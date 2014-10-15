@@ -78,8 +78,6 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/statfs.h>
-#include <sys/statvfs.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <algorithm>
@@ -866,29 +864,9 @@ static bool DoSource(CommandLine &CmdL)
    unsigned long long FetchPBytes = Fetcher.PartialPresent();
    unsigned long long DebBytes = Fetcher.TotalNeeded();
 
-   // Check for enough free space
-   struct statvfs Buf;
-   string OutputDir = ".";
-   if (statvfs(OutputDir.c_str(),&Buf) != 0) {
-      if (errno == EOVERFLOW)
-	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
-				OutputDir.c_str());
-      else
-	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
-				OutputDir.c_str());
-   } else if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-     {
-       struct statfs Stat;
-       if (statfs(OutputDir.c_str(),&Stat) != 0
-#if HAVE_STRUCT_STATFS_F_TYPE
-           || unsigned(Stat.f_type) != RAMFS_MAGIC
-#endif
-           )  {
-          return _error->Error(_("You don't have enough free space in %s"),
-              OutputDir.c_str());
-       }
-     }
-   
+   if (CheckFreeSpaceBeforeDownload(".", (FetchBytes - FetchPBytes)) == false)
+      return false;
+
    // Number of bytes
    if (DebBytes != FetchBytes)
       //TRANSLATOR: The required space between number and unit is already included

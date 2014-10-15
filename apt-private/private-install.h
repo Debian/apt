@@ -16,8 +16,6 @@ class CacheFile;
 class CommandLine;
 class pkgProblemResolver;
 
-#define RAMFS_MAGIC     0x858458f6
-
 APT_PUBLIC bool DoInstall(CommandLine &Cmd);
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,

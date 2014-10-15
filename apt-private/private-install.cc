@@ -22,11 +22,8 @@
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/install-progress.h>
 
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/statfs.h>
-#include <sys/statvfs.h>
 #include <algorithm>
 #include <iostream>
 #include <set>
@@ -177,33 +174,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (_error->PendingError() == true)
       return false;
 
-   /* Check for enough free space, but only if we are actually going to
-      download */
-   if (_config->FindB("APT::Get::Print-URIs") == false &&
-       _config->FindB("APT::Get::Download",true) == true)
-   {
-      struct statvfs Buf;
-      std::string OutputDir = _config->FindDir("Dir::Cache::Archives");
-      if (statvfs(OutputDir.c_str(),&Buf) != 0) {
-	 if (errno == EOVERFLOW)
-	    return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
-				 OutputDir.c_str());
-	 else
-	    return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
-				 OutputDir.c_str());
-      } else if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-      {
-         struct statfs Stat;
-         if (statfs(OutputDir.c_str(),&Stat) != 0
-#if HAVE_STRUCT_STATFS_F_TYPE
-             || unsigned(Stat.f_type) != RAMFS_MAGIC
-#endif
-             )
-            return _error->Error(_("You don't have enough free space in %s."),
-                OutputDir.c_str());
-      }
-   }
-   
+   if (CheckFreeSpaceBeforeDownload(_config->FindDir("Dir::Cache::Archives"), (FetchBytes - FetchPBytes)) == false)
+      return false;
+
    // Fail safe check
    if (_config->FindI("quiet",0) >= 2 ||
        _config->FindB("APT::Get::Assume-Yes",false) == true)

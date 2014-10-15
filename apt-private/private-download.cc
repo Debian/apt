@@ -19,6 +19,9 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <fcntl.h>
+#include <sys/vfs.h>
+#include <sys/statvfs.h>
+#include <errno.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -143,6 +146,42 @@ bool AcquireRun(pkgAcquire &Fetcher, int const PulseInterval, bool * const Failu
 	 *Failure = true;
    }
 
+   return true;
+}
+									/*}}}*/
+bool CheckFreeSpaceBeforeDownload(std::string const &Dir, unsigned long long FetchBytes)/*{{{*/
+{
+   uint32_t const RAMFS_MAGIC = 0x858458f6;
+   /* Check for enough free space, but only if we are actually going to
+      download */
+   if (_config->FindB("APT::Get::Print-URIs", false) == true ||
+       _config->FindB("APT::Get::Download", true) == false)
+      return true;
+
+   struct statvfs Buf;
+   if (statvfs(Dir.c_str(),&Buf) != 0) {
+      if (errno == EOVERFLOW)
+	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
+	       Dir.c_str());
+      else
+	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
+	       Dir.c_str());
+   }
+   else
+   {
+      unsigned long long const FreeBlocks = _config->Find("APT::Sandbox::User").empty() ? Buf.f_bfree : Buf.f_bavail;
+      if (FreeBlocks < (FetchBytes / Buf.f_bsize))
+      {
+	 struct statfs Stat;
+	 if (statfs(Dir.c_str(),&Stat) != 0
+#if HAVE_STRUCT_STATFS_F_TYPE
+	       || Stat.f_type != RAMFS_MAGIC
+#endif
+	    )
+	    return _error->Error(_("You don't have enough free space in %s."),
+		  Dir.c_str());
+      }
+   }
    return true;
 }
 									/*}}}*/

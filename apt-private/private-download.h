@@ -18,4 +18,6 @@ APT_PUBLIC bool AuthPrompt(std::string const &UntrustedList, bool const PromptUs
 
 APT_PUBLIC bool AcquireRun(pkgAcquire &Fetcher, int const PulseInterval, bool * const Failure, bool * const TransientNetworkFailure);
 
+APT_PUBLIC bool CheckFreeSpaceBeforeDownload(std::string const &Dir, unsigned long long FetchBytes);
+
 #endif
