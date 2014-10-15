@@ -1288,6 +1288,11 @@ void pkgAcqIndex::ReverifyAfterIMS()
    // a reverify (as its uncompressed on disk already)
    DestFile = GetPartialFileNameFromURI(RealURI);
 
+   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+   // file when its doing the indexcopy
+   if (RealURI.substr(0,6) == "cdrom:")
+      return;
+
    // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
       DestFile += '.' + CurrentCompressionExtension;
@@ -1398,11 +1403,6 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    // on if-modfied-since hit to avoid a stale attack against us
    if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
-      // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
-      // file when its doing the indexcopy
-      if (RealURI.substr(0,6) == "cdrom:")
-         return;
-
       // The files timestamp matches, reverify by copy into partial/
       EraseFileName = "";
       ReverifyAfterIMS();

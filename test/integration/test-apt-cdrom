@@ -66,21 +66,50 @@ CD_LABEL="$(echo "$ident" | grep "^Stored label:" | head -n1 | sed "s/^[^:]*: //
 testequal "CD::${CD_ID} \"${CD_LABEL}\";
 CD::${CD_ID}::Label \"${CD_LABEL}\";" cat rootdir/var/lib/apt/cdroms.list
 
-testequal 'Reading package lists...
+testcdromusage() {
+	touch rootdir/var/lib/apt/extended_states
+
+	testequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   testing
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst testing (0.8.15 stable [amd64])
 Conf testing (0.8.15 stable [amd64])' aptget install testing -s
 
-testequal 'Reading package lists...
+	testdpkgnotinstalled testing
+	testsuccess aptget install testing -y
+	testdpkginstalled testing
+	testsuccess aptget purge testing -y
+	testdpkgnotinstalled testing
+
+	testequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   testing:i386
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst testing:i386 (0.8.15 stable [i386])
 Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
+
+	testdpkgnotinstalled testing:i386
+	testsuccess aptget install testing:i386 -y
+	testdpkginstalled testing:i386
+	testsuccess aptget purge testing:i386 -y
+	testdpkgnotinstalled testing:i386
+
+	rm -f testing_0.8.15_amd64.deb
+	testsuccess aptget download testing
+	testsuccess test -s testing_0.8.15_amd64.deb
+	rm -f testing_0.8.15_amd64.deb
+
+	rm -f testing_0.8.15.dsc
+	testsuccess aptget source testing --dsc-only -d
+	testsuccess test -s testing_0.8.15.dsc
+	rm -f testing_0.8.15.dsc
+}
+testcdromusage
 
 # check Idempotence of apt-cdrom (and disabling of Translation dropping)
 testequal "$CDROM_PRE
@@ -101,7 +130,15 @@ $CDROM_POST" aptcdromlog add
 msgtest 'Test for the english description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && msgpass || msgfail
 
-# check that we really can install from a 'cdrom'
-testdpkgnotinstalled testing
-testsuccess aptget install testing -y
-testdpkginstalled testing
+# ensure cdrom method isn't trying to mount the cdrom
+mv rootdir/media/cdrom-unmounted rootdir/media/cdrom-ejected
+# ensure an update doesn't mess with cdrom sources
+testsuccess aptget update
+testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+mv rootdir/media/cdrom-ejected rootdir/media/cdrom-unmounted
+testcdromusage
+
+# and again to check that it withstands the temptation even if it could mount
+testsuccess aptget update
+testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+testcdromusage
