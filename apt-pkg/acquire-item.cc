@@ -1571,6 +1571,7 @@ void pkgAcqMetaBase::AbortTransaction()
             Rename(PartialFile, PartialFile + ".FAILED");
       }
    }
+   Transaction.clear();
 }
 									/*}}}*/
 // AcqMetaBase::TransactionHasError - Check for errors in Transaction	/*{{{*/
@@ -1617,6 +1618,7 @@ void pkgAcqMetaBase::CommitTransaction()
       // mark that this transaction is finished
       (*I)->TransactionManager = 0;
    }
+   Transaction.clear();
 }
 									/*}}}*/
 // AcqMetaBase::TransactionStageCopy - Stage a file for copying		/*{{{*/
