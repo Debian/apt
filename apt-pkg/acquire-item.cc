@@ -246,7 +246,7 @@ void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
    if (RealFileExists(DestFile))
    {
       std::string SandboxUser = _config->Find("APT::Sandbox::User");
-      ChangeOwnerAndPermissionOfFile("GetPartialFileName", DestFile.c_str(),
+      ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
                                      SandboxUser.c_str(), "root", 0600);
    }
    Owner->Enqueue(Item);
@@ -1570,6 +1570,10 @@ void pkgAcqMetaBase::AbortTransaction()
          if(FileExists(PartialFile))
             Rename(PartialFile, PartialFile + ".FAILED");
       }
+      // fix permissions for existing files which were part of a reverify
+      // like InRelease files or files in partial we might work with next time
+      else if (FileExists((*I)->DestFile))
+	 ChangeOwnerAndPermissionOfFile("AbortTransaction", (*I)->DestFile.c_str(), "root", "root", 0644);
    }
    Transaction.clear();
 }

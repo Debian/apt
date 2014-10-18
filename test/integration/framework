@@ -23,25 +23,32 @@ if [ "$MSGCOLOR" != 'NO' ]; then
 	CCMD="\033[1;35m" # pink
 fi
 
-msgdie() { printf "${CERROR}E: $1${CNORMAL}\n" >&2; exit 1; }
-msgwarn() { printf "${CWARNING}W: $1${CNORMAL}\n" >&2; }
-msgmsg() { printf "${CMSG}$1${CNORMAL}\n"; }
-msginfo() { printf "${CINFO}I: $1${CNORMAL}\n"; }
-msgdebug() { printf "${CDEBUG}D: $1${CNORMAL}\n"; }
-msgdone() { printf "${CDONE}DONE${CNORMAL}\n"; }
-msgnwarn() { printf "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgnmsg() { printf "${CMSG}$1${CNORMAL}"; }
-msgninfo() { printf "${CINFO}I: $1${CNORMAL}"; }
-msgndebug() { printf "${CDEBUG}D: $1${CNORMAL}"; }
-msgtest() {
-	while [ -n "$1" ]; do
-		printf "${CINFO}$1${CCMD} "
-		printf -- "$(echo "$2" | sed -e 's#^apt\([cgfs]\)#apt-\1#')${CINFO} "
+msgprintf() {
+	local START="$1"
+	local MIDDLE="$2"
+	local END="$3"
+	shift 3
+	if [ -n "$1" ]; then
+		printf "$START " "$1"
 		shift
-		if [ -n "$1" ]; then shift; else break; fi
-	done
-	printf "…${CNORMAL} "
+		while [ -n "$1" ]; do
+			printf "$MIDDLE " "$(echo "$1" | sed -e 's#^apt\([cgfs]\)#apt-\1#')"
+			shift
+		done
+	fi
+	printf "${END}"
 }
+msgdie() { msgprintf "${CERROR}E: %s" '%s' "${CNORMAL}\n" "$@" >&2; exit 1; }
+msgwarn() { msgprintf "${CWARNING}W: %s" '%s' "${CNORMAL}\n" "$@" >&2; }
+msgmsg() { msgprintf "${CMSG}%s" '%s' "${CNORMAL}\n" "$@"; }
+msginfo() { msgprintf "${CINFO}I: %s" '%s' "${CNORMAL}\n" "$@"; }
+msgdebug() { msgprintf "${CDEBUG}D: %s" '%s' "${CNORMAL}\n" "$@"; }
+msgdone() { msgprintf "${CDONE}DONE" '%s' "${CNORMAL}\n" "$@"; }
+msgnwarn() { msgprintf "${CWARNING}W: %s" '%s' "${CNORMAL}" "$@" >&2; }
+msgnmsg() { msgprintf "${CMSG}%s" '%s' "${CNORMAL}" "$@"; }
+msgninfo() { msgprintf "${CINFO}I: %s" '%s' "${CNORMAL}" "$@"; }
+msgndebug() { msgprintf "${CDEBUG}D: %s" '%s' "${CNORMAL}" "$@"; }
+msgtest() { msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@"; }
 msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
 msgskip() {
 	if [ $# -gt 0 ]; then printf "${CWARNING}SKIP: $*${CNORMAL}\n" >&2;
@@ -1222,17 +1229,20 @@ testfailure() {
 	fi
 }
 
-testaccessrights() {
-	msgtest "Test that file $1 has access rights set to" "$2"
-	if [ "$2" = "$(stat --format '%a' "$1")" ]; then
+testfilestats() {
+	msgtest "Test that file $1 has $2 $3" "$4"
+	if [ "$4" "$3" "$(stat --format "$2" "$1")" ]; then
 		msgpass
 	else
 		echo >&2
 		ls -l >&2 "$1"
-		echo -n >&2 "stat(1) reports access rights: "
-		stat --format '%a' "$1"
+		echo -n >&2 "stat(1) reports for $2: "
+		stat --format "$2" "$1"
 		msgfail
 	fi
+}
+testaccessrights() {
+	testfilestats "$1" '%a' '=' "$2"
 }
 
 testwebserverlaststatuscode() {

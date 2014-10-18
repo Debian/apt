@@ -1,24 +1,73 @@
 #!/bin/sh
 set -e
 
+# ensure that an update will only succeed entirely or not at all
+
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
+insertsource 'unstable' 'foo' 'all' '1.0'
 
 setupaptarchive --no-update
-changetowebserver
 
-# break package file
-cat > aptarchive/dists/unstable/main/binary-i386/Packages <<EOF
+breakfile() {
+	mv "$1" "${1}.bak"
+	cat > "$1" <<EOF
 Package: bar
 EOF
-compressfile aptarchive/dists/unstable/main/binary-i386/Packages '+1hour'
+	compressfile "$1"
+}
+restorefile() {
+	mv "${1}.bak" "$1"
+}
 
-# ensure that a update will only succeed entirely or not at all
-testfailure aptget update
-testequal "partial" ls rootdir/var/lib/apt/lists
+listscheck() {
+	testequal "$(cat $1)" ls rootdir/var/lib/apt/lists
+	# all copied files are properly chmodded
+	find rootdir/var/lib/apt/lists -maxdepth 1 -type f | while read file; do
+		testaccessrights "$file" '644'
+		testfilestats "$file" '%U' '!=' '_apt'
+	done
+}
+
+testrun() {
+	# produce an unsigned repository
+	find aptarchive \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
+	testfailure aptget update --no-allow-insecure-repositories
+	listscheck "$1"
+
+	# signed but broken
+	signreleasefiles
+
+	breakfile aptarchive/dists/unstable/main/binary-i386/Packages
+	testfailure aptget update
+	listscheck "$1"
+	restorefile aptarchive/dists/unstable/main/binary-i386/Packages
+
+	breakfile aptarchive/dists/unstable/main/source/Sources
+	testfailure aptget update
+	listscheck "$1"
+	restorefile aptarchive/dists/unstable/main/source/Sources
+}
+
+testsetup() {
+	msgmsg 'Test with no initial data over' "$1"
+	rm -rf rootdir/var/lib/apt/lists
+	mkdir -p rootdir/var/lib/apt/lists/partial
+	ls rootdir/var/lib/apt/lists > listsdir.lst
+	testrun 'listsdir.lst'
+
+	msgmsg 'Test with initial data over' "$1"
+	testsuccess aptget update
+	ls rootdir/var/lib/apt/lists > listsdir.lst
+	testrun 'listsdir.lst'
+}
+
+testsetup 'file'
+changetowebserver
+testsetup 'http'
 
