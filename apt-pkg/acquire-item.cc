@@ -107,6 +107,18 @@ static std::string GetCompressedFileName(std::string const &URI, std::string con
    return Name;
 }
 									/*}}}*/
+static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser, pkgAcqMetaBase * const TransactionManager, pkgAcquire::Item * const I) /*{{{*/
+{
+   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+      return true;
+
+   _error->Error(_("Use --allow-insecure-repositories to force the update"));
+   TransactionManager->AbortTransaction();
+   I->Status = pkgAcquire::Item::StatError;
+   return false;
+}
+									/*}}}*/
+
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 #if __GNUC__ >= 4
@@ -1784,16 +1796,12 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the users explicitely wants it
-   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if(AllowInsecureRepositories(MetaIndexParser, TransactionManager, this) == true)
    {
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
       MetaIndexParser->Load(MetaIndexFile);
       QueueIndexes(true);
-   } 
-   else 
-   {
-      _error->Error("Use --allow-insecure-repositories to force the update");
    }
 
    Item::Failed(Message,Cnf);
@@ -2162,7 +2170,7 @@ void pkgAcqMetaIndex::Failed(string Message,
    // No Release file was present so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
-   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if(AllowInsecureRepositories(MetaIndexParser, TransactionManager, this) == true)
    {
       // Done, queue for rename on transaction finished
       if (FileExists(DestFile)) 
@@ -2170,12 +2178,6 @@ void pkgAcqMetaIndex::Failed(string Message,
 
       // queue without any kind of hashsum support
       QueueIndexes(false);
-   } else {
-      // warn if the repository is unsinged
-      _error->Error("Use --allow-insecure-repositories to force the update");
-      TransactionManager->AbortTransaction();
-      Status = StatError;
-      return;
    }
 }
 									/*}}}*/
@@ -2286,7 +2288,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       // No Release file was present, or verification failed, so fall
       // back to queueing Packages files without verification
       // only allow going further if the users explicitely wants it
-      if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+      if(AllowInsecureRepositories(MetaIndexParser, TransactionManager, this) == true)
       {
 	 Status = StatDone;
 
@@ -2307,11 +2309,6 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
             TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
          }
          QueueIndexes(false);
-      } else {
-         // warn if the repository is unsigned
-         _error->Error("Use --allow-insecure-repositories to force the update");
-         TransactionManager->AbortTransaction();
-         Status = StatError;
       }
    }
 }
