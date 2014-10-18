@@ -39,8 +39,9 @@ assert_update_is_refused_and_last_good_state_used()
 assert_repo_is_intact()
 {
     testequal "foo/unstable 2.0 all" apt list -q
-    testsuccess "" aptget install -y -s foo
-    testfailure "" aptget install -y evil
+    testsuccess aptget install -y -s foo
+    testfailure aptget install -y evil
+    testsuccess aptget source foo --print-uris
 
     LISTDIR=rootdir/var/lib/apt/lists
     if ! ( ls $LISTDIR/*InRelease >/dev/null 2>&1 || 
@@ -62,9 +63,11 @@ test_from_inrelease_to_unsigned()
     # setup archive with InRelease file
     setupaptarchive_with_lists_clean
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     simulate_mitm_and_inject_evil_package
     assert_update_is_refused_and_last_good_state_used
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
 }
 
 test_from_release_gpg_to_unsigned()
@@ -73,9 +76,11 @@ test_from_release_gpg_to_unsigned()
     setupaptarchive_with_lists_clean
     rm $APTARCHIVE/dists/unstable/InRelease
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     simulate_mitm_and_inject_evil_package
     assert_update_is_refused_and_last_good_state_used
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
 }
 
 test_from_inrelease_to_unsigned_with_override()
@@ -118,6 +123,7 @@ test_cve_2012_0214()
     # setup archive with InRelease
     setupaptarchive_with_lists_clean
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     # do what CVE-2012-0214 did
     rm $APTARCHIVE/dists/unstable/InRelease
@@ -127,6 +133,7 @@ test_cve_2012_0214()
     aptftparchive -qq release ./aptarchive > aptarchive/dists/unstable/Release 
 
     assert_update_is_refused_and_last_good_state_used
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
 
     # ensure there is no _Release file downloaded
     testfailure ls rootdir/var/lib/apt/lists/*_Release
@@ -137,6 +144,7 @@ test_subvert_inrelease()
     # setup archive with InRelease
     setupaptarchive_with_lists_clean
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     # replace InRelease with something else
     mv $APTARCHIVE/dists/unstable/Release $APTARCHIVE/dists/unstable/InRelease
@@ -146,6 +154,7 @@ test_subvert_inrelease()
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     # ensure we keep the repo
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
     assert_repo_is_intact
 }
 
@@ -154,6 +163,7 @@ test_inrelease_to_invalid_inrelease()
     # setup archive with InRelease
     setupaptarchive_with_lists_clean
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     # now remove InRelease and subvert Release do no longer verify
     sed -i 's/Codename.*/Codename: evil!'/ $APTARCHIVE/dists/unstable/InRelease
@@ -166,8 +176,9 @@ W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  The following si
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     # ensure we keep the repo
+    testfailure grep 'evil' rootdir/var/lib/apt/lists/*InRelease
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
     assert_repo_is_intact
-    testfailure grep "evil" rootdir/var/lib/apt/lists/*InRelease
 }
 
 test_release_gpg_to_invalid_release_release_gpg()
@@ -176,6 +187,7 @@ test_release_gpg_to_invalid_release_release_gpg()
     setupaptarchive_with_lists_clean
     rm $APTARCHIVE/dists/unstable/InRelease
     testsuccess aptget update
+    listcurrentlistsdirectory > lists.before
 
     # now subvert Release do no longer verify
     echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
@@ -187,8 +199,9 @@ W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg
 
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
+    testfailure grep 'evil' rootdir/var/lib/apt/lists/*Release
+    testfileequal lists.before "$(listcurrentlistsdirectory)"
     assert_repo_is_intact
-    testfailure grep "evil" rootdir/var/lib/apt/lists/*Release
 }
 
 
@@ -229,6 +242,6 @@ test_inrelease_to_invalid_inrelease
 msgmsg "test_release_gpg_to_invalid_release_release_gpg"
 test_release_gpg_to_invalid_release_release_gpg
 
-# ensure we can ovveride the downgrade error
-msgmsg "test_from_inrelease_to_unsigned"
+# ensure we can override the downgrade error
+msgmsg "test_from_inrelease_to_unsigned_with_override"
 test_from_inrelease_to_unsigned_with_override

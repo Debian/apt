@@ -25,40 +25,39 @@ restorefile() {
 	mv "${1}.bak" "$1"
 }
 
-listscheck() {
-	testequal "$(cat $1)" ls rootdir/var/lib/apt/lists
-}
-
 testrun() {
 	# produce an unsigned repository
 	find aptarchive \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
 	testfailure aptget update --no-allow-insecure-repositories
-	listscheck "$1"
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
 
 	# signed but broken
 	signreleasefiles
 
 	breakfile aptarchive/dists/unstable/main/binary-i386/Packages
 	testfailure aptget update
-	listscheck "$1"
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
 	restorefile aptarchive/dists/unstable/main/binary-i386/Packages
 
 	breakfile aptarchive/dists/unstable/main/source/Sources
 	testfailure aptget update
-	listscheck "$1"
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
 	restorefile aptarchive/dists/unstable/main/source/Sources
 }
 
 testsetup() {
 	msgmsg 'Test with no initial data over' "$1"
 	rm -rf rootdir/var/lib/apt/lists
-	mkdir -p rootdir/var/lib/apt/lists/partial
-	ls rootdir/var/lib/apt/lists > listsdir.lst
+	mkdir -m 700 -p rootdir/var/lib/apt/lists/partial
+	if [ "$(id -u)" = '0' ]; then
+		chown _apt:root rootdir/var/lib/apt/lists/partial
+	fi
+	listcurrentlistsdirectory > listsdir.lst
 	testrun 'listsdir.lst'
 
 	msgmsg 'Test with initial data over' "$1"
 	testsuccess aptget update
-	ls rootdir/var/lib/apt/lists > listsdir.lst
+	listcurrentlistsdirectory > listsdir.lst
 	testrun 'listsdir.lst'
 }
 

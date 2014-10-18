@@ -17,6 +17,7 @@ insertpackage 'unstable' 'foo' 'all' '1.0'
 setupaptarchive
 changetowebserver
 aptget update -qq
+listcurrentlistsdirectory > lists.before
 
 # insert new version
 mkdir aptarchive/dists/unstable/main/binary-i386/saved
@@ -24,23 +25,19 @@ cp -p aptarchive/dists/unstable/main/binary-i386/Packages* \
      aptarchive/dists/unstable/main/binary-i386/saved
 insertpackage 'unstable' 'foo' 'all' '2.0'
 
-# not using compressfile for compat with older apt releases
-gzip -c aptarchive/dists/unstable/main/binary-i386/Packages > \
-  aptarchive/dists/unstable/main/binary-i386/Packages.gz
-generatereleasefiles
-signreleasefiles
-
+compressfile aptarchive/dists/unstable/main/binary-i386/Packages
 # ensure that we do not get a I-M-S hit for the Release file
-touch -d "+1hour" aptarchive/dists/unstable/*Release*
+
+generatereleasefiles '+1hour'
+signreleasefiles
 
 # but now only deliver the previous Packages file instead of the new one
 # (simulating a stale attack)
 cp -p aptarchive/dists/unstable/main/binary-i386/saved/Packages* \
      aptarchive/dists/unstable/main/binary-i386/
 
-# ensure this raises a error
+# ensure this raises an error
 testequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Hash Sum mismatch
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
-
-
+testfileequal lists.before "$(listcurrentlistsdirectory)"

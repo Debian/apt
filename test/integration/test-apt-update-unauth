@@ -16,7 +16,7 @@ configarchitecture "i386"
 insertpackage 'unstable' 'foo' 'all' '1.0'
 insertsource 'unstable' 'foo' 'all' '1.0'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver
 
 # FIXME: 
@@ -24,13 +24,10 @@ changetowebserver
 #    reverified
 runtest() {
     # start unauthenticated
-    find rootdir/var/lib/apt/lists/ -type f | xargs rm -f
-    rm -f aptarchive/dists/unstable/*Release*
+    rm -rf rootdir/var/lib/apt/lists/
+    find aptarchive/ -name '*Release*' -delete
 
-    testsuccess aptget update -qq --allow-insecure-repositories
-
-    # FIXME: this really shouldn't be needed
-    rm -f rootdir/var/lib/apt/lists/partial/*
+    testsuccess aptget update --allow-insecure-repositories
 
     # become authenticated
     generatereleasefiles
@@ -45,14 +42,14 @@ runtest() {
     # change the local packages file
     PKGS=$(ls rootdir/var/lib/apt/lists/*Packages*)
     echo "meep" > $PKGS
-    ls rootdir/var/lib/apt/lists/ > lists.before
+    listcurrentlistsdirectory > lists.before
 
     # update and ensure all is reverted on the hashsum failure
     testfailure aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0
 
     # ensure we have before what we have after
     msgtest 'Check rollback on going from' 'unauth -> auth'
-    ls rootdir/var/lib/apt/lists/ > lists.after
+    listcurrentlistsdirectory > lists.after
     if cmp lists.before lists.after; then
         msgpass
     else

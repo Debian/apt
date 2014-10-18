@@ -34,8 +34,9 @@ mv aptarchive/dists/unstable/InRelease.good aptarchive/dists/unstable/InRelease
 
 # append junk at the end of the Packages.gz/Packages
 SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
-echo "1234567890" >> aptarchive/dists/unstable/main/binary-i386/Packages.gz
-echo "1234567890" >> aptarchive/dists/unstable/main/binary-i386/Packages
+find aptarchive -name 'Packages*' | while read pkg; do
+	echo "1234567890" >> "$pkg"
+done
 NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 rm -f rootdir/var/lib/apt/lists/localhost*
 testequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
