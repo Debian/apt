@@ -229,16 +229,15 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,HashStringLis
    step */
 bool pkgAcquire::Item::Rename(string From,string To)
 {
-   if (rename(From.c_str(),To.c_str()) != 0)
-   {
-      char S[300];
-      snprintf(S,sizeof(S),_("rename failed, %s (%s -> %s)."),strerror(errno),
-	      From.c_str(),To.c_str());
-      Status = StatError;
-      ErrorText += S;
-      return false;
-   }   
-   return true;
+   if (rename(From.c_str(),To.c_str()) == 0)
+      return true;
+
+   std::string S;
+   strprintf(S, _("rename failed, %s (%s -> %s)."), strerror(errno),
+	 From.c_str(),To.c_str());
+   Status = StatError;
+   ErrorText += S;
+   return false;
 }
 									/*}}}*/
 void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
@@ -318,30 +317,31 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 	     << " FailCode: " 
 	     << FailCode << std::endl;
 #endif
-   const char *Args[40];
-   unsigned int i = 0;
    string report = _config->Find("Methods::Mirror::ProblemReporting", 
 				 "/usr/lib/apt/apt-report-mirror-failure");
    if(!FileExists(report))
       return;
-   Args[i++] = report.c_str();
-   Args[i++] = UsedMirror.c_str();
-   Args[i++] = DescURI().c_str();
-   Args[i++] = FailCode.c_str();
-   Args[i++] = NULL;
+
+   std::vector<char const*> Args;
+   Args.push_back(report.c_str());
+   Args.push_back(UsedMirror.c_str());
+   Args.push_back(DescURI().c_str());
+   Args.push_back(FailCode.c_str());
+   Args.push_back(NULL);
+
    pid_t pid = ExecFork();
-   if(pid < 0) 
+   if(pid < 0)
    {
       _error->Error("ReportMirrorFailure Fork failed");
       return;
    }
-   else if(pid == 0) 
+   else if(pid == 0)
    {
-      execvp(Args[0], (char**)Args);
+      execvp(Args[0], (char**)Args.data());
       std::cerr << "Could not exec " << Args[0] << std::endl;
       _exit(100);
    }
-   if(!ExecWait(pid, "report-mirror-failure")) 
+   if(!ExecWait(pid, "report-mirror-failure"))
    {
       _error->Warning("Couldn't report problem to '%s'",
 		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
