@@ -27,11 +27,6 @@ restorefile() {
 
 listscheck() {
 	testequal "$(cat $1)" ls rootdir/var/lib/apt/lists
-	# all copied files are properly chmodded
-	find rootdir/var/lib/apt/lists -maxdepth 1 -type f | while read file; do
-		testaccessrights "$file" '644'
-		testfilestats "$file" '%U' '!=' '_apt'
-	done
 }
 
 testrun() {

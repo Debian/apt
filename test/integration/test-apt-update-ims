@@ -54,7 +54,7 @@ Hit http://localhost:8080 unstable/main amd64 Packages
 Hit http://localhost:8080 unstable/main Translation-en
 Reading package lists..."
 
-find aptarchive -name "InRelease" | xargs rm -f
+find aptarchive -name 'InRelease' -delete
 
 echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
@@ -78,9 +78,8 @@ Hit http://localhost:8080 unstable/main Translation-en
 Reading package lists...
 W: The data from 'http://localhost:8080 unstable Release.gpg' is not signed. Packages from that repository can not be authenticated."
 
-find aptarchive -name "Release.gpg" | xargs rm -f
+find aptarchive -name 'Release.gpg' -delete
 
-echo 'Acquire::AllowInsecureRepositories "1";' > rootdir/etc/apt/apt.conf.d/insecure.conf
 echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 

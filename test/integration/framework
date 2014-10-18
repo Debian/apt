@@ -1081,12 +1081,13 @@ testfileequal() {
 testempty() {
 	msgtest "Test for no output of" "$*"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
-	if $* >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
+	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
 		msgpass
 	else
 		cat $COMPAREFILE
 		msgfail
 	fi
+	aptautotest 'testempty' "$@"
 }
 
 testequal() {
@@ -1103,7 +1104,8 @@ testequal() {
 	if [ -n "$MSG" ]; then
 		msgtest "$MSG" "$*"
 	fi
-	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	"$@" 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	aptautotest 'testequal' "$@"
 }
 
 testequalor2() {
@@ -1114,7 +1116,7 @@ testequalor2() {
 	echo "$2" > $COMPAREFILE2
 	shift 2
 	msgtest "Test for equality OR of" "$*"
-	$* >$COMPAREAGAINST 2>&1 || true
+	"$@" >$COMPAREAGAINST 2>&1 || true
 	if checkdiff $COMPAREFILE1 $COMPAREAGAINST >/dev/null 2>&1 || \
 		checkdiff $COMPAREFILE2 $COMPAREAGAINST >/dev/null 2>&1
 	then
@@ -1126,6 +1128,7 @@ testequalor2() {
 		checkdiff $COMPAREFILE2 $COMPAREAGAINST || true
 		msgfail
 	fi
+	aptautotest 'testequalor2' "$@"
 }
 
 testshowvirtual() {
@@ -1210,6 +1213,7 @@ testsuccess() {
 		cat >&2 $OUTPUT
 		msgfail "exitcode $EXITCODE"
 	fi
+	aptautotest 'testsuccess' "$@"
 }
 
 testfailure() {
@@ -1227,6 +1231,7 @@ testfailure() {
 	else
 		msgpass
 	fi
+	aptautotest 'testfailure' "$@"
 }
 
 testfilestats() {
@@ -1271,3 +1276,34 @@ pause() {
 	local IGNORE
 	read IGNORE
 }
+
+### The following tests are run by most test methods automatically to check
+### general things about commands executed without writing the test every time.
+
+aptautotest() {
+	local TESTCALL="$1"
+	local CMD="$2"
+	local FIRSTOPT="$3"
+	local AUTOTEST="aptautotest_$(basename "$CMD" | tr -d '-')_$(echo "$FIRSTOPT" | tr -d '-')"
+	if command -v $AUTOTEST >/dev/null; then
+		shift 3
+		# save and restore the *.output files from other tests
+		# as we might otherwise override them in these automatic tests
+		rm -rf rootdir/tmp-before
+		mv rootdir/tmp rootdir/tmp-before
+		mkdir rootdir/tmp
+		$AUTOTEST "$TESTCALL" "$@"
+		rm -rf rootdir/tmp-aptautotest
+		mv rootdir/tmp rootdir/tmp-aptautotest
+		mv rootdir/tmp-before rootdir/tmp
+	fi
+}
+
+aptautotest_aptget_update() {
+	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
+	# all copied files are properly chmodded
+	find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f | while read file; do
+		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
+	done
+}
+aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
