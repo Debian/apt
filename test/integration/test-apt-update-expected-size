@@ -15,16 +15,16 @@ changetowebserver
 # normal update works fine
 testsuccess aptget update
 
-# make InRelease really big
+# make InRelease really big to trigger fallback
 mv aptarchive/dists/unstable/InRelease aptarchive/dists/unstable/InRelease.good
 dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2 2>/dev/null
 touch -d '+1hour' aptarchive/dists/unstable/InRelease
-aptget update -o Apt::Get::List-Cleanup=0  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0 > output.log
+testsuccess aptget update -o Apt::Get::List-Cleanup=0  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0
 msgtest 'Check that the max write warning is triggered'
-if grep -q "Writing more data than expected" output.log; then
+if grep -q "Writing more data than expected" rootdir/tmp/testsuccess.output; then
     msgpass
 else
-    cat output.log
+    cat rootdir/tmp/testsuccess.output
     msgfail
 fi
 # ensure the failed InRelease file got renamed

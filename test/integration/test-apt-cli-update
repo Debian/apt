@@ -10,7 +10,7 @@ configarchitecture "i386"
 insertpackage 'unstable' 'foo' 'all' '2.0'
 insertinstalledpackage 'foo' 'all' '1.0'
 
-setupaptarchive
+setupaptarchive --no-update
 
 APTARCHIVE=$(readlink -f ./aptarchive)
 

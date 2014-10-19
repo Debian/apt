@@ -24,12 +24,11 @@ testloopbreak() {
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
 	rm -f rootdir/var/lib/apt/extended_states
 
-
-	testsuccess aptget install advanced=1 -y -t "$1" -o Debug::pkgPackageManager=1
+	testsuccess aptget install advanced=1 -y -t "$1"
 	testdpkginstalled advanced
 	testdpkgnotinstalled basic common
 
-	testsuccess aptget dist-upgrade -y -t "$1" -o Debug::pkgPackageManager=1
+	testsuccess aptget dist-upgrade -y -t "$1"
 	testdpkginstalled advanced basic common
 }
 

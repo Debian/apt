@@ -843,7 +843,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     // but if it fails ignore this failure and look for alternative ways of solving
 		     if (Debug)
 		     {
-			clog << OutputInDepth(Depth) << "Avoidance unpack of " << ConflictPkg.FullName() << " failed for " << End << std::endl;
+			clog << OutputInDepth(Depth) << "Avoidance unpack of " << ConflictPkg.FullName() << " failed for " << End << " ignoring:" << std::endl;
 			_error->DumpErrors(std::clog);
 		     }
 		     _error->RevertToStack();

@@ -17,11 +17,11 @@ done
 aptkey list | grep '^pub' > aptkey.list
 testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
 
+testsuccess aptget update
 msgtest 'Test for no gpg errors/warnings in' 'apt-get update'
-aptget update > update.log 2>&1
-if grep -iq 'GPG' update.log; then
+if grep -iq 'GPG' rootdir/tmp/testsuccess.output; then
+	cat rootdir/tmp/testsuccess.output
 	msgfail
-	cat update.log
 else
 	msgpass
 fi

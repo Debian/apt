@@ -1205,8 +1205,18 @@ testsuccess() {
 		msgtest 'Test for successful execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
-	if $@ >${OUTPUT} 2>&1; then
-		msgpass
+	if "$@" >${OUTPUT} 2>&1; then
+		if expr match "$1" '^apt.*' >/dev/null; then
+			if grep -q -E '^E: ' "$OUTPUT"; then
+				echo >&2
+				cat >&2 $OUTPUT
+				msgfail 'successful run, but output contains errors'
+			else
+				msgpass
+			fi
+		else
+			msgpass
+		fi
 	else
 		local EXITCODE=$?
 		echo >&2
@@ -1223,13 +1233,24 @@ testfailure() {
 		msgtest 'Test for failure in execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
-	if $@ >${OUTPUT} 2>&1; then
+	if "$@" >${OUTPUT} 2>&1; then
 		local EXITCODE=$?
 		echo >&2
 		cat >&2 $OUTPUT
 		msgfail "exitcode $EXITCODE"
 	else
-		msgpass
+		local EXITCODE=$?
+		if expr match "$1" '^apt.*' >/dev/null; then
+			if ! grep -q -E '^E: ' "$OUTPUT"; then
+				echo >&2
+				cat >&2 $OUTPUT
+				msgfail "run failed with exitcode ${EXITCODE}, but with no errors"
+			else
+				msgpass
+			fi
+		else
+			msgpass
+		fi
 	fi
 	aptautotest 'testfailure' "$@"
 }
