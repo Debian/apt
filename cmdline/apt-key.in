@@ -384,8 +384,12 @@ if [ "$command" != "help" ]; then
 
     # gpg needs (in different versions more or less) files to function correctly,
     # so we give it its own homedir and generate some valid content for it
-    if [ ! -d "$TMPDIR" ]; then
-        unset TMPDIR
+    if [ -n "$TMPDIR" ]; then
+       # tmpdir is a directory and current user has rwx access to it
+       # same tests as in apt-pkg/contrib/fileutl.cc GetTempDir()
+       if [ ! -d "$TMPDIR" ] || [ ! -r "$TMPDIR" ] || [ ! -w "$TMPDIR" ] || [ ! -x "$TMPDIR" ]; then
+	  unset TMPDIR
+       fi
     fi
     GPGHOMEDIR="$(mktemp -d)"
     CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"

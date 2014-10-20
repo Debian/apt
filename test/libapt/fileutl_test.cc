@@ -217,8 +217,16 @@ TEST(FileUtlTest, GetTempDir)
    setenv("TMPDIR", "/not-there-no-really-not", 1);
    EXPECT_EQ("/tmp", GetTempDir());
 
+   // here but not accessible for non-roots
    setenv("TMPDIR", "/usr", 1);
-   EXPECT_EQ("/usr", GetTempDir());
+   EXPECT_EQ("/tmp", GetTempDir());
+
+   // files are no good for tmpdirs, too
+   setenv("TMPDIR", "/dev/null", 1);
+   EXPECT_EQ("/tmp", GetTempDir());
+
+   setenv("TMPDIR", "/var/tmp", 1);
+   EXPECT_EQ("/var/tmp", GetTempDir());
 
    unsetenv("TMPDIR");
    if (old_tmpdir.empty() == false)

@@ -176,6 +176,10 @@ addtrap() {
 }
 
 setupenvironment() {
+	# privilege dropping and testing doesn't work if /tmp isn't world-writeable (as e.g. with libpam-tmpdir)
+	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
+		unset TMPDIR
+	fi
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "

@@ -2066,9 +2066,11 @@ std::string GetTempDir()						/*{{{*/
       tmpdir = P_tmpdir;
 #endif
 
-   // check that tmpdir is set and exists
    struct stat st;
-   if (!tmpdir || strlen(tmpdir) == 0 || stat(tmpdir, &st) != 0)
+   if (!tmpdir || strlen(tmpdir) == 0 || // tmpdir is set
+	 stat(tmpdir, &st) != 0 || (st.st_mode & S_IFDIR) == 0 || // exists and is directory
+	 access(tmpdir, R_OK | W_OK | X_OK) != 0 // current user has rwx access to directory
+      )
       tmpdir = "/tmp";
 
    return string(tmpdir);
