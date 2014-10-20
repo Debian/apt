@@ -57,14 +57,14 @@ aptgetupdate() {
 	# note that insecure with trusted=yes are allowed
 	# as the trusted=yes indicates that security is provided by
 	# something above the understanding of apt
-	testsuccess aptget update --no-allow-insecure-repositories
+	${1:-testsuccess} aptget update --no-allow-insecure-repositories
 }
 
 insecureaptgetupdate() {
 	rm -rf rootdir/var/lib/apt/lists
 	testfailure aptget update --no-allow-insecure-repositories
 	rm -rf rootdir/var/lib/apt/lists
-	testsuccess aptget update --allow-insecure-repositories
+	testwarning aptget update --allow-insecure-repositories
 }
 
 msgmsg 'Test without trusted option and good sources'
@@ -103,7 +103,7 @@ everythingsucceeds -t testing
 msgmsg 'Test with trusted=yes option and good and unsigned sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate
+aptgetupdate 'testwarning'
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing
@@ -128,7 +128,7 @@ everythingsucceeds -t testing
 msgmsg 'Test with trusted=yes option and good and unknown sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate
+aptgetupdate 'testwarning'
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing
@@ -154,7 +154,7 @@ everythingsucceeds -t testing
 msgmsg 'Test with trusted=yes option and good and expired sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate
+aptgetupdate 'testwarning'
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing
@@ -181,7 +181,7 @@ everythingfails -t testing
 msgmsg 'Test with trusted=yes option and unsigned and good sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate
+aptgetupdate 'testwarning'
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing

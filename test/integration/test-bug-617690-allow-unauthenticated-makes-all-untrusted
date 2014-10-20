@@ -34,7 +34,7 @@ testrun() {
 		testsuccess aptget download cool --allow-unauthenticated
 		testfileexists 'cool_1.0_i386.deb'
 	else
-                testsuccess aptget update --allow-insecure-repositories
+                testwarning aptget update --allow-insecure-repositories
 
 		testfailure aptget download cool
 		testfilemissing 'cool_1.0_i386.deb'

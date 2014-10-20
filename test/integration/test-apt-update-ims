@@ -12,9 +12,15 @@ setupaptarchive --no-update
 changetowebserver
 
 runtest() {
+    configallowinsecurerepositories "${1:-false}"
+
     rm -f rootdir/var/lib/apt/lists/localhost*
 
-    testsuccess aptget update
+    if [ "$1" = 'true' ]; then
+	testwarning aptget update
+    else
+	testsuccess aptget update
+    fi
 
     # ensure no leftovers in partial
     testfailure ls "rootdir/var/lib/apt/lists/partial/*"
@@ -62,10 +68,7 @@ runtest
 echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 
-
 # no Release.gpg or InRelease
-configallowinsecurerepositories "true"
-
 msgmsg "Release only"
 EXPECT="Ign http://localhost:8080 unstable InRelease
   404  Not Found
@@ -81,7 +84,7 @@ W: The data from 'http://localhost:8080 unstable Release.gpg' is not signed. Pac
 find aptarchive -name 'Release.gpg' -delete
 
 echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
-runtest
+runtest "true"
 
 echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
-runtest
+runtest "true"

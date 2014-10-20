@@ -12,7 +12,7 @@ setupaptarchive
 
 aptgetupdate() {
 	rm -rf rootdir/var/lib/apt/ rootdir/var/cache/apt/*.bin
-	testsuccess aptget update --allow-insecure-repositories
+	${1:-testwarning} aptget update --allow-insecure-repositories
 }
 
 PKGTEXT="$(aptget install cool --assume-no -d | head -n 7)"
@@ -25,7 +25,7 @@ testequal "$PKGTEXT
 Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
 sed -i -e 's#deb#deb [trusted=no]#' $DEBFILE
-aptgetupdate
+aptgetupdate 'testsuccess'
 
 testequal "$PKGTEXT
 WARNING: The following packages cannot be authenticated!

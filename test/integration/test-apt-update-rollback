@@ -117,7 +117,7 @@ test_unauthenticated_to_invalid_inrelease() {
     rm $APTARCHIVE/dists/unstable/InRelease
     rm $APTARCHIVE/dists/unstable/Release.gpg
 
-    testsuccess aptget update --allow-insecure-repositories
+    testwarning aptget update --allow-insecure-repositories
     listcurrentlistsdirectory > lists.before
     testequal "WARNING: The following packages cannot be authenticated!
   old

@@ -35,7 +35,7 @@ testfailure test -f pkga_1.0_all.deb
 echo 'Acquire::http::Pipeline-Depth 10;' > rootdir/etc/apt/apt.conf.d/99enable-pipeline
 
 # the output is a bit strange: it looks like it has downloaded pkga 4 times
-testsuccess aptget download pkga pkgb pkgc pkgd
+testwarning aptget download pkga pkgb pkgc pkgd
 for pkg in 'pkga' 'pkgb' 'pkgc' 'pkgd'; do
 	testsuccess test -f ${pkg}_1.0_all.deb
 	testsuccess cmp incoming/${pkg}_1.0_all.deb ${pkg}_1.0_all.deb

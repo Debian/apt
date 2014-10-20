@@ -1207,10 +1207,10 @@ testsuccess() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if grep -q -E '^E: ' "$OUTPUT"; then
+			if grep -q -E '^[WE]: ' "$OUTPUT"; then
 				echo >&2
 				cat >&2 $OUTPUT
-				msgfail 'successful run, but output contains errors'
+				msgfail 'successful run, but output contains warnings/errors'
 			else
 				msgpass
 			fi
@@ -1225,7 +1225,37 @@ testsuccess() {
 	fi
 	aptautotest 'testsuccess' "$@"
 }
-
+testwarning() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for successful execution with warnings of' "$*"
+	fi
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
+	if "$@" >${OUTPUT} 2>&1; then
+		if expr match "$1" '^apt.*' >/dev/null; then
+			if grep -q -E '^E: ' "$OUTPUT"; then
+				echo >&2
+				cat >&2 $OUTPUT
+				msgfail 'successful run, but output contains errors'
+			elif ! grep -q -E '^W: ' "$OUTPUT"; then
+				echo >&2
+				cat >&2 $OUTPUT
+				msgfail 'successful run, but output contains no warnings'
+			else
+				msgpass
+			fi
+		else
+			msgpass
+		fi
+	else
+		local EXITCODE=$?
+		echo >&2
+		cat >&2 $OUTPUT
+		msgfail "exitcode $EXITCODE"
+	fi
+	aptautotest 'testwarning' "$@"
+}
 testfailure() {
 	if [ "$1" = '--nomsg' ]; then
 		shift

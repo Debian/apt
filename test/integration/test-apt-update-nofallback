@@ -54,8 +54,7 @@ assert_repo_is_intact()
 setupaptarchive_with_lists_clean()
 {
     setupaptarchive --no-update
-    rm -f rootdir/var/lib/apt/lists/_*
-    #rm -rf rootdir/var/lib/apt/lists
+    rm -rf rootdir/var/lib/apt/lists
 }
 
 test_from_inrelease_to_unsigned()
@@ -87,14 +86,15 @@ test_from_inrelease_to_unsigned_with_override()
 {
     # setup archive with InRelease file
     setupaptarchive_with_lists_clean
-    testsuccess aptget update
+    # FIXME: is not what the server reported 4104 4106
+    testsuccess aptget update #-o Debug::pkgAcquire::Worker=1
 
     # simulate moving to a unsigned but otherwise valid repo
     simulate_mitm_and_inject_evil_package
     generatereleasefiles
 
     # and ensure we can update to it (with enough force) 
-    testsuccess aptget update --allow-insecure-repositories \
+    testwarning aptget update --allow-insecure-repositories \
         -o Acquire::AllowDowngradeToInsecureRepositories=1
     # but that the individual packages are still considered untrusted
     testequal "WARNING: The following packages cannot be authenticated!

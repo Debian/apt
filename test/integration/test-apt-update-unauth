@@ -27,7 +27,7 @@ runtest() {
     rm -rf rootdir/var/lib/apt/lists/
     find aptarchive/ -name '*Release*' -delete
 
-    testsuccess aptget update --allow-insecure-repositories
+    testwarning aptget update --allow-insecure-repositories
 
     # become authenticated
     generatereleasefiles
