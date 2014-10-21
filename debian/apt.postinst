@@ -43,11 +43,6 @@ case "$1" in
 	adduser --force-badname --system -home /var/empty \
 	    --no-create-home --quiet _apt || true
 
-        # ensure the passwords can still be read by the methods
-        if [ -e /etc/apt/auth.conf ]; then
-            chown _apt:root /etc/apt/auth.conf
-        fi
-
 	# deal with upgrades from experimental
 	if dpkg --compare-versions "$2" 'eq' '1.1~exp3'; then
 	    # libapt will setup partial/ at runtime

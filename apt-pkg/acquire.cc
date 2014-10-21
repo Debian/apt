@@ -86,8 +86,16 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
       std::string SandboxUser = _config->Find("APT::Sandbox::User");
       struct passwd *pw = getpwnam(SandboxUser.c_str());
       struct group *gr = getgrnam("root");
-      if (pw != NULL && gr != NULL && chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-	 _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+      if (pw != NULL && gr != NULL)
+      {
+         // chown the partial dir
+         if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+            _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+         // chown the auth.conf file
+         std::string AuthConf = _config->FindFile("Dir::Etc::netrc");
+         if(chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+            _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
+      }
    }
    if (chmod(partial.c_str(), 0700) != 0)
       _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
