@@ -20,6 +20,7 @@ foo/testing 2 amd64
 foo/stable 1 amd64
 ' apt list foo -a
 
+	cd downloaded
 	rm -f foo_1_amd64.deb foo_2_amd64.deb
 	testsuccess aptget download foo "$@"
 	testsuccess test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
@@ -27,6 +28,7 @@ foo/stable 1 amd64
 	rm -f foo_1.dsc foo_2.dsc
 	testsuccess aptget source foo --dsc-only -d "$@"
 	testsuccess test -s foo_1.dsc -o -s foo_2.dsc
+	cd - >/dev/null
 }
 
 everythingfails() {
@@ -39,18 +41,22 @@ foo/stable 1 amd64
   foo
 E: Some packages could not be authenticated'
 
+	cd downloaded
 	rm -f foo_1_amd64.deb foo_2_amd64.deb
 	testfailure aptget download foo "$@"
-	testequal "$WARNING" tail -n 3 rootdir/tmp/testfailure.output
+	testequal "$WARNING" tail -n 3 ../rootdir/tmp/testfailure.output
 	testfailure test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
 
 	rm -f foo_1.dsc foo_2.dsc
 	testfailure aptget source foo --dsc-only -d "$@"
-	testequal "$WARNING" tail -n 3 rootdir/tmp/testfailure.output
+	testequal "$WARNING" tail -n 3 ../rootdir/tmp/testfailure.output
 	testfailure test -s foo_1.dsc -o -s foo_2.dsc
+	cd - >/dev/null
 }
 
 cp -a rootdir/etc/apt/sources.list.d/ rootdir/etc/apt/sources.list.d.bak/
+echo 'Debug::Acquire::Transaction "true";
+Debug::pkgAcquire::Worker "true";' > rootdir/etc/apt/apt.conf.d/00debugging
 
 aptgetupdate() {
 	rm -rf rootdir/var/lib/apt/lists

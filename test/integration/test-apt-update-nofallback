@@ -195,7 +195,7 @@ test_release_gpg_to_invalid_release_release_gpg()
 
     testequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release.gpg: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
-W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  
+W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 

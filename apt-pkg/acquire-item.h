@@ -323,6 +323,7 @@ class pkgAcquire::Item : public WeakPointable
       InvalidFormat,
       SignatureError,
       NotClearsigned,
+      MaximumSizeExceeded
    };
 
    /** \brief Rename failed file and set error

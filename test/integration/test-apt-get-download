@@ -44,7 +44,10 @@ testdownload() {
 }
 
 # normal case as "root"
+OLDPWD="$(pwd)"
+cd downloaded
 testdownload apt_2.0_all.deb apt
+cd "$OLDPWD"
 
 # simulate normal user with non-existent root-owned directories
 rm -rf rootdir/var/cache/apt/archives/
@@ -52,14 +55,18 @@ mkdir rootdir/var/cache/apt/archives/
 addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/cache/apt/archives || true;"
 chmod -R -w rootdir/var/cache/apt/archives
 
+OLDPWD="$(pwd)"
+cd downloaded
+
 # normal case(es)
 testdownload apt_1.0_all.deb apt stable
 testdownload apt_2.0_all.deb apt
 
-DEBFILE="$(readlink -f aptarchive)/pool/apt_2.0_all.deb"
+DEBFILE="$(readlink -f ../aptarchive)/pool/apt_2.0_all.deb"
 testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sha512sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris
 
 # deb:677887
+testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms --print-uris
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms
 
 # deb:736962
@@ -74,6 +81,7 @@ testsuccess aptget download apt apt apt/unstable apt=2.0
 testsuccess test -s apt_2.0_all.deb
 
 # restore "root" rights
+cd "$OLDPWD"
 chmod -f -R +w $PWD/rootdir/var/cache/apt/archives
 rm -rf rootdir/var/cache/apt/archives/
 
@@ -86,5 +94,7 @@ testsuccess aptget install -d apt
 testsuccess test -s rootdir/var/cache/apt/archives/apt_2.0_all.deb
 testaccessrights 'aptarchive/pool/apt_2.0_all.deb' '644'
 mv aptarchive/pool/apt_2.0_all.deb aptarchive/pool/apt_2.0_all.deb.gone
+cd downloaded
 testdownload apt_2.0_all.deb apt
+cd "$OLDPWD"
 mv aptarchive/pool/apt_2.0_all.deb.gone aptarchive/pool/apt_2.0_all.deb

@@ -58,9 +58,11 @@ testrun() {
 		msgpass
 	fi
 	msgtest 'Check if package is downloadable'
+	cd downloaded
 	testsuccess --nomsg aptget download testpkg
 	msgtest '\tdeb file is present'; testsuccess --nomsg test -f testpkg_1.0_i386.deb
 	rm testpkg_1.0_i386.deb
+	cd - >/dev/null
 	testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
@@ -79,10 +81,12 @@ Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
 	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	aptget clean
 	msgtest 'Check if the source is aptgetable'
+	cd downloaded
 	testsuccess --nomsg aptget source testpkg
-	msgtest '\tdsc file is present'; testsuccess --nomsg test -f testpkg_1.0.dsc
-	msgtest '\tdirectory is present'; testsuccess --nomsg test -d testpkg-1.0
+	testsuccess test -s testpkg_1.0.dsc
+	testsuccess test -d testpkg-1.0
 	rm -rf testpkg-1.0*
+	cd - >/dev/null
 	testequal "$(aptcache show testpkg -o Acquire::Languages=none)
 " aptcache dumpavail
 }

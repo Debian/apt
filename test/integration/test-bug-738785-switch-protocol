@@ -25,6 +25,7 @@ downloadfile 'http://localhost:8080/pool/apt_1.0/changelog' changelog >/dev/null
 echo 'Apt::Changelogs::Server "http://localhost:8080/redirectme";' > rootdir/etc/apt/apt.conf.d/changelog.conf
 testequal "'http://localhost:8080/redirectme/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
 
+cd downloaded
 testsuccess aptget changelog apt -d
 testsuccess test -s apt.changelog
 rm -f apt.changelog
@@ -32,6 +33,7 @@ rm -f apt.changelog
 testsuccess aptget download apt
 testsuccess test -s apt_1.0_all.deb
 rm apt_1.0_all.deb
+cd - >/dev/null
 
 testsuccess aptget install apt -y
 testdpkginstalled 'apt'
@@ -49,15 +51,11 @@ rm https
 cd - >/dev/null
 echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
 
-if [ "$(id -u)" = '0' ]; then
-	testequal "Can't drop privileges for downloading as file '$(pwd)/apt_1.0_all.deb' couldn't be accessed by user '_apt'.
-E: The method driver $(pwd)/rootdir/usr/lib/apt/methods/https could not be found.
+cd downloaded
+testequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
 N: Is the package apt-transport-https installed?" aptget download apt -q=0
-else
-	testequal "E: The method driver $(pwd)/rootdir/usr/lib/apt/methods/https could not be found.
-N: Is the package apt-transport-https installed?" aptget download apt -q=0
-fi
 testsuccess test ! -e apt_1.0_all.deb
+cd - >/dev/null
 
 # revert to all methods
 rm -rf rootdir/$COPYMETHODS

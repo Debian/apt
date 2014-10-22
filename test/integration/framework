@@ -32,7 +32,7 @@ msgprintf() {
 		printf "$START " "$1"
 		shift
 		while [ -n "$1" ]; do
-			printf "$MIDDLE " "$(echo "$1" | sed -e 's#^apt\([cgfs]\)#apt-\1#')"
+			printf "$MIDDLE " "$(echo "$1" | sed -e 's#^apt\([cfghs]\)#apt-\1#')"
 			shift
 		done
 	fi
@@ -57,9 +57,9 @@ msgskip() {
 msgfail() {
 	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
-        if [ -n "$APT_DEBUG_TESTS" ]; then
-            bash
-        fi
+	if [ -n "$APT_DEBUG_TESTS" ]; then
+		$SHELL
+	fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
 
@@ -184,10 +184,12 @@ setupenvironment() {
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
 
+	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
 	if [ "$(id -u)" = '0' ]; then
 		# relax permissions so that running as root with user switching works
 		umask 022
-		chmod o+rx "$TMPWORKINGDIRECTORY"
+		chmod 711 "$TMPWORKINGDIRECTORY"
+		chown _apt:root "${TMPWORKINGDIRECTORY}/downloaded"
 	fi
 
 	TESTDIRECTORY=$(readlink -f $(dirname $0))
@@ -1061,7 +1063,7 @@ downloadfile() {
 }
 
 checkdiff() {
-	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	local DIFFTEXT="$(command diff -u "$@" 2>&1 | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo >&2
 		echo >&2 "$DIFFTEXT"
@@ -1307,7 +1309,7 @@ testaccessrights() {
 
 testwebserverlaststatuscode() {
 	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
-	local STATUS='rootdir/tmp/webserverstatus-statusfile.log'
+	local STATUS='downloaded/webserverstatus-statusfile.log'
 	rm -f "$DOWNLOG" "$STATUS"
 	msgtest 'Test last status code from the webserver was' "$1"
 	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
@@ -1353,20 +1355,20 @@ aptautotest() {
 		shift 3
 		# save and restore the *.output files from other tests
 		# as we might otherwise override them in these automatic tests
-		rm -rf rootdir/tmp-before
-		mv rootdir/tmp rootdir/tmp-before
-		mkdir rootdir/tmp
+		rm -rf ${TMPWORKINGDIRECTORY}/rootdir/tmp-before
+		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp ${TMPWORKINGDIRECTORY}/rootdir/tmp-before
+		mkdir ${TMPWORKINGDIRECTORY}/rootdir/tmp
 		$AUTOTEST "$TESTCALL" "$@"
-		rm -rf rootdir/tmp-aptautotest
-		mv rootdir/tmp rootdir/tmp-aptautotest
-		mv rootdir/tmp-before rootdir/tmp
+		rm -rf ${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest
+		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp ${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest
+		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp-before ${TMPWORKINGDIRECTORY}/rootdir/tmp
 	fi
 }
 
 aptautotest_aptget_update() {
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
 	# all copied files are properly chmodded
-	find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f | while read file; do
+	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f); do
 		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
 	done
 }

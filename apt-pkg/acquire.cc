@@ -54,23 +54,38 @@ pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NU
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
-   string const Mode = _config->Find("Acquire::Queue-Mode","host");
-   if (strcasecmp(Mode.c_str(),"host") == 0)
-      QueueMode = QueueHost;
-   if (strcasecmp(Mode.c_str(),"access") == 0)
-      QueueMode = QueueAccess;
+   Initialize();
 }
 pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), Queues(0), Workers(0),
 			   Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
+   Initialize();
+   SetLog(Progress);
+}
+void pkgAcquire::Initialize()
+{
    string const Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
       QueueMode = QueueHost;
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
-   SetLog(Progress);
+
+   // chown the auth.conf file as it will be accessed by our methods
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+   {
+      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+      struct group const * const gr = getgrnam("root");
+      if (pw != NULL && gr != NULL)
+      {
+	 std::string const AuthConf = _config->FindFile("Dir::Etc::netrc");
+	 if(AuthConf.empty() == false && RealFileExists(AuthConf) &&
+	       chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+	    _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
+      }
+   }
 }
 									/*}}}*/
 // Acquire::GetLock - lock directory and prepare for action		/*{{{*/
@@ -81,21 +96,16 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
 	 CreateAPTDirectoryIfNeeded(parent, partial) == false)
       return false;
 
-   if (getuid() == 0) // if we aren't root, we can't chown, so don't try it
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
    {
-      std::string SandboxUser = _config->Find("APT::Sandbox::User");
-      struct passwd *pw = getpwnam(SandboxUser.c_str());
-      struct group *gr = getgrnam("root");
+      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+      struct group const * const gr = getgrnam("root");
       if (pw != NULL && gr != NULL)
       {
          // chown the partial dir
          if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
             _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
-         // chown the auth.conf file
-         std::string const AuthConf = _config->FindFile("Dir::Etc::netrc");
-	 if(AuthConf.empty() == false && RealFileExists(AuthConf) &&
-	       chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-	    _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
       }
    }
    if (chmod(partial.c_str(), 0700) != 0)

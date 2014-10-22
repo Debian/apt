@@ -378,6 +378,8 @@ class pkgAcquire
     */
    virtual ~pkgAcquire();
 
+   private:
+   APT_HIDDEN void Initialize();
 };
 
 /** \brief Represents a single download source from which an item

@@ -99,6 +99,7 @@ Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 	testsuccess aptget purge testing:i386 -y
 	testdpkgnotinstalled testing:i386
 
+	cd downloaded
 	rm -f testing_0.8.15_amd64.deb
 	testsuccess aptget download testing
 	testsuccess test -s testing_0.8.15_amd64.deb
@@ -108,6 +109,7 @@ Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 	testsuccess aptget source testing --dsc-only -d
 	testsuccess test -s testing_0.8.15.dsc
 	rm -f testing_0.8.15.dsc
+	cd - >/dev/null
 }
 testcdromusage
 
