@@ -29,7 +29,7 @@
 
 const char * HashString::_SupportedHashes[] =
 {
-   "SHA512", "SHA256", "SHA1", "MD5Sum", NULL
+   "SHA512", "SHA256", "SHA1", "MD5Sum", "Checksum-FileSize", NULL
 };
 
 HashString::HashString()
@@ -111,6 +111,8 @@ std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
       SHA512.AddFD(Fd);
       fileHash = (std::string)SHA512.Result();
    }
+   else if (strcasecmp(Type.c_str(), "Checksum-FileSize") == 0)
+      strprintf(fileHash, "%llu", Fd.FileSize());
    Fd.Close();
 
    return fileHash;
@@ -147,7 +149,13 @@ bool HashStringList::usable() const					/*{{{*/
       return false;
    std::string const forcedType = _config->Find("Acquire::ForceHash", "");
    if (forcedType.empty() == true)
-      return true;
+   {
+      // FileSize alone isn't usable
+      for (std::vector<HashString>::const_iterator hs = list.begin(); hs != list.end(); ++hs)
+	 if (hs->HashType() != "Checksum-FileSize")
+	    return true;
+      return false;
+   }
    return find(forcedType) != NULL;
 }
 									/*}}}*/
@@ -201,6 +209,9 @@ bool HashStringList::VerifyFile(std::string filename) const		/*{{{*/
    HashString const * const hs = find(NULL);
    if (hs == NULL || hs->VerifyFile(filename) == false)
       return false;
+   HashString const * const hsf = find("Checksum-FileSize");
+   if (hsf != NULL && hsf->VerifyFile(filename) == false)
+      return false;
    return true;
 }
 									/*}}}*/
@@ -235,6 +246,14 @@ bool HashStringList::operator!=(HashStringList const &other) const
 }
 									/*}}}*/
 
+// PrivateHashes							/*{{{*/
+class PrivateHashes {
+public:
+   unsigned long long FileSize;
+
+   PrivateHashes() : FileSize(0) {}
+};
+									/*}}}*/
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/
 bool Hashes::Add(const unsigned char * const Data,unsigned long long const Size, unsigned int const Hashes)
 {
@@ -254,6 +273,7 @@ bool Hashes::Add(const unsigned char * const Data,unsigned long long const Size,
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic pop
 #endif
+   d->FileSize += Size;
    return Res;
 }
 bool Hashes::AddFD(int const Fd,unsigned long long Size, unsigned int const Hashes)
@@ -314,15 +334,17 @@ HashStringList Hashes::GetHashStringList()
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic pop
 #endif
+   std::string SizeStr;
+   strprintf(SizeStr, "%llu", d->FileSize);
+   hashes.push_back(HashString("Checksum-FileSize", SizeStr));
    return hashes;
 }
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-	#pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
 #endif
-Hashes::Hashes() {}
-Hashes::~Hashes() {}
+Hashes::Hashes() { d = new PrivateHashes(); }
+Hashes::~Hashes() { delete d; }
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic pop
 #endif

@@ -499,9 +499,11 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    return true;
 }
 									/*}}}*/
-static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> parts)/*{{{*/
 {
    size_t const pcount = parts.size();
+   for (size_t i = 0; i < pcount; ++i)
+      parts[i] = DeQuoteString(parts[i]);
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);

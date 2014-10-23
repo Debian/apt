@@ -163,30 +163,34 @@ TEST(HashSumsTest, FileBased)
 
    FileFd fd(__FILE__, FileFd::ReadOnly);
    EXPECT_TRUE(fd.IsOpen());
+   std::string FileSize;
+   strprintf(FileSize, "%llu", fd.FileSize());
 
    {
       Hashes hashes;
       hashes.AddFD(fd.Fd());
       HashStringList list = hashes.GetHashStringList();
       EXPECT_FALSE(list.empty());
-      EXPECT_EQ(4, list.size());
+      EXPECT_EQ(5, list.size());
       EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
       EXPECT_EQ(sha1.Value(), list.find("SHA1")->HashValue());
       EXPECT_EQ(sha256.Value(), list.find("SHA256")->HashValue());
       EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
    }
-   unsigned long sz = fd.FileSize();
+   unsigned long long sz = fd.FileSize();
    fd.Seek(0);
    {
       Hashes hashes;
       hashes.AddFD(fd.Fd(), sz);
       HashStringList list = hashes.GetHashStringList();
       EXPECT_FALSE(list.empty());
-      EXPECT_EQ(4, list.size());
+      EXPECT_EQ(5, list.size());
       EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
       EXPECT_EQ(sha1.Value(), list.find("SHA1")->HashValue());
       EXPECT_EQ(sha256.Value(), list.find("SHA256")->HashValue());
       EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
    }
    fd.Seek(0);
    {
@@ -279,37 +283,46 @@ TEST(HashSumsTest, HashStringList)
    EXPECT_EQ(NULL, list.find(""));
    EXPECT_EQ(NULL, list.find("MD5Sum"));
 
+   // empty lists aren't equal
    HashStringList list2;
    EXPECT_FALSE(list == list2);
    EXPECT_TRUE(list != list2);
+
+   // some hashes don't really contribute to usability
+   list.push_back(HashString("Checksum-FileSize", "29"));
+   EXPECT_FALSE(list.empty());
+   EXPECT_FALSE(list.usable());
 
    Hashes hashes;
    hashes.Add("The quick brown fox jumps over the lazy dog");
    list = hashes.GetHashStringList();
    EXPECT_FALSE(list.empty());
    EXPECT_TRUE(list.usable());
-   EXPECT_EQ(4, list.size());
+   EXPECT_EQ(5, list.size());
    EXPECT_TRUE(NULL != list.find(NULL));
    EXPECT_TRUE(NULL != list.find(""));
    EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   EXPECT_TRUE(NULL != list.find("Checksum-FileSize"));
    EXPECT_TRUE(NULL == list.find("ROT26"));
 
    _config->Set("Acquire::ForceHash", "MD5Sum");
    EXPECT_FALSE(list.empty());
    EXPECT_TRUE(list.usable());
-   EXPECT_EQ(4, list.size());
+   EXPECT_EQ(5, list.size());
    EXPECT_TRUE(NULL != list.find(NULL));
    EXPECT_TRUE(NULL != list.find(""));
    EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   EXPECT_TRUE(NULL != list.find("Checksum-FileSize"));
    EXPECT_TRUE(NULL == list.find("ROT26"));
 
    _config->Set("Acquire::ForceHash", "ROT26");
    EXPECT_FALSE(list.empty());
    EXPECT_FALSE(list.usable());
-   EXPECT_EQ(4, list.size());
+   EXPECT_EQ(5, list.size());
    EXPECT_TRUE(NULL == list.find(NULL));
    EXPECT_TRUE(NULL == list.find(""));
    EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   EXPECT_TRUE(NULL != list.find("Checksum-FileSize"));
    EXPECT_TRUE(NULL == list.find("ROT26"));
 
    _config->Clear("Acquire::ForceHash");

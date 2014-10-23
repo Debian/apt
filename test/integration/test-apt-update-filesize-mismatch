@@ -1,0 +1,55 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+configcompression 'gz'
+
+insertpackage 'testing' 'foo' 'all' '1'
+insertpackage 'testing' 'foo2' 'all' '1'
+insertsource 'testing' 'foo' 'all' '1'
+insertsource 'testing' 'foo2' 'all' '1'
+
+setupaptarchive --no-update
+changetowebserver
+
+find aptarchive \( -name 'Packages' -o -name 'Sources' -o -name 'Translation-en' \) -delete
+for release in $(find aptarchive -name 'Release'); do
+	cp "$release" "${release}.backup"
+done
+
+testsuccess aptget update
+testsuccess aptcache show foo
+testsuccess aptget install foo -s
+
+for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log); do
+	for ext in '' '.gz'; do
+		COMPRESSFILE="$get"
+		get="${get}${ext}"
+		FILE="$(basename -s '.gz' "$get")"
+		msgmsg 'Test filesize mismatch with file' "$FILE"
+		rm -rf rootdir/var/lib/apt/lists
+
+		for release in $(find aptarchive -name 'Release'); do
+			SIZE="$(awk "/$FILE\$/ { print \$2; exit }" "${release}.backup")"
+			sed "s# $SIZE # $(($SIZE + 111)) #" "${release}.backup" > "$release"
+		done
+		signreleasefiles
+
+		TEST='testfailure'
+		if expr match "$COMPRESSFILE" '^.*Translation-.*$' >/dev/null; then
+			TEST='testsuccess'
+			unset COMPRESSFILE
+		fi
+		$TEST aptget update -o Debug::pkgAcquire::Worker=1
+		cp rootdir/tmp/${TEST}.output rootdir/tmp/update.output
+		testsuccess grep -E "$(basename -s '.gz' "$COMPRESSFILE").*Hash Sum mismatch" rootdir/tmp/update.output
+		$TEST aptcache show foo
+		$TEST aptget install foo -s
+
+		testfailure aptcache show bar
+		testfailure aptget install bar -s
+	done
+done

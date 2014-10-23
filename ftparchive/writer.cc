@@ -471,6 +471,8 @@ bool PackagesWriter::DoPackage(string FileName)
    {
       if (hs->HashType() == "MD5Sum")
 	 Changes.push_back(SetTFRewriteData("MD5sum", hs->HashValue().c_str()));
+      else if (hs->HashType() == "Checksum-FileSize")
+	 continue;
       else
 	 Changes.push_back(SetTFRewriteData(hs->HashType().c_str(), hs->HashValue().c_str()));
    }
@@ -785,7 +787,7 @@ bool SourcesWriter::DoPackage(string FileName)
 
          for (HashStringList::const_iterator hs = Db.HashesList.begin(); hs != Db.HashesList.end(); ++hs)
 	 {
-	    if (hs->HashType() == "MD5Sum")
+	    if (hs->HashType() == "MD5Sum" || hs->HashType() == "Checksum-FileSize")
 	       continue;
 	    char const * fieldname;
 	    std::ostream * out;
