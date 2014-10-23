@@ -1252,7 +1252,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",32*1024);
 
    // try to figure out the max environment size
-   unsigned int OSArgMax = sysconf(_SC_ARG_MAX);
+   int OSArgMax = sysconf(_SC_ARG_MAX);
    if(OSArgMax < 0)
       OSArgMax = 32*1024;
    OSArgMax -= EnvironmentSize() - 2*1024;
