@@ -683,8 +683,7 @@ insertpackage() {
 		fi
 		for BUILDARCH in $ARCHS; do
 			local PPATH="aptarchive/dists/${RELEASE}/main/binary-${BUILDARCH}"
-			mkdir -p $PPATH aptarchive/dists/${RELEASE}/main/source
-			touch aptarchive/dists/${RELEASE}/main/source/Sources
+			mkdir -p $PPATH
 			local FILE="${PPATH}/Packages"
 			echo "Package: $NAME
 Priority: $PRIORITY
@@ -695,10 +694,17 @@ Maintainer: Joe Sixpack <joe@example.org>" >> $FILE
 			echo "Version: $VERSION
 Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb" >> $FILE
 			test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
-			echo "Description: $DESCRIPTION" >> $FILE
+			echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)" >> $FILE
+			echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)" >> $FILE
 			echo >> $FILE
 		done
 	done
+	mkdir -p aptarchive/dists/${RELEASE}/main/source aptarchive/dists/${RELEASE}/main/i18n
+	touch aptarchive/dists/${RELEASE}/main/source/Sources
+	echo "Package: $NAME
+Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)
+Description-en: $DESCRIPTION
+" >> aptarchive/dists/${RELEASE}/main/i18n/Translation-en
 }
 
 insertsource() {
@@ -773,7 +779,7 @@ buildaptarchivefromincoming() {
 
 buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
-	find aptarchive -name 'Packages' -o -name 'Sources' | while read line; do
+	find aptarchive -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
 		msgninfo "\t${line} file… "
 		compressfile "$line" "$1"
 		msgdone "info"
