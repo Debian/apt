@@ -85,7 +85,7 @@ TEST(StrUtilTest,EndsWith)
    EXPECT_FALSE(Endswith("abcd", "x"));
    EXPECT_FALSE(Endswith("abcd", "abcndefg"));
 }
-TEST(StrUtilTest,StartWith)
+TEST(StrUtilTest,StartsWith)
 {
    using APT::String::Startswith;
    EXPECT_TRUE(Startswith("abcd", "a"));
@@ -128,4 +128,18 @@ TEST(StrUtilTest,SubstVar)
    EXPECT_EQ(" bb bb bb bb ", SubstVar(" aaa aaa aaa aaa ", "aaa", "bb"));
    EXPECT_EQ(" bb a bb a bb a bb ", SubstVar(" aaa a aaa a aaa a aaa ", "aaa", "bb"));
 
+}
+TEST(StrUtilTest,Base64Encode)
+{
+   EXPECT_EQ("QWxhZGRpbjpvcGVuIHNlc2FtZQ==", Base64Encode("Aladdin:open sesame"));
+   EXPECT_EQ("cGxlYXN1cmUu", Base64Encode("pleasure."));
+   EXPECT_EQ("bGVhc3VyZS4=", Base64Encode("leasure."));
+   EXPECT_EQ("ZWFzdXJlLg==", Base64Encode("easure."));
+   EXPECT_EQ("YXN1cmUu", Base64Encode("asure."));
+   EXPECT_EQ("c3VyZS4=", Base64Encode("sure."));
+   EXPECT_EQ("dXJlLg==", Base64Encode("ure."));
+   EXPECT_EQ("cmUu", Base64Encode("re."));
+   EXPECT_EQ("ZS4=", Base64Encode("e."));
+   EXPECT_EQ("Lg==", Base64Encode("."));
+   EXPECT_EQ("", Base64Encode(""));
 }

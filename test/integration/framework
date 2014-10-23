@@ -944,23 +944,35 @@ signreleasefiles() {
 }
 
 webserverconfig() {
-	msgtest "Set webserver config option '${1}' to" "$2"
+	local NOCHECK=false
+	if [ "$1" = '--no-check' ]; then
+		NOCHECK=true
+		shift
+	fi
 	local DOWNLOG='rootdir/tmp/download-testfile.log'
-	local STATUS='rootdir/tmp/webserverconfig.status'
+	local STATUS='downloaded/webserverconfig.status'
 	rm -f "$STATUS" "$DOWNLOG"
-	if downloadfile "http://localhost:8080/_config/set/${1}/${2}" "$STATUS" > "$DOWNLOG"; then
+	local URI
+	if [ -n "$2" ]; then
+		msgtest "Set webserver config option '${1}' to" "$2"
+		URI="http://localhost:8080/_config/set/${1}/${2}"
+	else
+		msgtest 'Clear webserver config option' "${1}"
+		URI="http://localhost:8080/_config/clear/${1}"
+	fi
+	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass
 	else
-		cat "$DOWNLOG" "$STATUS"
+		cat "$DOWNLOG" "$STATUS" || true
 		msgfail
 	fi
-	testwebserverlaststatuscode '200'
+	$NOCHECK || testwebserverlaststatuscode '200'
 }
 
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#http://localhost:4433/#${1}#"
+		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#https://localhost:4433/#${1}#"
 	done
 }
 
@@ -1047,7 +1059,7 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 	mv "${CD}" "${CD}-unmounted"
 	# we don't want the disk to be modifiable
 	addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/media/cdrom/dists/ $PWD/rootdir/media/cdrom-unmounted/dists/ || true;"
-	chmod -R -w rootdir/media/cdrom-unmounted/dists
+	chmod -R 555 rootdir/media/cdrom-unmounted/dists
 }
 
 downloadfile() {
@@ -1055,7 +1067,7 @@ downloadfile() {
 	apthelper -o Debug::Acquire::${PROTO}=1 \
 		download-file "$1" "$2" 2>&1 || true
 	# only if the file exists the download was successful
-	if [ -e "$2" ]; then
+	if [ -r "$2" ]; then
 		return 0
 	else
 		return 1
@@ -1312,8 +1324,7 @@ testwebserverlaststatuscode() {
 	local STATUS='downloaded/webserverstatus-statusfile.log'
 	rm -f "$DOWNLOG" "$STATUS"
 	msgtest 'Test last status code from the webserver was' "$1"
-	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
-	if [ "$(cat "$STATUS")" = "$1" ]; then
+	if downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then
 		msgpass
 	else
 		echo >&2
