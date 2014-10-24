@@ -1,9 +1,12 @@
 #include <config.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <string>
 #include <vector>
 
 #include <gtest/gtest.h>
+
+#include "file-helpers.h"
 
 TEST(StrUtilTest,DeEscapeString)
 {
@@ -142,4 +145,71 @@ TEST(StrUtilTest,Base64Encode)
    EXPECT_EQ("ZS4=", Base64Encode("e."));
    EXPECT_EQ("Lg==", Base64Encode("."));
    EXPECT_EQ("", Base64Encode(""));
+}
+void ReadMessagesTestWithNewLine(char const * const nl, char const * const ab)
+{
+   SCOPED_TRACE(SubstVar(SubstVar(nl, "\n", "n"), "\r", "r") + " # " + ab);
+   FileFd fd;
+   std::string pkgA = "Package: pkgA\n"
+      "Version: 1\n"
+      "Size: 100\n"
+      "Description: aaa\n"
+      " aaa";
+   std::string pkgB = "Package: pkgB\n"
+      "Version: 1\n"
+      "Flag: no\n"
+      "Description: bbb";
+   std::string pkgC = "Package: pkgC\n"
+      "Version: 2\n"
+      "Flag: yes\n"
+      "Description:\n"
+      " ccc";
+
+   createTemporaryFile("readmessage", fd, NULL, (pkgA + nl + pkgB + nl + pkgC + nl).c_str());
+   std::vector<std::string> list;
+   EXPECT_TRUE(ReadMessages(fd.Fd(), list));
+   EXPECT_EQ(3, list.size());
+   EXPECT_EQ(pkgA, list[0]);
+   EXPECT_EQ(pkgB, list[1]);
+   EXPECT_EQ(pkgC, list[2]);
+
+   size_t const msgsize = 63990;
+   createTemporaryFile("readmessage", fd, NULL, NULL);
+   for (size_t j = 0; j < msgsize; ++j)
+      fd.Write(ab, strlen(ab));
+   for (size_t i = 0; i < 21; ++i)
+   {
+      std::string msg;
+      strprintf(msg, "msgsize=%zu  i=%zu", msgsize, i);
+      SCOPED_TRACE(msg);
+      fd.Seek((msgsize + (i - 1)) * strlen(ab));
+      fd.Write(ab, strlen(ab));
+      fd.Write(nl, strlen(nl));
+      fd.Seek(0);
+      list.clear();
+      EXPECT_TRUE(ReadMessages(fd.Fd(), list));
+      EXPECT_EQ(1, list.size());
+      EXPECT_EQ((msgsize + i) * strlen(ab), list[0].length());
+      EXPECT_EQ(std::string::npos, list[0].find_first_not_of(ab));
+   }
+
+   list.clear();
+   fd.Write(pkgA.c_str(), pkgA.length());
+   fd.Write(nl, strlen(nl));
+   fd.Seek(0);
+   EXPECT_TRUE(ReadMessages(fd.Fd(), list));
+   EXPECT_EQ(2, list.size());
+   EXPECT_EQ((msgsize + 20) * strlen(ab), list[0].length());
+   EXPECT_EQ(std::string::npos, list[0].find_first_not_of(ab));
+   EXPECT_EQ(pkgA, list[1]);
+
+
+   fd.Close();
+}
+TEST(StrUtilTest,ReadMessages)
+{
+   ReadMessagesTestWithNewLine("\n\n", "a");
+   ReadMessagesTestWithNewLine("\r\n\r\n", "a");
+   ReadMessagesTestWithNewLine("\n\n", "ab");
+   ReadMessagesTestWithNewLine("\r\n\r\n", "ab");
 }

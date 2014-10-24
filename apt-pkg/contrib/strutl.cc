@@ -779,86 +779,94 @@ string TimeRFC1123(time_t Date)
 
    In particular: this reads blocks from the input until it believes
    that it's run out of input text.  Each block is terminated by a
-   double newline ('\n' followed by '\n').  As noted below, there is a
-   bug in this code: it assumes that all the blocks have been read if
-   it doesn't see additional text in the buffer after the last one is
-   parsed, which will cause it to lose blocks if the last block
-   coincides with the end of the buffer.
+   double newline ('\n' followed by '\n').
  */
 bool ReadMessages(int Fd, vector<string> &List)
 {
    char Buffer[64000];
-   char *End = Buffer;
    // Represents any left-over from the previous iteration of the
    // parse loop.  (i.e., if a message is split across the end
    // of the buffer, it goes here)
    string PartialMessage;
-   
-   while (1)
-   {
-      int Res = read(Fd,End,sizeof(Buffer) - (End-Buffer));
+
+   do {
+      int const Res = read(Fd, Buffer, sizeof(Buffer));
       if (Res < 0 && errno == EINTR)
 	 continue;
-      
-      // Process is dead, this is kind of bad..
+
+      // process we read from has died
       if (Res == 0)
 	 return false;
-      
+
       // No data
-      if (Res < 0 && errno == EAGAIN)
+      if (Res < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 	 return true;
       if (Res < 0)
 	 return false;
-			      
-      End += Res;
-      
-      // Look for the end of the message
-      for (char *I = Buffer; I + 1 < End; I++)
-      {
-	 if (I[1] != '\n' ||
-	       (I[0] != '\n' && strncmp(I, "\r\n\r\n", 4) != 0))
-	    continue;
-	 
-	 // Pull the message out
-	 string Message(Buffer,I-Buffer);
-	 PartialMessage += Message;
 
-	 // Fix up the buffer
-	 for (; I < End && (*I == '\n' || *I == '\r'); ++I);
-	 End -= I-Buffer;	 
-	 memmove(Buffer,I,End-Buffer);
-	 I = Buffer;
-	 
-	 List.push_back(PartialMessage);
-	 PartialMessage.clear();
+      // extract the message(s) from the buffer
+      char const *Start = Buffer;
+      char const * const End = Buffer + Res;
+
+      char const * NL = (char const *) memchr(Start, '\n', End - Start);
+      if (NL == NULL)
+      {
+	 // end of buffer: store what we have so far and read new data in
+	 PartialMessage.append(Start, End - Start);
+	 Start = End;
       }
-      if (End != Buffer)
-	{
-	  // If there's text left in the buffer, store it
-	  // in PartialMessage and throw the rest of the buffer
-	  // away.  This allows us to handle messages that
-	  // are longer than the static buffer size.
-	  PartialMessage += string(Buffer, End);
-	  End = Buffer;
-	}
       else
-	{
-	  // BUG ALERT: if a message block happens to end at a
-	  // multiple of 64000 characters, this will cause it to
-	  // terminate early, leading to a badly formed block and
-	  // probably crashing the method.  However, this is the only
-	  // way we have to find the end of the message block.  I have
-	  // an idea of how to fix this, but it will require changes
-	  // to the protocol (essentially to mark the beginning and
-	  // end of the block).
-	  //
-	  //  -- dburrows 2008-04-02
-	  return true;
-	}
+	 ++NL;
+
+      if (PartialMessage.empty() == false && Start < End)
+      {
+	 // if we start with a new line, see if the partial message we have ended with one
+	 // so that we properly detect records ending between two read() runs
+	 // cases are: \n|\n  ,  \r\n|\r\n  and  \r\n\r|\n
+	 // the case \r|\n\r\n is handled by the usual double-newline handling
+	 if ((NL - Start) == 1 || ((NL - Start) == 2 && *Start == '\r'))
+	 {
+	    if (APT::String::Endswith(PartialMessage, "\n") || APT::String::Endswith(PartialMessage, "\r\n\r"))
+	    {
+	       PartialMessage.erase(PartialMessage.find_last_not_of("\r\n") + 1);
+	       List.push_back(PartialMessage);
+	       PartialMessage.clear();
+	       while (NL < End && (*NL == '\n' || *NL == '\r')) ++NL;
+	       Start = NL;
+	    }
+	 }
+      }
+
+      while (Start < End) {
+	 char const * NL2 = (char const *) memchr(NL, '\n', End - NL);
+	 if (NL2 == NULL)
+	 {
+	    // end of buffer: store what we have so far and read new data in
+	    PartialMessage.append(Start, End - Start);
+	    break;
+	 }
+	 ++NL2;
+
+	 // did we find a double newline?
+	 if ((NL2 - NL) == 1 || ((NL2 - NL) == 2 && *NL == '\r'))
+	 {
+	    PartialMessage.append(Start, NL2 - Start);
+	    PartialMessage.erase(PartialMessage.find_last_not_of("\r\n") + 1);
+	    List.push_back(PartialMessage);
+	    PartialMessage.clear();
+	    while (NL2 < End && (*NL2 == '\n' || *NL2 == '\r')) ++NL2;
+	    Start = NL2;
+	 }
+	 NL = NL2;
+      }
+
+      // we have read at least one complete message and nothing left
+      if (PartialMessage.empty() == true)
+	 return true;
 
       if (WaitFd(Fd) == false)
 	 return false;
-   }   
+   } while (true);
 }
 									/*}}}*/
 // MonthConv - Converts a month string into a number			/*{{{*/
