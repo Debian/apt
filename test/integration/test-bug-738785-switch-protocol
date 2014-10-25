@@ -54,7 +54,7 @@ echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
 cd downloaded
 testequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
 N: Is the package apt-transport-https installed?" aptget download apt -q=0
-testsuccess test ! -e apt_1.0_all.deb
+testfailure test -e apt_1.0_all.deb
 cd - >/dev/null
 
 # revert to all methods

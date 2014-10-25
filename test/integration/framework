@@ -77,12 +77,6 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgnmsg() { true; }
 	msgtest() { true; }
 	msgpass() { printf " ${CPASS}P${CNORMAL}"; }
-	msgskip() { printf " ${CWARNING}S${CNORMAL}" >&2; }
-	if [ -n "$CFAIL" ]; then
-		msgfail() { printf " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
-	else
-		msgfail() { printf " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
-	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
 	msginfo() { true; }
@@ -1228,6 +1222,36 @@ testmarkedauto() {
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 
+msgfailoutput() {
+	local MSG="$1"
+	local OUTPUT="$2"
+	shift 2
+	echo >&2
+	if [ "$1" = 'grep' ]; then
+		while [ -n "$2" ]; do shift; done
+		echo "#### Complete file: $1 ####"
+		cat >&2 "$1" || true
+		echo '#### grep output ####'
+	elif [ "$1" = 'test' ]; then
+		# doesn't support ! or non-file flags
+		msgfailoutputstatfile() {
+			local FILEFLAGS='^-[bcdefgGhkLOprsStuwx]$'
+			if expr match "$1" "$FILEFLAGS" >/dev/null; then
+				echo "#### stat(2) of file: $2 ####"
+				stat "$2" || true
+			fi
+		}
+		msgfailoutputstatfile "$2" "$3"
+		while [ -n "$5" ] && [ "$4" = '-o' -o "$4" = '-a' ]; do
+			shift 3
+			msgfailoutputstatfile "$2" "$3"
+		done
+		echo '#### test output ####'
+	fi
+	cat >&2 $OUTPUT
+	msgfail "$MSG"
+}
+
 testsuccess() {
 	if [ "$1" = '--nomsg' ]; then
 		shift
@@ -1237,10 +1261,10 @@ testsuccess() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if grep -q -E '^[WE]: ' "$OUTPUT"; then
-				echo >&2
-				cat >&2 $OUTPUT
-				msgfail 'successful run, but output contains warnings/errors'
+			if grep -q -E ' runtime error: ' "$OUTPUT"; then
+				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+			elif grep -q -E '^[WE]: ' "$OUTPUT"; then
+				msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
 			else
 				msgpass
 			fi
@@ -1249,9 +1273,7 @@ testsuccess() {
 		fi
 	else
 		local EXITCODE=$?
-		echo >&2
-		cat >&2 $OUTPUT
-		msgfail "exitcode $EXITCODE"
+		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest 'testsuccess' "$@"
 }
@@ -1264,14 +1286,12 @@ testwarning() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if grep -q -E '^E: ' "$OUTPUT"; then
-				echo >&2
-				cat >&2 $OUTPUT
-				msgfail 'successful run, but output contains errors'
+			if grep -q -E ' runtime error: ' "$OUTPUT"; then
+				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+			elif grep -q -E '^E: ' "$OUTPUT"; then
+				msgfailoutput 'successful run, but output contains errors' "$OUTPUT" "$@"
 			elif ! grep -q -E '^W: ' "$OUTPUT"; then
-				echo >&2
-				cat >&2 $OUTPUT
-				msgfail 'successful run, but output contains no warnings'
+				msgfailoutput 'successful run, but output contains no warnings' "$OUTPUT" "$@"
 			else
 				msgpass
 			fi
@@ -1295,16 +1315,14 @@ testfailure() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		local EXITCODE=$?
-		echo >&2
-		cat >&2 $OUTPUT
-		msgfail "exitcode $EXITCODE"
+		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	else
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if ! grep -q -E '^E: ' "$OUTPUT"; then
-				echo >&2
-				cat >&2 $OUTPUT
-				msgfail "run failed with exitcode ${EXITCODE}, but with no errors"
+			if grep -q -E ' runtime error: ' "$OUTPUT"; then
+				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+			elif ! grep -q -E '^E: ' "$OUTPUT"; then
+				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
 			else
 				msgpass
 			fi

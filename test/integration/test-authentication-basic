@@ -18,7 +18,7 @@ testauthfailure() {
 	testfailure apthelper download-file "${1}/bash" ./downloaded/bash
 	# crappy test, but http and https output are wastely different…
 	testsuccess grep 401 rootdir/tmp/testfailure.output
-	testsuccess test ! -s ./downloaded/bash
+	testfailure test -s ./downloaded/bash
 }
 
 testauthsuccess() {
