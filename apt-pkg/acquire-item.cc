@@ -44,9 +44,6 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -63,20 +60,6 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
    std::cerr << " Actual Hash: " << std::endl;
    for (HashStringList::const_iterator hs = Actual.begin(); hs != Actual.end(); ++hs)
       std::cerr <<  "\t- " << hs->toStr() << std::endl;
-}
-									/*}}}*/
-static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode) /*{{{*/
-{
-   if (getuid() == 0 && strlen(user) != 0 && strlen(group) != 0) // if we aren't root, we can't chown, so don't try it
-   {
-      // ensure the file is owned by root and has good permissions
-      struct passwd const * const pw = getpwnam(user);
-      struct group const * const gr = getgrnam(group);
-      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
-	 _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
-   }
-   if (chmod(file, mode) != 0)
-      _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
 }
 									/*}}}*/
 static std::string GetPartialFileName(std::string const &file)		/*{{{*/
@@ -155,9 +138,6 @@ pkgAcquire::Item::~Item()
    fetch this object */
 void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   if (RealFileExists(DestFile))
-      ChangeOwnerAndPermissionOfFile("Item::Failed", DestFile.c_str(), "root", "root", 0644);
-
    if(ErrorText.empty())
       ErrorText = LookupTag(Message,"Message");
    UsedMirror =  LookupTag(Message,"UsedMirror");
@@ -219,8 +199,6 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,HashStringLis
       if (Owner->Log != 0)
 	 Owner->Log->Fetched(Size,atoi(LookupTag(Message,"Resume-Point","0").c_str()));
    }
-   if (RealFileExists(DestFile))
-      ChangeOwnerAndPermissionOfFile("Item::Done", DestFile.c_str(), "root", "root", 0644);
 
    if (FileSize == 0)
       FileSize= Size;
@@ -237,7 +215,6 @@ bool pkgAcquire::Item::Rename(string From,string To)
 {
    if (rename(From.c_str(),To.c_str()) == 0)
       return true;
-   ChangeOwnerAndPermissionOfFile("Item::Failed", To.c_str(), "root", "root", 0644);
 
    std::string S;
    strprintf(S, _("rename failed, %s (%s -> %s)."), strerror(errno),
@@ -249,12 +226,6 @@ bool pkgAcquire::Item::Rename(string From,string To)
 									/*}}}*/
 void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
 {
-   if (RealFileExists(DestFile))
-   {
-      std::string SandboxUser = _config->Find("APT::Sandbox::User");
-      ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
-                                     SandboxUser.c_str(), "root", 0600);
-   }
    Owner->Enqueue(Item);
 }
 									/*}}}*/
@@ -1577,11 +1548,6 @@ void pkgAcqMetaBase::AbortTransaction()
       // the transaction will abort, so stop anything that is idle
       if ((*I)->Status == pkgAcquire::Item::StatIdle)
          (*I)->Status = pkgAcquire::Item::StatDone;
-
-      // reverify might act on a file outside of partial
-      // (as it itself is good, but needed to verify others, like Release)
-      if ((*I)->DestFile == (*I)->PartialFile && RealFileExists((*I)->DestFile))
-	 ChangeOwnerAndPermissionOfFile("AbortTransaction", (*I)->DestFile.c_str(), "root", "root", 0644);
    }
    Transaction.clear();
 }
@@ -2501,11 +2467,7 @@ bool pkgAcqArchive::QueueNext()
 	 if ((unsigned long long)Buf.st_size > Version->Size)
 	    unlink(DestFile.c_str());
 	 else
-	 {
 	    PartialSize = Buf.st_size;
-            std::string SandboxUser = _config->Find("APT::Sandbox::User");
-	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext",DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
-	 }
       }
 
       // Disables download of archives - useful if no real installation follows,
@@ -2669,11 +2631,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI, HashStringList const &Hashe
       if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
-      {
 	 PartialSize = Buf.st_size;
-         std::string SandboxUser = _config->Find("APT::Sandbox::User");
-	 ChangeOwnerAndPermissionOfFile("pkgAcqFile", DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
-      }
    }
 
    QueueURI(Desc);

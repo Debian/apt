@@ -34,12 +34,29 @@
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
 
+static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode) /*{{{*/
+{
+   if (getuid() == 0 && strlen(user) != 0 && strlen(group) != 0) // if we aren't root, we can't chown, so don't try it
+   {
+      // ensure the file is owned by root and has good permissions
+      struct passwd const * const pw = getpwnam(user);
+      struct group const * const gr = getgrnam(group);
+      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
+	 _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
+   }
+   if (chmod(file, mode) != 0)
+      _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
+}
+									/*}}}*/
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -306,7 +323,10 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
-	    
+
+	    if (RealFileExists(Owner->DestFile))
+	       ChangeOwnerAndPermissionOfFile("201::URIDone", Owner->DestFile.c_str(), "root", "root", 0644);
+
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Owner->GetOwner());
@@ -379,9 +399,13 @@ bool pkgAcquire::Worker::RunMessages()
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Itm->Owner->GetOwner());
-	    
+
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
+
+	    if (RealFileExists(Owner->DestFile))
+	       ChangeOwnerAndPermissionOfFile("400::URIFailure", Owner->DestFile.c_str(), "root", "root", 0644);
+
 	    OwnerQ->ItemDone(Itm);
 
 	    // set some status
@@ -542,7 +566,14 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    }
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
-   
+
+   if (RealFileExists(Item->Owner->DestFile))
+   {
+      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      ChangeOwnerAndPermissionOfFile("Item::QueueURI", Item->Owner->DestFile.c_str(),
+                                     SandboxUser.c_str(), "root", 0600);
+   }
+
    if (Debug == true)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
    OutQueue += Message;
