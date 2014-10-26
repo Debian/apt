@@ -119,14 +119,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
 	    std::string SizeStr;
 	    strprintf(SizeStr, "%llu", Size);
 	    Sum->Hashes.push_back(HashString("Checksum-FileSize", SizeStr));
-#if __GNUC__ >= 4
-       #pragma GCC diagnostic push
-       #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-            Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);
-#if __GNUC__ >= 4
-       #pragma GCC diagnostic pop
-#endif
+            APT_IGNORE_DEPRECATED(Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);)
             Entries[Name] = Sum;
          }
          Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));

@@ -132,6 +132,22 @@
 #endif
 #endif
 
+#if __GNUC__ >= 4
+	#define APT_IGNORE_DEPRECATED_PUSH \
+		_Pragma("GCC diagnostic push") \
+		_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+	#define APT_IGNORE_DEPRECATED_POP \
+		_Pragma("GCC diagnostic pop")
+	#define APT_IGNORE_DEPRECATED(XXX) \
+		APT_IGNORE_DEPRECATED_PUSH \
+		XXX \
+		APT_IGNORE_DEPRECATED_POP
+#else
+	#define APT_IGNORE_DEPRECATED_PUSH
+	#define APT_IGNORE_DEPRECATED_POP
+	#define APT_IGNORE_DEPRECATED(XXX) XXX
+#endif
+
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all
 // reverse-dependencies of libapt-pkg against the new SONAME.

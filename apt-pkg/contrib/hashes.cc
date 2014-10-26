@@ -258,10 +258,7 @@ public:
 bool Hashes::Add(const unsigned char * const Data,unsigned long long const Size, unsigned int const Hashes)
 {
    bool Res = true;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    if ((Hashes & MD5SUM) == MD5SUM)
       Res &= MD5.Add(Data, Size);
    if ((Hashes & SHA1SUM) == SHA1SUM)
@@ -270,9 +267,7 @@ bool Hashes::Add(const unsigned char * const Data,unsigned long long const Size,
       Res &= SHA256.Add(Data, Size);
    if ((Hashes & SHA512SUM) == SHA512SUM)
       Res &= SHA512.Add(Data, Size);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
    d->FileSize += Size;
    return Res;
 }
@@ -323,28 +318,18 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size, unsigned int const Hashes
 HashStringList Hashes::GetHashStringList()
 {
    HashStringList hashes;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    hashes.push_back(HashString("MD5Sum", MD5.Result().Value()));
    hashes.push_back(HashString("SHA1", SHA1.Result().Value()));
    hashes.push_back(HashString("SHA256", SHA256.Result().Value()));
    hashes.push_back(HashString("SHA512", SHA512.Result().Value()));
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
    std::string SizeStr;
    strprintf(SizeStr, "%llu", d->FileSize);
    hashes.push_back(HashString("Checksum-FileSize", SizeStr));
    return hashes;
 }
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 Hashes::Hashes() { d = new PrivateHashes(); }
 Hashes::~Hashes() { delete d; }
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP

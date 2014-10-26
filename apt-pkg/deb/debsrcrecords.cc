@@ -170,16 +170,8 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 // we have it already, store the new hash and be done
 	 if (file != List.end())
 	 {
-#if __GNUC__ >= 4
-	// set for compatibility only, so warn users not us
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
 	    if (checksumField == "Files")
-	       file->MD5Hash = hash;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+	       APT_IGNORE_DEPRECATED(file->MD5Hash = hash;)
 	    // an error here indicates that we have two different hashes for the same file
 	    if (file->Hashes.push_back(hashString) == false)
 	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());
@@ -192,16 +184,8 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 F.Size = strtoull(size.c_str(), NULL, 10);
 	 F.Hashes.push_back(hashString);
 
-#if __GNUC__ >= 4
-	// set for compatibility only, so warn users not us
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
 	 if (checksumField == "Files")
-	    F.MD5Hash = hash;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+	    APT_IGNORE_DEPRECATED(F.MD5Hash = hash;)
 
 	 // Try to guess what sort of file it is we are getting.
 	 string::size_type Pos = F.Path.length()-1;

@@ -189,15 +189,10 @@ class Hashes
 
    HashStringList GetHashStringList();
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    Hashes();
    virtual ~Hashes();
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
    private:
    APT_HIDDEN APT_CONST inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)

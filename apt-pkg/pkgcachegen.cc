@@ -668,14 +668,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    Grp->LastPackage = Package;
 
    // Set the name, arch and the ID
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-   Pkg->Name = Grp->Name;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+   APT_IGNORE_DEPRECATED(Pkg->Name = Grp->Name;)
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
    map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);

@@ -30,11 +30,7 @@ class pkgSrcRecords
 {
    public:
 
-#if __GNUC__ >= 4
-	// ensure that con- & de-structor don't trigger this warning
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    // Describes a single file
    struct File
    {
@@ -44,9 +40,7 @@ class pkgSrcRecords
       HashStringList Hashes;
       APT_DEPRECATED std::string MD5Hash;
    };
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
    // Abstract parser for each source record
    class Parser

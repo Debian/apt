@@ -613,19 +613,14 @@ void CacheSetHelper::canNotFindPackage(enum PkgSelector const select,
       PackageContainerInterface * const pci, pkgCacheFile &Cache,
       std::string const &pattern) {
 	switch (select) {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	case REGEX: canNotFindRegEx(pci, Cache, pattern); break;
 	case TASK: canNotFindTask(pci, Cache, pattern); break;
 	case FNMATCH: canNotFindFnmatch(pci, Cache, pattern); break;
 	case PACKAGENAME: canNotFindPackage(pci, Cache, pattern); break;
 	case STRING: canNotFindPackage(pci, Cache, pattern); break;
 	case UNKNOWN: break;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	}
 }
 // canNotFindTask - handle the case no package is found for a task	/*{{{*/
@@ -663,19 +658,14 @@ pkgCache::PkgIterator CacheSetHelper::canNotFindPkgName(pkgCacheFile &Cache,
 void CacheSetHelper::canNotFindVersion(enum VerSelector const select, VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
 {
 	switch (select) {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	case ALL: canNotFindAllVer(vci, Cache, Pkg); break;
 	case INSTCAND: canNotFindInstCandVer(vci, Cache, Pkg); break;
 	case CANDINST: canNotFindCandInstVer(vci, Cache, Pkg); break;
 	case NEWEST: canNotFindNewestVer(Cache, Pkg); break;
 	case CANDIDATE: canNotFindCandidateVer(Cache, Pkg); break;
 	case INSTALLED: canNotFindInstalledVer(Cache, Pkg); break;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	case CANDANDINST: canNotGetCandInstVer(Cache, Pkg); break;
 	case RELEASE:
 	case VERSIONNUMBER:
@@ -706,16 +696,11 @@ void CacheSetHelper::canNotFindCandInstVer(VersionContainerInterface * const /*v
 // canNotGetVersion - for package by selector				/*{{{*/
 pkgCache::VerIterator CacheSetHelper::canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
 	switch (select) {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	case NEWEST: return canNotFindNewestVer(Cache, Pkg);
 	case CANDIDATE: return canNotFindCandidateVer(Cache, Pkg);
 	case INSTALLED: return canNotFindInstalledVer(Cache, Pkg);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	case CANDINST: return canNotGetCandInstVer(Cache, Pkg);
 	case INSTCAND: return canNotGetInstCandVer(Cache, Pkg);
 	case ALL:
@@ -772,16 +757,11 @@ pkgCache::VerIterator CacheSetHelper::canNotGetCandInstVer(pkgCacheFile &Cache,
 APT_CONST void CacheSetHelper::showPackageSelection(pkgCache::PkgIterator const &pkg, enum PkgSelector const select,
 				       std::string const &pattern) {
 	switch (select) {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	case REGEX: showRegExSelection(pkg, pattern); break;
 	case TASK: showTaskSelection(pkg, pattern); break;
 	case FNMATCH: showFnmatchSelection(pkg, pattern); break;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	case PACKAGENAME: /* no suprises here */ break;
 	case STRING: /* handled by the special cases */ break;
 	case UNKNOWN: break;
@@ -807,20 +787,14 @@ APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const 
 APT_CONST void CacheSetHelper::showVersionSelection(pkgCache::PkgIterator const &Pkg,
       pkgCache::VerIterator const &Ver, enum VerSelector const select, std::string const &pattern) {
 	switch (select) {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	case RELEASE:
 		showSelectedVersion(Pkg, Ver, pattern, true);
 		break;
 	case VERSIONNUMBER:
 		showSelectedVersion(Pkg, Ver, pattern, false);
 		break;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_POP
 	case NEWEST:
 	case CANDIDATE:
 	case INSTALLED:

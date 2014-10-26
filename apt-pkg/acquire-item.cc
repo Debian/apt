@@ -104,10 +104,7 @@ static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser
 
 
 // Acquire::Item::Item - Constructor					/*{{{*/
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire *Owner,
                        HashStringList const &ExpectedHashes,
                        pkgAcqMetaBase *TransactionManager)
@@ -120,9 +117,7 @@ pkgAcquire::Item::Item(pkgAcquire *Owner,
    if(TransactionManager != NULL)
       TransactionManager->Add(this);
 }
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Acquire::Item::~Item - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -275,14 +270,7 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
 {
       ActiveSubprocess = subprocess;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-        Mode = ActiveSubprocess.c_str();
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+      APT_IGNORE_DEPRECATED(Mode = ActiveSubprocess.c_str();)
 }
 									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/

@@ -23,6 +23,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/cachefile.h>
@@ -224,14 +225,7 @@ public:
 		inline std::string FullName(bool const Pretty) const { return getPkg().FullName(Pretty); }
 		inline std::string FullName() const { return getPkg().FullName(); }
 		APT_DEPRECATED inline const char *Section() const {
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-	   return getPkg().Section();
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+		   APT_IGNORE_DEPRECATED(return getPkg().Section();)
 		}
 		inline bool Purge() const {return getPkg().Purge(); }
 		inline const char *Arch() const {return getPkg().Arch(); }
@@ -261,14 +255,9 @@ public:
 		REGEX = CacheSetHelper::REGEX,
 		TASK = CacheSetHelper::TASK,
 		FNMATCH = CacheSetHelper::FNMATCH };
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	void setConstructor(Constructor const by) { ConstructedBy = (CacheSetHelper::PkgSelector)by; }
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	void setConstructor(CacheSetHelper::PkgSelector const by) { ConstructedBy = by; }
 	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
@@ -290,19 +279,14 @@ public:
 
 	APT_DEPRECATED typedef CacheSetHelper::PkgModifier Modifier;
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 	   return helper.PackageFromName(Cache, pattern); }
 	APT_DEPRECATED static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
 	      pkgCacheFile &Cache, const char * cmdline,
 	      std::list<Modifier> const &mods, CacheSetHelper &helper) {
 	   return helper.PackageFromModifierCommandLine(modID, pci, Cache, cmdline, mods); }
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 private:
 	CacheSetHelper::PkgSelector ConstructedBy;
@@ -371,14 +355,9 @@ public:									/*{{{*/
 
 	PackageContainer() : PackageContainerInterface() {}
 	PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	/** \brief sort all included versions with given comparer
 
@@ -439,10 +418,7 @@ public:									/*{{{*/
 		return FromFnmatch(Cache, pattern, helper);
 	}
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	/** \brief returns a package specified by a string
 
 	    \param Cache the package is in
@@ -455,9 +431,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromName(Cache, pattern, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	/** \brief returns all packages specified by a string
 
@@ -663,65 +637,45 @@ public:
 		Modifier (unsigned short const &id, const char * const alias, Position const &pos,
 			  enum CacheSetHelper::VerSelector const select) : ID(id), Alias(alias), Pos(pos),
 			 SelectVersion(select) {}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 		APT_DEPRECATED Modifier(unsigned short const &id, const char * const alias, Position const &pos,
 			  Version const &select) : ID(id), Alias(alias), Pos(pos),
 			 SelectVersion((CacheSetHelper::VerSelector)select) {}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	};
 
 	static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				    const char **cmdline, CacheSetHelper::VerSelector const fallback,
 				    CacheSetHelper &helper);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				    const char **cmdline, Version const &fallback,
 				    CacheSetHelper &helper) {
 	   return FromCommandLine(vci, Cache, cmdline, (CacheSetHelper::VerSelector)fallback, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 			       std::string pkg, CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 			       std::string pkg, Version const &fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false) {
 	   return FromString(vci, Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper, onlyFromName);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &P, CacheSetHelper::VerSelector const fallback,
 				CacheSetHelper &helper);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &P, Version const &fallback,
 				CacheSetHelper &helper) {
 	   return FromPackage(vci, Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	static bool FromModifierCommandLine(unsigned short &modID,
 					    VersionContainerInterface * const vci,
@@ -735,10 +689,7 @@ public:
 				   pkgCache::DepIterator const &D,
 				   CacheSetHelper::VerSelector const selector,
 				   CacheSetHelper &helper);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED static bool FromDependency(VersionContainerInterface * const vci,
 				   pkgCacheFile &Cache,
 				   pkgCache::DepIterator const &D,
@@ -746,9 +697,7 @@ public:
 				   CacheSetHelper &helper) {
 	   return FromDependency(vci, Cache, D, (CacheSetHelper::VerSelector)selector, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 protected:								/*{{{*/
 
@@ -879,10 +828,7 @@ public:									/*{{{*/
 	static VersionContainer FromString(pkgCacheFile &Cache, std::string pkg) {
 		return FromString(Cache, pkg, CacheSetHelper::CANDINST);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 			Version const &fallback, CacheSetHelper &helper) {
 		VersionContainer vercon;
@@ -906,9 +852,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromString(Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 	/** \brief returns all versions specified for the package
 
@@ -927,10 +871,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromPackage(Cache, P, fallback, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
 		Version const &fallback, CacheSetHelper &helper) {
 		VersionContainer vercon;
@@ -942,9 +883,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromPackage(Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P) {
 		return FromPackage(Cache, P, CacheSetHelper::CANDIDATE);
 	}
@@ -985,10 +924,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromPackage(Cache, D, selector, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
 					       Version const &selector, CacheSetHelper &helper) {
 		VersionContainer vercon;
@@ -1000,9 +936,7 @@ public:									/*{{{*/
 		CacheSetHelper helper;
 		return FromPackage(Cache, D, (CacheSetHelper::VerSelector)selector, helper);
 	}
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D) {
 		return FromPackage(Cache, D, CacheSetHelper::CANDIDATE);
 	}
