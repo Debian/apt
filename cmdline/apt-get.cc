@@ -665,7 +665,7 @@ static bool DoDownload(CommandLine &CmdL)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile)  << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
@@ -953,18 +953,19 @@ static bool DoSource(CommandLine &CmdL)
 	 else
 	 {
 	    // Call dpkg-source
-	    char S[500];
-	    snprintf(S,sizeof(S),"%s -x %s",
+	    std::string const sourceopts = _config->Find("DPkg::Source-Options", "-x");
+	    std::string S;
+	    strprintf(S, "%s %s %s",
 		     _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
-		     Dsc[I].Dsc.c_str());
-	    if (system(S) != 0)
+		     sourceopts.c_str(), Dsc[I].Dsc.c_str());
+	    if (system(S.c_str()) != 0)
 	    {
-	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
-	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n"));
+	       fprintf(stderr, _("Unpack command '%s' failed.\n"), S.c_str());
+	       fprintf(stderr, _("Check if the 'dpkg-dev' package is installed.\n"));
 	       _exit(1);
-	    }	    
+	    }
 	 }
-	 
+
 	 // Try to compile it with dpkg-buildpackage
 	 if (_config->FindB("APT::Get::Compile",false) == true)
 	 {
@@ -980,20 +981,20 @@ static bool DoSource(CommandLine &CmdL)
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage
-	    char S[500];
-	    snprintf(S,sizeof(S),"cd %s && %s %s",
+	    std::string S;
+	    strprintf(S, "cd %s && %s %s",
 		     Dir.c_str(),
 		     _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
 		     buildopts.c_str());
-	    
-	    if (system(S) != 0)
+
+	    if (system(S.c_str()) != 0)
 	    {
-	       fprintf(stderr,_("Build command '%s' failed.\n"),S);
+	       fprintf(stderr, _("Build command '%s' failed.\n"), S.c_str());
 	       _exit(1);
-	    }	    
-	 }      
+	    }
+	 }
       }
-      
+
       _exit(0);
    }
 
@@ -1562,7 +1563,7 @@ static bool DoChangelog(CommandLine &CmdL)
    {
       string changelogfile;
       if (downOnly == false)
-	 changelogfile.append(tmpname).append("changelog");
+	 changelogfile.append(tmpname).append("/changelog");
       else
 	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
       if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)

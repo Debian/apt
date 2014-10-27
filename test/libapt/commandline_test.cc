@@ -56,3 +56,32 @@ TEST(CommandLineTest,Parsing)
    EXPECT_TRUE(c.FindB("Test::Worked", false));
    EXPECT_FALSE(c.FindB("Test::Zero", false));
 }
+
+TEST(CommandLineTest, BoolParsing)
+{
+   CommandLine::Args Args[] = {
+      { 't', 0, "Test::Worked", 0 },
+      {0,0,0,0}
+   };
+   ::Configuration c;
+   CommandLine CmdL(Args, &c);
+
+   // the commandline parser used to use strtol() on the argument
+   // to check if the argument is a boolean expression - that
+   // stopped after the "0". this test ensures that we always check 
+   // that the entire string was consumed by strtol
+   {
+   char const * argv[] = { "show", "-t", "0ad" };
+   bool res = CmdL.Parse(sizeof(argv)/sizeof(char*), argv);
+   EXPECT_TRUE(res);
+   ASSERT_EQ(std::string(CmdL.FileList[0]), "0ad");
+   }
+
+   {
+   char const * argv[] = { "show", "-t", "0", "ad" };
+   bool res = CmdL.Parse(sizeof(argv)/sizeof(char*), argv);
+   EXPECT_TRUE(res);
+   ASSERT_EQ(std::string(CmdL.FileList[0]), "ad");
+   }
+
+}

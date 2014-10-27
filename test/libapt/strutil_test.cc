@@ -19,6 +19,21 @@ TEST(StrUtilTest,DeEscapeString)
    EXPECT_EQ("foo\\ x", DeEscapeString("foo\\\\ x"));
    EXPECT_EQ("\\foo\\", DeEscapeString("\\\\foo\\\\"));
 }
+TEST(StrUtilTest,StringStrip)
+{
+   EXPECT_EQ("", APT::String::Strip(""));
+   EXPECT_EQ("foobar", APT::String::Strip("foobar"));
+   EXPECT_EQ("foo bar", APT::String::Strip("foo bar"));
+
+   EXPECT_EQ("", APT::String::Strip("  "));
+   EXPECT_EQ("", APT::String::Strip(" \r\n   \t "));
+
+   EXPECT_EQ("foo bar", APT::String::Strip("foo bar "));
+   EXPECT_EQ("foo bar", APT::String::Strip("foo bar \r\n \t "));
+   EXPECT_EQ("foo bar", APT::String::Strip("\r\n \t foo bar"));
+   EXPECT_EQ("bar foo", APT::String::Strip("\r\n \t bar foo \r\n \t "));
+   EXPECT_EQ("bar \t\r\n foo", APT::String::Strip("\r\n \t bar \t\r\n foo \r\n \t "));
+}
 TEST(StrUtilTest,StringSplitBasic)
 {
    std::vector<std::string> result = StringSplit("", "");

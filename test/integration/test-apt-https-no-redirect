@@ -25,6 +25,11 @@ msgtest 'download of a file does not work if' 'https redirected to http'
 downloadfile 'https://localhost:4433/redirectme/working' redirectfile >curloutput 2>&1 && msgfail || msgpass
 
 msgtest 'libcurl has forbidden access in last request to' 'http resource'
-grep -q -- 'Protocol http not supported or disabled in libcurl' curloutput && msgpass || msgfail
+if grep -q -E -- 'Protocol "?http"? not supported or disabled in libcurl' curloutput; then
+	msgpass
+else
+	cat curloutput
+	msgfail
+fi
 
 

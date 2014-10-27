@@ -80,14 +80,18 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
    string SourcesURI = _config->FindDir("Dir::State::lists") + 
       URItoFileName(IndexURI("Sources"));
-   string SourcesURIgzip = SourcesURI + ".gz";
 
-   if (!FileExists(SourcesURI) && !FileExists(SourcesURIgzip))
-      return NULL;
-   else if (!FileExists(SourcesURI) && FileExists(SourcesURIgzip))
-      SourcesURI = SourcesURIgzip;
-
-   return new debSrcRecordParser(SourcesURI,this);
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p;
+      p = SourcesURI + '.' + *t;
+      if (FileExists(p))
+         return new debSrcRecordParser(p, this);
+   }
+   if (FileExists(SourcesURI))
+      return new debSrcRecordParser(SourcesURI, this);
+   return NULL;
 }
 									/*}}}*/
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
@@ -129,11 +133,15 @@ string debSourcesIndex::Info(const char *Type) const
 inline string debSourcesIndex::IndexFile(const char *Type) const
 {
    string s = URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 
 string debSourcesIndex::IndexURI(const char *Type) const
@@ -259,11 +267,15 @@ string debPackagesIndex::Info(const char *Type) const
 inline string debPackagesIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debPackagesIndex::IndexURI(const char *Type) const
 {
@@ -411,11 +423,15 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 inline string debTranslationsIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debTranslationsIndex::IndexURI(const char *Type) const
 {

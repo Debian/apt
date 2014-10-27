@@ -1,3 +1,200 @@
+apt (1.0.9.3) unstable; urgency=medium
+
+  [ josch ]
+  * implement the updated build profile spec
+
+  [ Michael Vogt ]
+  * methods/rsh.cc: replace strcat with std::string (Closes: #76442)
+
+  [ Guillem Jover ]
+  * Update Status field values handling
+
+  [ David Kalnischkies ]
+  * don't cleanup cdrom files in apt-get update (Closes: 765458)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 15 Oct 2014 19:49:38 +0200
+
+apt (1.0.9.2) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * test/integration/test-apt-update-file: improve test
+  * Fix regression when copy: is used for a relative path (Closes: #762160)
+  * generalize Acquire::GzipIndex to support all compressions that
+    apt supports
+  * Fix regression for cdrom: sources from latest security update
+  * Ensure that iTFRewritePackageOrder is "MD5sum" to match 
+    apt-ftparchive
+  * debian/rules: add hardening=+all.
+    Thanks to Simon Ruderich, Markus Waldeck
+
+  [ Holger Wansing ]
+  * German program translation update (Closes: 762223)
+
+  [ Jérémy Bobbio ]
+  * disable timestamps in the footer of docs by doxygen
+
+  [ Trần Ngọc Quân ]
+  * Set STRIP_FROM_PATH for doxygen
+
+  [ Guillem Jover ]
+  * apt-get: Create the temporary downloaded changelog inside tmpdir
+    (closes: #763780) (CVE-2014-7206)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 02 Oct 2014 22:05:39 +0200
+
+apt (1.0.9.1) unstable; urgency=high
+
+  [ Michael Vogt ]
+  * Allow override of Proxy-Auto-Detect by the users configuration
+    (Closes: 759264)
+  * fix ci autopkgtest
+  * fix regression from 1.0.9 when file:/// source are used and
+    those are on a different partition than the apt state directory
+    and add regression test
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (636t): Update program translation
+
+  [ Chris Leick ]
+  * Updated German documentation translation
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 761394)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Sep 2014 20:52:25 +0200
+
+apt (1.0.9) unstable; urgency=high
+
+  * SECURITY UPDATE:
+    - incorrect invalidating of unauthenticated data (CVE-2014-0488)
+    - incorect verification of 304 reply (CVE-2014-0487)
+    - incorrect verification of Acquire::Gzip indexes (CVE-2014-0489)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Sep 2014 08:34:46 +0200
+
+apt (1.0.8) unstable; urgency=medium
+
+  [ Holger Wansing ]
+  * German program translation update (Closes: 758837)
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: 759608)
+
+  [ Warren He ]
+  * initialize iPolicyBrokenCount in DepCache::Update (Closes: 758397)
+
+  [ Andreas Oberritter ]
+  * Avoid yielding blank lines with APT::Cmd::use-format=true
+
+  [ Michael Vogt ]
+  * Make Proxy-Auto-Detect check for each host (Closes: #759264)
+  * Add testcase for apt list --all-versions
+  * * apt-pkg/deb/dpkgpm.cc:
+    - update string matching for dpkg I/O errors. (LP: #1363257)
+    - properly parse the dpkg status line so that package name 
+      is properly set and an apport report is created. Thanks 
+      to Anders Kaseorg for the patch  (LP: #1353171)
+  * Use heap to allocate PatternMatch to avoid potential stack overflow
+    (Closes: 759612)
+  * Run autopkgtest tests with "env -i" to avoid pollution from the host env
+    (Closes: #759655)
+  * test/integration/test-ubuntu-bug-346386-apt-get-update-paywall: 
+    - use downloadfile() to fix test failure
+  * Fix incorrect upgradable listing in "apt list" 
+    (thanks to Michael Musenbrock) (Closes: #753297)
+  * apt-pkg/cachefile.cc:
+    - ensure we have a Policy in CacheFile.BuildDepCache()
+  * methods/http.cc:
+    - Improve Debug::Acquire::http debug output
+
+  [ Dimitri John Ledkov ]
+  * apt-ftparchive: make Packages & Sources generation optional, 
+    during Generate call
+
+  [ David Kalnischkies ]
+  * support regular expressions in 'apt search'
+  * implement --full in apt search
+  * fix progress report for upgrade and reinstall
+  * rework PTY magic to fix stair-stepping on kfreebsd (Closes: 759684)
+  * don't call pager in non-terminals for changelog (Closes: 755040)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 09 Sep 2014 20:09:11 +0200
+
+apt (1.0.7) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * add REAMDE.md
+  * StringToBool: only act if the entire string is consumed by strtol()
+  * Use @builddeps@ in the debian/tests/control file
+  * apt-pkg/acquire-item.cc: make pkgAcqDiffIndex more uniform
+  * Fix SmartConfigure to ignore ordering of packages that are already valid
+  * doc/apt.8.xml: fix typo, thanks to Jakub Wilk (Closes: #756056)
+  * doc/po/pt.po: updated, thanks to Américo Monteir (Closes: #756200)
+
+  [ victory ]
+  * Update Japanese documentation translation (Closes: #754817)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (636t): Update one new string
+
+  [ Julian Andres Klode ]
+  * Fix debListParser to accept "no" as a value for the Multi-Arch field
+    (Closes: #759099)
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 756710)
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: 758208)
+
+  [ David Kalnischkies ]
+  * add dpkg::source-options for dpkg-source invocation (Closes: 757534)
+  * support versioned provides as implemented by dpkg (Closes: 758153)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 27 Aug 2014 17:11:42 -0700
+
+apt (1.0.6) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * German translation reviewed by Erik Pfannenstein
+
+  [ Michael Vogt ]
+  * methods/http.cc: use Req.str() in debug output
+  * Do not try to parse invalid translation files (LP: #756317)
+  * Do not clean "/" in pkgAcquire::Clean/pkgArchiveCleaner (Closes: #753531)
+  * Only show packages as upgradable if the have a CandidateVer != 0
+    (Closes: #753297)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update 3 new messages
+
+  [ Joe Hansen ]
+  * Danish program translation update (Closes: 753979)
+
+  [ David Kalnischkies ]
+  * handle moved mmap after UniqFindTagWrite call (Closes: #753941)
+
+  [ Michele Orrù ]
+  * use printf instead of echo in testing framework
+
+  [ Cédric Barboiron ]
+  * Improve description how to turn off the caches (Closes: #753531)
+
+  [ Guillem Jover ]
+  * po: Fill or add missing Language field
+  * po: Remove fuzzy from file msgid header
+  * po: Fill Project-Id-Version with correct project id and version
+  * po: Fix Plural-Forms fields
+  * po: Fix or add missing email addresses
+  * po: Fix encoding issues
+  * po: Fix format specifier order in translation
+  * build: Set the XSL parameter through the command line instead of sed
+  * build: Convert from DebianDoc SGML to DocBook XML
+  * doc: Convert from DebianDoc SGML to DocBook XML
+  * doc: Unfuzzy DocBook translations
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jul 2014 11:46:07 +0200
+
 apt (1.0.5) unstable; urgency=low
 
   [ Michael Vogt ]

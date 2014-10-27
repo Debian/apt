@@ -356,7 +356,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    Desc.URI = URI + ".diff/Index";
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI) + string(".DiffIndex");
+   DestFile += URItoFileName(Desc.URI);
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
@@ -392,7 +392,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 string pkgAcqDiffIndex::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI) + string(".IndexDiff");
+   Final += URItoFileName(Desc.URI);
    
    if(Debug)
       std::clog << "Custom600Header-IMS: " << Final << std::endl;
@@ -932,8 +932,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    }
    CompressionExtension = comprExt;
 
-   Verify = true;
-
    Init(URI, URIDesc, ShortDesc);
 }
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
@@ -957,13 +955,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
 
-   // only verify non-optional targets, see acquire-item.h for a FIXME
-   // to make this more flexible
-   if (Target->IsOptional())
-     Verify = false;
-   else
-     Verify = true;
-
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -978,8 +969,10 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    std::string const comprExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    if (comprExt == "uncompressed")
       Desc.URI = URI;
-   else
+   else {
       Desc.URI = URI + '.' + comprExt;
+      DestFile = DestFile + '.' + comprExt;
+   }
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -993,10 +986,11 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers()
 {
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
    if (_config->FindB("Acquire::GzipIndexes",false))
-      Final += ".gz";
+      Final += compExt;
    
    string msg = "\nIndex-File: true";
    // FIXME: this really should use "IndexTarget::IsOptional()" but that
@@ -1030,6 +1024,31 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
+// pkgAcqIndex::GetFinalFilename - Return the full final file path      /*{{{*/
+std::string pkgAcqIndex::GetFinalFilename(std::string const &URI,
+                                          std::string const &compExt)
+{
+   std::string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(URI);
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      FinalFile += '.' + compExt;
+   return FinalFile;
+}
+									/*}}}*/
+// AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit		/*{{{*/
+void pkgAcqIndex::ReverifyAfterIMS(std::string const &FileName)
+{
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      DestFile += compExt;
+
+   string FinalFile = GetFinalFilename(RealURI, compExt);
+   Rename(FinalFile, FileName);
+   Decompression = true;
+   Desc.URI = "copy:" + FileName;
+   QueueURI(Desc);
+}
+									/*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -1041,6 +1060,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 		       pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hash,Cfg);
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
 
    if (Decompression == true)
    {
@@ -1052,33 +1072,34 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
+         Desc.URI = RealURI;
 	 RenameOnError(HashSumMismatch);
          return;
       }
 
-      /* Verify the index file for correctness (all indexes must
-       * have a Package field) (LP: #346386) (Closes: #627642) */
-      if (Verify == true)
+      // FIXME: this can go away once we only ever download stuff that
+      //        has a valid hash and we never do GET based probing
+      //
+      /* Always verify the index file for correctness (all indexes must
+       * have a Package field) (LP: #346386) (Closes: #627642) 
+       */
+      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
+      // Only test for correctness if the file is not empty (empty is ok)
+      if (fd.Size() > 0)
       {
-	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 // Only test for correctness if the file is not empty (empty is ok)
-	 if (fd.FileSize() > 0)
-	 {
-	    pkgTagSection sec;
-	    pkgTagFile tag(&fd);
-
-	    // all our current indexes have a field 'Package' in each section
-	    if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
-	    {
-	       RenameOnError(InvalidFormat);
-	       return;
-	    }
+         pkgTagSection sec;
+         pkgTagFile tag(&fd);
+         
+         // all our current indexes have a field 'Package' in each section
+         if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
+         {
+            RenameOnError(InvalidFormat);
+            return;
          }
       }
        
       // Done, move it into position
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
+      string FinalFile = GetFinalFilename(RealURI, compExt);
       Rename(DestFile,FinalFile);
       chmod(FinalFile.c_str(),0644);
       
@@ -1086,7 +1107,9 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
          will work OK */
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
       DestFile += URItoFileName(RealURI);
-      
+      if (_config->FindB("Acquire::GzipIndexes",false))
+         DestFile += '.' + compExt;
+
       // Remove the compressed version.
       if (Erase == true)
 	 unlink(DestFile.c_str());
@@ -1100,9 +1123,6 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
    {
-      // The files timestamp matches
-      if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
-	 return;
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -1119,33 +1139,43 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       ErrorText = "Method gave a blank filename";
    }
 
-   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true) {
-       if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-	  // Update DestFile for .gz suffix so that the clean operation keeps it
-	  DestFile += ".gz";
-      return;
-    }
-
    if (FileName == DestFile)
       Erase = true;
    else
       Local = true;
-   
+
+   // The files timestamp matches, for non-local URLs reverify the local
+   // file, for local file, uncompress again to ensure the hashsum is still
+   // matching the Release file
+   bool const IsCDROM = RealURI.substr(0,6) == "cdrom:";
+   if ((Local == false || IsCDROM == true) &&
+	 StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   {
+      // set destfile to the final destfile
+      if(_config->FindB("Acquire::GzipIndexes",false) == false)
+      {
+         DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+         DestFile += URItoFileName(RealURI);
+      }
+
+      // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+      // file when its doing the indexcopy
+      if (IsCDROM == false)
+	 ReverifyAfterIMS(FileName);
+      return;
+   }
    string decompProg;
 
-   // If we enable compressed indexes and already have gzip, keep it
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI) + ".gz";
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
-      
-      // Update DestFile for .gz suffix so that the clean operation keeps it
-      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + ".gz";
+   // If we enable compressed indexes, queue for hash verification
+   if (_config->FindB("Acquire::GzipIndexes",false))
+   {
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(RealURI) + '.' + compExt;
+
+      Decompression = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+
       return;
     }
 
@@ -1186,8 +1216,11 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const *Target,
 // ---------------------------------------------------------------------
 string pkgAcqIndexTrans::Custom600Headers()
 {
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
+   if (_config->FindB("Acquire::GzipIndexes",false))
+      Final += compExt;
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -1517,6 +1550,32 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    if (_config->FindB("Debug::pkgAcquire::Auth", false))
       std::cerr << "Signature verification succeeded: "
                 << DestFile << std::endl;
+
+   // do not trust any previously unverified content that we may have
+   string LastGoodSigFile = _config->FindDir("Dir::State::lists").append("partial/").append(URItoFileName(RealURI));
+   if (DestFile != SigFile)
+      LastGoodSigFile.append(".gpg");
+   LastGoodSigFile.append(".reverify");
+   if(IMSHit == false && RealFileExists(LastGoodSigFile) == false)
+   {
+      for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
+           Target != IndexTargets->end();
+           ++Target)
+      {
+         // remove old indexes
+         std::string index = _config->FindDir("Dir::State::lists") +
+            URItoFileName((*Target)->URI);
+         unlink(index.c_str());
+         // and also old gzipindexes
+         std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+         for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+         {
+            index += '.' + (*t);
+            unlink(index.c_str());
+         }
+      }
+   }
+
 
    // Download further indexes with verification
    QueueIndexes(true);

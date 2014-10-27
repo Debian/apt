@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Ensure that a MITM can not stale the Packages/Sources without
+# raising a error message. Note that the Release file is protected
+# via the "Valid-Until" header
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive
+changetowebserver
+aptget update -qq
+
+# insert new version
+mkdir aptarchive/dists/unstable/main/binary-i386/saved
+cp -p aptarchive/dists/unstable/main/binary-i386/Packages* \
+     aptarchive/dists/unstable/main/binary-i386/saved
+insertpackage 'unstable' 'foo' 'all' '2.0'
+
+# not using compressfile for compat with older apt releases
+gzip -c aptarchive/dists/unstable/main/binary-i386/Packages > \
+  aptarchive/dists/unstable/main/binary-i386/Packages.gz
+generatereleasefiles
+signreleasefiles
+
+# ensure that we do not get a I-M-S hit for the Release file
+touch -d "+1hour" aptarchive/dists/unstable/*Release*
+
+# but now only deliver the previous Packages file instead of the new one
+# (simulating a stale attack)
+cp -p aptarchive/dists/unstable/main/binary-i386/saved/Packages* \
+     aptarchive/dists/unstable/main/binary-i386/
+
+# ensure this raises a error
+testequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Hash Sum mismatch
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+
+

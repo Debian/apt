@@ -2,5 +2,4 @@ language: cpp
 before_install:
  - sudo apt-get update -q
  - sudo ./prepare-release travis-ci
- - sudo apt-get install -q --no-install-recommends stunnel4 db-util
 script: make && make test && test/integration/run-tests

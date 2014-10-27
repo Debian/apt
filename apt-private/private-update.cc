@@ -56,10 +56,17 @@ bool DoUpdate(CommandLine &CmdL)
       if (List->GetIndexes(&Fetcher,true) == false)
 	 return false;
 
+      std::string compExt = APT::Configuration::getCompressionTypes()[0];
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 c1out << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+      {
+         std::string FileName = flNotDir(I->Owner->DestFile);
+         if(compExt.empty() == false && 
+            APT::String::Endswith(FileName, compExt))
+            FileName = FileName.substr(0, FileName.size() - compExt.size() - 1);
+	 c1out << '\'' << I->URI << "' " << FileName << ' ' << 
             I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+      }
       return true;
    }
 
@@ -83,7 +90,7 @@ bool DoUpdate(CommandLine &CmdL)
       for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
       {
          pkgDepCache::StateCache &state = Cache[I];
-         if (I->CurrentVer != 0 && state.Upgradable())
+         if (I->CurrentVer != 0 && state.Upgradable() && state.CandidateVer != NULL)
             upgradable++;
       }
       const char *msg = P_(

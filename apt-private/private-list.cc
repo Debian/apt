@@ -85,15 +85,14 @@ private:
 };
 									/*}}}*/
 static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
-                     pkgCache::PkgIterator P,    
-                     std::ostream &outs,
-                     bool include_summary=true)
+                     pkgCache::PkgIterator const &P, std::ostream &outs,
+                     std::string const &format)
 {
    for (pkgCache::VerIterator Ver = P.VersionList();
         Ver.end() == false; ++Ver)
    {
-      ListSingleVersion(CacheFile, records, Ver, outs, include_summary);
-      outs << "\n";
+      ListSingleVersion(CacheFile, records, Ver, outs, format);
+      outs << std::endl;
    }
 }
 									/*}}}*/
@@ -117,10 +116,9 @@ bool DoList(CommandLine &Cmd)
       patterns = Cmd.FileList + 1;
    }
 
-   std::map<std::string, std::string> output_map;
-   std::map<std::string, std::string>::const_iterator K;
-
-   bool includeSummary = _config->FindB("APT::Cmd::List-Include-Summary");
+   std::string format = "${color:highlight}${Package}${color:neutral}/${Origin} ${Version} ${Architecture}${ }${apt:Status}";
+   if (_config->FindB("APT::Cmd::List-Include-Summary", false) == true)
+      format += "\n  ${Description}\n";
 
    PackageNameMatcher matcher(patterns);
    LocalitySortedVersionSet bag;
@@ -129,28 +127,25 @@ bool DoList(CommandLine &Cmd)
                             Cache->Head().PackageCount, 
                             Cache->Head().PackageCount,
                             _("Listing"));
-   GetLocalitySortedVersionSet(CacheFile, bag, matcher, progress);
-   bool ShowAllVersions = _config->FindB("APT::Cmd::All-Versions", false);
+   GetLocalitySortedVersionSet(CacheFile, &bag, matcher, &progress);
+   bool const ShowAllVersions = _config->FindB("APT::Cmd::All-Versions", false);
+   std::map<std::string, std::string> output_map;
    for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); ++V)
    {
       std::stringstream outs;
       if(ShowAllVersions == true)
-      {
-         ListAllVersions(CacheFile, records, V.ParentPkg(), outs, includeSummary);
-         output_map.insert(std::make_pair<std::string, std::string>(
-            V.ParentPkg().Name(), outs.str()));
-      } else {
-         ListSingleVersion(CacheFile, records, V, outs, includeSummary);
-         output_map.insert(std::make_pair<std::string, std::string>(
-                           V.ParentPkg().Name(), outs.str()));
-      }
+         ListAllVersions(CacheFile, records, V.ParentPkg(), outs, format);
+      else
+         ListSingleVersion(CacheFile, records, V, outs, format);
+      output_map.insert(std::make_pair<std::string, std::string>(
+	       V.ParentPkg().Name(), outs.str()));
    }
 
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
+   std::map<std::string, std::string>::const_iterator K;
    for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
-
 
    // be nice and tell the user if there is more to see
    if (bag.size() == 1 && ShowAllVersions == false)
@@ -158,8 +153,8 @@ bool DoList(CommandLine &Cmd)
       // start with -1 as we already displayed one version
       int versions = -1;
       pkgCache::VerIterator Ver = *bag.begin();
-      for ( ; Ver.end() == false; Ver++)
-         versions++;
+      for ( ; Ver.end() == false; ++Ver)
+         ++versions;
       if (versions > 0)
          _error->Notice(P_("There is %i additional version. Please use the '-a' switch to see it", "There are %i additional versions. Please use the '-a' switch to see them.", versions), versions);
    }

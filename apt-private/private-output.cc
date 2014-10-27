@@ -118,7 +118,7 @@ static std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
    std::string flags_str;
    if (state.NowBroken())
       flags_str = "B";
-   if (P.CurrentVer() && state.Upgradable())
+   if (P.CurrentVer() && state.Upgradable() && state.CandidateVer != NULL)
       flags_str = "g";
    else if (P.CurrentVer() != NULL)
       flags_str = "i";
@@ -164,15 +164,26 @@ static std::string GetVersion(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator
 									/*}}}*/
 static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
-   pkgPolicy *policy = CacheFile.GetPolicy();
-   pkgCache::VerIterator inst = P.CurrentVer();
-   pkgCache::VerIterator cand = policy->GetCandidateVer(P);
-
-   // this may happen for packages in dpkg "deinstall ok config-file" state
-   if (inst.IsGood() == false && cand.IsGood() == false)
-      return P.VersionList().Arch();
-
-   return inst ? inst.Arch() : cand.Arch();
+   if (P->CurrentVer == 0)
+   {
+      pkgDepCache * const DepCache = CacheFile.GetDepCache();
+      pkgDepCache::StateCache const &state = (*DepCache)[P];
+      if (state.CandidateVer != NULL)
+      {
+	 pkgCache::VerIterator const CandV(CacheFile, state.CandidateVer);
+	 return CandV.Arch();
+      }
+      else
+      {
+	 pkgCache::VerIterator const V = P.VersionList();
+	 if (V.end() == false)
+	    return V.Arch();
+	 else
+	    return P.Arch();
+      }
+   }
+   else
+      return P.CurrentVer().Arch();
 }
 									/*}}}*/
 static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
@@ -196,80 +207,90 @@ static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &reco
    return ShortDescription;
 }
 									/*}}}*/
-void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
-                       pkgCache::VerIterator V, std::ostream &out,
-                       bool include_summary)
+static std::string GetLongDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
-   pkgCache::PkgIterator P = V.ParentPkg();
+   pkgPolicy *policy = CacheFile.GetPolicy();
 
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
-   pkgDepCache::StateCache &state = (*DepCache)[P];
+   pkgCache::VerIterator ver;
+   if (P->CurrentVer != 0)
+      ver = P.CurrentVer();
+   else
+      ver = policy->GetCandidateVer(P);
 
-   std::string suite = GetArchiveSuite(CacheFile, V);
-   std::string name_str = P.Name();
+   std::string const EmptyDescription = "(none)";
+   if(ver.end() == true)
+      return EmptyDescription;
 
+   pkgCache::DescIterator const Desc = ver.TranslatedDescription();
+   pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+   std::string const longdesc = parser.LongDesc();
+   if (longdesc.empty() == true)
+      return EmptyDescription;
+   return SubstVar(longdesc, "\n ", "\n  ");
+}
+									/*}}}*/
+void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
+                       pkgCache::VerIterator const &V, std::ostream &out,
+                       std::string const &format)
+{
+   pkgCache::PkgIterator const P = V.ParentPkg();
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   pkgDepCache::StateCache const &state = (*DepCache)[P];
+
+   std::string output;
    if (_config->FindB("APT::Cmd::use-format", false))
+      output = _config->Find("APT::Cmd::format", "${db::Status-Abbrev} ${Package} ${Version} ${Origin} ${Description}");
+   else
+      output = format;
+
+   // FIXME: some of these names are really icky – and all is nowhere documented
+   output = SubstVar(output, "${db::Status-Abbrev}", GetFlagsStr(CacheFile, P));
+   output = SubstVar(output, "${Package}", P.Name());
+   std::string const ArchStr = GetArchitecture(CacheFile, P);
+   output = SubstVar(output, "${Architecture}", ArchStr);
+   std::string const InstalledVerStr = GetInstalledVersion(CacheFile, P);
+   output = SubstVar(output, "${installed:Version}", InstalledVerStr);
+   std::string const CandidateVerStr = GetCandidateVersion(CacheFile, P);
+   output = SubstVar(output, "${candidate:Version}", CandidateVerStr);
+   std::string const VersionStr = GetVersion(CacheFile, V);
+   output = SubstVar(output, "${Version}", VersionStr);
+   output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
+
+   std::string StatusStr = "";
+   if (P->CurrentVer != 0)
    {
-      std::string format = _config->Find("APT::Cmd::format", "${db::Status-Abbrev} ${Package} ${Version} ${Origin} ${Description}");
-      std::string output = format;
-   
-      output = SubstVar(output, "${db::Status-Abbrev}", GetFlagsStr(CacheFile, P));
-      output = SubstVar(output, "${Package}", name_str);
-      output = SubstVar(output, "${installed:Version}", GetInstalledVersion(CacheFile, P));
-      output = SubstVar(output, "${candidate:Version}", GetCandidateVersion(CacheFile, P));
-      output = SubstVar(output, "${Version}", GetVersion(CacheFile, V));
-      output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
-      output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
-      out << output << std::endl;
-   } else {
-      // raring/linux-kernel version [upradable: new-version]
-      //    description
-      pkgPolicy *policy = CacheFile.GetPolicy();
-      std::string VersionStr = GetVersion(CacheFile, V);
-      std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
-      std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
-      std::string StatusStr;
-      if(P.CurrentVer() == V && state.Upgradable()) {
-         strprintf(StatusStr, _("[installed,upgradable to: %s]"),
-                   CandidateVerStr.c_str());
-      } else if (P.CurrentVer() == V) {
-         if(!V.Downloadable())
-            StatusStr = _("[installed,local]");
-         else
-            if(V.Automatic() && state.Garbage)
-               StatusStr = _("[installed,auto-removable]");
-            else if (state.Flags & pkgCache::Flag::Auto)
-               StatusStr = _("[installed,automatic]");
-            else
-               StatusStr = _("[installed]");
-      } else if (P.CurrentVer() && 
-                 policy->GetCandidateVer(P) == V && 
-                 state.Upgradable()) {
-            strprintf(StatusStr, _("[upgradable from: %s]"),
-                      InstalledVerStr.c_str());
-      } else {
-         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
-            StatusStr = _("[residual-config]");
-         else
-            StatusStr = "";
-      }
-      out << std::setiosflags(std::ios::left)
-          << _config->Find("APT::Color::Highlight", "")
-          << name_str 
-          << _config->Find("APT::Color::Neutral", "")
-          << "/" << suite
-          << " "
-          << VersionStr << " " 
-          << GetArchitecture(CacheFile, P);
-      if (StatusStr != "") 
-         out << " " << StatusStr;
-      if (include_summary)
+      if (P.CurrentVer() == V)
       {
-         out << std::endl 
-             << "  " << GetShortDescription(CacheFile, records, P)
-             << std::endl;
+	 if (state.Upgradable() && state.CandidateVer != NULL)
+	    strprintf(StatusStr, _("[installed,upgradable to: %s]"),
+		  CandidateVerStr.c_str());
+	 else if (V.Downloadable() == false)
+	    StatusStr = _("[installed,local]");
+	 else if(V.Automatic() == true && state.Garbage == true)
+	    StatusStr = _("[installed,auto-removable]");
+	 else if ((state.Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+	    StatusStr = _("[installed,automatic]");
+	 else
+	    StatusStr = _("[installed]");
       }
+      else if (state.CandidateVer == V && state.Upgradable())
+	 strprintf(StatusStr, _("[upgradable from: %s]"),
+	       InstalledVerStr.c_str());
    }
+   else if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
+      StatusStr = _("[residual-config]");
+   output = SubstVar(output, "${apt:Status}", StatusStr);
+   output = SubstVar(output, "${color:highlight}", _config->Find("APT::Color::Highlight", ""));
+   output = SubstVar(output, "${color:neutral}", _config->Find("APT::Color::Neutral", ""));
+   output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
+   output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
+   output = SubstVar(output, "${ }${ }", "${ }");
+   output = SubstVar(output, "${ }\n", "\n");
+   output = SubstVar(output, "${ }", " ");
+   if (APT::String::Endswith(output, " ") == true)
+      output.erase(output.length() - 1);
+
+   out << output;
 }
 									/*}}}*/
 // ShowList - Show a list						/*{{{*/

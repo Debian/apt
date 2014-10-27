@@ -108,7 +108,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 {
    unsigned char MA;
    string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
+   if (MultiArch.empty() == true || MultiArch == "no")
       MA = pkgCache::Version::None;
    else if (MultiArch == "same") {
       if (ArchitectureAll() == true)
@@ -145,7 +145,8 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
-   Ver->Section = UniqFindTagWrite("Section");
+   unsigned long const idxSection = UniqFindTagWrite("Section");
+   Ver->Section = idxSection;
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -260,7 +261,10 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 			       pkgCache::VerIterator &Ver)
 {
    if (Pkg->Section == 0)
-      Pkg->Section = UniqFindTagWrite("Section");
+   {
+      unsigned long const idxSection = UniqFindTagWrite("Section");
+      Pkg->Section = idxSection;
+   }
 
    string const static myArch = _config->Find("APT::Architecture");
    // Possible values are: "all", "native", "installed" and "none"
@@ -334,13 +338,9 @@ unsigned short debListParser::VersionHash()
 /* Status lines are of the form,
      Status: want flag status
    want = unknown, install, hold, deinstall, purge
-   flag = ok, reinstreq, hold, hold-reinstreq
-   status = not-installed, unpacked, half-configured,
-            half-installed, config-files, post-inst-failed, 
-            removal-failed, installed
-   
-   Some of the above are obsolete (I think?) flag = hold-* and 
-   status = post-inst-failed, removal-failed at least.
+   flag = ok, reinstreq
+   status = not-installed, config-files, half-installed, unpacked,
+            half-configured, triggers-awaited, triggers-pending, installed
  */
 bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 				pkgCache::VerIterator &Ver)
@@ -397,15 +397,13 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 
    // Process the flag field
    WordList StatusList[] = {{"not-installed",pkgCache::State::NotInstalled},
+                            {"config-files",pkgCache::State::ConfigFiles},
+                            {"half-installed",pkgCache::State::HalfInstalled},
                             {"unpacked",pkgCache::State::UnPacked},
                             {"half-configured",pkgCache::State::HalfConfigured},
-                            {"installed",pkgCache::State::Installed},
-                            {"half-installed",pkgCache::State::HalfInstalled},
-                            {"config-files",pkgCache::State::ConfigFiles},
                             {"triggers-awaited",pkgCache::State::TriggersAwaited},
                             {"triggers-pending",pkgCache::State::TriggersPending},
-                            {"post-inst-failed",pkgCache::State::HalfConfigured},
-                            {"removal-failed",pkgCache::State::HalfInstalled},
+                            {"installed",pkgCache::State::Installed},
                             {NULL, 0}};
    if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
@@ -631,72 +629,94 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseRestrictionsList == true)
    {
-      // Parse a restrictions list
-      if (I != Stop && *I == '<')
+      // Parse a restrictions formula which is in disjunctive normal form:
+      // (foo AND bar) OR (blub AND bla)
+
+      std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
+
+      // if the next character is a restriction list, then by default the
+      // dependency does not apply and the conditions have to be checked
+      // if the next character is not a restriction list, then by default the
+      // dependency applies
+      bool applies1 = (*I != '<');
+      while (I != Stop)
       {
+	 if (*I != '<')
+	     break;
+
 	 ++I;
 	 // malformed
 	 if (unlikely(I == Stop))
 	    return 0;
 
-	 std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
-
 	 const char *End = I;
-	 bool Found = false;
-	 bool NegRestriction = false;
-	 while (I != Stop)
-	 {
-	    // look for whitespace or ending '>'
-	    for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
 
-	    if (unlikely(End == Stop))
-	       return 0;
-
-	    if (*I == '!')
+	 // if of the prior restriction list is already fulfilled, then
+	 // we can just skip to the end of the current list
+	 if (applies1) {
+	    for (;End != Stop && *End != '>'; ++End);
+	    I = ++End;
+	    // skip whitespace
+	    for (;I != Stop && isspace(*I) != 0; I++);
+	 } else {
+	    bool applies2 = true;
+	    // all the conditions inside a restriction list have to be
+	    // met so once we find one that is not met, we can skip to
+	    // the end of this list
+	    while (I != Stop)
 	    {
-	       NegRestriction = true;
-	       ++I;
-	    }
+	       // look for whitespace or ending '>'
+	       // End now points to the character after the current term
+	       for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
 
-	    std::string restriction(I, End);
+	       if (unlikely(End == Stop))
+		  return 0;
 
-	    std::string prefix = "profile.";
-	    // only support for "profile" prefix, ignore others
-	    if (restriction.size() > prefix.size() &&
-		  restriction.substr(0, prefix.size()) == prefix)
-	    {
-	       // get the name of the profile
-	       restriction = restriction.substr(prefix.size());
+	       bool NegRestriction = false;
+	       if (*I == '!')
+	       {
+		  NegRestriction = true;
+		  ++I;
+	       }
+
+	       std::string restriction(I, End);
 
 	       if (restriction.empty() == false && profiles.empty() == false &&
-		     std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
+		  std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
 	       {
-		  Found = true;
-		  if (I[-1] != '!')
-		     NegRestriction = false;
-		  // we found a match, so fast-forward to the end of the wildcards
-		  for (; End != Stop && *End != '>'; ++End);
+		  if (NegRestriction) {
+		     applies2 = false;
+		     // since one of the terms does not apply we don't have to check the others
+		     for (; End != Stop && *End != '>'; ++End);
+		  }
+	       } else {
+		  if (!NegRestriction) {
+		     applies2 = false;
+		     // since one of the terms does not apply we don't have to check the others
+		     for (; End != Stop && *End != '>'; ++End);
+		  }
 	       }
-	    }
 
-	    if (*End++ == '>') {
+	       if (*End++ == '>') {
+		  I = End;
+		  // skip whitespace
+		  for (;I != Stop && isspace(*I) != 0; I++);
+		  break;
+	       }
+
 	       I = End;
-	       break;
+	       // skip whitespace
+	       for (;I != Stop && isspace(*I) != 0; I++);
 	    }
-
-	    I = End;
-	    for (;I != Stop && isspace(*I) != 0; I++);
+	    if (applies2) {
+	       applies1 = true;
+	    }
 	 }
-
-	 if (NegRestriction == true)
-	    Found = !Found;
-
-	 if (Found == false)
-	    Package = ""; /* not for this restriction */
       }
 
-      // Skip whitespace
-      for (;I != Stop && isspace(*I) != 0; I++);
+      if (applies1 == false) {
+	 Package = ""; //not for this restriction
+      }
    }
 
    if (I != Stop && *I == '|')
@@ -799,8 +819,8 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	 Start = ParseDepends(Start,Stop,Package,Version,Op);
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
-	 if (Op != pkgCache::Dep::NoOp) {
-	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
+	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;
