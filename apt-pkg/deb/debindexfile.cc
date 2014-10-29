@@ -458,9 +458,9 @@ string debTranslationsIndex::IndexURI(const char *Type) const
 bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
 {
    string const TranslationFile = string("Translation-").append(Language);
-   new pkgAcqIndexTrans(Owner, IndexURI(Language),
-                        Info(TranslationFile.c_str()),
-                        TranslationFile);
+   new pkgAcqIndex(Owner, IndexURI(Language),
+                   Info(TranslationFile.c_str()),
+                   TranslationFile, HashStringList());
 
    return true;
 }

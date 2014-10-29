@@ -73,16 +73,6 @@ E: Some index files failed to download. They have been ignored, or old ones used
 testoverhttp() {
 	forcecompressor "$1"
 
-	createemptyfile 'en'
-	testaptgetupdate "Get: http://localhost:8080  Packages []
-Get: http://localhost:8080  Translation-en
-Reading package lists..." "empty file en.$COMPRESS over http"
-
-	createemptyarchive 'en'
-	testaptgetupdate "Get: http://localhost:8080  Packages []
-Get: http://localhost:8080  Translation-en []
-Reading package lists..." "empty archive en.$COMPRESS over http"
-
 	createemptyarchive 'Packages'
 	testaptgetupdate "Get: http://localhost:8080  Packages []
 Reading package lists..." "empty archive Packages.$COMPRESS over http"

@@ -47,16 +47,9 @@ translationslisted() {
 translationslisted 'with full Index'
 
 
-# only compressed files available (as it happens on CD-ROM)
-sed -i '/i18n\/Translation-[^.]*$/ d' $(find aptarchive -name 'Release')
-signreleasefiles
-
-translationslisted 'with partial Index'
-
-
 # no records at all about Translation files (fallback to guessing)
-sed -i '/i18n\/Translation-.*$/ d' $(find aptarchive -name 'Release')
-signreleasefiles
+find aptarchive -name 'Release' -or -name 'InRelease' | xargs rm -f
+configallowinsecurerepositories "true";
 
 msgtest 'Download of en as forced language' 'without Index'
 aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
