@@ -218,17 +218,20 @@ bool RSHConn::WriteMsg(std::string &Text,bool Sync,const char *Fmt,...)
    va_list args;
    va_start(args,Fmt);
 
-   // sprintf the description
-   char S[512];
-   vsnprintf(S,sizeof(S) - 4,Fmt,args);
+   // sprintf into a buffer
+   char Tmp[1024];
+   vsnprintf(Tmp,sizeof(Tmp),Fmt,args);
    va_end(args);
 
+   // concat to create the real msg
+   std::string Msg;
    if (Sync == true)
-      strcat(S," 2> /dev/null || echo\n");
+      Msg = std::string(Tmp) + " 2> /dev/null || echo\n";
    else
-      strcat(S," 2> /dev/null\n");
+      Msg = std::string(Tmp) + " 2> /dev/null\n";
 
    // Send it off
+   const char *S = Msg.c_str();
    unsigned long Len = strlen(S);
    unsigned long Start = 0;
    while (Len != 0)
