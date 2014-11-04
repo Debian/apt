@@ -63,7 +63,7 @@ class pkgAcqMetaBase;
  */
 class pkgAcquire::Item : public WeakPointable
 {  
-   friend pkgAcqMetaBase;
+   friend class pkgAcqMetaBase;
 
    void *d;
 
