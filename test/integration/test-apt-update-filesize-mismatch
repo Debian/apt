@@ -28,7 +28,7 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 	for ext in '' '.gz'; do
 		COMPRESSFILE="$get"
 		get="${get}${ext}"
-		FILE="$(basename -s '.gz' "$get")"
+		FILE="$(basename "$get" '.gz')"
 		msgmsg 'Test filesize mismatch with file' "$FILE"
 		rm -rf rootdir/var/lib/apt/lists
 
