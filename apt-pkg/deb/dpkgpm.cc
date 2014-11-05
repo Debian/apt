@@ -55,6 +55,18 @@
 
 using namespace std;
 
+APT_PURE static unsigned int
+EnvironmentSize()
+{
+  unsigned int size = 0;
+  char **envp = environ;
+
+  while (*envp != NULL)
+    size += strlen (*envp++) + 1;
+
+  return size;
+}
+
 class pkgDPkgPMPrivate 
 {
 public:
@@ -1230,8 +1242,15 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    fd_set rfds;
    struct timespec tv;
 
-   unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);
-   unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
+   // FIXME: do we really need this limit when we have MaxArgBytes?
+   unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",32*1024);
+
+   // try to figure out the max environment size
+   int OSArgMax = sysconf(_SC_ARG_MAX);
+   if(OSArgMax < 0)
+      OSArgMax = 32*1024;
+   OSArgMax -= EnvironmentSize() - 2*1024;
+   unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes", OSArgMax);
    bool const NoTriggers = _config->FindB("DPkg::NoTriggers", false);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
