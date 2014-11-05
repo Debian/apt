@@ -47,7 +47,8 @@ translationslisted() {
 translationslisted 'with full Index'
 
 
-# no records at all about Translation files (fallback to guessing)
+# No Release file at all, so no records about Translation files
+# (fallback to guessing)
 find aptarchive -name 'Release' -or -name 'InRelease' | xargs rm -f
 configallowinsecurerepositories "true";
 
