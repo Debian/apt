@@ -452,19 +452,6 @@ string debTranslationsIndex::IndexURI(const char *Type) const
    return Res;
 }
 									/*}}}*/
-// TranslationsIndex::GetIndexes - Fetch the index files		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
-{
-   string const TranslationFile = string("Translation-").append(Language);
-   new pkgAcqIndex(Owner, IndexURI(Language),
-                   Info(TranslationFile.c_str()),
-                   TranslationFile, HashStringList());
-
-   return true;
-}
-									/*}}}*/
 // TranslationsIndex::Describe - Give a descriptive path to the index	/*{{{*/
 // ---------------------------------------------------------------------
 /* This should help the user find the index in the sources.list and
