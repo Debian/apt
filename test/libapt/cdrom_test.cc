@@ -109,6 +109,7 @@ TEST(CDROMTest, FindMountPointForDevice)
    EXPECT_EQ("/boot/efi", FindMountPointForDevice("/dev/sda1"));
    EXPECT_EQ("/tmp", FindMountPointForDevice("tmpfs"));
 
-   unlink(tempfile);
+   if (tempfile !=  NULL)
+      unlink(tempfile);
    free(tempfile);
 }
