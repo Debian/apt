@@ -1319,10 +1319,12 @@ void ioprintf(ostream &out,const char *format,...)
    va_list args;
    ssize_t size = 400;
    while (true) {
+      bool ret = false;
       va_start(args,format);
-      if (iovprintf(out, format, args, size) == true)
-	 return;
+      ret = iovprintf(out, format, args, size);
       va_end(args);
+      if (ret == true)
+	 return;
    }
 }
 void strprintf(string &out,const char *format,...)
@@ -1331,10 +1333,12 @@ void strprintf(string &out,const char *format,...)
    ssize_t size = 400;
    std::ostringstream outstr;
    while (true) {
+      bool ret = false;
       va_start(args,format);
-      if (iovprintf(outstr, format, args, size) == true)
-	 break;
+      ret = iovprintf(outstr, format, args, size);
       va_end(args);
+      if (ret == true)
+	 break;
    }
    out = outstr.str();
 }
