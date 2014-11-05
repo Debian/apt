@@ -619,7 +619,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 cur != available_patches.end(); ++cur)
       patchesSize += cur->patch_size;
    unsigned long long const sizeLimit = ServerSize * _config->FindI("Acquire::PDiffs::SizeLimit", 100);
-   if (false && sizeLimit > 0 && (sizeLimit/100) < patchesSize)
+   if (sizeLimit > 0 && (sizeLimit/100) < patchesSize)
    {
       if (Debug)
 	 std::clog << "Need " << patchesSize << " bytes (Limit is " << sizeLimit/100
