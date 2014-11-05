@@ -252,37 +252,40 @@ TEST(FileUtlTest, Popen)
 
    // output something
    const char* Args[10] = {"/bin/echo", "meepmeep", NULL};
-   bool res = Popen(Args, Fd, Child, FileFd::ReadOnly);
-   Fd.Read(buf, sizeof(buf)-1, &n);
+   EXPECT_TRUE(Popen(Args, Fd, Child, FileFd::ReadOnly));
+   EXPECT_TRUE(Fd.Read(buf, sizeof(buf)-1, &n));
    buf[n] = 0;
    EXPECT_NE(n, 0);
-   EXPECT_EQ(res, true);
    EXPECT_STREQ(buf, "meepmeep\n");
 
    // wait for the child to exit and cleanup
-   ExecWait(Child, "PopenRead");
-   Fd.Close();
+   EXPECT_TRUE(ExecWait(Child, "PopenRead"));
+   EXPECT_TRUE(Fd.Close());
 
    // ensure that after a close all is good again
    if(FileExists("/proc/self/fd"))
       EXPECT_EQ(Glob("/proc/self/fd/*").size(), OpenFds.size());
 
-
    // ReadWrite is not supported
-   res = Popen(Args, Fd, Child, FileFd::ReadWrite);
-   EXPECT_EQ(res, false);
-   _error->Discard();
+   _error->PushToStack();
+   EXPECT_FALSE(Popen(Args, Fd, Child, FileFd::ReadWrite));
+   EXPECT_FALSE(Fd.IsOpen());
+   EXPECT_FALSE(Fd.Failed());
+   EXPECT_TRUE(_error->PendingError());
+   _error->RevertToStack();
 
    // write something
    Args[0] = "/bin/bash";
    Args[1] = "-c";
    Args[2] = "read";
    Args[3] = NULL;
-   res = Popen(Args, Fd, Child, FileFd::WriteOnly);
+   EXPECT_TRUE(Popen(Args, Fd, Child, FileFd::WriteOnly));
    s = "\n";
-   Fd.Write(s.c_str(), s.size());
-   Fd.Close();
-   ExecWait(Child, "PopenWrite");
+   EXPECT_TRUE(Fd.Write(s.c_str(), s.length()));
+   EXPECT_TRUE(Fd.Close());
+   EXPECT_FALSE(Fd.IsOpen());
+   EXPECT_FALSE(Fd.Failed());
+   EXPECT_TRUE(ExecWait(Child, "PopenWrite"));
 }
 TEST(FileUtlTest, flAbsPath)
 {
