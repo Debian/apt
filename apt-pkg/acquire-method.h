@@ -44,6 +44,7 @@ class pkgAcqMethod
 
       std::string Uri;
       std::string DestFile;
+      int DestFileFd;
       time_t LastModified;
       bool IndexFile;
       bool FailIgnore;

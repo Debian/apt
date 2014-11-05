@@ -101,6 +101,11 @@ class pkgAcquire::Worker : public WeakPointable
     */
    int OutFd;
 
+   /** \brief The socket to send SCM_RIGHTS message through
+    */
+   int PrivSepSocketFd;
+   int PrivSepSocketFdChild;
+
    /** \brief Set to \b true if the worker is in a state in which it
     *  might generate data or command responses.
     *
