@@ -53,11 +53,16 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
    // ensure the memory is as predictably messed up
 #define APT_INIT_READBACK \
    char readback[20]; \
-   memset(readback, 'D', sizeof(readback)/sizeof(readback[0])); \
+   memset(readback, 'D', sizeof(readback)*sizeof(readback[0])); \
    readback[19] = '\0';
 #define EXPECT_N_STR(expect, actual) \
    EXPECT_EQ(0, strncmp(expect, actual, strlen(expect)));
-
+   {
+      APT_INIT_READBACK
+      char const * const expect = "DDDDDDDDDDDDDDDDDDD";
+      EXPECT_STREQ(expect,readback);
+      EXPECT_N_STR(expect, readback);
+   }
    {
       APT_INIT_READBACK
       char const * const expect = "This";
