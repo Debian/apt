@@ -1,3 +1,24 @@
+apt (1.1~exp8) experimental; urgency=medium
+
+  [ Michael Vogt ]
+  * merge unstable upload version 1.0.9.3
+  * Ensure /etc/apt/auth.conf has _apt:root owner
+  * Use sysconf(_SC_ARG_MAX) to find the size of Dpkg::MaxArgBytes
+  * Only support Translation-* that are listed in the {In,}Release file
+  * Call "Dequeue()" for items in AbortTransaction() to fix race
+  * prepare ABI for feature/socketpair
+  * Bump ABI to 4.15
+
+  [ David Kalnischkies ]
+  * reenable support for -s (and co) in apt-get source (Closes: 742578)
+  * run acquire transactions only once
+  * aborted reverify restores file owner and permission
+  * test if TMPDIR is accessible before using (Closes: 765951)
+  * chown finished partial files earlier
+  * promote filesize to a hashstring
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 06 Nov 2014 10:01:21 +0100
+
 apt (1.1~exp7) experimental; urgency=medium
 
   [ David Kalnischkies ]
