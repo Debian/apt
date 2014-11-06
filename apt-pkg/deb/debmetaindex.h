@@ -54,8 +54,9 @@ class debReleaseIndex : public metaIndex {
    std::string MetaIndexURI(const char *Type) const;
 
 #if APT_PKG_ABI >= 413
-   virtual std::string LocalFileName() const;
+   virtual
 #endif
+   std::string LocalFileName() const;
 
    std::string IndexURI(const char *Type, std::string const &Section, std::string const &Arch="native") const;
    std::string IndexURISuffix(const char *Type, std::string const &Section, std::string const &Arch="native") const;

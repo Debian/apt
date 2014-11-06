@@ -136,28 +136,6 @@ static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
-
-
-// helper that can go wit hthe next ABI break
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-static std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
-{
-   // FIXME: this cast is the horror, the horror
-   debReleaseIndex *r = (debReleaseIndex*)metaindex;
-
-   // see if we have a InRelease file
-   std::string PathInRelease =  r->MetaIndexFile("InRelease");
-   if (FileExists(PathInRelease))
-      return PathInRelease;
-
-   // and if not return the normal one
-   if (FileExists(PathInRelease))
-      return r->MetaIndexFile("Release");
-
-   return "";
-}
-#endif
-
 // GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -176,12 +154,8 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
       {
          if (&CurrentIndexFile == (*IF))
          {
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-            std::string path = MetaIndexFileNameOnDisk(*S);
-#else
-            std::string path = (*S)->LocalFileName();
-#endif
-            if (path != "") 
+            std::string const path = (*S)->LocalFileName();
+            if (path != "")
             {
                indexRecords records;
                records.Load(path);

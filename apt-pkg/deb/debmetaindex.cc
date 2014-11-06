@@ -78,7 +78,6 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    return Res;
 }
 
-#if APT_PKG_ABI >= 0x0413
 std::string debReleaseIndex::LocalFileName() const
 {
    // see if we have a InRelease file
@@ -92,7 +91,6 @@ std::string debReleaseIndex::LocalFileName() const
 
    return "";
 }
-#endif
 
 string debReleaseIndex::IndexURISuffix(const char *Type, string const &Section, string const &Arch) const
 {
