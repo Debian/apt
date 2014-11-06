@@ -65,7 +65,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 }
 									/*}}}*/
 // Index File types for APT						/*{{{*/
-class edspIFType: public pkgIndexFile::Type
+class APT_HIDDEN edspIFType: public pkgIndexFile::Type
 {
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator) const
@@ -75,7 +75,7 @@ class edspIFType: public pkgIndexFile::Type
    };
    edspIFType() {Label = "EDSP scenario file";};
 };
-static edspIFType _apt_Universe;
+APT_HIDDEN edspIFType _apt_Universe;
 
 const pkgIndexFile::Type *edspIndex::GetType() const
 {

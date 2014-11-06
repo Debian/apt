@@ -28,7 +28,7 @@ class pkgAcquire;
 class pkgCacheGenerator;
 
 
-class debStatusIndex : public pkgIndexFile
+class APT_HIDDEN debStatusIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -55,7 +55,7 @@ class debStatusIndex : public pkgIndexFile
    virtual ~debStatusIndex();
 };
     
-class debPackagesIndex : public pkgIndexFile
+class APT_HIDDEN debPackagesIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -92,7 +92,7 @@ class debPackagesIndex : public pkgIndexFile
    virtual ~debPackagesIndex();
 };
 
-class debTranslationsIndex : public pkgIndexFile
+class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -126,7 +126,7 @@ class debTranslationsIndex : public pkgIndexFile
    virtual ~debTranslationsIndex();
 };
 
-class debSourcesIndex : public pkgIndexFile
+class APT_HIDDEN debSourcesIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -163,7 +163,7 @@ class debSourcesIndex : public pkgIndexFile
    virtual ~debSourcesIndex();
 };
 
-class debDebPkgFileIndex : public pkgIndexFile
+class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
 {
  private:
    void *d;
@@ -193,7 +193,7 @@ class debDebPkgFileIndex : public pkgIndexFile
    virtual ~debDebPkgFileIndex();
 };
 
-class debDscFileIndex : public pkgIndexFile
+class APT_HIDDEN debDscFileIndex : public pkgIndexFile
 {
  private:
    std::string DscFile;
@@ -211,7 +211,7 @@ class debDscFileIndex : public pkgIndexFile
    virtual ~debDscFileIndex() {};
 };
 
-class debDebianSourceDirIndex : public debDscFileIndex
+class APT_HIDDEN debDebianSourceDirIndex : public debDscFileIndex
 {
  public:
    virtual const Type *GetType() const APT_CONST;

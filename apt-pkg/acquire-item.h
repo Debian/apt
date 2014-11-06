@@ -342,7 +342,7 @@ class pkgAcquire::Item : public WeakPointable
 };
 									/*}}}*/
 /** \brief Information about an index patch (aka diff). */		/*{{{*/
-struct DiffInfo {
+struct APT_HIDDEN DiffInfo {
    /** The filename of the diff. */
    std::string file;
 
@@ -359,9 +359,7 @@ struct DiffInfo {
    unsigned long long patch_size;
 };
 									/*}}}*/
-									/*}}}*/
-
-class pkgAcqMetaBase  : public pkgAcquire::Item
+class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
 {
    void *d;
 
@@ -441,12 +439,12 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
    bool TransactionHasError() APT_PURE;
    void CommitTransaction();
 
-   /** \brief Stage (queue) a copy action when the transaction is commited
+   /** \brief Stage (queue) a copy action when the transaction is committed
     */
    void TransactionStageCopy(Item *I,
                              const std::string &From, 
                              const std::string &To);
-   /** \brief Stage (queue) a removal action when the transaction is commited
+   /** \brief Stage (queue) a removal action when the transaction is committed
     */
    void TransactionStageRemoval(Item *I, const std::string &FinalFile);
 
@@ -459,7 +457,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
         MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
         AuthPass(false), IMSHit(false) {};
 };
-
+									/*}}}*/
 /** \brief An acquire item that downloads the detached signature	{{{
  *  of a meta-index (Release) file, then queues up the release
  *  file itself.
@@ -468,7 +466,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
  *
  *  \sa pkgAcqMetaIndex
  */
-class pkgAcqMetaSig : public pkgAcqMetaBase
+class APT_HIDDEN pkgAcqMetaSig : public pkgAcqMetaBase
 {
    void *d;
 
@@ -512,7 +510,6 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
    virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
-
 /** \brief An item that is responsible for downloading the meta-index	{{{
  *  file (i.e., Release) itself and verifying its signature.
  *
@@ -523,7 +520,7 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
  *  otherwise, the expected hashsums will be "" (causing the
  *  authentication of the index files to be bypassed).
  */
-class pkgAcqMetaIndex : public pkgAcqMetaBase
+class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
 {
    void *d;
 
@@ -568,7 +565,7 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
 };
 									/*}}}*/
 /** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
-class pkgAcqMetaClearSig : public pkgAcqMetaIndex
+class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 {
    void *d;
 
@@ -607,8 +604,6 @@ public:
    virtual ~pkgAcqMetaClearSig();
 };
 									/*}}}*/
-
-
 /** \brief Common base class for all classes that deal with fetching 	{{{
            indexes
  */
@@ -652,7 +647,7 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
  *
  *  \sa pkgAcqIndexDiffs, pkgAcqIndex
  */
-class pkgAcqDiffIndex : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
    void *d;
 
@@ -725,7 +720,7 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
    void *d;
 
@@ -813,7 +808,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class pkgAcqIndexDiffs : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
    void *d;
 
@@ -929,7 +924,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
  *
  *  \todo Why does pkgAcqIndex have protected members?
  */
-class pkgAcqIndex : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 {
    void *d;
 
@@ -1028,7 +1023,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
-class IndexTarget
+class APT_HIDDEN IndexTarget
 {
    void *d;
 
@@ -1053,7 +1048,7 @@ class IndexTarget
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
-class OptionalIndexTarget : public IndexTarget
+class APT_HIDDEN OptionalIndexTarget : public IndexTarget
 {
    void *d;
 

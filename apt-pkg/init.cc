@@ -89,7 +89,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
    // Repository security
-   // FIXME: this is set to "true" for backward compatiblity, once
+   // FIXME: this is set to "true" for backward compatibility, once
    //        jessie is out we want to change this to "false" to
    //        improve security
    Cnf.CndSet("Acquire::AllowInsecureRepositories", true);

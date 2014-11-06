@@ -392,7 +392,7 @@ debReleaseIndex::debSectionEntry::debSectionEntry (string const &Section,
 		bool const &IsSrc): Section(Section), IsSrc(IsSrc)
 {}
 
-class debSLTypeDebian : public pkgSourceList::Type
+class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 {
    protected:
 
@@ -484,7 +484,7 @@ debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)
 }
 
 
-class debSLTypeDeb : public debSLTypeDebian
+class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian
 {
    public:
 
@@ -502,7 +502,7 @@ class debSLTypeDeb : public debSLTypeDebian
    }   
 };
 
-class debSLTypeDebSrc : public debSLTypeDebian
+class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian
 {
    public:
 
@@ -520,7 +520,7 @@ class debSLTypeDebSrc : public debSLTypeDebian
    }   
 };
 
-class debSLTypeDebFile : public pkgSourceList::Type
+class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type
 {
    public:
 
@@ -539,6 +539,7 @@ class debSLTypeDebFile : public pkgSourceList::Type
       Label = "Debian Deb File";
    }   
 };
-debSLTypeDeb _apt_DebType;
-debSLTypeDebSrc _apt_DebSrcType;
-debSLTypeDebFile _apt_DebFileType;
+
+APT_HIDDEN debSLTypeDeb _apt_DebType;
+APT_HIDDEN debSLTypeDebSrc _apt_DebSrcType;
+APT_HIDDEN debSLTypeDebFile _apt_DebFileType;

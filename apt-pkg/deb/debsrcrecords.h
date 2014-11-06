@@ -21,7 +21,7 @@
 
 class pkgIndexFile;
 
-class debSrcRecordParser : public pkgSrcRecords::Parser
+class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -61,7 +61,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual ~debSrcRecordParser();
 };
 
-class debDscRecordParser : public debSrcRecordParser
+class APT_HIDDEN debDscRecordParser : public debSrcRecordParser
 {
  public:
    debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index);

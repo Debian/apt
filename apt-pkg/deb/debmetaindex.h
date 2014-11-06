@@ -21,7 +21,7 @@ class pkgIndexFile;
 class debDebPkgFileIndex;
 class IndexTarget;
 
-class debReleaseIndex : public metaIndex {
+class APT_HIDDEN debReleaseIndex : public metaIndex {
    public:
 
    class debSectionEntry
@@ -74,7 +74,7 @@ class debReleaseIndex : public metaIndex {
    void PushSectionEntry(const debSectionEntry *Entry);
 };
 
-class debDebFileMetaIndex : public metaIndex
+class APT_HIDDEN debDebFileMetaIndex : public metaIndex
 {
  private:
    std::string DebFile;

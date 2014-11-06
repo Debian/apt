@@ -25,7 +25,7 @@
 #include <apt-pkg/indexfile.h>
 #endif
 
-class debRecordParser : public pkgRecords::Parser
+class APT_HIDDEN debRecordParser : public pkgRecords::Parser
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -64,7 +64,7 @@ class debRecordParser : public pkgRecords::Parser
 };
 
 // custom record parser that reads deb files directly
-class debDebFileRecordParser : public debRecordParser
+class APT_HIDDEN debDebFileRecordParser : public debRecordParser
 {
  public:
    virtual std::string FileName() {

@@ -26,7 +26,7 @@
 
 class FileFd;
 
-class debListParser : public pkgCacheGenerator::ListParser
+class APT_HIDDEN debListParser : public pkgCacheGenerator::ListParser
 {
    public:
 
@@ -59,7 +59,7 @@ class debListParser : public pkgCacheGenerator::ListParser
 
    public:
 
-   static unsigned char GetPrio(std::string Str);
+   APT_PUBLIC static unsigned char GetPrio(std::string Str);
       
    // These all operate against the current section
    virtual std::string Package();
@@ -84,26 +84,26 @@ class debListParser : public pkgCacheGenerator::ListParser
    bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
 			std::string section);
 
-   static const char *ParseDepends(const char *Start,const char *Stop,
+   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op);
-   static const char *ParseDepends(const char *Start,const char *Stop,
+   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op,
 	 bool const &ParseArchFlags);
-   static const char *ParseDepends(const char *Start,const char *Stop,
+   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op,
 	 bool const &ParseArchFlags, bool const &StripMultiArch);
-   static const char *ParseDepends(const char *Start,const char *Stop,
+   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op,
 	 bool const &ParseArchFlags, bool const &StripMultiArch,
 	 bool const &ParseRestrictionsList);
 
-   static const char *ConvertRelation(const char *I,unsigned int &Op);
+   APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File, std::string const &Arch = "");
    virtual ~debListParser();
 };
 
-class debDebFileParser : public debListParser
+class APT_HIDDEN debDebFileParser : public debListParser
 {
  private:
    std::string DebFile;
@@ -114,7 +114,7 @@ class debDebFileParser : public debListParser
 			   pkgCache::VerIterator &Ver);
 };
 
-class debTranslationsParser : public debListParser
+class APT_HIDDEN debTranslationsParser : public debListParser
 {
  public:
    // a translation can never be a real package

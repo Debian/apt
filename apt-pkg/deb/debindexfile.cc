@@ -802,13 +802,13 @@ pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
 }
 									/*}}}*/
 // Index File types for Debian						/*{{{*/
-class debIFTypeSrc : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeSrc : public pkgIndexFile::Type
 {
    public:
    
    debIFTypeSrc() {Label = "Debian Source Index";};
 };
-class debIFTypePkg : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypePkg : public pkgIndexFile::Type
 {
    public:
    
@@ -818,12 +818,12 @@ class debIFTypePkg : public pkgIndexFile::Type
    };
    debIFTypePkg() {Label = "Debian Package Index";};
 };
-class debIFTypeTrans : public debIFTypePkg
+class APT_HIDDEN debIFTypeTrans : public debIFTypePkg
 {
    public:
    debIFTypeTrans() {Label = "Debian Translation Index";};
 };
-class debIFTypeStatus : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 {
    public:
    
@@ -833,7 +833,7 @@ class debIFTypeStatus : public pkgIndexFile::Type
    };
    debIFTypeStatus() {Label = "Debian dpkg status file";};
 };
-class debIFTypeDebPkgFile : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
 {
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
@@ -842,7 +842,7 @@ class debIFTypeDebPkgFile : public pkgIndexFile::Type
    };
    debIFTypeDebPkgFile() {Label = "deb Package file";};
 };
-class debIFTypeDscFile : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
 {
    public:
    virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string DscFile) const
@@ -851,7 +851,7 @@ class debIFTypeDscFile : public pkgIndexFile::Type
    };
    debIFTypeDscFile() {Label = "dsc File Source Index";};
 };
-class debIFTypeDebianSourceDir : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeDebianSourceDir : public pkgIndexFile::Type
 {
    public:
    virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string SourceDir) const
@@ -861,14 +861,14 @@ class debIFTypeDebianSourceDir : public pkgIndexFile::Type
    debIFTypeDebianSourceDir() {Label = "debian/control File Source Index";};
 };
 
-static debIFTypeSrc _apt_Src;
-static debIFTypePkg _apt_Pkg;
-static debIFTypeTrans _apt_Trans;
-static debIFTypeStatus _apt_Status;
-static debIFTypeDebPkgFile _apt_DebPkgFile;
+APT_HIDDEN debIFTypeSrc _apt_Src;
+APT_HIDDEN debIFTypePkg _apt_Pkg;
+APT_HIDDEN debIFTypeTrans _apt_Trans;
+APT_HIDDEN debIFTypeStatus _apt_Status;
+APT_HIDDEN debIFTypeDebPkgFile _apt_DebPkgFile;
 // file based pseudo indexes
-static debIFTypeDscFile _apt_DscFile;
-static debIFTypeDebianSourceDir _apt_DebianSourceDir;
+APT_HIDDEN debIFTypeDscFile _apt_DscFile;
+APT_HIDDEN debIFTypeDebianSourceDir _apt_DebianSourceDir;
 
 const pkgIndexFile::Type *debSourcesIndex::GetType() const
 {

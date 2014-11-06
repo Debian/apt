@@ -34,7 +34,7 @@ class pkgSourceList;
 class OpProgress;
 class pkgIndexFile;
 
-class pkgCacheGenerator							/*{{{*/
+class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 {
    private:
    APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
@@ -111,10 +111,10 @@ class pkgCacheGenerator							/*{{{*/
    bool MergeFileProvides(ListParser &List);
    bool FinishCache(OpProgress *Progress) APT_DEPRECATED APT_CONST;
 
-   static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
+   APT_PUBLIC static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
-   static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
-   static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
+   APT_PUBLIC static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
+   APT_PUBLIC static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
 
    void ReMap(void const * const oldMap, void const * const newMap);
 
@@ -136,7 +136,7 @@ class pkgCacheGenerator							/*{{{*/
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
-class pkgCacheGenerator::ListParser
+class APT_HIDDEN pkgCacheGenerator::ListParser
 {
    pkgCacheGenerator *Owner;
    friend class pkgCacheGenerator;
