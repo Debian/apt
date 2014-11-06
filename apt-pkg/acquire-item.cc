@@ -44,9 +44,6 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -63,20 +60,6 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
    std::cerr << " Actual Hash: " << std::endl;
    for (HashStringList::const_iterator hs = Actual.begin(); hs != Actual.end(); ++hs)
       std::cerr <<  "\t- " << hs->toStr() << std::endl;
-}
-									/*}}}*/
-static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode) /*{{{*/
-{
-   // ensure the file is owned by root and has good permissions
-   struct passwd const * const pw = getpwnam(user);
-   struct group const * const gr = getgrnam(group);
-   if (getuid() == 0) // if we aren't root, we can't chown, so don't try it
-   {
-      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
-	 _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
-   }
-   if (chmod(file, mode) != 0)
-      _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
 }
 									/*}}}*/
 static std::string GetPartialFileName(std::string const &file)		/*{{{*/
@@ -155,7 +138,7 @@ pkgAcquire::Item::~Item()
    fetch this object */
 void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   if(ErrorText == "")
+   if(ErrorText.empty())
       ErrorText = LookupTag(Message,"Message");
    UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
@@ -179,9 +162,9 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Status = StatIdle;
 
    // check fail reason
-   string FailReason = LookupTag(Message, "FailReason");
+   string const FailReason = LookupTag(Message, "FailReason");
    if(FailReason == "MaximumSizeExceeded")
-      Rename(DestFile, DestFile+".FAILED");
+      RenameOnError(MaximumSizeExceeded);
 
    // report mirror failure back to LP if we actually use a mirror
    if(FailReason.size() != 0)
@@ -197,6 +180,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 void pkgAcquire::Item::Start(string /*Message*/,unsigned long long Size)
 {
    Status = StatFetching;
+   ErrorText.clear();
    if (FileSize == 0 && Complete == false)
       FileSize = Size;
 }
@@ -242,12 +226,6 @@ bool pkgAcquire::Item::Rename(string From,string To)
 									/*}}}*/
 void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
 {
-   if (RealFileExists(DestFile))
-   {
-      std::string SandboxUser = _config->Find("APT::Sandbox::User");
-      ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
-                                     SandboxUser.c_str(), "root", 0600);
-   }
    Owner->Enqueue(Item);
 }
 									/*}}}*/
@@ -258,7 +236,7 @@ void pkgAcquire::Item::Dequeue()					/*{{{*/
 									/*}}}*/
 bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
 {
-   if(FileExists(DestFile))
+   if (RealFileExists(DestFile))
       Rename(DestFile, DestFile + ".FAILED");
 
    switch (error)
@@ -283,7 +261,11 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 	 Status = StatError;
 	 break;
       case NotClearsigned:
-         ErrorText = _("Does not start with a cleartext signature");
+	 ErrorText = _("Does not start with a cleartext signature");
+	 Status = StatError;
+	 break;
+      case MaximumSizeExceeded:
+	 // the method is expected to report a good error for this
 	 Status = StatError;
 	 break;
    }
@@ -702,14 +684,14 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 									/*}}}*/
 void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{{*/
 {
+   Item::Failed(Message,Cnf);
+   Status = StatDone;
+
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
-
-   Item::Failed(Message,Cnf);
-   Status = StatDone;
 }
 									/*}}}*/
 void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
@@ -792,8 +774,11 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    }
 }
 									/*}}}*/
-void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
+void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{{*/
 {
+   Item::Failed(Message,Cnf);
+   Status = StatDone;
+
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
@@ -1284,11 +1269,14 @@ string pkgAcqIndex::Custom600Headers() const
 // pkgAcqIndex::Failed - getting the indexfile failed			/*{{{*/
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   Item::Failed(Message,Cnf);
+
    size_t const nextExt = CompressionExtensions.find(' ');
    if (nextExt != std::string::npos)
    {
       CompressionExtensions = CompressionExtensions.substr(nextExt+1);
       Init(RealURI, Desc.Description, Desc.ShortDesc);
+      Status = StatIdle;
       return;
    }
 
@@ -1515,19 +1503,10 @@ void pkgAcqMetaBase::AbortTransaction()
          std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
       // the transaction will abort, so stop anything that is idle
       if ((*I)->Status == pkgAcquire::Item::StatIdle)
-         (*I)->Status = pkgAcquire::Item::StatDone;
-
-      // kill failed files in partial
-      if ((*I)->Status == pkgAcquire::Item::StatError)
       {
-         std::string const PartialFile = GetPartialFileName(flNotDir((*I)->DestFile));
-         if(FileExists(PartialFile))
-            Rename(PartialFile, PartialFile + ".FAILED");
+         (*I)->Status = pkgAcquire::Item::StatDone;
+         (*I)->Dequeue();
       }
-      // fix permissions for existing files which were part of a reverify
-      // like InRelease files or files in partial we might work with next time
-      else if (FileExists((*I)->DestFile))
-	 ChangeOwnerAndPermissionOfFile("AbortTransaction", (*I)->DestFile.c_str(), "root", "root", 0644);
    }
    Transaction.clear();
 }
@@ -1562,8 +1541,6 @@ void pkgAcqMetaBase::CommitTransaction()
 	       << (*I)->DescURI() << std::endl;
 
 	 Rename((*I)->PartialFile, (*I)->DestFile);
-	 ChangeOwnerAndPermissionOfFile("CommitTransaction", (*I)->DestFile.c_str(), "root", "root", 0644);
-
       } else {
          if(_config->FindB("Debug::Acquire::Transaction", false) == true)
             std::clog << "rm "
@@ -1712,16 +1689,17 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   Item::Failed(Message,Cnf);
 
    // check if we need to fail at this point 
    if (AuthPass == true && CheckStopAuthentication(RealURI, Message))
          return;
 
    // FIXME: meh, this is not really elegant
-   string InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
+   string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   string const InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
                                          "InRelease");
-   string FinalInRelease = _config->FindDir("Dir::State::lists") + URItoFileName(InReleaseURI);
+   string const FinalInRelease = _config->FindDir("Dir::State::lists") + URItoFileName(InReleaseURI);
 
    if (RealFileExists(Final) || RealFileExists(FinalInRelease))
    {
@@ -1736,7 +1714,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
          _error->Warning(_("This is normally not allowed, but the option "
                            "Acquire::AllowDowngradeToInsecureRepositories was "
                            "given to override it."));
-         
+         Status = StatDone;
       } else {
          _error->Error("%s", downgrade_msg.c_str());
          Rename(MetaIndexFile, MetaIndexFile+".FAILED");
@@ -1763,8 +1741,6 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       MetaIndexParser->Load(MetaIndexFile);
       QueueIndexes(true);
    }
-
-   Item::Failed(Message,Cnf);
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
    if (Cnf->LocalOnly == true ||
@@ -2152,10 +2128,12 @@ string pkgAcqMetaClearSig::Custom600Headers() const
 									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file                     	/*{{{*/
 // ---------------------------------------------------------------------
-void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long /*Size*/,
-                              HashStringList const &/*Hashes*/,
+void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
+                              HashStringList const &Hashes,
                               pkgAcquire::MethodConfig *Cnf)
 {
+   Item::Done(Message, Size, Hashes, Cnf);
+
    // if we expect a ClearTextSignature (InRelase), ensure that
    // this is what we get and if not fail to queue a 
    // Release/Release.gpg, see #346386
@@ -2420,11 +2398,7 @@ bool pkgAcqArchive::QueueNext()
 	 if ((unsigned long long)Buf.st_size > Version->Size)
 	    unlink(DestFile.c_str());
 	 else
-	 {
 	    PartialSize = Buf.st_size;
-            std::string SandboxUser = _config->Find("APT::Sandbox::User");
-	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext",DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
-	 }
       }
 
       // Disables download of archives - useful if no real installation follows,
@@ -2493,7 +2467,6 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size, HashStringList 
    string FinalFile = _config->FindDir("Dir::Cache::Archives");
    FinalFile += flNotDir(StoreFilename);
    Rename(DestFile,FinalFile);
-   ChangeOwnerAndPermissionOfFile("pkgAcqArchive::Done", FinalFile.c_str(), "root", "root", 0644);
    StoreFilename = DestFile = FinalFile;
    Complete = true;
 }
@@ -2503,8 +2476,8 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size, HashStringList 
 /* Here we try other sources */
 void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   ErrorText = LookupTag(Message,"Message");
-   
+   Item::Failed(Message,Cnf);
+
    /* We don't really want to retry on failed media swaps, this prevents 
       that. An interesting observation is that permanent failures are not
       recorded. */
@@ -2514,10 +2487,10 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       // Vf = Version.FileList();
       while (Vf.end() == false) ++Vf;
       StoreFilename = string();
-      Item::Failed(Message,Cnf);
       return;
    }
-   
+
+   Status = StatIdle;
    if (QueueNext() == false)
    {
       // This is the retry counter
@@ -2530,9 +2503,9 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 if (QueueNext() == true)
 	    return;
       }
-      
+
       StoreFilename = string();
-      Item::Failed(Message,Cnf);
+      Status = StatError;
    }
 }
 									/*}}}*/
@@ -2589,11 +2562,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI, HashStringList const &Hashe
       if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
-      {
 	 PartialSize = Buf.st_size;
-         std::string SandboxUser = _config->Find("APT::Sandbox::User");
-	 ChangeOwnerAndPermissionOfFile("pkgAcqFile", DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
-      }
    }
 
    QueueURI(Desc);
@@ -2652,7 +2621,12 @@ void pkgAcqFile::Done(string Message,unsigned long long Size,HashStringList cons
       // Symlink the file
       if (symlink(FileName.c_str(),DestFile.c_str()) != 0)
       {
-	 ErrorText = "Link to " + DestFile + " failure ";
+	 _error->PushToStack();
+	 _error->Errno("pkgAcqFile::Done", "Symlinking file %s failed", DestFile.c_str());
+	 std::stringstream msg;
+	 _error->DumpErrors(msg);
+	 _error->RevertToStack();
+	 ErrorText = msg.str();
 	 Status = StatError;
 	 Complete = false;
       }      
@@ -2664,19 +2638,19 @@ void pkgAcqFile::Done(string Message,unsigned long long Size,HashStringList cons
 /* Here we try other sources */
 void pkgAcqFile::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   ErrorText = LookupTag(Message,"Message");
-   
+   Item::Failed(Message,Cnf);
+
    // This is the retry counter
    if (Retries != 0 &&
        Cnf->LocalOnly == false &&
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
    {
-      Retries--;
+      --Retries;
       QueueURI(Desc);
+      Status = StatIdle;
       return;
    }
-   
-   Item::Failed(Message,Cnf);
+
 }
 									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/

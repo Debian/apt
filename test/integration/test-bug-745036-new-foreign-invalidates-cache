@@ -6,10 +6,8 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'amd64'
 
-insertpackage 'unstable' 'cool-foo' 'amd64' '1.0' 'Depends: foo'
-insertpackage 'unstable' 'foo' 'amd64' '1.0' 'Multi-Arch: foreign'
-insertinstalledpackage 'cool-foo' 'amd64' '1.0' 'Depends: foo'
-insertinstalledpackage 'foo' 'amd64' '1.0' 'Multi-Arch: foreign'
+insertpackage 'unstable,installed' 'cool-foo' 'amd64' '1.0' 'Depends: foo'
+insertpackage 'unstable,installed' 'foo' 'amd64' '1.0' 'Multi-Arch: foreign'
 
 setupaptarchive
 

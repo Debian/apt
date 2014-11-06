@@ -161,10 +161,10 @@ class HashStringList
    std::vector<HashString> list;
 };
 
+class PrivateHashes;
 class Hashes
 {
-   /** \brief dpointer placeholder */
-   void *d;
+   PrivateHashes *d;
 
    public:
    /* those will disappear in the future as it is hard to add new ones this way.

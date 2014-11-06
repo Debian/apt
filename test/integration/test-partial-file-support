@@ -52,36 +52,37 @@ cp -a ${TESTDIR}/framework $TESTFILE
 
 testrun() {
 	webserverconfig 'aptwebserver::support::range' 'true'
+	local DOWN='./downloaded/testfile'
 
-	copysource $TESTFILE 0 ./testfile
-	testdownloadfile 'no data' "${1}/testfile" './testfile' '='
+	copysource $TESTFILE 0 $DOWN
+	testdownloadfile 'no data' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 
-	copysource $TESTFILE 20 ./testfile
-	testdownloadfile 'valid partial data' "${1}/testfile" './testfile' '='
+	copysource $TESTFILE 20 $DOWN
+	testdownloadfile 'valid partial data' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '206' "$DOWNLOADLOG"
 
-	copysource /dev/zero 20 ./testfile
-	testdownloadfile 'invalid partial data' "${1}/testfile" './testfile' '!='
+	copysource /dev/zero 20 $DOWN
+	testdownloadfile 'invalid partial data' "${1}/testfile" "$DOWN" '!='
 	testwebserverlaststatuscode '206' "$DOWNLOADLOG"
 
-	copysource $TESTFILE 1M ./testfile
-	testdownloadfile 'completely downloaded file' "${1}/testfile" './testfile' '='
+	copysource $TESTFILE 1M $DOWN
+	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
 
-	copysource /dev/zero 1M ./testfile
-	testdownloadfile 'too-big partial file' "${1}/testfile" './testfile' '='
+	copysource /dev/zero 1M $DOWN
+	testdownloadfile 'too-big partial file' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 
-	copysource /dev/zero 20 ./testfile
-	touch ./testfile
-	testdownloadfile 'old data' "${1}/testfile" './testfile' '='
+	copysource /dev/zero 20 $DOWN
+	touch $DOWN
+	testdownloadfile 'old data' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 
 	webserverconfig 'aptwebserver::support::range' 'false'
 
-	copysource $TESTFILE 20 ./testfile
-	testdownloadfile 'no server support' "${1}/testfile" './testfile' '='
+	copysource $TESTFILE 20 $DOWN
+	testdownloadfile 'no server support' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 }
 

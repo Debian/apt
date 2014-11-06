@@ -473,6 +473,10 @@ bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
 	    hex2bytes(CurStat.MD5, hs->HashValue().data(), sizeof(CurStat.MD5));
 	    CurStat.Flags |= FlMD5;
 	 }
+	 else if (strcasecmp(hs->HashType().c_str(), "Checksum-FileSize") == 0)
+	 {
+	    // we store it in a different field already
+	 }
 	 else
 	    return _error->Error("Got unknown unrequested hashtype %s", hs->HashType().c_str());
       }

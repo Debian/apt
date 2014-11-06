@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+configcompression 'gz'
+
+insertpackage 'testing' 'foo' 'all' '1'
+insertpackage 'testing' 'foo2' 'all' '1'
+insertsource 'testing' 'foo' 'all' '1'
+insertsource 'testing' 'foo2' 'all' '1'
+
+setupaptarchive --no-update
+changetowebserver
+
+echo 'Package: bar
+Maintainer: Doctor Evil <evil@example.com>
+Description: come to the dark side
+' > aptarchive/DoctorEvil
+compressfile aptarchive/DoctorEvil
+
+find aptarchive \( -name 'Packages' -o -name 'Sources' -o -name 'Translation-en' \) -delete
+
+testsuccess aptget update
+testsuccess aptcache show foo
+testsuccess aptget install foo -s
+
+for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log); do
+	msgmsg 'Test hashsum mismatch with file' "$get"
+	rm -rf rootdir/var/lib/apt/lists
+	webserverconfig 'aptwebserver::overwrite' ''
+	webserverconfig "aptwebserver::overwrite::$(printf '%s' "${get}" | sed 's#/#%2F#g' )::filename" '%2FDoctorEvil.gz'
+
+	testfailure aptget update
+	cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
+	testsuccess grep -E "$(basename -s '.gz' "$get").*Hash Sum mismatch" rootdir/tmp/update.output
+	testfailure aptcache show foo
+	testfailure aptget install foo -s
+
+	testfailure aptcache show bar
+	testfailure aptget install bar -s
+done

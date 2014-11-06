@@ -8,23 +8,18 @@ setupenvironment
 configarchitecture "i386"
 
 # simple case
-insertpackage 'stable' 'upgrade-simple' 'all' '1.0'
+insertpackage 'stable,installed' 'upgrade-simple' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-simple' 'all' '2.0'
-insertinstalledpackage 'upgrade-simple' 'all' '1.0'
 
 # upgrade with a new dependency
-insertpackage 'stable' 'upgrade-with-new-dep' 'all' '1.0' 
+insertpackage 'stable,installed' 'upgrade-with-new-dep' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-with-new-dep' 'all' '2.0' 'Depends: new-dep'
 insertpackage 'stable' 'new-dep' 'all' '1.0'
-insertinstalledpackage 'upgrade-with-new-dep' 'all' '1.0'
 
 # upgrade with conflict and a new pkg with higher priority than conflict
-insertpackage 'stable' 'upgrade-with-conflict' 'all' '1.0'
+insertpackage 'stable,installed' 'upgrade-with-conflict' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-with-conflict' 'all' '2.0' 'Conflicts: conflicting-dep' 'standard'
-insertpackage 'stable' 'conflicting-dep' 'all' '1.0'
-insertinstalledpackage 'upgrade-with-conflict' 'all' '1.0'
-insertinstalledpackage 'conflicting-dep' 'all' '1.0'
-
+insertpackage 'stable,installed' 'conflicting-dep' 'all' '1.0'
 
 setupaptarchive
 

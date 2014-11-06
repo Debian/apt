@@ -116,6 +116,9 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
             indexRecords::checkSum *Sum = new indexRecords::checkSum;
             Sum->MetaKeyFilename = Name;
             Sum->Size = Size;
+	    std::string SizeStr;
+	    strprintf(SizeStr, "%llu", Size);
+	    Sum->Hashes.push_back(HashString("Checksum-FileSize", SizeStr));
 #if __GNUC__ >= 4
        #pragma GCC diagnostic push
        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

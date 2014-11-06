@@ -41,7 +41,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg
 	testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
 	msgtest 'Check if trusted.gpg is created with permissions set to' '0644'
 	if [ "$(stat -c '%a' rootdir/etc/apt/trusted.gpg )" = '644' ]; then
@@ -78,7 +78,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
 	msgtest 'Test key removal with' 'long key ID'
@@ -86,7 +86,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del 5A90D141DBAC8DAE
 	testempty aptkey list
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
 	msgtest 'Test key removal with' 'fingerprint'
@@ -94,7 +94,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
 	testempty aptkey list
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
 	msgtest 'Test key removal with' 'single key in softlink'
@@ -102,7 +102,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	ln -s $(readlink -f ./keys/joesixpack.pub) rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
 	cleanplate
@@ -125,7 +125,7 @@ pub   2048R/528144E2 2011-01-16'
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'pub   2048R/528144E2 2011-01-16'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
-	testsuccess test ! -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	testfailure test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 
 	msgtest 'Test key removal with' 'multiple files including key'
@@ -134,7 +134,7 @@ pub   2048R/528144E2 2011-01-16'
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'pub   2048R/528144E2 2011-01-16'
-	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 

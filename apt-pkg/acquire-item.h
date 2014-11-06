@@ -63,6 +63,8 @@ class pkgAcqMetaBase;
  */
 class pkgAcquire::Item : public WeakPointable
 {  
+   friend class pkgAcqMetaBase;
+
    void *d;
 
    protected:
@@ -323,6 +325,7 @@ class pkgAcquire::Item : public WeakPointable
       InvalidFormat,
       SignatureError,
       NotClearsigned,
+      MaximumSizeExceeded
    };
 
    /** \brief Rename failed file and set error

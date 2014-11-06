@@ -30,7 +30,7 @@ runtest() {
     
     # ensure that we still do a hash check on ims hit
     msgtest 'Test I-M-S' 'reverify'
-    aptget update -o Debug::pkgAcquire::Auth=1 2>&1 | grep -A1 'RecivedHash:' | grep -q -- '- SHA' && msgpass || msgfail
+    aptget update -o Debug::pkgAcquire::Auth=1 2>&1 | grep -A2 'RecivedHash:' | grep -q -- '- SHA' && msgpass || msgfail
 
     # ensure no leftovers in partial
     testfailure ls "rootdir/var/lib/apt/lists/partial/*"

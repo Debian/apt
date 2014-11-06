@@ -46,7 +46,11 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 	if ! ${testcase}; then
 		FAIL=$((FAIL+1))
 		FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
-		echo >&2 "$(basename $testcase) ... FAIL"
+		if [ "$MSGLEVEL" -le 2 ]; then
+			printf >&2 "\n${CHIGH}Running $(basename $testcase) -> FAILED${CRESET}"
+		else
+			echo >&2 "${CHIGH}Running $(basename $testcase) -> FAILED${CRESET}"
+		fi
 	else
 		PASS=$((PASS+1))
 	fi

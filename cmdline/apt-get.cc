@@ -80,6 +80,9 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <pwd.h>
+#include <grp.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -659,6 +662,8 @@ static bool DoDownload(CommandLine &CmdL)
 	 Ver != verset.end(); ++Ver, ++i)
    {
       pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
+      if (storefile[i].empty())
+	 continue;
       std::string const filename = cwd + flNotDir(storefile[i]);
       storefile[i].assign(filename);
       I->DestFile.assign(filename);
@@ -1481,7 +1486,10 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
                           "http://packages.debian.org/changelogs");
    string const path = GetChangelogPath(CacheFile, Ver);
    string changelog_uri;
-   strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
+   if (APT::String::Endswith(server, "/") == true)
+      strprintf(changelog_uri, "%s%s/changelog", server.c_str(), path.c_str());
+   else
+      strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
    {
       std::cout << '\'' << changelog_uri << '\'' << std::endl;
@@ -1492,7 +1500,7 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    string descr;
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
-   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+   pkgAcquire::Item const * itm = new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
 
    // Disable drop-privs if "_apt" can not write to the target dir
    CheckDropPrivsMustBeDisabled(Fetcher);
@@ -1500,18 +1508,18 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    // try downloading it, if that fails, try third-party-changelogs location
    // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?
    Fetcher.Run();
-   if (!FileExists(targetfile))
+   if (itm->Status != pkgAcquire::Item::StatDone)
    {
       string third_party_uri;
       if (GuessThirdPartyChangelogUri(CacheFile, Ver, third_party_uri))
       {
          strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
-         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+         itm = new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
          Fetcher.Run();
       }
    }
 
-   if (FileExists(targetfile))
+   if (itm->Status == pkgAcquire::Item::StatDone)
       return true;
 
    // error
@@ -1557,6 +1565,19 @@ static bool DoChangelog(CommandLine &CmdL)
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
+
+      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+      if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+      {
+	 struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+	 struct group const * const gr = getgrnam("root");
+	 if (pw != NULL && gr != NULL)
+	 {
+	    // chown the tmp dir directory we use to the sandbox user
+	    if(chown(tmpdir, pw->pw_uid, gr->gr_gid) != 0)
+	       _error->WarningE("DoChangelog", "chown to %s:%s of directory %s failed", SandboxUser.c_str(), "root", tmpdir);
+	 }
+      }
    }
 
    for (APT::VersionList::const_iterator Ver = verset.begin(); 
@@ -1572,7 +1593,7 @@ static bool DoChangelog(CommandLine &CmdL)
       {
          DisplayFileInPager(changelogfile);
          // cleanup temp file
-         unlink(changelogfile.c_str());
+	 unlink(changelogfile.c_str());
       }
    }
    // clenaup tmp dir

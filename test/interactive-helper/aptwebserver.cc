@@ -157,9 +157,8 @@ static bool sendData(int const client, std::string const &data)		/*{{{*/
 }
 									/*}}}*/
 static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
-	       bool content, std::string const &error = "")
+	       bool content, std::string const &error = "", std::list<std::string> headers = std::list<std::string>())
 {
-   std::list<std::string> headers;
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
@@ -367,20 +366,86 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 
    // Proxies require absolute uris, so this is a simple proxy-fake option
    std::string const absolute = _config->Find("aptwebserver::request::absolute", "uri,path");
-   if (strncmp(host.c_str(), filename.c_str(), host.length()) == 0)
+   if (strncmp(host.c_str(), filename.c_str(), host.length()) == 0 && APT::String::Startswith(filename, "/_config/") == false)
    {
       if (absolute.find("uri") == std::string::npos)
       {
 	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that");
 	 return false;
       }
+
       // strip the host from the request to make it an absolute path
       filename.erase(0, host.length());
+
+      std::string const authConf = _config->Find("aptwebserver::proxy-authorization", "");
+      std::string auth = LookupTag(request, "Proxy-Authorization", "");
+      if (authConf.empty() != auth.empty())
+      {
+	 if (auth.empty())
+	    sendError(client, 407, request, sendContent, "Proxy requires authentication");
+	 else
+	    sendError(client, 407, request, sendContent, "Client wants to authenticate to proxy, but proxy doesn't need it");
+	return false;
+      }
+      if (authConf.empty() == false)
+      {
+	 char const * const basic = "Basic ";
+	 if (strncmp(auth.c_str(), basic, strlen(basic)) == 0)
+	 {
+	    auth.erase(0, strlen(basic));
+	    if (auth != authConf)
+	    {
+	       sendError(client, 407, request, sendContent, "Proxy-Authentication doesn't match");
+	       return false;
+	    }
+	 }
+	 else
+	 {
+	    std::list<std::string> headers;
+	    headers.push_back("Proxy-Authenticate: Basic");
+	    sendError(client, 407, request, sendContent, "Unsupported Proxy-Authentication Scheme", headers);
+	    return false;
+	 }
+      }
    }
-   else if (absolute.find("path") == std::string::npos)
+   else if (absolute.find("path") == std::string::npos && APT::String::Startswith(filename, "/_config/") == false)
    {
       sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
       return false;
+   }
+
+   if (APT::String::Startswith(filename, "/_config/") == false)
+   {
+      std::string const authConf = _config->Find("aptwebserver::authorization", "");
+      std::string auth = LookupTag(request, "Authorization", "");
+      if (authConf.empty() != auth.empty())
+      {
+	 if (auth.empty())
+	    sendError(client, 401, request, sendContent, "Server requires authentication");
+	 else
+	    sendError(client, 401, request, sendContent, "Client wants to authenticate to server, but server doesn't need it");
+	 return false;
+      }
+      if (authConf.empty() == false)
+      {
+	 char const * const basic = "Basic ";
+	 if (strncmp(auth.c_str(), basic, strlen(basic)) == 0)
+	 {
+	    auth.erase(0, strlen(basic));
+	    if (auth != authConf)
+	    {
+	       sendError(client, 401, request, sendContent, "Authentication doesn't match");
+	       return false;
+	    }
+	 }
+	 else
+	 {
+	    std::list<std::string> headers;
+	    headers.push_back("WWW-Authenticate: Basic");
+	    sendError(client, 401, request, sendContent, "Unsupported Authentication Scheme", headers);
+	    return false;
+	 }
+      }
    }
 
    size_t paramspos = filename.find('?');
@@ -434,9 +499,11 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    return true;
 }
 									/*}}}*/
-static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> parts)/*{{{*/
 {
    size_t const pcount = parts.size();
+   for (size_t i = 0; i < pcount; ++i)
+      parts[i] = DeQuoteString(parts[i]);
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);
@@ -656,6 +723,8 @@ int main(int const argc, const char * argv[])
    CommandLine::Args Args[] = {
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
       {0, "request-absolute", "aptwebserver::request::absolute", CommandLine::HasArg},
+      {0, "authorization", "aptwebserver::authorization", CommandLine::HasArg},
+      {0, "proxy-authorization", "aptwebserver::proxy-authorization", CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}

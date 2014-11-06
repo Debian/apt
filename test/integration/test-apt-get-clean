@@ -26,10 +26,10 @@ touch rootdir/var/cache/apt/archives/foo_4_all.deb
 
 testsuccess aptget clean
 
-testsuccess test ! -e rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
-testsuccess test ! -e rootdir/var/cache/apt/archives/foo_1_all.deb
-testsuccess test ! -e rootdir/var/cache/apt/archives/foo_2_all.deb
-testsuccess test ! -e rootdir/var/cache/apt/archives/foo_3_all.deb
-testsuccess test ! -e rootdir/var/cache/apt/archives/foo_4_all.deb
+testfailure test -e rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
+testfailure test -e rootdir/var/cache/apt/archives/foo_1_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_2_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
 
 

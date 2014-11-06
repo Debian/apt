@@ -49,16 +49,23 @@ bool CheckDropPrivsMustBeDisabled(pkgAcquire &Fetcher)			/*{{{*/
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin();
 	I != Fetcher.ItemsEnd() && res == true; ++I)
    {
-      int fd = open((*I)->DestFile.c_str(), O_CREAT | O_RDWR, 0600);
+      if ((*I)->DestFile.empty())
+	 continue;
+      // we assume that an existing (partial) file means that we have sufficient rights
+      if (RealFileExists((*I)->DestFile))
+	 continue;
+      int fd = open((*I)->DestFile.c_str(), O_CREAT | O_EXCL | O_RDWR, 0600);
       if (fd < 0)
       {
 	 res = false;
 	 std::string msg;
 	 strprintf(msg, _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
 	       (*I)->DestFile.c_str(), SandboxUser.c_str());
-	 c0out << msg << std::endl;
+	 std::cerr << "W: " << msg << std::endl;
 	 _config->Set("APT::Sandbox::User", "");
+	 break;
       }
+      unlink((*I)->DestFile.c_str());
       close(fd);
    }
 
