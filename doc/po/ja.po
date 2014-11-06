@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-08-28 00:20+0000\n"
+"POT-Creation-Date: 2014-11-06 09:45+0100\n"
 "PO-Revision-Date: 2014-07-10 19:52+0900\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@debian.or.jp>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -892,9 +892,9 @@ msgstr ""
 "literal> がデフォルトで有効になっています。"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.8.xml:170 apt-get.8.xml:552 apt-cache.8.xml:346 apt-key.8.xml:191
+#: apt.8.xml:170 apt-get.8.xml:560 apt-cache.8.xml:346 apt-key.8.xml:191
 #: apt-mark.8.xml:127 apt-secure.8.xml:187 apt-cdrom.8.xml:148
-#: apt-config.8.xml:105 apt.conf.5.xml:1222 apt_preferences.5.xml:701
+#: apt-config.8.xml:105 apt.conf.5.xml:1254 apt_preferences.5.xml:701
 #: sources.list.5.xml:274 apt-extracttemplates.1.xml:66 apt-sortpkgs.1.xml:59
 #: apt-ftparchive.1.xml:603
 msgid "See Also"
@@ -910,7 +910,7 @@ msgstr ""
 "&guidesdir; にあるAPTユーザガイド、 &apt-preferences;、 APT Howto."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.8.xml:176 apt-get.8.xml:558 apt-cache.8.xml:351 apt-mark.8.xml:131
+#: apt.8.xml:176 apt-get.8.xml:566 apt-cache.8.xml:351 apt-mark.8.xml:131
 #: apt-cdrom.8.xml:153 apt-config.8.xml:110 apt-extracttemplates.1.xml:70
 #: apt-sortpkgs.1.xml:63 apt-ftparchive.1.xml:607
 msgid "Diagnostics"
@@ -1767,6 +1767,15 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:529
 msgid ""
+"Forbid the update command to acquire unverifiable data from configured "
+"sources. Apt will fail at the update command for repositories without valid "
+"cryptographically signatures.  Configuration Item: <literal>Acquire::"
+"AllowInsecureRepositories</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml:537
+msgid ""
 "Show user friendly progress information in the terminal window when packages "
 "are installed, upgraded or removed. For a machine parsable version of this "
 "data see README.progress-reporting in the apt doc directory.  Configuration "
@@ -1780,13 +1789,13 @@ msgstr ""
 "<literal>Dpkg::Progress-Fancy</literal>"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:542 apt-cache.8.xml:339 apt-key.8.xml:170 apt-mark.8.xml:121
-#: apt.conf.5.xml:1216 apt_preferences.5.xml:694
+#: apt-get.8.xml:550 apt-cache.8.xml:339 apt-key.8.xml:170 apt-mark.8.xml:121
+#: apt.conf.5.xml:1248 apt_preferences.5.xml:694
 msgid "Files"
 msgstr "ファイル"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-get.8.xml:553
+#: apt-get.8.xml:561
 msgid ""
 "&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
 "&apt-secure;, The APT User's guide in &guidesdir;, &apt-preferences;, the "
@@ -1797,7 +1806,7 @@ msgstr ""
 "Howto"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-get.8.xml:559
+#: apt-get.8.xml:567
 msgid ""
 "<command>apt-get</command> returns zero on normal operation, decimal 100 on "
 "error."
@@ -3948,14 +3957,23 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:384
+#, fuzzy
+#| msgid ""
+#| "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used "
+#| "to enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be "
+#| "beneficial e.g. on high-latency connections. It specifies how many "
+#| "requests are sent in a pipeline.  Previous APT versions had a default of "
+#| "10 for this setting, but the default value is now 0 (= disabled) to avoid "
+#| "problems with the ever-growing amount of webservers and proxies which "
+#| "choose to not conform to the HTTP/1.1 specification."
 msgid ""
 "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to "
 "enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e."
 "g. on high-latency connections. It specifies how many requests are sent in a "
-"pipeline.  Previous APT versions had a default of 10 for this setting, but "
-"the default value is now 0 (= disabled) to avoid problems with the ever-"
-"growing amount of webservers and proxies which choose to not conform to the "
-"HTTP/1.1 specification."
+"pipeline.  APT tries to detect and workaround misbehaving webservers and "
+"proxies at runtime, but if you know that yours does not conform to the "
+"HTTP/1.1 specification pipelining can be disabled by setting the value to 0. "
+"It is enabled by default with the value 10."
 msgstr ""
 "<literal>Acquire::http::Pipeline-Depth</literal> の設定は、例えばレイテンシの"
 "高い接続で有益な、HTTP パイプライン (RFC 2616 8.1.2.2 節) を有効にするのに使"
@@ -4390,13 +4408,40 @@ msgstr "ダウンロード時に IPv4 プロトコルだけを使うように強
 msgid "When downloading, force to use only the IPv6 protocol."
 msgstr "ダウンロード時に IPv6 プロトコルだけを使うように強制します。"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml:591
+msgid ""
+"The maximum file size of Release/Release.gpg/InRelease files.  The default "
+"is 10MB."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml:598
+msgid ""
+"Allow the update operation to load data files from a repository without a "
+"trusted signature. If enabled this option no data files will be loaded and "
+"the update operation fails with a error for this source. The default is "
+"false for backward compatibility. This will be changed in the future."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml:609
+msgid ""
+"Allow that a repository that was previously gpg signed to become unsigned "
+"durign a update operation. When there is no valid signature of a perviously "
+"trusted repository apt will refuse the update. This option can be used to "
+"override this protection. You almost certainly never want to enable this. "
+"The default is false.  Note that apt will still consider packages from this "
+"source untrusted and warn about them if you try to install them."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:592
+#: apt.conf.5.xml:624
 msgid "Directories"
 msgstr "ディレクトリ"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:594
+#: apt.conf.5.xml:626
 msgid ""
 "The <literal>Dir::State</literal> section has directories that pertain to "
 "local state information. <literal>lists</literal> is the directory to place "
@@ -4415,7 +4460,7 @@ msgstr ""
 "サブアイテムすべてに、前に付加するデフォルトディレクトリを含んでいます。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:601
+#: apt.conf.5.xml:633
 msgid ""
 "<literal>Dir::Cache</literal> contains locations pertaining to local cache "
 "information, such as the two package caches <literal>srcpkgcache</literal> "
@@ -4439,7 +4484,7 @@ msgstr ""
 "でいます。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:611
+#: apt.conf.5.xml:643
 msgid ""
 "<literal>Dir::Etc</literal> contains the location of configuration files, "
 "<literal>sourcelist</literal> gives the location of the sourcelist and "
@@ -4453,7 +4498,7 @@ msgstr ""
 "ファイルを指定された場合のみ、この設定の効果があります)"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:617
+#: apt.conf.5.xml:649
 msgid ""
 "The <literal>Dir::Parts</literal> setting reads in all the config fragments "
 "in lexical order from the directory specified. After this is done then the "
@@ -4464,7 +4509,7 @@ msgstr ""
 "します。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:621
+#: apt.conf.5.xml:653
 msgid ""
 "Binary programs are pointed to by <literal>Dir::Bin</literal>. <literal>Dir::"
 "Bin::Methods</literal> specifies the location of the method handlers and "
@@ -4481,7 +4526,7 @@ msgstr ""
 "プログラムの場所を指定します。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:629
+#: apt.conf.5.xml:661
 msgid ""
 "The configuration item <literal>RootDir</literal> has a special meaning.  If "
 "set, all paths in <literal>Dir::</literal> will be relative to "
@@ -4501,7 +4546,7 @@ msgstr ""
 "<filename>/tmp/staging/var/lib/dpkg/status</filename> から探します。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:642
+#: apt.conf.5.xml:674
 msgid ""
 "The <literal>Ignore-Files-Silently</literal> list can be used to specify "
 "which files APT should silently ignore while parsing the files in the "
@@ -4517,12 +4562,12 @@ msgstr ""
 "フォルト値を見ればわかる通り、このパターンには正規表現を使用できます。"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:651
+#: apt.conf.5.xml:683
 msgid "APT in DSelect"
 msgstr "DSelect での APT"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:653
+#: apt.conf.5.xml:685
 msgid ""
 "When APT is used as a &dselect; method several configuration directives "
 "control the default behavior. These are in the <literal>DSelect</literal> "
@@ -4533,7 +4578,7 @@ msgstr ""
 "ます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:658
+#: apt.conf.5.xml:690
 msgid ""
 "Cache Clean mode; this value may be one of <literal>always</literal>, "
 "<literal>prompt</literal>, <literal>auto</literal>, <literal>pre-auto</"
@@ -4554,7 +4599,7 @@ msgstr ""
 "パッケージをダウンロードする直前に行います。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:672
+#: apt.conf.5.xml:704
 msgid ""
 "The contents of this variable are passed to &apt-get; as command line "
 "options when it is run for the install phase."
@@ -4563,7 +4608,7 @@ msgstr ""
 "されます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:677
+#: apt.conf.5.xml:709
 msgid ""
 "The contents of this variable are passed to &apt-get; as command line "
 "options when it is run for the update phase."
@@ -4572,7 +4617,7 @@ msgstr ""
 "されます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:682
+#: apt.conf.5.xml:714
 msgid ""
 "If true the [U]pdate operation in &dselect; will always prompt to continue.  "
 "The default is to prompt only on error."
@@ -4581,12 +4626,12 @@ msgstr ""
 "します。デフォルトはエラーが発生した場合のみです。"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:688
+#: apt.conf.5.xml:720
 msgid "How APT calls &dpkg;"
 msgstr "APT が &dpkg; を呼ぶ方法"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:689
+#: apt.conf.5.xml:721
 msgid ""
 "Several configuration directives control how APT invokes &dpkg;. These are "
 "in the <literal>DPkg</literal> section."
@@ -4595,7 +4640,7 @@ msgstr ""
 "<literal>DPkg</literal> セクションにあります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:694
+#: apt.conf.5.xml:726
 msgid ""
 "This is a list of options to pass to &dpkg;. The options must be specified "
 "using the list notation and each list item is passed as a single argument to "
@@ -4605,7 +4650,7 @@ msgstr ""
 "なければなりません。また、各リストは単一の引数として &dpkg; に渡されます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:700
+#: apt.conf.5.xml:732
 msgid ""
 "This is a list of shell commands to run before/after invoking &dpkg;.  Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -4617,7 +4662,7 @@ msgstr ""
 "bin/sh</filename> を通して呼び出され、何か問題があれば APT が異常終了します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:707
+#: apt.conf.5.xml:739
 msgid ""
 "This is a list of shell commands to run before invoking &dpkg;. Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -4634,7 +4679,7 @@ msgstr ""
 "ります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:714
+#: apt.conf.5.xml:746
 msgid ""
 "Version 2 of this protocol dumps more information, including the protocol "
 "version, the APT configuration space and the packages, files and versions "
@@ -4647,7 +4692,7 @@ msgstr ""
 "<literal>MultiArch</literal> フラグが追加されています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:719
+#: apt.conf.5.xml:751
 msgid ""
 "The version of the protocol to be used for the command "
 "<literal><replaceable>cmd</replaceable></literal> can be chosen by setting "
@@ -4663,7 +4708,7 @@ msgstr ""
 "ポートしている最大のバージョンの情報を代わりに送ります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:726
+#: apt.conf.5.xml:758
 msgid ""
 "The file descriptor to be used to send the information can be requested with "
 "<literal>DPkg::Tools::options::<replaceable>cmd</replaceable>::InfoFD</"
@@ -4680,7 +4725,7 @@ msgstr ""
 "ルディスクリプタの番号が収録されています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:736
+#: apt.conf.5.xml:768
 msgid ""
 "APT chdirs to this directory before invoking &dpkg;, the default is "
 "<filename>/</filename>."
@@ -4689,7 +4734,7 @@ msgstr ""
 "<filename>/</filename> です。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:741
+#: apt.conf.5.xml:773
 msgid ""
 "These options are passed to &dpkg-buildpackage; when compiling packages; the "
 "default is to disable signing and produce all binaries."
@@ -4698,12 +4743,12 @@ msgstr ""
 "ます。デフォルトでは署名を無効にし、全バイナリを生成します。"
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
-#: apt.conf.5.xml:746
+#: apt.conf.5.xml:778
 msgid "dpkg trigger usage (and related options)"
 msgstr "dpkg トリガの使い方 (および関連オプション)"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt.conf.5.xml:747
+#: apt.conf.5.xml:779
 msgid ""
 "APT can call &dpkg; in such a way as to let it make aggressive use of "
 "triggers over multiple calls of &dpkg;. Without further options &dpkg; will "
@@ -4727,7 +4772,7 @@ msgstr ""
 "(もしくはそれ以上) の時間 100% のままとなり、進捗レポートを壊してしまいます。"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><literallayout>
-#: apt.conf.5.xml:762
+#: apt.conf.5.xml:794
 #, no-wrap
 msgid ""
 "DPkg::NoTriggers \"true\";\n"
@@ -4741,7 +4786,7 @@ msgstr ""
 "DPkg::TriggersPending \"true\";"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt.conf.5.xml:756
+#: apt.conf.5.xml:788
 msgid ""
 "Note that it is not guaranteed that APT will support these options or that "
 "these options will not cause (big) trouble in the future. If you have "
@@ -4764,7 +4809,7 @@ msgstr ""
 "\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:769
+#: apt.conf.5.xml:801
 msgid ""
 "Add the no triggers flag to all &dpkg; calls (except the ConfigurePending "
 "call).  See &dpkg; if you are interested in what this actually means. In "
@@ -4784,7 +4829,7 @@ msgstr ""
 "在 APT は、このフラグを、展開呼び出しや削除呼び出しにも追加します。"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:777
+#: apt.conf.5.xml:809
 msgid ""
 "Valid values are \"<literal>all</literal>\", \"<literal>smart</literal>\" "
 "and \"<literal>no</literal>\".  The default value is \"<literal>all</literal>"
@@ -4811,7 +4856,7 @@ msgstr ""
 "能性があるからです。"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:792
+#: apt.conf.5.xml:824
 msgid ""
 "If this option is set APT will call <command>dpkg --configure --pending</"
 "command> to let &dpkg; handle all required configurations and triggers. This "
@@ -4828,7 +4873,7 @@ msgstr ""
 "では、最後以外のすべての実行で、無効にできます。"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:799
+#: apt.conf.5.xml:831
 msgid ""
 "Useful for the <literal>smart</literal> configuration as a package which has "
 "pending triggers is not considered as <literal>installed</literal>, and "
@@ -4843,7 +4888,7 @@ msgstr ""
 "ことに注意してください。"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para><literallayout>
-#: apt.conf.5.xml:812
+#: apt.conf.5.xml:844
 #, no-wrap
 msgid ""
 "OrderList::Score {\n"
@@ -4861,7 +4906,7 @@ msgstr ""
 "};"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:805
+#: apt.conf.5.xml:837
 msgid ""
 "Essential packages (and their dependencies) should be configured immediately "
 "after unpacking. It is a good idea to do this quite early in the upgrade "
@@ -4884,12 +4929,12 @@ msgstr ""
 "\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:825
+#: apt.conf.5.xml:857
 msgid "Periodic and Archives options"
 msgstr "Periodic オプションと Archives オプション"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:826
+#: apt.conf.5.xml:858
 msgid ""
 "<literal>APT::Periodic</literal> and <literal>APT::Archives</literal> groups "
 "of options configure behavior of apt periodic updates, which is done by the "
@@ -4902,12 +4947,12 @@ msgstr ""
 "トは、このスクリプトの先頭を参照してください。"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:834
+#: apt.conf.5.xml:866
 msgid "Debug options"
 msgstr "デバッグオプション"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:836
+#: apt.conf.5.xml:868
 msgid ""
 "Enabling options in the <literal>Debug::</literal> section will cause "
 "debugging information to be sent to the standard error stream of the program "
@@ -4923,7 +4968,7 @@ msgstr ""
 "のオプションは興味がないでしょうが、以下のものは興味を引くかもしれません。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:847
+#: apt.conf.5.xml:879
 msgid ""
 "<literal>Debug::pkgProblemResolver</literal> enables output about the "
 "decisions made by <literal>dist-upgrade, upgrade, install, remove, purge</"
@@ -4934,7 +4979,7 @@ msgstr ""
 "にします。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:855
+#: apt.conf.5.xml:887
 msgid ""
 "<literal>Debug::NoLocking</literal> disables all file locking.  This can be "
 "used to run some operations (for instance, <literal>apt-get -s install</"
@@ -4945,7 +4990,7 @@ msgstr ""
 "literal>) を行う場合に使用します。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:864
+#: apt.conf.5.xml:896
 msgid ""
 "<literal>Debug::pkgDPkgPM</literal> prints out the actual command line each "
 "time that <literal>apt</literal> invokes &dpkg;."
@@ -4957,7 +5002,7 @@ msgstr ""
 #. 	   motivating example, except I haven't a clue why you'd want
 #. 	   to do this. 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.conf.5.xml:872
+#: apt.conf.5.xml:904
 msgid ""
 "<literal>Debug::IdentCdrom</literal> disables the inclusion of statfs data "
 "in CD-ROM IDs."
@@ -4966,34 +5011,34 @@ msgstr ""
 "ないようにします。"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:882
+#: apt.conf.5.xml:914
 msgid "A full list of debugging options to apt follows."
 msgstr "以下は apt に対するデバッグオプションのすべてです。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:891
+#: apt.conf.5.xml:923
 msgid ""
 "Print information related to accessing <literal>cdrom://</literal> sources."
 msgstr ""
 "<literal>cdrom://</literal> ソースへのアクセスに関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:902
+#: apt.conf.5.xml:934
 msgid "Print information related to downloading packages using FTP."
 msgstr "FTP を用いたパッケージのダウンロードに関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:913
+#: apt.conf.5.xml:945
 msgid "Print information related to downloading packages using HTTP."
 msgstr "HTTP を用いたパッケージのダウンロードに関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:924
+#: apt.conf.5.xml:956
 msgid "Print information related to downloading packages using HTTPS."
 msgstr "HTTPS を用いたパッケージのダウンロードに関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:935
+#: apt.conf.5.xml:967
 msgid ""
 "Print information related to verifying cryptographic signatures using "
 "<literal>gpg</literal>."
@@ -5001,7 +5046,7 @@ msgstr ""
 "<literal>gpg</literal> を用いた暗号署名の検証に関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:946
+#: apt.conf.5.xml:978
 msgid ""
 "Output information about the process of accessing collections of packages "
 "stored on CD-ROMs."
@@ -5010,12 +5055,12 @@ msgstr ""
 "します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:956
+#: apt.conf.5.xml:988
 msgid "Describes the process of resolving build-dependencies in &apt-get;."
 msgstr "&apt-get; での構築依存関係解決のプロセスを説明します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:966
+#: apt.conf.5.xml:998
 msgid ""
 "Output each cryptographic hash that is generated by the <literal>apt</"
 "literal> libraries."
@@ -5023,7 +5068,7 @@ msgstr ""
 "<literal>apt</literal> ライブラリが生成した、暗号化ハッシュを出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:976
+#: apt.conf.5.xml:1008
 msgid ""
 "Do not include information from <literal>statfs</literal>, namely the number "
 "of used and free blocks on the CD-ROM filesystem, when generating an ID for "
@@ -5033,7 +5078,7 @@ msgstr ""
 "システムにある使用済・未使用ブロックの数からの情報を含めないようにします。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:987
+#: apt.conf.5.xml:1019
 msgid ""
 "Disable all file locking.  For instance, this will allow two instances of "
 "<quote><literal>apt-get update</literal></quote> to run at the same time."
@@ -5042,13 +5087,13 @@ msgstr ""
 "<quote><literal>apt-get update</literal></quote> を実行できるようになります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:999
+#: apt.conf.5.xml:1031
 msgid "Log when items are added to or removed from the global download queue."
 msgstr ""
 "グローバルダウンロードキューに対する項目の追加・削除の際にログを出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1009
+#: apt.conf.5.xml:1041
 msgid ""
 "Output status messages and errors related to verifying checksums and "
 "cryptographic signatures of downloaded files."
@@ -5057,7 +5102,7 @@ msgstr ""
 "ジやエラーを出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1019
+#: apt.conf.5.xml:1051
 msgid ""
 "Output information about downloading and applying package index list diffs, "
 "and errors relating to package index list diffs."
@@ -5066,7 +5111,7 @@ msgstr ""
 "します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1031
+#: apt.conf.5.xml:1063
 msgid ""
 "Output information related to patching apt package lists when downloading "
 "index diffs instead of full indices."
@@ -5075,14 +5120,14 @@ msgstr ""
 "リストへのパッチ適用に関する情報を出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1042
+#: apt.conf.5.xml:1074
 msgid ""
 "Log all interactions with the sub-processes that actually perform downloads."
 msgstr ""
 "実際のダウンロードを行う際の、サブプロセスとのやりとりをログに出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1053
+#: apt.conf.5.xml:1085
 msgid ""
 "Log events related to the automatically-installed status of packages and to "
 "the removal of unused packages."
@@ -5091,7 +5136,7 @@ msgstr ""
 "に出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1063
+#: apt.conf.5.xml:1095
 msgid ""
 "Generate debug messages describing which packages are being automatically "
 "installed to resolve dependencies.  This corresponds to the initial auto-"
@@ -5106,7 +5151,7 @@ msgstr ""
 "路に対応しています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1077
+#: apt.conf.5.xml:1109
 msgid ""
 "Generate debug messages describing which packages are marked as keep/install/"
 "remove while the ProblemResolver does his work.  Each addition or deletion "
@@ -5135,7 +5180,7 @@ msgstr ""
 "ます。<literal>section</literal> はパッケージが現れるセクション名です。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1098
+#: apt.conf.5.xml:1130
 msgid ""
 "When invoking &dpkg;, output the precise command line with which it is being "
 "invoked, with arguments separated by a single space character."
@@ -5144,7 +5189,7 @@ msgstr ""
 "切られます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1109
+#: apt.conf.5.xml:1141
 msgid ""
 "Output all the data received from &dpkg; on the status file descriptor and "
 "any errors encountered while parsing it."
@@ -5153,7 +5198,7 @@ msgstr ""
 "を解析中に発生したエラーを出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1120
+#: apt.conf.5.xml:1152
 msgid ""
 "Generate a trace of the algorithm that decides the order in which "
 "<literal>apt</literal> should pass packages to &dpkg;."
@@ -5162,18 +5207,18 @@ msgstr ""
 "のトレースを生成します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1132
+#: apt.conf.5.xml:1164
 msgid ""
 "Output status messages tracing the steps performed when invoking &dpkg;."
 msgstr "&dpkg; を呼び出す際に、実行手順を追跡した状態メッセージを出力します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1143
+#: apt.conf.5.xml:1175
 msgid "Output the priority of each package list on startup."
 msgstr "起動時の各パッケージの優先度を表示します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1153
+#: apt.conf.5.xml:1185
 msgid ""
 "Trace the execution of the dependency resolver (this applies only to what "
 "happens when a complex dependency problem is encountered)."
@@ -5182,7 +5227,7 @@ msgstr ""
 "した場合にのみ、適用されます)。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1164
+#: apt.conf.5.xml:1196
 msgid ""
 "Display a list of all installed packages with their calculated score used by "
 "the pkgProblemResolver. The description of the package is the same as "
@@ -5193,7 +5238,7 @@ msgstr ""
 "説明したものと同じです。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1176
+#: apt.conf.5.xml:1208
 msgid ""
 "Print information about the vendors read from <filename>/etc/apt/vendors."
 "list</filename>."
@@ -5202,7 +5247,7 @@ msgstr ""
 "します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml:1186
+#: apt.conf.5.xml:1218
 msgid ""
 "Display the external commands that are called by apt hooks.  This includes e."
 "g. the config options <literal>DPkg::{Pre,Post}-Invoke</literal> or "
@@ -5213,13 +5258,13 @@ msgstr ""
 "{Pre,Post}-Invoke</literal> があります。"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:1210 apt_preferences.5.xml:541 sources.list.5.xml:233
+#: apt.conf.5.xml:1242 apt_preferences.5.xml:541 sources.list.5.xml:233
 #: apt-ftparchive.1.xml:592
 msgid "Examples"
 msgstr "サンプル"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1211
+#: apt.conf.5.xml:1243
 msgid ""
 "&configureindex; is a configuration file showing example values for all "
 "possible options."
@@ -5229,7 +5274,7 @@ msgstr ""
 
 #.  ? reading apt.conf 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1223
+#: apt.conf.5.xml:1255
 msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
 
