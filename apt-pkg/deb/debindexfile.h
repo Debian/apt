@@ -114,7 +114,6 @@ class debTranslationsIndex : public pkgIndexFile
 
    // Interface for acquire
    virtual std::string Describe(bool Short) const;   
-   virtual bool GetIndexes(pkgAcquire *Owner) const;
    
    // Interface for the Cache Generator
    virtual bool Exists() const;

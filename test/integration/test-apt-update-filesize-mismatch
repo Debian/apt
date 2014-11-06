@@ -38,16 +38,11 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 		done
 		signreleasefiles
 
-		TEST='testfailure'
-		if expr match "$COMPRESSFILE" '^.*Translation-.*$' >/dev/null; then
-			TEST='testsuccess'
-			unset COMPRESSFILE
-		fi
-		$TEST aptget update -o Debug::pkgAcquire::Worker=1
-		cp rootdir/tmp/${TEST}.output rootdir/tmp/update.output
+		testfailure aptget update -o Debug::pkgAcquire::Worker=1
+		cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
 		testsuccess grep -E "$(basename -s '.gz' "$COMPRESSFILE").*Hash Sum mismatch" rootdir/tmp/update.output
-		$TEST aptcache show foo
-		$TEST aptget install foo -s
+		testfailure aptcache show foo
+		testfailure aptget install foo -s
 
 		testfailure aptcache show bar
 		testfailure aptget install bar -s

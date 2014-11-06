@@ -1027,43 +1027,6 @@ class pkgAcqIndex : public pkgAcqBaseIndex
              std::string const &ShortDesc);
 };
 									/*}}}*/
-/** \brief An acquire item that is responsible for fetching a		{{{
- *  translated index file.
- *
- *  The only difference from pkgAcqIndex is that transient failures
- *  are suppressed: no error occurs if the translated index file is
- *  missing.
- */
-class pkgAcqIndexTrans : public pkgAcqIndex
-{
-   void *d;
-
-   public:
-  
-   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual std::string Custom600Headers() const;
-
-   /** \brief Create a pkgAcqIndexTrans.
-    *
-    *  \param Owner The pkgAcquire object with which this item is
-    *  associated.
-    *
-    *  \param URI The URI of the index file that is to be downloaded.
-    *
-    *  \param URIDesc A "URI-style" description of this index file.
-    *
-    *  \param ShortDesc A brief description of this index file.
-    */
-   pkgAcqIndexTrans(pkgAcquire *Owner,
-                    std::string URI,std::string URIDesc,
-		    std::string ShortDesc);
-   pkgAcqIndexTrans(pkgAcquire *Owner,
-                    pkgAcqMetaBase *TransactionManager,
-                    IndexTarget const * const Target,
-                    HashStringList const &ExpectedHashes,
-                    indexRecords *MetaIndexParser);
-};
-									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
 class IndexTarget
 {

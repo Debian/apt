@@ -33,16 +33,11 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 	webserverconfig 'aptwebserver::overwrite' ''
 	webserverconfig "aptwebserver::overwrite::$(printf '%s' "${get}" | sed 's#/#%2F#g' )::filename" '%2FDoctorEvil.gz'
 
-	TEST='testfailure'
-	if expr match "$get" '^.*Translation-.*$' >/dev/null; then
-		TEST='testsuccess'
-		unset get
-	fi
-	$TEST aptget update
-	cp rootdir/tmp/${TEST}.output rootdir/tmp/update.output
+	testfailure aptget update
+	cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
 	testsuccess grep -E "$(basename -s '.gz' "$get").*Hash Sum mismatch" rootdir/tmp/update.output
-	$TEST aptcache show foo
-	$TEST aptget install foo -s
+	testfailure aptcache show foo
+	testfailure aptget install foo -s
 
 	testfailure aptcache show bar
 	testfailure aptget install bar -s
