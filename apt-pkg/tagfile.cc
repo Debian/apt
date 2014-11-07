@@ -408,7 +408,11 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
+#if APT_PKG_ABI >= 413
 bool pkgTagSection::Exists(const char* const Tag) const
+#else
+bool pkgTagSection::Exists(const char* const Tag)
+#endif
 {
    unsigned int tmp;
    return Find(Tag, tmp);

@@ -254,7 +254,11 @@ class pkgAcquire::Item : public WeakPointable
     *  line, so they should (if nonempty) have a leading newline and
     *  no trailing newline.
     */
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const {return std::string();};
+#else
+   virtual std::string Custom600Headers() {return std::string();};
+#endif
 
    /** \brief A "descriptive" URI-like string.
     *
@@ -280,9 +284,16 @@ class pkgAcquire::Item : public WeakPointable
 
    /** \return the acquire process with which this item is associated. */
    pkgAcquire *GetOwner() const {return Owner;};
+#if APT_PKG_ABI < 413
+   pkgAcquire *GetOwner() {return Owner;};
+#endif
 
    /** \return \b true if this object is being fetched from a trusted source. */
+#if APT_PKG_ABI >= 413
    virtual bool IsTrusted() const {return false;};
+#else
+   virtual bool IsTrusted() {return false;};
+#endif
    
    /** \brief Report mirror problem
     * 
@@ -497,7 +508,11 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqMetaBase
    virtual void Done(std::string Message,unsigned long long Size,
                      HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
    virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
@@ -551,7 +566,11 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
    virtual std::string DescURI() {return RealURI; };
    virtual void Finished();
 
@@ -589,7 +608,11 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 
 public:
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
    virtual void Done(std::string Message,unsigned long long Size,
                      HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
@@ -675,7 +698,11 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string DescURI() {return RealURI + "Index";};
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
 
    /** \brief Parse the Index file for a set of Packages diffs.
     *
@@ -989,7 +1016,11 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual void Done(std::string Message,unsigned long long Size, 
                      HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
    virtual std::string DescURI() {return Desc.URI;};
 
    /** \brief Create a pkgAcqIndex.
@@ -1111,8 +1142,12 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual std::string DescURI() {return Desc.URI;};
    virtual std::string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
+#if APT_PKG_ABI >= 413
    virtual bool IsTrusted() const;
-   
+#else
+   virtual bool IsTrusted();
+#endif
+
    /** \brief Create a new pkgAcqArchive.
     *
     *  \param Owner The pkgAcquire object with which this item is
@@ -1161,7 +1196,11 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string DescURI() {return Desc.URI;};
+#if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
 
    /** \brief Create a new pkgAcqFile object.
     *

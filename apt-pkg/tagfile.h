@@ -97,7 +97,11 @@ class pkgTagSection
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
+#if APT_PKG_ABI >= 413
    bool Exists(const char* const Tag) const;
+#else
+   bool Exists(const char* const Tag);
+#endif
 
    inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
                    {Start = Section + Tags[I].StartTag; Stop = Section + Tags[I+1].StartTag;}

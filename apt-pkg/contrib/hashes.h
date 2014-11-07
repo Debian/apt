@@ -55,6 +55,8 @@ class HashString
    // get hash type used
    std::string HashType() const { return Type; };
    std::string HashValue() const { return Hash; };
+   APT_DEPRECATED std::string HashType() { return Type; };
+   APT_DEPRECATED std::string HashValue() { return Hash; };
 
    // verify the given filename against the currently loaded hash
    bool VerifyFile(std::string filename) const;

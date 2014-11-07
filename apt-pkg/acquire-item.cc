@@ -373,7 +373,11 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
+#if APT_PKG_ABI >= 413
 string pkgAcqDiffIndex::Custom600Headers() const
+#else
+string pkgAcqDiffIndex::Custom600Headers()
+#endif
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(Desc.URI);
@@ -1239,7 +1243,11 @@ void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
+#if APT_PKG_ABI >= 413
 string pkgAcqIndex::Custom600Headers() const
+#else
+string pkgAcqIndex::Custom600Headers()
+#endif
 {
    string Final = GetFinalFilename();
 
@@ -1638,7 +1646,11 @@ pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
+#if APT_PKG_ABI >= 413
 string pkgAcqMetaSig::Custom600Headers() const
+#else
+string pkgAcqMetaSig::Custom600Headers()
+#endif
 {
    std::string Header = GetCustom600Headers(RealURI);
    return Header;
@@ -1783,7 +1795,11 @@ void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
 									/*}}}*/
 // pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
+#if APT_PKG_ABI >= 413
 string pkgAcqMetaIndex::Custom600Headers() const
+#else
+string pkgAcqMetaIndex::Custom600Headers()
+#endif
 {
    return GetCustom600Headers(RealURI);
 }
@@ -2107,7 +2123,11 @@ pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 									/*}}}*/
 // pkgAcqMetaClearSig::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
+#if APT_PKG_ABI >= 413
 string pkgAcqMetaClearSig::Custom600Headers() const
+#else
+string pkgAcqMetaClearSig::Custom600Headers()
+#endif
 {
    string Header = GetCustom600Headers(RealURI);
    Header += "\nFail-Ignore: true";
@@ -2499,7 +2519,11 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 									/*}}}*/
 // AcqArchive::IsTrusted - Determine whether this archive comes from a trusted source /*{{{*/
 // ---------------------------------------------------------------------
+#if APT_PKG_ABI >= 413
 APT_PURE bool pkgAcqArchive::IsTrusted() const
+#else
+APT_PURE bool pkgAcqArchive::IsTrusted()
+#endif
 {
    return Trusted;
 }
@@ -2644,7 +2668,11 @@ void pkgAcqFile::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
+#if APT_PKG_ABI >= 413
 string pkgAcqFile::Custom600Headers() const
+#else
+string pkgAcqFile::Custom600Headers()
+#endif
 {
    if (IsIndexFile)
       return "\nIndex-File: true";
