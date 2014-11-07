@@ -141,6 +141,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       map_stringitem_t const idx = StoreString(pkgCacheGenerator::SECTION, Start, Stop - Start);
       Ver->Section = idx;
    }
+#if APT_PKG_ABI >= 413
    // Parse the source package name
    pkgCache::GrpIterator const G = Ver.ParentPkg().Group();
    Ver->SourcePkgName = G->Name;
@@ -192,6 +193,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 }
       }
    }
+#endif
 
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size

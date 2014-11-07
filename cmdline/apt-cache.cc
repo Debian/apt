@@ -389,8 +389,10 @@ static bool Stats(CommandLine &)
 	    stritems.insert(V->VerStr);
 	 if (V->Section != 0)
 	    stritems.insert(V->Section);
+#if APT_PKG_ABI >= 413
 	 stritems.insert(V->SourcePkgName);
 	 stritems.insert(V->SourceVerStr);
+#endif
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)

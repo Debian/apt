@@ -170,7 +170,11 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+#if APT_PKG_ABI >= 413
 static pkgSrcRecords::Parser *FindSrc(const char *Name,
+#else
+static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
+#endif
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
@@ -278,10 +282,21 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
 		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
-		  Src = Ver.SourcePkgName();
 		  // the Version we have is possibly fuzzy or includes binUploads,
-		  // so we use the Version of the SourcePkg
+		  // so we use the Version of the SourcePkg (empty if same as package)
+#if APT_PKG_ABI >= 413
+		  Src = Ver.SourcePkgName();
 		  VerTag = Ver.SourceVerStr();
+#else
+		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
+		  Src = Parse.SourcePkg();
+		  // no SourcePkg name, so it is the "binary" name
+		  if (Src.empty() == true)
+		     Src = TmpSrc;
+		  VerTag = Parse.SourceVer();
+		  if (VerTag.empty() == true)
+		     VerTag = Ver.VerStr();
+#endif
 		  break;
 	       }
 	    }
@@ -312,10 +327,17 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
+#if APT_PKG_ABI >= 413
 	    if (strcmp(Ver.SourcePkgName(),Ver.ParentPkg().Name()) != 0)
 	       Src = Ver.SourcePkgName();
 	    if (VerTag.empty() == true && strcmp(Ver.SourceVerStr(),Ver.VerStr()) != 0)
 	       VerTag = Ver.SourceVerStr();
+#else
+	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+	    Src = Parse.SourcePkg();
+	    if (VerTag.empty() == true)
+	       VerTag = Parse.SourceVer();
+#endif
 	 }
       }
    }
@@ -717,6 +739,9 @@ static bool DoSource(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
+#if APT_PKG_ABI < 413
+   pkgRecords Recs(Cache);
+#endif
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -744,8 +769,11 @@ static bool DoSource(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
+#if APT_PKG_ABI >= 413
       pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
-      
+#else
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+#endif
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
@@ -1004,6 +1032,9 @@ static bool DoBuildDep(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
+#if APT_PKG_ABI < 413
+   pkgRecords Recs(Cache);
+#endif
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -1050,7 +1081,11 @@ static bool DoBuildDep(CommandLine &CmdL)
             Last = Type->CreateSrcPkgParser(*I);
       } else {
          // normal case, search the cache for the source file
-         Last = FindSrc(*I,SrcRecs,Src,Cache);
+#if APT_PKG_ABI >= 413
+	 Last = FindSrc(*I,SrcRecs,Src,Cache);
+#else
+	 Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+#endif
       }
 
       if (Last == 0)
@@ -1407,9 +1442,18 @@ static string GetChangelogPath(CacheFile &Cache,
    pkgRecords Recs(Cache);
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
    string path = flNotFile(rec.FileName());
+#if APT_PKG_ABI >= 413
    path.append(Ver.SourcePkgName());
    path.append("_");
    path.append(StripEpoch(Ver.SourceVerStr()));
+#else
+   string srcpkg = rec.SourcePkg().empty() ? Ver.ParentPkg().Name() : rec.SourcePkg();
+   string ver = Ver.VerStr();
+   // if there is a source version it always wins
+   if (rec.SourceVer() != "")
+      ver = rec.SourceVer();
+   path += srcpkg + "_" + StripEpoch(ver);
+#endif
    return path;
 }
 									/*}}}*/
