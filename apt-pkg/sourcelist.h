@@ -52,23 +52,15 @@ class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
 
-class pkgSource
-{
-   protected:
-
-   std::vector<metaIndex *> SrcList;
-
-};
-
-class pkgSourceList : public pkgSource
+class pkgSourceList
 {
    public:
-   
+
    // List of supported source list types
    class Type
    {
       public:
-      
+
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
@@ -91,13 +83,17 @@ class pkgSourceList : public pkgSource
       Type();
       virtual ~Type() {};
    };
-   
+
    typedef std::vector<metaIndex *>::const_iterator const_iterator;
-   
-   public:
+
+   protected:
+
+   std::vector<metaIndex *> SrcList;
 
    int ParseFileDeb822(std::string File);
    bool ParseFileOldStyle(std::string File);
+
+   public:
 
    bool ReadMainList();
    bool Read(std::string File);
