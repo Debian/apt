@@ -74,7 +74,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       *Cache.HeaderP = pkgCache::Header();
 
       // make room for the hashtables for packages and groups
-      if (Map.RawAllocate(2 * (Cache.HeaderP->HashTableSize * sizeof(map_pointer_t))) == 0)
+      if (Map.RawAllocate(2 * (Cache.HeaderP->GetHashTableSize() * sizeof(map_pointer_t))) == 0)
 	 return;
 
       map_stringitem_t const idxVerSysName = WriteStringInMap(_system->VS->Label);
@@ -96,10 +96,10 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 	 map_stringitem_t const idxArchitectures = WriteStringInMap(list);
 	 if (unlikely(idxArchitectures == 0))
 	    return;
-	 Cache.HeaderP->Architectures = idxArchitectures;
+	 Cache.HeaderP->SetArchitectures(idxArchitectures);
       }
       else
-	 Cache.HeaderP->Architectures = idxArchitecture;
+	 Cache.HeaderP->SetArchitectures(idxArchitecture);
 
       Cache.ReMap();
    }
@@ -616,7 +616,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
-   map_pointer_t *insertAt = &Cache.HeaderP->GrpHashTable()[Hash];
+   map_pointer_t *insertAt = &Cache.HeaderP->GrpHashTableP()[Hash];
    while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
       insertAt = &(Cache.GrpP + *insertAt)->Next;
    Grp->Next = *insertAt;
@@ -652,18 +652,18 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       Grp->FirstPackage = Package;
       // Insert it into the hash table
       map_id_t const Hash = Cache.Hash(Name);
-      map_pointer_t *insertAt = &Cache.HeaderP->PkgHashTable()[Hash];
+      map_pointer_t *insertAt = &Cache.HeaderP->PkgHashTableP()[Hash];
       while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name) > 0)
-	 insertAt = &(Cache.PkgP + *insertAt)->Next;
-      Pkg->Next = *insertAt;
+	 insertAt = &(Cache.PkgP + *insertAt)->NextPackage;
+      Pkg->NextPackage = *insertAt;
       *insertAt = Package;
    }
    else // Group the Packages together
    {
       // this package is the new last package
       pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
-      Pkg->Next = LastPkg->Next;
-      LastPkg->Next = Package;
+      Pkg->NextPackage = LastPkg->NextPackage;
+      LastPkg->NextPackage = Package;
    }
    Grp->LastPackage = Package;
 

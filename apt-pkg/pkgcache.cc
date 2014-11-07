@@ -82,10 +82,13 @@ pkgCache::Header::Header()
    MaxDescFileSize = 0;
    
    FileList = 0;
+#if APT_PKG_ABI < 413
+   APT_IGNORE_DEPRECATED(StringList = 0;)
+#endif
    VerSysName = 0;
    Architecture = 0;
-   Architectures = 0;
-   HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
+   SetArchitectures(0);
+   SetHashTableSize(_config->FindI("APT::Cache-HashTableSize", 10 * 1048));
    memset(Pools,0,sizeof(Pools));
 
    CacheFileSize = 0;
@@ -114,6 +117,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 // Cache::pkgCache - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+APT_IGNORE_DEPRECATED_PUSH
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
    // call getArchitectures() with cached=false to ensure that the 
@@ -123,6 +127,7 @@ pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
    if (DoMap == true)
       ReMap();
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Cache::ReMap - Reopen the cache file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -162,7 +167,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    if (Map.Size() < HeaderP->CacheFileSize)
       return _error->Error(_("The package cache file is corrupted, it is too small"));
 
-   if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->Architectures == 0)
+   if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->GetArchitectures() == 0)
       return _error->Error(_("The package cache file is corrupted"));
 
    // Locate our VS..
@@ -176,8 +181,8 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    for (++a; a != archs.end(); ++a)
       list.append(",").append(*a);
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
-	 list != StrP + HeaderP->Architectures)
-      return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->Architectures, list.c_str());
+	 list != StrP + HeaderP->GetArchitectures())
+      return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->GetArchitectures(), list.c_str());
 
    return true;
 }
@@ -192,7 +197,7 @@ map_id_t pkgCache::sHash(const string &Str) const
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % HeaderP->HashTableSize;
+   return Hash % HeaderP->GetHashTableSize();
 }
 
 map_id_t pkgCache::sHash(const char *Str) const
@@ -200,7 +205,7 @@ map_id_t pkgCache::sHash(const char *Str) const
    unsigned long Hash = tolower_ascii(*Str);
    for (const char *I = Str + 1; *I != 0; ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % HeaderP->HashTableSize;
+   return Hash % HeaderP->GetHashTableSize();
 }
 									/*}}}*/
 // Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
@@ -211,8 +216,8 @@ map_id_t pkgCache::sHash(const char *Str) const
 pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 {
    // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
+   Package *Pkg = PkgP + HeaderP->PkgHashTableP()[Hash(Name)];
+   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
       int const cmp = strcmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
       if (cmp == 0)
@@ -273,7 +278,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 		return GrpIterator(*this,0);
 
 	// Look at the hash bucket for the group
-	Group *Grp = GrpP + HeaderP->GrpHashTable()[sHash(Name)];
+	Group *Grp = GrpP + HeaderP->GrpHashTableP()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
 		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
 		if (cmp == 0)
@@ -359,7 +364,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 
 	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
-	     Pkg = Owner->PkgP + Pkg->Next) {
+	     Pkg = Owner->PkgP + Pkg->NextPackage) {
 		if (stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
@@ -407,7 +412,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	if (S->LastPackage == LastPkg.Index())
 		return PkgIterator(*Owner, 0);
 
-	return PkgIterator(*Owner, Owner->PkgP + LastPkg->Next);
+	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
 }
 									/*}}}*/
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
@@ -420,10 +425,10 @@ void pkgCache::GrpIterator::operator ++(int)
       S = Owner->GrpP + S->Next;
 
    // Follow the hash table
-   while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
+   while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
       HashIndex++;
-      S = Owner->GrpP + Owner->HeaderP->GrpHashTable()[HashIndex];
+      S = Owner->GrpP + Owner->HeaderP->GrpHashTableP()[HashIndex];
    }
 }
 									/*}}}*/
@@ -434,13 +439,13 @@ void pkgCache::PkgIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->PkgP)
-      S = Owner->PkgP + S->Next;
+      S = Owner->PkgP + S->NextPackage;
 
    // Follow the hash table
-   while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
       HashIndex++;
-      S = Owner->PkgP + Owner->HeaderP->PkgHashTable()[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->PkgHashTableP()[HashIndex];
    }
 }
 									/*}}}*/

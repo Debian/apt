@@ -85,16 +85,45 @@
 using std::string;
 #endif
 
+#if APT_PKG_ABI >= 413
 // storing file sizes of indexes, which are way below 4 GB for now
 typedef uint32_t map_filesize_t;
+typedef map_filesize_t should_be_map_filesize_t;
+#else
+typedef unsigned long map_filesize_t;
+typedef unsigned int should_be_map_filesize_t;
+#endif
+#if APT_PKG_ABI >= 413
 // each package/group/dependency gets an id
 typedef uint32_t map_id_t;
+typedef map_id_t should_be_map_id_t;
+#else
+typedef unsigned long map_id_t;
+typedef unsigned int should_be_map_id_t;
+#endif
+#if APT_PKG_ABI >= 413
 // some files get an id, too, but in far less absolute numbers
 typedef uint16_t map_fileid_t;
+typedef map_fileid_t should_be_map_fileid_t;
+#else
+typedef unsigned long map_fileid_t;
+typedef unsigned int should_be_map_fileid_t;
+#endif
+#if APT_PKG_ABI >= 413
 // relative pointer from cache start
 typedef uint32_t map_pointer_t;
+#else
+typedef unsigned int map_pointer_t;
+#endif
 // same as the previous, but documented to be to a string item
 typedef map_pointer_t map_stringitem_t;
+#if APT_PKG_ABI >= 413
+typedef uint64_t should_be_uint64_t;
+typedef uint64_t should_be_uint64_small_t;
+#else
+typedef unsigned long long should_be_uint64_t;
+typedef unsigned long should_be_uint64_small_t;
+#endif
 
 class pkgVersioningSystem;
 class pkgCache								/*{{{*/
@@ -109,6 +138,7 @@ class pkgCache								/*{{{*/
    struct Description;
    struct Provides;
    struct Dependency;
+   struct StringItem;
    struct VerFile;
    struct DescFile;
    
@@ -185,6 +215,7 @@ class pkgCache								/*{{{*/
    Description *DescP;
    Provides *ProvideP;
    Dependency *DepP;
+   APT_DEPRECATED StringItem *StringItemP;
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
@@ -288,12 +319,17 @@ struct pkgCache::Header
        The PackageFile structures are singly linked lists that represent
        all package files that have been merged into the cache. */
    map_pointer_t FileList;
+#if APT_PKG_ABI < 413
+   APT_DEPRECATED map_pointer_t StringList;
+#endif
    /** \brief String representing the version system used */
    map_pointer_t VerSysName;
    /** \brief native architecture the cache was built against */
    map_pointer_t Architecture;
+#if APT_PKG_ABI >= 413
    /** \brief all architectures the cache was built against */
    map_pointer_t Architectures;
+#endif
    /** \brief The maximum size of a raw entry from the original Package file */
    map_filesize_t MaxVerFileSize;
    /** \brief The maximum size of a raw entry from the original Translation file */
@@ -319,12 +355,26 @@ struct pkgCache::Header
        In the PkgHashTable is it possible that multiple packages have the same name -
        these packages are stored as a sequence in the list.
        The size of both tables is the same. */
+#if APT_PKG_ABI >= 413
    unsigned int HashTableSize;
-   map_pointer_t * PkgHashTable() const { return (map_pointer_t*) (this + 1); }
-   map_pointer_t * GrpHashTable() const { return PkgHashTable() + HashTableSize; }
+   unsigned int GetHashTableSize() const { return HashTableSize; }
+   void SetHashTableSize(unsigned int const sz) { HashTableSize = sz; }
+   map_pointer_t GetArchitectures() const { return Architectures; }
+   void SetArchitectures(map_pointer_t const idx) { Architectures = idx; }
+#else
+   // BEWARE: these tables are pretty much empty and just here for abi compat
+   map_ptrloc PkgHashTable[2*1048];
+   map_ptrloc GrpHashTable[2*1048];
+   unsigned int GetHashTableSize() const { return PkgHashTable[0]; }
+   void SetHashTableSize(unsigned int const sz) { PkgHashTable[0] = sz; }
+   map_pointer_t GetArchitectures() const { return PkgHashTable[1]; }
+   void SetArchitectures(map_pointer_t const idx) { PkgHashTable[1] = idx; }
+#endif
+   map_pointer_t * PkgHashTableP() const { return (map_pointer_t*) (this + 1); }
+   map_pointer_t * GrpHashTableP() const { return PkgHashTableP() + GetHashTableSize(); }
 
    /** \brief Size of the complete cache file */
-   unsigned long long CacheFileSize;
+   should_be_uint64_small_t CacheFileSize;
 
    bool CheckSizes(Header &Against) const APT_PURE;
    Header();
@@ -350,7 +400,7 @@ struct pkgCache::Group
    /** \brief Link to the next Group */
    map_pointer_t Next;		// Group
    /** \brief unique sequel ID */
-   map_id_t ID;
+   should_be_map_id_t ID;
 
 };
 									/*}}}*/
@@ -387,12 +437,18 @@ struct pkgCache::Package
    map_pointer_t VersionList;       // Version
    /** \brief index to the installed version */
    map_pointer_t CurrentVer;        // Version
+   /** \brief indicates nothing (consistently)
+       This field used to contain ONE section the package belongs to,
+       if those differs between versions it is a RANDOM one.
+       The Section() method tries to reproduce it, but the only sane
+       thing to do is use the Section field from the version! */
+   APT_DEPRECATED map_ptrloc Section; // StringItem
    /** \brief index of the group this package belongs to */
    map_pointer_t Group;             // Group the Package belongs to
 
    // Linked list
    /** \brief Link to the next package in the same bucket */
-   map_pointer_t Next;       // Package
+   map_pointer_t NextPackage;       // Package
    /** \brief List of all dependencies on this package */
    map_pointer_t RevDepends;        // Dependency
    /** \brief List of all "packages" this package provide */
@@ -416,7 +472,7 @@ struct pkgCache::Package
        This allows clients to create an array of size PackageCount and use it to store
        state information for the package map. For instance the status file emitter uses
        this to track which packages have been emitted already. */
-   map_id_t ID;
+   should_be_map_id_t ID;
    /** \brief some useful indicators of the package's state */
    unsigned long Flags;
 };
@@ -464,7 +520,7 @@ struct pkgCache::PackageFile
    /** \brief Link to the next PackageFile in the Cache */
    map_pointer_t NextFile;        // PackageFile
    /** \brief unique sequel ID */
-   map_fileid_t ID;
+   should_be_map_fileid_t ID;
 };
 									/*}}}*/
 // VerFile structure							/*{{{*/
@@ -479,7 +535,7 @@ struct pkgCache::VerFile
    /** \brief next step in the linked list */
    map_pointer_t NextFile;       // PkgVerFile
    /** \brief position in the package file */
-   map_filesize_t Offset;         // File offset
+   should_be_map_filesize_t Offset;         // File offset
    /** @TODO document pkgCache::VerFile::Size */
    map_filesize_t Size;
 };
@@ -493,7 +549,7 @@ struct pkgCache::DescFile
    /** \brief next step in the linked list */
    map_pointer_t NextFile;       // PkgVerFile
    /** \brief position in the file */
-   map_filesize_t Offset;         // File offset
+   should_be_map_filesize_t Offset;         // File offset
    /** @TODO document pkgCache::DescFile::Size */
    map_filesize_t Size;
 };
@@ -556,16 +612,16 @@ struct pkgCache::Version
    /** \brief archive size for this version
 
        For Debian this is the size of the .deb file. */
-   uint64_t Size; // These are the .deb size
+   should_be_uint64_t Size; // These are the .deb size
    /** \brief uncompressed size for this version */
-   uint64_t InstalledSize;
+   should_be_uint64_t InstalledSize;
    /** \brief characteristic value representing this version
 
        No two packages in existence should have the same VerStr
        and Hash with different contents. */
    unsigned short Hash;
    /** \brief unique sequel ID */
-   map_id_t ID;
+   should_be_map_id_t ID;
    /** \brief parsed priority value */
    unsigned char Priority;
 };
@@ -593,7 +649,7 @@ struct pkgCache::Description
    map_pointer_t ParentPkg;         // Package
 
    /** \brief unique sequel ID */
-   map_id_t ID;
+   should_be_map_id_t ID;
 };
 									/*}}}*/
 // Dependency structure							/*{{{*/
@@ -620,7 +676,7 @@ struct pkgCache::Dependency
    map_pointer_t ParentVer;       // Version
 
    /** \brief unique sequel ID */
-   map_id_t ID;
+   should_be_map_id_t ID;
    /** \brief Dependency type - Depends, Recommends, Conflicts, etc */
    unsigned char Type;
    /** \brief comparison operator specified on the depends line
@@ -654,6 +710,15 @@ struct pkgCache::Provides
    map_pointer_t NextProvides;     // Provides
    /** \brief next provides (based of version) */
    map_pointer_t NextPkgProv;      // Provides
+};
+									/*}}}*/
+// UNUSED StringItem structure						/*{{{*/
+struct APT_DEPRECATED  pkgCache::StringItem
+{
+   /** \brief string this refers to */
+   map_ptrloc String;        // StringItem
+   /** \brief Next link in the chain */
+   map_ptrloc NextItem;      // StringItem
 };
 									/*}}}*/
 

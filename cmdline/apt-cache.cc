@@ -267,11 +267,14 @@ static bool DumpPackage(CommandLine &CmdL)
 // ShowHashTableStats - Show stats about a hashtable			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+static map_pointer_t PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
+static map_pointer_t GroupNext(pkgCache::Group const * const G) { return G->Next; }
 template<class T>
 static void ShowHashTableStats(std::string Type,
                                T *StartP,
                                map_pointer_t *Hashtable,
-                               unsigned long Size)
+                               unsigned long Size,
+			       map_pointer_t(*Next)(T const * const))
 {
    // hashtable stats for the HashTable
    unsigned long NumBuckets = Size;
@@ -290,7 +293,7 @@ static void ShowHashTableStats(std::string Type,
       }
       ++UsedBuckets;
       unsigned long ThisBucketSize = 0;
-      for (; P != StartP; P = StartP + P->Next)
+      for (; P != StartP; P = StartP + Next(P))
          ++ThisBucketSize;
       Entries += ThisBucketSize;
       LongestBucket = std::max(ThisBucketSize, LongestBucket);
@@ -447,13 +450,13 @@ static bool Stats(CommandLine &)
       APT_CACHESIZE(VerFileCount, VerFileSz) +
       APT_CACHESIZE(DescFileCount, DescFileSz) +
       APT_CACHESIZE(ProvidesCount, ProvidesSz) +
-      (2 * Cache->Head().HashTableSize * sizeof(map_id_t));
+      (2 * Cache->Head().GetHashTableSize() * sizeof(map_id_t));
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
 #undef APT_CACHESIZE
 
    // hashtable stats
-   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->Head().PkgHashTable(), Cache->Head().HashTableSize);
-   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->Head().GrpHashTable(), Cache->Head().HashTableSize);
+   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->Head().PkgHashTableP(), Cache->Head().GetHashTableSize(), PackageNext);
+   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->Head().GrpHashTableP(), Cache->Head().GetHashTableSize(), GroupNext);
 
    return true;
 }
