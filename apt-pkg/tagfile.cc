@@ -281,6 +281,12 @@ pkgTagSection::pkgTagSection()
 }
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
+#if APT_PKG_ABI < 413
+bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
+{
+   return Scan(Start, MaxLength, true);
+}
+#endif
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
 {
    Section = Start;

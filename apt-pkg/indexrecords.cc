@@ -270,10 +270,23 @@ void indexRecords::SetTrusted(bool const Trusted)
       this->Trusted = NEVER_TRUSTED;
 }
 
+#if APT_PKG_ABI >= 413
 indexRecords::indexRecords(const string &ExpectedDist) :
    Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
    SupportsAcquireByHash(false)
 {
 }
+#else
+indexRecords::indexRecords() :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(""), ValidUntil(0),
+   SupportsAcquireByHash(false)
+{
+}
+indexRecords::indexRecords(const string ExpectedDist) :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
+   SupportsAcquireByHash(false)
+{
+}
+#endif
 
 indexRecords::~indexRecords() {}

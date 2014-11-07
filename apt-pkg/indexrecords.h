@@ -42,8 +42,12 @@ class indexRecords
    std::map<std::string,checkSum *> Entries;
 
    public:
-
+#if APT_PKG_ABI >= 413
    indexRecords(const std::string &ExpectedDist = "");
+#else
+   indexRecords();
+   indexRecords(const std::string ExpectedDist);
+#endif
 
    // Lookup function
    virtual checkSum *Lookup(const std::string MetaKey);

@@ -109,7 +109,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *
     *  \return \b false if an error occurred.
     */
-   APT_HIDDEN bool MarkRequired(InRootSetFunc &rootFunc);
+   bool MarkRequired(InRootSetFunc &rootFunc);
 
    /** \brief Set the StateCache::Garbage flag on all packages that
     *  should be removed.
@@ -120,7 +120,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *
     *  \return \b false if an error occurred.
     */
-   APT_HIDDEN bool Sweep();
+   bool Sweep();
 
    public:
    

@@ -86,7 +86,13 @@ class pkgTagSection
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!
     */
+#if APT_PKG_ABI >= 413
    APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
+#else
+   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart);
+   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength);
+#endif
+
    inline unsigned long size() const {return Stop - Section;};
    void Trim();
    virtual void TrimRecord(bool BeforeRecord, const char* &End);

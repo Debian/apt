@@ -20,17 +20,22 @@ namespace APT {
    namespace Upgrade {
       // FIXME: make this "enum class UpgradeMode {" once we enable c++11
       enum UpgradeMode {
-	 ALLOW_EVERYTHING = 0,
          FORBID_REMOVE_PACKAGES = 1,
-         FORBID_INSTALL_NEW_PACKAGES = 2
+         FORBID_INSTALL_NEW_PACKAGES = 2,
+	 ALLOW_EVERYTHING = 0
       };
+#if APT_PKG_ABI >= 413
       bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress = NULL);
+#else
+      bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
+      bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress);
+#endif
    }
 }
 
 // please use APT::Upgrade::Upgrade() instead
-APT_DEPRECATED bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress = NULL);
-APT_DEPRECATED bool pkgAllUpgrade(pkgDepCache &Cache, OpProgress * const Progress = NULL);
+APT_DEPRECATED bool pkgDistUpgrade(pkgDepCache &Cache);
+APT_DEPRECATED bool pkgAllUpgrade(pkgDepCache &Cache);
 
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 #endif
