@@ -94,7 +94,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgSimulate PM(Cache);
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
       delete progress;
@@ -306,8 +306,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
 
       _system->UnLock();
-      
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+
+#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
       delete progress;

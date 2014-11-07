@@ -1059,7 +1059,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - compat /*{{{*/
 // ---------------------------------------------------------------------
 									/*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
@@ -1096,7 +1096,7 @@ pkgPackageManager::DoInstallPostFork(int statusFd)
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* compat */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(int statusFd)
 {
@@ -1120,7 +1120,7 @@ pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {

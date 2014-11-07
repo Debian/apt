@@ -156,5 +156,6 @@
 #define APT_PKG_MAJOR 4
 #define APT_PKG_MINOR 15
 #define APT_PKG_RELEASE 0
+#define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 
 #endif
