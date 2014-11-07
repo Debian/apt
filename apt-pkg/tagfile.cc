@@ -47,6 +47,23 @@ public:
    unsigned long long Size;
 };
 
+class pkgTagSectionPrivate
+{
+public:
+   pkgTagSectionPrivate()
+   {
+   }
+   struct TagData {
+      unsigned int StartTag;
+      unsigned int EndTag;
+      unsigned int StartValue;
+      unsigned int NextInBucket;
+
+      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
+   };
+   std::vector<TagData> Tags;
+};
+
 static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
 {
    /* This very simple hash function for the last 8 letters gives
@@ -274,11 +291,18 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 // pkgTagSection::pkgTagSection - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
    : Section(0), d(NULL), Stop(0)
 {
-   memset(&LookupTable, 0, sizeof(LookupTable));
+   d = new pkgTagSectionPrivate();
+#if APT_PKG_ABI < 413
+   TagCount = 0;
+   memset(&Indexes, 0, sizeof(Indexes));
+#endif
+   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 #if APT_PKG_ABI < 413
@@ -292,9 +316,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
    Section = Start;
    const char *End = Start + MaxLength;
 
-   if (Restart == false && Tags.empty() == false)
+   if (Restart == false && d->Tags.empty() == false)
    {
-      Stop = Section + Tags.back().StartTag;
+      Stop = Section + d->Tags.back().StartTag;
       if (End <= Stop)
 	 return false;
       Stop = (const char *)memchr(Stop,'\n',End - Stop);
@@ -305,19 +329,23 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
    else
    {
       Stop = Section;
-      if (Tags.empty() == false)
+      if (d->Tags.empty() == false)
       {
-	 memset(&LookupTable, 0, sizeof(LookupTable));
-	 Tags.clear();
+	 memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+	 d->Tags.clear();
       }
-      Tags.reserve(0x100);
+      d->Tags.reserve(0x100);
    }
-   size_t TagCount = Tags.size();
+#if APT_PKG_ABI >= 413
+   unsigned int TagCount = d->Tags.size();
+#else
+   APT_IGNORE_DEPRECATED(TagCount = d->Tags.size();)
+#endif
 
    if (Stop == 0)
       return false;
 
-   TagData lastTagData(0);
+   pkgTagSectionPrivate::TagData lastTagData(0);
    lastTagData.EndTag = 0;
    unsigned long lastTagHash = 0;
    while (Stop < End)
@@ -335,14 +363,20 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 // store the last found tag
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (LookupTable[lastTagHash] != 0)
-	       lastTagData.NextInBucket = LookupTable[lastTagHash];
-	    LookupTable[lastTagHash] = TagCount;
-	    Tags.push_back(lastTagData);
+	    if (AlphaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
+	    APT_IGNORE_DEPRECATED_PUSH
+	    AlphaIndexes[lastTagHash] = TagCount;
+#if APT_PKG_ABI < 413
+	    if (d->Tags.size() < sizeof(Indexes)/sizeof(Indexes[0]))
+	       Indexes[d->Tags.size()] = lastTagData.StartTag;
+#endif
+	    APT_IGNORE_DEPRECATED_POP
+	    d->Tags.push_back(lastTagData);
 	 }
 
-	 ++TagCount;
-	 lastTagData = TagData(Stop - Section);
+	 APT_IGNORE_DEPRECATED(++TagCount;)
+	 lastTagData = pkgTagSectionPrivate::TagData(Stop - Section);
 	 // find the colon separating tag and value
 	 char const * Colon = (char const *) memchr(Stop, ':', End - Stop);
 	 if (Colon == NULL)
@@ -377,14 +411,20 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       {
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (LookupTable[lastTagHash] != 0)
-	       lastTagData.NextInBucket = LookupTable[lastTagHash];
-	    LookupTable[lastTagHash] = TagCount;
-	    Tags.push_back(lastTagData);
+	    if (AlphaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
+	    APT_IGNORE_DEPRECATED(AlphaIndexes[lastTagHash] = TagCount;)
+#if APT_PKG_ABI < 413
+	    APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = lastTagData.StartTag;)
+#endif
+	    d->Tags.push_back(lastTagData);
 	 }
 
-	 TagData const td(Stop - Section);
-	 Tags.push_back(td);
+	 pkgTagSectionPrivate::TagData const td(Stop - Section);
+#if APT_PKG_ABI < 413
+	 APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = td.StartTag;)
+#endif
+	 d->Tags.push_back(td);
 	 TrimRecord(false,End);
 	 return true;
       }
@@ -430,16 +470,16 @@ bool pkgTagSection::Exists(const char* const Tag)
 bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
 {
    size_t const Length = strlen(Tag);
-   unsigned int Bucket = LookupTable[AlphaHash(Tag, Length)];
+   unsigned int Bucket = AlphaIndexes[AlphaHash(Tag, Length)];
    if (Bucket == 0)
       return false;
 
-   for (; Bucket != 0; Bucket = Tags[Bucket - 1].NextInBucket)
+   for (; Bucket != 0; Bucket = d->Tags[Bucket - 1].NextInBucket)
    {
-      if ((Tags[Bucket - 1].EndTag - Tags[Bucket - 1].StartTag) != Length)
+      if ((d->Tags[Bucket - 1].EndTag - d->Tags[Bucket - 1].StartTag) != Length)
 	 continue;
 
-      char const * const St = Section + Tags[Bucket - 1].StartTag;
+      char const * const St = Section + d->Tags[Bucket - 1].StartTag;
       if (strncasecmp(Tag,St,Length) != 0)
 	 continue;
 
@@ -457,9 +497,9 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
    if (Find(Tag, Pos) == false)
       return false;
 
-   Start = Section + Tags[Pos].StartValue;
+   Start = Section + d->Tags[Pos].StartValue;
    // Strip off the gunk from the end
-   End = Section + Tags[Pos + 1].StartTag;
+   End = Section + d->Tags[Pos + 1].StartTag;
    if (unlikely(Start > End))
       return _error->Error("Internal parsing error");
 
@@ -571,11 +611,16 @@ bool pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
    return true;
 }
 									/*}}}*/
+void pkgTagSection::Get(const char *&Start,const char *&Stop,unsigned int I) const
+{
+   Start = Section + d->Tags[I].StartTag;
+   Stop = Section + d->Tags[I+1].StartTag;
+}
 APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
-   if (Tags.empty() == true)
+   if (d->Tags.empty() == true)
       return 0;
    // the last element is just marking the end and isn't a real one
-   return Tags.size() - 1;
+   return d->Tags.size() - 1;
 }
 									/*}}}*/
 // TFRewrite - Rewrite a control record					/*{{{*/
@@ -768,4 +813,4 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 }
 									/*}}}*/
 
-pkgTagSection::~pkgTagSection() {}
+pkgTagSection::~pkgTagSection() { delete d; }

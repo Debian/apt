@@ -33,23 +33,22 @@
 #endif
 
 class FileFd;
+class pkgTagSectionPrivate;
 
 class pkgTagSection
 {
    const char *Section;
-   struct TagData {
-      unsigned int StartTag;
-      unsigned int EndTag;
-      unsigned int StartValue;
-      unsigned int NextInBucket;
-
-      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
-   };
-   std::vector<TagData> Tags;
-   unsigned int LookupTable[0x100];
+   // We have a limit of 256 tags per section with the old abi
+#if APT_PKG_ABI < 413
+   APT_DEPRECATED unsigned int Indexes[256];
+#endif
+   unsigned int AlphaIndexes[0x100];
+#if APT_PKG_ABI < 413
+   APT_DEPRECATED unsigned int TagCount;
+#endif
 
    // dpointer placeholder (for later in case we need it)
-   void *d;
+   pkgTagSectionPrivate *d;
 
    protected:
    const char *Stop;
@@ -109,8 +108,7 @@ class pkgTagSection
    bool Exists(const char* const Tag);
 #endif
 
-   inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
-                   {Start = Section + Tags[I].StartTag; Stop = Section + Tags[I+1].StartTag;}
+   void Get(const char *&Start,const char *&Stop,unsigned int I) const;
 
    inline void GetSection(const char *&Start,const char *&Stop) const
    {
