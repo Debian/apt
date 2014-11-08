@@ -8,80 +8,101 @@ configarchitecture 'i386'
 
 buildsimplenativepackage 'coolstuff' 'all' '1.0' 'unstable'
 
-setupaptarchive
+setupaptarchive --no-update
 
 changetowebserver
-
 rm -rf rootdir/var/lib/apt/lists
 
 translationslisted() {
 	msgtest 'No download of non-existent locals' "$1"
-	LC_ALL="" aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+	export LC_ALL=""
+	testsuccess --nomsg aptget update -o Acquire::Languages=en
+	testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of existent locals' "$1"
-	LC_ALL="" aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+	testsuccess --nomsg aptget update
+	cp rootdir/tmp/testsuccess.output testsuccess.output
+	testsuccess grep -q -e 'Translation-en ' testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of en in LC_ALL=C' "$1"
-	LC_ALL=C aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+	export LC_ALL=C
+	testsuccess --nomsg aptget update
+	cp rootdir/tmp/testsuccess.output testsuccess.output
+	testsuccess grep -q -e 'Translation-en ' testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
+	unset LC_ALL
 
 	msgtest 'Download of en as forced language' "$1"
-	aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
+	testsuccess --nomsg aptget update -o Acquire::Languages=en
+	cp rootdir/tmp/testsuccess.output testsuccess.output
+	testsuccess grep -q -e 'Translation-en ' testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of nothing else in forced language' "$1"
-	aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+	testsuccess --nomsg aptget update -o Acquire::Languages=en
+	testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download no Translation- if forced language is non-existent' "$1"
-	aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
+	testsuccess --nomsg aptget update -o Acquire::Languages=ast_DE
+	testfailure grep -q -e 'Translation-' rootdir/tmp/testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of nothing if none is forced' "$1"
-	aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+	testsuccess --nomsg aptget update -o Acquire::Languages=none
+	testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
 	rm -rf rootdir/var/lib/apt/lists
 }
 
 translationslisted 'with full Index'
 
-
 # No Release file at all, so no records about Translation files
 # (fallback to guessing)
-find aptarchive -name 'Release' -or -name 'InRelease' | xargs rm -f
+find aptarchive \( -name 'Release' -o -name 'InRelease' \) -delete
 configallowinsecurerepositories "true";
 
 msgtest 'Download of en as forced language' 'without Index'
-aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
+testwarning --nomsg aptget update -o Acquire::Languages=en
+cp rootdir/tmp/testsuccess.output testsuccess.output
+testsuccess grep -q -e 'Translation-en ' testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
-aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+testwarning --nomsg aptget update -o Acquire::Languages=en
+testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of ast_DE as forced language' 'without Index'
-aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-ast_DE$' && msgpass || msgfail
+testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
+cp rootdir/tmp/testsuccess.output testsuccess.output
+testsuccess grep -q -e 'Translation-ast_DE$' testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
-aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-[^a][^s]' && msgfail || msgpass
+testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
+testfailure grep -q -e 'Translation-[^a][^s]' rootdir/tmp/testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing if none is forced' 'without Index'
-aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+testwarning --nomsg aptget update -o Acquire::Languages=none
+testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
 touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
 
 msgtest 'Download of builtin files' 'without Index'
-aptget update | grep -q -e 'Translation-ast_DE' && msgpass || msgfail
+testwarning --nomsg aptget update
+cp rootdir/tmp/testsuccess.output testsuccess.output
+testsuccess grep -q -e 'Translation-ast_DE' testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
 touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
 
 msgtest 'Download of nothing (even builtin) if none is forced' 'without Index'
-aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+testwarning --nomsg aptget update -o Acquire::Languages=none
+testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
 rm -rf rootdir/var/lib/apt/lists
