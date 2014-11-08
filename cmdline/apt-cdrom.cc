@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -252,10 +253,8 @@ int main(int argc,const char *argv[])					/*{{{*/
    CommandLine CmdL;
    ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
-   // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
-   
+   InitOutput();
+
    // Match the operation
    bool returned = CmdL.DispatchArg(Cmds);
 

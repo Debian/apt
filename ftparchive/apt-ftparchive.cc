@@ -20,6 +20,7 @@
 #include <apt-pkg/fileutl.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
 
 #include <algorithm>
 #include <climits>
@@ -42,11 +43,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-using namespace std;    
-ostream c0out(0);
-ostream c1out(0);
-ostream c2out(0);
-ofstream devnull("/dev/null");
+using namespace std;
 unsigned Quiet = 0;
 
 // struct PackageMap - List of all package files in the config file	/*{{{*/
@@ -1064,16 +1061,10 @@ int main(int argc, const char *argv[])
    CommandLine CmdL(Args,_config);
    ParseCommandLine(CmdL, Cmds, Args, &_config, NULL, argc, argv, ShowHelp);
 
-   // Setup the output streams
-   c0out.rdbuf(clog.rdbuf());
-   c1out.rdbuf(clog.rdbuf());
-   c2out.rdbuf(clog.rdbuf());
+   _config->CndSet("quiet",0);
    Quiet = _config->FindI("quiet",0);
-   if (Quiet > 0)
-      c0out.rdbuf(devnull.rdbuf());
-   if (Quiet > 1)
-      c1out.rdbuf(devnull.rdbuf());
- 
+   InitOutput(clog.rdbuf());
+
    // Match the operation
    CmdL.DispatchArg(Cmds);
    

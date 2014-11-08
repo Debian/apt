@@ -22,6 +22,7 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -41,10 +42,6 @@
 									/*}}}*/
 using namespace std;
 
-ostream c0out(0);
-ostream c1out(0);
-ostream c2out(0);
-ofstream devnull("/dev/null");
 /* DoAuto - mark packages as automatically/manually installed		{{{*/
 static bool DoAuto(CommandLine &CmdL)
 {
@@ -444,18 +441,7 @@ int main(int argc,const char *argv[])					/*{{{*/
    CommandLine CmdL;
    ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
-   // Deal with stdout not being a tty
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
-
-   // Setup the output streams
-   c0out.rdbuf(cout.rdbuf());
-   c1out.rdbuf(cout.rdbuf());
-   c2out.rdbuf(cout.rdbuf());
-   if (_config->FindI("quiet",0) > 0)
-      c0out.rdbuf(devnull.rdbuf());
-   if (_config->FindI("quiet",0) > 1)
-      c1out.rdbuf(devnull.rdbuf());
+   InitOutput();
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

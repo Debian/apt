@@ -69,32 +69,38 @@ buildsimplenativepackage 'foo' 'i386' '1' 'test'
 mv incoming/* aptarchive/pool/main/
 
 # generate (empty cachedb)
-aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testequal " Misses in Cache: 2
- dists/test/Contents-i386: New 402 B  Misses in Cache: 0" grep Misses stats-out.txt
+testsuccess grep Misses stats-out.txt
+testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 2
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0'
 
 # generate again
-aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testequal " Misses in Cache: 0
- dists/test/Contents-i386:  Misses in Cache: 0" grep Misses stats-out.txt
+testsuccess grep Misses stats-out.txt
+testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 0
+ dists/test/Contents-i386:  Misses in Cache: 0'
 
 # and again (with removing the Packages file)
 rm -f ./aptarchive/dists/test/main/binary-i386/*
 rm -f ./aptarchive/dists/test/Contents-i386
-aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testequal " Misses in Cache: 0
- dists/test/Contents-i386: New 402 B  Misses in Cache: 0" grep Misses stats-out.txt
+testsuccess grep Misses stats-out.txt
+testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 0
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0'
 
 # and clean
 rm -rf aptarchive/pool/main/*
-testequal "packages-main-i386.db" aptftparchive clean ftparchive.conf
-aptftparchive clean ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 
+testequal "packages-main-i386.db" aptftparchive clean ftparchive.conf -q=0
+testsuccess aptftparchive clean ftparchive.conf -q=0 -o Debug::APT::FTPArchive::Clean=1
+cp rootdir/tmp/testsuccess.output clean-out.txt
 testequal "0	Number of unique keys in the tree" grep unique clean-out.txt
 testequal "packages-main-i386.db" grep packages-main-i386.db clean-out.txt
-
