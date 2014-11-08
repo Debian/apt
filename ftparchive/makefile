@@ -9,8 +9,8 @@ include ../buildlib/defaults.mak
 ifdef BDBLIB
 APT_DOMAIN:=apt-utils
 PROGRAM=apt-ftparchive
-SLIBS = -lapt-pkg -lapt-inst $(BDBLIB) $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile apt-inst/makefile
+SLIBS = -lapt-pkg -lapt-inst -lapt-private $(BDBLIB) $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile apt-private/makefile
 SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
          multicompress.cc sources.cc
 include $(PROGRAM_H)

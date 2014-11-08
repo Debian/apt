@@ -19,6 +19,8 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <algorithm>
 #include <climits>
 #include <sys/time.h>
@@ -1060,21 +1062,8 @@ int main(int argc, const char *argv[])
 
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
-   if (pkgInitConfig(*_config) == false || CmdL.Parse(argc,argv) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
-   
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
-   
+   ParseCommandLine(CmdL, Cmds, Args, &_config, NULL, argc, argv, ShowHelp);
+
    // Setup the output streams
    c0out.rdbuf(clog.rdbuf());
    c1out.rdbuf(clog.rdbuf());

@@ -24,7 +24,9 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+
 #include <apt-private/private-output.h>
+#include <apt-private/private-cmndline.h>
 
 #include <string.h>
 #include <iostream>
@@ -79,19 +81,8 @@ int main(int argc,const char *argv[])					/*{{{*/
         // we really don't need anything
         DropPrivileges();
 
-	CommandLine CmdL(Args,_config);
-	if (pkgInitConfig(*_config) == false ||
-	    CmdL.Parse(argc,argv) == false) {
-		_error->DumpErrors();
-		return 2;
-	}
-
-	// See if the help should be shown
-	if (_config->FindB("help") == true ||
-	    _config->FindB("version") == true) {
-		ShowHelp(CmdL);
-		return 1;
-	}
+	CommandLine CmdL;
+	ParseCommandLine(CmdL, NULL, Args, &_config, NULL, argc, argv, ShowHelp);
 
 	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
 	{

@@ -23,6 +23,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
@@ -142,12 +144,12 @@ static bool DoIt(string InFile)
 // ShowHelp - Show the help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static int ShowHelp()
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
-      return 0;
+      return true;
    
    cout <<
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
@@ -161,7 +163,7 @@ static int ShowHelp()
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
 
-   return 0;
+   return true;
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
@@ -179,19 +181,9 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
-
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       CmdL.FileSize() == 0)
-      return ShowHelp();
+   CommandLine::Dispatch Cmds[] = {{NULL, NULL}};
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
 
    // Match the operation
    for (unsigned int I = 0; I != CmdL.FileSize(); I++)

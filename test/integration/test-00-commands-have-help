@@ -1,0 +1,52 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+# this test does double duty: The obvious is checking for --help and co,
+# but it also checks if the binary can find all methods in the library.
+# The later is quite handy for manual testing of non-abibreaking changes
+export LD_BIND_NOW=1
+
+checkversionmessage() {
+	testsuccess grep '^apt .* compiled on ' ${1}-help.output
+}
+
+checkhelpmessage() {
+	checkversionmessage "$1"
+	testsuccess grep '^Usage:' ${1}-help.output
+}
+
+checkoptions() {
+	testsuccess $1 --help
+	cp -f rootdir/tmp/testsuccess.output ${1}-help.output
+	checkhelpmessage "$1"
+
+	testsuccess $1 --version
+	cp -f rootdir/tmp/testsuccess.output ${1}-help.output
+	checkversionmessage "$1"
+}
+
+for CMD in 'apt-cache' 'apt-cdrom' 'apt-config' \
+	'apt-extracttemplates' 'apt-get' 'apt-helper' \
+	'apt-mark' 'apt-sortpkgs' 'apt' 'apt-ftparchive'; do
+	cmd="$(echo "$CMD" | tr -d '-')"
+	msgtest 'Test for failure with no parameters calling' "$CMD"
+	if $cmd > ${cmd}-help.output 2>&1; then
+		echo
+		cat ${cmd}-help.output
+		msgfail 'zero exit'
+	else
+		msgpass
+	fi
+	checkhelpmessage "$cmd"
+	checkoptions "$cmd"
+done
+
+for CMD in 'apt-dump-solver'  'apt-internal-solver'; do
+	checkoptions "$(echo "$CMD" | tr -d '-')"
+done

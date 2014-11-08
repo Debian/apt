@@ -2,12 +2,17 @@
 #include <config.h>
 
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/error.h>
 
 #include <apt-private/private-cmndline.h>
 
 #include <vector>
 #include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -287,3 +292,31 @@ std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char c
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
+void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, CommandLine::Args * const Args,/*{{{*/
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
+{
+   CmdL = CommandLine(Args,_config);
+   if ((Cnf != NULL && pkgInitConfig(**Cnf) == false) ||
+       CmdL.Parse(argc,argv) == false ||
+       (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
+   {
+      if (_config->FindB("version") == true)
+	 ShowHelp(CmdL);
+
+      _error->DumpErrors();
+      exit(100);
+   }
+
+   // See if the help should be shown
+   if (_config->FindB("help") == true || _config->FindB("version") == true)
+   {
+      ShowHelp(CmdL);
+      exit(0);
+   }
+   if (Cmds != NULL && CmdL.FileSize() == 0)
+   {
+      ShowHelp(CmdL);
+      exit(1);
+   }
+}
+									/*}}}*/

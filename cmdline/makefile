@@ -67,15 +67,15 @@ APT_DOMAIN:=apt-utils
 
 # The apt-sortpkgs program
 PROGRAM=apt-sortpkgs
-SLIBS = -lapt-pkg $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-sortpkgs.cc
 include $(PROGRAM_H)
 
 # The apt-extracttemplates program
 PROGRAM=apt-extracttemplates
-SLIBS = -lapt-pkg -lapt-inst $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile apt-inst/makefile
+SLIBS = -lapt-pkg -lapt-inst -lapt-private $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile apt-private/makefile
 SOURCE = apt-extracttemplates.cc 
 include $(PROGRAM_H)
 
