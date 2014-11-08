@@ -346,28 +346,28 @@ bool pkgAcquire::Worker::RunMessages()
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    // see if there is a hash to verify
-	    HashStringList RecivedHashes;
+	    HashStringList ReceivedHashes;
 	    HashStringList expectedHashes = Owner->HashSums();
 	    for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
 	    {
 	       std::string const tagname = hs->HashType() + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
 	       if (hashsum.empty() == false)
-		  RecivedHashes.push_back(HashString(hs->HashType(), hashsum));
+		  ReceivedHashes.push_back(HashString(hs->HashType(), hashsum));
 	    }
 
 	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
 	    {
 	       std::clog << "201 URI Done: " << Owner->DescURI() << endl
-		  << "RecivedHash:" << endl;
-	       for (HashStringList::const_iterator hs = RecivedHashes.begin(); hs != RecivedHashes.end(); ++hs)
+		  << "ReceivedHash:" << endl;
+	       for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << "ExpectedHash:" << endl;
 	       for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << endl;
 	    }
-	    Owner->Done(Message, ServerSize, RecivedHashes, Config);
+	    Owner->Done(Message, ServerSize, ReceivedHashes, Config);
 	    ItemDone();
 
 	    // Log that we are done
