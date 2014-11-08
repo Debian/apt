@@ -8,38 +8,63 @@ setupenvironment
 configarchitecture 'amd64'
 
 # apt-extracttemplates needs this
-insertinstalledpackage 'debconf' 'amd64' '1.5'
 insertinstalledpackage 'pkg-with-template' 'amd64' '1.0'
 
 # build a simple package that contains a config and a tempalte
 mkdir -p DEBIAN
-TEMPLATE_STR="Template: foo/bar
-Type: string
-Description: Some bar var
-"
-echo "$TEMPLATE_STR" > DEBIAN/templates
-
 CONFIG_STR="#!/bin/sh
 random shell stuff
 "
 echo "$CONFIG_STR" > DEBIAN/config
 
-buildsimplenativepackage 'pkg-with-template' 'amd64' '0.8.15' 'stable' '' 'pkg with template' '' '' './DEBIAN' 
+testrun() {
+	local TEMPLATE_STR='Template: foo/bar
+Type: string
+Description: Some bar var
+'
+	echo "$TEMPLATE_STR" > DEBIAN/templates
+	buildsimplenativepackage "$1" 'amd64' '0.8.15' 'stable' "$2" 'pkg with template' '' '' './DEBIAN'
 
-# ensure we get the right stuff out of the file
-mkdir extracttemplates-out
-OUT="$(aptextracttemplates -t ./extracttemplates-out incoming/pkg-with-template*.deb)"
+	cp dpkg.status rootdir/var/lib/dpkg/status
+	insertinstalledpackage 'debconf' 'amd64' '3'
 
-PKG=$(printf "$OUT" | cut -f1 -d' ')
-INSTALLED_VER=$(printf "$OUT" | cut -f2 -d' ')
-TEMPLATE=$(printf "$OUT" | cut -f3 -d' ')
-CONFIG=$(printf "$OUT" | cut -f4 -d' ')
+	# ensure we get the right stuff out of the file
+	rm -rf extracttemplates-out rootdir/var/cache/apt
+	mkdir extracttemplates-out
+	testsuccess aptextracttemplates -t ./extracttemplates-out incoming/${1}*.deb
+	OUT='rootdir/tmp/testsuccess.output'
+	testequal "$1" cut -f1 -d' ' $OUT
+	if [ -n "$2" ]; then
+		testequal '' cut -f2 -d' ' $OUT
+	else
+		testequal '1.0' cut -f2 -d' ' $OUT
+	fi
+	TEMPLATE=$(cut -f3 -d' ' $OUT)
+	testfileequal "$TEMPLATE" "$TEMPLATE_STR"
+	CONFIG=$(cut -f4 -d' ' $OUT)
+	testfileequal "$CONFIG" "$CONFIG_STR"
 
-testequal "$CONFIG_STR" cat $CONFIG
-testequal "$TEMPLATE_STR" cat $TEMPLATE
+	# ensure that the format of the output string has the right number of dots
+	for s in "$CONFIG" "$TEMPLATE"; do
+		NR_DOTS=$(basename "$s" | tr -c -d '.')
+		testequal '..' echo $NR_DOTS
+	done
 
-# ensure that the format of the output string has the right number of dots
-for s in "$CONFIG" "$TEMPLATE"; do
-    NR_DOTS=$(basename "$s" | tr -c -d .)
-    testequal ".." echo $NR_DOTS
-done
+	if [ -n "$2" ]; then
+		rm -rf extracttemplates-out rootdir/var/cache/apt
+		mkdir extracttemplates-out
+		cp dpkg.status rootdir/var/lib/dpkg/status
+		insertinstalledpackage 'debconf' 'amd64' '1'
+		testempty aptextracttemplates -t ./extracttemplates-out incoming/${1}*.deb
+	fi
+}
+
+cp rootdir/var/lib/dpkg/status dpkg.status
+testrun 'pkg-with-template' ''
+testrun 'pkg-with-template-depends' 'Depends: debconf (>= 2)'
+testrun 'pkg-with-template-predepends' 'Pre-Depends: debconf (>= 2)'
+
+# test with no debconf installed
+cp dpkg.status rootdir/var/lib/dpkg/status
+testfailure aptextracttemplates -t ./extracttemplates-out incoming/pkg-with-template-depends*.deb
+testfileequal 'rootdir/tmp/testfailure.output' 'E: Cannot get debconf version. Is debconf installed?'

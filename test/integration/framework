@@ -1110,6 +1110,7 @@ testempty() {
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
 		msgpass
 	else
+		echo
 		cat $COMPAREFILE
 		msgfail
 	fi
