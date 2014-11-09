@@ -1,0 +1,72 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'bar' 'amd64,i386' '1'
+insertpackage 'unstable' 'uninstalled' 'all' '1'
+insertpackage 'unstable' 'uninstalled-native' 'amd64' '1'
+
+insertinstalledpackage 'foo' 'all' '1'
+insertinstalledpackage 'bar' 'amd64' '1'
+
+setupaptarchive
+
+# dpkg is "installed" by our test framework
+testdpkginstalled dpkg
+
+testnoautopkg() {
+	testempty aptmark showauto
+	testequal 'bar
+dpkg
+foo' aptmark showmanual
+	testequal 'bar
+foo' aptmark showmanual bar foo uninstalled
+}
+testmarkonpkgasauto() {
+	testsuccess aptmark $1 foo
+	testequal 'foo' aptmark showauto
+	testequal 'foo' aptmark showauto foo
+	testequal 'bar
+dpkg' aptmark showmanual
+	testequal 'bar' aptmark showmanual bar
+
+	testsuccess aptmark $2 foo
+	testnoautopkg
+}
+
+testequal 'E: No packages found' aptmark auto
+testequal 'E: No packages found' aptmark manual
+
+testnoautopkg
+testmarkonpkgasauto 'auto' 'manual'
+testmarkonpkgasauto 'markauto' 'unmarkauto'
+
+testnoholdpkg() {
+	testempty aptmark showhold
+	testempty aptmark showholds  # typical "typo"
+	testempty aptmark showhold dpkg
+	testempty aptmark showholds dpkg
+}
+testmarkonepkgashold() {
+	testsuccess aptmark hold $1
+	testequal "$1" aptmark showhold
+	testequal "$1" aptmark showholds
+	testsuccess aptmark unhold $1
+	testnoholdpkg
+}
+
+testequal 'E: No packages found' aptmark hold
+testequal 'E: No packages found' aptmark unhold
+
+testnoholdpkg
+testmarkonepkgashold 'foo'
+testmarkonepkgashold 'bar'
+testmarkonepkgashold 'uninstalled'
+testmarkonepkgashold 'uninstalled-native'
+
+testequal 'uninstalled set on hold.' aptmark hold uninstalled
+testequal 'uninstalled-native set on hold.' aptmark hold uninstalled-native
