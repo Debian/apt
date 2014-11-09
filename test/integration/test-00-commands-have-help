@@ -50,3 +50,14 @@ done
 for CMD in 'apt-dump-solver'  'apt-internal-solver'; do
 	checkoptions "$(echo "$CMD" | tr -d '-')"
 done
+
+# in times of need, we all look for super cow to save the day
+testsuccess aptget moo
+testsuccess aptget moo -q=2
+testsuccess aptget moo moo
+testsuccess aptget moo moo -q=2
+testsuccess aptget moo moo --color
+testsuccess aptget moo moo moo
+testsuccess aptget moo moo moo -q=2
+testsuccess aptget moo moo moo moo
+testsuccess aptget moo moo moo moo -q=2

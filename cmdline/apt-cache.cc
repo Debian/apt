@@ -116,7 +116,7 @@ static bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 		  continue;
 
 	    // Skip conflicts and replaces
-	    if (End.IsNegative() == true)
+	    if (End.IsNegative() == true || End->Type == pkgCache::Dep::Replaces)
 	       continue;
 
 	    // Verify the or group
@@ -133,7 +133,7 @@ static bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 		  break;
 	       }
 	       delete [] VList;
-	       
+
 	       if (Start == End)
 		  break;
 	       ++Start;

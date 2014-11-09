@@ -25,6 +25,9 @@ setupaptarchive
 
 APTARCHIVE=$(readlink -f ./aptarchive)
 
+testequal 'E: You must give at least one search pattern' aptcache search
+testequal 'E: You must give at least one search pattern' apt search
+
 # with OP progress 
 testequal "Sorting...
 Full Text Search...

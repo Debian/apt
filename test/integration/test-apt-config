@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+testsuccess aptconfig dump
+testequal 'APT::Architecture "amd64";' aptconfig dump APT::Architecture
+testempty aptconfig dump config::which::does::not::exist
+
+testequal 'APT::Architectures "";
+APT::Architectures:: "amd64";' aptconfig dump APT::Architectures
+testequal 'APT::Architectures:: "amd64";' aptconfig dump --no-empty APT::Architectures
+testequal 'amd64' aptconfig dump --no-empty --format='%v%n' APT::Architectures
+
+testempty aptconfig shell
+testequal 'E: Arguments not in pairs' aptconfig shell APT::Architecture
+testempty aptconfig shell APT::Architecture ARCH # incorrect order
+testequal "ARCH='amd64'" aptconfig shell ARCH APT::Architecture
+
+ROOTDIR="$(readlink -f rootdir)"
+testequal "CONFIG='apt.conf'" aptconfig shell CONFIG Dir::Etc::main
+testequal "CONFIG='${ROOTDIR}/etc/apt/apt.conf'" aptconfig shell CONFIG Dir::Etc::main/f
+testequal "CONFIG='etc/apt/'" aptconfig shell CONFIG Dir::Etc
+testequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/ # old style
+testequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/d
+
+testempty aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
+export DEB_BUILD_PROFILES='nodoc stage1'
+testequal 'nodoc
+stage1' aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
+unset DEB_BUILD_PROFILES
+testempty aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles

@@ -14,9 +14,11 @@ configarchitecture "i386"
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver
-aptget update -qq
+
+echo "Acquire::Languages \"none\";" > rootdir/etc/apt/apt.conf.d/00nolanguages
+testsuccess aptget update
 listcurrentlistsdirectory > lists.before
 
 # insert new version

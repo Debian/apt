@@ -53,7 +53,7 @@ echo "http://some-proxy"
 EOF
     chmod 755 apt-proxy-detect
     echo "Acquire::http::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
-    
+
     testequal "Using proxy 'http://some-proxy' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
 
 
@@ -64,13 +64,15 @@ echo "https://https-proxy"
 EOF
     chmod 755 apt-proxy-detect
     echo "Acquire::https::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
-    
-    testequal "Using proxy 'https://https-proxy' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com 
 
-
-    
+    testequal "Using proxy 'https://https-proxy' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
 }
 
 test_apt_helper_download
 test_apt_helper_detect_proxy
 
+# test failure modes
+testequal 'E: Invalid operation download' apthelper download
+testequal 'E: Must specify at least one pair url/filename' apthelper download-file
+testequal 'E: Must specify at least one pair url/filename' apthelper download-file http://example.org/
+testequal 'E: Need one URL as argument' apthelper auto-detect-proxy
