@@ -558,30 +558,12 @@ static bool DoClean(CommandLine &)
       return true;
    }
 
-   bool const NoLocking = _config->FindB("Debug::NoLocking",false);
-   // Lock the archive directory
-   FileFd Lock;
-   if (NoLocking == false)
-   {
-      int lock_fd = GetLock(archivedir + "lock");
-      if (lock_fd < 0)
-	 return _error->Error(_("Unable to lock directory %s"), archivedir.c_str());
-      Lock.Fd(lock_fd);
-   }
-
    pkgAcquire Fetcher;
+   Fetcher.GetLock(archivedir);
    Fetcher.Clean(archivedir);
    Fetcher.Clean(archivedir + "partial/");
 
-   if (NoLocking == false)
-   {
-      Lock.Close();
-      int lock_fd = GetLock(listsdir + "lock");
-      if (lock_fd < 0)
-	 return _error->Error(_("Unable to lock directory %s"), listsdir.c_str());
-      Lock.Fd(lock_fd);
-   }
-
+   Fetcher.GetLock(listsdir);
    Fetcher.Clean(listsdir + "partial/");
 
    pkgCacheFile::RemoveCaches();

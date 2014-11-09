@@ -152,6 +152,8 @@ bool pkgAcquire::GetLock(std::string const &Lock)
       return true;
 
    // Lock the directory this acquire object will work in
+   if (LockFD != -1)
+      close(LockFD);
    LockFD = ::GetLock(flCombine(Lock, "lock"));
    if (LockFD == -1)
       return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
