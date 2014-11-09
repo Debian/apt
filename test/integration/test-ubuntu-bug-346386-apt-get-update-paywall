@@ -40,7 +40,8 @@ msgtest 'Got expected failure message' 'apt-get update'
 aptget update -qq 2>&1 | grep -q 'W:.*Does not start with a cleartext signature' && msgpass || msgfail
 
 ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
-testequal 'partial' ls $LISTS
+testequal 'lock
+partial' ls $LISTS
 
 # and again with pre-existing files with "valid data" which should remain
 for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do

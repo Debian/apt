@@ -27,8 +27,9 @@ W: The repository 'file: unstable Release' does not have a Release file. This is
 E: Use --allow-insecure-repositories to force the update" aptget update --no-allow-insecure-repositories
 
 # no package foo
-testequal "Listing..." apt list foo
-testequal "partial" ls rootdir/var/lib/apt/lists
+testequal 'Listing...' apt list foo
+testequal 'lock
+partial' ls rootdir/var/lib/apt/lists
 
 # allow override
 testequal "Ign file: unstable InRelease

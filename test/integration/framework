@@ -236,7 +236,6 @@ setupenvironment() {
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
-	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
 	# store apt-key were we can access it, even if we run it as a different user
@@ -1412,7 +1411,7 @@ aptautotest() {
 aptautotest_aptget_update() {
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
 	# all copied files are properly chmodded
-	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f); do
+	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
 	done
 }

@@ -49,6 +49,7 @@ testsetup() {
 	msgmsg 'Test with no initial data over' "$1"
 	rm -rf rootdir/var/lib/apt/lists
 	mkdir -m 700 -p rootdir/var/lib/apt/lists/partial
+	touch rootdir/var/lib/apt/lists/lock
 	if [ "$(id -u)" = '0' ]; then
 		chown _apt:root rootdir/var/lib/apt/lists/partial
 	fi
