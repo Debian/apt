@@ -237,9 +237,11 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
 
    FileFd StateFile;
    string const state = _config->FindFile("Dir::State::extended_states");
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), flNotFile(state)) == false)
+      return false;
 
    // if it does not exist, create a empty one
-   if(!RealFileExists(state)) 
+   if(!RealFileExists(state))
    {
       StateFile.Open(state, FileFd::WriteAtomic);
       StateFile.Close();
