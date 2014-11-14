@@ -92,8 +92,11 @@ void pkgAcquire::Initialize()
 static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent)
 {
    std::string const partial = parent + "partial";
-   if (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
-	 CreateAPTDirectoryIfNeeded(parent, partial) == false)
+   mode_t const mode = umask(S_IWGRP | S_IWOTH);
+   bool const creation_fail = (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
+	 CreateAPTDirectoryIfNeeded(parent, partial) == false);
+   umask(mode);
+   if (creation_fail == true)
       return false;
 
    std::string const SandboxUser = _config->Find("APT::Sandbox::User");

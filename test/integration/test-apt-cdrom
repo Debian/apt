@@ -125,7 +125,6 @@ $CDROM_POST" aptcdromlog add
 msgtest 'Test for the german description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
 rm -rf rootdir/var/lib/apt/lists
-mkdir -p rootdir/var/lib/apt/lists/partial
 testequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add

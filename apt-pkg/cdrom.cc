@@ -822,8 +822,11 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    // check for existence and possibly create state directory for copying
    string const listDir = _config->FindDir("Dir::State::lists");
    string const partialListDir = listDir + "partial/";
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+   mode_t const mode = umask(S_IWGRP | S_IWOTH);
+   bool const creation_fail = (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+	 CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false);
+   umask(mode);
+   if (creation_fail == true)
    {
       UnmountCDROM(CDROM, NULL);
       return _error->Errno("cdrom", _("List directory %spartial is missing."), listDir.c_str());

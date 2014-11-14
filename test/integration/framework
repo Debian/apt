@@ -203,7 +203,7 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p usr/bin var/cache var/lib/apt var/log tmp
+	mkdir -p usr/bin var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
@@ -1341,7 +1341,7 @@ testfilestats() {
 		msgpass
 	else
 		echo >&2
-		ls -l >&2 "$1"
+		ls -ld >&2 "$1"
 		echo -n >&2 "stat(1) reports for $2: "
 		stat --format "$2" "$1"
 		msgfail
@@ -1386,6 +1386,24 @@ listcurrentlistsdirectory() {
 	done
 }
 
+### convinience hacks ###
+mkdir() {
+	# creating some directories by hand is a tedious task, so make it look simple
+	if [ "$*" = '-p rootdir/var/lib/apt/lists' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" ] ||
+	   [ "$*" = '-p rootdir/var/lib/apt/lists/partial' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" ]; then
+		# only the last directory created by mkdir is effected by the -m !
+		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt"
+		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"
+		command mkdir -m 700 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+		touch "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/lock"
+		if [ "$(id -u)" = '0' ]; then
+			chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+		fi
+	else
+		command mkdir "$@"
+	fi
+}
+
 ### The following tests are run by most test methods automatically to check
 ### general things about commands executed without writing the test every time.
 
@@ -1410,6 +1428,8 @@ aptautotest() {
 
 aptautotest_aptget_update() {
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${USER}:${USER}:755"
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${USER}:${USER}:755"
 	# all copied files are properly chmodded
 	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
