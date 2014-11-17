@@ -272,6 +272,14 @@ setupenvironment() {
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 
+	# create some files in /tmp and look at user/group to get what this means
+	TEST_DEFAULT_USER="$USER"
+	if [ "$(uname)" = 'GNU/kFreeBSD' ]; then
+		TEST_DEFAULT_GROUP='root'
+	else
+		TEST_DEFAULT_GROUP="$USER"
+	fi
+
         # Acquire::AllowInsecureRepositories=false is not yet the default
         # but we want it to be the default soon
         configallowinsecurerepositories "false";
@@ -1428,11 +1436,11 @@ aptautotest() {
 
 aptautotest_aptget_update() {
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
-	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${USER}:${USER}:755"
-	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${USER}:${USER}:755"
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	# all copied files are properly chmodded
 	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f ! -name 'lock'); do
-		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
+		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }

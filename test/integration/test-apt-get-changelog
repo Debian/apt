@@ -33,7 +33,7 @@ testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/apt_
 
 testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat  ../aptarchive/pool/apt_1.0/changelog)"
-testfilestats 'apt.changelog' '%U:%G:%a' '=' "${USER}:${USER}:644"
+testfilestats 'apt.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 rm -f apt.changelog ../aptarchive/pool/apt_1.0/changelog
 
 testequal "$(cat ../aptarchive/pool/apt_1.0.changelog)" aptget changelog apt \
@@ -41,7 +41,7 @@ testequal "$(cat ../aptarchive/pool/apt_1.0.changelog)" aptget changelog apt \
 
 testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat ../aptarchive/pool/apt_1.0.changelog)"
-testfilestats 'apt.changelog' '%U:%G:%a' '=' "${USER}:${USER}:644"
+testfilestats 'apt.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 rm -f apt.changelog ../aptarchive/pool/apt_1.0.changelog
 
 testequal 'E: changelog download failed' aptget changelog apt -qq -d -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
