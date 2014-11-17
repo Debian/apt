@@ -6,6 +6,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture 'native'
+configdpkgnoopchroot
 
 # create a bunch of failures
 createfailure() {
@@ -24,51 +25,6 @@ createfailure 'prerm'
 createfailure 'postrm'
 
 setupaptarchive
-
-# create a library to noop chroot() and rewrite maintainer script executions
-# via execvp() as used by dpkg as we don't want our rootdir to be a fullblown
-# chroot directory dpkg could chroot into to execute the maintainer scripts
-cat << EOF > noopchroot.c
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dlfcn.h>
-
-static char * chrootdir = NULL;
-
-int chroot(const char *path) {
-	printf("WARNING: CHROOTing to %s was ignored!\n", path);
-	free(chrootdir);
-	chrootdir = strdup(path);
-	return 0;
-}
-int execvp(const char *file, char *const argv[]) {
-	static int (*func_execvp) (const char *, char * const []) = NULL;
-	if (func_execvp == NULL)
-		func_execvp = (int (*) (const char *, char * const [])) dlsym(RTLD_NEXT, "execvp");
-	if (chrootdir == NULL || strncmp(file, "/var/lib/dpkg/", strlen("/var/lib/dpkg/")) != 0)
-		return func_execvp(file, argv);
-	printf("REWRITE execvp call %s into %s\n", file, chrootdir);
-	char newfile[strlen(chrootdir) + strlen(file)];
-	strcpy(newfile, chrootdir);
-	strcat(newfile, file);
-	return func_execvp(newfile, argv);
-}
-EOF
-testsuccess gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
-
-mkdir -p "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
-DPKG="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
-echo "#!/bin/sh
-if [ -n \"\$LD_PRELOAD\" ]; then
-	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}\"
-else
-	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so\"
-fi
-dpkg \"\$@\"" > $DPKG
-chmod +x $DPKG
-sed -ie "s|^DPKG::options:: \"dpkg\";\$|DPKG::options:: \"$DPKG\";|" aptconfig.conf
 
 # setup some pre- and post- invokes to check the output isn't garbled later
 APTHOOK="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apthook"
