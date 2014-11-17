@@ -8,7 +8,7 @@ setupenvironment
 configarchitecture 'native'
 configdpkgnoopchroot
 
-setupsimplenativepackage "fdleaks" 'native' '1.0' 'unstable'
+setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
 BUILDDIR="incoming/fdleaks-1.0"
 for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
 	echo '#!/bin/sh
@@ -19,7 +19,8 @@ rm -rf "$BUILDDIR"
 
 setupaptarchive
 
-testsuccess aptget install -y fdleaks
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess aptget install -y fdleaks -qq < /dev/null
 msgtest 'Check if fds were not' 'leaked'
 if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '8' ]; then
 	msgpass
@@ -29,7 +30,23 @@ else
 	msgfail
 fi
 
-testsuccess aptget purge -y fdleaks
+cp rootdir/tmp/testsuccess.output terminal.output
+tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+testfileequal 'terminal.log' "$(cat terminal.output)"
+
+testequal 'startup archives unpack
+install fdleaks:all <none> 1.0
+status half-installed fdleaks:all 1.0
+status unpacked fdleaks:all 1.0
+status unpacked fdleaks:all 1.0
+startup packages configure
+configure fdleaks:all 1.0 <none>
+status unpacked fdleaks:all 1.0
+status half-configured fdleaks:all 1.0
+status installed fdleaks:all 1.0' cut -f 3- -d' ' rootdir/var/log/dpkg.log
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess aptget purge -y fdleaks -qq
 msgtest 'Check if fds were not' 'leaked'
 if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '12' ]; then
 	msgpass
@@ -38,3 +55,20 @@ else
 	cat rootdir/tmp/testsuccess.output
 	msgfail
 fi
+cp rootdir/tmp/testsuccess.output terminal.output
+tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+testfileequal 'terminal.log' "$(cat terminal.output)"
+
+testequal 'startup packages purge
+status installed fdleaks:all 1.0
+remove fdleaks:all 1.0 <none>
+status half-configured fdleaks:all 1.0
+status half-installed fdleaks:all 1.0
+status config-files fdleaks:all 1.0
+purge fdleaks:all 1.0 <none>
+status config-files fdleaks:all 1.0
+status config-files fdleaks:all 1.0
+status config-files fdleaks:all 1.0
+status config-files fdleaks:all 1.0
+status config-files fdleaks:all 1.0
+status not-installed fdleaks:all <none>' cut -f 3- -d' ' rootdir/var/log/dpkg.log
