@@ -1,0 +1,40 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+configdpkgnoopchroot
+
+setupsimplenativepackage "fdleaks" 'native' '1.0' 'unstable'
+BUILDDIR="incoming/fdleaks-1.0"
+for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
+	echo '#!/bin/sh
+ls -l /proc/self/fd/' > ${BUILDDIR}/debian/$script
+done
+buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+rm -rf "$BUILDDIR"
+
+setupaptarchive
+
+testsuccess aptget install -y fdleaks
+msgtest 'Check if fds were not' 'leaked'
+if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '8' ]; then
+	msgpass
+else
+	echo
+	cat rootdir/tmp/testsuccess.output
+	msgfail
+fi
+
+testsuccess aptget purge -y fdleaks
+msgtest 'Check if fds were not' 'leaked'
+if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '12' ]; then
+	msgpass
+else
+	echo
+	cat rootdir/tmp/testsuccess.output
+	msgfail
+fi

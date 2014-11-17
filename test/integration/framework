@@ -358,6 +358,54 @@ configdpkg() {
 	fi
 }
 
+configdpkgnoopchroot() {
+	# create a library to noop chroot() and rewrite maintainer script executions
+	# via execvp() as used by dpkg as we don't want our rootdir to be a fullblown
+	# chroot directory dpkg could chroot into to execute the maintainer scripts
+	msgtest 'Building library to preload to make maintainerscript work in' 'dpkg'
+	cat << EOF > noopchroot.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dlfcn.h>
+
+static char * chrootdir = NULL;
+
+int chroot(const char *path) {
+	printf("WARNING: CHROOTing to %s was ignored!\n", path);
+	free(chrootdir);
+	chrootdir = strdup(path);
+	return 0;
+}
+int execvp(const char *file, char *const argv[]) {
+	static int (*func_execvp) (const char *, char * const []) = NULL;
+	if (func_execvp == NULL)
+		func_execvp = (int (*) (const char *, char * const [])) dlsym(RTLD_NEXT, "execvp");
+	if (chrootdir == NULL || strncmp(file, "/var/lib/dpkg/", strlen("/var/lib/dpkg/")) != 0)
+		return func_execvp(file, argv);
+	printf("REWRITE execvp call %s into %s\n", file, chrootdir);
+	char newfile[strlen(chrootdir) + strlen(file)];
+	strcpy(newfile, chrootdir);
+	strcat(newfile, file);
+	return func_execvp(newfile, argv);
+}
+EOF
+	testsuccess --nomsg gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+
+	mkdir -p "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
+	DPKG="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	echo "#!/bin/sh
+if [ -n \"\$LD_PRELOAD\" ]; then
+	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}\"
+else
+	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so\"
+fi
+dpkg \"\$@\"" > $DPKG
+	chmod +x $DPKG
+	sed -ie "s|^DPKG::options:: \"dpkg\";\$|DPKG::options:: \"$DPKG\";|" aptconfig.conf
+}
+
 configallowinsecurerepositories() {
     echo "Acquire::AllowInsecureRepositories \"$1\";" >  rootdir/etc/apt/apt.conf.d/allow-insecure-repositories.conf
 
@@ -480,7 +528,7 @@ buildsimplenativepackage() {
 	fi
 	local BUILDDIR=${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}
 
-	msgninfo "Build package ${NAME} in ${VERSION} for ${RELEASE} in ${DISTSECTION}… "
+	msgtest "Build source package in version ${VERSION} for ${RELEASE} in ${DISTSECTION}" "$NAME"
 	mkdir -p $BUILDDIR/debian/source
 	echo "* most suckless software product ever" > ${BUILDDIR}/FEATURES
 	echo "#!/bin/sh
@@ -512,7 +560,10 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	echo "Description: $DESCRIPTION" >> ${BUILDDIR}/debian/control
 
 	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
-	(cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' \
+	cd ${BUILDDIR}/..
+	testsuccess --nomsg dpkg-source -b ${NAME}-${VERSION}
+	cd - >/dev/null
+	sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output \
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
@@ -524,6 +575,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	done
 
 	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
+		msgtest "Build binary package for ${RELEASE} in ${SECTION}" "$NAME"
 		rm -rf ${BUILDDIR}/debian/tmp
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
@@ -537,11 +589,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
 		# ensure the right permissions as dpkg-deb ensists
 		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
-		if ! dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
-			cat $LOG
-			false
-		fi
-		rm $LOG
+		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/..
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
@@ -559,15 +607,13 @@ buildpackage() {
 	local ARCH=$(getarchitecture $4)
 	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
 	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
-	msgninfo "Build package ${PKGNAME} for ${RELEASE} in ${SECTION}… "
+	msgtest "Build package for ${RELEASE} in ${SECTION}" "$PKGNAME"
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	if ! dpkg-buildpackage -uc -us -a$ARCH >$BUILDLOG 2>&1 ; then
-		cat $BUILDLOG
-		false
-	fi
+	testsuccess --nomsg dpkg-buildpackage -uc -us -a$ARCH
+	cp ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output $BUILDLOG
 	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
 	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
@@ -577,7 +623,6 @@ buildpackage() {
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.srclist
 	done
-	msgdone "info"
 }
 
 buildaptarchive() {

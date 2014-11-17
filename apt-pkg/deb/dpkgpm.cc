@@ -1158,8 +1158,7 @@ void pkgDPkgPM::SetupSlavePtyMagic()
    int const slaveFd = open(d->slave, O_RDWR);
    if (slaveFd == -1)
       _error->FatalE("open", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-
-   if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
+   else if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
       _error->FatalE("ioctl", "Setting TIOCSCTTY for slave fd %d failed!", slaveFd);
    else
    {
@@ -1170,6 +1169,9 @@ void pkgDPkgPM::SetupSlavePtyMagic()
       if (tcsetattr(0, TCSANOW, &d->tt) < 0)
 	 _error->FatalE("tcsetattr", "Setting in Setup via TCSANOW for slave fd %d failed!", slaveFd);
    }
+
+   if (slaveFd != -1)
+      close(slaveFd);
 }
 void pkgDPkgPM::StopPtyMagic()
 {
