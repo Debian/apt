@@ -72,7 +72,8 @@ class pkgDPkgPMPrivate
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL),
-                        progress(NULL), master(-1), slave(NULL)
+			progress(NULL), tt_is_valid(false), master(-1),
+			slave(NULL), protect_slave_from_dying(-1)
    {
       dpkgbuf[0] = '\0';
    }
@@ -90,8 +91,10 @@ public:
 
    // pty stuff
    struct termios tt;
+   bool tt_is_valid;
    int master;
    char * slave;
+   int protect_slave_from_dying;
 
    // signals
    sigset_t sigmask;
@@ -1071,47 +1074,40 @@ void pkgDPkgPM::StartPtyMagic()
    }
 
    _error->PushToStack();
-   // if tcgetattr for both stdin/stdout returns 0 (no error)
-   // we do the pty magic
-   if (tcgetattr(STDOUT_FILENO, &d->tt) == 0 &&
-	 tcgetattr(STDIN_FILENO, &d->tt) == 0)
+
+   d->master = posix_openpt(O_RDWR | O_NOCTTY);
+   if (d->master == -1)
+      _error->Errno("posix_openpt", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
+   else if (unlockpt(d->master) == -1)
+      _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
+   else
    {
-      d->master = posix_openpt(O_RDWR | O_NOCTTY);
-      if (d->master == -1)
-	 _error->Errno("posix_openpt", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-      else if (unlockpt(d->master) == -1)
-      {
-	 _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
-	 close(d->master);
-	 d->master = -1;
-      }
+      char const * const slave_name = ptsname(d->master);
+      if (slave_name == NULL)
+	 _error->Errno("ptsname", "Getting name for slave of master fd %d failed!", d->master);
       else
       {
-	 char const * const slave_name = ptsname(d->master);
-	 if (slave_name == NULL)
+	 d->slave = strdup(slave_name);
+	 if (d->slave == NULL)
+	    _error->Errno("strdup", "Copying name %s for slave of master fd %d failed!", slave_name, d->master);
+	 else if (grantpt(d->master) == -1)
+	    _error->Errno("grantpt", "Granting access to slave %s based on master fd %d failed!", slave_name, d->master);
+	 else if (tcgetattr(STDIN_FILENO, &d->tt) == 0)
 	 {
-	    _error->Errno("unlockpt", "Getting name for slave of master fd %d failed!", d->master);
-	    close(d->master);
-	    d->master = -1;
-	 }
-	 else
-	 {
-	    d->slave = strdup(slave_name);
-	    if (d->slave == NULL)
+	    d->tt_is_valid = true;
+	    struct termios raw_tt;
+	    // copy window size of stdout if its a 'good' terminal
+	    if (tcgetattr(STDOUT_FILENO, &raw_tt) == 0)
 	    {
-	       _error->Errno("strdup", "Copying name %s for slave of master fd %d failed!", slave_name, d->master);
-	       close(d->master);
-	       d->master = -1;
+	       struct winsize win;
+	       if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0)
+		  _error->Errno("ioctl", "Getting TIOCGWINSZ from stdout failed!");
+	       if (ioctl(d->master, TIOCSWINSZ, &win) < 0)
+		  _error->Errno("ioctl", "Setting TIOCSWINSZ for master fd %d failed!", d->master);
 	    }
-	    struct winsize win;
-	    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0)
-	       _error->Errno("ioctl", "Getting TIOCGWINSZ from stdout failed!");
-	    if (ioctl(d->master, TIOCSWINSZ, &win) < 0)
-	       _error->Errno("ioctl", "Setting TIOCSWINSZ for master fd %d failed!", d->master);
 	    if (tcsetattr(d->master, TCSANOW, &d->tt) == -1)
 	       _error->Errno("tcsetattr", "Setting in Start via TCSANOW for master fd %d failed!", d->master);
 
-	    struct termios raw_tt;
 	    raw_tt = d->tt;
 	    cfmakeraw(&raw_tt);
 	    raw_tt.c_lflag &= ~ECHO;
@@ -1123,17 +1119,21 @@ void pkgDPkgPM::StartPtyMagic()
 	    sigaddset(&d->sigmask, SIGTTOU);
 	    sigprocmask(SIG_BLOCK,&d->sigmask, &d->original_sigmask);
 	    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tt) == -1)
-	       _error->Errno("tcsetattr", "Setting in Start via TCSAFLUSH for stdout failed!");
+	       _error->Errno("tcsetattr", "Setting in Start via TCSAFLUSH for stdin failed!");
 	    sigprocmask(SIG_SETMASK, &d->original_sigmask, NULL);
+
+	 }
+	 if (d->slave != NULL)
+	 {
+	    /* on linux, closing (and later reopening) all references to the slave
+	       makes the slave a death end, so we open it here to have one open all
+	       the time. We could use this fd in SetupSlavePtyMagic() for linux, but
+	       on kfreebsd we get an incorrect ("step like") output then while it has
+	       no problem with closing all references… so to avoid platform specific
+	       code here we combine both and be happy once more */
+	    d->protect_slave_from_dying = open(d->slave, O_RDWR | O_CLOEXEC);
 	 }
       }
-   }
-   else
-   {
-      // complain only if stdout is either a terminal (but still failed) or is an invalid
-      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
-      if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
-	 _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
    }
 
    if (_error->PendingError() == true)
@@ -1143,17 +1143,23 @@ void pkgDPkgPM::StartPtyMagic()
 	 close(d->master);
 	 d->master = -1;
       }
+      if (d->slave != NULL)
+      {
+	 free(d->slave);
+	 d->slave = NULL;
+      }
       _error->DumpErrors(std::cerr);
    }
    _error->RevertToStack();
 }
 void pkgDPkgPM::SetupSlavePtyMagic()
 {
-   if(d->master == -1)
+   if(d->master == -1 || d->slave == NULL)
       return;
 
    if (close(d->master) == -1)
       _error->FatalE("close", "Closing master %d in child failed!", d->master);
+   d->master = -1;
    if (setsid() == -1)
       _error->FatalE("setsid", "Starting a new session for child failed!");
 
@@ -1168,7 +1174,7 @@ void pkgDPkgPM::SetupSlavePtyMagic()
 	 if (dup2(slaveFd, i) == -1)
 	    _error->FatalE("dup2", "Dupping %d to %d in child failed!", slaveFd, i);
 
-      if (tcsetattr(0, TCSANOW, &d->tt) < 0)
+      if (d->tt_is_valid == true && tcsetattr(STDIN_FILENO, TCSANOW, &d->tt) < 0)
 	 _error->FatalE("tcsetattr", "Setting in Setup via TCSANOW for slave fd %d failed!", slaveFd);
    }
 
@@ -1180,9 +1186,14 @@ void pkgDPkgPM::StopPtyMagic()
    if (d->slave != NULL)
       free(d->slave);
    d->slave = NULL;
+   if (d->protect_slave_from_dying != -1)
+   {
+      close(d->protect_slave_from_dying);
+      d->protect_slave_from_dying = -1;
+   }
    if(d->master >= 0) 
    {
-      if (tcsetattr(0, TCSAFLUSH, &d->tt) == -1)
+      if (d->tt_is_valid == true && tcsetattr(STDIN_FILENO, TCSAFLUSH, &d->tt) == -1)
 	 _error->FatalE("tcsetattr", "Setting in Stop via TCSAFLUSH for stdin failed!");
       close(d->master);
       d->master = -1;
