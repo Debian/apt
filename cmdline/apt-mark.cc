@@ -274,65 +274,75 @@ static bool DoHold(CommandLine &CmdL)
       return true;
    }
 
-   Args.erase(Args.begin() + BaseArgs, Args.end());
-   Args.push_back("--merge-avail");
-   Args.push_back("-");
-   Args.push_back(NULL);
-
-   int external[2] = {-1, -1};
-   if (pipe(external) != 0)
-      return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --merge-avail");
-
-   pid_t dpkgMergeAvail = ExecFork();
-   if (dpkgMergeAvail == 0)
-   {
-      close(external[1]);
-      std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
-	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --merge-avail", chrootDir.c_str());
-      dup2(external[0], STDIN_FILENO);
-      int const nullfd = open("/dev/null", O_RDONLY);
-      dup2(nullfd, STDOUT_FILENO);
-      execvp(Args[0], (char**) &Args[0]);
-      _error->WarningE("dpkgGo", "Can't get dpkg --merge-avail running!");
-      _exit(2);
-   }
-
-   FILE* dpkg = fdopen(external[1], "w");
+   APT::PackageList keepoffset;
    for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg->CurrentVer != 0)
 	 continue;
-      char const * Arch;
-      if (Pkg->VersionList != 0)
-	 Arch = Pkg.VersionList().Arch();
-      else
-	 Arch = Pkg.Arch();
-      fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
-	    "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", Pkg.Name(), Arch);
+      keepoffset.insert(Pkg);
    }
-   fclose(dpkg);
 
-   if (dpkgMergeAvail > 0)
+   if (keepoffset.empty() == false)
    {
-      int Status = 0;
-      while (waitpid(dpkgMergeAvail, &Status, 0) != dpkgMergeAvail)
+      Args.erase(Args.begin() + BaseArgs, Args.end());
+      Args.push_back("--merge-avail");
+      // FIXME: supported only since 1.17.7 in dpkg
+      Args.push_back("-");
+      Args.push_back(NULL);
+
+      int external[2] = {-1, -1};
+      if (pipe(external) != 0)
+	 return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --merge-avail");
+
+      pid_t dpkgMergeAvail = ExecFork();
+      if (dpkgMergeAvail == 0)
       {
-	 if (errno == EINTR)
-	    continue;
-	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --merge-avail");
-	 break;
+	 close(external[1]);
+	 std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+	 if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
+	    _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --merge-avail", chrootDir.c_str());
+	 dup2(external[0], STDIN_FILENO);
+	 int const nullfd = open("/dev/null", O_RDONLY);
+	 dup2(nullfd, STDOUT_FILENO);
+	 execvp(Args[0], (char**) &Args[0]);
+	 _error->WarningE("dpkgGo", "Can't get dpkg --merge-avail running!");
+	 _exit(2);
       }
-      if (WIFEXITED(Status) == false || WEXITSTATUS(Status) != 0)
-	 return _error->Error(_("Executing dpkg failed. Are you root?"));
+
+      FILE* dpkg = fdopen(external[1], "w");
+      for (APT::PackageList::iterator Pkg = keepoffset.begin(); Pkg != keepoffset.end(); ++Pkg)
+      {
+	 char const * Arch;
+	 if (Pkg->VersionList != 0)
+	    Arch = Pkg.VersionList().Arch();
+	 else
+	    Arch = Pkg.Arch();
+	 fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
+	       "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", Pkg.Name(), Arch);
+      }
+      fclose(dpkg);
+      keepoffset.clear();
+
+      if (dpkgMergeAvail > 0)
+      {
+	 int Status = 0;
+	 while (waitpid(dpkgMergeAvail, &Status, 0) != dpkgMergeAvail)
+	 {
+	    if (errno == EINTR)
+	       continue;
+	    _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --merge-avail");
+	    break;
+	 }
+	 if (WIFEXITED(Status) == false || WEXITSTATUS(Status) != 0)
+	    return _error->Error(_("Executing dpkg failed. Are you root?"));
+      }
    }
 
    Args.erase(Args.begin() + BaseArgs, Args.end());
    Args.push_back("--set-selections");
    Args.push_back(NULL);
 
-   external[0] = -1;
-   external[1] = -1;
+   int external[2] = {-1, -1};
    if (pipe(external) != 0)
       return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --set-selections");
 
@@ -349,7 +359,7 @@ static bool DoHold(CommandLine &CmdL)
       _exit(2);
    }
 
-   dpkg = fdopen(external[1], "w");
+   FILE* dpkg = fdopen(external[1], "w");
    for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (dpkgMultiArch == false)

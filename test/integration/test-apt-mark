@@ -85,6 +85,15 @@ testequal 'E: No packages found' aptmark unhold
 testnoholdpkg
 testmarkonepkgashold 'foo'
 testmarkonepkgashold 'bar'
+
+msgtest 'dpkg supports --merge-avail via' 'stdin'
+if dpkg --merge-avail - < /dev/null >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip 'dpkg version too old'
+	exit 0
+fi
+
 testmarkonepkgashold 'uninstalled'
 testmarkonepkgashold 'uninstalled-native'
 
