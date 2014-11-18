@@ -5,7 +5,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture 'native'
+configarchitecture 'amd64' 'i386'
 configdpkgnoopchroot
 
 setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
@@ -16,6 +16,11 @@ ls -l /proc/self/fd/' > ${BUILDDIR}/debian/$script
 done
 buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 rm -rf "$BUILDDIR"
+
+PKGNAME='fdleaks:all'
+if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null; then
+	PKGNAME='fdleaks'
+fi
 
 setupaptarchive
 
@@ -34,16 +39,16 @@ cp rootdir/tmp/testsuccess.output terminal.output
 tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
 testfileequal 'terminal.log' "$(cat terminal.output)"
 
-testequal 'startup archives unpack
-install fdleaks:all <none> 1.0
-status half-installed fdleaks:all 1.0
-status unpacked fdleaks:all 1.0
-status unpacked fdleaks:all 1.0
+testequal "startup archives unpack
+install $PKGNAME <none> 1.0
+status half-installed $PKGNAME 1.0
+status unpacked $PKGNAME 1.0
+status unpacked $PKGNAME 1.0
 startup packages configure
-configure fdleaks:all 1.0 <none>
-status unpacked fdleaks:all 1.0
-status half-configured fdleaks:all 1.0
-status installed fdleaks:all 1.0' cut -f 3- -d' ' rootdir/var/log/dpkg.log
+configure $PKGNAME 1.0 <none>
+status unpacked $PKGNAME 1.0
+status half-configured $PKGNAME 1.0
+status installed $PKGNAME 1.0" cut -f 3- -d' ' rootdir/var/log/dpkg.log
 
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess aptget purge -y fdleaks -qq
@@ -59,16 +64,16 @@ cp rootdir/tmp/testsuccess.output terminal.output
 tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
 testfileequal 'terminal.log' "$(cat terminal.output)"
 
-testequal 'startup packages purge
-status installed fdleaks:all 1.0
-remove fdleaks:all 1.0 <none>
-status half-configured fdleaks:all 1.0
-status half-installed fdleaks:all 1.0
-status config-files fdleaks:all 1.0
-purge fdleaks:all 1.0 <none>
-status config-files fdleaks:all 1.0
-status config-files fdleaks:all 1.0
-status config-files fdleaks:all 1.0
-status config-files fdleaks:all 1.0
-status config-files fdleaks:all 1.0
-status not-installed fdleaks:all <none>' cut -f 3- -d' ' rootdir/var/log/dpkg.log
+testequal "startup packages purge
+status installed $PKGNAME 1.0
+remove $PKGNAME 1.0 <none>
+status half-configured $PKGNAME 1.0
+status half-installed $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+purge $PKGNAME 1.0 <none>
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status not-installed $PKGNAME <none>" cut -f 3- -d' ' rootdir/var/log/dpkg.log
