@@ -48,7 +48,8 @@ startup packages configure
 configure $PKGNAME 1.0 <none>
 status unpacked $PKGNAME 1.0
 status half-configured $PKGNAME 1.0
-status installed $PKGNAME 1.0" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+status installed $PKGNAME 1.0
+startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
 
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess aptget purge -y fdleaks -qq
@@ -76,4 +77,5 @@ status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
-status not-installed $PKGNAME <none>" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+status not-installed $PKGNAME <none>
+startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log

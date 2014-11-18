@@ -19,13 +19,14 @@ testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
-pmstatus:testing:20:Preparing testing (amd64)
-pmstatus:testing:40:Unpacking testing (amd64)
-pmstatus:testing:60:Preparing to configure testing (amd64)
-pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing:60:Configuring testing (amd64)
-pmstatus:testing:80:Configuring testing (amd64)
-pmstatus:testing:100:Installed testing (amd64)" cat apt-progress.log
+pmstatus:testing:16.6667:Preparing testing (amd64)
+pmstatus:testing:33.3333:Unpacking testing (amd64)
+pmstatus:testing:50:Preparing to configure testing (amd64)
+pmstatus:dpkg-exec:50:Running dpkg
+pmstatus:testing:50:Configuring testing (amd64)
+pmstatus:testing:66.6667:Configuring testing (amd64)
+pmstatus:testing:83.3333:Installed testing (amd64)
+pmstatus:dpkg-exec:83.3333:Running dpkg" cat apt-progress.log
 
 # upgrade
 exec 3> apt-progress.log
@@ -34,13 +35,14 @@ testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
-pmstatus:testing:20:Preparing testing (amd64)
-pmstatus:testing:40:Unpacking testing (amd64)
-pmstatus:testing:60:Preparing to configure testing (amd64)
-pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing:60:Configuring testing (amd64)
-pmstatus:testing:80:Configuring testing (amd64)
-pmstatus:testing:100:Installed testing (amd64)" cat apt-progress.log
+pmstatus:testing:16.6667:Preparing testing (amd64)
+pmstatus:testing:33.3333:Unpacking testing (amd64)
+pmstatus:testing:50:Preparing to configure testing (amd64)
+pmstatus:dpkg-exec:50:Running dpkg
+pmstatus:testing:50:Configuring testing (amd64)
+pmstatus:testing:66.6667:Configuring testing (amd64)
+pmstatus:testing:83.3333:Installed testing (amd64)
+pmstatus:dpkg-exec:83.3333:Running dpkg" cat apt-progress.log
 
 # reinstall
 exec 3> apt-progress.log
@@ -49,22 +51,24 @@ testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
-pmstatus:testing:20:Preparing testing (amd64)
-pmstatus:testing:40:Unpacking testing (amd64)
-pmstatus:testing:60:Preparing to configure testing (amd64)
-pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing:60:Configuring testing (amd64)
-pmstatus:testing:80:Configuring testing (amd64)
-pmstatus:testing:100:Installed testing (amd64)" cat apt-progress.log
+pmstatus:testing:16.6667:Preparing testing (amd64)
+pmstatus:testing:33.3333:Unpacking testing (amd64)
+pmstatus:testing:50:Preparing to configure testing (amd64)
+pmstatus:dpkg-exec:50:Running dpkg
+pmstatus:testing:50:Configuring testing (amd64)
+pmstatus:testing:66.6667:Configuring testing (amd64)
+pmstatus:testing:83.3333:Installed testing (amd64)
+pmstatus:dpkg-exec:83.3333:Running dpkg" cat apt-progress.log
 
 # and remove
 exec 3> apt-progress.log
 testsuccess aptget remove testing -y -o APT::Status-Fd=3
 testequal "pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Removing testing (amd64)
-pmstatus:testing:33.3333:Preparing for removal of testing (amd64)
-pmstatus:testing:66.6667:Removing testing (amd64)
-pmstatus:testing:100:Removed testing (amd64)" cat apt-progress.log
+pmstatus:testing:25:Preparing for removal of testing (amd64)
+pmstatus:testing:50:Removing testing (amd64)
+pmstatus:testing:75:Removed testing (amd64)
+pmstatus:dpkg-exec:75:Running dpkg" cat apt-progress.log
 
 # install non-native and ensure we get proper progress info
 exec 3> apt-progress.log
@@ -75,12 +79,13 @@ testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing2:0:Installing testing2 (i386)
-pmstatus:testing2:20:Preparing testing2 (i386)
-pmstatus:testing2:40:Unpacking testing2 (i386)
-pmstatus:testing2:60:Preparing to configure testing2 (i386)
-pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing2:60:Configuring testing2 (i386)
-pmstatus:testing2:80:Configuring testing2 (i386)
-pmstatus:testing2:100:Installed testing2 (i386)" cat apt-progress.log
+pmstatus:testing2:16.6667:Preparing testing2 (i386)
+pmstatus:testing2:33.3333:Unpacking testing2 (i386)
+pmstatus:testing2:50:Preparing to configure testing2 (i386)
+pmstatus:dpkg-exec:50:Running dpkg
+pmstatus:testing2:50:Configuring testing2 (i386)
+pmstatus:testing2:66.6667:Configuring testing2 (i386)
+pmstatus:testing2:83.3333:Installed testing2 (i386)
+pmstatus:dpkg-exec:83.3333:Running dpkg" cat apt-progress.log
 
 rm -f apt-progress*.log

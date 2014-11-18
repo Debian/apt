@@ -1237,10 +1237,13 @@ testnopackage() {
 	fi
 }
 
-testdpkginstalled() {
-	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
-	if [ "$PKGS" != $# ]; then
+testdpkgstatus() {
+	local STATE="$1"
+	local NR="$2"
+	shift 2
+	msgtest "Test that $NR package(s) are in state $STATE with" "dpkg -l $*"
+	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep "^${STATE}" | wc -l)"
+	if [ "$PKGS" != $NR ]; then
 		echo >&2 $PKGS
 		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
@@ -1249,16 +1252,12 @@ testdpkginstalled() {
 	fi
 }
 
+testdpkginstalled() {
+	testdpkgstatus 'ii' "$#" "$@"
+}
+
 testdpkgnotinstalled() {
-	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
-	if [ "$PKGS" != 0 ]; then
-		echo
-		dpkg -l "$@" | grep '^[a-z]' >&2
-		msgfail
-	else
-		msgpass
-	fi
+	testdpkgstatus 'ii' '0' "$@"
 }
 
 testmarkedauto() {
