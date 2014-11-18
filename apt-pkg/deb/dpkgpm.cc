@@ -1047,6 +1047,12 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 	 PackagesTotal++;
       }
    }
+   /* one extra: We don't want the progress bar to reach 100%, especially not
+      if we call dpkg --configure --pending and process a bunch of triggers
+      while showing 100%. Also, spindown takes a while, so never reaching 100%
+      is way more correct than reaching 100% while still doing stuff even if
+      doing it this way is slightly bending the rules */
+   ++PackagesTotal;
 }
                                                                         /*}}}*/
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
@@ -1280,9 +1286,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 
    // support subpressing of triggers processing for special
    // cases like d-i that runs the triggers handling manually
-   bool const SmartConf = (_config->Find("PackageManager::Configure", "all") != "all");
    bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
-   if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
+   if (_config->FindB("DPkg::ConfigurePending", true) == true)
       List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
    // for the progress
