@@ -635,12 +635,8 @@ buildaptarchive() {
 
 createaptftparchiveconfig() {
 	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
-	COMPRESSORS="${COMPRESSORS%* }"
-	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
-	if [ -z "$ARCHS" ]; then
-		# the pool is empty, so we will operate on faked packages - let us use the configured archs
-		ARCHS="$(getarchitectures)"
-	fi
+	local COMPRESSORS="${COMPRESSORS%* }"
+	local ARCHS="$(getarchitectures)"
 	echo -n 'Dir {
 	ArchiveDir "' >> ftparchive.conf
 	echo -n $(readlink -f .) >> ftparchive.conf
@@ -1489,3 +1485,19 @@ aptautotest_aptget_update() {
 	done
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
+
+testaptautotestnodpkgwarning() {
+	local TESTCALL="$1"
+	while [ -n "$2" ]; do
+		if [ "$2" = '-s' ]; then return; fi
+		shift
+	done
+	testfailure grep '^dpkg: warning:.*ignor.*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"
+}
+
+aptautotest_aptget_install() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_aptget_remove() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_aptget_purge() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_install() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_remove() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_purge() { testaptautotestnodpkgwarning "$@"; }
