@@ -4,6 +4,7 @@
 # Tchaikov <tchaikov@sjtu.org>, 2005, 2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
+# Zhou Mo <cdluminate@gmail.com>, 2014.
 #
 msgid ""
 msgstr ""
@@ -11,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-09-09 20:35+0200\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
-"Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
+"Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -111,7 +112,7 @@ msgstr "您必须明确地给出至少一个表达式"
 
 #: cmdline/apt-cache.cc:1421
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
+msgstr "该命令已废弃。请使用‘apt-mark showauto’代替。"
 
 #: cmdline/apt-cache.cc:1516 apt-pkg/cacheset.cc:596
 #, c-format
@@ -166,7 +167,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s，用于 %s 构架，编译于 %s %s\n"
 
 #: cmdline/apt-cache.cc:1750
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -203,15 +203,13 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "用法： apt-cache [选项] 命令\n"
-"　　　 apt-cache [选项] add 文件1 [文件2 ...]\n"
 "　　　 apt-cache [选项] showpkg 软件包1 [软件包2 ...]\n"
 "　　　 apt-cache [选项] showsrc 软件包1 [软件包2 ...]\n"
 "\n"
-"apt-cache 是一个底层的工具，我们用它来操纵 APT 的二进制\n"
-"缓存文件，也用来在那些文件中查询相关信息\n"
+"apt-cache 是一个底层的工具，可以用来\n"
+"在 APT 的二进制缓存文件中查询信息\n"
 "\n"
 "命令：\n"
-"   add - 向源缓存加入一个软件包文件\n"
 "   gencaches - 同时生成软件包和源代码包的缓存\n"
 "   showpkg - 显示某个软件包的全面信息\n"
 "   showsrc - 显示源文件的各项记录\n"
@@ -221,7 +219,6 @@ msgstr ""
 "   unmet - 显示所有未满足的依赖关系\n"
 "   search - 根据正则表达式搜索软件包列表\n"
 "   show - 以便于阅读的格式介绍该软件包\n"
-"   showauto - 显示自动安装的软件包的列表\n"
 "   depends - 显示该软件包的依赖关系信息\n"
 "   rdepends - 显示所有依赖于该软件包的软件包名字\n"
 "   pkgnames - 列出所有软件包的名字\n"
@@ -259,6 +256,9 @@ msgid ""
 "See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
 "mount point."
 msgstr ""
+"从默认挂载点自动检测 CD-ROM 失败。\n"
+"您可以尝试用 --cdrom 选项来设置 CD-ROM 的挂载点。\n"
+"更多关于 CD-ROM 自动检测以及挂载点的信息，请参见‘man apt-cdrom’。"
 
 #: cmdline/apt-cdrom.cc:182
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -292,24 +292,24 @@ msgstr ""
 "   dump - 显示配置文件\n"
 "\n"
 "选项：\n"
-"  -h  本帮助文本。\n"
+"  -h   显示本帮助文本。\n"
 "  -c=? 读取指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
 
 #: cmdline/apt-get.cc:245
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package for architecture '%s'"
-msgstr "无法按照正则表达式 %s 找到任何软件包"
+msgstr "找不到‘%s’体系结构下的软件包"
 
 #: cmdline/apt-get.cc:327
 #, fuzzy, c-format
 msgid "Can not find a package '%s' with version '%s'"
-msgstr "无法按照正则表达式 %s 找到任何软件包"
+msgstr "找不到软件包‘%s’的‘%s’版本"
 
 #: cmdline/apt-get.cc:330
 #, fuzzy, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "无法按照正则表达式 %s 找到任何软件包"
+msgstr "找不到‘%s’软件包的‘%s’发行"
 
 #: cmdline/apt-get.cc:367
 #, c-format
@@ -317,9 +317,9 @@ msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "选择 %s 作为源代码包而非 %s\n"
 
 #: cmdline/apt-get.cc:423
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find version '%s' of package '%s'"
-msgstr "忽略不可用的 %2$s 软件包的 %1$s 版"
+msgstr "找不到 %2$s 软件包的 %1$s 版本"
 
 #: cmdline/apt-get.cc:454
 #, c-format
@@ -342,6 +342,7 @@ msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
+"该命令已废弃。请用‘apt-mark auto’或‘apt-mark manual’替代。"
 
 #: cmdline/apt-get.cc:538 cmdline/apt-get.cc:546
 msgid "Internal error, problem resolver broke stuff"
@@ -370,20 +371,20 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:791
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "请使用：\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "获得该软件包的最近更新(可能尚未正式发布)。\n"
 
 #: cmdline/apt-get.cc:843
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
-msgstr "忽略已下载过的文件“%s”\n"
+msgstr "忽略已下载的文件“%s”\n"
 
 #: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
 #: apt-private/private-install.cc:187 apt-private/private-install.cc:190
@@ -457,6 +458,8 @@ msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+"找不到关于 %s 的有效体系结构信息。请参见 apt.conf(5) APT::"
+"Architectures for setup"
 
 #: cmdline/apt-get.cc:1079 cmdline/apt-get.cc:1082
 #, c-format
@@ -469,11 +472,11 @@ msgid "%s has no build depends.\n"
 msgstr " %s 没有构建依赖关系信息。\n"
 
 #: cmdline/apt-get.cc:1272
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+msgstr "由于 %3$s 不被软件包 %4$s 所允许，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
 
 #: cmdline/apt-get.cc:1290
 #, c-format
@@ -488,20 +491,21 @@ msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新"
 
 #: cmdline/apt-get.cc:1352
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
-"由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 "
-"%1$s 依赖关系"
+"软件包 %3$s 的候选版本不能满足版本要求，"
+"因此 %2$s 软件包的 %1$s 依赖无法满足"
 
 #: cmdline/apt-get.cc:1358
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+msgstr ""
+"软件包 %3$s 没有可用的候选版本，因此 %2$s 的 %1$s 依赖无法满足"
 
 #: cmdline/apt-get.cc:1381
 #, c-format
@@ -518,16 +522,15 @@ msgid "Failed to process build dependencies"
 msgstr "无法处理构建依赖关系"
 
 #: cmdline/apt-get.cc:1494 cmdline/apt-get.cc:1506
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog for %s (%s)"
-msgstr "正在连接 %s (%s)"
+msgstr "%s (%s) 的 Changelog"
 
 #: cmdline/apt-get.cc:1592
 msgid "Supported modules:"
 msgstr "支持的模块："
 
 #: cmdline/apt-get.cc:1633
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -576,7 +579,7 @@ msgstr ""
 "　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
 "　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
 "\n"
-"apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
+"apt-get 是一个用于下载和安装软件包的简易命令行界面。\n"
 "最常用命令是 update 和 install。\n"
 "\n"
 "命令：\n"
@@ -591,10 +594,10 @@ msgstr ""
 "   dist-upgrade - 发布版升级，见 apt-get(8)\n"
 "   dselect-upgrade - 根据 dselect 的选择来进行升级\n"
 "   clean - 删除所有已下载的包文件\n"
-"   autoclean - 删除老版本的已下载的包文件\n"
+"   autoclean - 删除已下载的旧包文件\n"
 "   check - 核对以确认系统的依赖关系的完整性\n"
-"   markauto - 标记指定的软件包为自动安装\n"
-"   unmarkauto - 标记指定的软件包为手动安装\n"
+"   changelog - 下载指定软件包，并显示其changelog\n"
+"   download - 下载指定的二进制包到当前目录\n"
 "\n"
 "选项：\n"
 "  -h  本帮助文档。\n"
@@ -616,16 +619,15 @@ msgstr ""
 
 #: cmdline/apt-helper.cc:36
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "需要一个 URL 作为参数"
 
 #: cmdline/apt-helper.cc:49
-#, fuzzy
 msgid "Must specify at least one pair url/filename"
-msgstr "要下载源代码，必须指定至少一个对应的软件包"
+msgstr "必须指定至少一对URL或者文件名"
 
 #: cmdline/apt-helper.cc:67
 msgid "Download Failed"
-msgstr ""
+msgstr "下载失败"
 
 #: cmdline/apt-helper.cc:80
 msgid ""
@@ -640,31 +642,42 @@ msgid ""
 "\n"
 "                       This APT helper has Super Meep Powers.\n"
 msgstr ""
+"用法： apt-helper [选项] 命令\n"
+"       apt-helper [选项] download-file uri target-path\n"
+"\n"
+"apt-helper 是一个 apt 的内部帮助程序\n"
+"\n"
+"命令：\n"
+"   download-file - 将uri指定的文件下载到指定目标目录\n"
+"   auto-detect-proxy - 用 apt.conf 检测代理设置\n"
+"\n"
+"                       This APT helper has Super Meep Powers.\n"
+
 
 #: cmdline/apt-mark.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "但是它还没有被安装"
+msgstr "%s 还没有安装，因此无法标记。\n"
 
 #: cmdline/apt-mark.cc:74
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s 被设置为手动安装。\n"
+msgstr "%s 已经被设置为手动安装。\n"
 
 #: cmdline/apt-mark.cc:76
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s 被设置为手动安装。\n"
+msgstr "%s 已经被设置为自动安装。\n"
 
 #: cmdline/apt-mark.cc:241
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s 已经是最新的版本了。\n"
+msgstr "%s 已经设置为保留。\n"
 
 #: cmdline/apt-mark.cc:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already not hold.\n"
-msgstr "%s 已经是最新的版本了。\n"
+msgstr "%s 已经设置为不保留。\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
@@ -674,18 +687,18 @@ msgid "Waited for %s but it wasn't there"
 msgstr "等待子进程 %s 的退出，但是它并不存在"
 
 #: cmdline/apt-mark.cc:273 cmdline/apt-mark.cc:322
-#, fuzzy, c-format
+#, c-format
 msgid "%s set on hold.\n"
-msgstr "%s 已设置为手动安装。\n"
+msgstr "%s 设置为保留。\n"
 
 #: cmdline/apt-mark.cc:275 cmdline/apt-mark.cc:327
-#, fuzzy, c-format
+#, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "无法打开 %s"
+msgstr "取消保留 %s 的设置。\n"
 
 #: cmdline/apt-mark.cc:345
 msgid "Executing dpkg failed. Are you root?"
-msgstr ""
+msgstr "执行 dpkg 失败。您是 root 吗？"
 
 #: cmdline/apt-mark.cc:392
 msgid ""
@@ -713,6 +726,30 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
+"用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
+"\n"
+"apt-mark 是一个可以对软件包进行 手动/自动 安装标记的简单命令行界面。\n"
+"它也能列出标记。\n"
+"\n"
+"命令：\n"
+"   auto - 标记指定软件包为自动安装\n"
+"   manual - 标记指定软件包为手动安装\n"
+"   hold - 标记指定软件包为保留(held back)\n"
+"   unhold - 取消指定软件包的保留(held back)标记\n"
+"   showauto - 列出所有自动安装的软件包\n"
+"   showmanual - 列出所有手动安装的软件包\n"
+"   showhold - 列出设为保留的软件包\n"
+"\n"
+"选项：\n"
+"  -h  显示本帮助信息\n"
+"  -q  日志型输出 - 不显示进度\n"
+"  -qq 安静模式，只输出错误信息\n"
+"  -s  无动作。只说明将要做什么。\n"
+"  -f  读取/写入 指定文件的  自动/手动 标记\n"
+"  -c=? 读取指定的配置文件\n"
+"  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
+"更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
 
 #: cmdline/apt.cc:47
 msgid ""
@@ -735,6 +772,23 @@ msgid ""
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
+"用法： apt [选项] 命令\n"
+"\n"
+"apt 的命令行界面。\n"
+"基本命令：\n"
+" list - 根据名称列出软件包\n"
+" search - 搜索软件包描述\n"
+" show - 显示软件包细节\n"
+"\n"
+" update - 更新可用软件包列表\n"
+"\n"
+" install - 安装软件包\n"
+" remove  - 移除软件包\n"
+"\n"
+" upgrade - 通过 安装/升级 软件来更新系统\n"
+" full-upgrade - 通过 卸载/安装/升级 来更新系统\n"
+"\n"
+" edit-sources - 编辑软件源信息文件\n"
 
 #: methods/cdrom.cc:203
 #, c-format
@@ -982,9 +1036,9 @@ msgid "Temporary failure resolving '%s'"
 msgstr "暂时不能解析域名“%s”"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
+msgstr "解析“%s:%s”时出现系统故障"
 
 #: methods/connect.cc:211
 #, c-format
@@ -1033,7 +1087,7 @@ msgstr "由于没有公钥，无法验证下列签名：\n"
 
 #: methods/gzip.cc:69
 msgid "Empty files can't be valid archives"
-msgstr ""
+msgstr "空文件不能当作有效归档"
 
 #: methods/http.cc:511
 msgid "Error writing to the file"
@@ -1170,7 +1224,7 @@ msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
 
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
-msgstr ""
+msgstr "正在排序"
 
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
@@ -1356,10 +1410,9 @@ msgid_plural ""
 msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
 
 #: apt-private/private-install.cc:519
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "使用'apt-get autoremove'来卸载它们"
+msgstr[0] "使用'apt-get autoremove'来卸载它(它们)。"
 
 #: apt-private/private-install.cc:612
 msgid "You might want to run 'apt-get -f install' to correct these:"
@@ -1418,7 +1471,7 @@ msgstr "不能重新安装 %s，因为无法下载它。\n"
 #: apt-private/private-install.cc:846
 #, c-format
 msgid "%s is already the newest version.\n"
-msgstr "%s 已经是最新的版本了。\n"
+msgstr "%s 已经是最新的版本。\n"
 
 #: apt-private/private-install.cc:894
 #, c-format
@@ -1426,31 +1479,31 @@ msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
 
 #: apt-private/private-install.cc:899
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
+msgstr "由于 %4$s，为 %3$s 选定了版本 %1$s (%2$s)\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-install.cc:941
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "软件包 %s 还未安装，因而不会被卸载\n"
+msgstr "软件包 %s 还未安装，因而不会被卸载。您的意思是 ‘%s’ 吗？\n"
 
 #: apt-private/private-install.cc:947
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "软件包 %s 还未安装，因而不会被卸载\n"
 
 #: apt-private/private-list.cc:129
 msgid "Listing"
-msgstr ""
+msgstr "正在列表"
 
 #: apt-private/private-list.cc:159
 #, c-format
 msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
+msgstr[0] "还有 %i 个版本。请使用 -a 选项来查看它(他们)。"
 
 #: apt-private/private-main.cc:32
 msgid ""
@@ -1466,40 +1519,37 @@ msgstr ""
 #: apt-private/private-output.cc:103 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
-msgstr ""
+msgstr "未知"
 
 #: apt-private/private-output.cc:265
-#, fuzzy, c-format
+#, c-format
 msgid "[installed,upgradable to: %s]"
-msgstr " [已安装]"
+msgstr "[已安装，可升级至：%s]"
 
 #: apt-private/private-output.cc:268
-#, fuzzy
 msgid "[installed,local]"
-msgstr " [已安装]"
+msgstr "[已安装，本地]"
 
 #: apt-private/private-output.cc:270
 msgid "[installed,auto-removable]"
-msgstr ""
+msgstr "[已安装，可自动卸载]"
 
 #: apt-private/private-output.cc:272
-#, fuzzy
 msgid "[installed,automatic]"
-msgstr " [已安装]"
+msgstr "[已安装，自动]"
 
 #: apt-private/private-output.cc:274
-#, fuzzy
 msgid "[installed]"
-msgstr " [已安装]"
+msgstr "[已安装]"
 
 #: apt-private/private-output.cc:277
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr ""
+msgstr "[可从该版本升级：%s]"
 
 #: apt-private/private-output.cc:281
 msgid "[residual-config]"
-msgstr ""
+msgstr "[配置文件残留]"
 
 #: apt-private/private-output.cc:455
 #, c-format
@@ -1630,7 +1680,7 @@ msgstr "编译正则表达式时出错 - %s"
 
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
-msgstr ""
+msgstr "全文搜索"
 
 #: apt-private/private-show.cc:156
 #, c-format
@@ -1638,20 +1688,21 @@ msgid "There is %i additional record. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional records. Please use the '-a' switch to see them."
 msgstr[0] ""
+"有 %i 条附加记录。请加上 ‘-a’ 参数来查看它们"
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
+msgstr "不是一个实包(虚包)"
 
 #: apt-private/private-sources.cc:58
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse %s. Edit again? "
-msgstr "无法将 %s 重命名为 %s"
+msgstr "解析 %s 失败。请重新编辑之后再试。"
 
 #: apt-private/private-sources.cc:70
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
+msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。"
 
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
@@ -1663,10 +1714,11 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
+"有 %i 个软件包可以升级。请执行 ‘apt list --upgradable’ 来查看它们。\n"
 
 #: apt-private/private-update.cc:94
 msgid "All packages are up to date."
-msgstr ""
+msgstr "所有软件包均为最新。"
 
 #: apt-private/private-upgrade.cc:25
 msgid "Calculating upgrade... "
@@ -1705,14 +1757,14 @@ msgstr "没有找到镜像文件 %s"
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, fuzzy, c-format
+#, c-format
 msgid "Can not read mirror file '%s'"
-msgstr "没有找到镜像文件 %s"
+msgstr "无法读取镜像文件 %s"
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "没有找到镜像文件 %s"
+msgstr "在镜像文件 %s 中未找到所需条目"
 
 #: methods/mirror.cc:445
 #, c-format
@@ -1786,9 +1838,9 @@ msgstr ""
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "无法读取 %s 的状态"
+msgstr "无法建立临时文件(mkstemp) %s "
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1400
 #, c-format
@@ -1941,9 +1993,8 @@ msgid "Failed to stat %s"
 msgstr "无法获得 %s 的状态"
 
 #: ftparchive/cachedb.cc:332
-#, fuzzy
 msgid "Failed to read .dsc"
-msgstr "无法读取符号链接 %s"
+msgstr "读取 .dsc 文件失败"
 
 #: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
@@ -2050,9 +2101,9 @@ msgstr "无法打开 %s"
 #. skip spaces
 #. find end of word
 #: ftparchive/override.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu (%s)"
-msgstr "override 文件 %s 第 %lu 行的格式有误 #1"
+msgstr "override 文件 %s 第 %llu (%s) 行的格式有误"
 
 #: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
@@ -2060,19 +2111,19 @@ msgid "Failed to read the override file %s"
 msgstr "无法读取 override 文件 %s"
 
 #: ftparchive/override.cc:166
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "override 文件 %s 第 %lu 行的格式有误 #1"
+msgstr "override 文件 %s 第 %llu 行的格式有误 #1"
 
 #: ftparchive/override.cc:178
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "override 文件 %s 第 %lu 行的格式有误 #2"
+msgstr "override 文件 %s 第 %llu 行的格式有误 #2"
 
 #: ftparchive/override.cc:191
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "override 文件 %s 第 %lu 行的格式有误 #3"
+msgstr "override 文件 %s 第 %llu 行的格式有误 #3"
 
 #: ftparchive/multicompress.cc:73
 #, c-format
@@ -2344,7 +2395,7 @@ msgstr "无法对目录 %s 加锁"
 #: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
 #, fuzzy, c-format
 msgid "Clean of %s is not supported"
-msgstr "不支持索引文件类型“%s”"
+msgstr "%s 的 clean 不被支持"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2372,9 +2423,8 @@ msgid "Size mismatch"
 msgstr "大小不符"
 
 #: apt-pkg/acquire-item.cc:173
-#, fuzzy
 msgid "Invalid file format"
-msgstr "无效的操作 %s"
+msgstr "无效的文件格式 %s"
 
 #: apt-pkg/acquire-item.cc:1573
 #, c-format
@@ -2382,11 +2432,13 @@ msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
+"在 Release 文件中找不到期望的条目 %s"
+"（sources.list条目有误，或者文件有误）"
 
 #: apt-pkg/acquire-item.cc:1589
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "无法解析软件包仓库 Release 文件 %s"
+msgstr "在 Release 文件中找不到 %s 的哈希值"
 
 #: apt-pkg/acquire-item.cc:1631
 msgid "There is no public key available for the following key IDs:\n"
@@ -2398,6 +2450,8 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
+"%s 的 Release 文件已经过期(invalid since %s)。"
+"该仓库的更新将不会被应用。"
 
 #: apt-pkg/acquire-item.cc:1691
 #, c-format
@@ -2430,7 +2484,7 @@ msgstr ""
 #: apt-pkg/acquire-item.cc:1925
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "没有源可以用来下载 %s 版本的 %s"
 
 #: apt-pkg/acquire-item.cc:1983
 #, c-format
@@ -2444,9 +2498,9 @@ msgid "The method driver %s could not be found."
 msgstr "无法找到获取软件包的渠道 %s 所需的驱动程序。"
 
 #: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
+msgstr "请检查是否安装了 %s 软件包"
 
 #: apt-pkg/acquire-worker.cc:169
 #, c-format
@@ -2511,9 +2565,9 @@ msgid "Couldn't find any package by regex '%s'"
 msgstr "无法按照正则表达式 %s 找到任何软件包"
 
 #: apt-pkg/cacheset.cc:615
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "无法按照正则表达式 %s 找到任何软件包"
+msgstr "无法按照 glob ‘%s’ 找到任何软件包"
 
 #: apt-pkg/cacheset.cc:626
 #, c-format
@@ -2661,19 +2715,19 @@ msgstr ""
 
 #: apt-pkg/edsp.cc:241
 msgid "Send request to solver"
-msgstr ""
+msgstr "向solver发送请求"
 
 #: apt-pkg/edsp.cc:320
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "准备接收解决方案"
 
 #: apt-pkg/edsp.cc:327
 msgid "External solver failed without a proper error message"
-msgstr ""
+msgstr "外部solver出错，错误信息不恰当"
 
 #: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
 msgid "Execute external solver"
-msgstr ""
+msgstr "执行外部solver"
 
 #: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:773
 #, c-format
@@ -2742,7 +2796,7 @@ msgstr "无法确定适合的打包系统类型"
 #: apt-pkg/install-progress.cc:57
 #, c-format
 msgid "Progress: [%3i%%]"
-msgstr ""
+msgstr "进度：[%3i%%]"
 
 #: apt-pkg/install-progress.cc:91 apt-pkg/install-progress.cc:174
 msgid "Running dpkg"
@@ -2758,9 +2812,9 @@ msgstr ""
 "(%d)"
 
 #: apt-pkg/packagemanager.cc:550 apt-pkg/packagemanager.cc:580
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "无法打开文件 %s"
+msgstr "无法配置 %s。"
 
 #: apt-pkg/packagemanager.cc:630
 #, c-format
@@ -2786,9 +2840,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "软件包缓存区文件的版本不兼容"
 
 #: apt-pkg/pkgcache.cc:169
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "软件包缓存文件损坏了"
+msgstr "软件包缓存文件损坏，它太小了"
 
 #: apt-pkg/pkgcache.cc:174
 #, c-format
@@ -2870,9 +2923,9 @@ msgstr "软件包暂存区使用的是不兼容的版本控制系统"
 #: apt-pkg/pkgcachegen.cc:479 apt-pkg/pkgcachegen.cc:517
 #: apt-pkg/pkgcachegen.cc:524 apt-pkg/pkgcachegen.cc:555
 #: apt-pkg/pkgcachegen.cc:569
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "处理 %s (FindPkg)时出错"
+msgstr "处理 %s (%s%d) 时出错"
 
 #: apt-pkg/pkgcachegen.cc:257
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2924,6 +2977,8 @@ msgid ""
 "The value '%s' is invalid for APT::Default-Release as such a release is not "
 "available in the sources"
 msgstr ""
+"'%s' 这个值对 APT::Default-Release 是无效的，"
+"因为在源里找不到这样的发行"
 
 #: apt-pkg/policy.cc:422
 #, c-format
@@ -2940,9 +2995,9 @@ msgid "No priority (or zero) specified for pin"
 msgstr "没有为版本锁定指定优先级(或为零)"
 
 #: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(URI 解析)"
+msgstr "安装源配置文件“%2$s”第 %1$u 节有错误(URI 解析)"
 
 #: apt-pkg/sourcelist.cc:170
 #, c-format
@@ -3010,9 +3065,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
 
 #: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
+msgstr "无法识别在源列表 %3$s 里，第 %2$u 节中的软件包类别“%1$s”"
 
 #: apt-pkg/srcrecords.cc:52
 msgid "You must put some 'source' URIs in your sources.list"
@@ -3029,12 +3084,11 @@ msgid "Unable to parse package file %s (2)"
 msgstr "无法解析软件包文件 %s (2)"
 
 #: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
-"有一些索引文件不能下载，它们可能被忽略了，也可能转而使用了旧的索引文件。"
+"部分索引文件下载失败。如果忽略它们，那将转而使用旧的索引文件。"
 
 #: apt-pkg/vendorlist.cc:85
 #, c-format
@@ -3174,23 +3228,24 @@ msgstr "无法获得锁 %s"
 #: apt-pkg/contrib/fileutl.cc:360 apt-pkg/contrib/fileutl.cc:474
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
+msgstr "无法创建文件列表，因为‘%s’不是一个目录"
 
 #: apt-pkg/contrib/fileutl.cc:394
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
+msgstr "忽略‘%s’(于目录‘%s’)，鉴于它不是一个常规文件"
 
 #: apt-pkg/contrib/fileutl.cc:412
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
+msgstr "忽略‘%s’(于目录‘%s’)，鉴于它没有文件扩展名"
 
 #: apt-pkg/contrib/fileutl.cc:421
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+"忽略‘%s’(于目录‘%s’)，鉴于它的文件扩展名无效"
 
 #: apt-pkg/contrib/fileutl.cc:824
 #, c-format
@@ -3236,14 +3291,14 @@ msgid "Failed to exec compressor "
 msgstr "无法执行压缩程序"
 
 #: apt-pkg/contrib/fileutl.cc:1514
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "读取文件出错，还剩 %lu 字节没有读出"
+msgstr "还剩 %llu 字节没有读出，但已没有可读信息"
 
 #: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1649
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "写入文件出错，还剩 %lu 字节没有保存"
+msgstr "还剩 %llu 字节没有写入，但无法写入操作"
 
 #: apt-pkg/contrib/fileutl.cc:1915
 #, c-format
@@ -3280,9 +3335,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "无法为复制文件描述符 %i"
 
 #: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "无法 mmap %lu 字节的数据"
+msgstr "无法 mmap %llu 字节的数据"
 
 #: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
@@ -3334,13 +3389,13 @@ msgstr "%c%s... 完成"
 
 #: apt-pkg/contrib/progress.cc:181
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... 完成"
+msgstr "%c%s... %u%%"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -3389,7 +3444,7 @@ msgstr "无法对状态列表目录加锁(%s)，请查看您是否正以 root �
 #, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr "dpkg 被中断，您必须手工运行 %s 解决此问题。"
+msgstr "dpkg 被中断，您必须手工运行 ‘%s’ 解决此问题。"
 
 #: apt-pkg/deb/debsystem.cc:128
 msgid "Not locked"
@@ -3478,21 +3533,21 @@ msgstr "完全删除了 %s"
 
 #: apt-pkg/deb/dpkgpm.cc:1069 apt-pkg/deb/dpkgpm.cc:1124
 #: apt-pkg/deb/dpkgpm.cc:1150
-#, fuzzy, c-format
+#, c-format
 msgid "Can not write log (%s)"
-msgstr "无法写入 %s"
+msgstr "无法写入日志 (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc:1069 apt-pkg/deb/dpkgpm.cc:1150
 msgid "Is /dev/pts mounted?"
-msgstr ""
+msgstr "/dev/pts 挂载了吗？"
 
 #: apt-pkg/deb/dpkgpm.cc:1124
 msgid "Is stdout a terminal?"
-msgstr ""
+msgstr "stdout 是终端吗？"
 
 #: apt-pkg/deb/dpkgpm.cc:1625
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "操作在完成之前被打断"
 
 #: apt-pkg/deb/dpkgpm.cc:1687
 msgid "No apport report written because MaxReports is reached already"
@@ -3522,16 +3577,17 @@ msgid ""
 msgstr "因为错误消息指示这是由于内存不足，没有写入 apport 报告。"
 
 #: apt-pkg/deb/dpkgpm.cc:1714 apt-pkg/deb/dpkgpm.cc:1720
-#, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
-msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
+msgstr ""
+"错误信息显示本地系统有一些问题，因此没有写入 apport 报告"
 
 #: apt-pkg/deb/dpkgpm.cc:1742
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
-msgstr "因为错误消息指示这是一个 dpkg I/O 错误，没有写入 apport 报告。"
+msgstr ""
+"因为错误消息指示这是一个 dpkg I/O 错误，没有写入 apport 报告。"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
