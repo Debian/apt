@@ -105,3 +105,9 @@ testfileequal ./aptkey.list 'pub   2048R/528144E2 2011-01-16'
 testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
+
+msgtest 'Test key removal with' '8 byte key ID'
+cleanplate
+cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+testsuccess --nomsg aptkey --fakeroot del 5A90D141DBAC8DAE
+testempty aptkey list
