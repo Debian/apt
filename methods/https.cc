@@ -69,6 +69,9 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
       {
          me->Server->Result = 200;
 	 me->Server->StartPos = me->Server->Size;
+	 // the actual size is not important for https as curl will deal with it
+	 // by itself and e.g. doesn't bother us with transport-encoding…
+	 me->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
       }
       else
 	 me->Server->StartPos = 0;
@@ -86,19 +89,25 @@ size_t
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    HttpsMethod *me = (HttpsMethod *)userp;
+   size_t buffer_size = size * nmemb;
+   // we don't need to count the junk here, just drop anything we get as
+   // we don't always know how long it would be, e.g. in chunked encoding.
+   if (me->Server->JunkSize != 0)
+      return buffer_size;
 
    if (me->Res.Size == 0)
       me->URIStart(me->Res);
-   if(me->File->Write(buffer, size*nmemb) != true)
+   if(me->File->Write(buffer, buffer_size) != true)
       return false;
 
    if(me->Queue->MaximumSize > 0 && me->File->Tell() > me->Queue->MaximumSize)
    {
       me->SetFailReason("MaximumSizeExceeded");
-      return _error->Error("Writing more data than expected (%llu > %llu)",
+      _error->Error("Writing more data than expected (%llu > %llu)",
                            me->TotalWritten, me->Queue->MaximumSize);
+      return 0;
    }
-   return size*nmemb;
+   return buffer_size;
 }
 
 int
