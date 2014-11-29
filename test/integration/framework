@@ -1064,8 +1064,8 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 }
 
 downloadfile() {
-	local PROTO="$(echo "$1" | cut -d':' -f 1 )"
-	apthelper -o Debug::Acquire::${PROTO}=1 \
+	local PROTO="${1%%:*}"
+	apthelper -o Debug::Acquire::${PROTO}=1 -o Debug::pkgAcquire::Worker=1 \
 		download-file "$1" "$2" 2>&1 || true
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then
@@ -1221,7 +1221,7 @@ testsuccess() {
 		msgtest 'Test for successful execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
-	if $@ >${OUTPUT} 2>&1; then
+	if "$@" >${OUTPUT} 2>&1; then
 		msgpass
 	else
 		echo >&2
