@@ -287,13 +287,13 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      std::cout << "\n";
          
      // save cursor
-     std::cout << "\033[s";
+     std::cout << "\0337";
          
      // set scroll region (this will place the cursor in the top left)
      std::cout << "\033[0;" << nr_rows - 1 << "r";
             
      // restore cursor but ensure its inside the scrolling area
-     std::cout << "\033[u";
+     std::cout << "\0338";
      static const char *move_cursor_up = "\033[1A";
      std::cout << move_cursor_up;
 
@@ -375,8 +375,8 @@ bool PackageManagerFancy::DrawStatusLine()
    if (unlikely(size.rows < 1 || size.columns < 1))
       return false;
 
-   static std::string save_cursor = "\033[s";
-   static std::string restore_cursor = "\033[u";
+   static std::string save_cursor = "\0337";
+   static std::string restore_cursor = "\0338";
 
    // green
    static std::string set_bg_color = DeQuoteString(
