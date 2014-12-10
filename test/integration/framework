@@ -102,7 +102,7 @@ runapt() {
 	local CMD="$1"
 	shift
 	case $CMD in
-	sh|aptitude|*/*) ;;
+	sh|aptitude|*/*|command) ;;
 	*) CMD="${BUILDDIRECTORY}/$CMD";;
 	esac
 	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"

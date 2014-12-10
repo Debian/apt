@@ -1131,7 +1131,7 @@ void pkgDPkgPM::StartPtyMagic()
 	       on kfreebsd we get an incorrect ("step like") output then while it has
 	       no problem with closing all references… so to avoid platform specific
 	       code here we combine both and be happy once more */
-	    d->protect_slave_from_dying = open(d->slave, O_RDWR | O_CLOEXEC);
+	    d->protect_slave_from_dying = open(d->slave, O_RDWR | O_CLOEXEC | O_NOCTTY);
 	 }
       }
    }
@@ -1163,7 +1163,7 @@ void pkgDPkgPM::SetupSlavePtyMagic()
    if (setsid() == -1)
       _error->FatalE("setsid", "Starting a new session for child failed!");
 
-   int const slaveFd = open(d->slave, O_RDWR);
+   int const slaveFd = open(d->slave, O_RDWR | O_NOCTTY);
    if (slaveFd == -1)
       _error->FatalE("open", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
    else if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
