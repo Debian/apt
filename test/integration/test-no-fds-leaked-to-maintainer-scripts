@@ -26,20 +26,25 @@ setupaptarchive
 
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess aptget install -y fdleaks -qq < /dev/null
-msgtest 'Check if fds were not' 'leaked'
-if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '8' ]; then
-	msgpass
-else
-	echo
-	cat rootdir/tmp/testsuccess.output
-	msgfail
-fi
 
-cp rootdir/tmp/testsuccess.output terminal.output
-tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
-testfileequal 'terminal.log' "$(cat terminal.output)"
+checkfdleak() {
+	msgtest 'Check if fds were not' 'leaked'
+	if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = "$1" ]; then
+		msgpass
+	else
+		echo
+		cat rootdir/tmp/testsuccess.output
+		msgfail
+	fi
+}
+checkinstall() {
+	checkfdleak 8
 
-testequal "startup archives unpack
+	cp rootdir/tmp/testsuccess.output terminal.output
+	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+	testfileequal 'terminal.log' "$(cat terminal.output)"
+
+	testequal "startup archives unpack
 install $PKGNAME <none> 1.0
 status half-installed $PKGNAME 1.0
 status unpacked $PKGNAME 1.0
@@ -50,22 +55,19 @@ status unpacked $PKGNAME 1.0
 status half-configured $PKGNAME 1.0
 status installed $PKGNAME 1.0
 startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+}
+checkinstall
 
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess aptget purge -y fdleaks -qq
-msgtest 'Check if fds were not' 'leaked'
-if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = '12' ]; then
-	msgpass
-else
-	echo
-	cat rootdir/tmp/testsuccess.output
-	msgfail
-fi
-cp rootdir/tmp/testsuccess.output terminal.output
-tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
-testfileequal 'terminal.log' "$(cat terminal.output)"
+checkpurge() {
+	checkfdleak 12
 
-testequal "startup packages purge
+	cp rootdir/tmp/testsuccess.output terminal.output
+	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+	testfileequal 'terminal.log' "$(cat terminal.output)"
+
+	testequal "startup packages purge
 status installed $PKGNAME 1.0
 remove $PKGNAME 1.0 <none>
 status half-configured $PKGNAME 1.0
@@ -79,3 +81,13 @@ status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
 status not-installed $PKGNAME <none>
 startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+}
+checkpurge
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" install -y fdleaks -qq < /dev/null
+checkinstall
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" purge -y fdleaks -qq
+checkpurge
