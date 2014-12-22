@@ -131,7 +131,7 @@ aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
 aptdumpsolver() { runapt "${APTDUMPSOLVER}" "$@"; }
 
 dpkg() {
-	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
+	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
 dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
@@ -247,15 +247,28 @@ setupenvironment() {
 	else
 		echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	fi
-	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
-	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
+
+	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
+#!/bin/sh
+set -e
+if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
+	if [ -n "\$LD_PRELOAD" ]; then
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}"
+	else
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
+	fi
+fi
+exec fakeroot dpkg --root="${TMPWORKINGDIRECTORY}/rootdir" \\
+	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
+	--force-not-root --force-bad-path "\$@"
+EOF
+	cat "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
+
 	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
-	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
 	# too distracting for users, but helpful to detect changes
@@ -388,22 +401,15 @@ int execvp(const char *file, char *const argv[]) {
 	char newfile[strlen(chrootdir) + strlen(file)];
 	strcpy(newfile, chrootdir);
 	strcat(newfile, file);
+	char const * const baseadmindir = "/var/lib/dpkg";
+	char admindir[strlen(chrootdir) + strlen(baseadmindir)];
+	strcpy(admindir, chrootdir);
+	strcat(admindir, baseadmindir);
+	setenv("DPKG_ADMINDIR", admindir, 1);
 	return func_execvp(newfile, argv);
 }
 EOF
 	testsuccess --nomsg gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
-
-	mkdir -p "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
-	DPKG="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
-	echo "#!/bin/sh
-if [ -n \"\$LD_PRELOAD\" ]; then
-	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}\"
-else
-	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so\"
-fi
-dpkg \"\$@\"" > $DPKG
-	chmod +x $DPKG
-	sed -ie "s|^DPKG::options:: \"dpkg\";\$|DPKG::options:: \"$DPKG\";|" aptconfig.conf
 }
 
 configallowinsecurerepositories() {
