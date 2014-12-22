@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-12-03 14:47+0100\n"
-"PO-Revision-Date: 2010-08-26 14:42+0800\n"
+"PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -302,14 +302,14 @@ msgid "Can not find a package for architecture '%s'"
 msgstr "找不到‘%s’体系结构下的软件包"
 
 #: cmdline/apt-get.cc:327
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with version '%s'"
 msgstr "找不到软件包‘%s’的‘%s’版本"
 
 #: cmdline/apt-get.cc:330
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "找不到‘%s’软件包的‘%s’发行"
+msgstr "找不到软件包‘%s’的‘%s’发行"
 
 #: cmdline/apt-get.cc:367
 #, c-format
@@ -1066,6 +1066,7 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1329,7 +1330,7 @@ msgstr "有 %lu 个软件包没有被完全安装或卸载。\n"
 #. YESEXPR/NOEXPR defined in your l10n.
 #: apt-private/private-output.cc:761
 msgid "[Y/n]"
-msgstr ""
+msgstr "[Y/n]"
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
 #. e.g. "Should this file be removed? [y/N] "
@@ -1337,17 +1338,17 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: apt-private/private-output.cc:767
 msgid "[y/N]"
-msgstr ""
+msgstr "[y/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
 #: apt-private/private-output.cc:778
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
 #: apt-private/private-output.cc:784
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
 #, c-format
@@ -2220,9 +2221,9 @@ msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 节中的软件包类别“%1$s”"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "%s 的 clean 不被支持"
+msgstr "%s 的 Clean (清理)不被支持"
 
 #: apt-pkg/clean.cc:64
 #, c-format
@@ -2294,7 +2295,7 @@ msgstr "无法读取或写入软件源缓存"
 
 #: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "向solver发送情景"
 
 #: apt-pkg/edsp.cc:241
 msgid "Send request to solver"
@@ -3520,7 +3521,6 @@ msgid "Problem unlinking %s"
 msgstr "在使用 unlink 删除 %s 时出错"
 
 #: cmdline/apt-internal-solver.cc:49
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -3533,16 +3533,17 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"用法： apt-extracttemplates 文件甲 [文件乙 ...]\n"
+"用法： apt-internal-solver\n"
 "\n"
-"apt-extracttemplates 是用来从 debian 软件包中解压出配置文件和模板\n"
-"信息的工具\n"
+"apt-internal-solver 是个用于调试及类似用途的接口，它可以\n"
+"像 APT 家族外部解决器(resolver)那样使用当前的内部解决器。\n"
 "\n"
 "选项：\n"
-"  -h   本帮助文本\n"
-"  -t   设置 temp 目录\n"
-"  -c=? 读指定的配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+"  -h  显示本帮助。\n"
+"  -q  日志型输出 - 无进度指示\n"
+"  -c=? 读取指定配置文件\n"
+"  -o=? 设置任意配置项，比如 -o dir::cache=/tmp\n"
+
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
