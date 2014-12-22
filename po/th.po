@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-12-03 14:47+0100\n"
-"PO-Revision-Date: 2014-04-20 09:38+0700\n"
+"PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
@@ -615,7 +615,7 @@ msgstr ""
 
 #: cmdline/apt-helper.cc:36
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "ต้องการ URL หนึ่งรายการเป็นอาร์กิวเมนต์"
 
 #: cmdline/apt-helper.cc:49
 msgid "Must specify at least one pair url/filename"
@@ -626,7 +626,6 @@ msgid "Download Failed"
 msgstr "ดาวน์โหลดไม่สำเร็จ"
 
 #: cmdline/apt-helper.cc:80
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -646,6 +645,7 @@ msgstr ""
 "\n"
 "คำสั่ง:\n"
 "   download-file - ดาวน์โหลด URI ที่กำหนดลงในพาธปลายทาง\n"
+"   auto-detect-proxy - ตรวจหาพร็อกซีโดยใช้ apt.conf\n"
 "\n"
 "                       โปรแกรมช่วยเหลือของ APT นี้มีพลัง Super Meep\n"
 
@@ -1245,7 +1245,7 @@ msgstr "แต่แพกเกจนี้เป็นแพกเกจเส
 
 #: apt-private/private-output.cc:469
 msgid "but it is not installed"
-msgstr "แต่ได้ติดตั้งไว้"
+msgstr "แต่ไม่ได้ติดตั้งไว้"
 
 #: apt-private/private-output.cc:469
 msgid "but it is not going to be installed"
@@ -1362,10 +1362,11 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
+"มี %i แพกเกจสามารถปรับรุ่นได้ เรียก 'apt list --upgradable' หากต้องการดูรายชื่อ\n"
 
 #: apt-private/private-update.cc:101
 msgid "All packages are up to date."
-msgstr ""
+msgstr "ปรับรุ่นทุกแพกเกจเป็นรุ่นล่าสุดแล้ว"
 
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
@@ -2222,9 +2223,9 @@ msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "ไม่รองรับแฟ้มดัชนีชนิด '%s'"
+msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
 
 #: apt-pkg/clean.cc:64
 #, c-format
@@ -3346,9 +3347,8 @@ msgid "Unable to open DB file %s: %s"
 msgstr "ไม่สามารถเปิดแฟ้ม DB %s: %s"
 
 #: ftparchive/cachedb.cc:332
-#, fuzzy
 msgid "Failed to read .dsc"
-msgstr "readlink %s ไม่สำเร็จ"
+msgstr "อ่าน .dsc ไม่สำเร็จ"
 
 #: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
