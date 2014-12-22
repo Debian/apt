@@ -73,7 +73,8 @@ public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL),
 			progress(NULL), tt_is_valid(false), master(-1),
-			slave(NULL), protect_slave_from_dying(-1)
+			slave(NULL), protect_slave_from_dying(-1),
+			direct_stdin(false)
    {
       dpkgbuf[0] = '\0';
    }
@@ -100,6 +101,7 @@ public:
    sigset_t sigmask;
    sigset_t original_sigmask;
 
+   bool direct_stdin;
 };
 
 namespace
@@ -1079,6 +1081,9 @@ void pkgDPkgPM::StartPtyMagic()
       return;
    }
 
+   if (isatty(STDIN_FILENO) == 0)
+      d->direct_stdin = true;
+
    _error->PushToStack();
 
    d->master = posix_openpt(O_RDWR | O_NOCTTY);
@@ -1176,7 +1181,10 @@ void pkgDPkgPM::SetupSlavePtyMagic()
       _error->FatalE("ioctl", "Setting TIOCSCTTY for slave fd %d failed!", slaveFd);
    else
    {
-      for (unsigned short i = 0; i < 3; ++i)
+      unsigned short i = 0;
+      if (d->direct_stdin == true)
+	 ++i;
+      for (; i < 3; ++i)
 	 if (dup2(slaveFd, i) == -1)
 	    _error->FatalE("dup2", "Dupping %d to %d in child failed!", slaveFd, i);
 
@@ -1596,8 +1604,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (d->master >= 0 && !d->stdin_is_dev_null)
-	    FD_SET(0, &rfds); 
+	 if (d->master >= 0 && d->direct_stdin == false && d->stdin_is_dev_null == false)
+	    FD_SET(STDIN_FILENO, &rfds);
 	 FD_SET(_dpkgin, &rfds);
 	 if(d->master >= 0)
 	    FD_SET(d->master, &rfds);
