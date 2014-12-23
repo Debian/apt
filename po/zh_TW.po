@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-12-03 14:47+0100\n"
+"POT-Creation-Date: 2014-12-23 13:28+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -158,7 +158,7 @@ msgid "  Version table:"
 msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1743 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:73 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:84 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
@@ -616,11 +616,11 @@ msgstr ""
 msgid "Must specify at least one pair url/filename"
 msgstr "在取得原始碼時必須至少指定一個套件"
 
-#: cmdline/apt-helper.cc:67
+#: cmdline/apt-helper.cc:73 cmdline/apt-helper.cc:77
 msgid "Download Failed"
 msgstr ""
 
-#: cmdline/apt-helper.cc:80
+#: cmdline/apt-helper.cc:91
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -661,7 +661,7 @@ msgstr "%s 已經是最新版本了。\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1304
+#: apt-pkg/deb/dpkgpm.cc:1317
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待 %s 但是它並不存在"
@@ -899,7 +899,7 @@ msgstr "Data socket 連線逾時"
 msgid "Unable to accept connection"
 msgstr "無法接受連線"
 
-#: methods/ftp.cc:877 methods/server.cc:353 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "有問題的雜湊檔"
 
@@ -1028,31 +1028,31 @@ msgstr "由於無法取得它們的公鑰，以下簽章無法進行驗證：\n"
 msgid "Empty files can't be valid archives"
 msgstr ""
 
-#: methods/http.cc:511
+#: methods/http.cc:513
 msgid "Error writing to the file"
 msgstr "在寫入該檔時發生錯誤"
 
-#: methods/http.cc:525
+#: methods/http.cc:527
 msgid "Error reading from server. Remote end closed connection"
 msgstr "在讀取伺服器時發生錯誤，遠端主機已關閉連線"
 
-#: methods/http.cc:527
+#: methods/http.cc:529
 msgid "Error reading from server"
 msgstr "在讀取伺服器時發生錯誤"
 
-#: methods/http.cc:563
+#: methods/http.cc:565
 msgid "Error writing to file"
 msgstr "在寫入檔案時發生錯誤"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "Select failed"
 msgstr "選擇失敗"
 
-#: methods/http.cc:628
+#: methods/http.cc:630
 msgid "Connection timed out"
 msgstr "連線逾時"
 
-#: methods/http.cc:651
+#: methods/http.cc:653
 msgid "Error writing to output file"
 msgstr "在寫入輸出檔時發生錯誤"
 
@@ -1060,39 +1060,39 @@ msgstr "在寫入輸出檔時發生錯誤"
 msgid "Waiting for headers"
 msgstr "等待標頭"
 
-#: methods/server.cc:110
+#: methods/server.cc:111
 msgid "Bad header line"
 msgstr "標頭行錯誤"
 
-#: methods/server.cc:135 methods/server.cc:142
+#: methods/server.cc:136 methods/server.cc:143
 msgid "The HTTP server sent an invalid reply header"
 msgstr "HTTP 伺服器傳送了一個無效的回覆標頭"
 
-#: methods/server.cc:172
+#: methods/server.cc:173
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "HTTP 伺服器傳送了一個無效的 Content-Length 標頭"
 
-#: methods/server.cc:195
+#: methods/server.cc:193
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "HTTP 伺服器傳送了一個無效的 Content-Range 標頭"
 
-#: methods/server.cc:197
+#: methods/server.cc:195
 msgid "This HTTP server has broken range support"
 msgstr "這個 HTTP 伺服器的範圍支援有問題"
 
-#: methods/server.cc:221
+#: methods/server.cc:219
 msgid "Unknown date format"
 msgstr "未知的資料格式"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "錯誤的標頭資料"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "連線失敗"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "內部錯誤"
 
@@ -2969,134 +2969,134 @@ msgstr "偵測器 %s 無法理解，試試 true 或 false。"
 msgid "Invalid operation %s"
 msgstr "無效的操作 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:110
+#: apt-pkg/deb/dpkgpm.cc:112
 #, c-format
 msgid "Installing %s"
 msgstr "正在安裝 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:111 apt-pkg/deb/dpkgpm.cc:1014
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
 #, c-format
 msgid "Configuring %s"
 msgstr "正在設定 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:112 apt-pkg/deb/dpkgpm.cc:1021
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
 #, c-format
 msgid "Removing %s"
 msgstr "正在移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:113
+#: apt-pkg/deb/dpkgpm.cc:115
 #, fuzzy, c-format
 msgid "Completely removing %s"
 msgstr "已完整移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:114
+#: apt-pkg/deb/dpkgpm.cc:116
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:115
+#: apt-pkg/deb/dpkgpm.cc:117
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "正在執行安裝後套件後續處理程式 %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:847
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "找不到 '%s' 目錄"
 
-#: apt-pkg/deb/dpkgpm.cc:860 apt-pkg/deb/dpkgpm.cc:882
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
 #, fuzzy, c-format
 msgid "Could not open file '%s'"
 msgstr "無法開啟檔案 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1007
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing %s"
 msgstr "正在準備 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1008
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Unpacking %s"
 msgstr "正在解開 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1013
+#: apt-pkg/deb/dpkgpm.cc:1015
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在準備設定 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1015
+#: apt-pkg/deb/dpkgpm.cc:1017
 #, c-format
 msgid "Installed %s"
 msgstr "已安裝 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1020
+#: apt-pkg/deb/dpkgpm.cc:1022
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在準備移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1022
+#: apt-pkg/deb/dpkgpm.cc:1024
 #, c-format
 msgid "Removed %s"
 msgstr "已移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1027
+#: apt-pkg/deb/dpkgpm.cc:1029
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "正在準備完整移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1028
+#: apt-pkg/deb/dpkgpm.cc:1030
 #, c-format
 msgid "Completely removed %s"
 msgstr "已完整移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "無法寫入 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1670
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1719
+#: apt-pkg/deb/dpkgpm.cc:1732
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1724
+#: apt-pkg/deb/dpkgpm.cc:1737
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1726
+#: apt-pkg/deb/dpkgpm.cc:1739
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1732
+#: apt-pkg/deb/dpkgpm.cc:1745
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1739
+#: apt-pkg/deb/dpkgpm.cc:1752
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1746 apt-pkg/deb/dpkgpm.cc:1752
+#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1774
+#: apt-pkg/deb/dpkgpm.cc:1787
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

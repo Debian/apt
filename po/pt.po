@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-12-03 14:47+0100\n"
+"POT-Creation-Date: 2014-12-23 13:28+0100\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -159,7 +159,7 @@ msgid "  Version table:"
 msgstr "  Tabela de Versão:"
 
 #: cmdline/apt-cache.cc:1743 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:73 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:84 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
@@ -643,11 +643,11 @@ msgstr ""
 msgid "Must specify at least one pair url/filename"
 msgstr "Tem de especificar pelo menos um pacote para obter o código fonte de"
 
-#: cmdline/apt-helper.cc:67
+#: cmdline/apt-helper.cc:73 cmdline/apt-helper.cc:77
 msgid "Download Failed"
 msgstr ""
 
-#: cmdline/apt-helper.cc:80
+#: cmdline/apt-helper.cc:91
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -688,7 +688,7 @@ msgstr "%s já estava para não manter.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1304
+#: apt-pkg/deb/dpkgpm.cc:1317
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperou por %s mas não estava lá"
@@ -949,7 +949,7 @@ msgstr "Ligação de socket de dados expirou"
 msgid "Unable to accept connection"
 msgstr "Impossível aceitar ligação"
 
-#: methods/ftp.cc:877 methods/server.cc:353 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "Problema ao calcular o hash do ficheiro"
 
@@ -1083,31 +1083,31 @@ msgstr ""
 msgid "Empty files can't be valid archives"
 msgstr "Ficheiros vazios não podem ser arquivos válidos"
 
-#: methods/http.cc:511
+#: methods/http.cc:513
 msgid "Error writing to the file"
 msgstr "Erro ao escrever para o ficheiro"
 
-#: methods/http.cc:525
+#: methods/http.cc:527
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Erro ao ler do servidor. O lado remoto fechou a ligação"
 
-#: methods/http.cc:527
+#: methods/http.cc:529
 msgid "Error reading from server"
 msgstr "Erro ao ler do servidor"
 
-#: methods/http.cc:563
+#: methods/http.cc:565
 msgid "Error writing to file"
 msgstr "Erro ao escrever para ficheiro"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "Select failed"
 msgstr "A selecção falhou"
 
-#: methods/http.cc:628
+#: methods/http.cc:630
 msgid "Connection timed out"
 msgstr "O tempo da ligação expirou"
 
-#: methods/http.cc:651
+#: methods/http.cc:653
 msgid "Error writing to output file"
 msgstr "Erro ao escrever para o ficheiro de saída"
 
@@ -1115,39 +1115,39 @@ msgstr "Erro ao escrever para o ficheiro de saída"
 msgid "Waiting for headers"
 msgstr "A aguardar por cabeçalhos"
 
-#: methods/server.cc:110
+#: methods/server.cc:111
 msgid "Bad header line"
 msgstr "Linha de cabeçalho errada"
 
-#: methods/server.cc:135 methods/server.cc:142
+#: methods/server.cc:136 methods/server.cc:143
 msgid "The HTTP server sent an invalid reply header"
 msgstr "O servidor HTTP enviou um cabeçalho de resposta inválido"
 
-#: methods/server.cc:172
+#: methods/server.cc:173
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "O servidor HTTP enviou um cabeçalho Content-Length inválido"
 
-#: methods/server.cc:195
+#: methods/server.cc:193
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "O servidor HTTP enviou um cabeçalho Content-Range inválido"
 
-#: methods/server.cc:197
+#: methods/server.cc:195
 msgid "This HTTP server has broken range support"
 msgstr "Este servidor HTTP possui suporte de range errado"
 
-#: methods/server.cc:221
+#: methods/server.cc:219
 msgid "Unknown date format"
 msgstr "Formato de data desconhecido"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Dados de cabeçalho errados"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "A ligação falhou"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Erro interno"
 
@@ -3108,110 +3108,110 @@ msgstr "O sentido %s não é compreendido, tente verdadeiro ou falso."
 msgid "Invalid operation %s"
 msgstr "Operação %s inválida"
 
-#: apt-pkg/deb/dpkgpm.cc:110
+#: apt-pkg/deb/dpkgpm.cc:112
 #, c-format
 msgid "Installing %s"
 msgstr "A instalar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:111 apt-pkg/deb/dpkgpm.cc:1014
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
 #, c-format
 msgid "Configuring %s"
 msgstr "A configurar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:112 apt-pkg/deb/dpkgpm.cc:1021
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
 #, c-format
 msgid "Removing %s"
 msgstr "A remover %s"
 
-#: apt-pkg/deb/dpkgpm.cc:113
+#: apt-pkg/deb/dpkgpm.cc:115
 #, c-format
 msgid "Completely removing %s"
 msgstr "A remover completamente %s"
 
-#: apt-pkg/deb/dpkgpm.cc:114
+#: apt-pkg/deb/dpkgpm.cc:116
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "A notar o desaparecimento de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:115
+#: apt-pkg/deb/dpkgpm.cc:117
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "A correr o 'trigger' de pós-instalação %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:847
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Falta o directório '%s'"
 
-#: apt-pkg/deb/dpkgpm.cc:860 apt-pkg/deb/dpkgpm.cc:882
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Não foi possível abrir ficheiro o '%s'"
 
-#: apt-pkg/deb/dpkgpm.cc:1007
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing %s"
 msgstr "A preparar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1008
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Unpacking %s"
 msgstr "A desempacotar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1013
+#: apt-pkg/deb/dpkgpm.cc:1015
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "A preparar para configurar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1015
+#: apt-pkg/deb/dpkgpm.cc:1017
 #, c-format
 msgid "Installed %s"
 msgstr "%s instalado"
 
-#: apt-pkg/deb/dpkgpm.cc:1020
+#: apt-pkg/deb/dpkgpm.cc:1022
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "A preparar a remoção de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1022
+#: apt-pkg/deb/dpkgpm.cc:1024
 #, c-format
 msgid "Removed %s"
 msgstr "%s removido"
 
-#: apt-pkg/deb/dpkgpm.cc:1027
+#: apt-pkg/deb/dpkgpm.cc:1029
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "A preparar para remover completamente %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1028
+#: apt-pkg/deb/dpkgpm.cc:1030
 #, c-format
 msgid "Completely removed %s"
 msgstr "Remoção completa de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Não conseguiu escrever para %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1670
 msgid "Operation was interrupted before it could finish"
 msgstr "A operação foi interrompida antes de poder terminar"
 
-#: apt-pkg/deb/dpkgpm.cc:1719
+#: apt-pkg/deb/dpkgpm.cc:1732
 msgid "No apport report written because MaxReports is reached already"
 msgstr "Nenhum relatório apport escrito pois MaxReports já foi atingido"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1724
+#: apt-pkg/deb/dpkgpm.cc:1737
 msgid "dependency problems - leaving unconfigured"
 msgstr "problemas de dependências - deixando por configurar"
 
-#: apt-pkg/deb/dpkgpm.cc:1726
+#: apt-pkg/deb/dpkgpm.cc:1739
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3219,7 +3219,7 @@ msgstr ""
 "Nenhum relatório apport escrito pois a mensagem de erro indica que é um erro "
 "de seguimento de um erro anterior."
 
-#: apt-pkg/deb/dpkgpm.cc:1732
+#: apt-pkg/deb/dpkgpm.cc:1745
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3227,7 +3227,7 @@ msgstr ""
 "Nenhum relatório apport escrito pois a mensagem de erro indica erro de disco "
 "cheio"
 
-#: apt-pkg/deb/dpkgpm.cc:1739
+#: apt-pkg/deb/dpkgpm.cc:1752
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3235,7 +3235,7 @@ msgstr ""
 "Nenhum relatório apport escrito pois a mensagem de erro indica um erro de "
 "memória esgotada"
 
-#: apt-pkg/deb/dpkgpm.cc:1746 apt-pkg/deb/dpkgpm.cc:1752
+#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -3244,7 +3244,7 @@ msgstr ""
 "Nenhum relatório apport escrito pois a mensagem de erro indica erro de disco "
 "cheio"
 
-#: apt-pkg/deb/dpkgpm.cc:1774
+#: apt-pkg/deb/dpkgpm.cc:1787
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-12-03 14:47+0100\n"
+"POT-Creation-Date: 2014-12-23 13:28+0100\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -158,7 +158,7 @@ msgid "  Version table:"
 msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1743 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:73 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:84 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
@@ -623,11 +623,11 @@ msgstr "需要一个 URL 作为参数"
 msgid "Must specify at least one pair url/filename"
 msgstr "必须指定至少一对URL或者文件名"
 
-#: cmdline/apt-helper.cc:67
+#: cmdline/apt-helper.cc:73 cmdline/apt-helper.cc:77
 msgid "Download Failed"
 msgstr "下载失败"
 
-#: cmdline/apt-helper.cc:80
+#: cmdline/apt-helper.cc:91
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -678,7 +678,7 @@ msgstr "%s 已经设置为不保留。\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1304
+#: apt-pkg/deb/dpkgpm.cc:1317
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待子进程 %s 的退出，但是它并不存在"
@@ -957,7 +957,7 @@ msgstr "数据套接字连接超时"
 msgid "Unable to accept connection"
 msgstr "无法接受连接"
 
-#: methods/ftp.cc:877 methods/server.cc:353 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "把文件加入哈希表时出错"
 
@@ -1065,8 +1065,7 @@ msgstr "无法运行 gpgv 以验证签名(您安装了 gpgv 吗？)"
 msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
-msgstr ""
-"明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
+msgstr "明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1086,31 +1085,31 @@ msgstr "由于没有公钥，无法验证下列签名：\n"
 msgid "Empty files can't be valid archives"
 msgstr "空文件不能当作有效归档"
 
-#: methods/http.cc:511
+#: methods/http.cc:513
 msgid "Error writing to the file"
 msgstr "写入文件出错"
 
-#: methods/http.cc:525
+#: methods/http.cc:527
 msgid "Error reading from server. Remote end closed connection"
 msgstr "从服务器读取数据时出错，对方关闭了连接"
 
-#: methods/http.cc:527
+#: methods/http.cc:529
 msgid "Error reading from server"
 msgstr "从服务器读取数据出错"
 
-#: methods/http.cc:563
+#: methods/http.cc:565
 msgid "Error writing to file"
 msgstr "写入文件出错"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "Select failed"
 msgstr "select 调用出错"
 
-#: methods/http.cc:628
+#: methods/http.cc:630
 msgid "Connection timed out"
 msgstr "连接超时"
 
-#: methods/http.cc:651
+#: methods/http.cc:653
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
@@ -1118,39 +1117,39 @@ msgstr "写输出文件时出错"
 msgid "Waiting for headers"
 msgstr "正在等待报头"
 
-#: methods/server.cc:110
+#: methods/server.cc:111
 msgid "Bad header line"
 msgstr "错误的报头行"
 
-#: methods/server.cc:135 methods/server.cc:142
+#: methods/server.cc:136 methods/server.cc:143
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 HTTP 服务器发送了一个无效的应答报头"
 
-#: methods/server.cc:172
+#: methods/server.cc:173
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "该 HTTP 服务器发送了一个无效的 Content-Length 报头"
 
-#: methods/server.cc:195
+#: methods/server.cc:193
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "该 HTTP 服务器发送了一个无效的 Content-Range 报头"
 
-#: methods/server.cc:197
+#: methods/server.cc:195
 msgid "This HTTP server has broken range support"
 msgstr "该 HTTP 服务器的 range 支持不正常"
 
-#: methods/server.cc:221
+#: methods/server.cc:219
 msgid "Unknown date format"
 msgstr "无法识别的日期格式"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "错误的报头数据"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "内部错误"
 
@@ -3023,134 +3022,134 @@ msgstr "不能识别参数 %s，请用 true 或 false"
 msgid "Invalid operation %s"
 msgstr "无效的操作 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:110
+#: apt-pkg/deb/dpkgpm.cc:112
 #, c-format
 msgid "Installing %s"
 msgstr "正在安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:111 apt-pkg/deb/dpkgpm.cc:1014
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
 #, c-format
 msgid "Configuring %s"
 msgstr "正在配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:112 apt-pkg/deb/dpkgpm.cc:1021
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
 #, c-format
 msgid "Removing %s"
 msgstr "正在删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:113
+#: apt-pkg/deb/dpkgpm.cc:115
 #, c-format
 msgid "Completely removing %s"
 msgstr "完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:114
+#: apt-pkg/deb/dpkgpm.cc:116
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "注意到 %s 已经消失"
 
-#: apt-pkg/deb/dpkgpm.cc:115
+#: apt-pkg/deb/dpkgpm.cc:117
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "执行安装后执行的触发器 %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:847
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "目录 %s 缺失"
 
-#: apt-pkg/deb/dpkgpm.cc:860 apt-pkg/deb/dpkgpm.cc:882
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "无法打开文件 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1007
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing %s"
 msgstr "正在准备 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1008
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Unpacking %s"
 msgstr "正在解压缩 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1013
+#: apt-pkg/deb/dpkgpm.cc:1015
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在准备配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1015
+#: apt-pkg/deb/dpkgpm.cc:1017
 #, c-format
 msgid "Installed %s"
 msgstr "已安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1020
+#: apt-pkg/deb/dpkgpm.cc:1022
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在准备 %s 的删除操作"
 
-#: apt-pkg/deb/dpkgpm.cc:1022
+#: apt-pkg/deb/dpkgpm.cc:1024
 #, c-format
 msgid "Removed %s"
 msgstr "已删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1027
+#: apt-pkg/deb/dpkgpm.cc:1029
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "正在准备完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1028
+#: apt-pkg/deb/dpkgpm.cc:1030
 #, c-format
 msgid "Completely removed %s"
 msgstr "完全删除了 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 #, c-format
 msgid "Can not write log (%s)"
 msgstr "无法写入日志 (%s)"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 msgid "Is /dev/pts mounted?"
 msgstr "/dev/pts 挂载了吗？"
 
-#: apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1670
 msgid "Operation was interrupted before it could finish"
 msgstr "操作在完成之前被打断"
 
-#: apt-pkg/deb/dpkgpm.cc:1719
+#: apt-pkg/deb/dpkgpm.cc:1732
 msgid "No apport report written because MaxReports is reached already"
 msgstr "由于已经达到 MaxReports 限制，没有写入 apport 报告。"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1724
+#: apt-pkg/deb/dpkgpm.cc:1737
 msgid "dependency problems - leaving unconfigured"
 msgstr "依赖问题 - 保持未配置"
 
-#: apt-pkg/deb/dpkgpm.cc:1726
+#: apt-pkg/deb/dpkgpm.cc:1739
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr "因为错误消息指示这是由于上一个问题导致的错误，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1732
+#: apt-pkg/deb/dpkgpm.cc:1745
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1739
+#: apt-pkg/deb/dpkgpm.cc:1752
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr "因为错误消息指示这是由于内存不足，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1746 apt-pkg/deb/dpkgpm.cc:1752
+#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr "错误信息显示本地系统有一些问题，因此没有写入 apport 报告"
 
-#: apt-pkg/deb/dpkgpm.cc:1774
+#: apt-pkg/deb/dpkgpm.cc:1787
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr "因为错误消息指示这是一个 dpkg I/O 错误，没有写入 apport 报告。"
@@ -3543,7 +3542,6 @@ msgstr ""
 "  -q  日志型输出 - 无进度指示\n"
 "  -c=? 读取指定配置文件\n"
 "  -o=? 设置任意配置项，比如 -o dir::cache=/tmp\n"
-
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"

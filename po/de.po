@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-12-03 14:47+0100\n"
+"POT-Creation-Date: 2014-12-23 13:28+0100\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -162,7 +162,7 @@ msgid "  Version table:"
 msgstr "  Versionstabelle:"
 
 #: cmdline/apt-cache.cc:1743 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:73 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:84 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
@@ -664,11 +664,11 @@ msgstr "Eine URL als Argument wird benötigt"
 msgid "Must specify at least one pair url/filename"
 msgstr "Es muss mindestens ein URL/Dateinamen-Paar angegeben werden"
 
-#: cmdline/apt-helper.cc:67
+#: cmdline/apt-helper.cc:73 cmdline/apt-helper.cc:77
 msgid "Download Failed"
 msgstr "Herunterladen fehlgeschlagen"
 
-#: cmdline/apt-helper.cc:80
+#: cmdline/apt-helper.cc:91
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -720,7 +720,7 @@ msgstr "Die Halten-Markierung für %s wurde bereits entfernt.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1304
+#: apt-pkg/deb/dpkgpm.cc:1317
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Es wurde auf %s gewartet, war jedoch nicht vorhanden"
@@ -1010,7 +1010,7 @@ msgstr "Zeitüberschreitung bei Datenverbindungsaufbau"
 msgid "Unable to accept connection"
 msgstr "Verbindung konnte nicht angenommen werden."
 
-#: methods/ftp.cc:877 methods/server.cc:353 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "Problem bei Bestimmung des Hashwertes einer Datei"
 
@@ -1149,33 +1149,33 @@ msgstr ""
 msgid "Empty files can't be valid archives"
 msgstr "Leere Dateien können kein gültiges Archiv sein."
 
-#: methods/http.cc:511
+#: methods/http.cc:513
 msgid "Error writing to the file"
 msgstr "Fehler beim Schreiben der Datei"
 
-#: methods/http.cc:525
+#: methods/http.cc:527
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 "Fehler beim Lesen vom Server: Verbindung wurde durch den Server auf der "
 "anderen Seite geschlossen."
 
-#: methods/http.cc:527
+#: methods/http.cc:529
 msgid "Error reading from server"
 msgstr "Fehler beim Lesen vom Server"
 
-#: methods/http.cc:563
+#: methods/http.cc:565
 msgid "Error writing to file"
 msgstr "Fehler beim Schreiben in Datei"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "Select failed"
 msgstr "Auswahl fehlgeschlagen"
 
-#: methods/http.cc:628
+#: methods/http.cc:630
 msgid "Connection timed out"
 msgstr "Zeitüberschreitung bei Verbindung"
 
-#: methods/http.cc:651
+#: methods/http.cc:653
 msgid "Error writing to output file"
 msgstr "Fehler beim Schreiben der Ausgabedatei"
 
@@ -1183,42 +1183,42 @@ msgstr "Fehler beim Schreiben der Ausgabedatei"
 msgid "Waiting for headers"
 msgstr "Warten auf Kopfzeilen"
 
-#: methods/server.cc:110
+#: methods/server.cc:111
 msgid "Bad header line"
 msgstr "Ungültige Kopfzeile"
 
-#: methods/server.cc:135 methods/server.cc:142
+#: methods/server.cc:136 methods/server.cc:143
 msgid "The HTTP server sent an invalid reply header"
 msgstr "Vom HTTP-Server wurde eine ungültige Antwort-Kopfzeile gesandt."
 
-#: methods/server.cc:172
+#: methods/server.cc:173
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
 "Vom HTTP-Server wurde eine ungültige »Content-Length«-Kopfzeile gesandt."
 
-#: methods/server.cc:195
+#: methods/server.cc:193
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr ""
 "Vom HTTP-Server wurde eine ungültige »Content-Range«-Kopfzeile gesandt."
 
-#: methods/server.cc:197
+#: methods/server.cc:195
 msgid "This HTTP server has broken range support"
 msgstr ""
 "Teilweise Dateiübertragung wird vom HTTP-Server nur fehlerhaft unterstützt."
 
-#: methods/server.cc:221
+#: methods/server.cc:219
 msgid "Unknown date format"
 msgstr "Unbekanntes Datumsformat"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Fehlerhafte Kopfzeilendaten"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Interner Fehler"
 
@@ -3206,112 +3206,112 @@ msgstr "Der Sinn von »%s« ist nicht klar, versuchen Sie »true« oder »false�
 msgid "Invalid operation %s"
 msgstr "Ungültige Operation %s"
 
-#: apt-pkg/deb/dpkgpm.cc:110
+#: apt-pkg/deb/dpkgpm.cc:112
 #, c-format
 msgid "Installing %s"
 msgstr "%s wird installiert."
 
-#: apt-pkg/deb/dpkgpm.cc:111 apt-pkg/deb/dpkgpm.cc:1014
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
 #, c-format
 msgid "Configuring %s"
 msgstr "%s wird konfiguriert."
 
-#: apt-pkg/deb/dpkgpm.cc:112 apt-pkg/deb/dpkgpm.cc:1021
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
 #, c-format
 msgid "Removing %s"
 msgstr "%s wird entfernt."
 
-#: apt-pkg/deb/dpkgpm.cc:113
+#: apt-pkg/deb/dpkgpm.cc:115
 #, c-format
 msgid "Completely removing %s"
 msgstr "%s wird vollständig entfernt."
 
-#: apt-pkg/deb/dpkgpm.cc:114
+#: apt-pkg/deb/dpkgpm.cc:116
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Verschwinden von %s festgestellt"
 
-#: apt-pkg/deb/dpkgpm.cc:115
+#: apt-pkg/deb/dpkgpm.cc:117
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Aufruf des Nach-Installations-Triggers %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:847
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Verzeichnis »%s« fehlt"
 
-#: apt-pkg/deb/dpkgpm.cc:860 apt-pkg/deb/dpkgpm.cc:882
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Datei »%s« konnte nicht geöffnet werden."
 
-#: apt-pkg/deb/dpkgpm.cc:1007
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing %s"
 msgstr "%s wird vorbereitet."
 
-#: apt-pkg/deb/dpkgpm.cc:1008
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Unpacking %s"
 msgstr "%s wird entpackt."
 
-#: apt-pkg/deb/dpkgpm.cc:1013
+#: apt-pkg/deb/dpkgpm.cc:1015
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Konfiguration von %s wird vorbereitet."
 
-#: apt-pkg/deb/dpkgpm.cc:1015
+#: apt-pkg/deb/dpkgpm.cc:1017
 #, c-format
 msgid "Installed %s"
 msgstr "%s installiert"
 
-#: apt-pkg/deb/dpkgpm.cc:1020
+#: apt-pkg/deb/dpkgpm.cc:1022
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Entfernen von %s wird vorbereitet."
 
-#: apt-pkg/deb/dpkgpm.cc:1022
+#: apt-pkg/deb/dpkgpm.cc:1024
 #, c-format
 msgid "Removed %s"
 msgstr "%s entfernt"
 
-#: apt-pkg/deb/dpkgpm.cc:1027
+#: apt-pkg/deb/dpkgpm.cc:1029
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Vollständiges Entfernen von %s wird vorbereitet."
 
-#: apt-pkg/deb/dpkgpm.cc:1028
+#: apt-pkg/deb/dpkgpm.cc:1030
 #, c-format
 msgid "Completely removed %s"
 msgstr "%s vollständig entfernt"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 #, c-format
 msgid "Can not write log (%s)"
 msgstr "Schreiben des Protokolls nicht möglich (%s)"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 msgid "Is /dev/pts mounted?"
 msgstr "Ist /dev/pts eingebunden?"
 
-#: apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1670
 msgid "Operation was interrupted before it could finish"
 msgstr "Operation wurde unterbrochen, bevor sie beendet werden konnte."
 
-#: apt-pkg/deb/dpkgpm.cc:1719
+#: apt-pkg/deb/dpkgpm.cc:1732
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 "Es wurde kein Apport-Bericht verfasst, da das Limit MaxReports bereits "
 "erreicht ist."
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1724
+#: apt-pkg/deb/dpkgpm.cc:1737
 msgid "dependency problems - leaving unconfigured"
 msgstr "Abhängigkeitsprobleme - verbleibt unkonfiguriert"
 
-#: apt-pkg/deb/dpkgpm.cc:1726
+#: apt-pkg/deb/dpkgpm.cc:1739
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3319,7 +3319,7 @@ msgstr ""
 "Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung darauf "
 "hindeutet, dass dies lediglich ein Folgefehler eines vorherigen Problems ist."
 
-#: apt-pkg/deb/dpkgpm.cc:1732
+#: apt-pkg/deb/dpkgpm.cc:1745
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3327,7 +3327,7 @@ msgstr ""
 "Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Fehler "
 "wegen voller Festplatte hindeutet."
 
-#: apt-pkg/deb/dpkgpm.cc:1739
+#: apt-pkg/deb/dpkgpm.cc:1752
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3335,7 +3335,7 @@ msgstr ""
 "Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Fehler "
 "wegen erschöpftem Arbeitsspeicher hindeutet."
 
-#: apt-pkg/deb/dpkgpm.cc:1746 apt-pkg/deb/dpkgpm.cc:1752
+#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
@@ -3343,7 +3343,7 @@ msgstr ""
 "Es wurde kein Apport-Bericht verfasst, da die Fehlermeldung auf einen Fehler "
 "im lokalen System hindeutet."
 
-#: apt-pkg/deb/dpkgpm.cc:1774
+#: apt-pkg/deb/dpkgpm.cc:1787
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-12-03 14:47+0100\n"
+"POT-Creation-Date: 2014-12-23 13:28+0100\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -154,7 +154,7 @@ msgid "  Version table:"
 msgstr "  Tabla de versiones:"
 
 #: cmdline/apt-cache.cc:1743 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:73 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1591 cmdline/apt-helper.cc:84 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
@@ -636,11 +636,11 @@ msgstr ""
 msgid "Must specify at least one pair url/filename"
 msgstr "Has de conseñar polo menos un paquete p'algamar so fonte"
 
-#: cmdline/apt-helper.cc:67
+#: cmdline/apt-helper.cc:73 cmdline/apt-helper.cc:77
 msgid "Download Failed"
 msgstr ""
 
-#: cmdline/apt-helper.cc:80
+#: cmdline/apt-helper.cc:91
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -681,7 +681,7 @@ msgstr "%s yá ta na versión más nueva.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1304
+#: apt-pkg/deb/dpkgpm.cc:1317
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperaba %s pero nun taba ellí"
@@ -921,7 +921,7 @@ msgstr "Gandió'l tiempu de conexón col zócalu de datos"
 msgid "Unable to accept connection"
 msgstr "Nun se pudo aceptar la conexón"
 
-#: methods/ftp.cc:877 methods/server.cc:353 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "Hebo un problema al xenerar el hash del ficheru"
 
@@ -1052,31 +1052,31 @@ msgstr ""
 msgid "Empty files can't be valid archives"
 msgstr ""
 
-#: methods/http.cc:511
+#: methods/http.cc:513
 msgid "Error writing to the file"
 msgstr "Fallu al escribir nel ficheru"
 
-#: methods/http.cc:525
+#: methods/http.cc:527
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Fallu al lleer nel sirvidor. El llau remotu zarró la conexón."
 
-#: methods/http.cc:527
+#: methods/http.cc:529
 msgid "Error reading from server"
 msgstr "Fallu al lleer nel sirvidor"
 
-#: methods/http.cc:563
+#: methods/http.cc:565
 msgid "Error writing to file"
 msgstr "Fallu al escribir nel ficheru"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "Select failed"
 msgstr "Falló la escoyeta"
 
-#: methods/http.cc:628
+#: methods/http.cc:630
 msgid "Connection timed out"
 msgstr "Gandió'l tiempu de conexón"
 
-#: methods/http.cc:651
+#: methods/http.cc:653
 msgid "Error writing to output file"
 msgstr "Fallu al escribir nel ficheru de salida"
 
@@ -1084,39 +1084,39 @@ msgstr "Fallu al escribir nel ficheru de salida"
 msgid "Waiting for headers"
 msgstr "Esperando les testeres"
 
-#: methods/server.cc:110
+#: methods/server.cc:111
 msgid "Bad header line"
 msgstr "Fallu na llinia testera"
 
-#: methods/server.cc:135 methods/server.cc:142
+#: methods/server.cc:136 methods/server.cc:143
 msgid "The HTTP server sent an invalid reply header"
 msgstr "El sirvidor HTTP mandó una testera incorreuta de rempuesta"
 
-#: methods/server.cc:172
+#: methods/server.cc:173
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "El sirvidor HTTP mandó una testera incorreuta de Content-Length"
 
-#: methods/server.cc:195
+#: methods/server.cc:193
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "El sirvidor HTTP mandó una testera incorreuta de Content-Range"
 
-#: methods/server.cc:197
+#: methods/server.cc:195
 msgid "This HTTP server has broken range support"
 msgstr "Esti sirvidor HTTP tien rotu'l soporte d'alcance"
 
-#: methods/server.cc:221
+#: methods/server.cc:219
 msgid "Unknown date format"
 msgstr "Formatu de data desconocíu"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Datos de testera incorreutos"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "Fallo la conexón"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Fallu internu"
 
@@ -3043,110 +3043,110 @@ msgstr "El sentíu %s nun s'entiende, prueba con braeru o falsu."
 msgid "Invalid operation %s"
 msgstr "Operación incorreuta: %s"
 
-#: apt-pkg/deb/dpkgpm.cc:110
+#: apt-pkg/deb/dpkgpm.cc:112
 #, c-format
 msgid "Installing %s"
 msgstr "Instalando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:111 apt-pkg/deb/dpkgpm.cc:1014
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
 #, c-format
 msgid "Configuring %s"
 msgstr "Configurando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:112 apt-pkg/deb/dpkgpm.cc:1021
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
 #, c-format
 msgid "Removing %s"
 msgstr "Desinstalando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:113
+#: apt-pkg/deb/dpkgpm.cc:115
 #, c-format
 msgid "Completely removing %s"
 msgstr "Desinstalóse dafechu %s"
 
-#: apt-pkg/deb/dpkgpm.cc:114
+#: apt-pkg/deb/dpkgpm.cc:116
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Anotando desaniciáu de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:115
+#: apt-pkg/deb/dpkgpm.cc:117
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Executando activador de post-instalación de %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:847
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Falta'l direutoriu '%s'."
 
-#: apt-pkg/deb/dpkgpm.cc:860 apt-pkg/deb/dpkgpm.cc:882
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Nun pudo abrise'l ficheru '%s'"
 
-#: apt-pkg/deb/dpkgpm.cc:1007
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing %s"
 msgstr "Preparando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1008
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Unpacking %s"
 msgstr "Desempaquetando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1013
+#: apt-pkg/deb/dpkgpm.cc:1015
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Preparándose pa configurar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1015
+#: apt-pkg/deb/dpkgpm.cc:1017
 #, c-format
 msgid "Installed %s"
 msgstr "%s instaláu"
 
-#: apt-pkg/deb/dpkgpm.cc:1020
+#: apt-pkg/deb/dpkgpm.cc:1022
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Preparándose pa desinstalar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1022
+#: apt-pkg/deb/dpkgpm.cc:1024
 #, c-format
 msgid "Removed %s"
 msgstr "%s desinstaláu"
 
-#: apt-pkg/deb/dpkgpm.cc:1027
+#: apt-pkg/deb/dpkgpm.cc:1029
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Preparándose pa desinstalar dafechu %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1028
+#: apt-pkg/deb/dpkgpm.cc:1030
 #, c-format
 msgid "Completely removed %s"
 msgstr "Desinstalóse dafechu %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Nun se pue escribir en %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1080 apt-pkg/deb/dpkgpm.cc:1168
+#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1670
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1719
+#: apt-pkg/deb/dpkgpm.cc:1732
 msgid "No apport report written because MaxReports is reached already"
 msgstr "Ensin informe escritu d'apport porque MaxReports llegó dafechu"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1724
+#: apt-pkg/deb/dpkgpm.cc:1737
 msgid "dependency problems - leaving unconfigured"
 msgstr "problemes de dependencies - déxase ensin configurar"
 
-#: apt-pkg/deb/dpkgpm.cc:1726
+#: apt-pkg/deb/dpkgpm.cc:1739
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3154,7 +3154,7 @@ msgstr ""
 "Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu que "
 "siguió dende un fallu previu"
 
-#: apt-pkg/deb/dpkgpm.cc:1732
+#: apt-pkg/deb/dpkgpm.cc:1745
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3162,7 +3162,7 @@ msgstr ""
 "Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
 "discu llenu"
 
-#: apt-pkg/deb/dpkgpm.cc:1739
+#: apt-pkg/deb/dpkgpm.cc:1752
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3170,7 +3170,7 @@ msgstr ""
 "Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
 "memoria"
 
-#: apt-pkg/deb/dpkgpm.cc:1746 apt-pkg/deb/dpkgpm.cc:1752
+#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -3179,7 +3179,7 @@ msgstr ""
 "Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
 "discu llenu"
 
-#: apt-pkg/deb/dpkgpm.cc:1774
+#: apt-pkg/deb/dpkgpm.cc:1787
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
