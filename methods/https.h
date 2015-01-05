@@ -66,6 +66,7 @@ class HttpsMethod : public pkgAcqMethod
    CURL *curl;
    FetchResult Res;
    HttpsServerState *Server;
+   bool ReceivedData;
 
    public:
    FileFd *File;

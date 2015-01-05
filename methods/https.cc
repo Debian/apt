@@ -85,8 +85,12 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
    if (me->Server->JunkSize != 0)
       return buffer_size;
 
-   if (me->Res.Size == 0)
+   if (me->ReceivedData == false)
+   {
       me->URIStart(me->Res);
+      me->ReceivedData = true;
+   }
+
    if(me->File->Write(buffer, buffer_size) != true)
       return false;
 
@@ -95,7 +99,7 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 
 int
 HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
-			      double /*ultotal*/, double /*ulnow*/)
+                             double /*ultotal*/, double /*ulnow*/)
 {
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
@@ -179,6 +183,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    char curl_errorstr[CURL_ERROR_SIZE];
    URI Uri = Itm->Uri;
    string remotehost = Uri.Host;
+   ReceivedData = false;
 
    // TODO:
    //       - http::Pipeline-Depth
