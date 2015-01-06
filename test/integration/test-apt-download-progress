@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# ensure downloading sends progress as a regression test for commit 9127d7ae
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+changetohttpswebserver
+
+assertprogress() {
+    T="$1"
+    testsuccess grep "dlstatus:1:0:Retrieving file 1 of 1" "$T"
+    if ! egrep -q "dlstatus:1:[0-9]{1,2}\.(.*):Retrieving file 1 of 1" "$T"; then
+        cat "$T"
+        msgfail "Failed to detect download progress"
+    fi
+    testsuccess grep "dlstatus:1:100:Retrieving file 1 of 1" "$T"
+    #cat $T
+}
+
+# we need to ensure the file is reasonable big so that apt has a chance to
+# actually report progress - but not too big to ensure its not delaying the
+# test too much
+TESTFILE=testfile.big
+testsuccess dd if=/dev/zero of=./aptarchive/$TESTFILE bs=800k count=1 
+
+msgtest 'download progress works via' 'http'
+printf '\n'
+exec 3> apt-progress.log
+testsuccess apthelper download-file "http://localhost:8080/$TESTFILE" http-$TESTFILE -o APT::Status-Fd=3 -o Acquire::http::Dl-Limit=800
+assertprogress apt-progress.log
+
+msgtest 'download progress works via' 'https'
+printf '\n'
+exec 3> apt-progress.log
+testsuccess apthelper download-file "https://localhost:4433/$TESTFILE" https-$TESTFILE -o APT::Status-Fd=3 -o Acquire::https::Dl-Limit=800
+assertprogress apt-progress.log
+
+# cleanup
+rm -f apt-progress*.log
