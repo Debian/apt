@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/stat.h>
 									/*}}}*/
@@ -671,8 +672,7 @@ APT_CONST bool debStatusIndex::Exists() const
 }
 									/*}}}*/
 
-// debDebPkgFile - Single .deb file                           		/*{{{*/
-// ---------------------------------------------------------------------
+// debDebPkgFile - Single .deb file					/*{{{*/
 debDebPkgFileIndex::debDebPkgFileIndex(std::string DebFile)
    : pkgIndexFile(true), DebFile(DebFile)
 {
@@ -688,53 +688,56 @@ bool debDebPkgFileIndex::Exists() const
 {
    return FileExists(DebFile);
 }
-bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
+bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &debfile)
 {
-   if(Prog)
-      Prog->SubProgress(0, "Reading deb file");
-
-   // get the control data out of the deb file vid dpkg -I
-   // ... can I haz libdpkg?
-   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-   std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg");
+   // get the control data out of the deb file via dpkg-deb -I
+   std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg-deb");
    std::vector<const char *> Args;
    Args.push_back(dpkg.c_str());
-   if (Opts != 0)
-   {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-	 Args.push_back(Opts->Value.c_str());
-      }
-   }
    Args.push_back("-I");
-   Args.push_back(DebFile.c_str());
+   Args.push_back(debfile.c_str());
    Args.push_back("control");
    Args.push_back(NULL);
    FileFd PipeFd;
    pid_t Child;
    if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("Popen failed");
-   // FIXME: static buffer
-   char buf[8*1024];
-   unsigned long long n = 0;
-   if(PipeFd.Read(buf, sizeof(buf)-1, &n) == false)
-      return _error->Errno("read", "Failed to read dpkg pipe");
+
+   char buffer[1024];
+   do {
+      unsigned long long actual = 0;
+      if (PipeFd.Read(buffer, sizeof(buffer)-1, &actual) == false)
+	 return _error->Errno("read", "Failed to read dpkg pipe");
+      if (actual == 0)
+	 break;
+      buffer[actual] = '\0';
+      content << buffer;
+   } while(true);
    ExecWait(Child, "Popen");
 
-   // now write the control data to a tempfile
+   content << "Filename: " << debfile << "\n";
+   struct stat Buf;
+   if (stat(debfile.c_str(), &Buf) != 0)
+      return false;
+   content << "Size: " << Buf.st_size << "\n";
+
+   return true;
+}
+bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
+{
+   if(Prog)
+      Prog->SubProgress(0, "Reading deb file");
+
+   // write the control data to a tempfile
    SPtr<FileFd> DebControl = GetTempFile("deb-file-" + flNotDir(DebFile));
    if(DebControl == NULL)
       return false;
-   DebControl->Write(buf, n);
-   // append size of the file
-   FileFd Fd(DebFile, FileFd::ReadOnly);
-   string Size;
-   strprintf(Size, "Size: %llu\n", Fd.Size());
-   DebControl->Write(Size.c_str(), Size.size());
-   // and rewind for the listparser
+   std::ostringstream content;
+   if (GetContent(content, DebFile) == false)
+      return false;
+   std::string const contentstr = content.str();
+   DebControl->Write(contentstr.c_str(), contentstr.length());
+   // rewind for the listparser
    DebControl->Seek(0);
 
    // and give it to the list parser
@@ -838,7 +841,7 @@ class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
    {
-      return new debDebFileRecordParser(File.FileName(),*File.Cache());
+      return new debDebFileRecordParser(File.FileName());
    };
    debIFTypeDebPkgFile() {Label = "deb Package file";};
 };

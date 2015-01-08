@@ -183,8 +183,8 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	    break;
 
 	 if (Resize() == false)
-	    return _error->Error(_("Unable to parse package file %s (1)"),
-		  d->Fd.Name().c_str());
+	    return _error->Error(_("Unable to parse package file %s (%d)"),
+		  d->Fd.Name().c_str(), 1);
 
       } while (Tag.Scan(d->Start,d->End - d->Start, false) == false);
    }
@@ -283,7 +283,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       return false;
    
    if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
-      return _error->Error(_("Unable to parse package file %s (2)"),d->Fd.Name().c_str());
+      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd.Name().c_str(), 2);
    
    return true;
 }

@@ -177,6 +177,14 @@ class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
       return DebFile;
    }
 
+   /** get the control (file) content of the deb file
+    *
+    * @param[out] content of the control file
+    * @param debfile is the filename of the .deb-file
+    * @return \b true if successful, otherwise \b false.
+    */
+   static bool GetContent(std::ostream &content, std::string const &debfile);
+
    // Interface for the Cache Generator
    virtual bool Exists() const;
    virtual bool HasPackages() const {
