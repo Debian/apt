@@ -634,18 +634,10 @@ bool SourcesWriter::DoPackage(string FileName)
    // the "db cursor"
    Db.Finish();
 
-   // read stuff
-   char *Start = Db.Dsc.Data;
-   char *BlkEnd = Db.Dsc.Data + Db.Dsc.Length;
-
-   // Add extra \n to the end, just in case (as in clearsigned they are missing)
-   *BlkEnd++ = '\n';
-   *BlkEnd++ = '\n';
-
    pkgTagSection Tags;
-   if (Tags.Scan(Start,BlkEnd - Start) == false)
+   if (Tags.Scan(Db.Dsc.Data.c_str(), Db.Dsc.Data.length()) == false)
       return _error->Error("Could not find a record in the DSC '%s'",FileName.c_str());
-   
+
    if (Tags.Exists("Source") == false)
       return _error->Error("Could not find a Source entry in the DSC '%s'",FileName.c_str());
    Tags.Trim();

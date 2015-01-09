@@ -780,7 +780,7 @@ buildaptarchivefromincoming() {
 	[ -e ftparchive.conf ] || createaptftparchiveconfig
 	[ -e dists ] || buildaptftparchivedirectorystructure
 	msgninfo "\tGenerate Packages, Sources and Contents files… "
-	aptftparchive -qq generate ftparchive.conf
+	testsuccess aptftparchive generate ftparchive.conf
 	cd - > /dev/null
 	msgdone "info"
 	generatereleasefiles

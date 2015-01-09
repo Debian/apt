@@ -328,12 +328,12 @@ bool CacheDB::LoadSource()
    if (Dsc.Read(FileName) == false)
       return false;
 
-   if (Dsc.Data == 0)
+   if (Dsc.Length == 0)
       return _error->Error(_("Failed to read .dsc"));
-   
+
    // Write back the control information
    InitQuerySource();
-   if (Put(Dsc.Data, Dsc.Length) == true)
+   if (Put(Dsc.Data.c_str(), Dsc.Length) == true)
       CurStat.Flags |= FlSource;
 
    return true;
