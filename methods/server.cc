@@ -129,7 +129,7 @@ bool ServerState::HeaderLine(string Line)
 	 if (elements == 3)
 	 {
 	    Code[0] = '\0';
-	    if (Owner->Debug == true)
+	    if (Owner != NULL && Owner->Debug == true)
 	       clog << "HTTP server doesn't give Reason-Phrase for " << Result << std::endl;
 	 }
 	 else if (elements != 4)
