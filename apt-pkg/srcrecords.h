@@ -34,11 +34,15 @@ APT_IGNORE_DEPRECATED_PUSH
    // Describes a single file
    struct File
    {
+      APT_DEPRECATED std::string MD5Hash;
+      APT_DEPRECATED unsigned long Size;
       std::string Path;
       std::string Type;
-      unsigned long long Size;
+   };
+   struct File2 : public File
+   {
+      unsigned long long FileSize;
       HashStringList Hashes;
-      APT_DEPRECATED std::string MD5Hash;
    };
 APT_IGNORE_DEPRECATED_POP
 
@@ -81,6 +85,7 @@ APT_IGNORE_DEPRECATED_POP
       static const char *BuildDepType(unsigned char const &Type) APT_PURE;
 
       virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
+      bool Files2(std::vector<pkgSrcRecords::File2> &F);
       
       Parser(const pkgIndexFile *Index) : iIndex(Index) {};
       virtual ~Parser() {};

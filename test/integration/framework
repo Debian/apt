@@ -248,7 +248,7 @@ setupenvironment() {
 		echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	fi
 
-	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
+	cat << EOF > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
 #!/bin/sh
 set -e
 if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
@@ -262,7 +262,6 @@ exec fakeroot dpkg --root="${TMPWORKINGDIRECTORY}/rootdir" \\
 	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
 	--force-not-root --force-bad-path "\$@"
 EOF
-	cat "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
 
@@ -827,7 +826,7 @@ buildaptarchivefromincoming() {
 	[ -e ftparchive.conf ] || createaptftparchiveconfig
 	[ -e dists ] || buildaptftparchivedirectorystructure
 	msgninfo "\tGenerate Packages, Sources and Contents files… "
-	aptftparchive -qq generate ftparchive.conf
+	testsuccess aptftparchive generate ftparchive.conf
 	cd - > /dev/null
 	msgdone "info"
 	generatereleasefiles "$@"

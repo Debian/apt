@@ -11,14 +11,20 @@ configdpkgnoopchroot
 setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
 BUILDDIR="incoming/fdleaks-1.0"
 for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
-	echo '#!/bin/sh
-ls -l /proc/self/fd/' > ${BUILDDIR}/debian/$script
+	cat > ${BUILDDIR}/debian/$script << EOF
+#!/bin/sh
+if [ -e "$(pwd)/rootdir/tmp/read_stdin" ]; then
+	read line;
+	echo "STDIN: -\$line-"
+fi
+ls -l /proc/self/fd/
+EOF
 done
 buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 rm -rf "$BUILDDIR"
 
 PKGNAME='fdleaks:all'
-if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null; then
+if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null >/dev/null 2>&1; then
 	PKGNAME='fdleaks'
 fi
 
@@ -84,6 +90,14 @@ startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
 }
 checkpurge
 
+msgtest 'setsid provided is new enough to support' '-w'
+if dpkg-checkbuilddeps -d 'util-linux (>= 2.24.2-1)' /dev/null >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip "$(command dpkg -l util-linux)"
+	exit
+fi
+
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" install -y fdleaks -qq < /dev/null
 checkinstall
@@ -91,3 +105,15 @@ checkinstall
 rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" purge -y fdleaks -qq
 checkpurge
+
+touch rootdir/tmp/read_stdin
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+for i in $(seq 1 10); do echo "$i"; done | testsuccess aptget install -y fdleaks -qq
+checkinstall
+testequal '2' grep -c '^STDIN: ' rootdir/var/log/apt/term.log
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+yes '' | testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" purge -y fdleaks -qq
+checkpurge
+testequal '3' grep -c '^STDIN: ' rootdir/var/log/apt/term.log

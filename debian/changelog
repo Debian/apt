@@ -234,6 +234,92 @@ apt (1.1~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Thu, 19 Jun 2014 12:01:48 +0200
 
+apt (1.0.9.7) unstable; urgency=medium
+
+  [ Tomasz Buchert ]
+  * Fix crash in the apt-transport-https when Owner is NULL (Closes: #778375)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 23 Feb 2015 12:54:03 +0100
+
+apt (1.0.9.6) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * Fix missing URIStart() for https downloads
+  * Add regression test for the previous commit
+
+  [ David Kalnischkies ]
+  * 128 KiB DSC files ought to be enough for everyone (Closes: 774893)
+  * award points for positive dependencies again (Closes: 774924)
+
+ -- Michael Vogt <mvo@ubuntu.com>  Fri, 16 Jan 2015 08:37:25 +0100
+
+apt (1.0.9.5) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * dispose http(s) 416 error page as non-content (Closes: 768797)
+  * do not make PTY slave the controlling terminal (Closes: 772641)
+  * always run 'dpkg --configure -a' at the end of our dpkg callings
+    (Closes: 769609)
+  * pass-through stdin fd instead of content if not a terminal (Closes: 773061)
+
+  [ James McCoy ]
+  * tighten filtering of kernel images in apt.auto-removal (Closes: 772732)
+
+  [ Jean-Pierre Giraud ]
+  * French manpages translation update (Closes: 771967)
+
+  [ Zhou Mo ]
+  * Chinese (simplified) program translation update (Closes: 771982)
+
+  [ Kenshi Muto ]
+  * Japanese program translation update (Closes: 772678)
+
+  [ Theppitak Karoonboonyanan ]
+  * Thai program translation update (Closes: 772913)
+
+ -- David Kalnischkies <david@kalnischkies.de>  Tue, 23 Dec 2014 13:22:42 +0100
+
+apt (1.0.9.4) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * use 'best' hash for source authentication (LP: 1098738)
+  * deprecate the Section member from package struct
+  * allow options between command and -- on commandline
+  * re-enable support for -s (and co) in apt-get source (Closes: 742578)
+  * change codenames to jessie as stable POV in docs
+  * close leaking slave fd after setting up pty magic (Closes: 767774)
+  * fix PTY interaction on linux and kfreebsd (Closes: 765687)
+
+  [ James McCoy ]
+  * support long keyids in "apt-key del" instead of ignoring them
+    (Closes: 754436)
+
+  [ Michael Vogt ]
+  * Use sysconf(_SC_ARG_MAX) to find the size of Dpkg::MaxArgBytes
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: 771039)
+
+  [ Julien Patriarca ]
+  * French program translation update (Closes: 766755)
+
+  [ Zhou Mo ]
+  * Chinese (simplified) program translation update (Closes: 766170)
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: 764055)
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 763379)
+
+  [ Kenshi Muto ]
+  * Japanese program translation update (Closes: 763033)
+
+  [ Manuel "Venturi" Porras Peralta ]
+  * Spanish program translation update (Closes: 771815)
+
+ -- David Kalnischkies <david@kalnischkies.de>  Wed, 03 Dec 2014 14:26:04 +0100
+
 apt (1.0.9.3) unstable; urgency=medium
 
   [ josch ]

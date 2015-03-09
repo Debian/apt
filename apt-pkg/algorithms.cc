@@ -468,7 +468,7 @@ void pkgProblemResolver::MakeScores()
 	 if (D->Version != 0)
 	 {
 	    pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
-	    if (IV.end() == true || D.IsSatisfied(IV) != D.IsNegative())
+	    if (IV.end() == true || D.IsSatisfied(IV) == false)
 	       continue;
 	 }
 	 Scores[T->ID] += DepMap[D->Type];

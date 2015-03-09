@@ -161,10 +161,12 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	// Accessors
 	inline const char *Name() const { return Group().Name(); }
 	// Versions have sections - and packages can have different versions with different sections
-	// so this interface is broken by design. It used to return the section of the "first parsed
-	// package stanza", but as this can potentially be anything it now returns the section of the
-	// newest version instead (if any). aka: Run as fast as you can to Version.Section().
-	APT_DEPRECATED const char *Section() const;
+	// so this interface is broken by design. Run as fast as you can to Version.Section().
+	APT_DEPRECATED inline const char *Section() const {
+	   APT_IGNORE_DEPRECATED_PUSH
+	   return S->Section == 0?0:Owner->StrP + S->Section;
+	   APT_IGNORE_DEPRECATED_POP
+	}
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);}
 	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;}

@@ -121,9 +121,32 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 // ---------------------------------------------------------------------
 /* This parses the list of files and returns it, each file is required to have
    a complete source package */
-bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
+bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &F)
 {
-   List.erase(List.begin(),List.end());
+   std::vector<pkgSrcRecords::File2> F2;
+   if (Files2(F2) == false)
+      return false;
+   for (std::vector<pkgSrcRecords::File2>::const_iterator f2 = F2.begin(); f2 != F2.end(); ++f2)
+   {
+      pkgSrcRecords::File2 f;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      f.MD5Hash = f2->MD5Hash;
+      f.Size = f2->Size;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+      f.Path = f2->Path;
+      f.Type = f2->Type;
+      F.push_back(f);
+   }
+   return true;
+}
+bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
+{
+   List.clear();
 
    // Stash the / terminated directory prefix
    string Base = Sect.FindS("Directory");
@@ -162,7 +185,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	    path = Base + path;
 
 	 // look if we have a record for this file already
-	 std::vector<pkgSrcRecords::File>::iterator file = List.begin();
+	 std::vector<pkgSrcRecords::File2>::iterator file = List.begin();
 	 for (; file != List.end(); ++file)
 	    if (file->Path == path)
 	       break;
@@ -179,13 +202,16 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 }
 
 	 // we haven't seen this file yet
-	 pkgSrcRecords::File F;
+	 pkgSrcRecords::File2 F;
 	 F.Path = path;
-	 F.Size = strtoull(size.c_str(), NULL, 10);
+	 F.FileSize = strtoull(size.c_str(), NULL, 10);
 	 F.Hashes.push_back(hashString);
 
+	 APT_IGNORE_DEPRECATED_PUSH
+	 F.Size = F.FileSize;
 	 if (checksumField == "Files")
-	    APT_IGNORE_DEPRECATED(F.MD5Hash = hash;)
+	    F.MD5Hash = hash;
+	 APT_IGNORE_DEPRECATED_POP
 
 	 // Try to guess what sort of file it is we are getting.
 	 string::size_type Pos = F.Path.length()-1;

@@ -26,13 +26,6 @@ insertinstalledpackage 'linux-headers-1000000-1-generic' 'amd64' '100.0.0-1'
 
 testsuccess aptmark auto "$CURRENTKERNEL" 'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic' 'linux-headers-1000000-1-generic'
 
-cat > ./fake-dpkg <<EOF
-#!/bin/sh
-exec $(aptconfig dump --no-empty --format='%v ' 'DPKG::options') "\$@"
-EOF
-chmod +x ./fake-dpkg
-echo 'Dir::Bin::dpkg "./fake-dpkg";' > rootdir/etc/apt/apt.conf.d/99fakedpkg
-
 # install fake-dpkg into it
 catfail() {
 	echo >&2

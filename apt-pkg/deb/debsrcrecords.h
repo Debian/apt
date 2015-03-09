@@ -54,6 +54,7 @@ class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
       return std::string(Start,Stop);
    };
    virtual bool Files(std::vector<pkgSrcRecords::File> &F);
+   bool Files2(std::vector<pkgSrcRecords::File2> &F);
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
       : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),

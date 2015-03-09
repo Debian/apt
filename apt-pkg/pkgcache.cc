@@ -1036,9 +1036,3 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
    return false;
 }
 									/*}}}*/
-APT_DEPRECATED APT_PURE const char * pkgCache::PkgIterator::Section() const {/*{{{*/
-   if (S->VersionList == 0)
-      return 0;
-   return VersionList().Section();
-}
-									/*}}}*/

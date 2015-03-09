@@ -861,7 +861,8 @@ int main(int const argc, const char * argv[])
 
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
-   int const slaves = _config->FindB("aptwebserver::slaves", SOMAXCONN);
+   int const slaves = _config->FindI("aptwebserver::slaves", SOMAXCONN);
+   std::cerr << "SLAVES: " << slaves << std::endl;
    listen(sock, slaves);
    /*}}}*/
 

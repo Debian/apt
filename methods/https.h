@@ -50,6 +50,8 @@ class HttpsServerState : public ServerState
 
    HttpsServerState(URI Srv, HttpsMethod *Owner);
    virtual ~HttpsServerState() {Close();};
+
+   bool ReceivedData;
 };
 
 class HttpsMethod : public pkgAcqMethod
@@ -62,18 +64,17 @@ class HttpsMethod : public pkgAcqMethod
 
    static size_t parse_header(void *buffer, size_t size, size_t nmemb, void *userp);
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
-   static int progress_callback(void *clientp, double dltotal, double dlnow, 
-				double ultotal, double ulnow);
+   static int progress_callback(void *clientp, double dltotal, double dlnow,
+				 double ultotal, double ulnow);
    void SetupProxy();
    CURL *curl;
    FetchResult Res;
    HttpsServerState *Server;
-   unsigned long long TotalWritten;
 
    public:
    FileFd *File;
-      
-   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), TotalWritten(0), File(NULL)
+
+   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), File(NULL)
    {
       curl = curl_easy_init();
    };

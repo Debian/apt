@@ -791,13 +791,13 @@ static bool DoSource(CommandLine &CmdL)
       }
 
       // Back track
-      vector<pkgSrcRecords::File> Lst;
-      if (Last->Files(Lst) == false) {
+      vector<pkgSrcRecords::File2> Lst;
+      if (Last->Files2(Lst) == false) {
 	 return false;
       }
 
       // Load them into the fetcher
-      for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
+      for (vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
 	   I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
@@ -844,7 +844,7 @@ static bool DoSource(CommandLine &CmdL)
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			I->Hashes, I->Size, Last->Index().SourceInfo(*Last,*I), Src);
+			I->Hashes, I->FileSize, Last->Index().SourceInfo(*Last,*I), Src);
       }
    }
 
