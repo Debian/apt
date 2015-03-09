@@ -37,16 +37,6 @@
 									/*}}}*/
 using namespace std;
 
-bool HttpsMethod::Configuration(std::string Message)
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
-
 size_t
 HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 {
@@ -131,7 +121,7 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
 }
 
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
-HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * /*Owner*/) : ServerState(Srv, NULL)
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner)
 {
    TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
    ReceivedData = false;
@@ -335,13 +325,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
    // set redirect options and default to 10 redirects
-   bool const AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
-	_config->FindB("Acquire::http::AllowRedirect",true));
    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
 
    // debug
-   if(_config->FindB("Debug::Acquire::https", false))
+   if (Debug == true)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 
    // error handling
@@ -378,7 +366,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   Server = new HttpsServerState(Itm->Uri, this);
+   Server = CreateServerState(Itm->Uri);
 
    // keep apt updated
    Res.Filename = Itm->DestFile;
@@ -473,6 +461,25 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    return true;
 }
+									/*}}}*/
+// HttpsMethod::Configuration - Handle a configuration message		/*{{{*/
+bool HttpsMethod::Configuration(string Message)
+{
+   if (ServerMethod::Configuration(Message) == false)
+      return false;
+
+   AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
+	_config->FindB("Acquire::http::AllowRedirect", true));
+   Debug = _config->FindB("Debug::Acquire::https",false);
+
+   return true;
+}
+									/*}}}*/
+ServerState * HttpsMethod::CreateServerState(URI uri)			/*{{{*/
+{
+   return new HttpsServerState(uri, this);
+}
+									/*}}}*/
 
 int main()
 {

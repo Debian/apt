@@ -1,0 +1,40 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+
+echo 'found' > aptarchive/working
+changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=/' \
+	-o 'aptwebserver::httpcode::200=200' -o 'aptwebserver::httpcode::404=404' \
+	-o 'aptwebserver::httpcode::301=301'
+
+testdownload() {
+	rm -f downfile
+	msgtest "download of a $1 via" "${3%%:*}"
+	$2 --nomsg downloadfile "$3" downfile
+
+	cp rootdir/tmp/testsuccess.output download.log
+	#looking for "HTTP server doesn't give Reason-Phrase for 200"
+	testsuccess grep 'give Reason-Phrase for' download.log
+
+	if [ "$2" = 'testsuccess' ]; then
+		testfileequal downfile 'found'
+	else
+		testfailure test -e downfile
+	fi
+}
+
+runtest() {
+	testdownload 'file works' 'testsuccess' "$1/working"
+	testdownload 'file via redirect works' 'testsuccess' "$1/redirectme/working"
+
+	testdownload 'non-existent file fails' 'testfailure' "$1/failing"
+	testdownload 'non-existent file via redirect fails' 'testfailure' "$1/redirectme/failing"
+}
+
+runtest 'http://localhost:8080'
+runtest 'https://localhost:4433'

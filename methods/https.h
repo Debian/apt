@@ -50,17 +50,14 @@ class HttpsServerState : public ServerState
 
    HttpsServerState(URI Srv, HttpsMethod *Owner);
    virtual ~HttpsServerState() {Close();};
-
-   bool ReceivedData;
 };
 
-class HttpsMethod : public pkgAcqMethod
+class HttpsMethod : public ServerMethod
 {
    // minimum speed in bytes/se that triggers download timeout handling
    static const int DL_MIN_SPEED = 10;
 
    virtual bool Fetch(FetchItem *);
-   virtual bool Configuration(std::string Message);
 
    static size_t parse_header(void *buffer, size_t size, size_t nmemb, void *userp);
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
@@ -69,12 +66,19 @@ class HttpsMethod : public pkgAcqMethod
    void SetupProxy();
    CURL *curl;
    FetchResult Res;
-   HttpsServerState *Server;
+   ServerState *Server;
+
+   // Used by ServerMethods unused by https
+   virtual void SendReq(FetchItem *) { exit(42); }
+   virtual void RotateDNS() { exit(42); }
 
    public:
    FileFd *File;
 
-   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), File(NULL)
+   virtual bool Configuration(std::string Message);
+   virtual ServerState * CreateServerState(URI uri);
+
+   HttpsMethod() : ServerMethod("1.2",Pipeline | SendConfig), File(NULL)
    {
       curl = curl_easy_init();
    };

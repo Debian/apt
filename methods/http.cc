@@ -772,8 +772,6 @@ bool HttpMethod::Configuration(string Message)
    if (ServerMethod::Configuration(Message) == false)
       return false;
 
-   DropPrivsOrDie();
-
    AllowRedirect = _config->FindB("Acquire::http::AllowRedirect",true);
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);

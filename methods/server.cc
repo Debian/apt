@@ -238,7 +238,12 @@ ServerState::ServerState(URI Srv, ServerMethod *Owner) : ServerName(Srv), TimeOu
 
 bool ServerMethod::Configuration(string Message)			/*{{{*/
 {
-   return pkgAcqMethod::Configuration(Message);
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
 }
 									/*}}}*/
 

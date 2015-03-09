@@ -27,58 +27,58 @@
 #include <string>
 #include <vector>
 
-static char const * httpcodeToStr(int const httpcode)		/*{{{*/
+static std::string httpcodeToStr(int const httpcode)			/*{{{*/
 {
    switch (httpcode)
    {
       // Informational 1xx
-      case 100: return "100 Continue";
-      case 101: return "101 Switching Protocols";
+      case 100: return _config->Find("aptwebserver::httpcode::100", "100 Continue");
+      case 101: return _config->Find("aptwebserver::httpcode::101", "101 Switching Protocols");
       // Successful 2xx
-      case 200: return "200 OK";
-      case 201: return "201 Created";
-      case 202: return "202 Accepted";
-      case 203: return "203 Non-Authoritative Information";
-      case 204: return "204 No Content";
-      case 205: return "205 Reset Content";
-      case 206: return "206 Partial Content";
+      case 200: return _config->Find("aptwebserver::httpcode::200", "200 OK");
+      case 201: return _config->Find("aptwebserver::httpcode::201", "201 Created");
+      case 202: return _config->Find("aptwebserver::httpcode::202", "202 Accepted");
+      case 203: return _config->Find("aptwebserver::httpcode::203", "203 Non-Authoritative Information");
+      case 204: return _config->Find("aptwebserver::httpcode::204", "204 No Content");
+      case 205: return _config->Find("aptwebserver::httpcode::205", "205 Reset Content");
+      case 206: return _config->Find("aptwebserver::httpcode::206", "206 Partial Content");
       // Redirections 3xx
-      case 300: return "300 Multiple Choices";
-      case 301: return "301 Moved Permanently";
-      case 302: return "302 Found";
-      case 303: return "303 See Other";
-      case 304: return "304 Not Modified";
-      case 305: return "304 Use Proxy";
-      case 307: return "307 Temporary Redirect";
+      case 300: return _config->Find("aptwebserver::httpcode::300", "300 Multiple Choices");
+      case 301: return _config->Find("aptwebserver::httpcode::301", "301 Moved Permanently");
+      case 302: return _config->Find("aptwebserver::httpcode::302", "302 Found");
+      case 303: return _config->Find("aptwebserver::httpcode::303", "303 See Other");
+      case 304: return _config->Find("aptwebserver::httpcode::304", "304 Not Modified");
+      case 305: return _config->Find("aptwebserver::httpcode::305", "305 Use Proxy");
+      case 307: return _config->Find("aptwebserver::httpcode::307", "307 Temporary Redirect");
       // Client errors 4xx
-      case 400: return "400 Bad Request";
-      case 401: return "401 Unauthorized";
-      case 402: return "402 Payment Required";
-      case 403: return "403 Forbidden";
-      case 404: return "404 Not Found";
-      case 405: return "405 Method Not Allowed";
-      case 406: return "406 Not Acceptable";
-      case 407: return "407 Proxy Authentication Required";
-      case 408: return "408 Request Time-out";
-      case 409: return "409 Conflict";
-      case 410: return "410 Gone";
-      case 411: return "411 Length Required";
-      case 412: return "412 Precondition Failed";
-      case 413: return "413 Request Entity Too Large";
-      case 414: return "414 Request-URI Too Large";
-      case 415: return "415 Unsupported Media Type";
-      case 416: return "416 Requested range not satisfiable";
-      case 417: return "417 Expectation Failed";
-      case 418: return "418 I'm a teapot";
+      case 400: return _config->Find("aptwebserver::httpcode::400", "400 Bad Request");
+      case 401: return _config->Find("aptwebserver::httpcode::401", "401 Unauthorized");
+      case 402: return _config->Find("aptwebserver::httpcode::402", "402 Payment Required");
+      case 403: return _config->Find("aptwebserver::httpcode::403", "403 Forbidden");
+      case 404: return _config->Find("aptwebserver::httpcode::404", "404 Not Found");
+      case 405: return _config->Find("aptwebserver::httpcode::405", "405 Method Not Allowed");
+      case 406: return _config->Find("aptwebserver::httpcode::406", "406 Not Acceptable");
+      case 407: return _config->Find("aptwebserver::httpcode::407", "407 Proxy Authentication Required");
+      case 408: return _config->Find("aptwebserver::httpcode::408", "408 Request Time-out");
+      case 409: return _config->Find("aptwebserver::httpcode::409", "409 Conflict");
+      case 410: return _config->Find("aptwebserver::httpcode::410", "410 Gone");
+      case 411: return _config->Find("aptwebserver::httpcode::411", "411 Length Required");
+      case 412: return _config->Find("aptwebserver::httpcode::412", "412 Precondition Failed");
+      case 413: return _config->Find("aptwebserver::httpcode::413", "413 Request Entity Too Large");
+      case 414: return _config->Find("aptwebserver::httpcode::414", "414 Request-URI Too Large");
+      case 415: return _config->Find("aptwebserver::httpcode::415", "415 Unsupported Media Type");
+      case 416: return _config->Find("aptwebserver::httpcode::416", "416 Requested range not satisfiable");
+      case 417: return _config->Find("aptwebserver::httpcode::417", "417 Expectation Failed");
+      case 418: return _config->Find("aptwebserver::httpcode::418", "418 I'm a teapot");
       // Server error 5xx
-      case 500: return "500 Internal Server Error";
-      case 501: return "501 Not Implemented";
-      case 502: return "502 Bad Gateway";
-      case 503: return "503 Service Unavailable";
-      case 504: return "504 Gateway Time-out";
-      case 505: return "505 HTTP Version not supported";
+      case 500: return _config->Find("aptwebserver::httpcode::500", "500 Internal Server Error");
+      case 501: return _config->Find("aptwebserver::httpcode::501", "501 Not Implemented");
+      case 502: return _config->Find("aptwebserver::httpcode::502", "502 Bad Gateway");
+      case 503: return _config->Find("aptwebserver::httpcode::503", "503 Service Unavailable");
+      case 504: return _config->Find("aptwebserver::httpcode::504", "504 Gateway Time-out");
+      case 505: return _config->Find("aptwebserver::httpcode::505", "505 HTTP Version not supported");
    }
-   return NULL;
+   return "";
 }
 									/*}}}*/
 static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
