@@ -279,7 +279,7 @@ static bool DoHold(CommandLine &CmdL)
    {
       if (Pkg->CurrentVer != 0)
 	 continue;
-      keepoffset.insert(Pkg);
+      keepoffset.insert(*Pkg);
    }
 
    if (keepoffset.empty() == false)
