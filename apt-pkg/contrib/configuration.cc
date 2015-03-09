@@ -629,19 +629,19 @@ string Configuration::Item::FullTag(const Item *Stop) const
    tag/value. AsSectional enables Sectional parsing.*/
 bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectional,
 		    unsigned const &Depth)
-{   
+{
    // Open the stream for reading
-   ifstream F(FName.c_str(),ios::in); 
-   if (!F != 0)
+   ifstream F(FName.c_str(),ios::in);
+   if (F.fail() == true)
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
 
    string LineBuffer;
    string Stack[100];
    unsigned int StackPos = 0;
-   
+
    // Parser state
    string ParentTag;
-   
+
    int CurLine = 0;
    bool InComment = false;
    while (F.eof() == false)

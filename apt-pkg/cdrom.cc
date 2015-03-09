@@ -466,7 +466,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    // Open the stream for reading
    ifstream F((FileExists(File)?File.c_str():"/dev/null"),
 	      ios::in );
-   if (!F != 0)
+   if (F.fail() == true)
       return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
 
    string NewFile = File + ".new";
@@ -477,7 +477,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
 			   "Failed to open %s.new",File.c_str());
 
    // Create a short uri without the path
-   string ShortURI = "cdrom:[" + Name + "]/";   
+   string ShortURI = "cdrom:[" + Name + "]/";
    string ShortURI2 = "cdrom:" + Name + "/";     // For Compatibility
 
    string Type;
@@ -485,12 +485,12 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
       Type = "deb-src";
    else
       Type = "deb";
-   
+
    char Buffer[300];
    int CurLine = 0;
    bool First = true;
    while (F.eof() == false)
-   {      
+   {
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
       if (F.fail() && !F.eof())
@@ -754,7 +754,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 	  FileExists(InfoDir + "/info") == true)
       {
 	 ifstream F((InfoDir + "/info").c_str());
-	 if (!F == 0)
+	 if (F.good() == true)
 	    getline(F,Name);
 
 	 if (Name.empty() == false)

@@ -754,7 +754,7 @@ pkgCache::VerIterator CacheSetHelper::canNotGetCandInstVer(pkgCacheFile &Cache,
 									/*}}}*/
 									/*}}}*/
 // showPackageSelection - by selector and given pattern			/*{{{*/
-APT_CONST void CacheSetHelper::showPackageSelection(pkgCache::PkgIterator const &pkg, enum PkgSelector const select,
+void CacheSetHelper::showPackageSelection(pkgCache::PkgIterator const &pkg, enum PkgSelector const select,
 				       std::string const &pattern) {
 	switch (select) {
 APT_IGNORE_DEPRECATED_PUSH
@@ -784,7 +784,7 @@ APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const 
 									/*}}}*/
 									/*}}}*/
 // showVersionSelection							/*{{{*/
-APT_CONST void CacheSetHelper::showVersionSelection(pkgCache::PkgIterator const &Pkg,
+void CacheSetHelper::showVersionSelection(pkgCache::PkgIterator const &Pkg,
       pkgCache::VerIterator const &Ver, enum VerSelector const select, std::string const &pattern) {
 	switch (select) {
 APT_IGNORE_DEPRECATED_PUSH

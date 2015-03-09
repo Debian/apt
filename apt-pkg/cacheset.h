@@ -225,7 +225,9 @@ public:
 		inline std::string FullName(bool const Pretty) const { return getPkg().FullName(Pretty); }
 		inline std::string FullName() const { return getPkg().FullName(); }
 		APT_DEPRECATED inline const char *Section() const {
-		   APT_IGNORE_DEPRECATED(return getPkg().Section();)
+		   APT_IGNORE_DEPRECATED_PUSH
+		      return getPkg().Section();
+		   APT_IGNORE_DEPRECATED_POP
 		}
 		inline bool Purge() const {return getPkg().Purge(); }
 		inline const char *Arch() const {return getPkg().Arch(); }

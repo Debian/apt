@@ -402,9 +402,12 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
    {
       // parse arch=, arch+= and arch-= settings
       map<string, string>::const_iterator arch = Options.find("arch");
-      vector<string> Archs =
-		(arch != Options.end()) ? VectorizeString(arch->second, ',') :
-				APT::Configuration::getArchitectures();
+      vector<string> Archs;
+      if (arch != Options.end())
+	 Archs = VectorizeString(arch->second, ',');
+      else
+	 Archs = APT::Configuration::getArchitectures();
+
       if ((arch = Options.find("arch+")) != Options.end())
       {
 	 std::vector<std::string> const plusArch = VectorizeString(arch->second, ',');
