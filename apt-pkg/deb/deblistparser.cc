@@ -817,10 +817,16 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       while (1)
       {
 	 Start = ParseDepends(Start,Stop,Package,Version,Op);
+	 const size_t archfound = Package.rfind(':');
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
 	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
 	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
+	 } else if (archfound != string::npos) {
+	    string OtherArch = Package.substr(archfound+1, string::npos);
+	    Package = Package.substr(0, archfound);
+	    if (NewProvides(Ver, Package, OtherArch, Version) == false)
+	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;
