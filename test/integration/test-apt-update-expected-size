@@ -39,6 +39,6 @@ find aptarchive -name 'Packages*' | while read pkg; do
 done
 NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 rm -f rootdir/var/lib/apt/lists/localhost*
-testequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
+testfailureequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq

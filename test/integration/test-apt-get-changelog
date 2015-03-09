@@ -21,9 +21,9 @@ chmod -R -w rootdir/var/cache/apt/archives
 
 echo 'Apt::Changelogs::Server "http://localhost:8080/";' > rootdir/etc/apt/apt.conf.d/changelog.conf
 
-testequal "'http://localhost:8080/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+testsuccessequal "'http://localhost:8080/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
 
-testequal "'http://localhost:8080/pool/apt_1.0/changelog'
+testsuccessequal "'http://localhost:8080/pool/apt_1.0/changelog'
 'http://localhost:8080/pool/apt_1.0/changelog'" aptget changelog apt apt --print-uris
 
 cd downloaded

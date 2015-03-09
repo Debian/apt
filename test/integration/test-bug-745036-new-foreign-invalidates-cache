@@ -14,7 +14,7 @@ setupaptarchive
 testsuccess aptget check -s
 
 configarchitecture 'amd64' 'i386'
-testequal 'E: The package cache was built for different architectures: amd64 vs amd64,i386' aptget check -s -o pkgCacheFile::Generate=false
+testfailureequal 'E: The package cache was built for different architectures: amd64 vs amd64,i386' aptget check -s -o pkgCacheFile::Generate=false
 
 testsuccess aptget check -s
 

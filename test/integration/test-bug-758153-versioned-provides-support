@@ -24,9 +24,15 @@ insertpackage 'experimental' 'foreign-webserver' 'i386' '4' 'Multi-Arch: foreign
 Provides: httpd (= 4)'
 insertpackage 'experimental' 'cool-webapp' 'all' '4' 'Depends: httpd (>= 4)'
 
+# arch-qualified provides, see #777071
+insertpackage 'unstable' 'foo' 'all' '1' 'Provides: bar:i386'
+insertpackage 'unstable' 'baz' 'i386,amd64' '1' 'Depends: bar'
+insertpackage 'experimental' 'baz' 'i386,amd64' '2' 'Depends: bar:i386'
+insertpackage 'experimental' 'baz-broken' 'i386' '2' 'Depends: bar:amd64'
+
 setupaptarchive
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 Calculating upgrade...
 The following packages will be upgraded:
@@ -37,7 +43,7 @@ Inst webapp [1] (2 unstable [all])
 Conf webserver (2 unstable [amd64])
 Conf webapp (2 unstable [all])' aptget dist-upgrade -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following packages will be upgraded:
   webapp webserver
@@ -47,7 +53,7 @@ Inst webapp [1] (2 unstable [all])
 Conf webserver (2 unstable [amd64])
 Conf webapp (2 unstable [all])' aptget install webapp webserver -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following packages will be upgraded:
   webapp webserver
@@ -57,7 +63,7 @@ Inst webapp [1] (3 experimental [all])
 Conf webserver (2 unstable [amd64])
 Conf webapp (3 experimental [all])' aptget install webapp=3 webserver -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following packages will be upgraded:
   webapp webserver
@@ -67,7 +73,7 @@ Inst webapp [1] (2 unstable [all])
 Conf webserver (3 experimental [amd64])
 Conf webapp (2 unstable [all])' aptget install webapp webserver=3 -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   foreign-webserver:i386
@@ -79,7 +85,7 @@ Inst webapp [1] (2 unstable [all])
 Conf foreign-webserver:i386 (2 unstable [i386])
 Conf webapp (2 unstable [all])' aptget install webapp foreign-webserver:i386 -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   foreign-webserver:i386
@@ -91,7 +97,7 @@ Inst webapp [1] (3 experimental [all])
 Conf foreign-webserver:i386 (2 unstable [i386])
 Conf webapp (3 experimental [all])' aptget install webapp=3 foreign-webserver:i386 -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   foreign-webserver:i386
@@ -103,7 +109,7 @@ Inst webapp [1] (2 unstable [all])
 Conf foreign-webserver:i386 (4 experimental [i386])
 Conf webapp (2 unstable [all])' aptget install webapp foreign-webserver:i386=4 -s
 
-testequal 'Reading package lists...
+testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
 requested an impossible situation or if you are using the unstable
@@ -115,7 +121,7 @@ The following packages have unmet dependencies:
  cool-webapp : Depends: httpd (>= 4)
 E: Unable to correct problems, you have held broken packages.' aptget install cool-webapp -s
 
-testequal 'Reading package lists...
+testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
 requested an impossible situation or if you are using the unstable
@@ -127,7 +133,7 @@ The following packages have unmet dependencies:
  cool-webapp : Depends: httpd (>= 4)
 E: Unable to correct problems, you have held broken packages.' aptget install cool-webapp foreign-webserver:i386 -s
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   cool-webapp foreign-webserver:i386
@@ -136,3 +142,65 @@ Inst foreign-webserver:i386 (4 experimental [i386])
 Inst cool-webapp (4 experimental [all])
 Conf foreign-webserver:i386 (4 experimental [i386])
 Conf cool-webapp (4 experimental [all])' aptget install cool-webapp foreign-webserver:i386=4 -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  baz:i386 foo
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst foo (1 unstable [all])
+Inst baz:i386 (1 unstable [i386])
+Conf foo (1 unstable [all])
+Conf baz:i386 (1 unstable [i386])' aptget install baz:i386 -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ baz : Depends: bar but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget install baz:amd64 -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Selected version '2' (experimental [amd64]) for 'baz'
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  baz foo
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst foo (1 unstable [all])
+Inst baz (2 experimental [amd64])
+Conf foo (1 unstable [all])
+Conf baz (2 experimental [amd64])" aptget install baz/experimental -s -q=0
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Selected version '2' (experimental [i386]) for 'baz:i386'
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  baz:i386 foo
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst foo (1 unstable [all])
+Inst baz:i386 (2 experimental [i386])
+Conf foo (1 unstable [all])
+Conf baz:i386 (2 experimental [i386])" aptget install baz:i386/experimental -s -q=0
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ baz-broken:i386 : Depends: bar but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget install baz-broken -s

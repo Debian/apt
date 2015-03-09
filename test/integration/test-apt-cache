@@ -42,45 +42,45 @@ testsuccess aptcache dump
 cp rootdir/tmp/testsuccess.output dump.output
 testsuccess test -s dump.output
 
-testequal 'dpkg
+testsuccessequal 'dpkg
 bar
 fancy
 foo' aptcache pkgnames
-testequal 'bar' aptcache pkgnames bar
-testequal 'fancy
+testsuccessequal 'bar' aptcache pkgnames bar
+testsuccessequal 'fancy
 foo' aptcache pkgnames f
 
-testequal "       foo |          1 | file:$(readlink -f .)/aptarchive/ unstable/main amd64 Packages" aptcache madison foo
+testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive/ unstable/main amd64 Packages" aptcache madison foo
 
 ### depends
 
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
  |Recommends: <cool>
   Recommends: <cooler>
   Conflicts: <foobar>
   Conflicts: <foobar:i386>' aptcache depends foo
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
   Recommends: <cool>
   Conflicts: <foobar>
   Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowOnlyFirstOr=1
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
  |Recommends: <cool> (>= 2)
   Recommends: <cooler> (<< 5)
   Conflicts: <foobar>
   Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowVersion=1
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
   Conflicts: <foobar:i386>' aptcache depends foo --no-recommends
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar' aptcache depends foo --important
-testequal 'foo
+testsuccessequal 'foo
   Conflicts: <foobar>
   Conflicts: <foobar:i386>' aptcache depends foo --important --no-depends --conflicts
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
  |Recommends: <cool>
   Recommends: <cooler>
@@ -97,7 +97,7 @@ bar
 <foobar>
 <foobar:i386>
 <foo:i386>' aptcache depends foo --recurse
-testequal 'foo
+testsuccessequal 'foo
   Depends: bar
 bar
   Depends: bar
@@ -107,18 +107,18 @@ bar
 
 ## rdpends
 
-testequal 'foo
+testsuccessequal 'foo
 Reverse Depends:
   bar
   bar' aptcache rdepends foo
-testequal 'foo
+testsuccessequal 'foo
 Reverse Depends:
   Replaces: bar
   Breaks: bar' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1
-testequal 'foo
+testsuccessequal 'foo
 Reverse Depends:
   Replaces: bar (<< 1)
   Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1
-testequal 'foo
+testsuccessequal 'foo
 Reverse Depends:
   Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1 --important --breaks

@@ -63,7 +63,7 @@ testrun() {
 	msgtest '\tdeb file is present'; testsuccess --nomsg test -f testpkg_1.0_i386.deb
 	rm testpkg_1.0_i386.deb
 	cd - >/dev/null
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   testpkg
@@ -71,14 +71,14 @@ The following NEW packages will be installed:
 Inst testpkg (1.0 unstable [i386])
 Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODSHOW" aptcache show testpkg
-	testequal "$GOODSHOW" aptcache show testpkg
+	testsuccessequal "$GOODSHOW" aptcache show testpkg
+	testsuccessequal "$GOODSHOW" aptcache show testpkg
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODPOLICY" aptcache policy testpkg
-	testequal "$GOODPOLICY" aptcache policy testpkg
+	testsuccessequal "$GOODPOLICY" aptcache policy testpkg
+	testsuccessequal "$GOODPOLICY" aptcache policy testpkg
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
-	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	testsuccessequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	testsuccessequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	aptget clean
 	msgtest 'Check if the source is aptgetable'
 	cd downloaded
@@ -87,7 +87,7 @@ Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
 	testsuccess test -d testpkg-1.0
 	rm -rf testpkg-1.0*
 	cd - >/dev/null
-	testequal "$(aptcache show testpkg -o Acquire::Languages=none)
+	testsuccessequal "$(aptcache show testpkg -o Acquire::Languages=none)
 " aptcache dumpavail
 }
 
@@ -134,14 +134,14 @@ testsuccess aptget update
 GOODSHOW="$(aptcache show testpkg)
 "
 test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3 || msgdie 'show is broken'
-testequal "$GOODSHOW" aptcache show testpkg
+testsuccessequal "$GOODSHOW" aptcache show testpkg
 GOODSHOWSRC="$(aptcache showsrc testpkg)
 "
 test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4 || msgdie 'showsrc is broken'
-testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+testsuccessequal "$GOODSHOWSRC" aptcache showsrc testpkg
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'policy is broken'
-testequal "$GOODPOLICY" aptcache policy testpkg
+testsuccessequal "$GOODPOLICY" aptcache policy testpkg
 
 for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'file' $COMPRESSOR; done
 
@@ -150,7 +150,7 @@ rm -rf rootdir/var/lib/apt/lists
 testsuccess aptget update
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4 || msgdie 'policy is broken'
-testequal "$GOODPOLICY" aptcache policy testpkg
+testsuccessequal "$GOODPOLICY" aptcache policy testpkg
 
 for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'http' $COMPRESSOR; done
 
@@ -159,6 +159,6 @@ rm -rf rootdir/var/lib/apt/lists
 testsuccess aptcdrom add </dev/null
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 cdrom://' | wc -l) -eq 4 || msgdie 'policy is broken'
-testequal "$GOODPOLICY" aptcache policy testpkg
+testsuccessequal "$GOODPOLICY" aptcache policy testpkg
 
 for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'cdrom' $COMPRESSOR; done

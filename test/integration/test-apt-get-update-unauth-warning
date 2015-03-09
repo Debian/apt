@@ -19,7 +19,7 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 rm -f $APTARCHIVE/dists/unstable/*Release*
 
 # update without authenticated files leads to warning
-testequal "Ign file: unstable InRelease
+testfailureequal "Ign file: unstable InRelease
   File not found
 Err file: unstable Release
   File not found
@@ -27,18 +27,18 @@ W: The repository 'file: unstable Release' does not have a Release file. This is
 E: Use --allow-insecure-repositories to force the update" aptget update --no-allow-insecure-repositories
 
 # no package foo
-testequal 'Listing...' apt list foo
+testsuccessequal 'Listing...' apt list foo
 testequal 'lock
 partial' ls rootdir/var/lib/apt/lists
 
 # allow override
-testequal "Ign file: unstable InRelease
+testwarningequal "Ign file: unstable InRelease
   File not found
 Ign file: unstable Release
   File not found
 Reading package lists...
 W: The repository 'file: unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
 # ensure we can not install the package
-testequal "WARNING: The following packages cannot be authenticated!
+testfailureequal "WARNING: The following packages cannot be authenticated!
   foo
 E: There are problems and -y was used without --force-yes" aptget install -qq -y foo

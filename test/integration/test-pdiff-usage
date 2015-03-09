@@ -60,7 +60,7 @@ testrun() {
 	testsuccess aptget update "$@"
 	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
 	testnopackage newstuff
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt oldstuff
 
 	msgmsg "Testcase: apply with one patch: $*"
@@ -90,13 +90,13 @@ SHA256-Patches:
 	find aptarchive -name 'Packages*' -type f -delete
 	wasmergeused "$@"
 	testnopackage oldstuff
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
 	msgmsg "Testcase: index is already up-to-date: $*"
 	find rootdir/var/lib/apt/lists -name '*diff_Index' -type f -delete
 	testsuccess aptget update "$@"
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
 	msgmsg "Testcase: apply with two patches: $*"
@@ -146,7 +146,7 @@ SHA256-Patches:
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	wasmergeused "$@"
 	testnopackage oldstuff
-	testequal "$(cat Packages-future)
+	testsuccessequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
 
 	msgmsg "Testcase: patch applying fails, but successful fallback: $*"
@@ -178,7 +178,7 @@ SHA256-Patches:
 	signreleasefiles
 	testsuccess aptget update "$@"
 	testnopackage oldstuff
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
 	msgmsg "Testcase: pdiff patch bigger than index itself: $*"
@@ -212,7 +212,7 @@ SHA256-Patches:
 	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptgetupdate.output
 	testsuccess grep 'bytes (Limit is' rootdir/tmp/aptgetupdate.output
 	testnopackage oldstuff
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 }
 echo 'Debug::pkgAcquire::Diffs "true";

@@ -29,7 +29,7 @@ mkdir -p aptarchive/dists/unstable/main/source/by-hash/SHA512
 testfailure aptget upate
 
 # ensure we do not know about "foo"
-testequal "Reading package lists...
+testfailureequal "Reading package lists...
 Building dependency tree...
 E: Unable to locate package foo" aptget install -q -s foo
 
@@ -37,7 +37,7 @@ E: Unable to locate package foo" aptget install -q -s foo
 testsuccess aptget update -o APT::Acquire::By-Hash=1 -o Acquire::Languages=none
 
 # ensure it works
-testequal "Inst foo (1.0 unstable [all])
+testsuccessequal "Inst foo (1.0 unstable [all])
 Conf foo (1.0 unstable [all])" aptget install -qq -s foo
 
 # add magic string to Release file ...

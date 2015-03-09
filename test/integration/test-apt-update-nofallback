@@ -31,14 +31,14 @@ EOF
 
 assert_update_is_refused_and_last_good_state_used()
 {
-    testequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq
+    testfailureequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq
 
     assert_repo_is_intact
 }
 
 assert_repo_is_intact()
 {
-    testequal "foo/unstable 2.0 all" apt list -q
+    testsuccessequal "foo/unstable 2.0 all" apt list -q
     testsuccess aptget install -y -s foo
     testfailure aptget install -y evil
     testsuccess aptget source foo --print-uris
@@ -97,7 +97,7 @@ test_from_inrelease_to_unsigned_with_override()
     testwarning aptget update --allow-insecure-repositories \
         -o Acquire::AllowDowngradeToInsecureRepositories=1
     # but that the individual packages are still considered untrusted
-    testequal "WARNING: The following packages cannot be authenticated!
+    testfailureequal "WARNING: The following packages cannot be authenticated!
   evil
 E: There are problems and -y was used without --force-yes" aptget install -qq -y evil
 }
@@ -149,7 +149,7 @@ test_subvert_inrelease()
     # replace InRelease with something else
     mv $APTARCHIVE/dists/unstable/Release $APTARCHIVE/dists/unstable/InRelease
 
-    testequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Does not start with a cleartext signature
+    testfailureequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Does not start with a cleartext signature
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
@@ -169,7 +169,7 @@ test_inrelease_to_invalid_inrelease()
     sed -i 's/Codename.*/Codename: evil!'/ $APTARCHIVE/dists/unstable/InRelease
     inject_evil_package
 
-    testequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable InRelease: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable InRelease: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
@@ -193,7 +193,7 @@ test_release_gpg_to_invalid_release_release_gpg()
     echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
     inject_evil_package
 
-    testequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release.gpg: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release.gpg: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 

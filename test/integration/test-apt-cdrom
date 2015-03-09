@@ -49,12 +49,12 @@ deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 Unmounting CD-ROM...
 Repeat this process for the rest of the CDs in your set."
 
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 Found label 'Debian APT Testdisk 0.8.15'
 $CDROM_POST" aptcdromlog add
 
-testequal "Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
+testsuccessequal "Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
 Mounting CD-ROM...
 Stored label: Debian APT Testdisk 0.8.15
 Unmounting CD-ROM..." aptcdromlog ident
@@ -63,13 +63,13 @@ Unmounting CD-ROM..." aptcdromlog ident
 ident="$(LC_ALL=C aptcdrom ident 2>&1 )"
 CD_ID="$(echo "$ident" | grep "^Identifying" | head -n1 | cut -d" " -f2 | tr --delete '[]')"
 CD_LABEL="$(echo "$ident" | grep "^Stored label:" | head -n1 | sed "s/^[^:]*: //")"
-testequal "CD::${CD_ID} \"${CD_LABEL}\";
-CD::${CD_ID}::Label \"${CD_LABEL}\";" cat rootdir/var/lib/apt/cdroms.list
+testfileequal rootdir/var/lib/apt/cdroms.list "CD::${CD_ID} \"${CD_LABEL}\";
+CD::${CD_ID}::Label \"${CD_LABEL}\";"
 
 testcdromusage() {
 	touch rootdir/var/lib/apt/extended_states
 
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following NEW packages will be installed:
@@ -84,7 +84,7 @@ Conf testing (0.8.15 stable [amd64])' aptget install testing -s
 	testsuccess aptget purge testing -y
 	testdpkgnotinstalled testing
 
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following NEW packages will be installed:
@@ -114,18 +114,18 @@ Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 testcdromusage
 
 # check Idempotence of apt-cdrom (and disabling of Translation dropping)
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add -o APT::CDROM::DropTranslation=0
 
 # take Translations from previous runs as needed
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add
 msgtest 'Test for the german description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
 rm -rf rootdir/var/lib/apt/lists
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add
 msgtest 'Test for the english description translation of' 'testing'

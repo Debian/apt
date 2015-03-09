@@ -65,29 +65,27 @@ configallowinsecurerepositories "true";
 
 msgtest 'Download of en as forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=en
-cp rootdir/tmp/testsuccess.output testsuccess.output
-testsuccess grep -q -e 'Translation-en ' testsuccess.output
+testsuccess grep -q -e 'Translation-en ' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=en
-testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
+testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of ast_DE as forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
-cp rootdir/tmp/testsuccess.output testsuccess.output
-testsuccess grep -q -e 'Translation-ast_DE$' testsuccess.output
+testsuccess grep -q -e 'Translation-ast_DE$' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
-testfailure grep -q -e 'Translation-[^a][^s]' rootdir/tmp/testsuccess.output
+testfailure grep -q -e 'Translation-[^a][^s]' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing if none is forced' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=none
-testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
+testfailure grep -q -e 'Translation' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
@@ -95,8 +93,7 @@ touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translat
 
 msgtest 'Download of builtin files' 'without Index'
 testwarning --nomsg aptget update
-cp rootdir/tmp/testsuccess.output testsuccess.output
-testsuccess grep -q -e 'Translation-ast_DE' testsuccess.output
+testsuccess grep -q -e 'Translation-ast_DE' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
@@ -104,5 +101,5 @@ touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translat
 
 msgtest 'Download of nothing (even builtin) if none is forced' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=none
-testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
+testfailure grep -q -e 'Translation' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists

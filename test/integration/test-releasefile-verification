@@ -33,7 +33,7 @@ prepare() {
 }
 
 installaptold() {
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
   aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
@@ -46,7 +46,7 @@ Download complete and in download only mode' aptget install apt -dy
 }
 
 installaptnew() {
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
   aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
@@ -59,7 +59,7 @@ Download complete and in download only mode' aptget install apt -dy
 }
 
 failaptold() {
-	testequal 'Reading package lists...
+	testfailureequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
   aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
@@ -73,7 +73,7 @@ E: There are problems and -y was used without --force-yes' aptget install apt -d
 }
 
 failaptnew() {
-	testequal 'Reading package lists...
+	testfailureequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
   aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
@@ -119,7 +119,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Joe Sixpack'
 	updatesuccess
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
 
@@ -128,7 +128,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Joe Sixpack'
 	updatesuccess
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
 
@@ -139,7 +139,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Rex Expired'
 	updatefailure '^W: .* KEYEXPIRED'
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	failaptold
 	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
@@ -150,7 +150,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Marvin Paranoid'
 	updatefailure '^W: .* NO_PUBKEY'
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	failaptold
 
@@ -164,7 +164,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Bad warm archive signed by' 'Joe Sixpack'
 	updatesuccess
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
 
@@ -175,7 +175,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Joe Sixpack'
 	updatesuccess
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
 
@@ -184,7 +184,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Marvin Paranoid'
 	updatefailure '^W: .* NO_PUBKEY'
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
 
@@ -194,7 +194,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Rex Expired'
 	updatefailure '^W: .* KEYEXPIRED'
-	testequal "$(cat ${PKGFILE})
+	testsuccessequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
 	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
@@ -204,7 +204,7 @@ runtest() {
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Joe Sixpack'
 	updatesuccess
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
 }
@@ -223,7 +223,7 @@ runtest2() {
 	find aptarchive/ -name Release.gpg -delete
 	msgtest 'Warm archive signed by' 'nobody'
 	updatesuccess
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	failaptnew
 
@@ -231,7 +231,7 @@ runtest2() {
 	rm -rf rootdir/var/lib/apt/lists
 	msgtest 'Cold archive signed by' 'nobody'
 	updatesuccess
-	testequal "$(cat ${PKGFILE}-new)
+	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	failaptnew
 }

@@ -1338,7 +1338,7 @@ testwarning() {
 	else
 		msgtest 'Test for successful execution with warnings of' "$*"
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
@@ -1387,6 +1387,26 @@ testfailure() {
 	fi
 	aptautotest 'testfailure' "$@"
 }
+
+testsuccessequal() {
+	local CMP="$1"
+	shift
+	testsuccess "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$CMP"
+}
+testwarningequal() {
+	local CMP="$1"
+	shift
+	testwarning "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" "$CMP"
+}
+testfailureequal() {
+	local CMP="$1"
+	shift
+	testfailure "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
+}
+
 
 testfilestats() {
 	msgtest "Test that file $1 has $2 $3" "$4"
@@ -1493,7 +1513,7 @@ aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
 testaptautotestnodpkgwarning() {
 	local TESTCALL="$1"
 	while [ -n "$2" ]; do
-		if [ "$2" = '-s' ]; then return; fi
+		if expr match "$2" '^-[a-z]*s' >/dev/null 2>&1; then return; fi
 		shift
 	done
 	testfailure grep '^dpkg: warning:.*ignor.*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"

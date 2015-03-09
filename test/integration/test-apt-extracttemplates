@@ -35,7 +35,7 @@ Description: Some bar var
 	OUT='rootdir/tmp/testsuccess.output'
 	testequal "$1" cut -f1 -d' ' $OUT
 	if [ -n "$2" ]; then
-		testequal '' cut -f2 -d' ' $OUT
+		testequal '' cut -s -f2 -d' ' $OUT
 	else
 		testequal '1.0' cut -f2 -d' ' $OUT
 	fi

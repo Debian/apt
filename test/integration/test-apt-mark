@@ -21,20 +21,20 @@ testdpkginstalled dpkg
 testnoautopkg() {
 	testempty aptmark showauto
 	testempty aptcache showauto
-	testequal 'bar
+	testsuccessequal 'bar
 dpkg
 foo' aptmark showmanual
-	testequal 'bar
+	testsuccessequal 'bar
 foo' aptmark showmanual bar foo uninstalled
 }
 testfooisauto() {
-	testequal 'foo' aptmark showauto
-	testequal 'foo' aptcache showauto
-	testequal 'foo' aptmark showauto foo
-	testequal 'foo' aptcache showauto foo
-	testequal 'bar
+	testsuccessequal 'foo' aptmark showauto
+	testsuccessequal 'foo' aptcache showauto
+	testsuccessequal 'foo' aptmark showauto foo
+	testsuccessequal 'foo' aptcache showauto foo
+	testsuccessequal 'bar
 dpkg' aptmark showmanual
-	testequal 'bar' aptmark showmanual bar
+	testsuccessequal 'bar' aptmark showmanual bar
 }
 testmarkonpkgasauto() {
 	testsuccess $1 $2 foo
@@ -48,8 +48,8 @@ testmarkonpkgasauto() {
 	testnoautopkg
 }
 
-testequal 'E: No packages found' aptmark auto
-testequal 'E: No packages found' aptmark manual
+testfailureequal 'E: No packages found' aptmark auto
+testfailureequal 'E: No packages found' aptmark manual
 
 testnoautopkg
 testmarkonpkgasauto 'aptmark' 'auto' 'manual'
@@ -63,10 +63,10 @@ testnoholdpkg() {
 	testempty aptmark showholds dpkg
 }
 testpkgonhold() {
-	testequal "$1" aptmark showhold
-	testequal "$1" aptmark showholds
-	testequal "$1" aptmark showhold $1
-	testequal "$1" aptmark showholds $1
+	testsuccessequal "$1" aptmark showhold
+	testsuccessequal "$1" aptmark showholds
+	testsuccessequal "$1" aptmark showhold $1
+	testsuccessequal "$1" aptmark showholds $1
 }
 testmarkonepkgashold() {
 	testsuccess aptmark hold $1
@@ -79,8 +79,8 @@ testmarkonepkgashold() {
 	testnoholdpkg
 }
 
-testequal 'E: No packages found' aptmark hold
-testequal 'E: No packages found' aptmark unhold
+testfailureequal 'E: No packages found' aptmark hold
+testfailureequal 'E: No packages found' aptmark unhold
 
 testnoholdpkg
 testmarkonepkgashold 'foo'
@@ -97,5 +97,5 @@ fi
 testmarkonepkgashold 'uninstalled'
 testmarkonepkgashold 'uninstalled-native'
 
-testequal 'uninstalled set on hold.' aptmark hold uninstalled
-testequal 'uninstalled-native set on hold.' aptmark hold uninstalled-native
+testsuccessequal 'uninstalled set on hold.' aptmark hold uninstalled
+testsuccessequal 'uninstalled-native set on hold.' aptmark hold uninstalled-native

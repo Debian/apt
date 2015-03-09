@@ -21,7 +21,7 @@ Inst libsame:i386 [1.0] (1.0 unstable [i386])
 Conf libsame (1.0 unstable [amd64])
 Conf libsame:i386 (1.0 unstable [i386])'
 
-testequal "$REINSTALL" aptget install --reinstall libsame -s
-testequal "$REINSTALL" aptget install --reinstall libsame:amd64 -s
-testequal "$REINSTALL" aptget install --reinstall libsame:i386 -s
-testequal "$REINSTALL" aptget install --reinstall libsame:amd64 libsame:i386 -s
+testsuccessequal "$REINSTALL" aptget install --reinstall libsame -s
+testsuccessequal "$REINSTALL" aptget install --reinstall libsame:amd64 -s
+testsuccessequal "$REINSTALL" aptget install --reinstall libsame:i386 -s
+testsuccessequal "$REINSTALL" aptget install --reinstall libsame:amd64 libsame:i386 -s

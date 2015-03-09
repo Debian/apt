@@ -8,29 +8,29 @@ setupenvironment
 configarchitecture 'amd64'
 
 testsuccess aptconfig dump
-testequal 'APT::Architecture "amd64";' aptconfig dump APT::Architecture
+testsuccessequal 'APT::Architecture "amd64";' aptconfig dump APT::Architecture
 testempty aptconfig dump config::which::does::not::exist
 
-testequal 'APT::Architectures "";
+testsuccessequal 'APT::Architectures "";
 APT::Architectures:: "amd64";' aptconfig dump APT::Architectures
-testequal 'APT::Architectures:: "amd64";' aptconfig dump --no-empty APT::Architectures
-testequal 'amd64' aptconfig dump --no-empty --format='%v%n' APT::Architectures
+testsuccessequal 'APT::Architectures:: "amd64";' aptconfig dump --no-empty APT::Architectures
+testsuccessequal 'amd64' aptconfig dump --no-empty --format='%v%n' APT::Architectures
 
 testempty aptconfig shell
-testequal 'E: Arguments not in pairs' aptconfig shell APT::Architecture
+testfailureequal 'E: Arguments not in pairs' aptconfig shell APT::Architecture
 testempty aptconfig shell APT::Architecture ARCH # incorrect order
-testequal "ARCH='amd64'" aptconfig shell ARCH APT::Architecture
+testsuccessequal "ARCH='amd64'" aptconfig shell ARCH APT::Architecture
 
 ROOTDIR="$(readlink -f rootdir)"
-testequal "CONFIG='apt.conf'" aptconfig shell CONFIG Dir::Etc::main
-testequal "CONFIG='${ROOTDIR}/etc/apt/apt.conf'" aptconfig shell CONFIG Dir::Etc::main/f
-testequal "CONFIG='etc/apt/'" aptconfig shell CONFIG Dir::Etc
-testequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/ # old style
-testequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/d
+testsuccessequal "CONFIG='apt.conf'" aptconfig shell CONFIG Dir::Etc::main
+testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/apt.conf'" aptconfig shell CONFIG Dir::Etc::main/f
+testsuccessequal "CONFIG='etc/apt/'" aptconfig shell CONFIG Dir::Etc
+testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/ # old style
+testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/d
 
 testempty aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
 export DEB_BUILD_PROFILES='nodoc stage1'
-testequal 'nodoc
+testsuccessequal 'nodoc
 stage1' aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
 unset DEB_BUILD_PROFILES
 testempty aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles

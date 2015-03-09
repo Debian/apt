@@ -17,7 +17,7 @@ testequalpolicy() {
 	local SP="$1"
 	local AP="$2"
 	shift 2
-	testequal "Package files:
+	testsuccessequal "Package files:
  $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
      release a=now
  $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/  Packages
@@ -126,7 +126,7 @@ testequalpolicycoolstuff() {
 		shift
 	fi
 	shift 6
-	testequal "coolstuff:
+	testsuccessequal "coolstuff:
   Installed: $INSTALLED
   Candidate: $CANDIDATE
   ${PINVERSION}Version table:${BPO2ARCHIVE}
