@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
+#include <sstream>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -34,9 +35,8 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet) :
-    pkgAcquireStatus(), ScreenWidth(ScreenWidth), ID(0), Quiet(Quiet)
+    pkgAcquireStatus(), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
 {
-   BlankLine[0] = 0;
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
       this->Quiet = 1;
@@ -48,7 +48,7 @@ AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet)
 void AcqTextStatus::Start()
 {
    pkgAcquireStatus::Start();
-   BlankLine[0] = 0;
+   LastLineLength = 0;
    ID = 1;
 }
 									/*}}}*/
@@ -60,8 +60,7 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   clearLastLine();
 
    cout << _("Hit ") << Itm.Description;
    cout << endl;
@@ -82,8 +81,7 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   clearLastLine();
 
    cout << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
@@ -111,8 +109,7 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   clearLastLine();
 
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
@@ -140,8 +137,7 @@ void AcqTextStatus::Stop()
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r' << flush;
+   clearLastLine();
 
    if (_config->FindB("quiet::NoStatistic", false) == true)
       return;
@@ -167,77 +163,66 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    enum {Long = 0,Medium,Short} Mode = Medium;
 
-   char Buffer[sizeof(BlankLine)];
-   char *End = Buffer + sizeof(Buffer);
-   char *S = Buffer;
-   if (ScreenWidth >= sizeof(Buffer))
-      ScreenWidth = sizeof(Buffer)-1;
-
-   // Put in the percent done
-   sprintf(S,"%.0f%%", Percent);
-
-   bool Shown = false;
-   for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
-	I = Owner->WorkerStep(I))
+   std::string Line;
    {
-      S += strlen(S);
-
-      // There is no item running
-      if (I->CurrentItem == 0)
+      std::stringstream S;
+      for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
+	    I = Owner->WorkerStep(I))
       {
-	 if (I->Status.empty() == false)
+	 // There is no item running
+	 if (I->CurrentItem == 0)
 	 {
-	    snprintf(S,End-S," [%s]",I->Status.c_str());
-	    Shown = true;
+	    if (I->Status.empty() == false)
+	       S << " [" << I->Status << "]";
+
+	    continue;
 	 }
 
-	 continue;
-      }
+	 // Add in the short description
+	 S << " [";
+	 if (I->CurrentItem->Owner->ID != 0)
+	    S << I->CurrentItem->Owner->ID << " ";
+	 S << I->CurrentItem->ShortDesc;
 
-      Shown = true;
+	 // Show the short mode string
+	 if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
+	    S << " " << I->CurrentItem->Owner->ActiveSubprocess;
 
-      // Add in the short description
-      if (I->CurrentItem->Owner->ID != 0)
-	 snprintf(S,End-S," [%lu %s",I->CurrentItem->Owner->ID,
-		  I->CurrentItem->ShortDesc.c_str());
-      else
-	 snprintf(S,End-S," [%s",I->CurrentItem->ShortDesc.c_str());
-      S += strlen(S);
-
-      // Show the short mode string
-      if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
-      {
-	 snprintf(S,End-S, " %s", I->CurrentItem->Owner->ActiveSubprocess.c_str());
-	 S += strlen(S);
-      }
-
-      // Add the current progress
-      if (Mode == Long)
-	 snprintf(S,End-S," %llu",I->CurrentSize);
-      else
-      {
-	 if (Mode == Medium || I->TotalSize == 0)
-	    snprintf(S,End-S," %sB",SizeToStr(I->CurrentSize).c_str());
-      }
-      S += strlen(S);
-
-      // Add the total size and percent
-      if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
-      {
-	 if (Mode == Short)
-	    snprintf(S,End-S," %.0f%%",
-		     (I->CurrentSize*100.0)/I->TotalSize);
+	 // Add the current progress
+	 if (Mode == Long)
+	    S << " " << I->CurrentSize;
 	 else
-	    snprintf(S,End-S,"/%sB %.0f%%",SizeToStr(I->TotalSize).c_str(),
-		     (I->CurrentSize*100.0)/I->TotalSize);
-      }
-      S += strlen(S);
-      snprintf(S,End-S,"]");
-   }
+	 {
+	    if (Mode == Medium || I->TotalSize == 0)
+	       S << " " << SizeToStr(I->CurrentSize) << "B";
+	 }
 
-   // Show something..
-   if (Shown == false)
-      snprintf(S,End-S,_(" [Working]"));
+	 // Add the total size and percent
+	 if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
+	 {
+	    if (Mode == Short)
+	       ioprintf(S, " %.0f%%", (I->CurrentSize*100.0)/I->TotalSize);
+	    else
+	       ioprintf(S, "/%sB %.0f%%", SizeToStr(I->TotalSize).c_str(),
+		     (I->CurrentSize*100.0)/I->TotalSize);
+	 }
+	 S << "]";
+      }
+
+      // Show at least something
+      Line = S.str();
+      S.clear();
+      if (Line.empty() == true)
+	 Line = _(" [Working]");
+   }
+   // Put in the percent done
+   {
+      std::stringstream S;
+      ioprintf(S, "%.0f%%", Percent);
+      S << Line;
+      Line = S.str();
+      S.clear();
+   }
 
    /* Put in the ETA and cps meter, block off signals to prevent strangeness
       during resizing */
@@ -248,34 +233,33 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    if (CurrentCPS != 0)
    {
-      char Tmp[300];
       unsigned long long ETA = (TotalBytes - CurrentBytes)/CurrentCPS;
-      sprintf(Tmp," %sB/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
-      unsigned int Len = strlen(Buffer);
-      unsigned int LenT = strlen(Tmp);
-      if (Len + LenT < ScreenWidth)
+      std::string Tmp = " " + SizeToStr(CurrentCPS) + "B/s " + TimeToStr(ETA);
+      size_t alignment = Line.length() + Tmp.length();
+      if (alignment < ScreenWidth)
       {
-	 memset(Buffer + Len,' ',ScreenWidth - Len);
-	 strcpy(Buffer + ScreenWidth - LenT,Tmp);
+	 alignment = ScreenWidth - alignment;
+	 for (size_t i = 0; i < alignment; ++i)
+	    Line.append(" ");
+	 Line.append(Tmp);
       }
    }
-   Buffer[ScreenWidth] = 0;
-   BlankLine[ScreenWidth] = 0;
+   if (Line.length() > ScreenWidth)
+      Line.erase(ScreenWidth);
    sigprocmask(SIG_SETMASK,&OldSigs,0);
 
    // Draw the current status
    if (_config->FindB("Apt::Color", false) == true)
       cout << _config->Find("APT::Color::Yellow");
-   if (strlen(Buffer) == strlen(BlankLine))
-      cout << '\r' << Buffer << flush;
+   if (LastLineLength > Line.length())
+      clearLastLine();
    else
-      cout << '\r' << BlankLine << '\r' << Buffer << flush;
+      cout << '\r';
+   cout << Line << flush;
    if (_config->FindB("Apt::Color", false) == true)
       cout << _config->Find("APT::Color::Neutral") << flush;
 
-   memset(BlankLine,' ',strlen(Buffer));
-   BlankLine[strlen(Buffer)] = 0;
-
+   LastLineLength = Line.length();
    Update = false;
 
    return true;
@@ -296,8 +280,7 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 
       return false;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   clearLastLine();
    ioprintf(cout,_("Media change: please insert the disc labeled\n"
 		   " '%s'\n"
 		   "in the drive '%s' and press enter\n"),
@@ -315,5 +298,19 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
    if(bStatus)
       Update = true;
    return bStatus;
+}
+									/*}}}*/
+void AcqTextStatus::clearLastLine() {					/*{{{*/
+   if (Quiet > 0)
+      return;
+
+   // do not try to clear more than the (now smaller) screen
+   if (LastLineLength > ScreenWidth)
+      LastLineLength = ScreenWidth;
+
+   std::cout << '\r';
+   for (size_t i = 0; i < LastLineLength; ++i)
+      std::cout << ' ';
+   std::cout << '\r' << std::flush;
 }
 									/*}}}*/

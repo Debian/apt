@@ -17,9 +17,11 @@
 class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 {
    unsigned int &ScreenWidth;
-   char BlankLine[1024];
+   size_t LastLineLength;
    unsigned long ID;
    unsigned long Quiet;
+
+   void clearLastLine();
 
    public:
 

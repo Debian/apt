@@ -207,7 +207,6 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    /* Run over the directory, we assume that the reader order will never
       change as the media is read-only. In theory if the kernel did
       some sort of wacked caching this might not be true.. */
-   char S[300];
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
    {
       // Skip some files..
@@ -215,30 +214,32 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 	  strcmp(Dir->d_name,"..") == 0)
 	 continue;
 
+      std::string S;
       if (Version <= 1)
       {
-	 sprintf(S,"%lu",(unsigned long)Dir->d_ino);
+	 strprintf(S, "%lu", (unsigned long)Dir->d_ino);
       }
       else
       {
 	 struct stat Buf;
 	 if (stat(Dir->d_name,&Buf) != 0)
 	    continue;
-	 sprintf(S,"%lu",(unsigned long)Buf.st_mtime);
+	 strprintf(S, "%lu", (unsigned long)Buf.st_mtime);
       }
-      
-      Hash.Add(S);
+
+      Hash.Add(S.c_str());
       Hash.Add(Dir->d_name);
    };
-   
+
    if (chdir(StartDir.c_str()) != 0) {
       _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
       closedir(D);
       return false;
    }
    closedir(D);
-   
+
    // Some stats from the fsys
+   std::string S;
    if (_config->FindB("Debug::identcdrom",false) == false)
    {
       struct statvfs Buf;
@@ -248,19 +249,19 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
       // We use a kilobyte block size to advoid overflow
       if (writable_media)
       {
-         sprintf(S,"%lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)));
+         strprintf(S, "%lu", (unsigned long)(Buf.f_blocks*(Buf.f_bsize/1024)));
       } else {
-         sprintf(S,"%lu %lu",(long)(Buf.f_blocks*(Buf.f_bsize/1024)),
-                 (long)(Buf.f_bfree*(Buf.f_bsize/1024)));
+         strprintf(S, "%lu %lu", (unsigned long)(Buf.f_blocks*(Buf.f_bsize/1024)),
+                 (unsigned long)(Buf.f_bfree*(Buf.f_bsize/1024)));
       }
-      Hash.Add(S);
-      sprintf(S,"-%u",Version);
+      Hash.Add(S.c_str());
+      strprintf(S, "-%u", Version);
    }
    else
-      sprintf(S,"-%u.debug",Version);
-   
+      strprintf(S, "-%u.debug", Version);
+
    Res = Hash.Result().Value() + S;
-   return true;   
+   return true;
 }
 									/*}}}*/
 // FindMountPointForDevice - Find mountpoint for the given device	/*{{{*/

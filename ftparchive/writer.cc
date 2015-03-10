@@ -440,9 +440,6 @@ bool PackagesWriter::DoPackage(string FileName)
       OverItem->Priority = Tags.FindS("Priority");
    }
 
-   char Size[40];
-   sprintf(Size,"%llu", (unsigned long long) FileSize);
-   
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
    if (DirStrip.empty() == false &&
@@ -466,7 +463,10 @@ bool PackagesWriter::DoPackage(string FileName)
    // This lists all the changes to the fields we are going to make.
    std::vector<TFRewriteData> Changes;
 
-   Changes.push_back(SetTFRewriteData("Size", Size));
+   std::string Size;
+   strprintf(Size, "%llu", (unsigned long long) FileSize);
+   Changes.push_back(SetTFRewriteData("Size", Size.c_str()));
+
    for (HashStringList::const_iterator hs = Db.HashesList.begin(); hs != Db.HashesList.end(); ++hs)
    {
       if (hs->HashType() == "MD5Sum")

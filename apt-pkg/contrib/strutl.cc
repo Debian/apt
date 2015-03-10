@@ -324,21 +324,19 @@ bool ParseCWord(const char *&String,string &Res)
 /* */
 string QuoteString(const string &Str, const char *Bad)
 {
-   string Res;
+   std::stringstream Res;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
    {
-      if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
+      if (strchr(Bad,*I) != 0 || isprint(*I) == 0 ||
 	  *I == 0x25 || // percent '%' char
 	  *I <= 0x20 || *I >= 0x7F) // control chars
       {
-	 char Buf[10];
-	 sprintf(Buf,"%%%02x",(int)*I);
-	 Res += Buf;
+	 ioprintf(Res,"%%%02x",(int)*I);
       }
       else
-	 Res += *I;
+	 Res << *I;
    }
-   return Res;
+   return Res.str();
 }
 									/*}}}*/
 // DeQuoteString - Convert a string from quoted from                    /*{{{*/
@@ -379,13 +377,12 @@ string DeQuoteString(string::const_iterator const &begin,
    YottaBytes (E24) */
 string SizeToStr(double Size)
 {
-   char S[300];
    double ASize;
    if (Size >= 0)
       ASize = Size;
    else
       ASize = -1*Size;
-   
+
    /* bytes, KiloBytes, MegaBytes, GigaBytes, TeraBytes, PetaBytes, 
       ExaBytes, ZettaBytes, YottaBytes */
    char Ext[] = {'\0','k','M','G','T','P','E','Z','Y'};
@@ -394,20 +391,21 @@ string SizeToStr(double Size)
    {
       if (ASize < 100 && I != 0)
       {
-         sprintf(S,"%'.1f %c",ASize,Ext[I]);
-	 break;
+	 std::string S;
+	 strprintf(S, "%'.1f %c", ASize, Ext[I]);
+	 return S;
       }
-      
+
       if (ASize < 10000)
       {
-         sprintf(S,"%'.0f %c",ASize,Ext[I]);
-	 break;
+	 std::string S;
+	 strprintf(S, "%'.0f %c", ASize, Ext[I]);
+	 return S;
       }
       ASize /= 1000.0;
       I++;
    }
-   
-   return S;
+   return "";
 }
 									/*}}}*/
 // TimeToStr - Convert the time into a string				/*{{{*/
@@ -415,36 +413,27 @@ string SizeToStr(double Size)
 /* Converts a number of seconds to a hms format */
 string TimeToStr(unsigned long Sec)
 {
-   char S[300];
-   
-   while (1)
+   std::string S;
+   if (Sec > 60*60*24)
    {
-      if (Sec > 60*60*24)
-      {
-	 //d means days, h means hours, min means minutes, s means seconds
-	 sprintf(S,_("%lid %lih %limin %lis"),Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
-	 break;
-      }
-      
-      if (Sec > 60*60)
-      {
-	 //h means hours, min means minutes, s means seconds
-	 sprintf(S,_("%lih %limin %lis"),Sec/60/60,(Sec/60) % 60,Sec % 60);
-	 break;
-      }
-      
-      if (Sec > 60)
-      {
-	 //min means minutes, s means seconds
-	 sprintf(S,_("%limin %lis"),Sec/60,Sec % 60);
-	 break;
-      }
-
-      //s means seconds
-      sprintf(S,_("%lis"),Sec);
-      break;
+      //TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+      strprintf(S,_("%lid %lih %limin %lis"),Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
    }
-   
+   else if (Sec > 60*60)
+   {
+      //TRANSLATOR: h means hours, min means minutes, s means seconds
+      strprintf(S,_("%lih %limin %lis"),Sec/60/60,(Sec/60) % 60,Sec % 60);
+   }
+   else if (Sec > 60)
+   {
+      //TRANSLATOR: min means minutes, s means seconds
+      strprintf(S,_("%limin %lis"),Sec/60,Sec % 60);
+   }
+   else
+   {
+      //TRANSLATOR: s means seconds
+      strprintf(S,_("%lis"),Sec);
+   }
    return S;
 }
 									/*}}}*/
@@ -1423,7 +1412,7 @@ size_t strv_length(const char **str_array)
       ;
    return i;
 }
-
+									/*}}}*/
 // DeEscapeString - unescape (\0XX and \xXX) from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1605,51 +1594,46 @@ void URI::CopyFrom(const string &U)
 /* */
 URI::operator string()
 {
-   string Res;
-   
+   std::stringstream Res;
+
    if (Access.empty() == false)
-      Res = Access + ':';
-   
+      Res << Access << ':';
+
    if (Host.empty() == false)
-   {	 
+   {
       if (Access.empty() == false)
-	 Res += "//";
-          
+	 Res << "//";
+
       if (User.empty() == false)
       {
 	 // FIXME: Technically userinfo is permitted even less
 	 // characters than these, but this is not conveniently
 	 // expressed with a blacklist.
-	 Res += QuoteString(User, ":/?#[]@");
+	 Res << QuoteString(User, ":/?#[]@");
 	 if (Password.empty() == false)
-	    Res += ":" + QuoteString(Password, ":/?#[]@");
-	 Res += "@";
+	    Res << ":" << QuoteString(Password, ":/?#[]@");
+	 Res << "@";
       }
-      
+
       // Add RFC 2732 escaping characters
-      if (Access.empty() == false &&
-	  (Host.find('/') != string::npos || Host.find(':') != string::npos))
-	 Res += '[' + Host + ']';
+      if (Access.empty() == false && Host.find_first_of("/:") != string::npos)
+	 Res << '[' << Host << ']';
       else
-	 Res += Host;
-      
+	 Res << Host;
+
       if (Port != 0)
-      {
-	 char S[30];
-	 sprintf(S,":%u",Port);
-	 Res += S;
-      }	 
+	 Res << ':' << Port;
    }
-   
+
    if (Path.empty() == false)
    {
       if (Path[0] != '/')
-	 Res += "/" + Path;
+	 Res << "/" << Path;
       else
-	 Res += Path;
+	 Res << Path;
    }
-   
-   return Res;
+
+   return Res.str();
 }
 									/*}}}*/
 // URI::SiteOnly - Return the schema and site for the URI		/*{{{*/
