@@ -1607,13 +1607,12 @@ static bool DoChangelog(CommandLine &CmdL)
 /* */
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
-	    
+   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
+
    if (_config->FindB("version") == true)
    {
       cout << _("Supported modules:") << endl;
-      
+
       for (unsigned I = 0; I != pkgVersioningSystem::GlobalListLen; I++)
       {
 	 pkgVersioningSystem *VS = pkgVersioningSystem::GlobalList[I];
@@ -1622,7 +1621,7 @@ static bool ShowHelp(CommandLine &)
 	 else
 	    cout << ' ';
 	 cout << "Ver: " << VS->Label << endl;
-	 
+
 	 /* Print out all the packaging systems that will work with 
 	    this VS */
 	 for (unsigned J = 0; J != pkgSystem::GlobalListLen; J++)

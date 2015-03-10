@@ -83,8 +83,7 @@ static bool DoDownloadFile(CommandLine &CmdL)
 
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    if (_config->FindB("version") == true)
      return true;

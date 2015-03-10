@@ -13,7 +13,7 @@ configarchitecture 'amd64'
 export LD_BIND_NOW=1
 
 checkversionmessage() {
-	testsuccess grep '^apt .* compiled on ' ${1}-help.output
+	testsuccess grep '^apt .* (' ${1}-help.output
 }
 
 checkhelpmessage() {

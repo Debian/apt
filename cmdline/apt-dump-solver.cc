@@ -21,9 +21,8 @@
 // ---------------------------------------------------------------------
 /* */
 static bool ShowHelp() {
-
+	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 	std::cout <<
-		PACKAGE " " PACKAGE_VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<
 		"Usage: apt-dump-resolver\n"
 		"\n"
 		"apt-dump-resolver is a dummy solver who just dumps its input to the\n"
