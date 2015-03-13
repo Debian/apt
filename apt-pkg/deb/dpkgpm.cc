@@ -72,7 +72,9 @@ class pkgDPkgPMPrivate
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL),
-                        progress(NULL), master(-1), slave(NULL)
+			progress(NULL), tt_is_valid(false), master(-1),
+			slave(NULL), protect_slave_from_dying(-1),
+			direct_stdin(false)
    {
       dpkgbuf[0] = '\0';
    }
@@ -90,13 +92,16 @@ public:
 
    // pty stuff
    struct termios tt;
+   bool tt_is_valid;
    int master;
    char * slave;
+   int protect_slave_from_dying;
 
    // signals
    sigset_t sigmask;
    sigset_t original_sigmask;
 
+   bool direct_stdin;
 };
 
 namespace
@@ -1044,6 +1049,12 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 	 PackagesTotal++;
       }
    }
+   /* one extra: We don't want the progress bar to reach 100%, especially not
+      if we call dpkg --configure --pending and process a bunch of triggers
+      while showing 100%. Also, spindown takes a while, so never reaching 100%
+      is way more correct than reaching 100% while still doing stuff even if
+      doing it this way is slightly bending the rules */
+   ++PackagesTotal;
 }
                                                                         /*}}}*/
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
@@ -1070,48 +1081,44 @@ void pkgDPkgPM::StartPtyMagic()
       return;
    }
 
+   if (isatty(STDIN_FILENO) == 0)
+      d->direct_stdin = true;
+
    _error->PushToStack();
-   // if tcgetattr for both stdin/stdout returns 0 (no error)
-   // we do the pty magic
-   if (tcgetattr(STDOUT_FILENO, &d->tt) == 0 &&
-	 tcgetattr(STDIN_FILENO, &d->tt) == 0)
+
+   d->master = posix_openpt(O_RDWR | O_NOCTTY);
+   if (d->master == -1)
+      _error->Errno("posix_openpt", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
+   else if (unlockpt(d->master) == -1)
+      _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
+   else
    {
-      d->master = posix_openpt(O_RDWR | O_NOCTTY);
-      if (d->master == -1)
-	 _error->Errno("posix_openpt", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-      else if (unlockpt(d->master) == -1)
-      {
-	 _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
-	 close(d->master);
-	 d->master = -1;
-      }
+      char const * const slave_name = ptsname(d->master);
+      if (slave_name == NULL)
+	 _error->Errno("ptsname", "Getting name for slave of master fd %d failed!", d->master);
       else
       {
-	 char const * const slave_name = ptsname(d->master);
-	 if (slave_name == NULL)
+	 d->slave = strdup(slave_name);
+	 if (d->slave == NULL)
+	    _error->Errno("strdup", "Copying name %s for slave of master fd %d failed!", slave_name, d->master);
+	 else if (grantpt(d->master) == -1)
+	    _error->Errno("grantpt", "Granting access to slave %s based on master fd %d failed!", slave_name, d->master);
+	 else if (tcgetattr(STDIN_FILENO, &d->tt) == 0)
 	 {
-	    _error->Errno("unlockpt", "Getting name for slave of master fd %d failed!", d->master);
-	    close(d->master);
-	    d->master = -1;
-	 }
-	 else
-	 {
-	    d->slave = strdup(slave_name);
-	    if (d->slave == NULL)
+	    d->tt_is_valid = true;
+	    struct termios raw_tt;
+	    // copy window size of stdout if its a 'good' terminal
+	    if (tcgetattr(STDOUT_FILENO, &raw_tt) == 0)
 	    {
-	       _error->Errno("strdup", "Copying name %s for slave of master fd %d failed!", slave_name, d->master);
-	       close(d->master);
-	       d->master = -1;
+	       struct winsize win;
+	       if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0)
+		  _error->Errno("ioctl", "Getting TIOCGWINSZ from stdout failed!");
+	       if (ioctl(d->master, TIOCSWINSZ, &win) < 0)
+		  _error->Errno("ioctl", "Setting TIOCSWINSZ for master fd %d failed!", d->master);
 	    }
-	    struct winsize win;
-	    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0)
-	       _error->Errno("ioctl", "Getting TIOCGWINSZ from stdout failed!");
-	    if (ioctl(d->master, TIOCSWINSZ, &win) < 0)
-	       _error->Errno("ioctl", "Setting TIOCSWINSZ for master fd %d failed!", d->master);
 	    if (tcsetattr(d->master, TCSANOW, &d->tt) == -1)
 	       _error->Errno("tcsetattr", "Setting in Start via TCSANOW for master fd %d failed!", d->master);
 
-	    struct termios raw_tt;
 	    raw_tt = d->tt;
 	    cfmakeraw(&raw_tt);
 	    raw_tt.c_lflag &= ~ECHO;
@@ -1123,17 +1130,21 @@ void pkgDPkgPM::StartPtyMagic()
 	    sigaddset(&d->sigmask, SIGTTOU);
 	    sigprocmask(SIG_BLOCK,&d->sigmask, &d->original_sigmask);
 	    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tt) == -1)
-	       _error->Errno("tcsetattr", "Setting in Start via TCSAFLUSH for stdout failed!");
+	       _error->Errno("tcsetattr", "Setting in Start via TCSAFLUSH for stdin failed!");
 	    sigprocmask(SIG_SETMASK, &d->original_sigmask, NULL);
+
+	 }
+	 if (d->slave != NULL)
+	 {
+	    /* on linux, closing (and later reopening) all references to the slave
+	       makes the slave a death end, so we open it here to have one open all
+	       the time. We could use this fd in SetupSlavePtyMagic() for linux, but
+	       on kfreebsd we get an incorrect ("step like") output then while it has
+	       no problem with closing all references… so to avoid platform specific
+	       code here we combine both and be happy once more */
+	    d->protect_slave_from_dying = open(d->slave, O_RDWR | O_CLOEXEC | O_NOCTTY);
 	 }
       }
-   }
-   else
-   {
-      // complain only if stdout is either a terminal (but still failed) or is an invalid
-      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
-      if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
-	 _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
    }
 
    if (_error->PendingError() == true)
@@ -1143,44 +1154,60 @@ void pkgDPkgPM::StartPtyMagic()
 	 close(d->master);
 	 d->master = -1;
       }
+      if (d->slave != NULL)
+      {
+	 free(d->slave);
+	 d->slave = NULL;
+      }
       _error->DumpErrors(std::cerr);
    }
    _error->RevertToStack();
 }
 void pkgDPkgPM::SetupSlavePtyMagic()
 {
-   if(d->master == -1)
+   if(d->master == -1 || d->slave == NULL)
       return;
 
    if (close(d->master) == -1)
       _error->FatalE("close", "Closing master %d in child failed!", d->master);
+   d->master = -1;
    if (setsid() == -1)
       _error->FatalE("setsid", "Starting a new session for child failed!");
 
-   int const slaveFd = open(d->slave, O_RDWR);
+   int const slaveFd = open(d->slave, O_RDWR | O_NOCTTY);
    if (slaveFd == -1)
       _error->FatalE("open", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-
-   if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
+   else if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
       _error->FatalE("ioctl", "Setting TIOCSCTTY for slave fd %d failed!", slaveFd);
    else
    {
-      for (unsigned short i = 0; i < 3; ++i)
+      unsigned short i = 0;
+      if (d->direct_stdin == true)
+	 ++i;
+      for (; i < 3; ++i)
 	 if (dup2(slaveFd, i) == -1)
 	    _error->FatalE("dup2", "Dupping %d to %d in child failed!", slaveFd, i);
 
-      if (tcsetattr(0, TCSANOW, &d->tt) < 0)
+      if (d->tt_is_valid == true && tcsetattr(STDIN_FILENO, TCSANOW, &d->tt) < 0)
 	 _error->FatalE("tcsetattr", "Setting in Setup via TCSANOW for slave fd %d failed!", slaveFd);
    }
+
+   if (slaveFd != -1)
+      close(slaveFd);
 }
 void pkgDPkgPM::StopPtyMagic()
 {
    if (d->slave != NULL)
       free(d->slave);
    d->slave = NULL;
+   if (d->protect_slave_from_dying != -1)
+   {
+      close(d->protect_slave_from_dying);
+      d->protect_slave_from_dying = -1;
+   }
    if(d->master >= 0) 
    {
-      if (tcsetattr(0, TCSAFLUSH, &d->tt) == -1)
+      if (d->tt_is_valid == true && tcsetattr(STDIN_FILENO, TCSAFLUSH, &d->tt) == -1)
 	 _error->FatalE("tcsetattr", "Setting in Stop via TCSAFLUSH for stdin failed!");
       close(d->master);
       d->master = -1;
@@ -1267,9 +1294,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 
    // support subpressing of triggers processing for special
    // cases like d-i that runs the triggers handling manually
-   bool const SmartConf = (_config->Find("PackageManager::Configure", "all") != "all");
    bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
-   if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
+   if (_config->FindB("DPkg::ConfigurePending", true) == true)
       List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
    // for the progress
@@ -1578,8 +1604,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (d->master >= 0 && !d->stdin_is_dev_null)
-	    FD_SET(0, &rfds); 
+	 if (d->master >= 0 && d->direct_stdin == false && d->stdin_is_dev_null == false)
+	    FD_SET(STDIN_FILENO, &rfds);
 	 FD_SET(_dpkgin, &rfds);
 	 if(d->master >= 0)
 	    FD_SET(d->master, &rfds);

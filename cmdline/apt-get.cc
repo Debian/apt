@@ -797,13 +797,13 @@ static bool DoSource(CommandLine &CmdL)
       }
 
       // Back track
-      vector<pkgSrcRecords::File> Lst;
-      if (Last->Files(Lst) == false) {
+      vector<pkgSrcRecords::File2> Lst;
+      if (Last->Files2(Lst) == false) {
 	 return false;
       }
 
       // Load them into the fetcher
-      for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
+      for (vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
 	   I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
@@ -832,22 +832,26 @@ static bool DoSource(CommandLine &CmdL)
 	 queued.insert(Last->Index().ArchiveURI(I->Path));
 
 	 // check if we have a file with that md5 sum already localy
-	 if(!I->MD5Hash.empty() && FileExists(flNotDir(I->Path)))  
-	 {
-	    FileFd Fd(flNotDir(I->Path), FileFd::ReadOnly);
-	    MD5Summation sum;
-	    sum.AddFD(Fd.Fd(), Fd.Size());
-	    Fd.Close();
-	    if((string)sum.Result() == I->MD5Hash) 
+	 std::string localFile = flNotDir(I->Path);
+	 if (FileExists(localFile) == true)
+	    if(I->Hashes.VerifyFile(localFile) == true)
 	    {
 	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
-			flNotDir(I->Path).c_str());
+			localFile.c_str());
 	       continue;
 	    }
+
+	 // see if we have a hash (Acquire::ForceHash is the only way to have none)
+	 HashString const * const hs = I->Hashes.find(NULL);
+	 if (hs == NULL && _config->FindB("APT::Get::AllowUnauthenticated",false) == false)
+	 {
+	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
+		     localFile.c_str());
+	    continue;
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			I->MD5Hash,I->Size,
+			hs != NULL ? hs->toStr() : "", I->FileSize,
 			Last->Index().SourceInfo(*Last,*I),Src);
       }
    }

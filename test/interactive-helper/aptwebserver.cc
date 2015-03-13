@@ -19,6 +19,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
+
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <list>
@@ -79,12 +81,21 @@ static char const * httpcodeToStr(int const httpcode)		/*{{{*/
    return NULL;
 }
 									/*}}}*/
+static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
+   if (std::find(headers.begin(), headers.end(), "Transfer-Encoding: chunked") != headers.end())
+      return true;
+   if (_config->FindB("aptwebserver::chunked-transfer-encoding", false) == true)
+      return true;
+   return false;
+}
 static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 {
-   std::ostringstream contentlength;
-   contentlength << "Content-Length: " << data.FileSize();
-   headers.push_back(contentlength.str());
-
+   if (chunkedTransferEncoding(headers) == false)
+   {
+      std::ostringstream contentlength;
+      contentlength << "Content-Length: " << data.FileSize();
+      headers.push_back(contentlength.str());
+   }
    std::string lastmodified("Last-Modified: ");
    lastmodified.append(TimeRFC1123(data.ModificationTime()));
    headers.push_back(lastmodified);
@@ -92,9 +103,12 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 									/*}}}*/
 static void addDataHeaders(std::list<std::string> &headers, std::string &data)/*{{{*/
 {
-   std::ostringstream contentlength;
-   contentlength << "Content-Length: " << data.size();
-   headers.push_back(contentlength.str());
+   if (chunkedTransferEncoding(headers) == false)
+   {
+      std::ostringstream contentlength;
+      contentlength << "Content-Length: " << data.size();
+      headers.push_back(contentlength.str());
+   }
 }
 									/*}}}*/
 static bool sendHead(int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
@@ -114,6 +128,9 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    date.append(TimeRFC1123(time(NULL)));
    headers.push_back(date);
 
+   if (chunkedTransferEncoding(headers) == true)
+      headers.push_back("Transfer-Encoding: chunked");
+
    std::clog << ">>> RESPONSE to " << client << " >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
@@ -130,25 +147,55 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    return Success;
 }
 									/*}}}*/
-static bool sendFile(int const client, FileFd &data)			/*{{{*/
+static bool sendFile(int const client, std::list<std::string> const &headers, FileFd &data)/*{{{*/
 {
    bool Success = true;
+   bool const chunked = chunkedTransferEncoding(headers);
    char buffer[500];
    unsigned long long actual = 0;
    while ((Success &= data.Read(buffer, sizeof(buffer), &actual)) == true)
    {
       if (actual == 0)
 	 break;
-      Success &= FileFd::Write(client, buffer, actual);
+
+      if (chunked == true)
+      {
+	 std::string size;
+	 strprintf(size, "%llX\r\n", actual);
+	 Success &= FileFd::Write(client, size.c_str(), size.size());
+	 Success &= FileFd::Write(client, buffer, actual);
+	 Success &= FileFd::Write(client, "\r\n", strlen("\r\n"));
+      }
+      else
+	 Success &= FileFd::Write(client, buffer, actual);
+   }
+   if (chunked == true)
+   {
+      char const * const finish = "0\r\n\r\n";
+      Success &= FileFd::Write(client, finish, strlen(finish));
    }
    if (Success == false)
-      std::cerr << "SENDFILE: READ/WRITE ERROR to " << client << std::endl;
+      std::cerr << "SENDFILE:" << (chunked ? " CHUNKED" : "") << " READ/WRITE ERROR to " << client << std::endl;
    return Success;
 }
 									/*}}}*/
-static bool sendData(int const client, std::string const &data)		/*{{{*/
+static bool sendData(int const client, std::list<std::string> const &headers, std::string const &data)/*{{{*/
 {
-   if (FileFd::Write(client, data.c_str(), data.size()) == false)
+   if (chunkedTransferEncoding(headers) == true)
+   {
+      unsigned long long const ullsize = data.length();
+      std::string size;
+      strprintf(size, "%llX\r\n", ullsize);
+      char const * const finish = "\r\n0\r\n\r\n";
+      if (FileFd::Write(client, size.c_str(), size.length()) == false ||
+	    FileFd::Write(client, data.c_str(), ullsize) == false ||
+	    FileFd::Write(client, finish, strlen(finish)) == false)
+      {
+	 std::cerr << "SENDDATA: CHUNK WRITE ERROR to " << client << std::endl;
+	 return false;
+      }
+   }
+   else if (FileFd::Write(client, data.c_str(), data.size()) == false)
    {
       std::cerr << "SENDDATA: WRITE ERROR to " << client << std::endl;
       return false;
@@ -157,34 +204,38 @@ static bool sendData(int const client, std::string const &data)		/*{{{*/
 }
 									/*}}}*/
 static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
-	       bool content, std::string const &error = "")
+	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   std::list<std::string> headers;
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
    if (httpcode != 200)
-   {
-      if (error.empty() == false)
-	 response.append("<p><em>Error</em>: ").append(error).append("</p>");
-      response.append("This error is a result of the request: <pre>");
-   }
+      response.append("<p><em>Error</em>: ");
    else
-   {
-      if (error.empty() == false)
-	 response.append("<p><em>Success</em>: ").append(error).append("</p>");
+      response.append("<p><em>Success</em>: ");
+   if (error.empty() == false)
+      response.append(error);
+   else
+      response.append(httpcodeToStr(httpcode));
+   if (httpcode != 200)
+      response.append("</p>This error is a result of the request: <pre>");
+   else
       response.append("The successfully executed operation was requested by: <pre>");
-   }
    response.append(request).append("</pre></body></html>");
+   if (httpcode != 200)
+   {
+      if (_config->FindB("aptwebserver::closeOnError", false) == true)
+	 headers.push_back("Connection: close");
+   }
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 static void sendSuccess(int const client, std::string const &request,
-	       bool content, std::string const &error = "")
+	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   sendError(client, 200, request, content, error);
+   sendError(client, 200, request, content, error, headers);
 }
 									/*}}}*/
 static void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
@@ -221,7 +272,7 @@ static void sendRedirect(int const client, int const httpcode, std::string const
    headers.push_back(location);
    sendHead(client, httpcode, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 									/*}}}*/
 static int filter_hidden_files(const struct dirent *a)			/*{{{*/
@@ -263,16 +314,15 @@ static int grouped_alpha_case_sort(const struct dirent **a, const struct dirent 
 }
 									/*}}}*/
 static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*/
-			  std::string const &request, bool content)
+			  std::string const &request, bool content, std::list<std::string> &headers)
 {
-   std::list<std::string> headers;
    std::ostringstream listing;
 
    struct dirent **namelist;
    int const counter = scandir(dir.c_str(), &namelist, filter_hidden_files, grouped_alpha_case_sort);
    if (counter == -1)
    {
-      sendError(client, 500, request, content);
+      sendError(client, 500, request, content, "scandir failed", headers);
       return;
    }
 
@@ -311,18 +361,18 @@ static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*
    addDataHeaders(headers, response);
    sendHead(client, 200, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 									/*}}}*/
 static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 		    std::string &filename, std::string &params, bool &sendContent,
-		    bool &closeConnection)
+		    bool &closeConnection, std::list<std::string> &headers)
 {
    if (strncmp(request.c_str(), "HEAD ", 5) == 0)
       sendContent = false;
    if (strncmp(request.c_str(), "GET ", 4) != 0)
    {
-      sendError(client, 501, request, true);
+      sendError(client, 501, request, true, "", headers);
       return false;
    }
 
@@ -333,7 +383,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (lineend == std::string::npos || filestart == std::string::npos ||
 	 fileend == std::string::npos || filestart == fileend)
    {
-      sendError(client, 500, request, sendContent, "Filename can't be extracted");
+      sendError(client, 500, request, sendContent, "Filename can't be extracted", headers);
       return false;
    }
 
@@ -345,14 +395,14 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "close") == 0;
    else
    {
-      sendError(client, 500, request, sendContent, "Not a HTTP/1.{0,1} request");
+      sendError(client, 500, request, sendContent, "Not a HTTP/1.{0,1} request", headers);
       return false;
    }
 
    filename = request.substr(filestart, fileend - filestart);
    if (filename.find(' ') != std::string::npos)
    {
-      sendError(client, 500, request, sendContent, "Filename contains an unencoded space");
+      sendError(client, 500, request, sendContent, "Filename contains an unencoded space", headers);
       return false;
    }
 
@@ -360,7 +410,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (host.empty() == true)
    {
       // RFC 2616 §14.23 requires Host
-      sendError(client, 400, request, sendContent, "Host header is required");
+      sendError(client, 400, request, sendContent, "Host header is required", headers);
       return false;
    }
    host = "http://" + host;
@@ -371,7 +421,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    {
       if (absolute.find("uri") == std::string::npos)
       {
-	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that");
+	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that", headers);
 	 return false;
       }
       // strip the host from the request to make it an absolute path
@@ -379,7 +429,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    }
    else if (absolute.find("path") == std::string::npos)
    {
-      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
+      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that", headers);
       return false;
    }
 
@@ -398,7 +448,8 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
        filename.find_first_of("\r\n\t\f\v") != std::string::npos ||
        filename.find("/../") != std::string::npos)
    {
-      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)");
+      std::list<std::string> headers;
+      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)", headers);
       return false;
    }
 
@@ -434,46 +485,45 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    return true;
 }
 									/*}}}*/
-static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+static bool handleOnTheFlyReconfiguration(int const client, std::string const &request,/*{{{*/
+      std::vector<std::string> parts, std::list<std::string> &headers)
 {
    size_t const pcount = parts.size();
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!");
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!", headers);
       return true;
    }
    else if (pcount == 4 && parts[1] == "find")
    {
-      std::list<std::string> headers;
       std::string response = _config->Find(parts[2], parts[3]);
       addDataHeaders(headers, response);
       sendHead(client, 200, headers);
-      sendData(client, response);
+      sendData(client, headers, response);
       return true;
    }
    else if (pcount == 3 && parts[1] == "find")
    {
-      std::list<std::string> headers;
       if (_config->Exists(parts[2]) == true)
       {
 	 std::string response = _config->Find(parts[2]);
 	 addDataHeaders(headers, response);
 	 sendHead(client, 200, headers);
-	 sendData(client, response);
+	 sendData(client, headers, response);
 	 return true;
       }
-      sendError(client, 404, request, "Requested Configuration option doesn't exist.");
+      sendError(client, 404, request, true, "Requested Configuration option doesn't exist", headers);
       return false;
    }
    else if (pcount == 3 && parts[1] == "clear")
    {
       _config->Clear(parts[2]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.");
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.", headers);
       return true;
    }
 
-   sendError(client, 400, request, true, "Unknown on-the-fly configuration request");
+   sendError(client, 400, request, true, "Unknown on-the-fly configuration request", headers);
    return false;
 }
 									/*}}}*/
@@ -482,18 +532,22 @@ static void * handleClient(void * voidclient)				/*{{{*/
    int client = *((int*)(voidclient));
    std::clog << "ACCEPT client " << client << std::endl;
    std::vector<std::string> messages;
-   while (ReadMessages(client, messages))
+   bool closeConnection = false;
+   std::list<std::string> headers;
+   while (closeConnection == false && ReadMessages(client, messages))
    {
-      bool closeConnection = false;
+      // if we announced a closing, do the close
+      if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+	 break;
+      headers.clear();
       for (std::vector<std::string>::const_iterator m = messages.begin();
 	    m != messages.end() && closeConnection == false; ++m) {
 	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
 	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
-	 std::list<std::string> headers;
 	 std::string filename;
 	 std::string params;
 	 bool sendContent = true;
-	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection) == false)
+	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection, headers) == false)
 	    continue;
 
 	 // special webserver command request
@@ -502,7 +556,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    std::vector<std::string> parts = VectorizeString(filename, '/');
 	    if (parts[0] == "_config")
 	    {
-	       handleOnTheFlyReconfiguration(client, *m, parts);
+	       handleOnTheFlyReconfiguration(client, *m, parts, headers);
 	       continue;
 	    }
 	 }
@@ -534,7 +588,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       {
 		  char error[300];
 		  regerror(res, pattern, error, sizeof(error));
-		  sendError(client, 500, *m, sendContent, error);
+		  sendError(client, 500, *m, sendContent, error, headers);
 		  continue;
 	       }
 	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
@@ -553,7 +607,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 if (_config->FindB("aptwebserver::support::http", true) == false &&
 	       LookupTag(*m, "Host").find(":4433") == std::string::npos)
 	 {
-	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS");
+	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS", headers);
 	    continue;
 	 }
 	 else if (RealFileExists(filename) == true)
@@ -609,17 +663,16 @@ static void * handleClient(void * voidclient)				/*{{{*/
 			headers.push_back(contentrange.str());
 			sendHead(client, 206, headers);
 			if (sendContent == true)
-			   sendFile(client, data);
+			   sendFile(client, headers, data);
 			continue;
 		     }
 		     else
 		     {
-			headers.push_back("Content-Length: 0");
 			std::ostringstream contentrange;
 			contentrange << "Content-Range: bytes */" << filesize;
 			headers.push_back(contentrange.str());
-			sendHead(client, 416, headers);
-			continue;
+			sendError(client, 416, *m, sendContent, "", headers);
+			break;
 		     }
 		  }
 	       }
@@ -628,22 +681,20 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    addFileHeaders(headers, data);
 	    sendHead(client, 200, headers);
 	    if (sendContent == true)
-	       sendFile(client, data);
+	       sendFile(client, headers, data);
 	 }
 	 else if (DirectoryExists(filename) == true)
 	 {
 	    if (filename[filename.length()-1] == '/')
-	       sendDirectoryListing(client, filename, *m, sendContent);
+	       sendDirectoryListing(client, filename, *m, sendContent, headers);
 	    else
 	       sendRedirect(client, 301, filename.append("/"), *m, sendContent);
 	 }
 	 else
-	    sendError(client, 404, *m, sendContent);
+	    sendError(client, 404, *m, sendContent, "", headers);
       }
       _error->DumpErrors(std::cerr);
       messages.clear();
-      if (closeConnection == true)
-	 break;
    }
    close(client);
    std::clog << "CLOSE client " << client << std::endl;

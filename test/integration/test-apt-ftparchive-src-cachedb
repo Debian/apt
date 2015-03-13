@@ -180,10 +180,6 @@ testequal "
 E: Could not find a Source entry in the DSC 'aptarchive/pool/invalid/invalid_1.0.dsc'" aptftparchive sources aptarchive/pool/invalid
 rm -f aptarchive/pool/invalid/invalid_1.0.dsc
 
-dd if=/dev/zero of="aptarchive/pool/invalid/toobig_1.0.dsc" bs=1k count=129 2>/dev/null
-testequal "
-E: DSC file 'aptarchive/pool/invalid/toobig_1.0.dsc' is too large!" aptftparchive sources aptarchive/pool/invalid
-
 # ensure clean works
 rm -f aptarchive/pool/main/*
 aptftparchive clean apt-ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 

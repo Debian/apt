@@ -32,6 +32,11 @@ insertpackage 'multipleyes' 'foo' 'amd64' '2.2' 'Conflicts: bar (<= 3)'
 # having foo multiple times as conflict is a non-advisable hack in general
 insertpackage 'multipleyes' 'bar' 'amd64' '2.2' 'Conflicts: foo (<= 3), foo (<= 3)'
 
+#774924 - slightly simplified
+insertpackage 'jessie' 'login' 'amd64' '2' 'Pre-Depends: libaudit1 (>= 0)'
+insertpackage 'jessie' 'libaudit1' 'amd64' '2' 'Depends: libaudit-common (>= 0)'
+insertpackage 'jessie' 'libaudit-common' 'amd64' '2' 'Breaks: libaudit0, libaudit1 (<< 2)'
+
 cp rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status-backup
 setupaptarchive
 
@@ -142,3 +147,26 @@ Inst foo [1] (2 versioned [amd64])
 Inst baz (2 versioned [amd64])
 Conf foo (2 versioned [amd64])
 Conf baz (2 versioned [amd64])' aptget install baz -st versioned
+
+# recreating the exact situation is hard, so we pull tricks to get the score
+cp -f rootdir/var/lib/dpkg/status-backup rootdir/var/lib/dpkg/status
+insertinstalledpackage 'gdm3' 'amd64' '1' 'Depends: libaudit0, libaudit0'
+insertinstalledpackage 'login' 'amd64' '1' 'Essential: yes'
+insertinstalledpackage 'libaudit0' 'amd64' '1'
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  gdm3 libaudit0
+The following NEW packages will be installed:
+  libaudit-common libaudit1
+The following packages will be upgraded:
+  login
+1 upgraded, 2 newly installed, 2 to remove and 0 not upgraded.
+Remv gdm3 [1]
+Remv libaudit0 [1]
+Inst libaudit-common (2 jessie [amd64])
+Conf libaudit-common (2 jessie [amd64])
+Inst libaudit1 (2 jessie [amd64])
+Conf libaudit1 (2 jessie [amd64])
+Inst login [1] (2 jessie [amd64])
+Conf login (2 jessie [amd64])' aptget dist-upgrade -st jessie
