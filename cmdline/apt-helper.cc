@@ -48,7 +48,7 @@ static bool DoDownloadFile(CommandLine &CmdL)
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
    size_t fileind = 0;

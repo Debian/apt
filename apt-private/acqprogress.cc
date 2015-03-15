@@ -1,10 +1,9 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.24 2003/04/27 01:56:48 doogie Exp $
 /* ######################################################################
 
-   Acquire Progress - Command line progress meter 
-   
+   Acquire Progress - Command line progress meter
+
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
@@ -29,13 +28,11 @@
 #include <apti18n.h>
 									/*}}}*/
 
-using namespace std;
-
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet) :
-    pkgAcquireStatus(), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
+AcqTextStatus::AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet) :
+    pkgAcquireStatus(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
 {
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
@@ -62,8 +59,8 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
 
    clearLastLine();
 
-   cout << _("Hit ") << Itm.Description;
-   cout << endl;
+   out << _("Hit ") << Itm.Description;
+   out << std::endl;
    Update = true;
 }
 									/*}}}*/
@@ -83,10 +80,10 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
 
    clearLastLine();
 
-   cout << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
+   out << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
-      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
-   cout << endl;
+      out << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
+   out << std::endl;
 }
 									/*}}}*/
 // AcqTextStatus::Done - Completed a download				/*{{{*/
@@ -113,15 +110,15 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
 
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
-      cout << _("Ign ") << Itm.Description << endl;
+      out << _("Ign ") << Itm.Description << std::endl;
       if (Itm.Owner->ErrorText.empty() == false &&
 	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == true)
-	 cout << "  " << Itm.Owner->ErrorText << endl;
+	 out << "  " << Itm.Owner->ErrorText << std::endl;
    }
    else
    {
-      cout << _("Err ") << Itm.Description << endl;
-      cout << "  " << Itm.Owner->ErrorText << endl;
+      out << _("Err ") << Itm.Description << std::endl;
+      out << "  " << Itm.Owner->ErrorText << std::endl;
    }
 
    Update = true;
@@ -143,7 +140,7 @@ void AcqTextStatus::Stop()
       return;
 
    if (FetchedBytes != 0 && _error->PendingError() == false)
-      ioprintf(cout,_("Fetched %sB in %s (%sB/s)\n"),
+      ioprintf(out,_("Fetched %sB in %s (%sB/s)\n"),
 	       SizeToStr(FetchedBytes).c_str(),
 	       TimeToStr(ElapsedTime).c_str(),
 	       SizeToStr(CurrentCPS).c_str());
@@ -152,7 +149,7 @@ void AcqTextStatus::Stop()
 // AcqTextStatus::Pulse - Regular event pulse				/*{{{*/
 // ---------------------------------------------------------------------
 /* This draws the current progress. Each line has an overall percent
-   meter and a per active item status meter along with an overall 
+   meter and a per active item status meter along with an overall
    bandwidth and ETA indicator. */
 bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 {
@@ -250,14 +247,14 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    // Draw the current status
    if (_config->FindB("Apt::Color", false) == true)
-      cout << _config->Find("APT::Color::Yellow");
+      out << _config->Find("APT::Color::Yellow");
    if (LastLineLength > Line.length())
       clearLastLine();
    else
-      cout << '\r';
-   cout << Line << flush;
+      out << '\r';
+   out << Line << std::flush;
    if (_config->FindB("Apt::Color", false) == true)
-      cout << _config->Find("APT::Color::Neutral") << flush;
+      out << _config->Find("APT::Color::Neutral") << std::flush;
 
    LastLineLength = Line.length();
    Update = false;
@@ -268,7 +265,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 // AcqTextStatus::MediaChange - Media need to be swapped		/*{{{*/
 // ---------------------------------------------------------------------
 /* Prompt for a media swap */
-bool AcqTextStatus::MediaChange(string Media,string Drive)
+bool AcqTextStatus::MediaChange(std::string Media, std::string Drive)
 {
    // If we do not output on a terminal and one of the options to avoid user
    // interaction is given, we assume that no user is present who could react
@@ -281,7 +278,7 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
       return false;
 
    clearLastLine();
-   ioprintf(cout,_("Media change: please insert the disc labeled\n"
+   ioprintf(out,_("Media change: please insert the disc labeled\n"
 		   " '%s'\n"
 		   "in the drive '%s' and press enter\n"),
 	    Media.c_str(),Drive.c_str());
@@ -301,16 +298,16 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 }
 									/*}}}*/
 void AcqTextStatus::clearLastLine() {					/*{{{*/
-   if (Quiet > 0)
+   if (Quiet > 0 || LastLineLength == 0)
       return;
 
    // do not try to clear more than the (now smaller) screen
    if (LastLineLength > ScreenWidth)
       LastLineLength = ScreenWidth;
 
-   std::cout << '\r';
+   out << '\r';
    for (size_t i = 0; i < LastLineLength; ++i)
-      std::cout << ' ';
-   std::cout << '\r' << std::flush;
+      out << ' ';
+   out << '\r' << std::flush;
 }
 									/*}}}*/

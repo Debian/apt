@@ -624,7 +624,7 @@ static bool DoDownload(CommandLine &CmdL)
    if (verset.empty() == true)
       return false;
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
    pkgRecords Recs(Cache);
@@ -729,7 +729,7 @@ static bool DoSource(CommandLine &CmdL)
       return false;
 
    // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
    SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
@@ -1550,7 +1550,7 @@ static bool DoChangelog(CommandLine &CmdL)
       return Success;
    }
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    Fetcher.SetLog(&Stat);
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);

@@ -116,7 +116,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       return false;
 
    // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
    {
