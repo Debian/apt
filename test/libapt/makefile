@@ -8,6 +8,7 @@ APT_DOMAIN=none
 include ../../buildlib/defaults.mak
 
 .PHONY: test
+ifeq (file-okay,$(shell $(CC) -M gtest_runner.cc >/dev/null 2>&1 && echo 'file-okay'))
 test: $(BIN)/gtest$(BASENAME)
 	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=$(LIB) $(BIN)/gtest$(BASENAME)
 
@@ -71,3 +72,11 @@ $(LIB)/gtest.a: $(OBJ)/gtest-all.o
 	echo Building static library $@
 	-rm -f $@
 	$(AR) $(ARFLAGS) $@ $^
+
+else
+test:
+	@echo "APT uses Googles C++ testing framework for its unit tests"
+	@echo "On Debian systems this is available in the 'libgtest-dev' package."
+	@echo "Please install it before attempting to run the unit tests."
+	exit 100
+endif

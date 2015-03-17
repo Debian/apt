@@ -91,7 +91,7 @@ AC_CHECK_LIB(curl, curl_easy_init,
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(gtest/gtest.h,,
-     AC_MSG_ERROR([failed: I need gtest to build tests]),
+     AC_MSG_WARN([failed: I need gtest (packaged as libgtest-dev) for unit testing]),
 )
 AC_LANG_POP([C++])
 
