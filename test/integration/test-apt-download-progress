@@ -30,13 +30,13 @@ testsuccess dd if=/dev/zero of=./aptarchive/$TESTFILE bs=800k count=1
 msgtest 'download progress works via' 'http'
 printf '\n'
 exec 3> apt-progress.log
-testsuccess apthelper download-file "http://localhost:8080/$TESTFILE" http-$TESTFILE -o APT::Status-Fd=3 -o Acquire::http::Dl-Limit=600
+testsuccess apthelper download-file "http://localhost:8080/$TESTFILE" http-$TESTFILE -o APT::Status-Fd=3 -o Acquire::http::Dl-Limit=300
 assertprogress apt-progress.log
 
 msgtest 'download progress works via' 'https'
 printf '\n'
 exec 3> apt-progress.log
-testsuccess apthelper download-file "https://localhost:4433/$TESTFILE" https-$TESTFILE -o APT::Status-Fd=3 -o Acquire::https::Dl-Limit=600
+testsuccess apthelper download-file "https://localhost:4433/$TESTFILE" https-$TESTFILE -o APT::Status-Fd=3 -o Acquire::https::Dl-Limit=300
 assertprogress apt-progress.log
 
 # cleanup
