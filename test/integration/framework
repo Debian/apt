@@ -1125,8 +1125,10 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 
 downloadfile() {
 	local PROTO="${1%%:*}"
-	apthelper -o Debug::Acquire::${PROTO}=1 -o Debug::pkgAcquire::Worker=1 \
-		download-file "$1" "$2" 2>&1 || true
+	if ! apthelper -o Debug::Acquire::${PROTO}=1 -o Debug::pkgAcquire::Worker=1 \
+		download-file "$1" "$2" 2>&1 ; then
+		return 1
+	fi
 	# only if the file exists the download was successful
 	if [ -r "$2" ]; then
 		return 0
@@ -1407,6 +1409,20 @@ testfailureequal() {
 	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
 }
 
+testfailuremsg() {
+	local CMP="$1"
+	shift
+	testfailure "$@"
+	msgtest 'Check that the output of the previous failed command has expected' 'failures and warnings'
+	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output" 2>&1 || true
+	if echo "$CMP" | checkdiff - "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output"; then
+		msgpass
+	else
+		echo '### Complete output ###'
+		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
+		msgfail
+	fi
+}
 
 testfilestats() {
 	msgtest "Test that file $1 has $2 $3" "$4"

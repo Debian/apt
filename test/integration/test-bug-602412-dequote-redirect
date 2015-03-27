@@ -8,7 +8,7 @@ configarchitecture 'amd64'
 
 buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver -o aptwebserver::redirect::replace::/pool/=/newpool/ \
 		  -o aptwebserver::redirect::replace::/dists/=/newdists/
 
@@ -16,6 +16,7 @@ mv aptarchive/pool aptarchive/newpool
 mv aptarchive/dists aptarchive/newdists
 
 testrun() {
+	msgmsg 'Test redirection works in method boundaries' "$1"
 	msgtest 'Test redirection works in' 'apt-get update'
 	testsuccess --nomsg aptget update
 

@@ -37,11 +37,17 @@
 									/*}}}*/
 using namespace std;
 
+struct APT_HIDDEN CURLUserPointer {
+   HttpsMethod * const https;
+   HttpsMethod::FetchResult * const Res;
+   CURLUserPointer(HttpsMethod * const https, HttpsMethod::FetchResult * const Res) : https(https), Res(Res) {}
+};
+
 size_t
 HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    size_t len = size * nmemb;
-   HttpsMethod *me = (HttpsMethod *)userp;
+   CURLUserPointer *me = (CURLUserPointer *)userp;
    std::string line((char*) buffer, len);
    for (--len; len > 0; --len)
       if (isspace(line[len]) == 0)
@@ -53,23 +59,33 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
    if (line.empty() == true)
    {
-      if (me->Server->Result != 416 && me->Server->StartPos != 0)
+      if (me->https->Server->Result != 416 && me->https->Server->StartPos != 0)
 	 ;
-      else if (me->Server->Result == 416 && me->Server->Size == me->File->FileSize())
+      else if (me->https->Server->Result == 416 && me->https->Server->Size == me->https->File->FileSize())
       {
-         me->Server->Result = 200;
-	 me->Server->StartPos = me->Server->Size;
+         me->https->Server->Result = 200;
+	 me->https->Server->StartPos = me->https->Server->Size;
 	 // the actual size is not important for https as curl will deal with it
 	 // by itself and e.g. doesn't bother us with transport-encoding…
-	 me->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
+	 me->https->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
       }
       else
-	 me->Server->StartPos = 0;
+	 me->https->Server->StartPos = 0;
 
-      me->File->Truncate(me->Server->StartPos);
-      me->File->Seek(me->Server->StartPos);
+      me->https->File->Truncate(me->https->Server->StartPos);
+      me->https->File->Seek(me->https->Server->StartPos);
+
+      me->Res->LastModified = me->https->Server->Date;
+      me->Res->Size = me->https->Server->Size;
+      me->Res->ResumePoint = me->https->Server->StartPos;
+
+      // we expect valid data, so tell our caller we get the file now
+      if (me->https->Server->Result >= 200 && me->https->Server->Result < 300 &&
+	    me->https->Server->JunkSize == 0 &&
+	    me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
+	 me->https->URIStart(*me->Res);
    }
-   else if (me->Server->HeaderLine(line) == false)
+   else if (me->https->Server->HeaderLine(line) == false)
       return 0;
 
    return size*nmemb;
@@ -84,12 +100,6 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
    // we don't always know how long it would be, e.g. in chunked encoding.
    if (me->Server->JunkSize != 0)
       return buffer_size;
-
-   if (me->Server->ReceivedData == false)
-   {
-      me->URIStart(me->Res);
-      me->Server->ReceivedData = true;
-   }
 
    if(me->File->Write(buffer, buffer_size) != true)
       return 0;
@@ -109,27 +119,15 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
    return buffer_size;
 }
 
-int
-HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
-			       double /*ultotal*/, double /*ulnow*/)
-{
-   HttpsMethod *me = (HttpsMethod *)clientp;
-   if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = (unsigned long long)dltotal;
-   }
-   return 0;
-}
-
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
 HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner)
 {
    TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
-   ReceivedData = false;
    Reset();
 }
 									/*}}}*/
 
-void HttpsMethod::SetupProxy()  					/*{{{*/
+void HttpsMethod::SetupProxy()						/*{{{*/
 {
    URI ServerName = Queue->Uri;
 
@@ -207,16 +205,16 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 
+   FetchResult Res;
+   CURLUserPointer userp(this, &Res);
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
-   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
+   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, &userp);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
    // options
-   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
+   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
    // only allow curl to handle https, not the other stuff it supports
    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
@@ -414,6 +412,15 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
 
+   // invalid range-request
+   if (Server->Result == 416)
+   {
+      unlink(File->Name().c_str());
+      delete File;
+      Redirect(Itm->Uri);
+      return true;
+   }
+
    struct stat resultStat;
    if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
    {
@@ -421,16 +428,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
    Res.Size = resultStat.st_size;
-
-   // invalid range-request
-   if (Server->Result == 416)
-   {
-      unlink(File->Name().c_str());
-      Res.Size = 0;
-      delete File;
-      Redirect(Itm->Uri);
-      return true;
-   }
 
    // Timestamp
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
@@ -455,7 +452,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    URIDone(Res);
 
    // cleanup
-   Res.Size = 0;
    delete File;
 
    return true;
