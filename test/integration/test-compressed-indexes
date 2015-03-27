@@ -61,7 +61,7 @@ testrun() {
 	cd downloaded
 	testsuccess --nomsg aptget download testpkg
 	msgtest '\tdeb file is present'; testsuccess --nomsg test -f testpkg_1.0_i386.deb
-	rm testpkg_1.0_i386.deb
+	rm -f testpkg_1.0_i386.deb
 	cd - >/dev/null
 	testsuccessequal 'Reading package lists...
 Building dependency tree...

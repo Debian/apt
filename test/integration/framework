@@ -3,7 +3,7 @@
 EXIT_CODE=0
 
 # we all like colorful messages
-if [ "$MSGCOLOR" != 'NO' ]; then
+if [ "$MSGCOLOR" != 'NO' ] && [ "$MSGCOLOR" != 'ALWAYS' ]; then
 	if [ ! -t 1 ]; then # but check that we output to a terminal
 		export MSGCOLOR='NO'
 	fi
