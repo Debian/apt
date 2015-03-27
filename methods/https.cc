@@ -386,7 +386,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (success != 0)
    {
       _error->Error("%s", curl_errorstr);
-      unlink(File->Name().c_str());
       return false;
    }
 
