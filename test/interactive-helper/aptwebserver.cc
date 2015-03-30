@@ -598,17 +598,24 @@ static void * handleClient(void * voidclient)				/*{{{*/
 {
    int client = *((int*)(voidclient));
    std::clog << "ACCEPT client " << client << std::endl;
-   std::vector<std::string> messages;
    bool closeConnection = false;
-   std::list<std::string> headers;
-   while (closeConnection == false && ReadMessages(client, messages))
+   while (closeConnection == false)
    {
-      // if we announced a closing, do the close
-      if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+      std::vector<std::string> messages;
+      if (ReadMessages(client, messages) == false)
 	 break;
-      headers.clear();
+
+      std::list<std::string> headers;
       for (std::vector<std::string>::const_iterator m = messages.begin();
 	    m != messages.end() && closeConnection == false; ++m) {
+	 // if we announced a closing in previous response, do the close now
+	 if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+	 {
+	    closeConnection = true;
+	    break;
+	 }
+	 headers.clear();
+
 	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
 	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
 	 std::string filename;
@@ -760,9 +767,16 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 else
 	    sendError(client, 404, *m, sendContent, "", headers);
       }
+
+      // if we announced a closing in the last response, do the close now
+      if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+	 closeConnection = true;
+
+      if (_error->PendingError() == true)
+	 break;
       _error->DumpErrors(std::cerr);
-      messages.clear();
    }
+   _error->DumpErrors(std::cerr);
    close(client);
    std::clog << "CLOSE client " << client << std::endl;
    return NULL;

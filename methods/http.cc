@@ -442,7 +442,7 @@ bool HttpServerState::RunData(FileFd * const File)
    {
       /* Closes encoding is used when the server did not specify a size, the
          loss of the connection means we are done */
-      if (Encoding == Closes)
+      if (Persistent == false)
 	 In.Limit(-1);
       else if (JunkSize != 0)
 	 In.Limit(JunkSize);
@@ -524,7 +524,7 @@ bool HttpServerState::Die(FileFd &File)
 
    // See if this is because the server finished the data stream
    if (In.IsLimit() == false && State != HttpServerState::Header &&
-       Encoding != HttpServerState::Closes)
+       Persistent == true)
    {
       Close();
       if (LErrno == 0)
@@ -571,7 +571,7 @@ bool HttpServerState::Flush(FileFd * const File)
 	    return true;
       }
 
-      if (In.IsLimit() == true || Encoding == ServerState::Closes)
+      if (In.IsLimit() == true || Persistent == false)
 	 return true;
    }
    return false;
