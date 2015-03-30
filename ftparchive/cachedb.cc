@@ -441,8 +441,8 @@ bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
       if (OpenFile() == false)
 	 return false;
 
-      Hashes hashes;
-      if (Fd->Seek(0) == false || hashes.AddFD(*Fd, CurStat.FileSize, FlHashes) == false)
+      Hashes hashes(FlHashes);
+      if (Fd->Seek(0) == false || hashes.AddFD(*Fd, CurStat.FileSize) == false)
 	 return false;
 
       HashStringList hl = hashes.GetHashStringList();

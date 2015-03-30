@@ -266,7 +266,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    Res.LastModified = Buf.st_mtime;
    Res.Size = Buf.st_size;
 
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);

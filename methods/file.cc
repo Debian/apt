@@ -87,7 +87,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
    if (Res.Filename.empty() == true)
       return _error->Error(_("File not found"));
 
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);

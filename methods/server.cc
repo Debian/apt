@@ -357,7 +357,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    FailFd = File->Fd();
    FailTime = Server->Date;
 
-   if (Server->InitHashes(*File) == false)
+   if (Server->InitHashes(*File, Queue->ExpectedHashes) == false)
    {
       _error->Errno("read",_("Problem hashing file"));
       return ERROR_NOT_FROM_SERVER;

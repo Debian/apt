@@ -443,7 +443,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.LastModified = resultStat.st_mtime;
 
    // take hashes
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);

@@ -64,8 +64,8 @@ const unsigned int CircleBuf::BW_HZ=10;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long long Size) 
-   : Size(Size), Hash(0), TotalWriten(0)
+CircleBuf::CircleBuf(unsigned long long Size)
+   : Size(Size), Hash(NULL), TotalWriten(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -84,10 +84,10 @@ void CircleBuf::Reset()
    TotalWriten = 0;
    MaxGet = (unsigned long long)-1;
    OutQueue = string();
-   if (Hash != 0)
+   if (Hash != NULL)
    {
       delete Hash;
-      Hash = new Hashes;
+      Hash = NULL;
    }
 }
 									/*}}}*/
@@ -222,7 +222,7 @@ bool CircleBuf::Write(int Fd)
 
       TotalWriten += Res;
       
-      if (Hash != 0)
+      if (Hash != NULL)
 	 Hash->Add(Buf + (OutP%Size),Res);
       
       OutP += Res;
@@ -484,10 +484,10 @@ APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
    return (ServerFd != -1);
 }
 									/*}}}*/
-bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
+bool HttpServerState::InitHashes(FileFd &File, HashStringList const &ExpectedHashes)/*{{{*/
 {
    delete In.Hash;
-   In.Hash = new Hashes;
+   In.Hash = new Hashes(ExpectedHashes);
 
    // Set the expected size and read file for the hashes
    File.Truncate(StartPos);

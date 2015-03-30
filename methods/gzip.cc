@@ -91,7 +91,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return false;
 
    // Read data from source, generate checksums and write
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    bool Failed = false;
    while (1) 
    {

@@ -194,6 +194,30 @@ TEST(HashSumsTest, FileBased)
    }
    fd.Seek(0);
    {
+      Hashes hashes(Hashes::MD5SUM | Hashes::SHA512SUM);
+      hashes.AddFD(fd);
+      HashStringList list = hashes.GetHashStringList();
+      EXPECT_FALSE(list.empty());
+      EXPECT_EQ(3, list.size());
+      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(NULL, list.find("SHA1"));
+      EXPECT_EQ(NULL, list.find("SHA256"));
+      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
+      fd.Seek(0);
+      Hashes hashes2(list);
+      hashes2.AddFD(fd);
+      list = hashes2.GetHashStringList();
+      EXPECT_FALSE(list.empty());
+      EXPECT_EQ(3, list.size());
+      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(NULL, list.find("SHA1"));
+      EXPECT_EQ(NULL, list.find("SHA256"));
+      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
+   }
+   fd.Seek(0);
+   {
       MD5Summation MD5;
       MD5.AddFD(fd.Fd());
       EXPECT_EQ(md5.Value(), MD5.Result().Value());

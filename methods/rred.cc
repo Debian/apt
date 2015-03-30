@@ -581,7 +581,7 @@ class RredMethod : public pkgAcqMethod {
 	 FILE *inp = fopen(Path.c_str(), "r");
 	 FILE *out = fopen(Itm->DestFile.c_str(), "w");
 
-	 Hashes hash;
+	 Hashes hash(Itm->ExpectedHashes);
 
 	 patch.apply_against_file(out, inp, &hash);
 

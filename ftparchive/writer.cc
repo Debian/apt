@@ -1075,8 +1075,8 @@ bool ReleaseWriter::DoPackage(string FileName)
 
    CheckSums[NewFileName].size = fd.Size();
 
-   Hashes hs;
-   hs.AddFD(fd, 0, DoHashes);
+   Hashes hs(DoHashes);
+   hs.AddFD(fd);
    CheckSums[NewFileName].Hashes = hs.GetHashStringList();
    fd.Close();
 

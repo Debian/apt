@@ -85,7 +85,7 @@ struct ServerState
    virtual bool Open() = 0;
    virtual bool IsOpen() = 0;
    virtual bool Close() = 0;
-   virtual bool InitHashes(FileFd &File) = 0;
+   virtual bool InitHashes(FileFd &File, HashStringList const &ExpectedHashes) = 0;
    virtual Hashes * GetHashes() = 0;
    virtual bool Die(FileFd &File) = 0;
    virtual bool Flush(FileFd * const File) = 0;

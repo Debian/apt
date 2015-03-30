@@ -42,7 +42,7 @@ class HttpsServerState : public ServerState
    virtual bool Open() { return false; }
    virtual bool IsOpen() { return false; }
    virtual bool Close() { return false; }
-   virtual bool InitHashes(FileFd &/*File*/) { return false; }
+   virtual bool InitHashes(FileFd &/*File*/, HashStringList const &/*ExpectedHashes*/) { return false; }
    virtual Hashes * GetHashes() { return NULL; }
    virtual bool Die(FileFd &/*File*/) { return false; }
    virtual bool Flush(FileFd * const /*File*/) { return false; }
