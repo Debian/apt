@@ -1900,8 +1900,19 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       }
    }
 
-   // log the ordering 
-   const char *ops_str[] = {"Install", "Configure","Remove","Purge"};
+   // log the ordering, see dpkgpm.h and the "Ops" enum there
+   const char *ops_str[] = {
+      "Install",
+      "Configure",
+      "Remove",
+      "Purge",
+      "ConfigurePending",
+      "TriggersPending",
+      "reserved-1",
+      "reserved-2",
+      "reserved-3",
+      "reserved-4",
+   };
    fprintf(report, "AptOrdering:\n");
    for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
       if ((*I).Pkg != NULL)
