@@ -79,7 +79,7 @@ bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 
 // split a given string by a char
-std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) APT_CONST;
+std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) APT_PURE;
 
 /* \brief Return a vector of strings from string "input" where "sep"
  * is used as the delimiter string.
