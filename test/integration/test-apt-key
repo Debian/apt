@@ -111,3 +111,9 @@ cleanplate
 cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 testsuccess --nomsg aptkey --fakeroot del 5A90D141DBAC8DAE
 testempty aptkey list
+
+msgtest 'Test key removal with' 'lowercase key ID' #keylength somewher between 8byte and short
+cleanplate
+cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
+testempty aptkey list
