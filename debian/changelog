@@ -1,3 +1,22 @@
+apt (1.0.9.7ubuntu5) vivid; urgency=medium
+
+  * merge fixes from the debian/jessie branch:
+
+  [ David Kalnischkies ]
+  * fix another d(e)select-upgrade typo (LP: #1399037)
+  * properly handle expected filesize in https.
+    Thanks to Robert Edmonds and Anders Kaseorg for initial patchs
+    (Closes: 777565, 781509)
+  * avoid depends on std::string implementation for pkgAcquire::Item::Mode
+    (Closes: 781858)
+  * demote VectorizeString gcc attribute from const to pure
+  * keyids in "apt-key del" should be case-insensitive (Closes: 781696)
+
+  [ Michael Vogt ]
+  * fix crash in order writing in pkgDPkgPM::WriteApportReport() (LP: #1436626)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 08 Apr 2015 12:25:27 +0200
+
 apt (1.0.9.7ubuntu4) vivid; urgency=medium
 
   [ Michael Vogt ]
