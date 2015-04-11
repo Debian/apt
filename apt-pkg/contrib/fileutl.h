@@ -195,9 +195,20 @@ pid_t ExecFork(std::set<int> keep_fds);
 void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
-
 // check if the given file starts with a PGP cleartext signature
 bool StartsWithGPGClearTextSignature(std::string const &FileName);
+
+/** change file attributes to requested known good values
+ *
+ * The method skips the user:group setting if not root.
+ *
+ * @param requester is printed as functionname in error cases
+ * @param file is the file to be modified
+ * @param user is the (new) owner of the file, e.g. _apt
+ * @param group is the (new) group owning the file, e.g. root
+ * @param mode is the access mode of the file, e.g. 0644
+ */
+bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode);
 
 /**
  * \brief Drop privileges

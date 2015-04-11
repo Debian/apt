@@ -43,20 +43,6 @@
 
 using namespace std;
 
-static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode) /*{{{*/
-{
-   if (getuid() == 0 && strlen(user) != 0 && strlen(group) != 0) // if we aren't root, we can't chown, so don't try it
-   {
-      // ensure the file is owned by root and has good permissions
-      struct passwd const * const pw = getpwnam(user);
-      struct group const * const gr = getgrnam(group);
-      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
-	 _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
-   }
-   if (chmod(file, mode) != 0)
-      _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
-}
-									/*}}}*/
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

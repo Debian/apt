@@ -927,8 +927,7 @@ pkgUdevCdromDevices::pkgUdevCdromDevices()				/*{{{*/
 }
 									/*}}}*/
 
-bool
-pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
+bool pkgUdevCdromDevices::Dlopen()					/*{{{*/
 {
    // alread open
    if(libudev_handle != NULL)
@@ -957,18 +956,14 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
-                                                                        /*{{{*/
-// convenience interface, this will just call ScanForRemovable
-vector<CdromDevice>
-pkgUdevCdromDevices::Scan()
+// convenience interface, this will just call ScanForRemovable		/*{{{*/
+vector<CdromDevice> pkgUdevCdromDevices::Scan()
 {
    bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
    return ScanForRemovable(CdromOnly);
 }
 									/*}}}*/
-                                                                        /*{{{*/
-vector<CdromDevice>
-pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
+vector<CdromDevice> pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)/*{{{*/
 {
    vector<CdromDevice> cdrom_devices;
    struct udev_enumerate *enumerate;

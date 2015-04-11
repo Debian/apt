@@ -33,6 +33,7 @@ aptcdromlog() {
 	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
 	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
 }
+aptautotest_aptcdromlog_add() { aptautotest_aptget_update "$@"; }
 
 CDROM_PRE="Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
 Unmounting CD-ROM...
@@ -133,13 +134,13 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 
 # ensure cdrom method isn't trying to mount the cdrom
 mv rootdir/media/cdrom-unmounted rootdir/media/cdrom-ejected
-# ensure an update doesn't mess with cdrom sources
+msgmsg "ensure an update doesn't mess with cdrom sources"
 testsuccess aptget update
 testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
 mv rootdir/media/cdrom-ejected rootdir/media/cdrom-unmounted
 testcdromusage
 
-# and again to check that it withstands the temptation even if it could mount
+msgmsg 'and again to check that it withstands the temptation even if it could mount'
 testsuccess aptget update
 testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
 testcdromusage
