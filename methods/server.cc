@@ -235,6 +235,12 @@ ServerState::ServerState(URI Srv, ServerMethod *Owner) : ServerName(Srv), TimeOu
    Reset();
 }
 									/*}}}*/
+bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
+{
+   File.Truncate(StartPos);
+   return GetHashes()->AddFD(File, StartPos);
+}
+									/*}}}*/
 
 bool ServerMethod::Configuration(string Message)			/*{{{*/
 {
@@ -357,7 +363,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    FailFd = File->Fd();
    FailTime = Server->Date;
 
-   if (Server->InitHashes(*File, Queue->ExpectedHashes) == false)
+   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
    {
       _error->Errno("read",_("Problem hashing file"));
       return ERROR_NOT_FROM_SERVER;

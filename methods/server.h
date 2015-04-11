@@ -72,6 +72,7 @@ struct ServerState
    };
    /** \brief Get the headers before the data */
    RunHeadersResult RunHeaders(FileFd * const File, const std::string &Uri);
+   bool AddPartialFileToHashes(FileFd &File);
 
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0; JunkSize = 0;
@@ -85,7 +86,7 @@ struct ServerState
    virtual bool Open() = 0;
    virtual bool IsOpen() = 0;
    virtual bool Close() = 0;
-   virtual bool InitHashes(FileFd &File, HashStringList const &ExpectedHashes) = 0;
+   virtual bool InitHashes(HashStringList const &ExpectedHashes) = 0;
    virtual Hashes * GetHashes() = 0;
    virtual bool Die(FileFd &File) = 0;
    virtual bool Flush(FileFd * const File) = 0;

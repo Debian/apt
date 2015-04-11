@@ -29,6 +29,8 @@ class FileFd;
 
 class HttpsServerState : public ServerState
 {
+   Hashes * Hash;
+
    protected:
    virtual bool ReadHeaderLines(std::string &/*Data*/) { return false; }
    virtual bool LoadNextResponse(bool const /*ToFile*/, FileFd * const /*File*/) { return false; }
@@ -42,8 +44,8 @@ class HttpsServerState : public ServerState
    virtual bool Open() { return false; }
    virtual bool IsOpen() { return false; }
    virtual bool Close() { return false; }
-   virtual bool InitHashes(FileFd &/*File*/, HashStringList const &/*ExpectedHashes*/) { return false; }
-   virtual Hashes * GetHashes() { return NULL; }
+   virtual bool InitHashes(HashStringList const &ExpectedHashes);
+   virtual Hashes * GetHashes();
    virtual bool Die(FileFd &/*File*/) { return false; }
    virtual bool Flush(FileFd * const /*File*/) { return false; }
    virtual bool Go(bool /*ToFile*/, FileFd * const /*File*/) { return false; }

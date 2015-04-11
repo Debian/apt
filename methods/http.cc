@@ -484,16 +484,14 @@ APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
    return (ServerFd != -1);
 }
 									/*}}}*/
-bool HttpServerState::InitHashes(FileFd &File, HashStringList const &ExpectedHashes)/*{{{*/
+bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
 {
    delete In.Hash;
    In.Hash = new Hashes(ExpectedHashes);
-
-   // Set the expected size and read file for the hashes
-   File.Truncate(StartPos);
-   return In.Hash->AddFD(File, StartPos);
+   return true;
 }
 									/*}}}*/
+
 APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;

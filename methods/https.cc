@@ -72,18 +72,18 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
       else
 	 me->https->Server->StartPos = 0;
 
-      me->https->File->Truncate(me->https->Server->StartPos);
-      me->https->File->Seek(me->https->Server->StartPos);
-
       me->Res->LastModified = me->https->Server->Date;
       me->Res->Size = me->https->Server->Size;
       me->Res->ResumePoint = me->https->Server->StartPos;
 
       // we expect valid data, so tell our caller we get the file now
-      if (me->https->Server->Result >= 200 && me->https->Server->Result < 300 &&
-	    me->https->Server->JunkSize == 0 &&
-	    me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
-	 me->https->URIStart(*me->Res);
+      if (me->https->Server->Result >= 200 && me->https->Server->Result < 300)
+      {
+	 if (me->https->Server->JunkSize == 0 && me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
+	    me->https->URIStart(*me->Res);
+	 if (me->https->Server->AddPartialFileToHashes(*(me->https->File)) == false)
+	    return 0;
+      }
    }
    else if (me->https->Server->HeaderLine(line) == false)
       return 0;
@@ -116,14 +116,29 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
       }
    }
 
+   if (me->Server->GetHashes()->Add((unsigned char const * const)buffer, buffer_size) == false)
+      return 0;
+
    return buffer_size;
 }
 
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
-HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner)
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner), Hash(NULL)
 {
    TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
    Reset();
+}
+									/*}}}*/
+bool HttpsServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
+{
+   delete Hash;
+   Hash = new Hashes(ExpectedHashes);
+   return true;
+}
+									/*}}}*/
+APT_PURE Hashes * HttpsServerState::GetHashes()				/*{{{*/
+{
+   return Hash;
 }
 									/*}}}*/
 
@@ -365,6 +380,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
    Server = CreateServerState(Itm->Uri);
+   if (Server->InitHashes(Itm->ExpectedHashes) == false)
+      return false;
 
    // keep apt updated
    Res.Filename = Itm->DestFile;
@@ -443,10 +460,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.LastModified = resultStat.st_mtime;
 
    // take hashes
-   Hashes Hash(Itm->ExpectedHashes);
-   FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd);
-   Res.TakeHashes(Hash);
+   Res.TakeHashes(*(Server->GetHashes()));
 
    // keep apt updated
    URIDone(Res);
