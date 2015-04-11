@@ -1,15 +1,15 @@
 # Italian translation of apt
-# Copyright (C) 2002-2010, 2011, 2012, 2013, 2014 The Free Software Foundation, Inc.
+# Copyright (C) 2002-2010, 2011, 2012, 2013, 2014, 2015 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 # Samuele Giovanni Tonon <samu@debian.org>, 2002.
-# Milo Casagrande <milo@ubuntu.com>, 2009, 2010, 2011, 2012, 2013, 2014.
+# Milo Casagrande <milo@milo.name>, 2009, 2010, 2011, 2012, 2013, 2014, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-03-09 02:17+0100\n"
-"PO-Revision-Date: 2014-05-31 17:04+0100\n"
+"POT-Creation-Date: 2015-04-11 08:08+0200\n"
+"PO-Revision-Date: 2015-04-07 16:51+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -18,7 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Launchpad-Export-Date: 2012-06-25 19:48+0000\n"
-"X-Generator: Poedit 1.6.5\n"
 
 #: cmdline/apt-cache.cc:149
 #, c-format
@@ -155,16 +154,7 @@ msgstr "  Gancio del pacchetto: "
 msgid "  Version table:"
 msgstr "  Tabella versione:"
 
-#: cmdline/apt-cache.cc:1827 cmdline/apt-cdrom.cc:208 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1610 cmdline/apt-helper.cc:86 cmdline/apt-mark.cc:446
-#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:222
-#: ftparchive/apt-ftparchive.cc:619 cmdline/apt-internal-solver.cc:47
-#: cmdline/apt-sortpkgs.cc:149
-#, c-format
-msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s per %s compilato il %s %s\n"
-
-#: cmdline/apt-cache.cc:1834
+#: cmdline/apt-cache.cc:1833
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -272,7 +262,7 @@ msgstr "Ripetere questo processo per il resto dei CD."
 msgid "Arguments not in pairs"
 msgstr "Argomenti non in coppia"
 
-#: cmdline/apt-config.cc:89
+#: cmdline/apt-config.cc:88
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -542,11 +532,11 @@ msgstr "Elaborazione delle dipendenze di generazione non riuscita"
 msgid "Changelog for %s (%s)"
 msgstr "Changelog per %s (%s)"
 
-#: cmdline/apt-get.cc:1615
+#: cmdline/apt-get.cc:1614
 msgid "Supported modules:"
 msgstr "Moduli supportati:"
 
-#: cmdline/apt-get.cc:1656
+#: cmdline/apt-get.cc:1655
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -638,7 +628,7 @@ msgstr ""
 
 #: cmdline/apt-helper.cc:36
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "Necessario un URL come argomento"
 
 #: cmdline/apt-helper.cc:49
 msgid "Must specify at least one pair url/filename"
@@ -648,8 +638,7 @@ msgstr "È necessario specificare almeno una coppia URL/nome file"
 msgid "Download Failed"
 msgstr "Scaricamento non riuscito"
 
-#: cmdline/apt-helper.cc:93
-#, fuzzy
+#: cmdline/apt-helper.cc:92
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -668,9 +657,10 @@ msgstr ""
 "apt-helper è un programma d'aiuto interno per apt\n"
 "\n"
 "Comandi:\n"
-"   download-file  Scarica l'URI fornito in percorso\n"
+"   download-file     Scarica l'URI fornito in percorso\n"
+"   auto-detect-proxy Rileva proxy utilizzando apt.conf\n"
 "\n"
-"                       Questo APT ha super poteri.\n"
+"                           Questo APT ha super poteri.\n"
 
 #: cmdline/apt-mark.cc:65
 #, c-format
@@ -718,7 +708,7 @@ msgstr "Blocco su %s annullato.\n"
 msgid "Executing dpkg failed. Are you root?"
 msgstr "Esecuzione di dpkg non riuscita. È stato lanciato come root?"
 
-#: cmdline/apt-mark.cc:450
+#: cmdline/apt-mark.cc:449
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -771,7 +761,7 @@ msgstr ""
 "Per maggiori informazioni, consultare le pagine di manuale apt-mark(8) e\n"
 "apt.conf(5)."
 
-#: cmdline/apt.cc:47
+#: cmdline/apt.cc:46
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
@@ -838,7 +828,7 @@ msgstr "Impossibile smontare il CD-ROM in %s, potrebbe essere ancora in uso."
 msgid "Disk not found."
 msgstr "Disco non trovato"
 
-#: methods/cdrom.cc:262 methods/file.cc:83 methods/rsh.cc:281
+#: methods/cdrom.cc:262 methods/file.cc:88 methods/rsh.cc:281
 msgid "File not found"
 msgstr "File non trovato"
 
@@ -847,11 +837,11 @@ msgstr "File non trovato"
 msgid "Failed to stat"
 msgstr "Esecuzione di stat non riuscita"
 
-#: methods/copy.cc:113 methods/gzip.cc:134 methods/rred.cc:605
+#: methods/copy.cc:105 methods/gzip.cc:134 methods/rred.cc:605
 msgid "Failed to set modification time"
 msgstr "Impostazione della data di modifica non riuscita"
 
-#: methods/file.cc:48
+#: methods/file.cc:49
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI non valido, gli URI locali non devono iniziare con //"
 
@@ -891,125 +881,125 @@ msgstr ""
 "È stato specificato un server proxy, ma nessuno script di accesso: Acquire::"
 "ftp::ProxyLogin è vuoto."
 
-#: methods/ftp.cc:281
+#: methods/ftp.cc:283
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
 msgstr ""
 "Comando dello script di accesso \"%s\" non riuscito, il server riporta: %s"
 
-#: methods/ftp.cc:307
+#: methods/ftp.cc:309
 #, c-format
 msgid "TYPE failed, server said: %s"
 msgstr "TYPE non riuscito, il server riporta: %s"
 
-#: methods/ftp.cc:345 methods/ftp.cc:457 methods/rsh.cc:195 methods/rsh.cc:243
+#: methods/ftp.cc:347 methods/ftp.cc:459 methods/rsh.cc:195 methods/rsh.cc:243
 msgid "Connection timeout"
 msgstr "Connessione scaduta"
 
-#: methods/ftp.cc:351
+#: methods/ftp.cc:353
 msgid "Server closed the connection"
 msgstr "Il server ha chiuso la connessione"
 
-#: methods/ftp.cc:354 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1515
+#: methods/ftp.cc:356 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1515
 #: apt-pkg/contrib/fileutl.cc:1524 apt-pkg/contrib/fileutl.cc:1529
 #: apt-pkg/contrib/fileutl.cc:1531
 msgid "Read error"
 msgstr "Errore di lettura"
 
-#: methods/ftp.cc:361 methods/rsh.cc:209
+#: methods/ftp.cc:363 methods/rsh.cc:209
 msgid "A response overflowed the buffer."
 msgstr "Una risposta ha superato le dimensioni del buffer."
 
-#: methods/ftp.cc:378 methods/ftp.cc:390
+#: methods/ftp.cc:380 methods/ftp.cc:392
 msgid "Protocol corruption"
 msgstr "Protocollo danneggiato"
 
-#: methods/ftp.cc:463 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:911
+#: methods/ftp.cc:465 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:911
 #: apt-pkg/contrib/fileutl.cc:1637 apt-pkg/contrib/fileutl.cc:1646
 #: apt-pkg/contrib/fileutl.cc:1651 apt-pkg/contrib/fileutl.cc:1653
 #: apt-pkg/contrib/fileutl.cc:1678
 msgid "Write error"
 msgstr "Errore di scrittura"
 
-#: methods/ftp.cc:702 methods/ftp.cc:708 methods/ftp.cc:743
+#: methods/ftp.cc:704 methods/ftp.cc:710 methods/ftp.cc:745
 msgid "Could not create a socket"
 msgstr "Impossibile creare un socket"
 
-#: methods/ftp.cc:713
+#: methods/ftp.cc:715
 msgid "Could not connect data socket, connection timed out"
 msgstr ""
 "Impossibile connettersi al socket dati, tempo esaurito per la connessione"
 
-#: methods/ftp.cc:717 methods/connect.cc:116
+#: methods/ftp.cc:719 methods/connect.cc:116
 msgid "Failed"
 msgstr "Non riuscito"
 
-#: methods/ftp.cc:719
+#: methods/ftp.cc:721
 msgid "Could not connect passive socket."
 msgstr "Impossibile connettersi alla socket passiva."
 
-#: methods/ftp.cc:736
+#: methods/ftp.cc:738
 msgid "getaddrinfo was unable to get a listening socket"
 msgstr "Impossibile ottenere un socket in ascolto con getaddrinfo()"
 
-#: methods/ftp.cc:750
+#: methods/ftp.cc:752
 msgid "Could not bind a socket"
 msgstr "Impossibile eseguire bind() su un socket"
 
-#: methods/ftp.cc:754
+#: methods/ftp.cc:756
 msgid "Could not listen on the socket"
 msgstr "Impossibile eseguire listen() su un socket"
 
-#: methods/ftp.cc:761
+#: methods/ftp.cc:763
 msgid "Could not determine the socket's name"
 msgstr "Impossibile determinare il nome del socket"
 
-#: methods/ftp.cc:793
+#: methods/ftp.cc:795
 msgid "Unable to send PORT command"
 msgstr "Impossibile inviare il comando PORT"
 
-#: methods/ftp.cc:803
+#: methods/ftp.cc:805
 #, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "Famiglia di indirizzamento %u (AF_*) sconosciuta"
 
-#: methods/ftp.cc:812
+#: methods/ftp.cc:814
 #, c-format
 msgid "EPRT failed, server said: %s"
 msgstr "EPRT non riuscito, il server riporta: %s"
 
-#: methods/ftp.cc:832
+#: methods/ftp.cc:834
 msgid "Data socket connect timed out"
 msgstr "Connessione al socket dati terminata"
 
-#: methods/ftp.cc:839
+#: methods/ftp.cc:841
 msgid "Unable to accept connection"
 msgstr "Impossibile accettare connessioni"
 
-#: methods/ftp.cc:879 methods/server.cc:362 methods/rsh.cc:319
+#: methods/ftp.cc:881 methods/server.cc:362 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "Si è verificato un problema nel creare l'hash del file"
 
-#: methods/ftp.cc:892
+#: methods/ftp.cc:894
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
 msgstr "Impossibile recuperare il file, il server riporta: \"%s\""
 
-#: methods/ftp.cc:907 methods/rsh.cc:338
+#: methods/ftp.cc:909 methods/rsh.cc:338
 msgid "Data socket timed out"
 msgstr "Socket dati terminato"
 
-#: methods/ftp.cc:944
+#: methods/ftp.cc:946
 #, c-format
 msgid "Data transfer failed, server said '%s'"
 msgstr "Trasferimento dati non riuscito, il server riporta: \"%s\""
 
 #. Get the files information
-#: methods/ftp.cc:1027
+#: methods/ftp.cc:1029
 msgid "Query"
 msgstr "Interrogazione"
 
-#: methods/ftp.cc:1141
+#: methods/ftp.cc:1143
 msgid "Unable to invoke "
 msgstr "Impossibile invocare "
 
@@ -1411,11 +1401,15 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
+"%i pacchetto può essere aggiornato: eseguire \"apt list --upgradable\" per "
+"vederlo.\n"
 msgstr[1] ""
+"%i pacchetti possono essere aggiornati: eseguire \"apt list --upgradable\" "
+"per vederli.\n"
 
 #: apt-private/private-update.cc:99
 msgid "All packages are up to date."
-msgstr ""
+msgstr "Tutti i pacchetti sono aggiornati."
 
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
@@ -1771,34 +1765,33 @@ msgstr ""
 msgid "Full Text Search"
 msgstr "Ricerca sul testo"
 
-#: apt-private/acqprogress.cc:66
+#: apt-private/acqprogress.cc:62
 msgid "Hit "
 msgstr "Trovato "
 
-#: apt-private/acqprogress.cc:88
+#: apt-private/acqprogress.cc:83
 msgid "Get:"
 msgstr "Scaricamento di:"
 
 # (ndt) questa non so cosa voglia dire
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:113
 msgid "Ign "
 msgstr "Ign "
 
-#: apt-private/acqprogress.cc:126
+#: apt-private/acqprogress.cc:120
 msgid "Err "
 msgstr "Err "
 
-#: apt-private/acqprogress.cc:150
+#: apt-private/acqprogress.cc:143
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "Recuperati %sB in %s (%sB/s)\n"
 
-#: apt-private/acqprogress.cc:240
-#, c-format
+#: apt-private/acqprogress.cc:213
 msgid " [Working]"
 msgstr " [In lavorazione]"
 
-#: apt-private/acqprogress.cc:301
+#: apt-private/acqprogress.cc:281
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -1901,7 +1894,7 @@ msgstr ""
 msgid "Merging available information"
 msgstr "Unione delle informazioni disponibili"
 
-#: cmdline/apt-extracttemplates.cc:229
+#: cmdline/apt-extracttemplates.cc:228
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1925,18 +1918,18 @@ msgstr ""
 "  -c=? Legge come configurazione il file specificato\n"
 "  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:259 apt-pkg/contrib/fileutl.cc:2092
+#: cmdline/apt-extracttemplates.cc:258 apt-pkg/contrib/fileutl.cc:2092
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Impossibile eseguire mkstemp %s"
 
-#: cmdline/apt-extracttemplates.cc:264 apt-pkg/pkgcachegen.cc:1385
+#: cmdline/apt-extracttemplates.cc:263 apt-pkg/pkgcachegen.cc:1385
 #: apt-pkg/contrib/fileutl.cc:2097
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Impossibile scrivere in %s"
 
-#: cmdline/apt-extracttemplates.cc:305
+#: cmdline/apt-extracttemplates.cc:304
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Impossibile trovare la versione di debconf. È installato?"
 
@@ -1964,7 +1957,7 @@ msgstr "Errore nella scrittura dell'intestazione nel file \"contents\""
 msgid "Error processing contents %s"
 msgstr "Errore nell'elaborare i contenuti %s"
 
-#: ftparchive/apt-ftparchive.cc:625
+#: ftparchive/apt-ftparchive.cc:624
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -2045,11 +2038,11 @@ msgstr ""
 "  -c=?        Legge come configurazione il file specificato\n"
 "  -o=?        Imposta un'opzione arbitraria di configurazione"
 
-#: ftparchive/apt-ftparchive.cc:821
+#: ftparchive/apt-ftparchive.cc:820
 msgid "No selections matched"
 msgstr "Nessuna selezione corrisponde"
 
-#: ftparchive/apt-ftparchive.cc:906
+#: ftparchive/apt-ftparchive.cc:905
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Mancano alcuni file nel file group di pacchetti \"%s\""
@@ -2084,9 +2077,8 @@ msgid "Failed to stat %s"
 msgstr "Impossibile eseguire stat su %s"
 
 #: ftparchive/cachedb.cc:326
-#, fuzzy
 msgid "Failed to read .dsc"
-msgstr "Esecuzione di readlink su %s non riuscita"
+msgstr "Lettura di .dsc non riuscita"
 
 #: ftparchive/cachedb.cc:359
 msgid "Archive has no control record"
@@ -2265,7 +2257,7 @@ msgstr "Problema nell'unlink di %s"
 msgid "Failed to rename %s to %s"
 msgstr "Rinomina di %s in %s non riuscita"
 
-#: cmdline/apt-internal-solver.cc:51
+#: cmdline/apt-internal-solver.cc:50
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2293,7 +2285,7 @@ msgstr ""
 msgid "Unknown package record!"
 msgstr "Record del pacchetto sconosciuto."
 
-#: cmdline/apt-sortpkgs.cc:155
+#: cmdline/apt-sortpkgs.cc:154
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
@@ -2584,9 +2576,9 @@ msgstr ""
 "Tipo \"%s\" non riconosciuto nella stanza %u nel file delle sorgenti %s"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:553
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "Il file indice di tipo \"%s\" non è supportato"
+msgstr "La pulizia di %s non è supportata"
 
 #: apt-pkg/clean.cc:64
 #, c-format
@@ -3118,31 +3110,31 @@ msgstr "Voce \"Valid-Until\" nel file Release %s non valida"
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Voce \"Date\" nel file Release %s non valida"
 
-#. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
+#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%lig %lih %limin %lis"
 
-#. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:432
+#. TRANSLATOR: h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%lih %limin %lis"
 
-#. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:439
+#. TRANSLATOR: min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:430
 #, c-format
 msgid "%limin %lis"
 msgstr "%limin %lis"
 
-#. s means seconds
-#: apt-pkg/contrib/strutl.cc:444
+#. TRANSLATOR: s means seconds
+#: apt-pkg/contrib/strutl.cc:435
 #, c-format
 msgid "%lis"
 msgstr "%lis"
 
-#: apt-pkg/contrib/strutl.cc:1290
+#: apt-pkg/contrib/strutl.cc:1279
 #, c-format
 msgid "Selection %s not found"
 msgstr "Selezione %s non trovata"
@@ -3348,7 +3340,7 @@ msgstr ""
 msgid "Unable to stat the mount point %s"
 msgstr "Impossibile eseguire stat sul punto di mount %s"
 
-#: apt-pkg/contrib/cdromutl.cc:246
+#: apt-pkg/contrib/cdromutl.cc:247
 msgid "Failed to stat the cdrom"
 msgstr "Esecuzione di stat sul CD-ROM non riuscita"
 
@@ -3792,11 +3784,17 @@ msgstr "Intestazione TAR di tipo %u sconosciuta, member %s"
 #~ msgid "Total dependency version space: "
 #~ msgstr "Totale spazio dipendenza di versione: "
 
+#~ msgid "%s %s for %s compiled on %s %s\n"
+#~ msgstr "%s %s per %s compilato il %s %s\n"
+
 #~ msgid "You don't have enough free space in %s"
 #~ msgstr "Lo spazio libero in %s è insufficiente"
 
 #~ msgid "Done"
 #~ msgstr "Eseguito"
+
+#~ msgid "Unable to parse package file %s (2)"
+#~ msgstr "Impossibile analizzare il file di pacchetto %s (2)"
 
 #~ msgid "No keyring installed in %s."
 #~ msgstr "Nessun portachiavi installato in %s."
