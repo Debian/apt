@@ -12,16 +12,19 @@ insertinstalledpackage 'provider' 'amd64' '1' 'Provides: foo'
 
 insertpackage 'unstable' 'pre-depender' 'all' '1' 'Pre-Depends: libc6:i386'
 insertpackage 'unstable' 'depender' 'all' '1' 'Depends: libc6:i386'
+insertpackage 'unstable' 'depender-x32' 'i386,amd64' '1' 'Depends: libc6:i386'
+insertpackage 'unstable' 'depender-x64' 'i386,amd64' '1' 'Depends: libc6:amd64'
 
 insertpackage 'unstable' 'breaker' 'all' '1' 'Breaks: libold (<< 2)'
-insertpackage 'unstable' 'breaker-x32' 'amd64' '1' 'Breaks: libold:i386 (<< 2)'
-insertpackage 'unstable' 'breaker-x64' 'i386' '1' 'Breaks: libold:amd64 (<< 2)'
+insertpackage 'unstable' 'breaker-x32' 'i386,amd64' '1' 'Breaks: libold:i386 (<< 2)'
+insertpackage 'unstable' 'breaker-x64' 'i386,amd64' '1' 'Breaks: libold:amd64 (<< 2)'
 # conflicts with no effect
 insertpackage 'unstable' 'oldconflictor' 'all' '1' 'Conflicts: libold (<< 0)'
 insertpackage 'unstable' 'oldconflictor-x32' 'amd64' '1' 'Conflicts: libold:i386 (<< 0)'
 insertpackage 'unstable' 'oldconflictor-x64' 'i386' '1' 'Conflicts: libold:amd64 (<< 0)'
 
 insertpackage 'unstable' 'foo-depender' 'i386,amd64' '1' 'Depends: foo'
+insertpackage 'unstable' 'foo-native-depender' 'amd64' '1' 'Depends: foo:amd64'
 insertpackage 'unstable' 'foo-foreign-depender' 'i386' '1' 'Depends: foo:amd64'
 
 insertpackage 'unstable' 'foo-conflictor' 'i386,amd64' '1' 'Conflicts: foo'
@@ -56,6 +59,54 @@ Conf depender (1 unstable [all])' aptget install depender -s
 
 testequal 'Reading package lists...
 Building dependency tree...
+The following extra packages will be installed:
+  libc6:i386
+The following NEW packages will be installed:
+  depender-x32:i386 libc6:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:i386 (1 unstable [i386])
+Inst depender-x32:i386 (1 unstable [i386])
+Conf libc6:i386 (1 unstable [i386])
+Conf depender-x32:i386 (1 unstable [i386])' aptget install depender-x32:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6:i386
+The following NEW packages will be installed:
+  depender-x32 libc6:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:i386 (1 unstable [i386])
+Inst depender-x32 (1 unstable [amd64])
+Conf libc6:i386 (1 unstable [i386])
+Conf depender-x32 (1 unstable [amd64])' aptget install depender-x32:amd64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6
+The following NEW packages will be installed:
+  depender-x64 libc6
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1 unstable [amd64])
+Inst depender-x64 (1 unstable [amd64])
+Conf libc6 (1 unstable [amd64])
+Conf depender-x64 (1 unstable [amd64])' aptget install depender-x64:amd64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6
+The following NEW packages will be installed:
+  depender-x64:i386 libc6
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1 unstable [amd64])
+Inst depender-x64:i386 (1 unstable [i386])
+Conf libc6 (1 unstable [amd64])
+Conf depender-x64:i386 (1 unstable [i386])' aptget install depender-x64:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
 The following packages will be REMOVED:
   libold libold:i386
 The following NEW packages will be installed:
@@ -75,7 +126,29 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv libold:i386 [1]
 Inst breaker-x32 (1 unstable [amd64])
-Conf breaker-x32 (1 unstable [amd64])' aptget install breaker-x32 -s
+Conf breaker-x32 (1 unstable [amd64])' aptget install breaker-x32:amd64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold:i386
+The following NEW packages will be installed:
+  breaker-x32:i386
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold:i386 [1]
+Inst breaker-x32:i386 (1 unstable [i386])
+Conf breaker-x32:i386 (1 unstable [i386])' aptget install breaker-x32:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold
+The following NEW packages will be installed:
+  breaker-x64
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold [1]
+Inst breaker-x64 (1 unstable [amd64])
+Conf breaker-x64 (1 unstable [amd64])' aptget install breaker-x64:amd64 -s
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -86,7 +159,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv libold [1]
 Inst breaker-x64:i386 (1 unstable [i386])
-Conf breaker-x64:i386 (1 unstable [i386])' aptget install breaker-x64 -s
+Conf breaker-x64:i386 (1 unstable [i386])' aptget install breaker-x64:i386 -s
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -131,6 +204,14 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  foo-depender:i386 : Depends: foo:i386 but it is not installable
 E: Unable to correct problems, you have held broken packages.' aptget install foo-depender:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-native-depender
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-native-depender (1 unstable [amd64])
+Conf foo-native-depender (1 unstable [amd64])' aptget install foo-native-depender -s
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -180,3 +261,62 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst foo-no-conflictor:i386 (1 unstable [i386])
 Conf foo-no-conflictor:i386 (1 unstable [i386])' aptget install foo-no-conflictor:i386 -s
+
+msgmsg 'switch to single architecture'
+configarchitecture 'amd64'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6
+The following NEW packages will be installed:
+  depender-x64 libc6
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1 unstable [amd64])
+Inst depender-x64 (1 unstable [amd64])
+Conf libc6 (1 unstable [amd64])
+Conf depender-x64 (1 unstable [amd64])' aptget install depender-x64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+E: Unable to locate package depender-x64' aptget install depender-x64:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-native-depender
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-native-depender (1 unstable [amd64])
+Conf foo-native-depender (1 unstable [amd64])' aptget install foo-native-depender -s
+
+# libold:i386 is installed, but we don't see it as i386 isn't configured
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  breaker-x32
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst breaker-x32 (1 unstable [amd64])
+Conf breaker-x32 (1 unstable [amd64])' aptget install breaker-x32:amd64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold
+The following NEW packages will be installed:
+  breaker-x64
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold [1]
+Inst breaker-x64 (1 unstable [amd64])
+Conf breaker-x64 (1 unstable [amd64])' aptget install breaker-x64:amd64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ depender-x32 : Depends: libc6:i386 but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget install depender-x32 -s
