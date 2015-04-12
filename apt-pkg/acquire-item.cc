@@ -1739,7 +1739,10 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
       MetaIndexParser->Load(MetaIndexFile);
-      QueueIndexes(true);
+      if (!VerifyVendor(Message, RealURI))
+	 /* expired Release files are still a problem you need extra force for */;
+      else
+	 QueueIndexes(true);
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -1843,6 +1846,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*
 
    if (!VerifyVendor(Message, RealURI))
    {
+      Status = StatAuthError;
       return false;
    }
 
@@ -2030,13 +2034,19 @@ bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
        MetaIndexParser->GetValidUntil() > 0) {
       time_t const invalid_since = time(NULL) - MetaIndexParser->GetValidUntil();
       if (invalid_since > 0)
-	 // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
-	 // the time since then the file is invalid - formated in the same way as in
-	 // the download progress display (e.g. 7d 3h 42min 1s)
-	 return _error->Error(
-            _("Release file for %s is expired (invalid since %s). "
-              "Updates for this repository will not be applied."),
-            RealURI.c_str(), TimeToStr(invalid_since).c_str());
+      {
+	 std::string errmsg;
+	 strprintf(errmsg,
+	       // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+	       // the time since then the file is invalid - formated in the same way as in
+	       // the download progress display (e.g. 7d 3h 42min 1s)
+	       _("Release file for %s is expired (invalid since %s). "
+		  "Updates for this repository will not be applied."),
+	       RealURI.c_str(), TimeToStr(invalid_since).c_str());
+	 if (ErrorText.empty())
+	    ErrorText = errmsg;
+	 return _error->Error("%s", errmsg.c_str());
+      }
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
