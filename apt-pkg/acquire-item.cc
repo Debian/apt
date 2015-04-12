@@ -74,6 +74,11 @@ static std::string GetPartialFileNameFromURI(std::string const &uri)	/*{{{*/
    return GetPartialFileName(URItoFileName(uri));
 }
 									/*}}}*/
+static std::string GetFinalFileNameFromURI(std::string const &uri)	/*{{{*/
+{
+   return _config->FindDir("Dir::State::lists") + URItoFileName(uri);
+}
+									/*}}}*/
 static std::string GetCompressedFileName(std::string const &URI, std::string const &Name, std::string const &Ext) /*{{{*/
 {
    if (Ext.empty() || Ext == "uncompressed")
@@ -273,6 +278,12 @@ void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
       APT_IGNORE_DEPRECATED(Mode = ActiveSubprocess.c_str();)
 }
 									/*}}}*/
+// Acquire::Item::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcquire::Item::GetFinalFilename() const
+{
+   return GetFinalFileNameFromURI(Desc.URI);
+}
+									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
@@ -348,8 +359,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
 
    // look for the current package file
-   CurrentPackagesFile = _config->FindDir("Dir::State::lists");
-   CurrentPackagesFile += URItoFileName(RealURI);
+   CurrentPackagesFile = GetFinalFileNameFromURI(RealURI);
 
    // FIXME: this file:/ check is a hack to prevent fetching
    //        from local sources. this is really silly, and
@@ -370,6 +380,13 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 
 }
 									/*}}}*/
+// Acquire::Item::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcqDiffIndex::GetFinalFilename() const
+{
+   // the logic we inherent from pkgAcqBaseIndex isn't what we need here
+   return pkgAcquire::Item::GetFinalFilename();
+}
+									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
@@ -379,8 +396,7 @@ string pkgAcqDiffIndex::Custom600Headers() const
 string pkgAcqDiffIndex::Custom600Headers()
 #endif
 {
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(Desc.URI);
+   string const Final = GetFinalFilename();
 
    if(Debug)
       std::clog << "Custom600Header-IMS: " << Final << std::endl;
@@ -709,10 +725,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
 
    }
 
-   string FinalFile;
-   FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(Desc.URI);
-
+   string const FinalFile = GetFinalFilename();
    if(StringToBool(LookupTag(Message,"IMS-Hit"),false))
       DestFile = FinalFile;
 
@@ -754,8 +767,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    if(available_patches.empty() == true)
    {
       // we are done (yeah!), check hashes against the final file
-      DestFile = _config->FindDir("Dir::State::lists");
-      DestFile += URItoFileName(Target->URI);
+      DestFile = GetFinalFileNameFromURI(Target->URI);
       Finish(true);
    }
    else
@@ -797,10 +809,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 	 return;
       }
 
-      // queue for copy
-      std::string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
       // this is for the "real" finish
       Complete = true;
@@ -1064,10 +1073,8 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       }
 
 
-      std::string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-
       // move the result into place
+      std::string const FinalFile = GetFinalFilename();
       if(Debug)
 	 std::clog << "Queue patched file in place: " << std::endl
 		   << DestFile << " -> " << FinalFile << std::endl;
@@ -1104,6 +1111,12 @@ bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
       }
    }
    return true;
+}
+									/*}}}*/
+// AcqBaseIndex::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcqBaseIndex::GetFinalFilename() const
+{
+   return GetFinalFileNameFromURI(RealURI);
 }
 									/*}}}*/
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
@@ -1293,8 +1306,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 // pkgAcqIndex::GetFinalFilename - Return the full final file path	/*{{{*/
 std::string pkgAcqIndex::GetFinalFilename() const
 {
-   std::string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
+   std::string const FinalFile = GetFinalFileNameFromURI(RealURI);
    return GetCompressedFileName(RealURI, FinalFile, CurrentCompressionExtension);
 }
 									/*}}}*/
@@ -1566,18 +1578,16 @@ void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
                                              const std::string &FinalFile)
 {
    I->PartialFile = "";
-   I->DestFile = FinalFile; 
+   I->DestFile = FinalFile;
 }
 									/*}}}*/
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
-bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &RealURI,
-                                             const std::string &Message)
+bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &Message)
 {
    // FIXME: this entire function can do now that we disallow going to
    //        a unauthenticated state and can cleanly rollback
 
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-
+   string const Final = GetFinalFilename();
    if(FileExists(Final))
    {
       Status = StatTransientNetworkError;
@@ -1613,13 +1623,12 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
                              string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser,
+   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, URI,
                   HashStringList(), TransactionManager),
-   RealURI(URI), MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
+   MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
    ShortDesc(ShortDesc)
 {
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI);
+   DestFile = GetPartialFileNameFromURI(RealURI);
 
    // remove any partial downloaded sig-file in partial/.
    // it may confuse proxies and is too small to warrant a
@@ -1644,18 +1653,6 @@ pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 {
 }
 									/*}}}*/
-// pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
-// ---------------------------------------------------------------------
-#if APT_PKG_ABI >= 413
-string pkgAcqMetaSig::Custom600Headers() const
-#else
-string pkgAcqMetaSig::Custom600Headers()
-#endif
-{
-   std::string Header = GetCustom600Headers(RealURI);
-   return Header;
-}
-									/*}}}*/
 // pkgAcqMetaSig::Done - The signature was downloaded/verified		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
@@ -1667,7 +1664,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      if(CheckDownloadDone(Message, RealURI) == true)
+      if(CheckDownloadDone(Message) == true)
       {
          // destfile will be modified to point to MetaIndexFile for the
          // gpgv method, so we need to save it here
@@ -1676,15 +1673,8 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
       }
       return;
    }
-   else
-   {
-      if(CheckAuthDone(Message, RealURI) == true)
-      {
-         std::string FinalFile = _config->FindDir("Dir::State::lists");
-         FinalFile += URItoFileName(RealURI);
-         TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, FinalFile);
-      }
-   }
+   else if(CheckAuthDone(Message) == true)
+      TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, GetFinalFilename());
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
@@ -1692,14 +1682,14 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    Item::Failed(Message,Cnf);
 
    // check if we need to fail at this point 
-   if (AuthPass == true && CheckStopAuthentication(RealURI, Message))
+   if (AuthPass == true && CheckStopAuthentication(Message))
          return;
 
    // FIXME: meh, this is not really elegant
-   string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   string const Final = GetFinalFileNameFromURI(RealURI);
    string const InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
                                          "InRelease");
-   string const FinalInRelease = _config->FindDir("Dir::State::lists") + URItoFileName(InReleaseURI);
+   string const FinalInRelease = GetFinalFileNameFromURI(InReleaseURI);
 
    if (RealFileExists(Final) || RealFileExists(FinalInRelease))
    {
@@ -1739,7 +1729,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
       MetaIndexParser->Load(MetaIndexFile);
-      if (!VerifyVendor(Message, RealURI))
+      if (!VerifyVendor(Message))
 	 /* expired Release files are still a problem you need extra force for */;
       else
 	 QueueIndexes(true);
@@ -1760,9 +1750,9 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
                                  string MetaIndexSigURI,string MetaIndexSigURIDesc, string MetaIndexSigShortDesc,
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, HashStringList(),
+   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, URI, HashStringList(),
                   TransactionManager), 
-   RealURI(URI), URIDesc(URIDesc), ShortDesc(ShortDesc),
+   URIDesc(URIDesc), ShortDesc(ShortDesc),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
 {
@@ -1796,24 +1786,13 @@ void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
    QueueURI(Desc);
 }
 									/*}}}*/
-// pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
-// ---------------------------------------------------------------------
-#if APT_PKG_ABI >= 413
-string pkgAcqMetaIndex::Custom600Headers() const
-#else
-string pkgAcqMetaIndex::Custom600Headers()
-#endif
-{
-   return GetCustom600Headers(RealURI);
-}
-									/*}}}*/
 void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
                            HashStringList const &Hashes,
 			   pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hashes,Cfg);
 
-   if(CheckDownloadDone(Message, RealURI))
+   if(CheckDownloadDone(Message))
    {
       // we have a Release file, now download the Signature, all further
       // verify/queue for additional downloads will be done in the
@@ -1824,13 +1803,11 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
                         MetaIndexSigShortDesc, MetaIndexFile, IndexTargets, 
                         MetaIndexParser);
 
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
    }
 }
 									/*}}}*/
-bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*/
+bool pkgAcqMetaBase::CheckAuthDone(string Message)			/*{{{*/
 {
    // At this point, the gpgv method has succeeded, so there is a
    // valid signature from a key in the trusted keyring.  We
@@ -1844,7 +1821,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*
       return false;
    }
 
-   if (!VerifyVendor(Message, RealURI))
+   if (!VerifyVendor(Message))
    {
       Status = StatAuthError;
       return false;
@@ -1866,9 +1843,13 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*
    return true;
 }
 									/*}}}*/
-// pkgAcqMetaBase::GetCustom600Headers - Get header for AcqMetaBase     /*{{{*/
+// pkgAcqMetaBase::Custom600Headers - Get header for AcqMetaBase	/*{{{*/
 // ---------------------------------------------------------------------
-string pkgAcqMetaBase::GetCustom600Headers(const string &RealURI) const
+#if APT_PKG_ABI >= 413
+string pkgAcqMetaBase::Custom600Headers() const
+#else
+string pkgAcqMetaBase::Custom600Headers()
+#endif
 {
    std::string Header = "\nIndex-File: true";
    std::string MaximumSize;
@@ -1876,14 +1857,19 @@ string pkgAcqMetaBase::GetCustom600Headers(const string &RealURI) const
              _config->FindI("Acquire::MaxReleaseFileSize", 10*1000*1000));
    Header += MaximumSize;
 
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
+   string const FinalFile = GetFinalFilename();
 
    struct stat Buf;
    if (stat(FinalFile.c_str(),&Buf) == 0)
       Header += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 
    return Header;
+}
+									/*}}}*/
+// pkgAcqMetaBase::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcqMetaBase::GetFinalFilename() const
+{
+   return GetFinalFileNameFromURI(RealURI);
 }
 									/*}}}*/
 // pkgAcqMetaBase::QueueForSignatureVerify				/*{{{*/
@@ -1898,8 +1884,7 @@ void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
 }
 									/*}}}*/
 // pkgAcqMetaBase::CheckDownloadDone					/*{{{*/
-bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message,
-                                       const std::string &RealURI)
+bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message)
 {
    // We have just finished downloading a Release file (it is not
    // verified yet)
@@ -1923,11 +1908,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message,
    // make sure to verify against the right file on I-M-S hit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
    if(IMSHit)
-   {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      DestFile = FinalFile;
-   }
+      DestFile = GetFinalFilename();
 
    // set Item to complete as the remaining work is all local (verify etc)
    Complete = true;
@@ -1993,7 +1974,7 @@ void pkgAcqMetaBase::QueueIndexes(bool verify)				/*{{{*/
    }
 }
 									/*}}}*/
-bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
+bool pkgAcqMetaBase::VerifyVendor(string Message)			/*{{{*/
 {
    string::size_type pos;
 
@@ -2083,8 +2064,6 @@ void pkgAcqMetaIndex::Failed(string Message,
    pkgAcquire::Item::Failed(Message, Cnf);
    Status = StatDone;
 
-   string FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-
    _error->Warning(_("The repository '%s' does not have a Release file. "
                      "This is deprecated, please contact the owner of the "
                      "repository."), URIDesc.c_str());
@@ -2096,7 +2075,7 @@ void pkgAcqMetaIndex::Failed(string Message,
    {
       // Done, queue for rename on transaction finished
       if (FileExists(DestFile)) 
-         TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+         TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
       // queue without any kind of hashsum support
       QueueIndexes(false);
@@ -2132,19 +2111,18 @@ pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Custom600Headers - Insert custom request headers	/*{{{*/
-// ---------------------------------------------------------------------
 #if APT_PKG_ABI >= 413
 string pkgAcqMetaClearSig::Custom600Headers() const
 #else
 string pkgAcqMetaClearSig::Custom600Headers()
 #endif
 {
-   string Header = GetCustom600Headers(RealURI);
+   string Header = pkgAcqMetaBase::Custom600Headers();
    Header += "\nFail-Ignore: true";
    return Header;
 }
 									/*}}}*/
-// pkgAcqMetaClearSig::Done - We got a file                     	/*{{{*/
+// pkgAcqMetaClearSig::Done - We got a file				/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
                               HashStringList const &Hashes,
@@ -2165,21 +2143,12 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      if(CheckDownloadDone(Message, RealURI) == true)
+      if(CheckDownloadDone(Message) == true)
          QueueForSignatureVerify(DestFile, DestFile);
       return;
    }
-   else
-   {
-      if(CheckAuthDone(Message, RealURI) == true)
-      {
-         string FinalFile = _config->FindDir("Dir::State::lists");
-         FinalFile += URItoFileName(RealURI);
-
-         // queue for copy in place
-         TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
-      }
-   }
+   else if(CheckAuthDone(Message) == true)
+      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 }
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
@@ -2194,9 +2163,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       // Queue the 'old' InRelease file for removal if we try Release.gpg
       // as otherwise the file will stay around and gives a false-auth
       // impression (CVE-2012-0214)
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile.append(URItoFileName(RealURI));
-      TransactionManager->TransactionStageRemoval(this, FinalFile);
+      TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
       Status = StatDone;
 
       new pkgAcqMetaIndex(Owner, TransactionManager,
@@ -2206,7 +2173,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
    }
    else
    {
-      if(CheckStopAuthentication(RealURI, Message))
+      if(CheckStopAuthentication(Message))
          return;
 
       _error->Warning(_("The data from '%s' is not signed. Packages "
@@ -2224,8 +2191,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
           * that PackageFile objects are correctly filled in */
          if (FileExists(DestFile))
          {
-            string FinalFile = _config->FindDir("Dir::State::lists");
-            FinalFile += URItoFileName(RealURI);
+            string FinalFile = GetFinalFilename();
             /* InRelease files become Release files, otherwise
              * they would be considered as trusted later on */
             RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
@@ -2482,11 +2448,16 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size, HashStringList 
    }
 
    // Done, move it into position
-   string FinalFile = _config->FindDir("Dir::Cache::Archives");
-   FinalFile += flNotDir(StoreFilename);
+   string const FinalFile = GetFinalFilename();
    Rename(DestFile,FinalFile);
    StoreFilename = DestFile = FinalFile;
    Complete = true;
+}
+									/*}}}*/
+// Acquire::Item::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcqArchive::GetFinalFilename() const
+{
+   return _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
 }
 									/*}}}*/
 // AcqArchive::Failed - Failure handler					/*{{{*/

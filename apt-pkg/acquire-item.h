@@ -93,6 +93,9 @@ class pkgAcquire::Item : public WeakPointable
     */
    bool Rename(std::string From,std::string To);
 
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
    public:
 
    /** \brief The current status of this item. */
@@ -390,7 +393,13 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
    bool AuthPass;
 
    // required to deal gracefully with problems caused by incorrect ims hits
-   bool IMSHit; 
+   bool IMSHit;
+
+   /** \brief The URI of the signature file.  Unlike Desc.URI, this is
+    *  never modified; it is used to determine the file that is being
+    *  downloaded.
+    */
+   std::string RealURI;
 
    /** \brief Starts downloading the individual index files.
     *
@@ -411,15 +420,17 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     *  \param Message The message block received from the fetch
     *  subprocess.
     */
-   bool CheckDownloadDone(const std::string &Message,
-                          const std::string &RealURI);
+   bool CheckDownloadDone(const std::string &Message);
 
    /** \brief Queue the downloaded Signature for verification */
    void QueueForSignatureVerify(const std::string &MetaIndexFile,
                                 const std::string &MetaIndexFileSignature);
 
-   /** \brief get the custom600 header for all pkgAcqMeta */
-   std::string GetCustom600Headers(const std::string &RealURI) const;
+#if APT_PKG_ABI >= 413
+   virtual std::string Custom600Headers() const;
+#else
+   virtual std::string Custom600Headers();
+#endif
 
    /** \brief Called when authentication succeeded.
     *
@@ -430,20 +441,24 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     *  \param Message The message block received from the fetch
     *  subprocess.
     */
-   bool CheckAuthDone(std::string Message, const std::string &RealURI);
+   bool CheckAuthDone(std::string Message);
 
    /** Check if the current item should fail at this point */
-   bool CheckStopAuthentication(const std::string &RealURI,
-                                const std::string &Message);
+   bool CheckStopAuthentication(const std::string &Message);
 
    /** \brief Check that the release file is a release file for the
     *  correct distribution.
     *
     *  \return \b true if no fatal errors were encountered.
     */
-   bool VerifyVendor(std::string Message, const std::string &RealURI);
-   
+   bool VerifyVendor(std::string Message);
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
  public:
+   virtual std::string DescURI() {return RealURI; };
+
    // transaction code
    void Add(Item *I);
    void AbortTransaction();
@@ -462,11 +477,12 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
    pkgAcqMetaBase(pkgAcquire *Owner,
                   const std::vector<IndexTarget*>* IndexTargets,
                   indexRecords* MetaIndexParser,
+		  std::string const &RealURI,
                   HashStringList const &ExpectedHashes=HashStringList(),
                   pkgAcqMetaBase *TransactionManager=NULL)
       : Item(Owner, ExpectedHashes, TransactionManager),
         MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
-        AuthPass(false), IMSHit(false) {};
+        AuthPass(false), IMSHit(false), RealURI(RealURI) {};
 };
 									/*}}}*/
 /** \brief An acquire item that downloads the detached signature	{{{
@@ -483,12 +499,6 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqMetaBase
 
    protected:
 
-   /** \brief The URI of the signature file.  Unlike Desc.URI, this is
-    *  never modified; it is used to determine the file that is being
-    *  downloaded.
-    */
-   std::string RealURI;
-
    /** \brief The file we need to verify */
    std::string MetaIndexFile;
 
@@ -502,18 +512,12 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqMetaBase
    std::string ShortDesc;
 
    public:
-   
+
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size,
                      HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-#if APT_PKG_ABI >= 413
-   virtual std::string Custom600Headers() const;
-#else
-   virtual std::string Custom600Headers();
-#endif
-   virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,
@@ -540,11 +544,6 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    void *d;
 
    protected:
-   /** \brief The URI that is actually being downloaded; never
-    *  modified by pkgAcqMetaIndex.
-    */
-   std::string RealURI;
-
    std::string URIDesc;
    std::string ShortDesc;
 
@@ -566,12 +565,6 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-#if APT_PKG_ABI >= 413
-   virtual std::string Custom600Headers() const;
-#else
-   virtual std::string Custom600Headers();
-#endif
-   virtual std::string DescURI() {return RealURI; };
    virtual void Finished();
 
    /** \brief Create a new pkgAcqMetaIndex. */
@@ -652,6 +645,9 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
 
    bool VerifyHashByMetaKey(HashStringList const &Hashes);
 
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
    pkgAcqBaseIndex(pkgAcquire *Owner,
                    pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
@@ -691,6 +687,9 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    /** \brief If the copy step of the packages file is done
     */
    bool PackagesFileReadyInPartial;
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
 
  public:
    // Specialized action members
@@ -999,15 +998,14 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    /** \brief Auto select the right compression to use */
    void AutoSelectCompression();
 
-   /** \brief Get the full pathname of the final file for the current URI
-    */
-   std::string GetFinalFilename() const;
-
    /** \brief Schedule file for verification after a IMS hit */
    void ReverifyAfterIMS();
 
    /** \brief Validate the downloaded index file */
    bool ValidateFile(const std::string &FileName);
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
 
    public:
    
@@ -1133,9 +1131,12 @@ class pkgAcqArchive : public pkgAcquire::Item
 
    /** \brief Queue up the next available file for this version. */
    bool QueueNext();
-   
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
    public:
-   
+
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
