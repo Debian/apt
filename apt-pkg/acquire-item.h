@@ -74,10 +74,15 @@ class pkgAcquire::Item : public WeakPointable
 
    /** \brief Insert this item into its owner's queue.
     *
+    *  The method is designed to check if the request would end
+    *  in an IMSHit and if it determines that it would, it isn't
+    *  queueing the Item and instead sets it to completion instantly.
+    *
     *  \param Item Metadata about this item (its URI and
     *  description).
+    *  \return true if the item was inserted, false if IMSHit was detected
     */
-   void QueueURI(ItemDesc &Item);
+   virtual bool QueueURI(ItemDesc &Item);
 
    /** \brief Remove this item from its owner's queue. */
    void Dequeue();
@@ -392,9 +397,6 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     */
    bool AuthPass;
 
-   // required to deal gracefully with problems caused by incorrect ims hits
-   bool IMSHit;
-
    /** \brief The URI of the signature file.  Unlike Desc.URI, this is
     *  never modified; it is used to determine the file that is being
     *  downloaded.
@@ -457,7 +459,11 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
    virtual std::string GetFinalFilename() const;
 
  public:
+   // This refers more to the Transaction-Manager than the actual file
+   bool IMSHit;
+
    virtual std::string DescURI() {return RealURI; };
+   virtual bool QueueURI(pkgAcquire::ItemDesc &Item);
 
    // transaction code
    void Add(Item *I);
@@ -479,10 +485,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
                   indexRecords* MetaIndexParser,
 		  std::string const &RealURI,
                   HashStringList const &ExpectedHashes=HashStringList(),
-                  pkgAcqMetaBase *TransactionManager=NULL)
-      : Item(Owner, ExpectedHashes, TransactionManager),
-        MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
-        AuthPass(false), IMSHit(false), RealURI(RealURI) {};
+                  pkgAcqMetaBase *TransactionManager=NULL);
 };
 									/*}}}*/
 /** \brief An acquire item that downloads the detached signature	{{{
@@ -652,9 +655,7 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
                    pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
-                   indexRecords *MetaIndexParser)
-      : Item(Owner, ExpectedHashes, TransactionManager), Target(Target), 
-        MetaIndexParser(MetaIndexParser) {};
+                   indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -691,6 +692,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
 
+   virtual bool QueueURI(pkgAcquire::ItemDesc &Item);
  public:
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -714,7 +716,6 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  false otherwise.
     */
    bool ParseDiffIndex(std::string IndexDiffFile);
-   
 
    /** \brief Create a new pkgAcqDiffIndex.
     *
@@ -733,6 +734,8 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser);
+ private:
+   APT_HIDDEN void QueueOnIMSHit() const;
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching client-merge patches {{{
@@ -1008,7 +1011,6 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual std::string GetFinalFilename() const;
 
    public:
-   
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, 

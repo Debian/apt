@@ -1005,6 +1005,7 @@ signreleasefiles() {
 }
 
 webserverconfig() {
+	local WEBSERVER="${3:-http://localhost:8080}"
 	local NOCHECK=false
 	if [ "$1" = '--no-check' ]; then
 		NOCHECK=true
@@ -1016,10 +1017,10 @@ webserverconfig() {
 	local URI
 	if [ -n "$2" ]; then
 		msgtest "Set webserver config option '${1}' to" "$2"
-		URI="http://localhost:8080/_config/set/${1}/${2}"
+		URI="${WEBSERVER}/_config/set/${1}/${2}"
 	else
 		msgtest 'Clear webserver config option' "${1}"
-		URI="http://localhost:8080/_config/clear/${1}"
+		URI="${WEBSERVER}/_config/clear/${1}"
 	fi
 	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass
@@ -1467,12 +1468,14 @@ pause() {
 }
 
 listcurrentlistsdirectory() {
-	find rootdir/var/lib/apt/lists -maxdepth 1 -type d | while read line; do
-		stat --format '%U:%G:%a:%n' "$line"
-	done
-	find rootdir/var/lib/apt/lists -maxdepth 1 \! -type d | while read line; do
-		stat --format '%U:%G:%a:%s:%y:%n' "$line"
-	done
+	{
+		find rootdir/var/lib/apt/lists -maxdepth 1 -type d | while read line; do
+			stat --format '%U:%G:%a:%n' "$line"
+		done
+		find rootdir/var/lib/apt/lists -maxdepth 1 \! -type d | while read line; do
+			stat --format '%U:%G:%a:%s:%y:%n' "$line"
+		done
+	} | sort
 }
 
 ### convinience hacks ###

@@ -38,6 +38,10 @@ E: Some index files failed to download. They have been ignored, or old ones used
 }
 
 methodtest() {
+	# less complicated test setup this way
+	webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
+	webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
+
 	msgmsg 'Test with' "$1" 'and clean start'
 	rm -rf rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
 	# normal update works fine

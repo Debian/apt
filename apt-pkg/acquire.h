@@ -111,6 +111,7 @@ class pkgAcquire
    struct MethodConfig;
    struct ItemDesc;
    friend class Item;
+   friend class pkgAcqMetaBase;
    friend class Queue;
 
    typedef std::vector<Item *>::iterator ItemIterator;

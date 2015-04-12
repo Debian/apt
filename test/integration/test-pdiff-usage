@@ -14,16 +14,7 @@ changetowebserver
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 wasmergeused() {
-	msgtest 'Test for successful execution of' "$*"
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
-	if aptget update "$@" >${OUTPUT} 2>&1; then
-		msgpass
-	else
-		echo
-		cat $OUTPUT
-		msgfail
-	fi
+	testsuccess aptget update "$@"
 
 	msgtest 'No intermediate patch files' 'still exist'
 	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
@@ -36,7 +27,7 @@ wasmergeused() {
 	fi
 
 	msgtest 'Check if the right pdiff merger was used'
-	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' $OUTPUT; then
+	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' rootdir/tmp/testsuccess.output; then
 		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
 			msgpass
 		else
@@ -96,6 +87,8 @@ SHA256-Patches:
 	msgmsg "Testcase: index is already up-to-date: $*"
 	find rootdir/var/lib/apt/lists -name '*diff_Index' -type f -delete
 	testsuccess aptget update "$@"
+	testequal 'Hit http://localhost:8080  InRelease
+Reading package lists...' aptget update "$@" -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Diffs=0
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 

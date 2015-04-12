@@ -213,7 +213,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,HashStringLis
    step */
 bool pkgAcquire::Item::Rename(string From,string To)
 {
-   if (rename(From.c_str(),To.c_str()) == 0)
+   if (From == To || rename(From.c_str(),To.c_str()) == 0)
       return true;
 
    std::string S;
@@ -224,9 +224,41 @@ bool pkgAcquire::Item::Rename(string From,string To)
    return false;
 }
 									/*}}}*/
-void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
+// Acquire::Item::QueueURI and specialisations from child classes	/*{{{*/
+/* The idea here is that an item isn't queued if it exists on disk and the
+   transition manager was a hit as this means that the files it contains
+   the checksums for can't be updated either (or they are and we are asking
+   for a hashsum mismatch to happen which helps nobody) */
+bool pkgAcquire::Item::QueueURI(ItemDesc &Item)
+{
+   std::string const FinalFile = GetFinalFilename();
+   if (TransactionManager != NULL && TransactionManager->IMSHit == true &&
+	 FileExists(FinalFile) == true)
+   {
+      PartialFile = DestFile = FinalFile;
+      Status = StatDone;
+      return false;
+   }
+
+   Owner->Enqueue(Item);
+   return true;
+}
+/* The transition manager InRelease itself (or its older sisters-in-law
+   Release & Release.gpg) is always queued as this allows us to rerun gpgv
+   on it to verify that we aren't stalled with old files */
+bool pkgAcqMetaBase::QueueURI(pkgAcquire::ItemDesc &Item)
 {
    Owner->Enqueue(Item);
+   return true;
+}
+/* the Diff/Index needs to queue also the up-to-date complete index file
+   to ensure that the list cleaner isn't eating it */
+bool pkgAcqDiffIndex::QueueURI(pkgAcquire::ItemDesc &Item)
+{
+   if (pkgAcquire::Item::QueueURI(Item) == true)
+      return true;
+   QueueOnIMSHit();
+   return false;
 }
 									/*}}}*/
 void pkgAcquire::Item::Dequeue()					/*{{{*/
@@ -408,6 +440,14 @@ string pkgAcqDiffIndex::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
+void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
+{
+   // list cleanup needs to know that this file as well as the already
+   // present index is ours, so we create an empty diff to save it for us
+   new pkgAcqIndexDiffs(Owner, TransactionManager, Target,
+	 ExpectedHashes, MetaIndexParser);
+}
+									/*}}}*/
 bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 {
    // failing here is fine: our caller will take care of trying to
@@ -470,11 +510,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       // we have the same sha1 as the server so we are done here
       if(Debug)
 	 std::clog << "pkgAcqDiffIndex: Package file " << CurrentPackagesFile << " is up-to-date" << std::endl;
-
-      // list cleanup needs to know that this file as well as the already
-      // present index is ours, so we create an empty diff to save it for us
-      new pkgAcqIndexDiffs(Owner, TransactionManager, Target,
-                           ExpectedHashes, MetaIndexParser);
+      QueueOnIMSHit();
       return true;
    }
 
@@ -1098,6 +1134,17 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    }
 }
 									/*}}}*/
+// AcqBaseIndex - Constructor						/*{{{*/
+pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire *Owner,
+      pkgAcqMetaBase *TransactionManager,
+      struct IndexTarget const * const Target,
+      HashStringList const &ExpectedHashes,
+      indexRecords *MetaIndexParser)
+: Item(Owner, ExpectedHashes, TransactionManager), Target(Target),
+   MetaIndexParser(MetaIndexParser)
+{
+}
+									/*}}}*/
 // AcqBaseIndex::VerifyHashByMetaKey - verify hash for the given metakey /*{{{*/
 bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
 {
@@ -1491,6 +1538,19 @@ void pkgAcqIndex::StageDecompressDone(string Message,
    return;
 }
 									/*}}}*/
+// AcqMetaBase - Constructor						/*{{{*/
+pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire *Owner,
+      const std::vector<IndexTarget*>* IndexTargets,
+      indexRecords* MetaIndexParser,
+      std::string const &RealURI,
+      HashStringList const &ExpectedHashes,
+      pkgAcqMetaBase *TransactionManager)
+: Item(Owner, ExpectedHashes, TransactionManager),
+   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
+   AuthPass(false), RealURI(RealURI), IMSHit(false)
+{
+}
+									/*}}}*/
 // AcqMetaBase::Add - Add a item to the current Transaction		/*{{{*/
 void pkgAcqMetaBase::Add(Item *I)
 {
@@ -1831,13 +1891,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message)			/*{{{*/
       std::cerr << "Signature verification succeeded: "
                 << DestFile << std::endl;
 
-   // Download further indexes with verification 
-   //
-   // it would be really nice if we could simply do
-   //    if (IMSHit == false) QueueIndexes(true)
-   // and skip the download if the Release file has not changed
-   // - but right now the list cleaner will needs to be tricked
-   //   to not delete all our packages/source indexes in this case
+   // Download further indexes with verification
    QueueIndexes(true);
 
    return true;
@@ -1908,7 +1962,13 @@ bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message)
    // make sure to verify against the right file on I-M-S hit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
    if(IMSHit)
+   {
+      // for simplicity, the transaction manager is always InRelease
+      // even if it doesn't exist.
+      if (TransactionManager != NULL)
+	 TransactionManager->IMSHit = true;
       DestFile = GetFinalFilename();
+   }
 
    // set Item to complete as the remaining work is all local (verify etc)
    Complete = true;
@@ -1951,7 +2011,7 @@ void pkgAcqMetaBase::QueueIndexes(bool verify)				/*{{{*/
                    << "Expected Hash:" << std::endl;
          for (HashStringList::const_iterator hs = ExpectedIndexHashes.begin(); hs != ExpectedIndexHashes.end(); ++hs)
             std::cerr <<  "\t- " << hs->toStr() << std::endl;
-         std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
+         std::cerr << "For: " << ((Record == NULL) ? "<NULL>" : Record->MetaKeyFilename) << std::endl;
 
       }
       if (verify == true && ExpectedIndexHashes.empty() == true)

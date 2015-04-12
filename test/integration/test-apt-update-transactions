@@ -59,6 +59,13 @@ testsetup() {
 }
 
 testsetup 'file'
+
 changetowebserver
+webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
+webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
+
 testsetup 'http'
 
+changetohttpswebserver
+
+testsetup 'https'

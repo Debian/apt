@@ -96,9 +96,12 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
       contentlength << "Content-Length: " << data.FileSize();
       headers.push_back(contentlength.str());
    }
-   std::string lastmodified("Last-Modified: ");
-   lastmodified.append(TimeRFC1123(data.ModificationTime()));
-   headers.push_back(lastmodified);
+   if (_config->FindB("aptwebserver::support::last-modified", true) == true)
+   {
+      std::string lastmodified("Last-Modified: ");
+      lastmodified.append(TimeRFC1123(data.ModificationTime()));
+      headers.push_back(lastmodified);
+   }
 }
 									/*}}}*/
 static void addDataHeaders(std::list<std::string> &headers, std::string &data)/*{{{*/

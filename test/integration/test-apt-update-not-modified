@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'apt' 'all' '1.0'
+
+setupaptarchive --no-update
+
+methodtest() {
+	msgmsg 'Test with' "$1"
+	rm -rf rootdir/var/lib/apt/lists
+	# get our cache populated
+	testsuccess aptget update
+	listcurrentlistsdirectory > listsdir.lst
+
+	# hit again with a good cache
+	testsuccessequal "Hit $1 unstable InRelease
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+	# drop an architecture, which means the file should be gone now
+	configarchitecture 'i386'
+	sed '/_binary-amd64_Packages/ d' listsdir.lst > listsdir-without-amd64.lst
+	testsuccessequal "Hit $1 unstable InRelease
+Reading package lists..." aptget update
+	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
+
+	# readd arch so its downloaded again
+	configarchitecture 'amd64' 'i386'
+	testsuccessequal "Hit $1 unstable InRelease
+Get:1 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+}
+
+changetowebserver
+methodtest 'http://localhost:8080'
+
+changetohttpswebserver
+methodtest 'https://localhost:4433'
