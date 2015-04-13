@@ -1,3 +1,22 @@
+apt (1.0.9.8) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * fix another d(e)select-upgrade typo (LP: #1399037)
+  * properly handle expected filesize in https.
+    Thanks to Robert Edmonds and Anders Kaseorg for initial patchs
+    (Closes: 777565, 781509) (LP: #807303)
+  * avoid depends on std::string implementation for pkgAcquire::Item::Mode
+    (Closes: 781858)
+  * demote VectorizeString gcc attribute from const to pure
+  * keyids in "apt-key del" should be case-insensitive (Closes: 781696)
+  * parse specific-arch dependencies correctly on single-arch systems
+    (Closes: 777760)
+
+  [ Michael Vogt ]
+  * fix crash in order writing in pkgDPkgPM::WriteApportReport() (LP: #1436626)
+
+ -- David Kalnischkies <david@kalnischkies.de>  Mon, 13 Apr 2015 07:14:36 +0200
+
 apt (1.0.9.7) unstable; urgency=medium
 
   [ Tomasz Buchert ]
