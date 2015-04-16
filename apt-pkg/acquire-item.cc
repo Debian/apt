@@ -834,7 +834,8 @@ void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*C
 
    // first failure means we should fallback
    State = StateErrorDiff;
-   std::clog << "Falling back to normal index file acquire" << std::endl;
+   if (Debug)
+      std::clog << "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc,
 		   ExpectedHash);
 }
