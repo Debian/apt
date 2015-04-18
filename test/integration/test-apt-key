@@ -73,6 +73,12 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	testsuccess aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
 
+	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewher between 8byte and short
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
+	testempty aptkey list
+
 	msgtest 'Test key removal with' 'single key in real file'
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
@@ -181,3 +187,4 @@ setupgpgcommand 'gpg'
 testrun
 setupgpgcommand 'gpg2'
 testrun
+
