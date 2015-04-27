@@ -47,7 +47,7 @@ testrun() {
 	compressfile 'aptarchive/Packages'
 	generatereleasefiles
 	signreleasefiles
-	rm -rf aptarchive/Packages.diff rootdir/var/lib/apt/lists
+	rm -rf aptarchive/Packages.diff rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
 	testsuccess aptget update "$@"
 	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
 	testnopackage newstuff

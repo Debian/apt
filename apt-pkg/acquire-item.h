@@ -344,7 +344,8 @@ class pkgAcquire::Item : public WeakPointable
       InvalidFormat,
       SignatureError,
       NotClearsigned,
-      MaximumSizeExceeded
+      MaximumSizeExceeded,
+      PDiffError,
    };
 
    /** \brief Rename failed file and set error
@@ -352,6 +353,12 @@ class pkgAcquire::Item : public WeakPointable
     * \param state respresenting the error we encountered
     */
    bool RenameOnError(RenameOnErrorState const state);
+
+   enum TransactionStates {
+      TransactionCommit,
+      TransactionAbort,
+   };
+   virtual bool TransactionState(TransactionStates const state);
 
    /** \brief The HashSums of the item is supposed to have than done */
    HashStringList ExpectedHashes;
@@ -685,14 +692,12 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     */
    std::string Description;
 
-   /** \brief If the copy step of the packages file is done
-    */
-   bool PackagesFileReadyInPartial;
-
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
 
    virtual bool QueueURI(pkgAcquire::ItemDesc &Item);
+
+   virtual bool TransactionState(TransactionStates const state);
  public:
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -1009,6 +1014,8 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
+
+   virtual bool TransactionState(TransactionStates const state);
 
    public:
    // Specialized action members

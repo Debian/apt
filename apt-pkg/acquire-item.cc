@@ -173,6 +173,39 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       ReportMirrorFailure(ErrorText);
 }
 									/*}}}*/
+bool pkgAcquire::Item::TransactionState(TransactionStates const state)	/*{{{*/
+{
+   bool const Debug = _config->FindB("Debug::Acquire::Transaction", false);
+   switch(state)
+   {
+      case TransactionAbort:
+	 if(Debug == true)
+	    std::clog << "  Cancel: " << DestFile << std::endl;
+	 if (Status == pkgAcquire::Item::StatIdle)
+	 {
+	    Status = pkgAcquire::Item::StatDone;
+	    Dequeue();
+	 }
+	 break;
+      case TransactionCommit:
+	 if(PartialFile != "")
+	 {
+	    if(Debug == true)
+	       std::clog << "mv " << PartialFile << " -> "<< DestFile << " # " << DescURI() << std::endl;
+
+	    Rename(PartialFile, DestFile);
+	 } else {
+	    if(Debug == true)
+	       std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
+	    unlink(DestFile.c_str());
+	 }
+	 // mark that this transaction is finished
+	 TransactionManager = 0;
+	 break;
+   }
+   return true;
+}
+									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
 // ---------------------------------------------------------------------
 /* Stash status and the file size. Note that setting Complete means 
@@ -300,6 +333,9 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 	 // the method is expected to report a good error for this
 	 Status = StatError;
 	 break;
+      case PDiffError:
+	 // no handling here, done by callers
+	 break;
    }
    return false;
 }
@@ -374,7 +410,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 				 HashStringList const &ExpectedHashes,
                                  indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                     MetaIndexParser), PackagesFileReadyInPartial(false)
+                     MetaIndexParser)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -671,20 +707,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       return false;
    }
 
-   // FIXME: make this use the method
-   PackagesFileReadyInPartial = true;
-   std::string const Partial = GetPartialFileNameFromURI(RealURI);
-   
-   FileFd From(CurrentPackagesFile, FileFd::ReadOnly);
-   FileFd To(Partial, FileFd::WriteEmpty);
-   if(CopyFile(From, To) == false)
-      return _error->Errno("CopyFile", "failed to copy");
-   
-   if(Debug)
-      std::cerr << "Done copying " << CurrentPackagesFile
-                << " -> " << Partial
-                << std::endl;
-
    // we have something, queue the diffs
    string::size_type const last_space = Description.rfind(" ");
    if(last_space != string::npos)
@@ -738,6 +760,24 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{{
    new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
 }
 									/*}}}*/
+bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)	/*{{{*/
+{
+   if (pkgAcquire::Item::TransactionState(state) == false)
+      return false;
+
+   switch (state)
+   {
+      case TransactionCommit:
+	 break;
+      case TransactionAbort:
+	 std::string const Partial = GetPartialFileNameFromURI(RealURI);
+	 unlink(Partial.c_str());
+	 break;
+   }
+
+   return true;
+}
+									/*}}}*/
 void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cnf)
 {
@@ -765,15 +805,21 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
    if(StringToBool(LookupTag(Message,"IMS-Hit"),false))
       DestFile = FinalFile;
 
-   if(!ParseDiffIndex(DestFile))
-      return Failed("Message: Couldn't parse pdiff index", Cnf);
+   if(ParseDiffIndex(DestFile) == false)
+   {
+      Failed("Message: Couldn't parse pdiff index", Cnf);
+      // queue for final move - this should happen even if we fail
+      // while parsing (e.g. on sizelimit) and download the complete file.
+      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      return;
+   }
 
-   // queue for final move
    TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
 
    Complete = true;
    Status = StatDone;
    Dequeue();
+
    return;
 }
 									/*}}}*/
@@ -808,6 +854,17 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    }
    else
    {
+      // patching needs to be bootstrapped with the 'old' version
+      std::string const PartialFile = GetPartialFileNameFromURI(RealURI);
+      if (RealFileExists(PartialFile) == false)
+      {
+	 if (symlink(GetFinalFilename().c_str(), PartialFile.c_str()) != 0)
+	 {
+	    Failed("Link creation of " + PartialFile + " to " + GetFinalFilename() + " failed", NULL);
+	    return;
+	 }
+      }
+
       // get the next diff
       State = StateFetchDiff;
       QueueNextDiff();
@@ -822,6 +879,8 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
+   DestFile = GetPartialFileNameFromURI(Target->URI);
+   RenameOnError(PDiffError);
    new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
    Finish();
 }
@@ -950,6 +1009,8 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
       if (fd.Size() != available_patches[0].patch_size ||
 	    available_patches[0].patch_hashes != LocalHashes)
       {
+	 // patchfiles are dated, so bad indicates a bad download, so kill it
+	 unlink(DestFile.c_str());
 	 Failed("Patch has Size/Hashsum mismatch", NULL);
 	 return;
       }
@@ -1046,6 +1107,8 @@ void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * Cnf
    State = StateErrorDiff;
    if (Debug)
       std::clog << "Falling back to normal index file acquire" << std::endl;
+   DestFile = GetPartialFileNameFromURI(Target->URI);
+   RenameOnError(PDiffError);
    new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
 }
 									/*}}}*/
@@ -1069,6 +1132,8 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 
       if (fd.Size() != patch.patch_size || patch.patch_hashes != LocalHashes)
       {
+	 // patchfiles are dated, so bad indicates a bad download, so kill it
+	 unlink(DestFile.c_str());
 	 Failed("Patch has Size/Hashsum mismatch", NULL);
 	 return;
       }
@@ -1090,6 +1155,13 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       // this is the last completed diff, so we are ready to apply now
       State = StateApplyDiff;
 
+      // patching needs to be bootstrapped with the 'old' version
+      if (symlink(GetFinalFilename().c_str(), FinalFile.c_str()) != 0)
+      {
+	 Failed("Link creation of " + FinalFile + " to " + GetFinalFilename() + " failed", NULL);
+	 return;
+      }
+
       if(Debug)
 	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
 
@@ -1109,15 +1181,14 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 	 return;
       }
 
-
       // move the result into place
-      std::string const FinalFile = GetFinalFilename();
+      std::string const Final = GetFinalFilename();
       if(Debug)
 	 std::clog << "Queue patched file in place: " << std::endl
-		   << DestFile << " -> " << FinalFile << std::endl;
+		   << DestFile << " -> " << Final << std::endl;
 
       // queue for copy by the transaction manager
-      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      TransactionManager->TransactionStageCopy(this, DestFile, Final);
 
       // ensure the ed's are gone regardless of list-cleanup
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
@@ -1127,6 +1198,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 	 std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
 	 unlink(patch.c_str());
       }
+      unlink(FinalFile.c_str());
 
       // all set and done
       Complete = true;
@@ -1337,18 +1409,36 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       return;
    }
 
-   // on decompression failure, remove bad versions in partial/
-   if (Stage == STAGE_DECOMPRESS_AND_VERIFY)
-   {
-      unlink(EraseFileName.c_str());
-   }
-
    Item::Failed(Message,Cnf);
 
    if(Target->IsOptional() && ExpectedHashes.empty() && Stage == STAGE_DOWNLOAD)
       Status = StatDone;
    else
       TransactionManager->AbortTransaction();
+}
+									/*}}}*/
+bool pkgAcqIndex::TransactionState(TransactionStates const state)	/*{{{*/
+{
+   if (pkgAcquire::Item::TransactionState(state) == false)
+      return false;
+
+   switch (state)
+   {
+      case TransactionAbort:
+	 if (Stage == STAGE_DECOMPRESS_AND_VERIFY)
+	 {
+	    // keep the compressed file, but drop the decompressed
+	    EraseFileName.clear();
+	    if (PartialFile.empty() == false && flExtension(PartialFile) == "decomp")
+	       unlink(PartialFile.c_str());
+	 }
+	 break;
+      case TransactionCommit:
+	 if (EraseFileName.empty() == false)
+	    unlink(EraseFileName.c_str());
+	 break;
+   }
+   return true;
 }
 									/*}}}*/
 // pkgAcqIndex::GetFinalFilename - Return the full final file path	/*{{{*/
@@ -1530,9 +1620,6 @@ void pkgAcqIndex::StageDecompressDone(string Message,
       return;
    }
 
-   // remove the compressed version of the file
-   unlink(EraseFileName.c_str());
-
    // Done, queue for rename on transaction finished
    TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
@@ -1568,14 +1655,7 @@ void pkgAcqMetaBase::AbortTransaction()
    for (std::vector<Item*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
-      if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-         std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
-      // the transaction will abort, so stop anything that is idle
-      if ((*I)->Status == pkgAcquire::Item::StatIdle)
-      {
-         (*I)->Status = pkgAcquire::Item::StatDone;
-         (*I)->Dequeue();
-      }
+      (*I)->TransactionState(TransactionAbort);
    }
    Transaction.clear();
 }
@@ -1585,10 +1665,16 @@ bool pkgAcqMetaBase::TransactionHasError()
 {
    for (pkgAcquire::ItemIterator I = Transaction.begin();
         I != Transaction.end(); ++I)
-      if((*I)->Status != pkgAcquire::Item::StatDone &&
-         (*I)->Status != pkgAcquire::Item::StatIdle)
-         return true;
-
+   {
+      switch((*I)->Status) {
+	 case StatDone: break;
+	 case StatIdle: break;
+	 case StatAuthError: return true;
+	 case StatError: return true;
+	 case StatTransientNetworkError: return true;
+	 case StatFetching: break;
+      }
+   }
    return false;
 }
 									/*}}}*/
@@ -1603,24 +1689,7 @@ void pkgAcqMetaBase::CommitTransaction()
    for (std::vector<Item*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
-      if((*I)->PartialFile != "")
-      {
-	 if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-	    std::clog << "mv " << (*I)->PartialFile << " -> "<< (*I)->DestFile << " "
-	       << (*I)->DescURI() << std::endl;
-
-	 Rename((*I)->PartialFile, (*I)->DestFile);
-      } else {
-         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-            std::clog << "rm "
-                      <<  (*I)->DestFile
-                      << " "
-                      << (*I)->DescURI()
-                      << std::endl;
-         unlink((*I)->DestFile.c_str());
-      }
-      // mark that this transaction is finished
-      (*I)->TransactionManager = 0;
+      (*I)->TransactionState(TransactionCommit);
    }
    Transaction.clear();
 }
@@ -1634,7 +1703,7 @@ void pkgAcqMetaBase::TransactionStageCopy(Item *I,
    I->DestFile = To;
 }
 									/*}}}*/
-// AcqMetaBase::TransactionStageRemoval - Sage a file for removal	/*{{{*/
+// AcqMetaBase::TransactionStageRemoval - Stage a file for removal	/*{{{*/
 void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
                                              const std::string &FinalFile)
 {

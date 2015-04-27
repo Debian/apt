@@ -126,18 +126,17 @@ testrun() {
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 }
 
-msgmsg 'http: Test with Content-Length'
-webserverconfig 'aptwebserver::chunked-transfer-encoding' 'false'
-testrun 'http://localhost:8080'
-msgmsg 'http: Test with Transfer-Encoding: chunked'
-webserverconfig 'aptwebserver::chunked-transfer-encoding' 'true'
-testrun 'http://localhost:8080'
+serverconfigs() {
+	msgmsg "${1%%:*}: Test with Content-Length"
+	webserverconfig 'aptwebserver::chunked-transfer-encoding' 'false'
+	testrun "$1"
+	msgmsg "${1%%:*}: Test with Transfer-Encoding: chunked"
+	webserverconfig 'aptwebserver::chunked-transfer-encoding' 'true'
+	testrun "$1"
+}
+
+serverconfigs 'http://localhost:8080'
 
 changetohttpswebserver
 
-msgmsg 'https: Test with Content-Length'
-webserverconfig 'aptwebserver::chunked-transfer-encoding' 'false'
-testrun 'https://localhost:4433'
-msgmsg 'https: Test with Transfer-Encoding: chunked'
-webserverconfig 'aptwebserver::chunked-transfer-encoding' 'true'
-testrun 'https://localhost:4433'
+serverconfigs 'https://localhost:4433'

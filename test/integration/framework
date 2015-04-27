@@ -1523,9 +1523,13 @@ aptautotest_aptget_update() {
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	# all copied files are properly chmodded
-	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f ! -name 'lock'); do
+	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
+	if [ "$1" = 'testsuccess' ]; then
+		# failure cases can retain partial files and such
+		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)
+	fi
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
 aptautotest_aptcdrom_add() { aptautotest_aptget_update "$@"; }

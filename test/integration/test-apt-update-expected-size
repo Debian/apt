@@ -34,7 +34,7 @@ test_packagestoobig() {
 	done
 	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 	testfailuremsg "W: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
-E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=0
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::Transaction=0
 }
 
 methodtest() {
