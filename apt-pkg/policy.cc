@@ -97,37 +97,29 @@ bool pkgPolicy::InitDefaults()
    // Apply the defaults..
    SPtrArray<bool> Fixed = new bool[Cache->HeaderP->PackageFileCount];
    memset(Fixed,0,sizeof(*Fixed)*Cache->HeaderP->PackageFileCount);
-   signed Cur = 989;
    StatusOverride = false;
-   for (vector<Pin>::const_iterator I = Defaults.begin(); I != Defaults.end();
-	++I, --Cur)
+   for (vector<Pin>::const_iterator I = Defaults.begin(); I != Defaults.end(); ++I)
    {
       pkgVersionMatch Match(I->Data,I->Type);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if (Match.FileMatch(F) == true && Fixed[F->ID] == false)
+	 if (Fixed[F->ID] == false && Match.FileMatch(F) == true)
 	 {
-	    if (I->Priority != 0 && I->Priority > 0)
-	       Cur = I->Priority;
-	    
-	    if (I->Priority < 0)
-	       PFPriority[F->ID] =  I->Priority;
-	    else
-	       PFPriority[F->ID] = Cur;
-	    
+	    PFPriority[F->ID] = I->Priority;
+
 	    if (PFPriority[F->ID] >= 1000)
 	       StatusOverride = true;
-	    
+
 	    Fixed[F->ID] = true;
-	 }      
-      }      
+	 }
+      }
    }
 
    if (_config->FindB("Debug::pkgPolicy",false) == true)
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
-	 std::clog << "Prio of " << F.FileName() << ' ' << PFPriority[F->ID] << std::endl; 
-   
-   return true;   
+	 std::clog << "Prio of " << F.FileName() << ' ' << PFPriority[F->ID] << std::endl;
+
+   return true;
 }
 									/*}}}*/
 // Policy::GetCandidateVer - Get the candidate install version		/*{{{*/
@@ -324,13 +316,7 @@ pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
 {
    if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
-   {
-      // In this case 0 means default priority
-      if (Pins[Pkg->ID].Priority == 0)
-	 return 989;
       return Pins[Pkg->ID].Priority;
-   }
-   
    return 0;
 }
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
