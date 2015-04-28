@@ -4,22 +4,12 @@
 /* ######################################################################
 
    Package Version Policy implementation
-   
+
    This is just a really simple wrapper around pkgVersionMatch with
    some added goodies to manage the list of things..
-   
-   Priority Table:
-   
-   1000 -> inf = Downgradeable priorities
-   1000        = The 'no downgrade' pseduo-status file
-   100 -> 1000 = Standard priorities
-   990         = Config file override package files
-   989         = Start for preference auto-priorities
-   500         = Default package files
-   100         = The status file and ButAutomaticUpgrades sources
-   0 -> 100    = NotAutomatic sources like experimental
-   -inf -> 0   = Never selected   
-   
+
+   See man apt_preferences for what value means what.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -56,7 +46,7 @@ using namespace std;
    file matches the V0 policy engine. */
 pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
 {
-   if (Owner == 0 || &(Owner->Head()) == 0)
+   if (Owner == 0)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
    Pins = new Pin[Owner->Head().PackageCount];
@@ -125,7 +115,7 @@ bool pkgPolicy::InitDefaults()
 	    else
 	       PFPriority[F->ID] = Cur;
 	    
-	    if (PFPriority[F->ID] > 1000)
+	    if (PFPriority[F->ID] >= 1000)
 	       StatusOverride = true;
 	    
 	    Fixed[F->ID] = true;
@@ -166,9 +156,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
       effectively excludes everything <= 0 which are the non-automatic
       priorities.. The status file is given a prio of 100 which will exclude
       not-automatic sources, except in a single shot not-installed mode.
-      The second pseduo-status file is at prio 1000, above which will permit
-      the user to force-downgrade things.
-      
+
       The user pin is subject to the same priority rules as default 
       selections. Thus there are two ways to create a pin - a pin that
       tracks the default when the default is taken away, and a permanent
@@ -218,9 +206,9 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 	    Pref = Ver;
 	    PrefSeen = true;
 	 }
-	 /* Elevate our current selection (or the status file itself)
-	    to the Pseudo-status priority. */
-	 Max = 1000;
+	 /* Elevate our current selection (or the status file itself) so that only
+	    a downgrade can override it from now on */
+	 Max = 999;
 
 	 // Fast path optimize.
 	 if (StatusOverride == false)
