@@ -39,7 +39,8 @@ The following packages will be REMOVED:
 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
 Purg compiz-core-$1" aptget purge compiz-core-$1 -s
 	testsuccess aptget purge compiz-core-$1 -y
-	testfailureequal "dpkg-query: no packages found matching compiz-core-$1" dpkg -l compiz-core-$1
+	echo -n '' > rootdir/var/lib/dpkg/available # dpkg -l < 1.16.2 reads the available file by default, where the package can be found
+	testequalor2 "dpkg-query: no packages found matching compiz-core-$1" "No packages found matching compiz-core-$1." dpkg -l compiz-core-$1
 }
 
 msgmsg 'Test in multi arch environment'
