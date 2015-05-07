@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt rev2227.1.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-01-16 04:37-0500\n"
+"POT-Creation-Date: 2015-04-13 07:23+0200\n"
 "PO-Revision-Date: 2012-06-30 08:47+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -1158,9 +1158,260 @@ msgstr "Соединение разорвано"
 msgid "Internal error"
 msgstr "Внутренняя ошибка"
 
+#: apt-private/private-list.cc:129
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc:159
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "Исправление зависимостей…"
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " не удалось."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "Невозможно скорректировать зависимости"
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "Невозможно минимизировать набор обновлений"
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Готово"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr ""
+"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
+"f install»."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
+
+#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc:265
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Установлен]"
+
+#: apt-private/private-output.cc:268
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Установлен]"
+
+#: apt-private/private-output.cc:270
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc:272
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Установлен]"
+
+#: apt-private/private-output.cc:274
+#, fuzzy
+msgid "[installed]"
+msgstr " [Установлен]"
+
+#: apt-private/private-output.cc:277
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc:281
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc:455
+#, c-format
+msgid "but %s is installed"
+msgstr "но %s уже установлен"
+
+#: apt-private/private-output.cc:457
+#, c-format
+msgid "but %s is to be installed"
+msgstr "но %s будет установлен"
+
+#: apt-private/private-output.cc:464
+msgid "but it is not installable"
+msgstr "но он не может быть установлен"
+
+#: apt-private/private-output.cc:466
+msgid "but it is a virtual package"
+msgstr "но это виртуальный пакет"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not installed"
+msgstr "но он не установлен"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not going to be installed"
+msgstr "но он не будет установлен"
+
+#: apt-private/private-output.cc:474
+msgid " or"
+msgstr " или"
+
+#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
+msgid "The following packages have unmet dependencies:"
+msgstr "Пакеты, имеющие неудовлетворённые зависимости:"
+
+#: apt-private/private-output.cc:523
+msgid "The following NEW packages will be installed:"
+msgstr "НОВЫЕ пакеты, которые будут установлены:"
+
+#: apt-private/private-output.cc:549
+msgid "The following packages will be REMOVED:"
+msgstr "Пакеты, которые будут УДАЛЕНЫ:"
+
+#: apt-private/private-output.cc:571
+msgid "The following packages have been kept back:"
+msgstr "Пакеты, которые будут оставлены в неизменном виде:"
+
+#: apt-private/private-output.cc:592
+msgid "The following packages will be upgraded:"
+msgstr "Пакеты, которые будут обновлены:"
+
+#: apt-private/private-output.cc:613
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Пакеты, будут заменены на более СТАРЫЕ версии:"
+
+#: apt-private/private-output.cc:633
+msgid "The following held packages will be changed:"
+msgstr ""
+"Пакеты, которые должны были бы остаться без изменений, но будут заменены:"
+
+#: apt-private/private-output.cc:688
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (вследствие %s) "
+
+#: apt-private/private-output.cc:696
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"ВНИМАНИЕ: Эти существенно важные пакеты будут удалены.\n"
+"НЕ ДЕЛАЙТЕ этого, если вы НЕ представляете себе все возможные последствия!"
+
+#: apt-private/private-output.cc:727
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "обновлено %lu, установлено %lu новых пакетов, "
+
+#: apt-private/private-output.cc:731
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "переустановлено %lu переустановлено, "
+
+#: apt-private/private-output.cc:733
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu пакетов заменены на старые версии, "
+
+#: apt-private/private-output.cc:735
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "для удаления отмечено %lu пакетов, и %lu пакетов не обновлено.\n"
+
+#: apt-private/private-output.cc:739
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "не установлено до конца или удалено %lu пакетов.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:761
+msgid "[Y/n]"
+msgstr "[Д/н]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:767
+msgid "[y/N]"
+msgstr ""
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:778
+msgid "Y"
+msgstr "д"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:784
+msgid "N"
+msgstr "н"
+
+#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Ошибка компиляции регулярного выражения — %s"
+
+#: apt-private/private-update.cc:31
+msgid "The update command takes no arguments"
+msgstr "Команде update не нужны аргументы"
+
+#: apt-private/private-update.cc:97
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-update.cc:101
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr ""
+
+#: apt-private/private-show.cc:156
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-show.cc:163
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"ЗАМЕЧАНИЕ: Производить только имитация работы!\n"
+"      Для реальной работы apt-get требуются права суперпользователя.\n"
+"      Учтите, что блокировка не используется,\n"
+"      поэтому нет полного соответствия с текущей реальной ситуацией!"
 
 #: apt-private/private-install.cc:82
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1440,257 +1691,6 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Пакет «%s» не установлен, поэтому не может быть удалён\n"
 
-#: apt-private/private-list.cc:129
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc:159
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "Исправление зависимостей…"
-
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " не удалось."
-
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "Невозможно скорректировать зависимости"
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "Невозможно минимизировать набор обновлений"
-
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Готово"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
-"f install»."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
-
-#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc:265
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Установлен]"
-
-#: apt-private/private-output.cc:268
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Установлен]"
-
-#: apt-private/private-output.cc:270
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc:272
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Установлен]"
-
-#: apt-private/private-output.cc:274
-#, fuzzy
-msgid "[installed]"
-msgstr " [Установлен]"
-
-#: apt-private/private-output.cc:277
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc:281
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc:455
-#, c-format
-msgid "but %s is installed"
-msgstr "но %s уже установлен"
-
-#: apt-private/private-output.cc:457
-#, c-format
-msgid "but %s is to be installed"
-msgstr "но %s будет установлен"
-
-#: apt-private/private-output.cc:464
-msgid "but it is not installable"
-msgstr "но он не может быть установлен"
-
-#: apt-private/private-output.cc:466
-msgid "but it is a virtual package"
-msgstr "но это виртуальный пакет"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not installed"
-msgstr "но он не установлен"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not going to be installed"
-msgstr "но он не будет установлен"
-
-#: apt-private/private-output.cc:474
-msgid " or"
-msgstr " или"
-
-#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
-msgid "The following packages have unmet dependencies:"
-msgstr "Пакеты, имеющие неудовлетворённые зависимости:"
-
-#: apt-private/private-output.cc:523
-msgid "The following NEW packages will be installed:"
-msgstr "НОВЫЕ пакеты, которые будут установлены:"
-
-#: apt-private/private-output.cc:549
-msgid "The following packages will be REMOVED:"
-msgstr "Пакеты, которые будут УДАЛЕНЫ:"
-
-#: apt-private/private-output.cc:571
-msgid "The following packages have been kept back:"
-msgstr "Пакеты, которые будут оставлены в неизменном виде:"
-
-#: apt-private/private-output.cc:592
-msgid "The following packages will be upgraded:"
-msgstr "Пакеты, которые будут обновлены:"
-
-#: apt-private/private-output.cc:613
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Пакеты, будут заменены на более СТАРЫЕ версии:"
-
-#: apt-private/private-output.cc:633
-msgid "The following held packages will be changed:"
-msgstr ""
-"Пакеты, которые должны были бы остаться без изменений, но будут заменены:"
-
-#: apt-private/private-output.cc:688
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (вследствие %s) "
-
-#: apt-private/private-output.cc:696
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"ВНИМАНИЕ: Эти существенно важные пакеты будут удалены.\n"
-"НЕ ДЕЛАЙТЕ этого, если вы НЕ представляете себе все возможные последствия!"
-
-#: apt-private/private-output.cc:727
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "обновлено %lu, установлено %lu новых пакетов, "
-
-#: apt-private/private-output.cc:731
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "переустановлено %lu переустановлено, "
-
-#: apt-private/private-output.cc:733
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu пакетов заменены на старые версии, "
-
-#: apt-private/private-output.cc:735
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "для удаления отмечено %lu пакетов, и %lu пакетов не обновлено.\n"
-
-#: apt-private/private-output.cc:739
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "не установлено до конца или удалено %lu пакетов.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:761
-msgid "[Y/n]"
-msgstr "[Д/н]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:767
-msgid "[y/N]"
-msgstr ""
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:778
-msgid "Y"
-msgstr "д"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:784
-msgid "N"
-msgstr "н"
-
-#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Ошибка компиляции регулярного выражения — %s"
-
-#: apt-private/private-update.cc:31
-msgid "The update command takes no arguments"
-msgstr "Команде update не нужны аргументы"
-
-#: apt-private/private-update.cc:97
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-update.cc:101
-msgid "All packages are up to date."
-msgstr ""
-
-#: apt-private/private-show.cc:156
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-show.cc:163
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"ЗАМЕЧАНИЕ: Производить только имитация работы!\n"
-"      Для реальной работы apt-get требуются права суперпользователя.\n"
-"      Учтите, что блокировка не используется,\n"
-"      поэтому нет полного соответствия с текущей реальной ситуацией!"
-
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "ВНИМАНИЕ: Следующие пакеты невозможно аутентифицировать!"
@@ -1774,8 +1774,8 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:471 apt-pkg/init.cc:103
-#: apt-pkg/init.cc:111 apt-pkg/clean.cc:43 apt-pkg/acquire.cc:494
-#: apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/init.cc:111 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381
 #: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
 #: apt-pkg/contrib/cdromutl.cc:205
 #, c-format
@@ -2075,6 +2075,26 @@ msgstr "Не удалось найти аутентификационную за
 msgid "Hash mismatch for: %s"
 msgstr "Не совпадает хеш сумма для: %s"
 
+#: apt-pkg/acquire-worker.cc:116
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Драйвер для метода %s не найден."
+
+#: apt-pkg/acquire-worker.cc:118
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n"
+
+#: apt-pkg/acquire-worker.cc:169
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Метод %s запустился не корректно"
+
+#: apt-pkg/acquire-worker.cc:455
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
+
 #: apt-pkg/cachefile.cc:94
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "Списки пакетов или файл состояния не могут быть открыты или прочитаны."
@@ -2168,141 +2188,94 @@ msgstr "необязательный"
 msgid "extra"
 msgstr "дополнительный"
 
-#: apt-pkg/acquire-worker.cc:116
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "Драйвер для метода %s не найден."
-
-#: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n"
-
-#: apt-pkg/acquire-worker.cc:169
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Метод %s запустился не корректно"
-
-#: apt-pkg/acquire-worker.cc:455
-#, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
-
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Не поддерживается индексный файл типа «%s»"
 
-#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "Построение дерева зависимостей"
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Искажённая строка %lu в списке источников %s (анализ URI)"
 
-#: apt-pkg/depcache.cc:139
-msgid "Candidate versions"
-msgstr "Версии-кандидаты"
-
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "Генерирование зависимостей"
-
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "Чтение информации о состоянии"
-
-#: apt-pkg/depcache.cc:250
+#: apt-pkg/sourcelist.cc:170
 #, c-format
-msgid "Failed to open StateFile %s"
-msgstr "Не удалось открыть StateFile %s"
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Искажённая строка %lu в списке источников %s ([параметр] неразбираем)"
 
-#: apt-pkg/depcache.cc:256
+#: apt-pkg/sourcelist.cc:173
 #, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "Не удалось записать временный StateFile %s"
-
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "переименовать не удалось, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc:163
-msgid "Hash Sum mismatch"
-msgstr "Хеш сумма не совпадает"
-
-#: apt-pkg/acquire-item.cc:168
-msgid "Size mismatch"
-msgstr "Не совпадает размер"
-
-#: apt-pkg/acquire-item.cc:173
-#, fuzzy
-msgid "Invalid file format"
-msgstr "Неверная операция %s"
-
-#: apt-pkg/acquire-item.cc:1640
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr ""
-"Невозможно найти ожидаемый элемент «%s» в файле Release (некорректная запись "
-"в sources.list или файл)"
+"Искажённая строка %lu в списке источников %s ([параметр] слишком короткий)"
 
-#: apt-pkg/acquire-item.cc:1656
+#: apt-pkg/sourcelist.cc:184
 #, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "Невозможно найти хеш-сумму «%s» в файле Release"
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Искажённая строка %lu в списке источников %s (([%s] не назначаем)"
 
-#: apt-pkg/acquire-item.cc:1698
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
-
-#: apt-pkg/acquire-item.cc:1736
+#: apt-pkg/sourcelist.cc:190
 #, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Искажённая строка %lu в списке источников %s ([%s] не имеет ключа)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr ""
-"Файл Release для %s просрочен (недостоверный начиная с %s). Обновление этого "
-"репозитория производиться не будет."
+"Искажённая строка %lu в списке источников %s (([%s] ключ %s не имеет "
+"значения)"
 
-#: apt-pkg/acquire-item.cc:1758
+#: apt-pkg/sourcelist.cc:206
 #, c-format
-msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr "Конфликт распространения: %s (ожидался %s, но получен %s)"
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Искажённая строка %lu в списке источников %s (проблема в URI)"
 
-#: apt-pkg/acquire-item.cc:1788
+#: apt-pkg/sourcelist.cc:208
 #, c-format
-msgid ""
-"An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgid "Malformed line %lu in source list %s (dist)"
 msgstr ""
-"Произошла ошибка при проверке подписи. Репозиторий не обновлён и будут "
-"использованы предыдущие индексные файлы. Ошибка GPG: %s: %s\n"
+"Искажённая строка %lu в списке источников %s (проблема в имени дистрибутива)"
 
-#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1798 apt-pkg/acquire-item.cc:1803
+#: apt-pkg/sourcelist.cc:211
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Ошибка GPG: %s: %s"
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Искажённая строка %lu в списке источников %s (анализ URI)"
 
-#: apt-pkg/acquire-item.cc:1926
+#: apt-pkg/sourcelist.cc:217
 #, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"Не удалось обнаружить файл пакета %s. Это может означать, что вам придётся "
-"вручную исправить этот пакет (возможно, пропущен arch)"
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Искажённая строка %lu в списке источников %s (absolute dist)"
 
-#: apt-pkg/acquire-item.cc:1992
+#: apt-pkg/sourcelist.cc:224
 #, c-format
-msgid "Can't find a source to download version '%s' of '%s'"
-msgstr "Невозможно найти источник для загрузки «%2$s» версии «%1$s»"
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
 
-#: apt-pkg/acquire-item.cc:2050
+#: apt-pkg/sourcelist.cc:335
 #, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
+msgid "Opening %s"
+msgstr "Открытие %s"
+
+#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Строка %u в списке источников %s слишком длинна."
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Искажённая строка %u в списке источников %s (тип)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Неизвестный тип «%s» в строке %u в списке источников %s"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Неизвестный тип «%s» в строке %u в списке источников %s"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
 #, fuzzy, c-format
@@ -2383,6 +2356,111 @@ msgstr "Невозможно записать в %s"
 msgid "IO Error saving source cache"
 msgstr "Ошибка ввода/вывода при попытке сохранить кэш источников"
 
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
+msgid "Send scenario to solver"
+msgstr "Отправка сценария решателю"
+
+#: apt-pkg/edsp.cc:241
+msgid "Send request to solver"
+msgstr "Отправка запроса решателю"
+
+#: apt-pkg/edsp.cc:320
+msgid "Prepare for receiving solution"
+msgstr "Подготовка к приёму решения"
+
+#: apt-pkg/edsp.cc:327
+msgid "External solver failed without a proper error message"
+msgstr "Внешний решатель завершился с ошибкой не передав сообщения об ошибке"
+
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
+msgid "Execute external solver"
+msgstr "Запустить внешний решатель"
+
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "переименовать не удалось, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:163
+msgid "Hash Sum mismatch"
+msgstr "Хеш сумма не совпадает"
+
+#: apt-pkg/acquire-item.cc:168
+msgid "Size mismatch"
+msgstr "Не совпадает размер"
+
+#: apt-pkg/acquire-item.cc:173
+#, fuzzy
+msgid "Invalid file format"
+msgstr "Неверная операция %s"
+
+#: apt-pkg/acquire-item.cc:1650
+#, c-format
+msgid ""
+"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
+"or malformed file)"
+msgstr ""
+"Невозможно найти ожидаемый элемент «%s» в файле Release (некорректная запись "
+"в sources.list или файл)"
+
+#: apt-pkg/acquire-item.cc:1666
+#, c-format
+msgid "Unable to find hash sum for '%s' in Release file"
+msgstr "Невозможно найти хеш-сумму «%s» в файле Release"
+
+#: apt-pkg/acquire-item.cc:1708
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
+
+#: apt-pkg/acquire-item.cc:1746
+#, c-format
+msgid ""
+"Release file for %s is expired (invalid since %s). Updates for this "
+"repository will not be applied."
+msgstr ""
+"Файл Release для %s просрочен (недостоверный начиная с %s). Обновление этого "
+"репозитория производиться не будет."
+
+#: apt-pkg/acquire-item.cc:1768
+#, c-format
+msgid "Conflicting distribution: %s (expected %s but got %s)"
+msgstr "Конфликт распространения: %s (ожидался %s, но получен %s)"
+
+#: apt-pkg/acquire-item.cc:1798
+#, c-format
+msgid ""
+"An error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgstr ""
+"Произошла ошибка при проверке подписи. Репозиторий не обновлён и будут "
+"использованы предыдущие индексные файлы. Ошибка GPG: %s: %s\n"
+
+#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
+#: apt-pkg/acquire-item.cc:1808 apt-pkg/acquire-item.cc:1813
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr "Ошибка GPG: %s: %s"
+
+#: apt-pkg/acquire-item.cc:1936
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"Не удалось обнаружить файл пакета %s. Это может означать, что вам придётся "
+"вручную исправить этот пакет (возможно, пропущен arch)"
+
+#: apt-pkg/acquire-item.cc:2002
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr "Невозможно найти источник для загрузки «%2$s» версии «%1$s»"
+
+#: apt-pkg/acquire-item.cc:2060
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
+
 #: apt-pkg/vendorlist.cc:85
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
@@ -2414,14 +2492,6 @@ msgstr "Скачивается файл %li из %li (осталось %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Скачивается файл %li из %li"
-
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Некоторые индексные файлы не скачались. Они были проигнорированы или вместо "
-"них были использованы старые версии."
 
 #: apt-pkg/srcrecords.cc:53
 msgid "You must put some 'source' URIs in your sources.list"
@@ -2477,10 +2547,13 @@ msgstr ""
 "Если вы действительно хотите продолжить, установите параметр APT::Force-"
 "LoopBreak."
 
-#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Строка %u в списке источников %s слишком длинна."
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Некоторые индексные файлы не скачались. Они были проигнорированы или вместо "
+"них были использованы старые версии."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2578,25 +2651,31 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Невозможно исправить ошибки, у вас отложены (held) битые пакеты."
 
-#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
-msgid "Send scenario to solver"
-msgstr "Отправка сценария решателю"
+#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "Построение дерева зависимостей"
 
-#: apt-pkg/edsp.cc:241
-msgid "Send request to solver"
-msgstr "Отправка запроса решателю"
+#: apt-pkg/depcache.cc:139
+msgid "Candidate versions"
+msgstr "Версии-кандидаты"
 
-#: apt-pkg/edsp.cc:320
-msgid "Prepare for receiving solution"
-msgstr "Подготовка к приёму решения"
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "Генерирование зависимостей"
 
-#: apt-pkg/edsp.cc:327
-msgid "External solver failed without a proper error message"
-msgstr "Внешний решатель завершился с ошибкой не передав сообщения об ошибке"
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "Чтение информации о состоянии"
 
-#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
-msgid "Execute external solver"
-msgstr "Запустить внешний решатель"
+#: apt-pkg/depcache.cc:250
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Не удалось открыть StateFile %s"
+
+#: apt-pkg/depcache.cc:256
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Не удалось записать временный StateFile %s"
 
 #: apt-pkg/tagfile.cc:140
 #, c-format
@@ -2607,110 +2686,6 @@ msgstr "Невозможно разобрать содержимое пакет�
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Невозможно разобрать содержимое пакета %s (2)"
-
-#: apt-pkg/indexrecords.cc:78
-#, c-format
-msgid "Unable to parse Release file %s"
-msgstr "Невозможно разобрать содержимое файла Release (%s)"
-
-#: apt-pkg/indexrecords.cc:86
-#, c-format
-msgid "No sections in Release file %s"
-msgstr "Отсутствуют разделы в файле Release (%s)"
-
-#: apt-pkg/indexrecords.cc:117
-#, c-format
-msgid "No Hash entry in Release file %s"
-msgstr "Отсутствуют элементы Hash в файле Release (%s)"
-
-#: apt-pkg/indexrecords.cc:130
-#, c-format
-msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Неправильный элемент «Valid-Until» в файле Release %s"
-
-#: apt-pkg/indexrecords.cc:149
-#, c-format
-msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Неправильный элемент «Date» в файле Release %s"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Искажённая строка %lu в списке источников %s (анализ URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Искажённая строка %lu в списке источников %s ([параметр] неразбираем)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr ""
-"Искажённая строка %lu в списке источников %s ([параметр] слишком короткий)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Искажённая строка %lu в списке источников %s (([%s] не назначаем)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Искажённая строка %lu в списке источников %s ([%s] не имеет ключа)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Искажённая строка %lu в списке источников %s (([%s] ключ %s не имеет "
-"значения)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Искажённая строка %lu в списке источников %s (проблема в URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr ""
-"Искажённая строка %lu в списке источников %s (проблема в имени дистрибутива)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Искажённая строка %lu в списке источников %s (анализ URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Искажённая строка %lu в списке источников %s (absolute dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Искажённая строка %lu в списке источников %s (dist parse)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Открытие %s"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Искажённая строка %u в списке источников %s (тип)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Неизвестный тип «%s» в строке %u в списке источников %s"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Неизвестный тип «%s» в строке %u в списке источников %s"
 
 #: apt-pkg/cacheset.cc:489
 #, c-format
@@ -2772,6 +2747,31 @@ msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
 "Не удалось выбрать установленную версию из пакета %s, так как он не "
 "установлен"
+
+#: apt-pkg/indexrecords.cc:78
+#, c-format
+msgid "Unable to parse Release file %s"
+msgstr "Невозможно разобрать содержимое файла Release (%s)"
+
+#: apt-pkg/indexrecords.cc:86
+#, c-format
+msgid "No sections in Release file %s"
+msgstr "Отсутствуют разделы в файле Release (%s)"
+
+#: apt-pkg/indexrecords.cc:117
+#, c-format
+msgid "No Hash entry in Release file %s"
+msgstr "Отсутствуют элементы Hash в файле Release (%s)"
+
+#: apt-pkg/indexrecords.cc:130
+#, c-format
+msgid "Invalid 'Valid-Until' entry in Release file %s"
+msgstr "Неправильный элемент «Valid-Until» в файле Release %s"
+
+#: apt-pkg/indexrecords.cc:149
+#, c-format
+msgid "Invalid 'Date' entry in Release file %s"
+msgstr "Неправильный элемент «Date» в файле Release %s"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
