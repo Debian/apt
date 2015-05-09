@@ -89,7 +89,7 @@
 	#define APT_MUSTCHECK		__attribute__((warn_unused_result))
 #else
 	#define APT_NONNULL(...)
-	#define APT_REQRET
+	#define APT_MUSTCHECK
 #endif
 
 #if APT_GCC_VERSION >= 0x0400
