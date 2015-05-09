@@ -630,7 +630,7 @@ static bool DoDownload(CommandLine &CmdL)
    if (Cache.ReadOnlyOpen() == false)
       return false;
 
-   APT::CacheSetHelper helper(c0out);
+   APT::CacheSetHelper helper;
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
 
@@ -1528,7 +1528,7 @@ static bool DoChangelog(CommandLine &CmdL)
    if (Cache.ReadOnlyOpen() == false)
       return false;
    
-   APT::CacheSetHelper helper(c0out);
+   APT::CacheSetHelper helper;
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
    if (verset.empty() == true)
