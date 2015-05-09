@@ -1315,14 +1315,18 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
    GrpIterator const Grp = Pkg.Group();
    for (PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
    {
-      // not installed or version synced: fine by definition
-      // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
-      if (P->CurrentVer == 0 || strcmp(Pkg.CandVersion(), P.CandVersion()) == 0)
+      // not installed or self-check: fine by definition
+      if (P->CurrentVer == 0 || P == Pkg)
 	 continue;
-      // packages losing M-A:same can be out-of-sync
+
+      // not having a candidate or being in sync
+      // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
       VerIterator CV = PkgState[P->ID].CandidateVerIter(*this);
-      if (unlikely(CV.end() == true) ||
-	    (CV->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)
+      if (CV.end() == true || strcmp(Pkg.CandVersion(), CV.VerStr()) == 0)
+	 continue;
+
+      // packages losing M-A:same can be out-of-sync
+      if ((CV->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)
 	 continue;
 
       // not downloadable means the package is obsolete, so allow out-of-sync
@@ -1332,7 +1336,8 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       PkgState[Pkg->ID].iFlags |= AutoKept;
       if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << Pkg
-	    << " as its M-A:same siblings are not version-synced" << std::endl;
+	    << " as it is not in sync with its M-A:same sibling " << P
+	    << " (" << Pkg.CandVersion() << " != " << CV.VerStr() << ")" << std::endl;
       return false;
    }
 
