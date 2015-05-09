@@ -97,11 +97,11 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
-   std::string URI;
-   std::string Dist;
-   std::string Section;
-   const char * const Language;
-   
+   std::string const URI;
+   std::string const Dist;
+   std::string const Section;
+   std::string const Language;
+
    APT_HIDDEN std::string Info(const char *Type) const;
    APT_HIDDEN std::string IndexFile(const char *Type) const;
    APT_HIDDEN std::string IndexURI(const char *Type) const;
@@ -109,12 +109,12 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
    APT_HIDDEN std::string TranslationFile() const {return std::string("Translation-").append(Language);};
 
    public:
-   
+
    virtual const Type *GetType() const APT_CONST;
 
    // Interface for acquire
-   virtual std::string Describe(bool Short) const;   
-   
+   virtual std::string Describe(bool Short) const;
+
    // Interface for the Cache Generator
    virtual bool Exists() const;
    virtual bool HasPackages() const;
@@ -122,7 +122,7 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debTranslationsIndex(std::string URI,std::string Dist,std::string Section, char const * const Language);
+   debTranslationsIndex(std::string const &URI,std::string const &Dist,std::string const &Section, std::string const &Language);
    virtual ~debTranslationsIndex();
 };
 
