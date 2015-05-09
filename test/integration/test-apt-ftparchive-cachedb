@@ -3,12 +3,12 @@ set -e
 
 ensure_correct_packages_file() {
     testequal "Package: foo
-Priority: optional
-Section: others
-$(dpkg-deb -I ./aptarchive/pool/main/foo_1_i386.deb | grep 'Installed-Size:' | sed 's#^ ##')
-Maintainer: Joe Sixpack <joe@example.org>
 Architecture: i386
 Version: 1
+Priority: optional
+Section: others
+Maintainer: Joe Sixpack <joe@example.org>
+$(dpkg-deb -I ./aptarchive/pool/main/foo_1_i386.deb | grep 'Installed-Size:' | sed 's#^ ##')
 Filename: pool/main/foo_1_i386.deb" head -n8 ./aptarchive/dists/test/main/binary-i386/Packages
 }
 

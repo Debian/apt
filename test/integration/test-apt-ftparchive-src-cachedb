@@ -3,16 +3,16 @@ set -e
 
 assert_correct_sources_file() {
     testsuccessequal "Package: bar
+Format: 3.0 (native)
+Binary: bar
 Architecture: all
 Version: 1.0
-Binary: bar
-Format: 3.0 (native)
 Directory: pool/main
+Package-List:
+ bar deb admin extra
 Files:
  7b57dd065e51de5905288a5104d4bef5 406 bar_1.0.dsc
  d41d8cd98f00b204e9800998ecf8427e 0 bar_1.0.tar.gz
-Package-List:
- bar deb admin extra
 Checksums-Sha1:
  17a40b76715f393ab7fd6485c9392a02f1adf903 406 bar_1.0.dsc
  da39a3ee5e6b4b0d3255bfef95601890afd80709 0 bar_1.0.tar.gz
@@ -24,16 +24,16 @@ Checksums-Sha512:
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e 0 bar_1.0.tar.gz
 
 Package: foo
+Format: 3.0 (native)
+Binary: foo
 Architecture: all
 Version: 1.0
-Binary: foo
-Format: 3.0 (native)
 Directory: pool/main
+Package-List: 
+ foo deb admin extra
 Files:
  d144826e6f02831c1933e910c92cd7e0 171 foo_1.0.dsc
  d41d8cd98f00b204e9800998ecf8427e 0 foo_1.0.tar.gz
-Package-List: 
- foo deb admin extra
 Checksums-Sha1:
  979306aa3ccff3d61bba062bb6977e2493c6f907 171 foo_1.0.dsc
  da39a3ee5e6b4b0d3255bfef95601890afd80709 0 foo_1.0.tar.gz
@@ -43,7 +43,7 @@ Checksums-Sha256:
 Checksums-Sha512:
  3da0240fd764657c2f3661b4d750578a9a99b0580591b133756379d48117ebda87a5ed2467f513200d6e7eaf51422cbe91c15720eef7fb4bba2cc8ff81ebc547 171 foo_1.0.dsc
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e 0 foo_1.0.tar.gz
-" aptsortpkgs ./aptarchive/dists/test/main/source/Sources
+" aptsortpkgs ./aptarchive/dists/test/main/source/Sources -o APT::SortPkgs::Source=true
 }
 
 create_source_files() {

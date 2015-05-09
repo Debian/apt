@@ -623,71 +623,14 @@ APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
    return d->Tags.size() - 1;
 }
 									/*}}}*/
+
+#include "tagfile-order.c"
+
 // TFRewrite - Rewrite a control record					/*{{{*/
 // ---------------------------------------------------------------------
 /* This writes the control record to stdout rewriting it as necessary. The
    override map item specificies the rewriting rules to follow. This also
    takes the time to sort the feild list. */
-
-/* The order of this list is taken from dpkg source lib/parse.c the fieldinfos
-   array. */
-static const char *iTFRewritePackageOrder[] = {
-                          "Package",
-                          "Essential",
-                          "Status",
-                          "Priority",
-                          "Section",
-                          "Installed-Size",
-                          "Maintainer",
-                          "Original-Maintainer",
-                          "Architecture",
-                          "Source",
-                          "Version",
-                           "Revision",         // Obsolete
-                           "Config-Version",   // Obsolete
-                          "Replaces",
-                          "Provides",
-                          "Depends",
-                          "Pre-Depends",
-                          "Recommends",
-                          "Suggests",
-                          "Conflicts",
-                          "Breaks",
-                          "Conffiles",
-                          "Filename",
-                          "Size",
-                          "MD5sum",
-                          "SHA1",
-                          "SHA256",
-                          "SHA512",
-                           "MSDOS-Filename",   // Obsolete
-                          "Description",
-                          0};
-static const char *iTFRewriteSourceOrder[] = {"Package",
-                                      "Source",
-                                      "Binary",
-                                      "Version",
-                                      "Priority",
-                                      "Section",
-                                      "Maintainer",
-				      "Original-Maintainer",
-                                      "Build-Depends",
-                                      "Build-Depends-Indep",
-                                      "Build-Conflicts",
-                                      "Build-Conflicts-Indep",
-                                      "Architecture",
-                                      "Standards-Version",
-                                      "Format",
-                                      "Directory",
-                                      "Files",
-                                      0};   
-
-/* Two levels of initialization are used because gcc will set the symbol
-   size of an array to the length of the array, causing dynamic relinking 
-   errors. Doing this makes the symbol size constant */
-const char **TFRewritePackageOrder = iTFRewritePackageOrder;
-const char **TFRewriteSourceOrder = iTFRewriteSourceOrder;
-   
 bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite)
 {
