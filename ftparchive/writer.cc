@@ -837,7 +837,8 @@ bool SourcesWriter::DoPackage(string FileName)
    // (5 hardcoded + checksums + maintainer + end marker)
    std::vector<TFRewriteData> Changes;
 
-   Changes.push_back(SetTFRewriteData("Source",Package.c_str(),"Package"));
+   Changes.push_back(SetTFRewriteData("Source", 0));
+   Changes.push_back(SetTFRewriteData("Package",Package.c_str()));
    if (Files.empty() == false)
       Changes.push_back(SetTFRewriteData("Files",Files.c_str()));
    if (ChecksumsSha1.empty() == false)
