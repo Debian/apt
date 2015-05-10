@@ -54,13 +54,14 @@ class pkgTagSection
    const char *Stop;
 
    public:
-   
+
    inline bool operator ==(const pkgTagSection &rhs) {return Section == rhs.Section;};
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
-   
+
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned int &Pos) const;
    std::string FindS(const char *Tag) const;
+   std::string FindRawS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const;
    bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
@@ -115,9 +116,32 @@ class pkgTagSection
       Start = Section;
       Stop = this->Stop;
    };
-   
+
    pkgTagSection();
    virtual ~pkgTagSection();
+
+   struct Tag
+   {
+      enum ActionType { REMOVE, RENAME, REWRITE } Action;
+      std::string Name;
+      std::string Data;
+
+      static Tag Remove(std::string const &Name);
+      static Tag Rename(std::string const &OldName, std::string const &NewName);
+      static Tag Rewrite(std::string const &Name, std::string const &Data);
+      private:
+      Tag(ActionType const Action, std::string const &Name, std::string const &Data) :
+	 Action(Action), Name(Name), Data(Data) {}
+   };
+
+   /** Write this section (with optional rewrites) to a file
+    *
+    * @param File to write the section to
+    * @param Order in which tags should appear in the file
+    * @param Rewrite is a set of tags to be renamed, rewitten and/or removed
+    * @return \b true if successful, otherwise \b false
+    */
+   bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
 };
 
 class pkgTagFilePrivate;
@@ -141,20 +165,19 @@ class pkgTagFile
    virtual ~pkgTagFile();
 };
 
-/* This is the list of things to rewrite. The rewriter
-   goes through and changes or adds each of these headers
-   to suit. A zero forces the header to be erased, an empty string
-   causes the old value to be used. (rewrite rule ignored) */
-struct TFRewriteData
+extern const char **TFRewritePackageOrder;
+extern const char **TFRewriteSourceOrder;
+
+// Use pkgTagSection::Tag and pkgTagSection::Write() instead
+APT_IGNORE_DEPRECATED_PUSH
+struct APT_DEPRECATED TFRewriteData
 {
    const char *Tag;
    const char *Rewrite;
    const char *NewTag;
 };
-extern const char **TFRewritePackageOrder;
-extern const char **TFRewriteSourceOrder;
-
-bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
+APT_DEPRECATED bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite);
+APT_IGNORE_DEPRECATED_POP
 
 #endif

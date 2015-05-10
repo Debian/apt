@@ -509,8 +509,6 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 }
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 string pkgTagSection::FindS(const char *Tag) const
 {
    const char *Start;
@@ -518,6 +516,24 @@ string pkgTagSection::FindS(const char *Tag) const
    if (Find(Tag,Start,End) == false)
       return string();
    return string(Start,End);      
+}
+									/*}}}*/
+// TagSection::FindRawS - Find a string					/*{{{*/
+string pkgTagSection::FindRawS(const char *Tag) const
+{
+   unsigned int Pos;
+   if (Find(Tag, Pos) == false)
+      return "";
+
+   char const *Start = (char const *) memchr(Section + d->Tags[Pos].EndTag, ':', d->Tags[Pos].StartValue - d->Tags[Pos].EndTag);
+   ++Start;
+   char const *End = Section + d->Tags[Pos + 1].StartTag;
+   if (unlikely(Start > End))
+      return "";
+
+   for (; isspace(End[-1]) != 0 && End > Start; --End);
+
+   return std::string(Start, End - Start);
 }
 									/*}}}*/
 // TagSection::FindI - Find an integer					/*{{{*/
@@ -623,6 +639,132 @@ APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
    return d->Tags.size() - 1;
 }
 									/*}}}*/
+// TagSection::Write - Ordered (re)writing of fields			/*{{{*/
+pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string const &Name)
+{
+   return Tag(REMOVE, Name, "");
+}
+pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string const &OldName, std::string const &NewName)
+{
+   return Tag(RENAME, OldName, NewName);
+}
+pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::string const &Data)
+{
+   if (Data.empty() == true)
+      return Tag(REMOVE, Name, "");
+   else
+      return Tag(REWRITE, Name, Data);
+}
+static bool WriteTag(FileFd &File, std::string Tag, std::string const &Value)
+{
+   if (Value.empty() || isspace(Value[0]) != 0)
+      Tag.append(":");
+   else
+      Tag.append(": ");
+   Tag.append(Value);
+   Tag.append("\n");
+   return File.Write(Tag.c_str(), Tag.length());
+}
+static bool RewriteTags(FileFd &File, pkgTagSection const * const This, char const * const Tag,
+      std::vector<pkgTagSection::Tag>::const_iterator &R,
+      std::vector<pkgTagSection::Tag>::const_iterator const &REnd)
+{
+   size_t const TagLen = strlen(Tag);
+   for (; R != REnd; ++R)
+   {
+      std::string data;
+      if (R->Name.length() == TagLen && strncasecmp(R->Name.c_str(), Tag, R->Name.length()) == 0)
+      {
+	 if (R->Action != pkgTagSection::Tag::REWRITE)
+	    break;
+	 data = R->Data;
+      }
+      else if(R->Action == pkgTagSection::Tag::RENAME && R->Data.length() == TagLen &&
+	    strncasecmp(R->Data.c_str(), Tag, R->Data.length()) == 0)
+	 data = This->FindRawS(R->Name.c_str());
+      else
+	 continue;
+
+      return WriteTag(File, Tag, data);
+   }
+   return true;
+}
+bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::vector<Tag> const &Rewrite) const
+{
+   // first pass: Write everything we have an order for
+   if (Order != NULL)
+   {
+      for (unsigned int I = 0; Order[I] != 0; ++I)
+      {
+	 std::vector<Tag>::const_iterator R = Rewrite.begin();
+	 if (RewriteTags(File, this, Order[I], R, Rewrite.end()) == false)
+	    return false;
+	 if (R != Rewrite.end())
+	    continue;
+
+	 if (Exists(Order[I]) == false)
+	    continue;
+
+	 if (WriteTag(File, Order[I], FindRawS(Order[I])) == false)
+	    return false;
+      }
+   }
+   // second pass: See if we have tags which aren't ordered
+   if (d->Tags.empty() == false)
+   {
+      for (std::vector<pkgTagSectionPrivate::TagData>::const_iterator T = d->Tags.begin(); T != d->Tags.end() - 1; ++T)
+      {
+	 char const * const fieldname = Section + T->StartTag;
+	 size_t fieldnamelen = T->EndTag - T->StartTag;
+	 if (Order != NULL)
+	 {
+	    unsigned int I = 0;
+	    for (; Order[I] != 0; ++I)
+	    {
+	       if (fieldnamelen == strlen(Order[I]) && strncasecmp(fieldname, Order[I], fieldnamelen) == 0)
+		  break;
+	    }
+	    if (Order[I] != 0)
+	       continue;
+	 }
+
+	 std::string const name(fieldname, fieldnamelen);
+	 std::vector<Tag>::const_iterator R = Rewrite.begin();
+	 if (RewriteTags(File, this, name.c_str(), R, Rewrite.end()) == false)
+	    return false;
+	 if (R != Rewrite.end())
+	    continue;
+
+	 if (WriteTag(File, name, FindRawS(name.c_str())) == false)
+	    return false;
+      }
+   }
+   // last pass: see if there are any rewrites remaining we haven't done yet
+   for (std::vector<Tag>::const_iterator R = Rewrite.begin(); R != Rewrite.end(); ++R)
+   {
+      if (R->Action == Tag::REMOVE)
+	 continue;
+      std::string const name = ((R->Action == Tag::RENAME) ? R->Data : R->Name);
+      if (Exists(name.c_str()))
+	 continue;
+      if (Order != NULL)
+      {
+	 unsigned int I = 0;
+	 for (; Order[I] != 0; ++I)
+	 {
+	    if (strncasecmp(name.c_str(), Order[I], name.length()) == 0 && name.length() == strlen(Order[I]))
+	       break;
+	 }
+	 if (Order[I] != 0)
+	    continue;
+      }
+
+      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRawS(R->Name.c_str()) : R->Data)) == false)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
 
 #include "tagfile-order.c"
 
@@ -631,6 +773,7 @@ APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
 /* This writes the control record to stdout rewriting it as necessary. The
    override map item specificies the rewriting rules to follow. This also
    takes the time to sort the feild list. */
+APT_IGNORE_DEPRECATED_PUSH
 bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite)
 {
@@ -754,6 +897,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
       
    return true;
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 
 pkgTagSection::~pkgTagSection() { delete d; }
