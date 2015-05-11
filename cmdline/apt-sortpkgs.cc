@@ -108,8 +108,10 @@ static bool DoIt(string InFile)
    const char **Order = TFRewritePackageOrder;
    if (Source == true)
       Order = TFRewriteSourceOrder;
-   
+
    // Emit
+   FileFd stdoutfd;
+   stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
    unsigned char *Buffer = new unsigned char[Largest+1];
    for (vector<PkgName>::iterator I = List.begin(); I != List.end(); ++I)
    {
@@ -119,8 +121,8 @@ static bool DoIt(string InFile)
 	 delete [] Buffer;
 	 return false;
       }
-      
-      Buffer[I->Length] = '\n';      
+
+      Buffer[I->Length] = '\n';
       if (Section.Scan((char *)Buffer,I->Length+1) == false)
       {
 	 delete [] Buffer;
@@ -128,15 +130,13 @@ static bool DoIt(string InFile)
       }
 
       // Sort the section
-      if (TFRewrite(stdout,Section,Order,0) == false)
+      if (Section.Write(stdoutfd, Order) == false || stdoutfd.Write("\n", 1) == false)
       {
 	 delete [] Buffer;
 	 return _error->Error("Internal error, failed to sort fields");
       }
-      
-      fputc('\n',stdout);      
    }
-   
+
    delete [] Buffer;
    return true;
 }

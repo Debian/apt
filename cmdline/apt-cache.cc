@@ -580,6 +580,12 @@ static bool DumpAvail(CommandLine &)
    
    LocalitySort(VFList,Count,sizeof(*VFList));
 
+   std::vector<pkgTagSection::Tag> RW;
+   RW.push_back(pkgTagSection::Tag::Remove("Status"));
+   RW.push_back(pkgTagSection::Tag::Remove("Config-Version"));
+   FileFd stdoutfd;
+   stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
+
    // Iterate over all the package files and write them out.
    char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
@@ -620,35 +626,32 @@ static bool DumpAvail(CommandLine &)
 	 if (PkgF.Read(Buffer,VF.Size + Jitter) == false)
 	    break;
 	 Buffer[VF.Size + Jitter] = '\n';
-	 
+
 	 // See above..
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
 	    pkgTagSection Tags;
-	    TFRewriteData RW[] = {{"Status", NULL, NULL},{"Config-Version", NULL, NULL},{NULL, NULL, NULL}};
-	    const char *Zero = 0;
 	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
-		TFRewrite(stdout,Tags,&Zero,RW) == false)
+		Tags.Write(stdoutfd, NULL, RW) == false ||
+		stdoutfd.Write("\n", 1) == false)
 	    {
 	       _error->Error("Internal Error, Unable to parse a package record");
 	       break;
 	    }
-	    fputc('\n',stdout);
 	 }
 	 else
 	 {
-	    if (fwrite(Buffer+Jitter,VF.Size+1,1,stdout) != 1)
+	    if (stdoutfd.Write(Buffer + Jitter, VF.Size + 1) == false)
 	       break;
 	 }
-	 
+
 	 Pos = VF.Offset + VF.Size;
       }
 
-      fflush(stdout);
       if (_error->PendingError() == true)
          break;
    }
-   
+
    delete [] Buffer;
    delete [] VFList;
    return !_error->PendingError();

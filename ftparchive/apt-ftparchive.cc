@@ -178,7 +178,9 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    PkgDone = true;
    
    // Create a package writer object.
-   PackagesWriter Packages(flCombine(CacheDir,BinCacheDB),
+   MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
+		      PkgCompress,Permissions);
+   PackagesWriter Packages(&Comp.Input, flCombine(CacheDir,BinCacheDB),
 			   flCombine(OverrideDir,BinOverride),
 			   flCombine(OverrideDir,ExtraOverride),
 			   Arch);
@@ -197,10 +199,6 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
    Packages.DeLinkLimit = DeLinkLimit;
 
-   // Create a compressor object
-   MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
-		      PkgCompress,Permissions);
-   Packages.Output = Comp.Input;
    if (_error->PendingError() == true)
       return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    
@@ -272,7 +270,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    SrcDone = true;
    
    // Create a package writer object.
-   SourcesWriter Sources(flCombine(CacheDir, SrcCacheDB),
+   MultiCompress Comp(flCombine(ArchiveDir,SrcFile),
+		      SrcCompress,Permissions);
+   SourcesWriter Sources(&Comp.Input, flCombine(CacheDir, SrcCacheDB),
 			 flCombine(OverrideDir,BinOverride),
 			 flCombine(OverrideDir,SrcOverride),
 			 flCombine(OverrideDir,SrcExtraOverride));
@@ -287,11 +287,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
 
    Sources.DeLinkLimit = DeLinkLimit;
    Sources.Stats.DeLinkBytes = Stats.DeLinkBytes;
-   
-   // Create a compressor object
-   MultiCompress Comp(flCombine(ArchiveDir,SrcFile),
-		      SrcCompress,Permissions);
-   Sources.Output = Comp.Input;
+
    if (_error->PendingError() == true)
       return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
 
@@ -365,16 +361,15 @@ bool PackageMap::GenContents(Configuration &Setup,
    gettimeofday(&StartTime,0);   
    
    // Create a package writer object.
-   ContentsWriter Contents("", Arch);
+   MultiCompress Comp(flCombine(ArchiveDir,this->Contents),
+		      CntCompress,Permissions);
+   Comp.UpdateMTime = Setup.FindI("Default::ContentsAge",10)*24*60*60;
+   ContentsWriter Contents(&Comp.Input, "", Arch);
    if (PkgExt.empty() == false && Contents.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
       return false;
 
-   MultiCompress Comp(flCombine(ArchiveDir,this->Contents),
-		      CntCompress,Permissions);
-   Comp.UpdateMTime = Setup.FindI("Default::ContentsAge",10)*24*60*60;
-   Contents.Output = Comp.Input;
    if (_error->PendingError() == true)
       return false;
 
@@ -384,7 +379,7 @@ bool PackageMap::GenContents(Configuration &Setup,
       FileFd Head(flCombine(OverrideDir,ContentsHead),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return false;
-      
+
       unsigned long long Size = Head.Size();
       unsigned char Buf[4096];
       while (Size != 0)
@@ -392,17 +387,17 @@ bool PackageMap::GenContents(Configuration &Setup,
 	 unsigned long long ToRead = Size;
 	 if (Size > sizeof(Buf))
 	    ToRead = sizeof(Buf);
-	 
+
 	 if (Head.Read(Buf,ToRead) == false)
 	    return false;
-	 
-	 if (fwrite(Buf,1,ToRead,Comp.Input) != ToRead)
+
+	 if (Comp.Input.Write(Buf, ToRead) == false)
 	    return _error->Errno("fwrite",_("Error writing header to contents file"));
-	 
+
 	 Size -= ToRead;
-      }            
-   }  
-      
+      }
+   }
+
    /* Go over all the package file records and parse all the package
       files associated with this contents file into one great big honking
       memory structure, then dump the sorted version */
@@ -676,7 +671,7 @@ static bool SimpleGenPackages(CommandLine &CmdL)
       Override = CmdL.FileList[2];
    
    // Create a package writer object.
-   PackagesWriter Packages(_config->Find("APT::FTPArchive::DB"),
+   PackagesWriter Packages(NULL, _config->Find("APT::FTPArchive::DB"),
 			   Override, "", _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
@@ -704,7 +699,7 @@ static bool SimpleGenContents(CommandLine &CmdL)
       return ShowHelp(CmdL);
    
    // Create a package writer object.
-   ContentsWriter Contents(_config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
+   ContentsWriter Contents(NULL, _config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
    
@@ -737,7 +732,7 @@ static bool SimpleGenSources(CommandLine &CmdL)
 			     SOverride.c_str());
        
    // Create a package writer object.
-   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),Override,SOverride);
+   SourcesWriter Sources(NULL, _config->Find("APT::FTPArchive::DB"),Override,SOverride);
    if (_error->PendingError() == true)
       return false;
    
@@ -764,7 +759,7 @@ static bool SimpleGenRelease(CommandLine &CmdL)
 
    string Dir = CmdL.FileList[1];
 
-   ReleaseWriter Release("");
+   ReleaseWriter Release(NULL, "");
    Release.DirStrip = Dir;
 
    if (_error->PendingError() == true)

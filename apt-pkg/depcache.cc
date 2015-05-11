@@ -33,7 +33,6 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <set>
 
 #include <sys/stat.h>
@@ -252,17 +251,14 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
       return _error->Error(_("Failed to open StateFile %s"),
 			   state.c_str());
 
-   FILE *OutFile;
-   string const outfile = state + ".tmp";
-   if((OutFile = fopen(outfile.c_str(),"w")) == NULL)
-      return _error->Error(_("Failed to write temporary StateFile %s"),
-			   outfile.c_str());
+   FileFd OutFile(state, FileFd::ReadWrite | FileFd::Atomic);
+   if (OutFile.IsOpen() == false || OutFile.Failed() == true)
+      return _error->Error(_("Failed to write temporary StateFile %s"), state.c_str());
 
    // first merge with the existing sections
    pkgTagFile tagfile(&StateFile);
    pkgTagSection section;
    std::set<string> pkgs_seen;
-   const char *nullreorderlist[] = {0};
    while(tagfile.Step(section)) {
 	 string const pkgname = section.FindS("Package");
 	 string pkgarch = section.FindS("Architecture");
@@ -271,7 +267,7 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
 	 // Silently ignore unknown packages and packages with no actual
 	 // version.
 	 pkgCache::PkgIterator pkg = Cache->FindPkg(pkgname, pkgarch);
-	 if(pkg.end() || pkg.VersionList().end()) 
+	 if(pkg.end() || pkg.VersionList().end())
 	    continue;
 	 StateCache const &P = PkgState[pkg->ID];
 	 bool newAuto = (P.Flags & Flag::Auto);
@@ -292,21 +288,17 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
 	 if(_config->FindB("Debug::pkgAutoRemove",false))
 	    std::clog << "Update existing AutoInstall info: " 
 		      << pkg.FullName() << std::endl;
-	 TFRewriteData rewrite[3];
-	 rewrite[0].Tag = "Architecture";
-	 rewrite[0].Rewrite = pkg.Arch();
-	 rewrite[0].NewTag = 0;
-	 rewrite[1].Tag = "Auto-Installed";
-	 rewrite[1].Rewrite = newAuto ? "1" : "0";
-	 rewrite[1].NewTag = 0;
-	 rewrite[2].Tag = 0;
-	 TFRewrite(OutFile, section, nullreorderlist, rewrite);
-	 fprintf(OutFile,"\n");
+
+	 std::vector<pkgTagSection::Tag> rewrite;
+	 rewrite.push_back(pkgTagSection::Tag::Rewrite("Architecture", pkg.Arch()));
+	 rewrite.push_back(pkgTagSection::Tag::Rewrite("Auto-Installed", newAuto ? "1" : "0"));
+	 section.Write(OutFile, NULL, rewrite);
+	 if (OutFile.Write("\n", 1) == false)
+	    return false;
 	 pkgs_seen.insert(pkg.FullName());
    }
-   
+
    // then write the ones we have not seen yet
-   std::ostringstream ostr;
    for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); ++pkg) {
       StateCache const &P = PkgState[pkg->ID];
       if(P.Flags & Flag::Auto) {
@@ -325,19 +317,17 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
 	    continue;
 	 if(debug_autoremove)
 	    std::clog << "Writing new AutoInstall: " << pkg.FullName() << std::endl;
-	 ostr.str(string(""));
-	 ostr << "Package: " << pkg.Name()
-	      << "\nArchitecture: " << pkgarch
-	      << "\nAuto-Installed: 1\n\n";
-	 fprintf(OutFile,"%s",ostr.str().c_str());
+	 std::string stanza = "Package: ";
+	 stanza.append(pkg.Name())
+	      .append("\nArchitecture: ").append(pkgarch)
+	      .append("\nAuto-Installed: 1\n\n");
+	 if (OutFile.Write(stanza.c_str(), stanza.length()) == false)
+	    return false;
       }
    }
-   fclose(OutFile);
-
-   // move the outfile over the real file and set permissions
-   rename(outfile.c_str(), state.c_str());
+   if (OutFile.Close() == false)
+      return false;
    chmod(state.c_str(), 0644);
-
    return true;
 }
 									/*}}}*/

@@ -17,6 +17,7 @@
 #include <string>
 
 class debDebFile;
+class FileFd;
 
 class GenContents
 {
@@ -54,14 +55,14 @@ class GenContents
    unsigned long NodeLeft;
    
    Node *Grab(Node *Top,const char *Name,const char *Package);
-   void WriteSpace(FILE *Out,unsigned int Current,unsigned int Target);
-   void DoPrint(FILE *Out,Node *Top, char *Buf);
+   void WriteSpace(std::string &out, size_t Current, size_t Target);
+   void DoPrint(FileFd &Out,Node *Top, char *Buf);
    
    public:
    
    char *Mystrdup(const char *From);
    void Add(const char *Dir,const char *Package);   
-   void Print(FILE *Out);
+   void Print(FileFd &Out);
 
    GenContents() : BlockList(0), StrPool(0), StrLeft(0), 
                    NodePool(0), NodeLeft(0) {};

@@ -108,10 +108,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       }
       if (_error->PendingError() == true)
 	 return false;
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
-      if (TargetFl == 0)
-	 return _error->Errno("fdopen","Failed to reopen fd");
-      
+
       // Setup the progress meter
       if(Progress)
 	 Progress->OverallProgress(CurrentSize,TotalSize,FileSize,
@@ -132,14 +129,11 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	 string File;
 	 unsigned long long Size;
 	 if (GetFile(File,Size) == false)
-	 {
-	    fclose(TargetFl);
 	    return false;
-	 }
-	 
+
 	 if (Chop != 0)
 	    File = OrigPath + ChopDirs(File,Chop);
-	 
+
 	 // See if the file exists
 	 if (NoStat == false || Hits < 10)
 	 {
@@ -157,10 +151,10 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	       if (Chop != 0)
 		  File = OrigPath + ChopDirs(File,Chop);
 	    }
-	    
+
 	    // Get the size
 	    struct stat Buf;
-	    if (stat((CDROM + Prefix + File).c_str(),&Buf) != 0 || 
+	    if (stat((CDROM + Prefix + File).c_str(),&Buf) != 0 ||
 		Buf.st_size == 0)
 	    {
 	       bool Mangled = false;
@@ -173,7 +167,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 		  File.replace(Start,End-Start,"binary-all");
 		  Mangled = true;
 	       }
-	       
+
 	       if (Mangled == false ||
 		   stat((CDROM + Prefix + File).c_str(),&Buf) != 0)
 	       {
@@ -181,9 +175,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 		     clog << "Missed(2): " << OrigFile << endl;
 		  NotFound++;
 		  continue;
-	       }	       
-	    }	    
-	    			    	    
+	       }
+	    }
+
 	    // Size match
 	    if ((unsigned long long)Buf.st_size != Size)
 	    {
@@ -193,21 +187,17 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	       continue;
 	    }
 	 }
-	 
+
 	 Packages++;
 	 Hits++;
-	 
-	 if (RewriteEntry(TargetFl,File) == false)
-	 {
-	    fclose(TargetFl);
+
+	 if (RewriteEntry(Target, File) == false)
 	    return false;
-	 }
       }
-      fclose(TargetFl);
 
       if (Debug == true)
 	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
-	 
+
       if (_config->FindB("APT::CDROM::NoAct",false) == false)
       {
 	 // Move out of the partial directory
@@ -218,39 +208,38 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    return _error->Errno("rename","Failed to rename");
 	 ChangeOwnerAndPermissionOfFile("CopyPackages", FinalF.c_str(), "root", "root", 0644);
       }
-	 
+
       /* Mangle the source to be in the proper notation with
-       	 prefix dist [component] */ 
+	 prefix dist [component] */
       *I = string(*I,Prefix.length());
       ConvertToSourceList(CDROM,*I);
       *I = Prefix + ' ' + *I;
-      
+
       CurrentSize += FileSize;
-   }   
+   }
    if(Progress)
       Progress->Done();
-   
+
    // Some stats
    if(log) {
       stringstream msg;
       if(NotFound == 0 && WrongSize == 0)
 	 ioprintf(msg, _("Wrote %i records.\n"), Packages);
       else if (NotFound != 0 && WrongSize == 0)
-	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"), 
+	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"),
 		  Packages, NotFound);
       else if (NotFound == 0 && WrongSize != 0)
-	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"), 
+	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"),
 		  Packages, WrongSize);
       if (NotFound != 0 && WrongSize != 0)
 	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismatched files\n"), Packages, NotFound, WrongSize);
    }
-   
+
    if (Packages == 0)
       _error->Warning("No valid records were found.");
 
    if (NotFound + WrongSize > 10)
       _error->Warning("A lot of entries were discarded, something may be wrong.\n");
-   
 
    return true;
 }
@@ -267,10 +256,10 @@ string IndexCopy::ChopDirs(string Path,unsigned int Depth)
       Depth--;
    }
    while (I != string::npos && Depth != 0);
-   
+
    if (I == string::npos)
       return string();
-   
+
    return string(Path,I+1);
 }
 									/*}}}*/
@@ -433,17 +422,15 @@ bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 }
 									/*}}}*/
 // PackageCopy::RewriteEntry - Rewrite the entry with a new filename	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool PackageCopy::RewriteEntry(FILE *Target,string File)
+bool PackageCopy::RewriteEntry(FileFd &Target,string const &File)
 {
-   TFRewriteData Changes[] = {{ "Filename", File.c_str(), NULL },
-                              { NULL, NULL, NULL }};
-   
-   if (TFRewrite(Target,*Section,TFRewritePackageOrder,Changes) == false)
+   string const Dir(File,0,File.rfind('/'));
+   std::vector<pkgTagSection::Tag> Changes;
+   Changes.push_back(pkgTagSection::Tag::Rewrite("Filename", File));
+
+   if (Section->Write(Target, TFRewritePackageOrder, Changes) == false)
       return false;
-   fputc('\n',Target);
-   return true;
+   return Target.Write("\n", 1);
 }
 									/*}}}*/
 // SourceCopy::GetFile - Get the file information from the section	/*{{{*/
@@ -478,23 +465,18 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 }
 									/*}}}*/
 // SourceCopy::RewriteEntry - Rewrite the entry with a new filename	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool SourceCopy::RewriteEntry(FILE *Target,string File)
+bool SourceCopy::RewriteEntry(FileFd &Target, std::string const &File)
 {
-   string Dir(File,0,File.rfind('/'));
-   TFRewriteData Changes[] = {{ "Directory", Dir.c_str(), NULL },
-                              { NULL, NULL, NULL }};
-   
-   if (TFRewrite(Target,*Section,TFRewriteSourceOrder,Changes) == false)
+   string const Dir(File,0,File.rfind('/'));
+   std::vector<pkgTagSection::Tag> Changes;
+   Changes.push_back(pkgTagSection::Tag::Rewrite("Directory", Dir));
+
+   if (Section->Write(Target, TFRewriteSourceOrder, Changes) == false)
       return false;
-   fputc('\n',Target);
-   return true;
+   return Target.Write("\n", 1);
 }
 									/*}}}*/
-// SigVerify::Verify - Verify a files md5sum against its metaindex     	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// SigVerify::Verify - Verify a files md5sum against its metaindex	/*{{{*/
 bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 {
    const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
@@ -702,7 +684,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
 	 return false;
-      
+
       // Open the output file
       char S[400];
       snprintf(S,sizeof(S),"cdrom:[%s]/%s",Name.c_str(),
@@ -719,10 +701,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       }
       if (_error->PendingError() == true)
 	 return false;
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
-      if (TargetFl == 0)
-	 return _error->Errno("fdopen","Failed to reopen fd");
-      
+
       // Setup the progress meter
       if(Progress)
 	 Progress->OverallProgress(CurrentSize,TotalSize,FileSize,
@@ -740,20 +719,16 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 	 if(Progress)
 	    Progress->Progress(Parser.Offset());
 
-	 const char *Start;
-	 const char *Stop;
-	 Section.GetSection(Start,Stop);
-	 fwrite(Start,Stop-Start, 1, TargetFl);
-	 fputc('\n',TargetFl);
+	 if (Section.Write(Target) == false || Target.Write("\n", 1) == false)
+	    return false;
 
 	 Packages++;
 	 Hits++;
       }
-      fclose(TargetFl);
 
       if (Debug == true)
 	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << endl;
-	 
+
       if (_config->FindB("APT::CDROM::NoAct",false) == false)
       {
 	 // Move out of the partial directory
@@ -764,34 +739,32 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 	    return _error->Errno("rename","Failed to rename");
 	 ChangeOwnerAndPermissionOfFile("CopyTranslations", FinalF.c_str(), "root", "root", 0644);
       }
-      
-      
+
       CurrentSize += FileSize;
-   }   
+   }
    if(Progress)
       Progress->Done();
-   
+
    // Some stats
    if(log) {
       stringstream msg;
       if(NotFound == 0 && WrongSize == 0)
 	 ioprintf(msg, _("Wrote %i records.\n"), Packages);
       else if (NotFound != 0 && WrongSize == 0)
-	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"), 
+	 ioprintf(msg, _("Wrote %i records with %i missing files.\n"),
 		  Packages, NotFound);
       else if (NotFound == 0 && WrongSize != 0)
-	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"), 
+	 ioprintf(msg, _("Wrote %i records with %i mismatched files\n"),
 		  Packages, WrongSize);
       if (NotFound != 0 && WrongSize != 0)
 	 ioprintf(msg, _("Wrote %i records with %i missing files and %i mismatched files\n"), Packages, NotFound, WrongSize);
    }
-   
+
    if (Packages == 0)
       _error->Warning("No valid records were found.");
 
    if (NotFound + WrongSize > 10)
       _error->Warning("A lot of entries were discarded, something may be wrong.\n");
-   
 
    return true;
 }

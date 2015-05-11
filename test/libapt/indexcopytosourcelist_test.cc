@@ -16,7 +16,7 @@ class NoCopy : public IndexCopy {
 	 return Path;
       }
       bool GetFile(std::string &/*Filename*/, unsigned long long &/*Size*/) { return false; }
-      bool RewriteEntry(FILE * /*Target*/, std::string /*File*/) { return false; }
+      bool RewriteEntry(FileFd & /*Target*/, std::string const &/*File*/) { return false; }
       const char *GetFileName() { return NULL; }
       const char *Type() { return NULL; }
 
