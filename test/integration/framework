@@ -1128,7 +1128,7 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 downloadfile() {
 	local PROTO="${1%%:*}"
 	if ! apthelper -o Debug::Acquire::${PROTO}=1 -o Debug::pkgAcquire::Worker=1 \
-		download-file "$1" "$2" 2>&1 ; then
+		download-file "$1" "$2" "$3" 2>&1 ; then
 		return 1
 	fi
 	# only if the file exists the download was successful

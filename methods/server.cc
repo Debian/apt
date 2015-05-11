@@ -269,7 +269,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       Res.LastModified = Queue->LastModified;
       return IMS_HIT;
    }
-   
+
    /* Redirect
     *
     * Note that it is only OK for us to treat all redirection the same
@@ -314,7 +314,20 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       struct stat SBuf;
       if (stat(Queue->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
       {
-	 if ((unsigned long long)SBuf.st_size == Server->Size)
+	 bool partialHit = false;
+	 if (Queue->ExpectedHashes.usable() == true)
+	 {
+	    Hashes resultHashes(Queue->ExpectedHashes);
+	    FileFd file(Queue->DestFile, FileFd::ReadOnly);
+	    Server->Size = file.FileSize();
+	    Server->Date = file.ModificationTime();
+	    resultHashes.AddFD(file);
+	    HashStringList const hashList = resultHashes.GetHashStringList();
+	    partialHit = (Queue->ExpectedHashes == hashList);
+	 }
+	 else if ((unsigned long long)SBuf.st_size == Server->Size)
+	    partialHit = true;
+	 if (partialHit == true)
 	 {
 	    // the file is completely downloaded, but was not moved
 	    if (Server->HaveContent == true)
@@ -351,7 +364,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    // This is some sort of 2xx 'data follows' reply
    Res.LastModified = Server->Date;
    Res.Size = Server->Size;
-   
+
    // Open the file
    delete File;
    File = new FileFd(Queue->DestFile,FileFd::WriteAny);

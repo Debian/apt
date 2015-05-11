@@ -79,6 +79,7 @@ class HttpsMethod : public ServerMethod
    virtual bool Configuration(std::string Message);
    virtual ServerState * CreateServerState(URI uri);
    using pkgAcqMethod::FetchResult;
+   using pkgAcqMethod::FetchItem;
 
    HttpsMethod() : ServerMethod("1.2",Pipeline | SendConfig), File(NULL)
    {

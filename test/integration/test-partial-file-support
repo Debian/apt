@@ -17,8 +17,8 @@ DOWNLOADLOG='rootdir/tmp/testdownloadfile.log'
 
 testdownloadfile() {
 	rm -f "$DOWNLOADLOG"
-	msgtest "Testing download of file $2 with" "$1"
-	if ! downloadfile "$2" "$3" > "$DOWNLOADLOG"; then
+	msgtest "Testing download of file $2 with" "$1 $5"
+	if ! downloadfile "$2" "$3" "$5" > "$DOWNLOADLOG"; then
 		cat >&2 "$DOWNLOADLOG"
 		msgfail
 	else
@@ -77,6 +77,12 @@ followuprequest() {
 	copysource $TESTFILE 1M $DOWN
 	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
+
+	webserverconfig 'aptwebserver::support::content-range' 'false'
+	copysource $TESTFILE 1M $DOWN
+	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '=' "SHA1:$(sha1sum "$TESTFILE" | cut -d' ' -f 1)"
+	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
+	webserverconfig 'aptwebserver::support::content-range' 'true'
 
 	copysource $TESTFILE 1M $DOWN
 	copysource "${TESTFILE}2" 20 "${DOWN}2"

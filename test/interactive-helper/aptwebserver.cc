@@ -745,9 +745,12 @@ static void * handleClient(void * voidclient)				/*{{{*/
 		     }
 		     else
 		     {
-			std::ostringstream contentrange;
-			contentrange << "Content-Range: bytes */" << filesize;
-			headers.push_back(contentrange.str());
+			if (_config->FindB("aptwebserver::support::content-range", true) == true)
+			{
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes */" << filesize;
+			   headers.push_back(contentrange.str());
+			}
 			sendError(client, 416, *m, sendContent, "", headers);
 			break;
 		     }
