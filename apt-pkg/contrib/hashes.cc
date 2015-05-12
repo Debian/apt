@@ -204,15 +204,22 @@ bool HashStringList::push_back(const HashString &hashString)		/*{{{*/
 									/*}}}*/
 bool HashStringList::VerifyFile(std::string filename) const		/*{{{*/
 {
-   if (list.empty() == true)
+   if (usable() == false)
       return false;
-   HashString const * const hs = find(NULL);
-   if (hs == NULL || hs->VerifyFile(filename) == false)
-      return false;
+
+   Hashes hashes(*this);
+   FileFd file(filename, FileFd::ReadOnly);
    HashString const * const hsf = find("Checksum-FileSize");
-   if (hsf != NULL && hsf->VerifyFile(filename) == false)
-      return false;
-   return true;
+   if (hsf != NULL)
+   {
+      std::string fileSize;
+      strprintf(fileSize, "%llu", file.FileSize());
+      if (hsf->HashValue() != fileSize)
+	 return false;
+   }
+   hashes.AddFD(file);
+   HashStringList const hsl = hashes.GetHashStringList();
+   return hsl == *this;
 }
 									/*}}}*/
 bool HashStringList::operator==(HashStringList const &other) const	/*{{{*/

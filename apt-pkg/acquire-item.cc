@@ -1175,7 +1175,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    else if (State == StateApplyDiff)
    {
       // see if we really got the expected file
-      if(ExpectedHashes.usable() && !ExpectedHashes.VerifyFile(DestFile))
+      if(ExpectedHashes.usable() && ExpectedHashes != Hashes)
       {
 	 RenameOnError(HashSumMismatch);
 	 return;
