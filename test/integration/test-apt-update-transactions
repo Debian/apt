@@ -47,6 +47,7 @@ testrun() {
 
 testsetup() {
 	msgmsg 'Test with no initial data over' "$1"
+	redatereleasefiles 'now'
 	rm -rf rootdir/var/lib/apt/lists
 	mkdir -p rootdir/var/lib/apt/lists/partial
 	listcurrentlistsdirectory > listsdir.lst
@@ -55,6 +56,7 @@ testsetup() {
 	msgmsg 'Test with initial data over' "$1"
 	testsuccess aptget update
 	listcurrentlistsdirectory > listsdir.lst
+	redatereleasefiles '+1hour'
 	testrun 'listsdir.lst'
 }
 

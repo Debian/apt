@@ -26,6 +26,7 @@ test_inreleasetoobig() {
 }
 
 test_packagestoobig() {
+	redatereleasefiles '+1hour'
 	# append junk at the end of the Packages.gz/Packages
 	SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 	find aptarchive/dists -name 'Packages*' | while read pkg; do

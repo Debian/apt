@@ -333,13 +333,12 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    // see if there is a hash to verify
 	    HashStringList ReceivedHashes;
-	    HashStringList expectedHashes = Owner->HashSums();
-	    for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
+	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
-	       std::string const tagname = hs->HashType() + "-Hash";
+	       std::string const tagname = std::string(*type) + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
 	       if (hashsum.empty() == false)
-		  ReceivedHashes.push_back(HashString(hs->HashType(), hashsum));
+		  ReceivedHashes.push_back(HashString(*type, hashsum));
 	    }
 
 	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
@@ -349,6 +348,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << "ExpectedHash:" << endl;
+	       HashStringList expectedHashes = Owner->HashSums();
 	       for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << endl;

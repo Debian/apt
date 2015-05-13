@@ -158,6 +158,7 @@ test_inrelease_to_broken_gzip() {
     msgmsg "Test InRelease to broken gzip"
     start_with_good_inrelease
 
+    redatereleasefiles '+2hours'
     # append junk at the end of the compressed file
     echo "lala" >> $APTARCHIVE/dists/unstable/main/source/Sources.gz
     touch -d '+2min' $APTARCHIVE/dists/unstable/main/source/Sources.gz

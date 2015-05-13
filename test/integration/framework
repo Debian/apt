@@ -1005,6 +1005,15 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+redatereleasefiles() {
+	local DATE="$(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
+	for release in $(find aptarchive/ -name 'Release'); do
+		sed -i "s/^Date: .*$/Date: ${DATE}/" $release
+		touch -d "$DATE" $release
+	done
+	signreleasefiles "${2:-Joe Sixpack}"
+}
+
 webserverconfig() {
 	local WEBSERVER="${3:-http://localhost:8080}"
 	local NOCHECK=false

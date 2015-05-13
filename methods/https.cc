@@ -444,7 +444,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       char err[255];
       snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
       SetFailReason(err);
-      _error->Error("%s", err);
+      _error->Error("%i %s", Server->Result, Server->Code);
       // unlink, no need keep 401/404 page content in partial/
       unlink(File->Name().c_str());
       return false;

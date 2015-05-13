@@ -253,7 +253,10 @@ bool pkgAcquire::Item::Rename(string From,string To)
    strprintf(S, _("rename failed, %s (%s -> %s)."), strerror(errno),
 	 From.c_str(),To.c_str());
    Status = StatError;
-   ErrorText += S;
+   if (ErrorText.empty())
+      ErrorText = S;
+   else
+      ErrorText = ErrorText + ": " + S;
    return false;
 }
 									/*}}}*/
@@ -1794,7 +1797,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      if(CheckDownloadDone(Message) == true)
+      if(CheckDownloadDone(Message, Hashes) == true)
       {
          // destfile will be modified to point to MetaIndexFile for the
          // gpgv method, so we need to save it here
@@ -1837,7 +1840,8 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
          Status = StatDone;
       } else {
          _error->Error("%s", downgrade_msg.c_str());
-         Rename(MetaIndexFile, MetaIndexFile+".FAILED");
+	 if (TransactionManager->IMSHit == false)
+	    Rename(MetaIndexFile, MetaIndexFile+".FAILED");
 	 Item::Failed("Message: " + downgrade_msg, Cnf);
          TransactionManager->AbortTransaction();
          return;
@@ -1922,12 +1926,12 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
 {
    Item::Done(Message,Size,Hashes,Cfg);
 
-   if(CheckDownloadDone(Message))
+   if(CheckDownloadDone(Message, Hashes))
    {
       // we have a Release file, now download the Signature, all further
       // verify/queue for additional downloads will be done in the
       // pkgAcqMetaSig::Done() code
-      std::string MetaIndexFile = DestFile;
+      std::string const MetaIndexFile = DestFile;
       new pkgAcqMetaSig(Owner, TransactionManager, 
                         MetaIndexSigURI, MetaIndexSigURIDesc,
                         MetaIndexSigShortDesc, MetaIndexFile, IndexTargets, 
@@ -2008,7 +2012,7 @@ void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
 }
 									/*}}}*/
 // pkgAcqMetaBase::CheckDownloadDone					/*{{{*/
-bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message)
+bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message, HashStringList const &Hashes)
 {
    // We have just finished downloading a Release file (it is not
    // verified yet)
@@ -2031,7 +2035,18 @@ bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message)
 
    // make sure to verify against the right file on I-M-S hit
    IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
-   if(IMSHit)
+   if (IMSHit == false)
+   {
+      // detect IMS-Hits servers haven't detected by Hash comparison
+      std::string FinalFile = GetFinalFilename();
+      if (RealFileExists(FinalFile) && Hashes.VerifyFile(FinalFile) == true)
+      {
+	 IMSHit = true;
+	 unlink(DestFile.c_str());
+      }
+   }
+
+   if(IMSHit == true)
    {
       // for simplicity, the transaction manager is always InRelease
       // even if it doesn't exist.
@@ -2273,7 +2288,7 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      if(CheckDownloadDone(Message) == true)
+      if(CheckDownloadDone(Message, Hashes) == true)
          QueueForSignatureVerify(DestFile, DestFile);
       return;
    }

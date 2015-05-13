@@ -429,7 +429,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     *  \param Message The message block received from the fetch
     *  subprocess.
     */
-   bool CheckDownloadDone(const std::string &Message);
+   bool CheckDownloadDone(const std::string &Message, HashStringList const &Hashes);
 
    /** \brief Queue the downloaded Signature for verification */
    void QueueForSignatureVerify(const std::string &MetaIndexFile,
