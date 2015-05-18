@@ -58,6 +58,11 @@ APT_PURE time_t indexRecords::GetValidUntil() const
    return this->ValidUntil;
 }
 
+APT_PURE time_t indexRecords::GetDate() const
+{
+   return this->Date;
+}
+
 APT_PURE indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
@@ -133,9 +138,15 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       return false;
    }
 
-   string Label = Section.FindS("Label");
-   string StrDate = Section.FindS("Date");
-   string StrValidUntil = Section.FindS("Valid-Until");
+   string const StrDate = Section.FindS("Date");
+   if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
+   {
+      strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+
+   string const Label = Section.FindS("Label");
+   string const StrValidUntil = Section.FindS("Valid-Until");
 
    // if we have a Valid-Until header in the Release file, use it as default
    if (StrValidUntil.empty() == false)
@@ -158,20 +169,13 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file
       return true;
 
-   time_t date;
-   if (RFC1123StrToTime(StrDate.c_str(), date) == false)
-   {
-      strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
-      return false;
-   }
-
    if (MinAge != 0 && ValidUntil != 0) {
-      time_t const min_date = date + MinAge;
+      time_t const min_date = Date + MinAge;
       if (ValidUntil < min_date)
 	 ValidUntil = min_date;
    }
    if (MaxAge != 0) {
-      time_t const max_date = date + MaxAge;
+      time_t const max_date = Date + MaxAge;
       if (ValidUntil == 0 || ValidUntil > max_date)
 	 ValidUntil = max_date;
    }

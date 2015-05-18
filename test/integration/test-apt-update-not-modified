@@ -56,7 +56,6 @@ Reading package lists..." aptget update
 	testsuccessequal "Ign $1 unstable InRelease
   404  Not Found
 Hit $1 unstable Release
-Hit $1 unstable Release.gpg
 Reading package lists..." aptget update
 	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 
@@ -66,7 +65,6 @@ Reading package lists..." aptget update
 	testsuccessequal "Ign $1 unstable InRelease
   404  Not Found
 Hit $1 unstable Release
-Hit $1 unstable Release.gpg
 Reading package lists..." aptget update
 	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
 
@@ -75,7 +73,6 @@ Reading package lists..." aptget update
 	testsuccessequal "Ign $1 unstable InRelease
   404  Not Found
 Hit $1 unstable Release
-Hit $1 unstable Release.gpg
 Get:1 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
 Reading package lists..." aptget update
 	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
@@ -85,7 +82,6 @@ Reading package lists..." aptget update
 	testsuccessequal "Ign $1 unstable InRelease
   404  Not Found
 Get:1 $1 unstable Release [$(stat -c '%s' 'aptarchive/dists/unstable/Release') B]
-Get:2 $1 unstable Release.gpg [$(stat -c '%s' 'aptarchive/dists/unstable/Release.gpg') B]
 Reading package lists..." aptget update
 	webserverconfig 'aptwebserver::support::modified-since' 'true'
 	webserverconfig 'aptwebserver::support::last-modified' 'true'

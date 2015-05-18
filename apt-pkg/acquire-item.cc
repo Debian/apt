@@ -1637,7 +1637,7 @@ pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire *Owner,
       HashStringList const &ExpectedHashes,
       pkgAcqMetaBase *TransactionManager)
 : Item(Owner, ExpectedHashes, TransactionManager),
-   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
+   MetaIndexParser(MetaIndexParser), LastMetaIndexParser(NULL), IndexTargets(IndexTargets),
    AuthPass(false), RealURI(RealURI), IMSHit(false)
 {
 }
@@ -1697,6 +1697,14 @@ void pkgAcqMetaBase::CommitTransaction()
    Transaction.clear();
 }
 									/*}}}*/
+bool pkgAcqMetaBase::TransactionState(TransactionStates const state)	/*{{{*/
+{
+   // Do not remove InRelease on IMSHit of Release.gpg [yes, this is very edgecasey]
+   if (TransactionManager->IMSHit == false)
+      return pkgAcquire::Item::TransactionState(state);
+   return true;
+}
+									/*}}}*/
 // AcqMetaBase::TransactionStageCopy - Stage a file for copying		/*{{{*/
 void pkgAcqMetaBase::TransactionStageCopy(Item *I,
                                           const std::string &From,
@@ -1715,15 +1723,15 @@ void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
 }
 									/*}}}*/
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
-bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &Message)
+bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const std::string &Message)
 {
    // FIXME: this entire function can do now that we disallow going to
    //        a unauthenticated state and can cleanly rollback
 
-   string const Final = GetFinalFilename();
+   string const Final = I->GetFinalFilename();
    if(FileExists(Final))
    {
-      Status = StatTransientNetworkError;
+      I->Status = StatTransientNetworkError;
       _error->Warning(_("An error occurred during the signature "
                         "verification. The repository is not updated "
                         "and the previous index files will be used. "
@@ -1737,7 +1745,7 @@ bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &Message)
       _error->Error(_("GPG error: %s: %s"),
                     Desc.Description.c_str(),
                     LookupTag(Message,"Message").c_str());
-      Status = StatError;
+      I->Status = StatError;
       return true;
    } else {
       _error->Warning(_("GPG error: %s: %s"),
@@ -1751,17 +1759,13 @@ bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &Message)
 									/*}}}*/
 // AcqMetaSig::AcqMetaSig - Constructor					/*{{{*/
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
-                             pkgAcqMetaBase *TransactionManager,
-			     string URI,string URIDesc,string ShortDesc,
-                             string MetaIndexFile,
-			     const vector<IndexTarget*>* IndexTargets,
-			     indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, URI,
-                  HashStringList(), TransactionManager),
-   MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
-   ShortDesc(ShortDesc)
+      pkgAcqMetaBase *TransactionManager,
+      string const &URI, string const &URIDesc,string const &ShortDesc,
+      pkgAcqMetaIndex * const MetaIndex) :
+   pkgAcquire::Item(Owner, HashStringList(), TransactionManager), MetaIndex(MetaIndex),
+   URIDesc(URIDesc), RealURI(URI)
 {
-   DestFile = GetPartialFileNameFromURI(RealURI);
+   DestFile = GetPartialFileNameFromURI(URI);
 
    // remove any partial downloaded sig-file in partial/.
    // it may confuse proxies and is too small to warrant a
@@ -1779,11 +1783,28 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    Desc.ShortDesc = ShortDesc;
    Desc.URI = URI;
 
-   QueueURI(Desc);
+   // If we got a hit for Release, we will get one for Release.gpg too (or obscure errors),
+   // so we skip the download step and go instantly to verification
+   if (TransactionManager->IMSHit == true && RealFileExists(GetFinalFilename()))
+   {
+      Complete = true;
+      Status = StatDone;
+      PartialFile = DestFile = GetFinalFilename();
+      MetaIndexFileSignature = DestFile;
+      MetaIndex->QueueForSignatureVerify(this, MetaIndex->DestFile, DestFile);
+   }
+   else
+      QueueURI(Desc);
 }
 									/*}}}*/
 pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 {
+}
+									/*}}}*/
+// pkgAcqMetaSig::GetFinalFilename - Return the full final file path	/*{{{*/
+std::string pkgAcqMetaSig::GetFinalFilename() const
+{
+   return GetFinalFileNameFromURI(RealURI);
 }
 									/*}}}*/
 // pkgAcqMetaSig::Done - The signature was downloaded/verified		/*{{{*/
@@ -1793,21 +1814,32 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
                          HashStringList const &Hashes,
 			 pkgAcquire::MethodConfig *Cfg)
 {
+   if (MetaIndexFileSignature.empty() == false)
+   {
+      DestFile = MetaIndexFileSignature;
+      MetaIndexFileSignature.clear();
+   }
    Item::Done(Message, Size, Hashes, Cfg);
 
-   if(AuthPass == false)
+   if(MetaIndex->AuthPass == false)
    {
-      if(CheckDownloadDone(Message, Hashes) == true)
+      if(MetaIndex->CheckDownloadDone(this, Message, Hashes) == true)
       {
-         // destfile will be modified to point to MetaIndexFile for the
-         // gpgv method, so we need to save it here
-         MetaIndexFileSignature = DestFile;
-         QueueForSignatureVerify(MetaIndexFile, MetaIndexFileSignature);
+	 // destfile will be modified to point to MetaIndexFile for the
+	 // gpgv method, so we need to save it here
+	 MetaIndexFileSignature = DestFile;
+	 MetaIndex->QueueForSignatureVerify(this, MetaIndex->DestFile, DestFile);
       }
       return;
    }
-   else if(CheckAuthDone(Message) == true)
-      TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, GetFinalFilename());
+   else if(MetaIndex->CheckAuthDone(Message) == true)
+   {
+      if (TransactionManager->IMSHit == false)
+      {
+	 TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
+      }
+   }
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
@@ -1815,20 +1847,18 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    Item::Failed(Message,Cnf);
 
    // check if we need to fail at this point 
-   if (AuthPass == true && CheckStopAuthentication(Message))
+   if (MetaIndex->AuthPass == true && MetaIndex->CheckStopAuthentication(this, Message))
          return;
 
-   // FIXME: meh, this is not really elegant
-   string const Final = GetFinalFileNameFromURI(RealURI);
-   string const InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
-                                         "InRelease");
-   string const FinalInRelease = GetFinalFileNameFromURI(InReleaseURI);
+   string const FinalRelease = MetaIndex->GetFinalFilename();
+   string const FinalReleasegpg = GetFinalFilename();
+   string const FinalInRelease = TransactionManager->GetFinalFilename();
 
-   if (RealFileExists(Final) || RealFileExists(FinalInRelease))
+   if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
    {
       std::string downgrade_msg;
       strprintf(downgrade_msg, _("The repository '%s' is no longer signed."),
-                URIDesc.c_str());
+                MetaIndex->URIDesc.c_str());
       if(_config->FindB("Acquire::AllowDowngradeToInsecureRepositories"))
       {
          // meh, the users wants to take risks (we still mark the packages
@@ -1841,7 +1871,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       } else {
          _error->Error("%s", downgrade_msg.c_str());
 	 if (TransactionManager->IMSHit == false)
-	    Rename(MetaIndexFile, MetaIndexFile+".FAILED");
+	    Rename(MetaIndex->DestFile, MetaIndex->DestFile + ".FAILED");
 	 Item::Failed("Message: " + downgrade_msg, Cnf);
          TransactionManager->AbortTransaction();
          return;
@@ -1850,23 +1880,44 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    else
       _error->Warning(_("The data from '%s' is not signed. Packages "
 	       "from that repository can not be authenticated."),
-	    URIDesc.c_str());
+	    MetaIndex->URIDesc.c_str());
 
-   // this ensures that any file in the lists/ dir is removed by the
-   // transaction
-   DestFile = GetPartialFileNameFromURI(RealURI);
+   // ensures that a Release.gpg file in the lists/ is removed by the transaction
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the users explicitely wants it
-   if(AllowInsecureRepositories(MetaIndexParser, TransactionManager, this) == true)
+   if(AllowInsecureRepositories(MetaIndex->MetaIndexParser, TransactionManager, this) == true)
    {
+      if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
+      {
+	 // open the last Release if we have it
+	 if (TransactionManager->IMSHit == false)
+	 {
+	    MetaIndex->LastMetaIndexParser = new indexRecords;
+	    _error->PushToStack();
+	    if (RealFileExists(FinalInRelease))
+	       MetaIndex->LastMetaIndexParser->Load(FinalInRelease);
+	    else
+	       MetaIndex->LastMetaIndexParser->Load(FinalRelease);
+	    // its unlikely to happen, but if what we have is bad ignore it
+	    if (_error->PendingError())
+	    {
+	       delete MetaIndex->LastMetaIndexParser;
+	       MetaIndex->LastMetaIndexParser = NULL;
+	    }
+	    _error->RevertToStack();
+	 }
+      }
+
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
-      MetaIndexParser->Load(MetaIndexFile);
-      if (!VerifyVendor(Message))
+      MetaIndex->MetaIndexParser->Load(MetaIndex->DestFile);
+      if (MetaIndex->VerifyVendor(Message) == false)
 	 /* expired Release files are still a problem you need extra force for */;
       else
-	 QueueIndexes(true);
+	 MetaIndex->QueueIndexes(true);
+
+      TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -1926,18 +1977,14 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
 {
    Item::Done(Message,Size,Hashes,Cfg);
 
-   if(CheckDownloadDone(Message, Hashes))
+   if(CheckDownloadDone(this, Message, Hashes))
    {
       // we have a Release file, now download the Signature, all further
       // verify/queue for additional downloads will be done in the
       // pkgAcqMetaSig::Done() code
-      std::string const MetaIndexFile = DestFile;
-      new pkgAcqMetaSig(Owner, TransactionManager, 
+      new pkgAcqMetaSig(Owner, TransactionManager,
                         MetaIndexSigURI, MetaIndexSigURIDesc,
-                        MetaIndexSigShortDesc, MetaIndexFile, IndexTargets, 
-                        MetaIndexParser);
-
-      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+                        MetaIndexSigShortDesc, this);
    }
 }
 									/*}}}*/
@@ -1947,6 +1994,40 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message)			/*{{{*/
    // valid signature from a key in the trusted keyring.  We
    // perform additional verification of its contents, and use them
    // to verify the indexes we are about to download
+
+   if (TransactionManager->IMSHit == false)
+   {
+      // open the last (In)Release if we have it
+      std::string const FinalFile = GetFinalFilename();
+      std::string FinalRelease;
+      std::string FinalInRelease;
+      if (APT::String::Endswith(FinalFile, "InRelease"))
+      {
+	 FinalInRelease = FinalFile;
+	 FinalRelease = FinalFile.substr(0, FinalFile.length() - strlen("InRelease")) + "Release";
+      }
+      else
+      {
+	 FinalInRelease = FinalFile.substr(0, FinalFile.length() - strlen("Release")) + "InRelease";
+	 FinalRelease = FinalFile;
+      }
+      if (RealFileExists(FinalInRelease) || RealFileExists(FinalRelease))
+      {
+	 LastMetaIndexParser = new indexRecords;
+	 _error->PushToStack();
+	 if (RealFileExists(FinalInRelease))
+	    LastMetaIndexParser->Load(FinalInRelease);
+	 else
+	    LastMetaIndexParser->Load(FinalRelease);
+	 // its unlikely to happen, but if what we have is bad ignore it
+	 if (_error->PendingError())
+	 {
+	    delete LastMetaIndexParser;
+	    LastMetaIndexParser = NULL;
+	 }
+	 _error->RevertToStack();
+      }
+   }
 
    if (!MetaIndexParser->Load(DestFile))
    {
@@ -2001,48 +2082,47 @@ std::string pkgAcqMetaBase::GetFinalFilename() const
 }
 									/*}}}*/
 // pkgAcqMetaBase::QueueForSignatureVerify				/*{{{*/
-void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
-                                    const std::string &MetaIndexFileSignature)
+void pkgAcqMetaBase::QueueForSignatureVerify(pkgAcquire::Item * const I, std::string const &File, std::string const &Signature)
 {
    AuthPass = true;
-   Desc.URI = "gpgv:" + MetaIndexFileSignature;
-   DestFile = MetaIndexFile;
-   QueueURI(Desc);
-   SetActiveSubprocess("gpgv");
+   I->Desc.URI = "gpgv:" + Signature;
+   I->DestFile = File;
+   QueueURI(I->Desc);
+   I->SetActiveSubprocess("gpgv");
 }
 									/*}}}*/
 // pkgAcqMetaBase::CheckDownloadDone					/*{{{*/
-bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message, HashStringList const &Hashes)
+bool pkgAcqMetaBase::CheckDownloadDone(pkgAcquire::Item * const I, const std::string &Message, HashStringList const &Hashes) const
 {
    // We have just finished downloading a Release file (it is not
    // verified yet)
 
-   string FileName = LookupTag(Message,"Filename");
+   string const FileName = LookupTag(Message,"Filename");
    if (FileName.empty() == true)
    {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
+      I->Status = StatError;
+      I->ErrorText = "Method gave a blank filename";
       return false;
    }
 
-   if (FileName != DestFile)
+   if (FileName != I->DestFile)
    {
-      Local = true;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
+      I->Local = true;
+      I->Desc.URI = "copy:" + FileName;
+      I->QueueURI(I->Desc);
       return false;
    }
 
    // make sure to verify against the right file on I-M-S hit
-   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
-   if (IMSHit == false)
+   bool IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"), false);
+   if (IMSHit == false && Hashes.usable())
    {
       // detect IMS-Hits servers haven't detected by Hash comparison
-      std::string FinalFile = GetFinalFilename();
+      std::string const FinalFile = I->GetFinalFilename();
       if (RealFileExists(FinalFile) && Hashes.VerifyFile(FinalFile) == true)
       {
 	 IMSHit = true;
-	 unlink(DestFile.c_str());
+	 unlink(I->DestFile.c_str());
       }
    }
 
@@ -2052,11 +2132,11 @@ bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message, HashStringLis
       // even if it doesn't exist.
       if (TransactionManager != NULL)
 	 TransactionManager->IMSHit = true;
-      DestFile = GetFinalFilename();
+      I->PartialFile = I->DestFile = I->GetFinalFilename();
    }
 
    // set Item to complete as the remaining work is all local (verify etc)
-   Complete = true;
+   I->Complete = true;
 
    return true;
 }
@@ -2175,6 +2255,19 @@ bool pkgAcqMetaBase::VerifyVendor(string Message)			/*{{{*/
       }
    }
 
+   /* Did we get a file older than what we have? This is a last minute IMS hit and doubles
+      as a prevention of downgrading us to older (still valid) files */
+   if (TransactionManager->IMSHit == false && LastMetaIndexParser != NULL &&
+	 LastMetaIndexParser->GetDate() > MetaIndexParser->GetDate())
+   {
+      TransactionManager->IMSHit = true;
+      unlink(DestFile.c_str());
+      PartialFile = DestFile = GetFinalFilename();
+      delete MetaIndexParser;
+      MetaIndexParser = LastMetaIndexParser;
+      LastMetaIndexParser = NULL;
+   }
+
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
    {
       std::cerr << "Got Codename: " << MetaIndexParser->GetDist() << std::endl;
@@ -2248,7 +2341,6 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 {
    // index targets + (worst case:) Release/Release.gpg
    ExpectedAdditionalItems = IndexTargets->size() + 2;
-
 }
 									/*}}}*/
 pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
@@ -2268,14 +2360,25 @@ string pkgAcqMetaClearSig::Custom600Headers()
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file				/*{{{*/
-// ---------------------------------------------------------------------
+class APT_HIDDEN DummyItem : public pkgAcquire::Item
+{
+   std::string URI;
+   public:
+   virtual std::string DescURI() {return URI;};
+
+   DummyItem(pkgAcquire *Owner, std::string const &URI) : pkgAcquire::Item(Owner), URI(URI)
+   {
+      Status = StatDone;
+      DestFile = GetFinalFileNameFromURI(URI);
+   }
+};
 void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
                               HashStringList const &Hashes,
                               pkgAcquire::MethodConfig *Cnf)
 {
    Item::Done(Message, Size, Hashes, Cnf);
 
-   // if we expect a ClearTextSignature (InRelase), ensure that
+   // if we expect a ClearTextSignature (InRelease), ensure that
    // this is what we get and if not fail to queue a 
    // Release/Release.gpg, see #346386
    if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
@@ -2288,12 +2391,23 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      if(CheckDownloadDone(Message, Hashes) == true)
-         QueueForSignatureVerify(DestFile, DestFile);
+      if(CheckDownloadDone(this, Message, Hashes) == true)
+         QueueForSignatureVerify(this, DestFile, DestFile);
       return;
    }
    else if(CheckAuthDone(Message) == true)
-      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+   {
+      if (TransactionManager->IMSHit == false)
+	 TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+      else if (RealFileExists(GetFinalFilename()) == false)
+      {
+	 // We got an InRelease file IMSHit, but we haven't one, which means
+	 // we had a valid Release/Release.gpg combo stepping in, which we have
+	 // to 'acquire' now to ensure list cleanup isn't removing them
+	 new DummyItem(Owner, MetaIndexURI);
+	 new DummyItem(Owner, MetaSigURI);
+      }
+   }
 }
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
@@ -2318,7 +2432,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
    }
    else
    {
-      if(CheckStopAuthentication(Message))
+      if(CheckStopAuthentication(this, Message))
          return;
 
       _error->Warning(_("The data from '%s' is not signed. Packages "

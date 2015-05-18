@@ -8,6 +8,7 @@ set -e
 
 simulate_mitm_and_inject_evil_package()
 {
+    redatereleasefiles '+1 hour'
     rm -f $APTARCHIVE/dists/unstable/InRelease
     rm -f $APTARCHIVE/dists/unstable/Release.gpg
     inject_evil_package
@@ -31,7 +32,7 @@ EOF
 
 assert_update_is_refused_and_last_good_state_used()
 {
-    testfailureequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq
+    testfailuremsg "E: The repository 'file: unstable Release' is no longer signed." aptget update
 
     assert_repo_is_intact
 }
@@ -193,7 +194,7 @@ test_release_gpg_to_invalid_release_release_gpg()
     echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
     inject_evil_package
 
-    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release.gpg: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 

@@ -394,6 +394,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
 
    /** \brief A package-system-specific parser for the meta-index file. */
    indexRecords *MetaIndexParser;
+   indexRecords *LastMetaIndexParser;
 
    /** \brief The index files which should be looked up in the meta-index
     *  and then downloaded.
@@ -429,11 +430,10 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     *  \param Message The message block received from the fetch
     *  subprocess.
     */
-   bool CheckDownloadDone(const std::string &Message, HashStringList const &Hashes);
+   bool CheckDownloadDone(pkgAcquire::Item * const I, const std::string &Message, HashStringList const &Hashes) const;
 
    /** \brief Queue the downloaded Signature for verification */
-   void QueueForSignatureVerify(const std::string &MetaIndexFile,
-                                const std::string &MetaIndexFileSignature);
+   void QueueForSignatureVerify(pkgAcquire::Item * const I, std::string const &File, std::string const &Signature);
 
 #if APT_PKG_ABI >= 413
    virtual std::string Custom600Headers() const;
@@ -453,7 +453,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
    bool CheckAuthDone(std::string Message);
 
    /** Check if the current item should fail at this point */
-   bool CheckStopAuthentication(const std::string &Message);
+   bool CheckStopAuthentication(pkgAcquire::Item * const I, const std::string &Message);
 
    /** \brief Check that the release file is a release file for the
     *  correct distribution.
@@ -462,8 +462,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     */
    bool VerifyVendor(std::string Message);
 
-   /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual bool TransactionState(TransactionStates const state);
 
  public:
    // This refers more to the Transaction-Manager than the actual file
@@ -487,56 +486,15 @@ class pkgAcqMetaBase  : public pkgAcquire::Item				/*{{{*/
     */
    void TransactionStageRemoval(Item *I, const std::string &FinalFile);
 
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
    pkgAcqMetaBase(pkgAcquire *Owner,
                   const std::vector<IndexTarget*>* IndexTargets,
                   indexRecords* MetaIndexParser,
 		  std::string const &RealURI,
                   HashStringList const &ExpectedHashes=HashStringList(),
                   pkgAcqMetaBase *TransactionManager=NULL);
-};
-									/*}}}*/
-/** \brief An acquire item that downloads the detached signature	{{{
- *  of a meta-index (Release) file, then queues up the release
- *  file itself.
- *
- *  \todo Why protected members?
- *
- *  \sa pkgAcqMetaIndex
- */
-class APT_HIDDEN pkgAcqMetaSig : public pkgAcqMetaBase
-{
-   void *d;
-
-   protected:
-
-   /** \brief The file we need to verify */
-   std::string MetaIndexFile;
-
-   /** \brief The file we use to verify the MetaIndexFile with */
-   std::string MetaIndexFileSignature;
-
-   /** \brief Long URI description used in the acquire system */
-   std::string URIDesc;
-
-   /** \brief Short URI description used in the acquire system */
-   std::string ShortDesc;
-
-   public:
-
-   // Specialized action members
-   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size,
-                     HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig *Cnf);
-
-   /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire *Owner,
-                 pkgAcqMetaBase *TransactionManager,
-                 std::string URI,std::string URIDesc, std::string ShortDesc,
-                 std::string MetaIndexFile,
-		 const std::vector<IndexTarget*>* IndexTargets,
-		 indexRecords* MetaIndexParser);
-   virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
 /** \brief An item that is responsible for downloading the meta-index	{{{
@@ -584,6 +542,53 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
                    std::string MetaIndexSigURI, std::string MetaIndexSigURIDesc, std::string MetaIndexSigShortDesc,
 		   const std::vector<IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
+
+   friend class pkgAcqMetaSig;
+};
+									/*}}}*/
+/** \brief An acquire item that downloads the detached signature	{{{
+ *  of a meta-index (Release) file, then queues up the release
+ *  file itself.
+ *
+ *  \todo Why protected members?
+ *
+ *  \sa pkgAcqMetaIndex
+ */
+class APT_HIDDEN pkgAcqMetaSig : public pkgAcquire::Item
+{
+   void *d;
+
+   pkgAcqMetaIndex * const MetaIndex;
+
+   /** \brief The file we use to verify the MetaIndexFile with (not always set!) */
+   std::string MetaIndexFileSignature;
+
+   protected:
+
+   /** \brief Long URI description used in the acquire system */
+   std::string URIDesc;
+
+   /** \brief URI used to get the file */
+   std::string RealURI;
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const;
+
+   public:
+   virtual std::string DescURI() {return RealURI;};
+
+   // Specialized action members
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(std::string Message,unsigned long long Size,
+                     HashStringList const &Hashes,
+		     pkgAcquire::MethodConfig *Cnf);
+
+   /** \brief Create a new pkgAcqMetaSig. */
+   pkgAcqMetaSig(pkgAcquire *Owner,
+	 pkgAcqMetaBase *TransactionManager,
+	 std::string const &URI,std::string const &URIDesc,
+	 std::string const &ShortDesc, pkgAcqMetaIndex * const MetaIndex);
+   virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
 /** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/

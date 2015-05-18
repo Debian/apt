@@ -43,7 +43,7 @@ runtest() {
     testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 
     # ensure that we still do a hash check for other files on ims hit of Release
-    if grep -q '^Hit .* \(InRelease\|Release.gpg\)$' expected.output ; then
+    if grep -q '^Hit .* InRelease$' expected.output || ! grep -q '^Ign .* Release\(\.gpg\)\?$' expected.output; then
 	    $TEST aptget update -o Debug::Acquire::gpgv=1
 	    cp rootdir/tmp/${TEST}.output goodsign.output
 	    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
@@ -66,7 +66,6 @@ msgmsg 'Release/Release.gpg'
 EXPECT='Ign http://localhost:8080 unstable InRelease
   404  Not Found
 Hit http://localhost:8080 unstable Release
-Hit http://localhost:8080 unstable Release.gpg
 Reading package lists...'
 find aptarchive -name 'InRelease' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -81,7 +80,7 @@ Hit http://localhost:8080 unstable Release
 Ign http://localhost:8080 unstable Release.gpg
   404  Not Found
 Reading package lists...
-W: The data from 'http://localhost:8080 unstable Release.gpg' is not signed. Packages from that repository can not be authenticated."
+W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'warning'
@@ -108,8 +107,7 @@ msgmsg 'expired Release/Release.gpg'
 EXPECT='Ign http://localhost:8080 unstable InRelease
   404  Not Found
 Hit http://localhost:8080 unstable Release
-Hit http://localhost:8080 unstable Release.gpg
-E: Release file for http://localhost:8080/dists/unstable/Release.gpg is expired (invalid since). Updates for this repository will not be applied.'
+E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied.'
 find aptarchive -name 'InRelease' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
@@ -122,8 +120,8 @@ EXPECT="Ign http://localhost:8080 unstable InRelease
 Hit http://localhost:8080 unstable Release
 Ign http://localhost:8080 unstable Release.gpg
   404  Not Found
-W: The data from 'http://localhost:8080 unstable Release.gpg' is not signed. Packages from that repository can not be authenticated.
-E: Release file for http://localhost:8080/dists/unstable/InRelease is expired (invalid since). Updates for this repository will not be applied."
+W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated.
+E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure' 'warning'

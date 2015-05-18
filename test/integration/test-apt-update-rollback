@@ -78,7 +78,7 @@ test_inrelease_to_valid_release() {
     rm $APTARCHIVE/dists/unstable/Release.gpg
 
     # update fails
-    testfailureequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq
+    testfailureequal "E: The repository 'file: unstable Release' is no longer signed." aptget update -qq
 
     # test that security downgrade was not successful
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -101,7 +101,7 @@ test_inrelease_to_release_reverts_all() {
     break_repository_sources_index '+1hour'
 
     # ensure error
-    testfailureequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq # -o Debug::acquire::transaction=1
+    testfailureequal "E: The repository 'file: unstable Release' is no longer signed." aptget update -qq # -o Debug::acquire::transaction=1
 
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"

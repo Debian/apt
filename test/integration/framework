@@ -1164,9 +1164,9 @@ testfileequal() {
 	shift
 	msgtest "Test for correctness of file" "$FILE"
 	if [ -z "$*" ]; then
-		echo -n "" | checkdiff $FILE - && msgpass || msgfail
+		echo -n "" | checkdiff - $FILE && msgpass || msgfail
 	else
-		echo "$*" | checkdiff $FILE - && msgpass || msgfail
+		echo "$*" | checkdiff - $FILE && msgpass || msgfail
 	fi
 }
 
@@ -1547,7 +1547,8 @@ aptautotest_aptcdrom_add() { aptautotest_aptget_update "$@"; }
 testaptautotestnodpkgwarning() {
 	local TESTCALL="$1"
 	while [ -n "$2" ]; do
-		if expr match "$2" '^-[a-z]*s' >/dev/null 2>&1; then return; fi
+		if expr match "$2" '^-[a-z]*s' >/dev/null 2>&1; then return; fi # simulation mode
+		if expr match "$2" '^-dy\?' >/dev/null 2>&1; then return; fi # download-only mode
 		shift
 	done
 	testfailure grep '^dpkg: warning:.*ignor.*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"

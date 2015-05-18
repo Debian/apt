@@ -36,6 +36,7 @@ class indexRecords
    std::string Dist;
    std::string Suite;
    std::string ExpectedDist;
+   time_t Date;
    time_t ValidUntil;
    bool SupportsAcquireByHash;
 
@@ -62,6 +63,7 @@ class indexRecords
    std::string GetSuite() const;
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
+   time_t GetDate() const;
    std::string GetExpectedDist() const;
 
    /** \brief check if source is marked as always trusted */
