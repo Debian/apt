@@ -8,6 +8,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture 'i386'
+configcompression '.' 'gz'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
 insertsource 'unstable' 'foo' 'all' '1.0'
@@ -15,7 +16,8 @@ insertsource 'unstable' 'foo' 'all' '1.0'
 setupaptarchive --no-update
 
 breakfile() {
-	mv "$1" "${1}.bak"
+	mv "${1}" "${1}.bak"
+	mv "${1}.gz" "${1}.gz.bak"
 	cat > "$1" <<EOF
 Package: bar
 EOF
@@ -23,6 +25,7 @@ EOF
 }
 restorefile() {
 	mv "${1}.bak" "$1"
+	mv "${1}.gz.bak" "${1}.gz"
 }
 
 testrun() {
@@ -54,7 +57,8 @@ testsetup() {
 	testrun 'listsdir.lst'
 
 	msgmsg 'Test with initial data over' "$1"
-	testsuccess aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess aptget update -o Debug::pkgAcquire::Worker=1
 	listcurrentlistsdirectory > listsdir.lst
 	redatereleasefiles '+1hour'
 	testrun 'listsdir.lst'

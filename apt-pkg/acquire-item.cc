@@ -154,7 +154,18 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 return;
       }
 
-      Status = StatError;
+      switch (Status)
+      {
+	 case StatIdle:
+	 case StatFetching:
+	 case StatDone:
+	    Status = StatError;
+	    break;
+	 case StatAuthError:
+	 case StatError:
+	 case StatTransientNetworkError:
+	    break;
+      }
       Complete = false;
       Dequeue();
    }
@@ -167,7 +178,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       RenameOnError(MaximumSizeExceeded);
 
    // report mirror failure back to LP if we actually use a mirror
-   if(FailReason.size() != 0)
+   if(FailReason.empty() == false)
       ReportMirrorFailure(FailReason);
    else
       ReportMirrorFailure(ErrorText);
@@ -1403,16 +1414,18 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Item::Failed(Message,Cnf);
 
-   size_t const nextExt = CompressionExtensions.find(' ');
-   if (nextExt != std::string::npos)
+   // authorisation matches will not be fixed by other compression types
+   if (Status != StatAuthError)
    {
-      CompressionExtensions = CompressionExtensions.substr(nextExt+1);
-      Init(RealURI, Desc.Description, Desc.ShortDesc);
-      Status = StatIdle;
-      return;
+      size_t const nextExt = CompressionExtensions.find(' ');
+      if (nextExt != std::string::npos)
+      {
+	 CompressionExtensions = CompressionExtensions.substr(nextExt+1);
+	 Init(RealURI, Desc.Description, Desc.ShortDesc);
+	 Status = StatIdle;
+	 return;
+      }
    }
-
-   Item::Failed(Message,Cnf);
 
    if(Target->IsOptional() && ExpectedHashes.empty() && Stage == STAGE_DOWNLOAD)
       Status = StatDone;
