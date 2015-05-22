@@ -55,10 +55,10 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
    {
       if (me->Server->Result != 416 && me->Server->StartPos != 0)
 	 ;
-      else if (me->Server->Result == 416 && me->Server->Size == me->File->FileSize())
+      else if (me->Server->Result == 416 && me->Server->TotalFileSize == me->File->FileSize())
       {
          me->Server->Result = 200;
-	 me->Server->StartPos = me->Server->Size;
+	 me->Server->StartPos = me->Server->TotalFileSize;
 	 // the actual size is not important for https as curl will deal with it
 	 // by itself and e.g. doesn't bother us with transport-encoding…
 	 me->Server->JunkSize = std::numeric_limits<unsigned long long>::max();

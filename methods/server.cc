@@ -54,7 +54,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
    Major = 0; 
    Minor = 0; 
    Result = 0; 
-   Size = 0; 
+   TotalFileSize = 0;
    JunkSize = 0;
    StartPos = 0;
    Encoding = Closes;
@@ -177,8 +177,8 @@ bool ServerState::HeaderLine(string Line)
       // On partial content (206) the Content-Length less than the real
       // size, so do not set it here but leave that to the Content-Range
       // header instead
-      if(Result != 206 && Size == 0)
-         Size = DownloadSize;
+      if(Result != 206 && TotalFileSize == 0)
+         TotalFileSize = DownloadSize;
 
       return true;
    }
@@ -194,15 +194,15 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
 
       // §14.16 says 'byte-range-resp-spec' should be a '*' in case of 416
-      if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&Size) == 1)
+      if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&TotalFileSize) == 1)
 	 ; // we got the expected filesize which is all we wanted
-      else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&Size) != 2)
+      else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&TotalFileSize) != 2)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
-      if ((unsigned long long)StartPos > Size)
+      if ((unsigned long long)StartPos > TotalFileSize)
 	 return _error->Error(_("This HTTP server has broken range support"));
 
       // figure out what we will download
-      DownloadSize = Size - StartPos;
+      DownloadSize = TotalFileSize - StartPos;
       return true;
    }
 
@@ -313,7 +313,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       struct stat SBuf;
       if (stat(Queue->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
       {
-	 if ((unsigned long long)SBuf.st_size == Server->Size)
+	 if ((unsigned long long)SBuf.st_size == Server->TotalFileSize)
 	 {
 	    // the file is completely downloaded, but was not moved
 	    if (Server->HaveContent == true)
@@ -323,7 +323,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	       Server->RunData(&DevNull);
 	    }
 	    Server->HaveContent = false;
-	    Server->StartPos = Server->Size;
+	    Server->StartPos = Server->TotalFileSize;
 	    Server->Result = 200;
 	 }
 	 else if (unlink(Queue->DestFile.c_str()) == 0)
@@ -349,7 +349,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 
    // This is some sort of 2xx 'data follows' reply
    Res.LastModified = Server->Date;
-   Res.Size = Server->Size;
+   Res.Size = Server->TotalFileSize;
    
    // Open the file
    delete File;
