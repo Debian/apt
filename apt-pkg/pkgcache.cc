@@ -230,12 +230,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	size_t const found = Name.find(':');
 	if (found == string::npos)
-	{
-		if (MultiArchCache() == false)
-			return SingleArchFindPkg(Name);
-		else
-			return FindPkg(Name, "native");
-	}
+	   return FindPkg(Name, "native");
 	string const Arch = Name.substr(found+1);
 	/* Beware: This is specialcased to handle pkg:any in dependencies as
 	   these are linked to virtual pkg:any named packages with all archs.
@@ -249,13 +244,6 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
-	if (MultiArchCache() == false && Arch != "none") {
-		if (Arch == "native" || Arch == "all" || Arch == "any" ||
-		    Arch == NativeArch())
-			return SingleArchFindPkg(Name);
-		else
-			return PkgIterator(*this,0);
-	}
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
 	   find than a package (less entries in the buckets) */

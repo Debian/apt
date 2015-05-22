@@ -1,0 +1,72 @@
+#!/bin/sh
+# Ensure that the order in which packages are in the binary cache
+# does not effect if they can be found or not
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'abar' 'i386' '1'
+insertpackage 'unstable' 'foobar' 'i386' '1' 'Depends: abar:amd64, zfoo:amd64'
+insertpackage 'unstable' 'zfoo' 'i386' '1'
+
+setupaptarchive
+
+testrun() {
+	rm -f rootdir/var/lib/apt/extended_states
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  abar zfoo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst abar (1 unstable [i386])
+Inst zfoo (1 unstable [i386])
+Conf abar (1 unstable [i386])
+Conf zfoo (1 unstable [i386])' aptget install abar zfoo -s
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  abar zfoo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst abar (1 unstable [i386])
+Inst zfoo (1 unstable [i386])
+Conf abar (1 unstable [i386])
+Conf zfoo (1 unstable [i386])' aptget install abar:i386 zfoo:i386 -s
+
+	testequal "Reading package lists...
+Building dependency tree...
+Package abar:amd64 is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+Package zfoo:amd64 is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'abar:amd64' has no installation candidate
+E: Package 'zfoo:amd64' has no installation candidate" aptget install abar:amd64 zfoo:amd64 -s
+
+	cp -f rootdir/var/lib/dpkg/status status.backup
+	insertinstalledpackage 'abar' 'i386' '1'
+	insertinstalledpackage 'zfoo' 'i386' '1'
+
+	testequal 'abar
+zfoo' aptmark showmanual abar zfoo
+	testequal 'abar set to automatically installed.
+zfoo set to automatically installed.' aptmark auto abar zfoo
+	testempty aptmark showmanual abar zfoo
+	testequal 'abar
+zfoo' aptmark showauto abar zfoo
+
+	mv -f status.backup rootdir/var/lib/dpkg/status
+}
+
+msgmsg 'Single-Arch testrun'
+testrun
+msgmsg 'Multi-Arch testrun'
+configarchitecture 'i386' 'amd64'
+testrun

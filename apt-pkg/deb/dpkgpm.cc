@@ -1908,10 +1908,6 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       "Purge",
       "ConfigurePending",
       "TriggersPending",
-      "reserved-1",
-      "reserved-2",
-      "reserved-3",
-      "reserved-4",
    };
    fprintf(report, "AptOrdering:\n");
    for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)

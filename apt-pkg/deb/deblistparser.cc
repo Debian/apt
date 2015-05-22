@@ -770,7 +770,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 if (NewDepends(Ver,Package,"none",Version,Op,Type) == false)
 	    return false;
       }
-      else if (MultiArchEnabled == true && found != string::npos &&
+      else if (found != string::npos &&
 	       strcmp(Package.c_str() + found, ":any") != 0)
       {
 	 string Arch = Package.substr(found+1, string::npos);

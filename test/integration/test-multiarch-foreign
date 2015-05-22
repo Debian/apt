@@ -7,9 +7,13 @@ setupenvironment
 configarchitecture 'amd64' 'i386' 'armel'
 
 insertpackage 'unstable' 'cool-foo' 'amd64,i386' '1.0' 'Depends: foo'
+insertpackage 'unstable' 'cool-foo-x64' 'amd64' '1.0' 'Depends: foo:amd64'
+insertpackage 'unstable' 'cool-foo-x32' 'amd64' '1.0' 'Depends: foo:i386'
 insertpackage 'unstable' 'foo' 'amd64,i386,armel' '1.0' 'Multi-Arch: foreign'
 
 insertpackage 'unstable' 'cool-bar' 'amd64,i386' '1.0' 'Depends: bar-provider'
+insertpackage 'unstable' 'cool-bar-x64' 'amd64' '1.0' 'Depends: bar-provider:amd64'
+insertpackage 'unstable' 'cool-bar-x32' 'amd64' '1.0' 'Depends: bar-provider:i386'
 insertpackage 'unstable' 'bar' 'amd64,i386,armel' '1.0' 'Provides: bar-provider
 Multi-Arch: foreign'
 
@@ -26,28 +30,6 @@ Inst foo (1.0 unstable [amd64])
 Inst cool-foo:i386 (1.0 unstable [i386])
 Conf foo (1.0 unstable [amd64])
 Conf cool-foo:i386 (1.0 unstable [i386])' aptget install cool-foo:i386 -s
-
-testequal 'Reading package lists...
-Building dependency tree...
-The following extra packages will be installed:
-  foo
-The following NEW packages will be installed:
-  cool-foo foo
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst foo (1.0 unstable [amd64])
-Inst cool-foo (1.0 unstable [amd64])
-Conf foo (1.0 unstable [amd64])
-Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo:amd64 -s
-
-testequal 'Reading package lists...
-Building dependency tree...
-The following NEW packages will be installed:
-  cool-foo foo
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst foo (1.0 unstable [amd64])
-Inst cool-foo (1.0 unstable [amd64])
-Conf foo (1.0 unstable [amd64])
-Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo:amd64 foo:amd64 -s
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -69,10 +51,6 @@ Inst cool-foo (1.0 unstable [amd64])
 Conf foo:armel (1.0 unstable [armel])
 Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo:amd64 foo:armel -s
 
-
-
-
-
 testequal 'Reading package lists...
 Building dependency tree...
 The following extra packages will be installed:
@@ -84,28 +62,6 @@ Inst bar (1.0 unstable [amd64])
 Inst cool-bar:i386 (1.0 unstable [i386])
 Conf bar (1.0 unstable [amd64])
 Conf cool-bar:i386 (1.0 unstable [i386])' aptget install cool-bar:i386 -s
-
-testequal 'Reading package lists...
-Building dependency tree...
-The following extra packages will be installed:
-  bar
-The following NEW packages will be installed:
-  bar cool-bar
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst bar (1.0 unstable [amd64])
-Inst cool-bar (1.0 unstable [amd64])
-Conf bar (1.0 unstable [amd64])
-Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 -s
-
-testequal 'Reading package lists...
-Building dependency tree...
-The following NEW packages will be installed:
-  bar cool-bar
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst bar (1.0 unstable [amd64])
-Inst cool-bar (1.0 unstable [amd64])
-Conf bar (1.0 unstable [amd64])
-Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 bar:amd64 -s
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -129,6 +85,62 @@ Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 bar:armel -s
 
 testequal "Reading package lists...
 Building dependency tree...
+Note, selecting 'bar:i386' instead of 'bar-provider:i386'
+The following NEW packages will be installed:
+  bar:i386 cool-bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar:i386 (1.0 unstable [i386])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar:i386 (1.0 unstable [i386])
+Conf cool-bar (1.0 unstable [amd64])" aptget install cool-bar bar-provider:i386 -s -q=0
+
+satisfiable_in_singlearch() {
+	testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  cool-foo foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [amd64])
+Inst cool-foo (1.0 unstable [amd64])
+Conf foo (1.0 unstable [amd64])
+Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo:amd64 -s
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  cool-foo foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [amd64])
+Inst cool-foo (1.0 unstable [amd64])
+Conf foo (1.0 unstable [amd64])
+Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo:amd64 foo:amd64 -s
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  bar
+The following NEW packages will be installed:
+  bar cool-bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 -s
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar cool-bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 bar:amd64 -s
+
+	testequal "Reading package lists...
+Building dependency tree...
 Note, selecting 'bar' instead of 'bar-provider'
 The following NEW packages will be installed:
   bar cool-bar
@@ -138,13 +150,60 @@ Inst cool-bar (1.0 unstable [amd64])
 Conf bar (1.0 unstable [amd64])
 Conf cool-bar (1.0 unstable [amd64])" aptget install cool-bar bar-provider -s -q=0
 
-testequal "Reading package lists...
+	testequal 'Reading package lists...
 Building dependency tree...
-Note, selecting 'bar:i386' instead of 'bar-provider:i386'
+The following extra packages will be installed:
+  foo
 The following NEW packages will be installed:
-  bar:i386 cool-bar
+  cool-foo-x64 foo
 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst bar:i386 (1.0 unstable [i386])
-Inst cool-bar (1.0 unstable [amd64])
-Conf bar:i386 (1.0 unstable [i386])
-Conf cool-bar (1.0 unstable [amd64])" aptget install cool-bar bar-provider:i386 -s -q=0
+Inst foo (1.0 unstable [amd64])
+Inst cool-foo-x64 (1.0 unstable [amd64])
+Conf foo (1.0 unstable [amd64])
+Conf cool-foo-x64 (1.0 unstable [amd64])' aptget install cool-foo-x64 -s
+}
+
+#FIXME: do not work in single-arch as i386 isn't known at cache generation time
+	testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  cool-foo-x32 foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [amd64])
+Inst cool-foo-x32 (1.0 unstable [amd64])
+Conf foo (1.0 unstable [amd64])
+Conf cool-foo-x32 (1.0 unstable [amd64])' aptget install cool-foo-x32 -s
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  bar
+The following NEW packages will be installed:
+  bar cool-bar-x32
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar-x32 (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar-x32 (1.0 unstable [amd64])' aptget install cool-bar-x32 -s -q=0
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  bar
+The following NEW packages will be installed:
+  bar cool-bar-x64
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar-x64 (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar-x64 (1.0 unstable [amd64])' aptget install cool-bar-x64 -s -q=0
+
+
+satisfiable_in_singlearch
+
+msgmsg 'switch to single architecture'
+configarchitecture 'amd64'
+
+satisfiable_in_singlearch

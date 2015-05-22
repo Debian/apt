@@ -68,6 +68,8 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
       me->File->Truncate(me->Server->StartPos);
       me->File->Seek(me->Server->StartPos);
+
+      me->Res.Size = me->Server->Size;
    }
    else if (me->Server->HeaderLine(line) == false)
       return 0;
@@ -95,17 +97,6 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
       return false;
 
    return buffer_size;
-}
-
-int
-HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
-                             double /*ultotal*/, double /*ulnow*/)
-{
-   HttpsMethod *me = (HttpsMethod *)clientp;
-   if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = (unsigned long long)dltotal;
-   }
-   return 0;
 }
 
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
@@ -201,10 +192,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
    // options
-   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
+   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
    // only allow curl to handle https, not the other stuff it supports
    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
@@ -357,6 +346,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
    Server = new HttpsServerState(Itm->Uri, this);
+   Res = FetchResult();
 
    // keep apt updated
    Res.Filename = Itm->DestFile;

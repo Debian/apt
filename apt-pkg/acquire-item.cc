@@ -1194,8 +1194,18 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
 
-   // FIXME: this points to a c++ string that goes out of scope
-   Mode = decompProg.c_str();
+   if (decompProg == "copy")
+      Mode = "copy";
+   else if (decompProg == "xz")
+      Mode = "xz";
+   else if (decompProg == "lzma")
+      Mode = "lzma";
+   else if (decompProg == "bzip2")
+      Mode = "bzip2";
+   else if (decompProg == "gzip")
+      Mode = "gzip";
+   else
+      Mode = "decomp";
 }
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
