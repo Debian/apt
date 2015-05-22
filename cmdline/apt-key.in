@@ -180,7 +180,7 @@ update() {
 remove_key_from_keyring() {
     local GPG="$GPG_CMD --keyring $1"
     # check if the key is in this keyring: the key id is in the 5 column at the end
-    if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+$2:"; then
+    if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]*$2:"; then
 	return
     fi
     if [ ! -w "$1" ]; then

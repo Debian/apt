@@ -55,6 +55,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
    Minor = 0; 
    Result = 0; 
    Size = 0; 
+   JunkSize = 0;
    StartPos = 0;
    Encoding = Closes;
    HaveContent = false;
@@ -128,7 +129,7 @@ bool ServerState::HeaderLine(string Line)
 	 if (elements == 3)
 	 {
 	    Code[0] = '\0';
-	    if (Owner->Debug == true)
+	    if (Owner != NULL && Owner->Debug == true)
 	       clog << "HTTP server doesn't give Reason-Phrase for " << Result << std::endl;
 	 }
 	 else if (elements != 4)
@@ -163,14 +164,14 @@ bool ServerState::HeaderLine(string Line)
 	 Encoding = Stream;
       HaveContent = true;
 
-      // The length is already set from the Content-Range header
-      if (StartPos != 0)
-	 return true;
+      unsigned long long * SizePtr = &Size;
+      if (Result == 416)
+	 SizePtr = &JunkSize;
 
-      Size = strtoull(Val.c_str(), NULL, 10);
-      if (Size >= std::numeric_limits<unsigned long long>::max())
+      *SizePtr = strtoull(Val.c_str(), NULL, 10);
+      if (*SizePtr >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
-      else if (Size == 0)
+      else if (*SizePtr == 0)
 	 HaveContent = false;
       return true;
    }
@@ -187,10 +188,7 @@ bool ServerState::HeaderLine(string Line)
 
       // §14.16 says 'byte-range-resp-spec' should be a '*' in case of 416
       if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&Size) == 1)
-      {
-	 StartPos = 1; // ignore Content-Length, it would override Size
-	 HaveContent = false;
-      }
+	 ; // we got the expected filesize which is all we wanted
       else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&Size) != 2)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
       if ((unsigned long long)StartPos > Size)
@@ -308,9 +306,15 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 if ((unsigned long long)SBuf.st_size == Server->Size)
 	 {
 	    // the file is completely downloaded, but was not moved
+	    if (Server->HaveContent == true)
+	    {
+	       // Send to error page to dev/null
+	       FileFd DevNull("/dev/null",FileFd::WriteExists);
+	       Server->RunData(&DevNull);
+	    }
+	    Server->HaveContent = false;
 	    Server->StartPos = Server->Size;
 	    Server->Result = 200;
-	    Server->HaveContent = false;
 	 }
 	 else if (unlink(Queue->DestFile.c_str()) == 0)
 	 {

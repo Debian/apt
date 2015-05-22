@@ -440,6 +440,8 @@ bool HttpServerState::RunData(FileFd * const File)
          loss of the connection means we are done */
       if (Encoding == Closes)
 	 In.Limit(-1);
+      else if (JunkSize != 0)
+	 In.Limit(JunkSize);
       else
 	 In.Limit(Size - StartPos);
       

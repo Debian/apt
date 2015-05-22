@@ -160,7 +160,9 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 
 	// Accessors
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
-	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
+	// Versions have sections - and packages can have different versions with different sections
+	// so this interface is broken by design. Run as fast as you can to Version.Section().
+	APT_DEPRECATED inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);}
 	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;}

@@ -48,23 +48,34 @@ static bool DoDownloadFile(CommandLine &CmdL)
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
 
-
    pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
-   std::string download_uri = CmdL.FileList[1];
-   std::string targetfile = CmdL.FileList[2];
-   std::string hash;
-   if (CmdL.FileSize() > 3)
-      hash = CmdL.FileList[3];
-   // we use download_uri as descr and targetfile as short-descr
-   new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile, 
-                  "dest-dir-ignored", targetfile);
-   Fetcher.Run();
+
+   size_t fileind = 0;
+   std::vector<std::string> targetfiles;
+   while (fileind + 2 <= CmdL.FileSize())
+   {
+      std::string download_uri = CmdL.FileList[fileind + 1];
+      std::string targetfile = CmdL.FileList[fileind + 2];
+      std::string hash;
+      if (CmdL.FileSize() > fileind + 3)
+	 hash = CmdL.FileList[fileind + 3];
+      // we use download_uri as descr and targetfile as short-descr
+      new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile,
+	    "dest-dir-ignored", targetfile);
+      targetfiles.push_back(targetfile);
+      fileind += 3;
+   }
+
    bool Failed = false;
-   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true ||
-	 FileExists(targetfile) == false)
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
       return _error->Error(_("Download Failed"));
+   if (targetfiles.empty() == false)
+      for (std::vector<std::string>::const_iterator f = targetfiles.begin(); f != targetfiles.end(); ++f)
+	 if (FileExists(*f) == false)
+	    return _error->Error(_("Download Failed"));
+
    return true;
 }
 

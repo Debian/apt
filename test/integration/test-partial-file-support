@@ -24,13 +24,25 @@ testdownloadfile() {
 	else
 		msgpass
 	fi
-	cat "$DOWNLOADLOG" | while read field hash; do
+	sed -e '/^ <- / s#%20# #g' -e '/^ <- / s#%0a#\n#g' "$DOWNLOADLOG" | grep '^.*-Hash: ' > receivedhashes.log
+	testsuccess test -s receivedhashes.log
+	local HASHES_OK=0
+	local HASHES_BAD=0
+	while read field hash; do
 		local EXPECTED
 		case "$field" in
 		'MD5Sum-Hash:') EXPECTED="$(md5sum "$TESTFILE" | cut -d' ' -f 1)";;
 		'SHA1-Hash:') EXPECTED="$(sha1sum "$TESTFILE" | cut -d' ' -f 1)";;
 		'SHA256-Hash:') EXPECTED="$(sha256sum "$TESTFILE" | cut -d' ' -f 1)";;
 		'SHA512-Hash:') EXPECTED="$(sha512sum "$TESTFILE" | cut -d' ' -f 1)";;
+		'Checksum-FileSize-Hash:')
+			#filesize is too weak to check for !=
+			if [ "$4" = '=' ]; then
+				EXPECTED="$(stat -c '%s' "$TESTFILE")"
+			else
+				continue
+			fi
+			;;
 		*) continue;;
 		esac
 		if [ "$4" = '=' ]; then
@@ -40,15 +52,41 @@ testdownloadfile() {
 		fi
 		if [ "$EXPECTED" "$4" "$hash" ]; then
 			msgpass
+			HASHES_OK=$((HASHES_OK+1));
 		else
-			cat >&2 "$DOWNLOADLOG"
 			msgfail "expected: $EXPECTED ; got: $hash"
+			HASHES_BAD=$((HASHES_BAD+1));
 		fi
-	done
+	done < receivedhashes.log
+	msgtest 'At least one good hash and no bad ones'
+	if [ $HASHES_OK -eq 0 ] || [ $HASHES_BAD -ne 0 ]; then
+		cat >&2 "$DOWNLOADLOG"
+		msgfail
+	else
+		msgpass
+	fi
 }
 
 TESTFILE='aptarchive/testfile'
 cp -a ${TESTDIR}/framework $TESTFILE
+cp -a ${TESTDIR}/framework "${TESTFILE}2"
+
+followuprequest() {
+	local DOWN='./testfile'
+
+	copysource $TESTFILE 1M $DOWN
+	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '='
+	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
+
+	copysource $TESTFILE 1M $DOWN
+	copysource "${TESTFILE}2" 20 "${DOWN}2"
+	msgtest 'Testing download of files with' 'completely downloaded file + partial file'
+	testsuccess --nomsg apthelper -o Debug::Acquire::${1%%:*}=1 -o Debug::pkgAcquire::Worker=1 \
+		download-file "$1/testfile" "$DOWN" '' "$1/testfile2" "${DOWN}2"
+	testwebserverlaststatuscode '206' 'rootdir/tmp/testsuccess.output'
+	testsuccess diff -u "$TESTFILE" "${DOWN}"
+	testsuccess diff -u "${DOWN}" "${DOWN}2"
+}
 
 testrun() {
 	webserverconfig 'aptwebserver::support::range' 'true'
@@ -65,9 +103,11 @@ testrun() {
 	testdownloadfile 'invalid partial data' "${1}/testfile" './testfile' '!='
 	testwebserverlaststatuscode '206' "$DOWNLOADLOG"
 
-	copysource $TESTFILE 1M ./testfile
-	testdownloadfile 'completely downloaded file' "${1}/testfile" './testfile' '='
-	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
+	webserverconfig 'aptwebserver::closeOnError' 'false'
+	followuprequest "$1"
+	webserverconfig 'aptwebserver::closeOnError' 'true'
+	followuprequest "$1"
+	webserverconfig 'aptwebserver::closeOnError' 'false'
 
 	copysource /dev/zero 1M ./testfile
 	testdownloadfile 'too-big partial file' "${1}/testfile" './testfile' '='
@@ -85,8 +125,18 @@ testrun() {
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 }
 
+msgmsg 'http: Test with Content-Length'
+webserverconfig 'aptwebserver::chunked-transfer-encoding' 'false'
+testrun 'http://localhost:8080'
+msgmsg 'http: Test with Transfer-Encoding: chunked'
+webserverconfig 'aptwebserver::chunked-transfer-encoding' 'true'
 testrun 'http://localhost:8080'
 
 changetohttpswebserver
 
+msgmsg 'https: Test with Content-Length'
+webserverconfig 'aptwebserver::chunked-transfer-encoding' 'false'
+testrun 'https://localhost:4433'
+msgmsg 'https: Test with Transfer-Encoding: chunked'
+webserverconfig 'aptwebserver::chunked-transfer-encoding' 'true'
 testrun 'https://localhost:4433'

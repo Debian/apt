@@ -118,7 +118,16 @@ public:
 		inline const char *Name() const {return getPkg().Name(); }
 		inline std::string FullName(bool const Pretty) const { return getPkg().FullName(Pretty); }
 		inline std::string FullName() const { return getPkg().FullName(); }
-		inline const char *Section() const {return getPkg().Section(); }
+		APT_DEPRECATED inline const char *Section() const {
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	   return getPkg().Section();
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+		}
 		inline bool Purge() const {return getPkg().Purge(); }
 		inline const char *Arch() const {return getPkg().Arch(); }
 		inline pkgCache::GrpIterator Group() const { return getPkg().Group(); }

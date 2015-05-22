@@ -778,8 +778,9 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
+      long ScOpenMax = sysconf(_SC_OPEN_MAX);
       // Close all of our FDs - just in case
-      for (int K = 3; K != sysconf(_SC_OPEN_MAX); K++)
+      for (int K = 3; K != ScOpenMax; K++)
       {
 	 if(KeepFDs.find(K) == KeepFDs.end())
 	    fcntl(K,F_SETFD,FD_CLOEXEC);
