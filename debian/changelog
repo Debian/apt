@@ -1,3 +1,23 @@
+apt (1.0.9.10ubuntu1) unstable; urgency=low
+
+  * merged from debian/sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 22 May 2015 18:08:10 +0200
+
+apt (1.0.9.10) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * Fix crash in pkgDPkgPM::WriteApportReport(() (LP: #1436626)
+  * Move sysconf(_SC_OPEN_MAX); out of the for() loop to avoid unneeded
+    syscalls
+  * Fix endless loop in apt-get update that can cause disk fillup
+    (LP: #1445239)
+
+  [ Helmut Grohne ]
+  * parse arch-qualified Provides correctly (Closes: 777071)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 22 May 2015 17:38:31 +0200
+
 apt (1.0.9.9ubuntu1) wily; urgency=low
 
   * merged from debian/sid
