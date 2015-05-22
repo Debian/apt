@@ -654,6 +654,8 @@ static void * handleClient(void * voidclient)				/*{{{*/
 		     if (filesize > filestart)
 		     {
 			data.Skip(filestart);
+                        // make sure to send content-range before conent-length
+                        // as regression test for LP: #1445239
 			std::ostringstream contentrange;
 			contentrange << "Content-Range: bytes " << filestart << "-"
 			   << filesize - 1 << "/" << filesize;
