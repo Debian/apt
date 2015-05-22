@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# this is a regression test for LP: #1445239 where a partial download can
+# trigger an endless hang of the download method
+#
+
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+changetowebserver
+webserverconfig 'aptwebserver::support::range' 'true'
+
+TESTFILE='aptarchive/testfile'
+dd if=/dev/zero of=$TESTFILE bs=100k count=1 2>/dev/null
+
+DOWNLOADLOG='rootdir/tmp/testdownloadfile.log'
+
+TARGET=testfile-downloaded
+dd if=/dev/zero of=$TARGET bs=99k count=1 2>/dev/null
+if ! downloadfile http://localhost:8080/testfile "$TARGET" > "$DOWNLOADLOG"; then
+    cat >&2 "$DOWNLOADLOG"
+    msgfail
+else
+    msgpass
+fi
