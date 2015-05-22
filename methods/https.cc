@@ -69,7 +69,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
       me->File->Truncate(me->Server->StartPos);
       me->File->Seek(me->Server->StartPos);
 
-      me->Res.Size = me->Server->Size;
+      me->Res.Size = me->Server->TotalFileSize;
    }
    else if (me->Server->HeaderLine(line) == false)
       return 0;
