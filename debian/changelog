@@ -1,3 +1,17 @@
+apt (1.0.9.10) UNRELEASED; urgency=medium
+
+  [ Michael Vogt ]
+  * Fix crash in pkgDPkgPM::WriteApportReport(() (LP: #1436626)
+  * Move sysconf(_SC_OPEN_MAX); out of the for() loop to avoid unneeded
+    syscalls
+  * Fix endless loop in apt-get update that can cause disk fillup
+    (LP: #1445239)
+
+  [ Helmut Grohne ]
+  * parse arch-qualified Provides correctly (Closes: 777071)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 22 May 2015 16:42:27 +0200
+
 apt (1.0.9.9) unstable; urgency=medium
 
   [ David Kalnischkies ]
