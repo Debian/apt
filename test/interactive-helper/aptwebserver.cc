@@ -654,13 +654,13 @@ static void * handleClient(void * voidclient)				/*{{{*/
 		     if (filesize > filestart)
 		     {
 			data.Skip(filestart);
-			std::ostringstream contentlength;
-			contentlength << "Content-Length: " << (filesize - filestart);
-			headers.push_back(contentlength.str());
 			std::ostringstream contentrange;
 			contentrange << "Content-Range: bytes " << filestart << "-"
 			   << filesize - 1 << "/" << filesize;
 			headers.push_back(contentrange.str());
+			std::ostringstream contentlength;
+			contentlength << "Content-Length: " << (filesize - filestart);
+			headers.push_back(contentlength.str());
 			sendHead(client, 206, headers);
 			if (sendContent == true)
 			   sendFile(client, headers, data);

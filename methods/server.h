@@ -34,7 +34,8 @@ struct ServerState
    char Code[360];
 
    // These are some statistics from the last parsed header lines
-   unsigned long long Size; // size of the usable content (aka: the file)
+   unsigned long long Size; // total size of the usable content (aka: the file)
+   unsigned long long DownloadSize; // size we actually download (can be smaller than Size if we have partial content)
    unsigned long long JunkSize; // size of junk content (aka: server error pages)
    unsigned long long StartPos;
    time_t Date;
