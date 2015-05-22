@@ -447,7 +447,7 @@ bool HttpServerState::RunData(FileFd * const File)
       else if (JunkSize != 0)
 	 In.Limit(JunkSize);
       else
-	 In.Limit(Size - StartPos);
+	 In.Limit(DownloadSize);
       
       // Just transfer the whole block.
       do

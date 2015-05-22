@@ -70,19 +70,19 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 	 {
 	    Hashes resultHashes(me->Itm->ExpectedHashes);
 	    FileFd file(me->Itm->DestFile, FileFd::ReadOnly);
-	    me->https->Server->Size = file.FileSize();
+	    me->https->Server->TotalFileSize = file.FileSize();
 	    me->https->Server->Date = file.ModificationTime();
 	    resultHashes.AddFD(file);
 	    HashStringList const hashList = resultHashes.GetHashStringList();
 	    partialHit = (me->Itm->ExpectedHashes == hashList);
 	 }
-	 else if (me->https->Server->Result == 416 && me->https->Server->Size == me->https->File->FileSize())
+	 else if (me->https->Server->Result == 416 && me->https->Server->TotalFileSize == me->https->File->FileSize())
 	    partialHit = true;
 
 	 if (partialHit == true)
 	 {
 	    me->https->Server->Result = 200;
-	    me->https->Server->StartPos = me->https->Server->Size;
+	    me->https->Server->StartPos = me->https->Server->TotalFileSize;
 	    // the actual size is not important for https as curl will deal with it
 	    // by itself and e.g. doesn't bother us with transport-encoding…
 	    me->https->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
@@ -94,7 +94,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 	 me->https->Server->StartPos = 0;
 
       me->Res->LastModified = me->https->Server->Date;
-      me->Res->Size = me->https->Server->Size;
+      me->Res->Size = me->https->Server->TotalFileSize;
       me->Res->ResumePoint = me->https->Server->StartPos;
 
       // we expect valid data, so tell our caller we get the file now

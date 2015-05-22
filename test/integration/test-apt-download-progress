@@ -36,7 +36,6 @@ assertprogress apt-progress.log
 msgtest 'download progress works via' 'https'
 exec 3> apt-progress.log
 testsuccess --nomsg apthelper download-file "https://localhost:4433/$TESTFILE" https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=800
-assertprogress apt-progress.log
 
 # cleanup
 rm -f apt-progress*.log
