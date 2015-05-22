@@ -164,15 +164,22 @@ bool ServerState::HeaderLine(string Line)
 	 Encoding = Stream;
       HaveContent = true;
 
-      unsigned long long * SizePtr = &Size;
+      unsigned long long * DownloadSizePtr = &DownloadSize;
       if (Result == 416)
-	 SizePtr = &JunkSize;
+	 DownloadSizePtr = &JunkSize;
 
-      *SizePtr = strtoull(Val.c_str(), NULL, 10);
-      if (*SizePtr >= std::numeric_limits<unsigned long long>::max())
+      *DownloadSizePtr = strtoull(Val.c_str(), NULL, 10);
+      if (*DownloadSizePtr >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
-      else if (*SizePtr == 0)
+      else if (*DownloadSizePtr == 0)
 	 HaveContent = false;
+
+      // On partial content (206) the Content-Length less than the real
+      // size, so do not set it here but leave that to the Content-Range
+      // header instead
+      if(Result != 206 && Size == 0)
+         Size = DownloadSize;
+
       return true;
    }
 
@@ -193,6 +200,9 @@ bool ServerState::HeaderLine(string Line)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
       if ((unsigned long long)StartPos > Size)
 	 return _error->Error(_("This HTTP server has broken range support"));
+
+      // figure out what we will download
+      DownloadSize = Size - StartPos;
       return true;
    }
 
