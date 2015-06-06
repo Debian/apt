@@ -388,7 +388,7 @@ class Patch {
 
    public:
 
-   void read_diff(FileFd &f)
+   void read_diff(FileFd &f, Hashes * const h)
    {
       char buffer[BLOCK_SIZE];
       bool cmdwanted = true;
@@ -396,6 +396,8 @@ class Patch {
       Change ch(0);
       while(f.ReadLine(buffer, sizeof(buffer)))
       {
+	 if (h != NULL)
+	    h->Add(buffer);
 	 if (cmdwanted) {
 	    char *m, *c;
 	    size_t s, e;
@@ -519,8 +521,29 @@ class RredMethod : public pkgAcqMethod {
    private:
       bool Debug;
 
+      struct PDiffFile {
+	 std::string FileName;
+	 HashStringList ExpectedHashes;
+	 PDiffFile(std::string const &FileName, HashStringList const &ExpectedHashes) :
+	    FileName(FileName), ExpectedHashes(ExpectedHashes) {}
+      };
+
+      HashStringList ReadExpectedHashesForPatch(unsigned int const patch, std::string const &Message)
+      {
+	 HashStringList ExpectedHashes;
+	 for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+	 {
+	    std::string tagname;
+	    strprintf(tagname, "Patch-%d-%s-Hash", patch, *type);
+	    std::string const hashsum = LookupTag(Message, tagname.c_str());
+	    if (hashsum.empty() == false)
+	       ExpectedHashes.push_back(HashString(*type, hashsum));
+	 }
+	 return ExpectedHashes;
+      }
+
    protected:
-      virtual bool Fetch(FetchItem *Itm) {
+      virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) {
 	 Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
 	 URI Get = Itm->Uri;
 	 std::string Path = Get.Host + Get.Path; // rred:/path - no host
@@ -534,11 +557,17 @@ class RredMethod : public pkgAcqMethod {
 	 } else
 	    URIStart(Res);
 
-	 std::vector<std::string> patchpaths;
+	 std::vector<PDiffFile> patchfiles;
 	 Patch patch;
 
 	 if (FileExists(Path + ".ed") == true)
-	    patchpaths.push_back(Path + ".ed");
+	 {
+	    HashStringList const ExpectedHashes = ReadExpectedHashesForPatch(0, Message);
+	    std::string const FileName = Path + ".ed";
+	    if (ExpectedHashes.usable() == false)
+	       return _error->Error("No hashes found for uncompressed patch: %s", FileName.c_str());
+	    patchfiles.push_back(PDiffFile(FileName, ExpectedHashes));
+	 }
 	 else
 	 {
 	    _error->PushToStack();
@@ -546,18 +575,27 @@ class RredMethod : public pkgAcqMethod {
 	    _error->RevertToStack();
 
 	    std::string const baseName = Path + ".ed.";
+	    unsigned int seen_patches = 0;
 	    for (std::vector<std::string>::const_iterator p = patches.begin();
 		  p != patches.end(); ++p)
+	    {
 	       if (p->compare(0, baseName.length(), baseName) == 0)
-		  patchpaths.push_back(*p);
+	       {
+		  HashStringList const ExpectedHashes = ReadExpectedHashesForPatch(seen_patches, Message);
+		  if (ExpectedHashes.usable() == false)
+		     return _error->Error("No hashes found for uncompressed patch %d: %s", seen_patches, p->c_str());
+		  patchfiles.push_back(PDiffFile(*p, ExpectedHashes));
+		  ++seen_patches;
+	       }
+	    }
 	 }
 
 	 std::string patch_name;
-	 for (std::vector<std::string>::iterator I = patchpaths.begin();
-	       I != patchpaths.end();
+	 for (std::vector<PDiffFile>::iterator I = patchfiles.begin();
+	       I != patchfiles.end();
 	       ++I)
 	 {
-	    patch_name = *I;
+	    patch_name = I->FileName;
 	    if (Debug == true)
 	       std::clog << "Patching " << Path << " with " << patch_name
 		  << std::endl;
@@ -569,8 +607,12 @@ class RredMethod : public pkgAcqMethod {
 	       _error->DumpErrors(std::cerr);
 	       abort();
 	    }
-	    patch.read_diff(p);
+	    Hashes patch_hash(I->ExpectedHashes);
+	    patch.read_diff(p, &patch_hash);
 	    p.Close();
+	    HashStringList const hsl = patch_hash.GetHashStringList();
+	    if (hsl != I->ExpectedHashes)
+	       return _error->Error("Patch %s doesn't have the expected hashsum", patch_name.c_str());
 	 }
 
 	 if (Debug == true)
@@ -643,7 +685,7 @@ int main(int argc, char **argv)
 	 _error->DumpErrors(std::cerr);
 	 exit(1);
       }
-      patch.read_diff(p);
+      patch.read_diff(p, NULL);
    }
 
    if (just_diff) {

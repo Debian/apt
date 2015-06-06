@@ -170,6 +170,8 @@ SHA256-Patches:
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	testsuccess aptget update "$@"
+	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptgetupdate.output
+	testsuccess grep 'have the expected hashsum' rootdir/tmp/aptgetupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff

@@ -76,11 +76,12 @@ class pkgAcqMethod
    std::string FailReason;
    std::string UsedMirror;
    std::string IP;
-   
+
    // Handlers for messages
    virtual bool Configuration(std::string Message);
    virtual bool Fetch(FetchItem * /*Item*/) {return true;};
-   
+   virtual bool URIAcquire(std::string const &/*Message*/, FetchItem *Itm) { return Fetch(Itm); };
+
    // Outgoing messages
    void Fail(bool Transient = false);
    inline void Fail(const char *Why, bool Transient = false) {Fail(std::string(Why),Transient);};

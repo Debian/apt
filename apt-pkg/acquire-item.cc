@@ -95,6 +95,19 @@ static std::string GetCompressedFileName(std::string const &URI, std::string con
    return Name;
 }
 									/*}}}*/
+static std::string GetMergeDiffsPatchFileName(std::string const &Final, std::string const &Patch)/*{{{*/
+{
+   // rred expects the patch as $FinalFile.ed.$patchname.gz
+   return Final + ".ed." + Patch + ".gz";
+}
+									/*}}}*/
+static std::string GetDiffsPatchFileName(std::string const &Final)	/*{{{*/
+{
+   // rred expects the patch as $FinalFile.ed
+   return Final + ".ed";
+}
+									/*}}}*/
+
 static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser, pkgAcqMetaBase * const TransactionManager, pkgAcquire::Item * const I) /*{{{*/
 {
    if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
@@ -1860,6 +1873,9 @@ void pkgAcqIndexDiffs::Failed(string const &Message,pkgAcquire::MethodConfig con
 		<< "Falling back to normal index file acquire" << std::endl;
    DestFile = GetPartialFileNameFromURI(Target->URI);
    RenameOnError(PDiffError);
+   std::string const patchname = GetDiffsPatchFileName(DestFile);
+   if (RealFileExists(patchname))
+      rename(patchname.c_str(), std::string(patchname + ".FAILED").c_str());
    new pkgAcqIndex(Owner, TransactionManager, Target);
    Finish();
 }
@@ -1968,28 +1984,13 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 
    Item::Done(Message, Hashes, Cnf);
 
-   // FIXME: verify this download too before feeding it to rred
    std::string const FinalFile = GetPartialFileNameFromURI(Target->URI);
+   std::string const PatchFile = GetDiffsPatchFileName(FinalFile);
 
    // success in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
    {
-      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Gzip);
-      class Hashes LocalHashesCalc;
-      LocalHashesCalc.AddFD(fd);
-      HashStringList const LocalHashes = LocalHashesCalc.GetHashStringList();
-
-      if (fd.Size() != available_patches[0].patch_size ||
-	    available_patches[0].patch_hashes != LocalHashes)
-      {
-	 // patchfiles are dated, so bad indicates a bad download, so kill it
-	 unlink(DestFile.c_str());
-	 Failed("Patch has Size/Hashsum mismatch", NULL);
-	 return;
-      }
-
-      // rred excepts the patch as $FinalFile.ed
-      Rename(DestFile,FinalFile+".ed");
+      Rename(DestFile, PatchFile);
 
       if(Debug)
 	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
@@ -2000,18 +2001,17 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
       QueueURI(Desc);
       SetActiveSubprocess("rred");
       return;
-   } 
-
+   }
 
    // success in download/apply a diff, queue next (if needed)
    if(State == StateApplyDiff)
    {
       // remove the just applied patch
       available_patches.erase(available_patches.begin());
-      unlink((FinalFile + ".ed").c_str());
+      unlink(PatchFile.c_str());
 
       // move into place
-      if(Debug) 
+      if(Debug)
       {
 	 std::clog << "Moving patched file in place: " << std::endl
 		   << DestFile << " -> " << FinalFile << std::endl;
@@ -2029,6 +2029,18 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
          DestFile = FinalFile;
 	 return Finish(true);
    }
+}
+									/*}}}*/
+std::string pkgAcqIndexDiffs::Custom600Headers() const			/*{{{*/
+{
+   if(State != StateApplyDiff)
+      return pkgAcqBaseIndex::Custom600Headers();
+   std::ostringstream patchhashes;
+   HashStringList const ExpectedHashes = available_patches[0].patch_hashes;
+   for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
+      patchhashes <<  "\nPatch-0-" << hs->HashType() << "-Hash: " << hs->HashValue();
+   patchhashes << pkgAcqBaseIndex::Custom600Headers();
+   return patchhashes.str();
 }
 									/*}}}*/
 
@@ -2079,6 +2091,9 @@ void pkgAcqIndexMergeDiffs::Failed(string const &Message,pkgAcquire::MethodConfi
       std::clog << "Falling back to normal index file acquire" << std::endl;
    DestFile = GetPartialFileNameFromURI(Target->URI);
    RenameOnError(PDiffError);
+   std::string const patchname = GetMergeDiffsPatchFileName(DestFile, patch.file);
+   if (RealFileExists(patchname))
+      rename(patchname.c_str(), std::string(patchname + ".FAILED").c_str());
    new pkgAcqIndex(Owner, TransactionManager, Target);
 }
 									/*}}}*/
@@ -2090,26 +2105,10 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 
    Item::Done(Message, Hashes, Cnf);
 
-   // FIXME: verify download before feeding it to rred
    string const FinalFile = GetPartialFileNameFromURI(Target->URI);
-
    if (State == StateFetchDiff)
    {
-      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Gzip);
-      class Hashes LocalHashesCalc;
-      LocalHashesCalc.AddFD(fd);
-      HashStringList const LocalHashes = LocalHashesCalc.GetHashStringList();
-
-      if (fd.Size() != patch.patch_size || patch.patch_hashes != LocalHashes)
-      {
-	 // patchfiles are dated, so bad indicates a bad download, so kill it
-	 unlink(DestFile.c_str());
-	 Failed("Patch has Size/Hashsum mismatch", NULL);
-	 return;
-      }
-
-      // rred expects the patch as $FinalFile.ed.$patchname.gz
-      Rename(DestFile, FinalFile + ".ed." + patch.file + ".gz");
+      Rename(DestFile, GetMergeDiffsPatchFileName(FinalFile, patch.file));
 
       // check if this is the last completed diff
       State = StateDoneDiff;
@@ -2158,7 +2157,7 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 	    I != allPatches->end(); ++I)
       {
 	 std::string const PartialFile = GetPartialFileNameFromURI(Target->URI);
-	 std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
+	 std::string const patch = GetMergeDiffsPatchFileName(PartialFile, (*I)->patch.file);
 	 unlink(patch.c_str());
       }
       unlink(FinalFile.c_str());
@@ -2168,6 +2167,24 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
       if(Debug)
 	 std::clog << "allDone: " << DestFile << "\n" << std::endl;
    }
+}
+									/*}}}*/
+std::string pkgAcqIndexMergeDiffs::Custom600Headers() const		/*{{{*/
+{
+   if(State != StateApplyDiff)
+      return pkgAcqBaseIndex::Custom600Headers();
+   std::ostringstream patchhashes;
+   unsigned int seen_patches = 0;
+   for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	 I != allPatches->end(); ++I)
+   {
+      HashStringList const ExpectedHashes = (*I)->patch.patch_hashes;
+      for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
+	 patchhashes <<  "\nPatch-" << seen_patches << "-" << hs->HashType() << "-Hash: " << hs->HashValue();
+      ++seen_patches;
+   }
+   patchhashes << pkgAcqBaseIndex::Custom600Headers();
+   return patchhashes.str();
 }
 									/*}}}*/
 

@@ -774,6 +774,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 	 pkgAcquire::MethodConfig const * const Cnf);
+   virtual std::string Custom600Headers() const;
    virtual std::string DescURI() const {return Target->URI + "Index";};
    virtual HashStringList GetExpectedHashes() const;
    virtual bool HashesRequired() const;
@@ -886,6 +887,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf);
+   virtual std::string Custom600Headers() const;
    virtual std::string DescURI() const {return Target->URI + "IndexDiffs";};
    virtual HashStringList GetExpectedHashes() const;
    virtual bool HashesRequired() const;

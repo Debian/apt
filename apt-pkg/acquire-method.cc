@@ -388,14 +388,14 @@ int pkgAcqMethod::Run(bool Single)
 	    *I = Tmp;
 	    if (QueueBack == 0)
 	       QueueBack = Tmp;
-	    
+
 	    // Notify that this item is to be fetched.
-	    if (Fetch(Tmp) == false)
+	    if (URIAcquire(Message, Tmp) == false)
 	       Fail();
-	    
-	    break;					     
-	 }   
-      }      
+
+	    break;
+	 }
+      }
    }
 
    Exit();
@@ -403,8 +403,6 @@ int pkgAcqMethod::Run(bool Single)
 }
 									/*}}}*/
 // AcqMethod::PrintStatus - privately really send a log/status message	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMethod::PrintStatus(char const * const header, const char* Format,
 			       va_list &args) const
 {
