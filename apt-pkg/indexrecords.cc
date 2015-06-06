@@ -73,7 +73,7 @@ APT_PURE indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 
 APT_PURE bool indexRecords::Exists(string const &MetaKey) const
 {
-   return Entries.count(MetaKey) == 1;
+   return Entries.find(MetaKey) != Entries.end();
 }
 
 bool indexRecords::Load(const string Filename)				/*{{{*/

@@ -87,6 +87,15 @@ class HashStringList
     */
    HashString const * find(char const * const type) const;
    HashString const * find(std::string const &type) const { return find(type.c_str()); }
+
+   /** finds the filesize hash and returns it as number
+    *
+    * @return beware: if the size isn't known we return \b 0 here,
+    * just like we would do for an empty file. If that is a problem
+    * for you have to get the size manually out of the list.
+    */
+   unsigned long long FileSize() const;
+
    /** check if the given hash type is supported
     *
     * @param type to check

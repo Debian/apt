@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <algorithm>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string>
 #include <iostream>
 									/*}}}*/
@@ -176,6 +177,15 @@ HashString const * HashStringList::find(char const * const type) const /*{{{*/
       if (strcasecmp(hs->HashType().c_str(), type) == 0)
 	 return &*hs;
    return NULL;
+}
+									/*}}}*/
+unsigned long long HashStringList::FileSize() const			/*{{{*/
+{
+   HashString const * const hsf = find("Checksum-FileSize");
+   if (hsf == NULL)
+      return 0;
+   std::string const hv = hsf->HashValue();
+   return strtoull(hv.c_str(), NULL, 10);
 }
 									/*}}}*/
 bool HashStringList::supported(char const * const type)			/*{{{*/

@@ -22,6 +22,10 @@ addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-amd64;'
 chmod 550 aptarchive/dists/unstable/main/binary-amd64
 
 testsuccess aptget update
+
+# the release files aren't an IMS-hit, but the indexes are
+redatereleasefiles '+1 hour'
+
 testsuccess aptget update -o Debug::pkgAcquire::Auth=1
 cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
 

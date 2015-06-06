@@ -190,7 +190,12 @@ class pkgCache								/*{{{*/
    struct Flag
    {
       enum PkgFlags {Auto=(1<<0),Essential=(1<<3),Important=(1<<4)};
-      enum PkgFFlags {NotSource=(1<<0),NotAutomatic=(1<<1),ButAutomaticUpgrades=(1<<2)};
+      enum PkgFFlags {
+	 NotSource=(1<<0), /*!< packages can't be fetched from here, e.g. dpkg/status file */
+	 NotAutomatic=(1<<1), /*!< archive has a default pin of 1 */
+	 ButAutomaticUpgrades=(1<<2), /*!< (together with the previous) archive has a default pin of 100 */
+	 LocalSource=(1<<3), /*!< local sources can't and will not be verified by hashes */
+      };
    };
    
    protected:

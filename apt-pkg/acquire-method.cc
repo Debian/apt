@@ -376,7 +376,10 @@ int pkgAcqMethod::Run(bool Single)
 		  Tmp->ExpectedHashes.push_back(HashString(*t, hash));
 	    }
             char *End;
-            Tmp->MaximumSize = strtoll(LookupTag(Message, "Maximum-Size", "0").c_str(), &End, 10);
+	    if (Tmp->ExpectedHashes.FileSize() > 0)
+	       Tmp->MaximumSize = Tmp->ExpectedHashes.FileSize();
+	    else
+	       Tmp->MaximumSize = strtoll(LookupTag(Message, "Maximum-Size", "0").c_str(), &End, 10);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

@@ -742,13 +742,13 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // and give it to the list parser
    debDebFileParser Parser(DebControl, DebFile);
-   if(Gen.SelectFile(DebFile, "local", *this) == false)
+   if(Gen.SelectFile(DebFile, "local", *this, pkgCache::Flag::LocalSource) == false)
       return _error->Error("Problem with SelectFile %s", DebFile.c_str());
 
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
    File->Size = DebControl->Size();
    File->mtime = DebControl->ModificationTime();
-   
+
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeLister for %s", DebFile.c_str());
 

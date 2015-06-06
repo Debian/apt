@@ -57,7 +57,11 @@ bool FileMethod::Fetch(FetchItem *Itm)
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
       if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
-	 Res.IMSHit = true;
+      {
+	 unsigned long long const filesize = Itm->ExpectedHashes.FileSize();
+	 if (filesize != 0 && filesize == Res.Size)
+	    Res.IMSHit = true;
+      }
    }
 
    // See if the uncompressed file exists and reuse it

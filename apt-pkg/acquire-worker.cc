@@ -55,8 +55,8 @@ pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
    CurrentItem = 0;
    TotalSize = 0;
    CurrentSize = 0;
-   
-   Construct();   
+
+   Construct();
 }
 									/*}}}*/
 // Worker::Worker - Constructor for method config startup		/*{{{*/
@@ -70,8 +70,8 @@ pkgAcquire::Worker::Worker(MethodConfig *Cnf)
    CurrentItem = 0;
    TotalSize = 0;
    CurrentSize = 0;
-   
-   Construct();   
+
+   Construct();
 }
 									/*}}}*/
 // Worker::Construct - Constructor helper				/*{{{*/
@@ -136,7 +136,7 @@ bool pkgAcquire::Worker::Start()
    }
    for (int I = 0; I != 4; I++)
       SetCloseExec(Pipes[I],true);
-   
+
    // Fork off the process
    Process = ExecFork();
    if (Process == 0)
@@ -145,9 +145,9 @@ bool pkgAcquire::Worker::Start()
       dup2(Pipes[1],STDOUT_FILENO);
       dup2(Pipes[2],STDIN_FILENO);
       SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);      
+      SetCloseExec(STDIN_FILENO,false);
       SetCloseExec(STDERR_FILENO,false);
-      
+
       const char *Args[2];
       Args[0] = Method.c_str();
       Args[1] = 0;
@@ -165,7 +165,7 @@ bool pkgAcquire::Worker::Start()
    close(Pipes[2]);
    OutReady = false;
    InReady = true;
-   
+
    // Read the configuration data
    if (WaitFd(InFd) == false ||
        ReadMessages() == false)
@@ -174,7 +174,7 @@ bool pkgAcquire::Worker::Start()
    RunMessages();
    if (OwnerQ != 0)
       SendConfiguration();
-   
+
    return true;
 }
 									/*}}}*/
@@ -201,7 +201,7 @@ bool pkgAcquire::Worker::RunMessages()
 
       if (Debug == true)
 	 clog << " <- " << Access << ':' << QuoteString(Message,"\n") << endl;
-      
+
       // Fetch the message number
       char *End;
       int Number = strtol(Message.c_str(),&End,10);
@@ -215,15 +215,15 @@ bool pkgAcquire::Worker::RunMessages()
 
       // update used mirror
       string UsedMirror = LookupTag(Message,"UsedMirror", "");
-      if (!UsedMirror.empty() && 
+      if (!UsedMirror.empty() &&
           Itm && 
-          Itm->Description.find(" ") != string::npos) 
+          Itm->Description.find(" ") != string::npos)
       {
          Itm->Description.replace(0, Itm->Description.find(" "), UsedMirror);
          // FIXME: will we need this as well?
          //Itm->ShortDesc = UsedMirror;
       }
-      
+
       // Determine the message number and dispatch
       switch (Number)
       {
@@ -232,18 +232,18 @@ bool pkgAcquire::Worker::RunMessages()
 	 if (Capabilities(Message) == false)
 	    return _error->Error("Unable to process Capabilities message from %s",Access.c_str());
 	 break;
-	 
+
 	 // 101 Log
 	 case 101:
 	 if (Debug == true)
 	    clog << " <- (log) " << LookupTag(Message,"Message") << endl;
 	 break;
-	 
+
 	 // 102 Status
 	 case 102:
 	 Status = LookupTag(Message,"Message");
 	 break;
-	    
+
          // 103 Redirect
          case 103:
          {
@@ -252,7 +252,7 @@ bool pkgAcquire::Worker::RunMessages()
                _error->Error("Method gave invalid 103 Redirect message");
                break;
             }
- 
+
             string NewURI = LookupTag(Message,"New-URI",URI.c_str());
             Itm->URI = NewURI;
 
@@ -272,7 +272,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Done(Desc);
             break;
          }
-   
+
 	 // 200 URI Start
 	 case 200:
 	 {
@@ -281,23 +281,23 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Error("Method gave invalid 200 URI Start message");
 	       break;
 	    }
-	    
+
 	    CurrentItem = Itm;
 	    CurrentSize = 0;
 	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
 	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
-	    Itm->Owner->Start(Message,strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10));
+	    Itm->Owner->Start(Message, TotalSize);
 
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Itm->Owner->GetOwner());
-	    
+
 	    if (Log != 0)
 	       Log->Fetch(*Itm);
 
 	    break;
 	 }
-	 
+
 	 // 201 URI Done
 	 case 201:
 	 {
@@ -306,7 +306,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Error("Method gave invalid 201 URI Done message");
 	       break;
 	    }
-	    
+
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
 
@@ -316,22 +316,11 @@ bool pkgAcquire::Worker::RunMessages()
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Owner->GetOwner());
-	    
-	    OwnerQ->ItemDone(Itm);
-	    unsigned long long const ServerSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
-            bool isHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
-                         StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
-            // Using the https method the server might return 200, but the
-            // If-Modified-Since condition is not satsified, libcurl will
-            // discard the download. In this case, however, TotalSize will be
-            // set to the actual size of the file, while ServerSize will be set
-            // to 0. Therefore, if the item is marked as a hit and the
-            // downloaded size (ServerSize) is 0, we ignore TotalSize.
-	    if (TotalSize != 0 && (!isHit || ServerSize != 0) && ServerSize != TotalSize)
-	       _error->Warning("Size of file %s is not what the server reported %s %llu",
-			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
-	    // see if there is a hash to verify
+	    OwnerQ->ItemDone(Itm);
+
+	    HashStringList const ExpectedHashes = Owner->GetExpectedHashes();
+	    // see if we got hashes to verify
 	    HashStringList ReceivedHashes;
 	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
@@ -339,6 +328,18 @@ bool pkgAcquire::Worker::RunMessages()
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
 	       if (hashsum.empty() == false)
 		  ReceivedHashes.push_back(HashString(*type, hashsum));
+	    }
+	    // not all methods always sent Hashes our way
+	    if (ExpectedHashes.usable() == true && ReceivedHashes.usable() == false)
+	    {
+	       std::string const filename = LookupTag(Message, "Filename", Owner->DestFile.c_str());
+	       if (filename.empty() == false && RealFileExists(filename))
+	       {
+		  Hashes calc(ExpectedHashes);
+		  FileFd file(filename, FileFd::ReadOnly, FileFd::None);
+		  calc.AddFD(file);
+		  ReceivedHashes = calc.GetHashStringList();
+	       }
 	    }
 
 	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
@@ -348,30 +349,66 @@ bool pkgAcquire::Worker::RunMessages()
 	       for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << "ExpectedHash:" << endl;
-	       HashStringList expectedHashes = Owner->HashSums();
-	       for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
+	       for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
 		  std::clog <<  "\t- " << hs->toStr() << std::endl;
 	       std::clog << endl;
 	    }
-	    Owner->Done(Message, ServerSize, ReceivedHashes, Config);
-	    ItemDone();
 
-	    // Log that we are done
-	    if (Log != 0)
+	    // decide if what we got is what we expected
+	    bool consideredOkay = false;
+	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
+	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
+	    if (ExpectedHashes.usable())
 	    {
-	       if (isHit)
+	       if (ReceivedHashes.usable() == false)
 	       {
-		  /* Hide 'hits' for local only sources - we also manage to
-		     hide gets */
-		  if (Config->LocalOnly == false)
-		     Log->IMSHit(Desc);
-	       }	       
+		  /* IMS-Hits can't be checked here as we will have uncompressed file,
+		     but the hashes for the compressed file. What we have was good through
+		     so all we have to ensure later is that we are not stalled. */
+		  consideredOkay = isIMSHit;
+	       }
+	       else if (ReceivedHashes == ExpectedHashes)
+		  consideredOkay = true;
 	       else
-		  Log->Done(Desc);
+		  consideredOkay = false;
+
+	    }
+	    else if (Owner->HashesRequired() == true)
+	       consideredOkay = false;
+	    else
+	       consideredOkay = true;
+
+	    if (consideredOkay == true)
+	    {
+	       Owner->Done(Message, ReceivedHashes, Config);
+	       ItemDone();
+
+	       // Log that we are done
+	       if (Log != 0)
+	       {
+		  if (isIMSHit)
+		  {
+		     /* Hide 'hits' for local only sources - we also manage to
+			hide gets */
+		     if (Config->LocalOnly == false)
+			Log->IMSHit(Desc);
+		  }
+		  else
+		     Log->Done(Desc);
+	       }
+	    }
+	    else
+	    {
+	       Owner->Status = pkgAcquire::Item::StatAuthError;
+	       Owner->Failed(Message,Config);
+	       ItemDone();
+
+	       if (Log != 0)
+		  Log->Fail(Desc);
 	    }
 	    break;
-	 }	 
-	 
+	 }
+
 	 // 400 URI Failure
 	 case 400:
 	 {
@@ -408,18 +445,18 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Fail(Desc);
 
 	    break;
-	 }	 
-	 
+	 }
+
 	 // 401 General Failure
 	 case 401:
 	 _error->Error("Method %s General failure: %s",Access.c_str(),LookupTag(Message,"Message").c_str());
 	 break;
-	 
+
 	 // 403 Media Change
 	 case 403:
-	 MediaChange(Message); 
+	 MediaChange(Message);
 	 break;
-      }      
+      }
    }
    return true;
 }
@@ -432,7 +469,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
 {
    if (Config == 0)
       return true;
-   
+
    Config->Version = LookupTag(Message,"Version");
    Config->SingleInstance = StringToBool(LookupTag(Message,"Single-Instance"),false);
    Config->Pipeline = StringToBool(LookupTag(Message,"Pipeline"),false);
@@ -447,13 +484,13 @@ bool pkgAcquire::Worker::Capabilities(string Message)
       clog << "Configured access method " << Config->Access << endl;
       clog << "Version:" << Config->Version <<
 	      " SingleInstance:" << Config->SingleInstance <<
-	      " Pipeline:" << Config->Pipeline << 
-	      " SendConfig:" << Config->SendConfig << 
-	      " LocalOnly: " << Config->LocalOnly << 
-	      " NeedsCleanup: " << Config->NeedsCleanup << 
+	      " Pipeline:" << Config->Pipeline <<
+	      " SendConfig:" << Config->SendConfig <<
+	      " LocalOnly: " << Config->LocalOnly <<
+	      " NeedsCleanup: " << Config->NeedsCleanup <<
 	      " Removable: " << Config->Removable << endl;
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -463,10 +500,10 @@ bool pkgAcquire::Worker::Capabilities(string Message)
 bool pkgAcquire::Worker::MediaChange(string Message)
 {
    int status_fd = _config->FindI("APT::Status-Fd",-1);
-   if(status_fd > 0) 
+   if(status_fd > 0)
    {
       string Media = LookupTag(Message,"Media");
-      string Drive = LookupTag(Message,"Drive"); 
+      string Drive = LookupTag(Message,"Drive");
       ostringstream msg,status;
       ioprintf(msg,_("Please insert the disc labeled: "
 		     "'%s' "
@@ -536,12 +573,12 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 {
    if (OutFd == -1)
       return false;
-   
+
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
-   HashStringList const hsl = Item->Owner->HashSums();
+   HashStringList const hsl = Item->Owner->GetExpectedHashes();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
    if(Item->Owner->FileSize > 0)
@@ -564,7 +601,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
    OutQueue += Message;
    OutReady = true;
-   
+
    return true;
 }
 									/*}}}*/
@@ -586,7 +623,7 @@ bool pkgAcquire::Worker::OutFdReady()
    OutQueue.erase(0,Res);
    if (OutQueue.empty() == true)
       OutReady = false;
-   
+
    return true;
 }
 									/*}}}*/
@@ -608,7 +645,7 @@ bool pkgAcquire::Worker::InFdReady()
 bool pkgAcquire::Worker::MethodFailure()
 {
    _error->Error("Method %s has died unexpectedly!",Access.c_str());
-   
+
    // do not reap the child here to show meaningfull error to the user
    ExecWait(Process,Access.c_str(),false);
    Process = -1;
@@ -620,26 +657,22 @@ bool pkgAcquire::Worker::MethodFailure()
    InReady = false;
    OutQueue = string();
    MessageQueue.erase(MessageQueue.begin(),MessageQueue.end());
-   
+
    return false;
 }
 									/*}}}*/
-// Worker::Pulse - Called periodically 					/*{{{*/
+// Worker::Pulse - Called periodically					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcquire::Worker::Pulse()
 {
    if (CurrentItem == 0)
       return;
- 
+
    struct stat Buf;
    if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
       return;
    CurrentSize = Buf.st_size;
-   
-   // Hmm? Should not happen...
-   if (CurrentSize > TotalSize && TotalSize != 0)
-      TotalSize = CurrentSize;
 }
 									/*}}}*/
 // Worker::ItemDone - Called when the current item is finished		/*{{{*/

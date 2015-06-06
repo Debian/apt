@@ -18,7 +18,7 @@ setupaptarchive --no-update
 changetowebserver
 
 echo "Acquire::Languages \"none\";" > rootdir/etc/apt/apt.conf.d/00nolanguages
-testsuccess aptget update
+testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 listcurrentlistsdirectory > lists.before
 
 # insert new version
@@ -26,7 +26,7 @@ mkdir aptarchive/dists/unstable/main/binary-i386/saved
 cp -p aptarchive/dists/unstable/main/binary-i386/Packages* \
      aptarchive/dists/unstable/main/binary-i386/saved
 insertpackage 'unstable' 'foo' 'all' '2.0'
-
+touch -d '+1 hour' aptarchive/dists/unstable/main/binary-i386/Packages
 compressfile aptarchive/dists/unstable/main/binary-i386/Packages
 # ensure that we do not get a I-M-S hit for the Release file
 
@@ -39,7 +39,6 @@ cp -p aptarchive/dists/unstable/main/binary-i386/saved/Packages* \
      aptarchive/dists/unstable/main/binary-i386/
 
 # ensure this raises an error
-testfailureequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Hash Sum mismatch
-
-E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+testfailuremsg "W: Failed to fetch copy:$(readlink -f ./rootdir)/var/lib/apt/lists/localhost:8080_dists_unstable_main_binary-i386_Packages  Hash Sum mismatch
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 testfileequal lists.before "$(listcurrentlistsdirectory)"

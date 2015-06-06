@@ -192,11 +192,13 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		vector<debSectionEntry const*> const SectionEntries = src->second;
 		for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
 		     I != SectionEntries.end(); ++I) {
-			IndexTarget * Target = new IndexTarget();
-			Target->ShortDesc = "Sources";
-			Target->MetaKey = SourceIndexURISuffix(Target->ShortDesc.c_str(), (*I)->Section);
-			Target->URI = SourceIndexURI(Target->ShortDesc.c_str(), (*I)->Section);
-			Target->Description = Info (Target->ShortDesc.c_str(), (*I)->Section);
+			char const * const ShortDesc = "Sources";
+			IndexTarget * const Target = new IndexTarget(
+			      SourceIndexURISuffix(ShortDesc, (*I)->Section),
+			      ShortDesc,
+			      Info(ShortDesc, (*I)->Section),
+			      SourceIndexURI(ShortDesc, (*I)->Section)
+			      );
 			IndexTargets->push_back (Target);
 		}
 	}
@@ -212,11 +214,13 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 			continue;
 		for (vector <const debSectionEntry *>::const_iterator I = a->second.begin();
 		     I != a->second.end(); ++I) {
-			IndexTarget * Target = new IndexTarget();
-			Target->ShortDesc = "Packages";
-			Target->MetaKey = IndexURISuffix(Target->ShortDesc.c_str(), (*I)->Section, a->first);
-			Target->URI = IndexURI(Target->ShortDesc.c_str(), (*I)->Section, a->first);
-			Target->Description = Info (Target->ShortDesc.c_str(), (*I)->Section, a->first);
+			char const * const ShortDesc = "Packages";
+			IndexTarget * const Target = new IndexTarget(
+			      IndexURISuffix(ShortDesc, (*I)->Section, a->first),
+			      ShortDesc,
+			      Info (ShortDesc, (*I)->Section, a->first),
+			      IndexURI(ShortDesc, (*I)->Section, a->first)
+			      );
 			IndexTargets->push_back (Target);
 			sections.insert((*I)->Section);
 		}
@@ -235,11 +239,13 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 	     s != sections.end(); ++s) {
 		for (std::vector<std::string>::const_iterator l = lang.begin();
 		     l != lang.end(); ++l) {
-			IndexTarget * Target = new OptionalIndexTarget();
-			Target->ShortDesc = "Translation-" + *l;
-			Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);
-			Target->URI = TranslationIndexURI(l->c_str(), *s);
-			Target->Description = Info (Target->ShortDesc.c_str(), *s);
+			std::string const ShortDesc = "Translation-" + *l;
+			IndexTarget * const Target = new OptionalIndexTarget(
+			      TranslationIndexURISuffix(l->c_str(), *s),
+			      ShortDesc,
+			      Info (ShortDesc.c_str(), *s),
+			      TranslationIndexURI(l->c_str(), *s)
+			      );
 			IndexTargets->push_back(Target);
 		}
 	}
@@ -249,8 +255,6 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 									/*}}}*/
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 {
-   bool const tryInRelease = _config->FindB("Acquire::TryInRelease", true);
-
    indexRecords * const iR = new indexRecords(Dist);
    if (Trusted == ALWAYS_TRUSTED)
       iR->SetTrusted(true);
@@ -258,37 +262,17 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       iR->SetTrusted(false);
 
    // special case for --print-uris
-   if (GetAll) {
-      vector <IndexTarget *> *targets = ComputeIndexTargets();
-      for (vector <IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
-	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			 (*Target)->ShortDesc, HashStringList());
-      }
-      delete targets;
-
-      // this is normally created in pkgAcqMetaSig, but if we run
-      // in --print-uris mode, we add it here
-      if (tryInRelease == false)
-	 new pkgAcqMetaIndex(Owner, NULL,
-                             MetaIndexURI("Release"),
-                             MetaIndexInfo("Release"), "Release",
-                             MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
-                             ComputeIndexTargets(),
-                             iR);
+   vector <IndexTarget *> const * const targets = ComputeIndexTargets();
+#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X))
+   pkgAcqMetaBase * const TransactionManager = new pkgAcqMetaClearSig(Owner,
+	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
+	 targets, iR);
+#undef APT_TARGET
+   if (GetAll)
+   {
+      for (vector <IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target)
+	 new pkgAcqIndex(Owner, TransactionManager, *Target);
    }
-   if (tryInRelease == true)
-      new pkgAcqMetaClearSig(Owner, 
-            MetaIndexURI("InRelease"), MetaIndexInfo("InRelease"), "InRelease",
-	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-	    MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
-	    ComputeIndexTargets(),
-	    iR);
-   else
-      new pkgAcqMetaIndex(Owner, NULL,
-          MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-          MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
-          ComputeIndexTargets(),
-          iR);
 
    return true;
 }

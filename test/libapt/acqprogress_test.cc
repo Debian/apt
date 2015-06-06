@@ -1,4 +1,5 @@
 #include <config.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
@@ -10,9 +11,10 @@
 class TestItem: public pkgAcquire::Item
 {
 public:
-   TestItem(pkgAcquire * const Acq) : pkgAcquire::Item(Acq, "", NULL) {}
+   TestItem(pkgAcquire * const Acq) : pkgAcquire::Item(Acq) {}
 
-   virtual std::string DescURI() { return ""; }
+   virtual std::string DescURI() const { return ""; }
+   virtual HashStringList GetExpectedHashes() const { return HashStringList(); }
 
 };
 
