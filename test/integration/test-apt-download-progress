@@ -24,18 +24,19 @@ assertprogress() {
 # actually report progress - but not too big to ensure its not delaying the
 # test too much
 TESTFILE=testfile.big
-testsuccess dd if=/dev/zero of=./aptarchive/$TESTFILE bs=800k count=1 
+testsuccess dd if=/dev/zero of=./aptarchive/$TESTFILE bs=800k count=1
 
 OPT='-o APT::Status-Fd=3 -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1 -o Debug::Acquire::https=1'
 
 msgtest 'download progress works via' 'http'
 exec 3> apt-progress.log
-testsuccess --nomsg apthelper download-file "http://localhost:8080/$TESTFILE" http-$TESTFILE $OPT -o Acquire::http::Dl-Limit=800
+testsuccess --nomsg apthelper download-file "http://localhost:8080/$TESTFILE" ./downloaded/http-$TESTFILE $OPT -o Acquire::http::Dl-Limit=800
 assertprogress apt-progress.log
 
 msgtest 'download progress works via' 'https'
 exec 3> apt-progress.log
-testsuccess --nomsg apthelper download-file "https://localhost:4433/$TESTFILE" https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=800
+testsuccess --nomsg apthelper download-file "https://localhost:4433/$TESTFILE" ./downloaded/https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=800
+assertprogress apt-progress.log
 
 # cleanup
 rm -f apt-progress*.log
