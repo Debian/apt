@@ -165,7 +165,8 @@ SHA256-History:
 SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
-	echo 'I am Mallory and I change files' >> $PATCHFILE
+	# needs to look like a valid command, otherwise the parser will fail before hashes are checked
+	echo '1d' >> $PATCHFILE
 	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
 	generatereleasefiles '+1hour'
 	signreleasefiles
