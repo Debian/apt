@@ -96,6 +96,13 @@ class HashStringList
     */
    unsigned long long FileSize() const;
 
+   /** sets the filesize hash
+    *
+    * @param Size of the file
+    * @return @see #push_back
+    */
+   bool FileSize(unsigned long long const Size);
+
    /** check if the given hash type is supported
     *
     * @param type to check

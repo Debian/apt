@@ -627,7 +627,7 @@ class RredMethod : public pkgAcqMethod {
 	    p.Close();
 	    HashStringList const hsl = patch_hash.GetHashStringList();
 	    if (hsl != I->ExpectedHashes)
-	       return _error->Error("Patch %s doesn't have the expected hashsum", patch_name.c_str());
+	       return _error->Error("Hash Sum mismatch for uncompressed patch %s", patch_name.c_str());
 	 }
 
 	 if (Debug == true)

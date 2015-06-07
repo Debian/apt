@@ -188,6 +188,13 @@ unsigned long long HashStringList::FileSize() const			/*{{{*/
    return strtoull(hv.c_str(), NULL, 10);
 }
 									/*}}}*/
+bool HashStringList::FileSize(unsigned long long const Size)		/*{{{*/
+{
+   std::string size;
+   strprintf(size, "%llu", Size);
+   return push_back(HashString("Checksum-FileSize", size));
+}
+									/*}}}*/
 bool HashStringList::supported(char const * const type)			/*{{{*/
 {
    for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
@@ -361,9 +368,7 @@ APT_IGNORE_DEPRECATED_PUSH
    if ((d->CalcHashes & SHA512SUM) == SHA512SUM)
       hashes.push_back(HashString("SHA512", SHA512.Result().Value()));
 APT_IGNORE_DEPRECATED_POP
-   std::string SizeStr;
-   strprintf(SizeStr, "%llu", d->FileSize);
-   hashes.push_back(HashString("Checksum-FileSize", SizeStr));
+   hashes.FileSize(d->FileSize);
    return hashes;
 }
 APT_IGNORE_DEPRECATED_PUSH

@@ -152,14 +152,18 @@ HashStringList pkgAcqMetaBase::GetExpectedHashes() const
 
 APT_CONST bool pkgAcqIndexDiffs::HashesRequired() const
 {
-   /* FIXME: We have only hashes for uncompressed pdiffs.
-      rred uncompresses them on the fly while parsing.
-      In StateFetchDiff state we also uncompress on the fly for hash check.
-      Hashes are checked while searching for (next) patch to apply. */
+   /* We don't always have the diff of the downloaded pdiff file.
+      What we have for sure is hashes for the uncompressed file,
+      but rred uncompresses them on the fly while parsing, so not handled here.
+      Hashes are (also) checked while searching for (next) patch to apply. */
+   if (State == StateFetchDiff)
+      return available_patches[0].download_hashes.empty() == false;
    return false;
 }
 HashStringList pkgAcqIndexDiffs::GetExpectedHashes() const
 {
+   if (State == StateFetchDiff)
+      return available_patches[0].download_hashes;
    return HashStringList();
 }
 
@@ -168,11 +172,15 @@ APT_CONST bool pkgAcqIndexMergeDiffs::HashesRequired() const
    /* @see #pkgAcqIndexDiffs::HashesRequired, with the difference that
       we can check the rred result after all patches are applied as
       we know the expected result rather than potentially apply more patches */
+   if (State == StateFetchDiff)
+      return patch.download_hashes.empty() == false;
    return State == StateApplyDiff;
 }
 HashStringList pkgAcqIndexMergeDiffs::GetExpectedHashes() const
 {
-   if (State == StateApplyDiff)
+   if (State == StateFetchDiff)
+      return patch.download_hashes;
+   else if (State == StateApplyDiff)
       return GetExpectedHashesFor(Target->MetaKey);
    return HashStringList();
 }
@@ -1618,7 +1626,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 std::vector<DiffInfo>::iterator cur = available_patches.begin();
 	 for (; cur != available_patches.end(); ++cur)
 	 {
-	    if (cur->file != filename || unlikely(cur->result_size != size))
+	    if (cur->file != filename)
 	       continue;
 	    cur->result_hashes.push_back(HashString(*type, hash));
 	    break;
@@ -1630,8 +1638,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	    DiffInfo next;
 	    next.file = filename;
 	    next.result_hashes.push_back(HashString(*type, hash));
-	    next.result_size = size;
-	    next.patch_size = 0;
+	    next.result_hashes.FileSize(size);
 	    available_patches.push_back(next);
 	 }
 	 else
@@ -1679,10 +1686,9 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 {
 	    if (cur->file != filename)
 	       continue;
-	    if (unlikely(cur->patch_size != 0 && cur->patch_size != size))
-	       continue;
+	    if (cur->patch_hashes.empty())
+	       cur->patch_hashes.FileSize(size);
 	    cur->patch_hashes.push_back(HashString(*type, hash));
-	    cur->patch_size = size;
 	    break;
 	 }
 	 if (cur != available_patches.end())
@@ -1693,6 +1699,48 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 break;
       }
    }
+
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      std::string tagname = *type;
+      tagname.append("-Download");
+      std::string const tmp = Tags.FindS(tagname.c_str());
+      if (tmp.empty() == true)
+	 continue;
+
+      string hash, filename;
+      unsigned long long size;
+      std::stringstream ss(tmp);
+
+      // FIXME: all of pdiff supports only .gz compressed patches
+      while (ss >> hash >> size >> filename)
+      {
+	 if (unlikely(hash.empty() == true || filename.empty() == true))
+	    continue;
+	 if (unlikely(APT::String::Endswith(filename, ".gz") == false))
+	    continue;
+	 filename.erase(filename.length() - 3);
+
+	 // see if we have a record for this file already
+	 std::vector<DiffInfo>::iterator cur = available_patches.begin();
+	 for (; cur != available_patches.end(); ++cur)
+	 {
+	    if (cur->file != filename)
+	       continue;
+	    if (cur->download_hashes.empty())
+	       cur->download_hashes.FileSize(size);
+	    cur->download_hashes.push_back(HashString(*type, hash));
+	    break;
+	 }
+	 if (cur != available_patches.end())
+	       continue;
+	 if (Debug == true)
+	    std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": File " << filename
+	       << " wasn't in the list for the first parsed hash! (download)" << std::endl;
+	 break;
+      }
+   }
+
 
    bool foundStart = false;
    for (std::vector<DiffInfo>::iterator cur = available_patches.begin();
@@ -1729,7 +1777,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    unsigned long long patchesSize = 0;
    for (std::vector<DiffInfo>::const_iterator cur = available_patches.begin();
 	 cur != available_patches.end(); ++cur)
-      patchesSize += cur->patch_size;
+      patchesSize += cur->patch_hashes.FileSize();
    unsigned long long const sizeLimit = ServerSize * _config->FindI("Acquire::PDiffs::SizeLimit", 100);
    if (sizeLimit > 0 && (sizeLimit/100) < patchesSize)
    {

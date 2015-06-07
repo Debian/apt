@@ -705,17 +705,14 @@ struct APT_HIDDEN DiffInfo {						/*{{{*/
    /** The filename of the diff. */
    std::string file;
 
-   /** The hashes of the diff */
+   /** The hashes of the file after the diff is applied */
    HashStringList result_hashes;
 
-   /** The hashes of the file after the diff is applied */
+   /** The hashes of the diff */
    HashStringList patch_hashes;
 
-   /** The size of the file after the diff is applied */
-   unsigned long long result_size;
-
-   /** The size of the diff itself */
-   unsigned long long patch_size;
+   /** The hashes of the compressed diff */
+   HashStringList download_hashes;
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching client-merge patches {{{
