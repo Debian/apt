@@ -648,11 +648,6 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
 
-   /** \brief The index file which will be patched to generate the new
-    *  file.
-    */
-   std::string CurrentPackagesFile;
-
    /** \brief A description of the Packages file (stored in
     *  pkgAcquire::ItemDesc::Description).
     */

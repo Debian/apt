@@ -925,24 +925,36 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
         Target != IndexTargets->end();
         ++Target)
    {
-      if (verify == true && TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey) == false)
+      bool trypdiff = _config->FindB("Acquire::PDiffs", true);
+      if (verify == true)
       {
-	 // optional target that we do not have in the Release file are skipped
-	 if ((*Target)->IsOptional())
-	    continue;
+	 if (TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey) == false)
+	 {
+	    // optional targets that we do not have in the Release file are skipped
+	    if ((*Target)->IsOptional())
+	       continue;
 
-         Status = StatAuthError;
-         strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
-         return;
+	    Status = StatAuthError;
+	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
+	    return;
+	 }
+
+	 // check if we have patches available
+	 trypdiff &= TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index");
+      }
+      // if we have no file to patch, no point in trying
+      trypdiff &= RealFileExists(GetFinalFileNameFromURI((*Target)->URI));
+
+      // no point in patching from local sources
+      if (trypdiff)
+      {
+	 std::string const proto = (*Target)->URI.substr(0, strlen("file:/"));
+	 if (proto == "file:/" || proto == "copy:/" || proto == "cdrom:")
+	    trypdiff = false;
       }
 
-      /* Queue the Index file (Packages, Sources, Translation-$foo
-         (either diff or full packages files, depending
-         on the users option) - we also check if the PDiff Index file is listed
-         in the Meta-Index file. Ideal would be if pkgAcqDiffIndex would test this
-         instead, but passing the required info to it is to much hassle */
-      if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
-          TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true))
+      // Queue the Index file (Packages, Sources, Translation-$foo, …)
+      if (trypdiff)
          new pkgAcqDiffIndex(Owner, TransactionManager, *Target);
       else
          new pkgAcqIndex(Owner, TransactionManager, *Target);
@@ -1477,26 +1489,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
 
-   // look for the current package file
-   CurrentPackagesFile = GetFinalFileNameFromURI(Target->URI);
-
-   // FIXME: this file:/ check is a hack to prevent fetching
-   //        from local sources. this is really silly, and
-   //        should be fixed cleanly as soon as possible
-   if(!FileExists(CurrentPackagesFile) || 
-      Desc.URI.substr(0,strlen("file:/")) == "file:/")
-   {
-      // we don't have a pkg file or we don't want to queue
-      Failed("No index file, local or canceld by user", NULL);
-      return;
-   }
-
-   if(Debug)
-      std::clog << "pkgAcqDiffIndex::pkgAcqDiffIndex(): "
-	 << CurrentPackagesFile << std::endl;
-
    QueueURI(Desc);
-
 }
 									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
@@ -1570,6 +1563,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
+   std::string const CurrentPackagesFile = GetFinalFileNameFromURI(Target->URI);
    HashStringList const TargetFileHashes = GetExpectedHashesFor(Target->MetaKey);
    if (TargetFileHashes.usable() == false || ServerHashes != TargetFileHashes)
    {
@@ -1581,7 +1575,23 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
-   if (ServerHashes.VerifyFile(CurrentPackagesFile) == true)
+   HashStringList LocalHashes;
+   // try avoiding calculating the hash here as this is costly
+   if (TransactionManager->LastMetaIndexParser != NULL)
+   {
+      indexRecords::checkSum * const R = TransactionManager->LastMetaIndexParser->Lookup(Target->MetaKey);
+      if (R != NULL)
+	 LocalHashes = R->Hashes;
+   }
+   if (LocalHashes.usable() == false)
+   {
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
+      Hashes LocalHashesCalc(ServerHashes);
+      LocalHashesCalc.AddFD(fd);
+      LocalHashes = LocalHashesCalc.GetHashStringList();
+   }
+
+   if (ServerHashes == LocalHashes)
    {
       // we have the same sha1 as the server so we are done here
       if(Debug)
@@ -1590,14 +1600,9 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return true;
    }
 
-   FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
-   Hashes LocalHashesCalc;
-   LocalHashesCalc.AddFD(fd);
-   HashStringList const LocalHashes = LocalHashesCalc.GetHashStringList();
-
    if(Debug)
       std::clog << "Server-Current: " << ServerHashes.find(NULL)->toStr() << " and we start at "
-	 << fd.Name() << " " << fd.FileSize() << " " << LocalHashes.find(NULL)->toStr() << std::endl;
+	 << CurrentPackagesFile << " " << LocalHashes.FileSize() << " " << LocalHashes.find(NULL)->toStr() << std::endl;
 
    // parse all of (provided) history
    vector<DiffInfo> available_patches;
