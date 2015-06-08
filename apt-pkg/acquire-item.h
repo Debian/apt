@@ -965,9 +965,6 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    /** \brief Schedule file for verification after a IMS hit */
    void ReverifyAfterIMS();
 
-   /** \brief Validate the downloaded index file */
-   bool ValidateFile(std::string const &FileName);
-
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
 
