@@ -835,7 +835,9 @@ buildaptarchivefromincoming() {
 
 buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
-	find aptarchive -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
+	local DIR='aptarchive'
+	if [ -d "${DIR}/dists" ]; then DIR="${DIR}/dists"; fi
+	find "$DIR" -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
 		msgninfo "\t${line} file… "
 		compressfile "$line" "$1"
 		msgdone "info"

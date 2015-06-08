@@ -133,6 +133,25 @@ Reading package lists..." aptget update
 
 	rm -rf aptarchive/dists
 	cp -a aptarchive/dists.good aptarchive/dists
+
+	# new release file, but the indexes are the same
+	redatereleasefiles '+2 hours'
+
+	rm -rf rootdir/var/lib/apt/lists.good
+	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
+	testsuccessequal "Get:1 $1 unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Reading package lists..." aptget update
+
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists.good rootdir/var/lib/apt/lists
+	find rootdir/var/lib/apt/lists -name '*_Packages*' -delete
+	testsuccessequal "Get:1 $1 unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Get:3 $1 unstable/main i386 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-i386/Packages.gz') B]
+Reading package lists..." aptget update
+
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
 }
 
 changetowebserver

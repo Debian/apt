@@ -158,7 +158,10 @@ test_inrelease_to_broken_gzip() {
     msgmsg "Test InRelease to broken gzip"
     start_with_good_inrelease
 
-    redatereleasefiles '+2hours'
+    break_repository_sources_index '+1hour'
+    generatereleasefiles '+2hours'
+    signreleasefiles
+
     # append junk at the end of the compressed file
     echo "lala" >> $APTARCHIVE/dists/unstable/main/source/Sources.gz
     touch -d '+2min' $APTARCHIVE/dists/unstable/main/source/Sources.gz
@@ -166,6 +169,7 @@ test_inrelease_to_broken_gzip() {
     rm $APTARCHIVE/dists/unstable/main/source/Sources
 
     testfailure aptget update
+    testsuccess grep 'Hash Sum mismatch' rootdir/tmp/testfailure.output
     testfileequal lists.before "$(listcurrentlistsdirectory)"
 }
 

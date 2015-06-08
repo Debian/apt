@@ -119,6 +119,16 @@ static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser
    return false;
 }
 									/*}}}*/
+static HashStringList GetExpectedHashesFromFor(indexRecords * const Parser, std::string const MetaKey)/*{{{*/
+{
+   if (Parser == NULL)
+      return HashStringList();
+   indexRecords::checkSum * const R = Parser->Lookup(MetaKey);
+   if (R == NULL)
+      return HashStringList();
+   return R->Hashes;
+}
+									/*}}}*/
 
 // all ::HashesRequired and ::GetExpectedHashes implementations		/*{{{*/
 /* ::GetExpectedHashes is abstract and has to be implemented by all subclasses.
@@ -370,6 +380,25 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
 
    return true;
 }
+									/*}}}*/
+
+class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
+/* The sole purpose of this class is having an item which does nothing to
+   reach its done state to prevent cleanup deleting the mentioned file.
+   Handy in cases in which we know we have the file already, like IMS-Hits. */
+{
+   IndexTarget const * const Target;
+   public:
+   virtual std::string DescURI() const {return Target->URI;};
+   virtual HashStringList GetExpectedHashes()  const {return HashStringList();};
+
+   NoActionItem(pkgAcquire * const Owner, IndexTarget const * const Target) :
+      pkgAcquire::Item(Owner), Target(Target)
+   {
+      Status = StatDone;
+      DestFile = GetFinalFileNameFromURI(Target->URI);
+   }
+};
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
@@ -644,12 +673,7 @@ pkgAcqTransactionItem::~pkgAcqTransactionItem()				/*{{{*/
 									/*}}}*/
 HashStringList pkgAcqTransactionItem::GetExpectedHashesFor(std::string const MetaKey) const	/*{{{*/
 {
-   if (TransactionManager->MetaIndexParser == NULL)
-      return HashStringList();
-   indexRecords::checkSum * const R = TransactionManager->MetaIndexParser->Lookup(MetaKey);
-   if (R == NULL)
-      return HashStringList();
-   return R->Hashes;
+   return GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, MetaKey);
 }
 									/*}}}*/
 
@@ -939,6 +963,23 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	    return;
 	 }
 
+	 if (RealFileExists(GetFinalFileNameFromURI((*Target)->URI)))
+	 {
+	    if (TransactionManager->LastMetaIndexParser != NULL)
+	    {
+	       HashStringList const newFile = GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, (*Target)->MetaKey);
+	       HashStringList const oldFile = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, (*Target)->MetaKey);
+	       if (newFile == oldFile)
+	       {
+		  // we have the file already, no point in trying to acquire it again
+		  new NoActionItem(Owner, *Target);
+		  continue;
+	       }
+	    }
+	 }
+	 else
+	    trypdiff = false; // no file to patch
+
 	 // check if we have patches available
 	 trypdiff &= TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index");
       }
@@ -1085,20 +1126,6 @@ string pkgAcqMetaClearSig::Custom600Headers() const
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file				/*{{{*/
-class APT_HIDDEN DummyItem : public pkgAcquire::Item
-{
-   IndexTarget const * const Target;
-   public:
-   virtual std::string DescURI() const {return Target->URI;};
-   virtual HashStringList GetExpectedHashes()  const {return HashStringList();};
-
-   DummyItem(pkgAcquire * const Owner, IndexTarget const * const Target) :
-      pkgAcquire::Item(Owner), Target(Target)
-   {
-      Status = StatDone;
-      DestFile = GetFinalFileNameFromURI(Target->URI);
-   }
-};
 void pkgAcqMetaClearSig::Done(std::string const &Message,
                               HashStringList const &Hashes,
                               pkgAcquire::MethodConfig const * const Cnf)
@@ -1131,8 +1158,8 @@ void pkgAcqMetaClearSig::Done(std::string const &Message,
 	 // We got an InRelease file IMSHit, but we haven't one, which means
 	 // we had a valid Release/Release.gpg combo stepping in, which we have
 	 // to 'acquire' now to ensure list cleanup isn't removing them
-	 new DummyItem(Owner, &DetachedDataTarget);
-	 new DummyItem(Owner, &DetachedSigTarget);
+	 new NoActionItem(Owner, &DetachedDataTarget);
+	 new NoActionItem(Owner, &DetachedSigTarget);
       }
    }
 }
@@ -1578,11 +1605,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    HashStringList LocalHashes;
    // try avoiding calculating the hash here as this is costly
    if (TransactionManager->LastMetaIndexParser != NULL)
-   {
-      indexRecords::checkSum * const R = TransactionManager->LastMetaIndexParser->Lookup(Target->MetaKey);
-      if (R != NULL)
-	 LocalHashes = R->Hashes;
-   }
+      LocalHashes = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, Target->MetaKey);
    if (LocalHashes.usable() == false)
    {
       FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
