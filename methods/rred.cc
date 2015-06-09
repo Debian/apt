@@ -405,12 +405,12 @@ class Patch {
 	    size_t s, e;
 	    errno = 0;
 	    s = strtoul(buffer, &m, 10);
-	    if (unlikely(m == buffer || s == ULONG_MAX || errno != 0))
+	    if (unlikely(m == buffer || s == std::numeric_limits<unsigned long>::max() || errno != 0))
 	       return _error->Error("Parsing patchfile %s failed: Expected an effected line start", f.Name().c_str());
 	    else if (*m == ',') {
 	       ++m;
 	       e = strtol(m, &c, 10);
-	       if (unlikely(m == c || e == ULONG_MAX || errno != 0))
+	       if (unlikely(m == c || e == std::numeric_limits<unsigned long>::max() || errno != 0))
 		  return _error->Error("Parsing patchfile %s failed: Expected an effected line end", f.Name().c_str());
 	       if (unlikely(e < s))
 		  return _error->Error("Parsing patchfile %s failed: Effected lines end %lu is before start %lu", f.Name().c_str(), e, s);
