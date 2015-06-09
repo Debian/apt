@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+configcompression '.' 'gz'
+
+buildsimplenativepackage 'foo' 'amd64' '1' 'unstable'
+
+setupaptarchive --no-update
+changetowebserver
+
+testsuccessequal "Get:1 http://localhost:8080 unstable InRelease [$(stat -c%s aptarchive/dists/unstable/InRelease) B]
+Get:2 http://localhost:8080 unstable/main Sources [$(stat -c%s aptarchive/dists/unstable/main/source/Sources.gz) B]
+Get:3 http://localhost:8080 unstable/main amd64 Packages [$(stat -c%s aptarchive/dists/unstable/main/binary-amd64/Packages.gz) B]
+Get:4 http://localhost:8080 unstable/main Translation-en [$(stat -c%s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
+Reading package lists..." aptget update
+
+testempty find rootdir/var/lib/apt/lists -name '*Contents*'
+
+cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
+APT::Acquire::Targets::deb::Contents {
+	URI "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
+	ShortDescription "Contents";
+	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
+};
+EOF
+
+testsuccessequal "Hit http://localhost:8080 unstable InRelease
+Get:1 http://localhost:8080 unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
+Reading package lists..." aptget update
+
+testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' find rootdir/var/lib/apt/lists -name '*Contents*'
+testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' 'aptarchive/dists/unstable/main/Contents-amd64'
+
+# no automatic uncompress based on the name please,
+# only if we downloaded a compressed file, but target was uncompressed
+cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
+APT::Acquire::Targets::deb::Contents {
+	URI "\$(COMPONENT)/Contents-\$(ARCHITECTURE).gz";
+	ShortDescription "Contents.gz";
+	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents.gz";
+};
+EOF
+
+testsuccessequal "Hit http://localhost:8080 unstable InRelease
+Get:1 http://localhost:8080 unstable/main amd64 Contents.gz [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
+Reading package lists..." aptget update
+
+testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' find rootdir/var/lib/apt/lists -name '*Contents*'
+testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' 'aptarchive/dists/unstable/main/Contents-amd64.gz'

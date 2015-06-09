@@ -23,25 +23,6 @@
 
 using namespace std;
 
-string debReleaseIndex::Info(const char *Type, string const &Section, string const &Arch) const
-{
-   string Info = ::URI::SiteOnly(URI) + ' ';
-   if (Dist[Dist.size() - 1] == '/')
-   {
-      if (Dist != "/")
-         Info += Dist;
-   }
-   else
-   {
-      Info += Dist + '/' + Section;
-      if (Arch.empty() != true)
-	 Info += " " + Arch;
-   }
-   Info += " ";
-   Info += Type;
-   return Info;
-}
-
 string debReleaseIndex::MetaIndexInfo(const char *Type) const
 {
    string Info = ::URI::SiteOnly(URI) + ' ';
@@ -92,81 +73,6 @@ std::string debReleaseIndex::LocalFileName() const
    return "";
 }
 
-string debReleaseIndex::IndexURISuffix(const char *Type, string const &Section, string const &Arch) const
-{
-   string Res ="";
-   if (Dist[Dist.size() - 1] != '/')
-   {
-      if (Arch == "native")
-	 Res += Section + "/binary-" + _config->Find("APT::Architecture") + '/';
-      else
-	 Res += Section + "/binary-" + Arch + '/';
-   }
-   return Res + Type;
-}
-   
-
-string debReleaseIndex::IndexURI(const char *Type, string const &Section, string const &Arch) const
-{
-   if (Dist[Dist.size() - 1] == '/')
-   {
-      string Res;
-      if (Dist != "/")
-         Res = URI + Dist;
-      else 
-         Res = URI;
-      return Res + Type;
-   }
-   else
-      return URI + "dists/" + Dist + '/' + IndexURISuffix(Type, Section, Arch);
- }
-
-string debReleaseIndex::SourceIndexURISuffix(const char *Type, const string &Section) const
-{
-   string Res ="";
-   if (Dist[Dist.size() - 1] != '/')
-      Res += Section + "/source/";
-   return Res + Type;
-}
-
-string debReleaseIndex::SourceIndexURI(const char *Type, const string &Section) const
-{
-   string Res;
-   if (Dist[Dist.size() - 1] == '/')
-   {
-      if (Dist != "/")
-         Res = URI + Dist;
-      else 
-         Res = URI;
-      return Res + Type;
-   }
-   else
-      return URI + "dists/" + Dist + "/" + SourceIndexURISuffix(Type, Section);
-}
-
-string debReleaseIndex::TranslationIndexURISuffix(const char *Type, const string &Section) const
-{
-   string Res ="";
-   if (Dist[Dist.size() - 1] != '/')
-      Res += Section + "/i18n/Translation-";
-   return Res + Type;
-}
-
-string debReleaseIndex::TranslationIndexURI(const char *Type, const string &Section) const
-{
-   string Res;
-   if (Dist[Dist.size() - 1] == '/')
-   {
-      if (Dist != "/")
-         Res = URI + Dist;
-      else 
-         Res = URI;
-      return Res + Type;
-   }
-   else
-      return URI + "dists/" + Dist + "/" + TranslationIndexURISuffix(Type, Section);
-}
-
 debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist) :
 					metaIndex(URI, Dist, "deb"), Trusted(CHECK_TRUST)
 {}
@@ -184,73 +90,161 @@ debReleaseIndex::~debReleaseIndex() {
 			delete *S;
 }
 
-vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
-	vector <IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
+vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
+{
+   vector <IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
 
-	map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
-	if (src != ArchEntries.end()) {
-		vector<debSectionEntry const*> const SectionEntries = src->second;
-		for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
-		     I != SectionEntries.end(); ++I) {
-			char const * const ShortDesc = "Sources";
-			IndexTarget * const Target = new IndexTarget(
-			      SourceIndexURISuffix(ShortDesc, (*I)->Section),
-			      ShortDesc,
-			      Info(ShortDesc, (*I)->Section),
-			      SourceIndexURI(ShortDesc, (*I)->Section)
-			      );
-			IndexTargets->push_back (Target);
-		}
-	}
+   bool const flatArchive = (Dist[Dist.length() - 1] == '/');
+   std::string baseURI = URI;
+   if (flatArchive)
+   {
+      if (Dist != "/")
+         baseURI += Dist;
+   }
+   else
+      baseURI += "dists/" + Dist + "/";
+   std::string const Release = (Dist == "/") ? "" : Dist;
+   std::string const Site = ::URI::SiteOnly(URI);
+   std::vector<std::string> lang = APT::Configuration::getLanguages(true);
+   if (lang.empty())
+      lang.push_back("none");
+   map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
+   if (src != ArchEntries.end())
+   {
+      std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb-src", "", true);
+      for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
+      {
+#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb-src::") + *T + "::" + (X))
+	 std::string const URI = APT_T_CONFIG(flatArchive ? "flatURI" : "URI");
+	 std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
+	 std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
+	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb-src::") + *T + "::Optional", true);
+#undef APT_T_CONFIG
+	 if (URI.empty())
+	    continue;
 
-	// Only source release
-	if (IndexTargets->empty() == false && ArchEntries.size() == 1)
-		return IndexTargets;
+	 vector<debSectionEntry const*> const SectionEntries = src->second;
+	 for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
+	       I != SectionEntries.end(); ++I)
+	 {
+	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
+	    {
+	       if (*l == "none" && URI.find("$(LANGUAGE)") != std::string::npos)
+		  continue;
 
-	std::set<std::string> sections;
-	for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
-	     a != ArchEntries.end(); ++a) {
-		if (a->first == "source")
-			continue;
-		for (vector <const debSectionEntry *>::const_iterator I = a->second.begin();
-		     I != a->second.end(); ++I) {
-			char const * const ShortDesc = "Packages";
-			IndexTarget * const Target = new IndexTarget(
-			      IndexURISuffix(ShortDesc, (*I)->Section, a->first),
-			      ShortDesc,
-			      Info (ShortDesc, (*I)->Section, a->first),
-			      IndexURI(ShortDesc, (*I)->Section, a->first)
-			      );
-			IndexTargets->push_back (Target);
-			sections.insert((*I)->Section);
-		}
-	}
+	       struct SubstVar subst[] = {
+		  { "$(SITE)", &Site },
+		  { "$(RELEASE)", &Release },
+		  { "$(COMPONENT)", &((*I)->Section) },
+		  { "$(LANGUAGE)", &(*l) },
+		  { NULL, NULL }
+	       };
+	       std::string const name = SubstVar(URI, subst);
+	       IndexTarget * Target;
+	       if (IsOptional == true)
+	       {
+		  Target = new OptionalIndexTarget(
+			name,
+			SubstVar(ShortDesc, subst),
+			SubstVar(LongDesc, subst),
+			baseURI + name
+			);
+	       }
+	       else
+	       {
+		  Target = new IndexTarget(
+			name,
+			SubstVar(ShortDesc, subst),
+			SubstVar(LongDesc, subst),
+			baseURI + name
+			);
+	       }
+	       IndexTargets->push_back(Target);
 
-	std::vector<std::string> lang = APT::Configuration::getLanguages(true);
-	std::vector<std::string>::iterator lend = std::remove(lang.begin(), lang.end(), "none");
-	if (lend != lang.end())
-		lang.erase(lend);
+	       if (URI.find("$(LANGUAGE)") == std::string::npos)
+		  break;
+	    }
 
-	if (lang.empty() == true)
-		return IndexTargets;
+	    if (URI.find("$(COMPONENT)") == std::string::npos)
+	       break;
+	 }
+      }
+   }
 
-	// get the Translation-* files, later we will skip download of non-existent if we have an index
-	for (std::set<std::string>::const_iterator s = sections.begin();
-	     s != sections.end(); ++s) {
-		for (std::vector<std::string>::const_iterator l = lang.begin();
-		     l != lang.end(); ++l) {
-			std::string const ShortDesc = "Translation-" + *l;
-			IndexTarget * const Target = new OptionalIndexTarget(
-			      TranslationIndexURISuffix(l->c_str(), *s),
-			      ShortDesc,
-			      Info (ShortDesc.c_str(), *s),
-			      TranslationIndexURI(l->c_str(), *s)
-			      );
-			IndexTargets->push_back(Target);
-		}
-	}
+   // Only source release
+   if (IndexTargets->empty() == false && ArchEntries.size() == 1)
+      return IndexTargets;
 
-	return IndexTargets;
+   std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb", "", true);
+   for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
+   {
+#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb::") + *T + "::" + (X))
+      std::string const URI = APT_T_CONFIG(flatArchive ? "flatURI" : "URI");
+      std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
+      std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
+      bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb::") + *T + "::Optional", true);
+#undef APT_T_CONFIG
+      if (URI.empty())
+	 continue;
+
+      for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
+	    a != ArchEntries.end(); ++a)
+      {
+	 if (a->first == "source")
+	    continue;
+
+	 for (vector <const debSectionEntry *>::const_iterator I = a->second.begin();
+	       I != a->second.end(); ++I) {
+
+	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
+	    {
+	       if (*l == "none" && URI.find("$(LANGUAGE)") != std::string::npos)
+		  continue;
+
+	       struct SubstVar subst[] = {
+		  { "$(SITE)", &Site },
+		  { "$(RELEASE)", &Release },
+		  { "$(COMPONENT)", &((*I)->Section) },
+		  { "$(LANGUAGE)", &(*l) },
+		  { "$(ARCHITECTURE)", &(a->first) },
+		  { NULL, NULL }
+	       };
+	       std::string const name = SubstVar(URI, subst);
+	       IndexTarget * Target;
+	       if (IsOptional == true)
+	       {
+		  Target = new OptionalIndexTarget(
+			name,
+			SubstVar(ShortDesc, subst),
+			SubstVar(LongDesc, subst),
+			baseURI + name
+			);
+	       }
+	       else
+	       {
+		  Target = new IndexTarget(
+			name,
+			SubstVar(ShortDesc, subst),
+			SubstVar(LongDesc, subst),
+			baseURI + name
+			);
+	       }
+	       IndexTargets->push_back(Target);
+
+	       if (URI.find("$(LANGUAGE)") == std::string::npos)
+		  break;
+	    }
+
+	    if (URI.find("$(COMPONENT)") == std::string::npos)
+	       break;
+	 }
+
+	 if (URI.find("$(ARCHITECTURE)") == std::string::npos)
+	    break;
+      }
+   }
+
+   return IndexTargets;
 }
 									/*}}}*/
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
@@ -359,17 +353,6 @@ void debReleaseIndex::PushSectionEntry(vector<string> const &Archs, const debSec
 
 void debReleaseIndex::PushSectionEntry(string const &Arch, const debSectionEntry *Entry) {
 	ArchEntries[Arch].push_back(Entry);
-}
-
-void debReleaseIndex::PushSectionEntry(const debSectionEntry *Entry) {
-	if (Entry->IsSrc == true)
-		PushSectionEntry("source", Entry);
-	else {
-		for (map<string, vector<const debSectionEntry *> >::iterator a = ArchEntries.begin();
-		     a != ArchEntries.end(); ++a) {
-			a->second.push_back(Entry);
-		}
-	}
 }
 
 debReleaseIndex::debSectionEntry::debSectionEntry (string const &Section,

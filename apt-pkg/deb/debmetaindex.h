@@ -47,7 +47,6 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
    std::vector <IndexTarget *>* ComputeIndexTargets() const;
-   std::string Info(const char *Type, std::string const &Section, std::string const &Arch="") const;
 
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;
@@ -58,12 +57,6 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 #endif
    std::string LocalFileName() const;
 
-   std::string IndexURI(const char *Type, std::string const &Section, std::string const &Arch="native") const;
-   std::string IndexURISuffix(const char *Type, std::string const &Section, std::string const &Arch="native") const;
-   std::string SourceIndexURI(const char *Type, const std::string &Section) const;
-   std::string SourceIndexURISuffix(const char *Type, const std::string &Section) const;
-   std::string TranslationIndexURI(const char *Type, const std::string &Section) const;
-   std::string TranslationIndexURISuffix(const char *Type, const std::string &Section) const;
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
    void SetTrusted(bool const Trusted);
@@ -71,7 +64,6 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 
    void PushSectionEntry(std::vector<std::string> const &Archs, const debSectionEntry *Entry);
    void PushSectionEntry(std::string const &Arch, const debSectionEntry *Entry);
-   void PushSectionEntry(const debSectionEntry *Entry);
 };
 
 class APT_HIDDEN debDebFileMetaIndex : public metaIndex

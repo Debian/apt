@@ -101,8 +101,26 @@ bool pkgInitConfig(Configuration &Cnf)
    // The default user we drop to in the methods
    Cnf.CndSet("APT::Sandbox::User", "_apt");
 
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::URI", "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::flatURI", "Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::ShortDescription", "Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::Description", "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::flatDescription", "$(SITE) $(RELEASE) Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::Optional", false);
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::URI", "$(COMPONENT)/i18n/Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::flatURI", "$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::ShortDescription", "Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::Description", "$(SITE) $(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::flatDescription", "$(SITE) $(RELEASE) Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::URI", "$(COMPONENT)/source/Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::flatURI", "Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::ShortDescription", "Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::Description", "$(SITE) $(RELEASE)/$(COMPONENT) Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::flatDescription", "$(SITE) $(RELEASE) Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::Optional", false);
+
    bool Res = true;
-   
+
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
    if (Cfg != 0 && strlen(Cfg) != 0)
