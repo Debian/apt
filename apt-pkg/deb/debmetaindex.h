@@ -46,7 +46,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
-   std::vector <IndexTarget *>* ComputeIndexTargets() const;
+   std::vector<IndexTarget> ComputeIndexTargets() const;
 
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;

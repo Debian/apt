@@ -55,23 +55,23 @@ class IndexTarget							/*{{{*/
 {
    public:
    /** \brief A URI from which the index file can be downloaded. */
-   std::string const URI;
+   std::string URI;
 
    /** \brief A description of the index file. */
-   std::string const Description;
+   std::string Description;
 
    /** \brief A shorter description of the index file. */
-   std::string const ShortDesc;
+   std::string ShortDesc;
 
    /** \brief The key by which this index file should be
        looked up within the meta index file. */
-   std::string const MetaKey;
+   std::string MetaKey;
 
    /** \brief Is it okay if the file isn't found in the meta index */
-   bool const IsOptional;
+   bool IsOptional;
 
    /** \brief Target specific options defined by the implementation */
-   std::map<std::string, std::string> const Options;
+   std::map<std::string, std::string> Options;
 
    IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
 	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
@@ -374,7 +374,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
 /** \brief baseclass for the indexes files to manage them all together */
 {
    protected:
-   IndexTarget const * const Target;
+   IndexTarget const Target;
    HashStringList GetExpectedHashesFor(std::string const MetaKey) const;
 
    bool QueueURI(pkgAcquire::ItemDesc &Item);
@@ -392,13 +392,13 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    };
    virtual bool TransactionState(TransactionStates const state);
 
-   virtual std::string DescURI() const { return Target->URI; }
+   virtual std::string DescURI() const { return Target.URI; }
    virtual HashStringList GetExpectedHashes() const;
    virtual std::string GetMetaKey() const;
    virtual bool HashesRequired() const;
 
 
-   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const * const Target);
+   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const Target);
    virtual ~pkgAcqTransactionItem();
 
    friend class pkgAcqMetaBase;
@@ -412,7 +412,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
  protected:
    std::vector<pkgAcqTransactionItem*> Transaction;
 
-   IndexTarget const DataTarget;
  public:
    /** \brief A package-system-specific parser for the meta-index file. */
    indexRecords *MetaIndexParser;
@@ -422,7 +421,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    /** \brief The index files which should be looked up in the meta-index
     *  and then downloaded.
     */
-   const std::vector<IndexTarget*>* const IndexTargets;
+   std::vector<IndexTarget> const IndexTargets;
 
    /** \brief If \b true, the index's signature is currently being verified.
     */
@@ -504,7 +503,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    virtual std::string GetFinalFilename() const;
 
    pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-		  std::vector<IndexTarget*> const * const IndexTargets,
+		  std::vector<IndexTarget> const IndexTargets,
 		  IndexTarget const &DataTarget,
 		  indexRecords* const MetaIndexParser);
 };
@@ -541,7 +540,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
 		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
-		   const std::vector<IndexTarget*>* const IndexTargets, indexRecords * const MetaIndexParser);
+		   std::vector<IndexTarget> const IndexTargets, indexRecords * const MetaIndexParser);
 
    friend class pkgAcqMetaSig;
 };
@@ -577,7 +576,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 		     pkgAcquire::MethodConfig const * const Cnf);
 
    /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const * const Target,
+   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const Target,
 	 pkgAcqMetaIndex * const MetaIndex);
    virtual ~pkgAcqMetaSig();
 };
@@ -602,7 +601,7 @@ public:
 		IndexTarget const &ClearsignedTarget,
 		IndexTarget const &DetachedDataTarget,
 		IndexTarget const &DetachedSigTarget,
-		std::vector<IndexTarget*> const * const IndexTargets,
+		std::vector<IndexTarget> const IndexTargets,
 		indexRecords * const MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };
@@ -617,7 +616,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
    virtual std::string GetFinalFilename() const;
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                   IndexTarget const * const Target);
+                   IndexTarget const Target);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -653,7 +652,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    virtual void Failed(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf);
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string DescURI() const {return Target->URI + "Index";};
+   virtual std::string DescURI() const {return Target.URI + "Index";};
    virtual std::string Custom600Headers() const;
    virtual std::string GetMetaKey() const;
 
@@ -680,7 +679,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  \param ShortDesc A short description of the list file to download.
     */
    pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                   IndexTarget const * const Target);
+                   IndexTarget const Target);
  private:
    APT_HIDDEN void QueueOnIMSHit() const;
 };
@@ -756,7 +755,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 	 pkgAcquire::MethodConfig const * const Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Target->URI + "Index";};
+   virtual std::string DescURI() const {return Target.URI + "Index";};
    virtual HashStringList GetExpectedHashes() const;
    virtual bool HashesRequired() const;
 
@@ -778,8 +777,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                         IndexTarget const * const Target,
-                         DiffInfo const &patch,
+                         IndexTarget const Target, DiffInfo const &patch,
                          std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
 };
 									/*}}}*/
@@ -869,7 +867,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Target->URI + "IndexDiffs";};
+   virtual std::string DescURI() const {return Target.URI + "IndexDiffs";};
    virtual HashStringList GetExpectedHashes() const;
    virtual bool HashesRequired() const;
 
@@ -892,7 +890,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                    IndexTarget const * const Target,
+                    IndexTarget const Target,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>());
 };
 									/*}}}*/
@@ -969,7 +967,7 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual std::string GetMetaKey() const;
 
    pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-               IndexTarget const * const Target);
+               IndexTarget const Target);
 
    void Init(std::string const &URI, std::string const &URIDesc,
              std::string const &ShortDesc);

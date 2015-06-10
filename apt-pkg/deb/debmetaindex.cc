@@ -93,7 +93,7 @@ debReleaseIndex::~debReleaseIndex() {
 template<typename CallC>
 void foreachTarget(std::string const URI, std::string const Dist,
       std::map<std::string, std::vector<debReleaseIndex::debSectionEntry const *> > const &ArchEntries,
-      CallC Call)
+      CallC &Call)
 {
    bool const flatArchive = (Dist[Dist.length() - 1] == '/');
    std::string baseURI = URI;
@@ -206,7 +206,7 @@ void foreachTarget(std::string const URI, std::string const Dist,
 
 struct ComputeIndexTargetsClass
 {
-   vector <IndexTarget *> * const IndexTargets;
+   vector <IndexTarget> IndexTargets;
 
    void operator()(std::string MetaKey, std::string ShortDesc, std::string LongDesc,
 	 bool const IsOptional, std::map<std::string, std::string> Options)
@@ -217,7 +217,7 @@ struct ComputeIndexTargetsClass
 	 ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
 	 LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
       }
-      IndexTarget * Target = new IndexTarget(
+      IndexTarget Target(
 	    MetaKey,
 	    ShortDesc,
 	    LongDesc,
@@ -225,13 +225,11 @@ struct ComputeIndexTargetsClass
 	    IsOptional,
 	    Options
 	    );
-      IndexTargets->push_back(Target);
+      IndexTargets.push_back(Target);
    }
-
-   ComputeIndexTargetsClass() : IndexTargets(new vector <IndexTarget *>) {}
 };
 
-vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
+std::vector<IndexTarget> debReleaseIndex::ComputeIndexTargets() const
 {
    ComputeIndexTargetsClass comp;
    foreachTarget(URI, Dist, ArchEntries, comp);
@@ -249,7 +247,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       iR->SetTrusted(false);
 
    // special case for --print-uris
-   vector <IndexTarget *> const * const targets = ComputeIndexTargets();
+   std::vector<IndexTarget> const targets = ComputeIndexTargets();
 #define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
    pkgAcqMetaBase * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
@@ -257,7 +255,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 #undef APT_TARGET
    if (GetAll)
    {
-      for (vector <IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target)
+      for (std::vector<IndexTarget>::const_iterator Target = targets.begin(); Target != targets.end(); ++Target)
 	 new pkgAcqIndex(Owner, TransactionManager, *Target);
    }
 
