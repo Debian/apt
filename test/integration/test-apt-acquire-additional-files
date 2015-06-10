@@ -6,12 +6,20 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture 'amd64'
+
+# note that in --print-uri we talk about .bz2 because that is the default.
+# This doesn't mean it is actually attempt to download it.
 configcompression '.' 'gz'
 
 buildsimplenativepackage 'foo' 'amd64' '1' 'unstable'
 
 setupaptarchive --no-update
 changetowebserver
+
+testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
+'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
+'http://localhost:8080/dists/unstable/main/binary-amd64/Packages.bz2' localhost:8080_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:8080/dists/unstable/main/i18n/Translation-en.bz2' localhost:8080_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 testsuccessequal "Get:1 http://localhost:8080 unstable InRelease [$(stat -c%s aptarchive/dists/unstable/InRelease) B]
 Get:2 http://localhost:8080 unstable/main Sources [$(stat -c%s aptarchive/dists/unstable/main/source/Sources.gz) B]
@@ -28,6 +36,12 @@ APT::Acquire::Targets::deb::Contents {
 	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
 };
 EOF
+
+testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
+'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
+'http://localhost:8080/dists/unstable/main/binary-amd64/Packages.bz2' localhost:8080_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:8080/dists/unstable/main/i18n/Translation-en.bz2' localhost:8080_dists_unstable_main_i18n_Translation-en 0 
+'http://localhost:8080/dists/unstable/main/Contents-amd64.bz2' localhost:8080_dists_unstable_main_Contents-amd64 0 " aptget update --print-uris
 
 testsuccessequal "Hit http://localhost:8080 unstable InRelease
 Get:1 http://localhost:8080 unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
@@ -46,9 +60,28 @@ APT::Acquire::Targets::deb::Contents {
 };
 EOF
 
+# the last line is utter bogus of course, but how should apt know…
+testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
+'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
+'http://localhost:8080/dists/unstable/main/binary-amd64/Packages.bz2' localhost:8080_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:8080/dists/unstable/main/i18n/Translation-en.bz2' localhost:8080_dists_unstable_main_i18n_Translation-en 0 
+'http://localhost:8080/dists/unstable/main/Contents-amd64.gz.bz2' localhost:8080_dists_unstable_main_Contents-amd64.gz 0 " aptget update --print-uris
+
 testsuccessequal "Hit http://localhost:8080 unstable InRelease
 Get:1 http://localhost:8080 unstable/main amd64 Contents.gz [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' find rootdir/var/lib/apt/lists -name '*Contents*'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' 'aptarchive/dists/unstable/main/Contents-amd64.gz'
+
+rm -f rootdir/etc/apt/apt.conf.d/content-target.conf
+
+testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
+'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
+'http://localhost:8080/dists/unstable/main/binary-amd64/Packages.bz2' localhost:8080_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:8080/dists/unstable/main/i18n/Translation-en.bz2' localhost:8080_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris
+
+testsuccessequal "Hit http://localhost:8080 unstable InRelease
+Reading package lists..." aptget update
+
+testempty find rootdir/var/lib/apt/lists -name '*Contents*'

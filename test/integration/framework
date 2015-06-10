@@ -1531,6 +1531,11 @@ aptautotest() {
 }
 
 aptautotest_aptget_update() {
+	local TESTCALL="$1"
+	while [ -n "$2" ]; do
+		if [ "$2" = '--print-uris' ]; then return; fi # simulation mode
+		shift
+	done
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
@@ -1538,7 +1543,7 @@ aptautotest_aptget_update() {
 	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
-	if [ "$1" = 'testsuccess' ]; then
+	if [ "$TESTCALL" = 'testsuccess' ]; then
 		# failure cases can retain partial files and such
 		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)
 	fi

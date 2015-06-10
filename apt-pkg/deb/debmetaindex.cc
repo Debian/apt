@@ -90,10 +90,11 @@ debReleaseIndex::~debReleaseIndex() {
 			delete *S;
 }
 
-vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
+template<typename CallC>
+void foreachTarget(std::string const URI, std::string const Dist,
+      std::map<std::string, std::vector<debReleaseIndex::debSectionEntry const *> > const &ArchEntries,
+      CallC Call)
 {
-   vector <IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
-
    bool const flatArchive = (Dist[Dist.length() - 1] == '/');
    std::string baseURI = URI;
    if (flatArchive)
@@ -108,7 +109,7 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
    std::vector<std::string> lang = APT::Configuration::getLanguages(true);
    if (lang.empty())
       lang.push_back("none");
-   map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
+   map<string, vector<debReleaseIndex::debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
    if (src != ArchEntries.end())
    {
       std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb-src", "", true);
@@ -123,8 +124,8 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 	 if (URI.empty())
 	    continue;
 
-	 vector<debSectionEntry const*> const SectionEntries = src->second;
-	 for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
+	 vector<debReleaseIndex::debSectionEntry const*> const SectionEntries = src->second;
+	 for (vector<debReleaseIndex::debSectionEntry const*>::const_iterator I = SectionEntries.begin();
 	       I != SectionEntries.end(); ++I)
 	 {
 	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
@@ -139,27 +140,7 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 		  { "$(LANGUAGE)", &(*l) },
 		  { NULL, NULL }
 	       };
-	       std::string const name = SubstVar(URI, subst);
-	       IndexTarget * Target;
-	       if (IsOptional == true)
-	       {
-		  Target = new OptionalIndexTarget(
-			name,
-			SubstVar(ShortDesc, subst),
-			SubstVar(LongDesc, subst),
-			baseURI + name
-			);
-	       }
-	       else
-	       {
-		  Target = new IndexTarget(
-			name,
-			SubstVar(ShortDesc, subst),
-			SubstVar(LongDesc, subst),
-			baseURI + name
-			);
-	       }
-	       IndexTargets->push_back(Target);
+	       Call(baseURI, *T, URI, ShortDesc, LongDesc, IsOptional, subst);
 
 	       if (URI.find("$(LANGUAGE)") == std::string::npos)
 		  break;
@@ -170,10 +151,6 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 	 }
       }
    }
-
-   // Only source release
-   if (IndexTargets->empty() == false && ArchEntries.size() == 1)
-      return IndexTargets;
 
    std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb", "", true);
    for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
@@ -187,13 +164,13 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
       if (URI.empty())
 	 continue;
 
-      for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
+      for (map<string, vector<debReleaseIndex::debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
 	    a != ArchEntries.end(); ++a)
       {
 	 if (a->first == "source")
 	    continue;
 
-	 for (vector <const debSectionEntry *>::const_iterator I = a->second.begin();
+	 for (vector <const debReleaseIndex::debSectionEntry *>::const_iterator I = a->second.begin();
 	       I != a->second.end(); ++I) {
 
 	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
@@ -209,27 +186,7 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 		  { "$(ARCHITECTURE)", &(a->first) },
 		  { NULL, NULL }
 	       };
-	       std::string const name = SubstVar(URI, subst);
-	       IndexTarget * Target;
-	       if (IsOptional == true)
-	       {
-		  Target = new OptionalIndexTarget(
-			name,
-			SubstVar(ShortDesc, subst),
-			SubstVar(LongDesc, subst),
-			baseURI + name
-			);
-	       }
-	       else
-	       {
-		  Target = new IndexTarget(
-			name,
-			SubstVar(ShortDesc, subst),
-			SubstVar(LongDesc, subst),
-			baseURI + name
-			);
-	       }
-	       IndexTargets->push_back(Target);
+	       Call(baseURI, *T, URI, ShortDesc, LongDesc, IsOptional, subst);
 
 	       if (URI.find("$(LANGUAGE)") == std::string::npos)
 		  break;
@@ -243,9 +200,51 @@ vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
 	    break;
       }
    }
-
-   return IndexTargets;
 }
+
+
+struct ComputeIndexTargetsClass
+{
+   vector <IndexTarget *> * const IndexTargets;
+
+   void operator()(std::string const &baseURI, std::string const &/*TargetName*/,
+	 std::string const &URI, std::string const &ShortDesc, std::string const &LongDesc,
+	 bool const IsOptional, struct SubstVar const * const subst)
+   {
+      std::string const name = SubstVar(URI, subst);
+      IndexTarget * Target;
+      if (IsOptional == true)
+      {
+	 Target = new OptionalIndexTarget(
+	       name,
+	       SubstVar(ShortDesc, subst),
+	       SubstVar(LongDesc, subst),
+	       baseURI + name
+	       );
+      }
+      else
+      {
+	 Target = new IndexTarget(
+	       name,
+	       SubstVar(ShortDesc, subst),
+	       SubstVar(LongDesc, subst),
+	       baseURI + name
+	       );
+      }
+      IndexTargets->push_back(Target);
+   }
+
+   ComputeIndexTargetsClass() : IndexTargets(new vector <IndexTarget *>) {}
+};
+
+vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const
+{
+   ComputeIndexTargetsClass comp;
+   foreachTarget(URI, Dist, ArchEntries, comp);
+   return comp.IndexTargets;
+}
+
+
 									/*}}}*/
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 {
@@ -303,45 +302,55 @@ bool debReleaseIndex::IsTrusted() const
    return FileExists(VerifiedSigFile);
 }
 
-vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {
-	if (Indexes != NULL)
-		return Indexes;
+struct GetIndexFilesClass
+{
+   vector <pkgIndexFile *> * const Indexes;
+   std::string const URI;
+   std::string const Release;
+   bool const IsTrusted;
 
-	Indexes = new vector <pkgIndexFile*>;
-	map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
-	if (src != ArchEntries.end()) {
-		vector<debSectionEntry const*> const SectionEntries = src->second;
-		for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
-		     I != SectionEntries.end(); ++I)
-			Indexes->push_back(new debSourcesIndex (URI, Dist, (*I)->Section, IsTrusted()));
-	}
+   void operator()(std::string const &/*baseURI*/, std::string const &TargetName,
+	 std::string const &/*URI*/, std::string const &/*ShortDesc*/, std::string const &/*LongDesc*/,
+	 bool const /*IsOptional*/, struct SubstVar const * const subst)
+   {
+      if (TargetName == "Packages")
+      {
+	 Indexes->push_back(new debPackagesIndex(
+		  URI,
+		  Release,
+		  SubstVar("$(COMPONENT)", subst),
+		  IsTrusted,
+		  SubstVar("$(ARCHITECTURE)", subst)
+		  ));
+      }
+      else if (TargetName == "Sources")
+	 Indexes->push_back(new debSourcesIndex(
+		  URI,
+		  Release,
+		  SubstVar("$(COMPONENT)", subst),
+		  IsTrusted
+		  ));
+      else if (TargetName == "Translations")
+	 Indexes->push_back(new debTranslationsIndex(
+		  URI,
+		  Release,
+		  SubstVar("$(COMPONENT)", subst),
+		  SubstVar("$(LANGUAGE)", subst)
+		  ));
+   }
 
-	// Only source release
-	if (Indexes->empty() == false && ArchEntries.size() == 1)
-		return Indexes;
+   GetIndexFilesClass(std::string const &URI, std::string const &Release, bool const IsTrusted) :
+      Indexes(new vector <pkgIndexFile*>), URI(URI), Release(Release), IsTrusted(IsTrusted) {}
+};
 
-	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
-	map<string, set<string> > sections;
-	for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
-	     a != ArchEntries.end(); ++a) {
-		if (a->first == "source")
-			continue;
-		for (vector<debSectionEntry const*>::const_iterator I = a->second.begin();
-		     I != a->second.end(); ++I) {
-			Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted(), a->first));
-			sections[(*I)->Section].insert(lang.begin(), lang.end());
-		}
-	}
+std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
+{
+   if (Indexes != NULL)
+      return Indexes;
 
-	for (map<string, set<string> >::const_iterator s = sections.begin();
-	     s != sections.end(); ++s)
-		for (set<string>::const_iterator l = s->second.begin();
-		     l != s->second.end(); ++l) {
-			if (*l == "none") continue;
-			Indexes->push_back(new debTranslationsIndex(URI,Dist,s->first,(*l).c_str()));
-		}
-
-	return Indexes;
+   GetIndexFilesClass comp(URI, Dist, IsTrusted());
+   foreachTarget(URI, Dist, ArchEntries, comp);
+   return Indexes = comp.Indexes;
 }
 
 void debReleaseIndex::PushSectionEntry(vector<string> const &Archs, const debSectionEntry *Entry) {
