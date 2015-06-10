@@ -22,6 +22,7 @@ using std::string;
 #endif
 
 class pkgAcquire;
+class IndexTarget;
 
 class metaIndex
 {
@@ -40,16 +41,13 @@ class metaIndex
    virtual const char* GetType() const {return Type;}
 
    // interface to to query it
-#if APT_PKG_ABI >= 413
    /** \return the path of the local file (or "" if its not available) */
    virtual std::string LocalFileName() const;
-#else
-   std::string LocalFileName() const;
-#endif
 
    // Interface for acquire
    virtual std::string ArchiveURI(std::string const& File) const = 0;
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const = 0;
+   virtual std::vector<IndexTarget> GetIndexTargets() const = 0;
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0;
    virtual bool IsTrusted() const = 0;
 

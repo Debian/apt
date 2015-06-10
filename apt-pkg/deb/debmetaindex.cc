@@ -229,7 +229,7 @@ struct ComputeIndexTargetsClass
    }
 };
 
-std::vector<IndexTarget> debReleaseIndex::ComputeIndexTargets() const
+std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
 {
    ComputeIndexTargetsClass comp;
    foreachTarget(URI, Dist, ArchEntries, comp);
@@ -247,7 +247,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       iR->SetTrusted(false);
 
    // special case for --print-uris
-   std::vector<IndexTarget> const targets = ComputeIndexTargets();
+   std::vector<IndexTarget> const targets = GetIndexTargets();
 #define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
    pkgAcqMetaBase * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
@@ -396,6 +396,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 
       map<string, string>::const_iterator const trusted = Options.find("trusted");
 
+      debReleaseIndex *Deb = NULL;
       for (vector<metaIndex *>::const_iterator I = List.begin();
 	   I != List.end(); ++I)
       {
@@ -403,34 +404,23 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 	 if (strcmp((*I)->GetType(), "deb") != 0)
 	    continue;
 
-	 debReleaseIndex *Deb = (debReleaseIndex *) (*I);
-	 if (trusted != Options.end())
-	    Deb->SetTrusted(StringToBool(trusted->second, false));
-
 	 /* This check insures that there will be only one Release file
 	    queued for all the Packages files and Sources files it
 	    corresponds to. */
-	 if (Deb->GetURI() == URI && Deb->GetDist() == Dist)
+	 if ((*I)->GetURI() == URI && (*I)->GetDist() == Dist)
 	 {
-	    if (IsSrc == true)
-	       Deb->PushSectionEntry("source", new debReleaseIndex::debSectionEntry(Section, IsSrc));
-	    else
-	    {
-	       if (Dist[Dist.size() - 1] == '/')
-		  Deb->PushSectionEntry("any", new debReleaseIndex::debSectionEntry(Section, IsSrc));
-	       else
-		  Deb->PushSectionEntry(Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
-	    }
-	    return true;
+	    Deb = dynamic_cast<debReleaseIndex*>(*I);
+	    if (Deb != NULL)
+	       break;
 	 }
       }
 
       // No currently created Release file indexes this entry, so we create a new one.
-      debReleaseIndex *Deb;
-      if (trusted != Options.end())
-	 Deb = new debReleaseIndex(URI, Dist, StringToBool(trusted->second, false));
-      else
+      if (Deb == NULL)
+      {
 	 Deb = new debReleaseIndex(URI, Dist);
+	 List.push_back(Deb);
+      }
 
       if (IsSrc == true)
 	 Deb->PushSectionEntry ("source", new debReleaseIndex::debSectionEntry(Section, IsSrc));
@@ -441,7 +431,10 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 	 else
 	    Deb->PushSectionEntry (Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
       }
-      List.push_back(Deb);
+
+      if (trusted != Options.end())
+	 Deb->SetTrusted(StringToBool(trusted->second, false));
+
       return true;
    }
 };
