@@ -116,12 +116,12 @@ void foreachTarget(std::string const URI, std::string const Dist,
       for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
       {
 #define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb-src::") + *T + "::" + (X))
-	 std::string const URI = APT_T_CONFIG(flatArchive ? "flatURI" : "URI");
+	 std::string const MetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
 	 std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
 	 std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
 	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb-src::") + *T + "::Optional", true);
 #undef APT_T_CONFIG
-	 if (URI.empty())
+	 if (MetaKey.empty())
 	    continue;
 
 	 vector<debReleaseIndex::debSectionEntry const*> const SectionEntries = src->second;
@@ -130,23 +130,24 @@ void foreachTarget(std::string const URI, std::string const Dist,
 	 {
 	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
 	    {
-	       if (*l == "none" && URI.find("$(LANGUAGE)") != std::string::npos)
+	       if (*l == "none" && MetaKey.find("$(LANGUAGE)") != std::string::npos)
 		  continue;
 
-	       struct SubstVar subst[] = {
-		  { "$(SITE)", &Site },
-		  { "$(RELEASE)", &Release },
-		  { "$(COMPONENT)", &((*I)->Section) },
-		  { "$(LANGUAGE)", &(*l) },
-		  { NULL, NULL }
-	       };
-	       Call(baseURI, *T, URI, ShortDesc, LongDesc, IsOptional, subst);
+	       std::map<std::string, std::string> Options;
+	       Options.insert(std::make_pair("SITE", Site));
+	       Options.insert(std::make_pair("RELEASE", Release));
+	       Options.insert(std::make_pair("COMPONENT", (*I)->Section));
+	       Options.insert(std::make_pair("LANGUAGE", *l));
+	       Options.insert(std::make_pair("ARCHITECTURE", "source"));
+	       Options.insert(std::make_pair("BASE_URI", baseURI));
+	       Options.insert(std::make_pair("CREATED_BY", *T));
+	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
-	       if (URI.find("$(LANGUAGE)") == std::string::npos)
+	       if (MetaKey.find("$(LANGUAGE)") == std::string::npos)
 		  break;
 	    }
 
-	    if (URI.find("$(COMPONENT)") == std::string::npos)
+	    if (MetaKey.find("$(COMPONENT)") == std::string::npos)
 	       break;
 	 }
       }
@@ -156,12 +157,12 @@ void foreachTarget(std::string const URI, std::string const Dist,
    for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
    {
 #define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb::") + *T + "::" + (X))
-      std::string const URI = APT_T_CONFIG(flatArchive ? "flatURI" : "URI");
+      std::string const MetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
       std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
       std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
       bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb::") + *T + "::Optional", true);
 #undef APT_T_CONFIG
-      if (URI.empty())
+      if (MetaKey.empty())
 	 continue;
 
       for (map<string, vector<debReleaseIndex::debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
@@ -175,28 +176,28 @@ void foreachTarget(std::string const URI, std::string const Dist,
 
 	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
 	    {
-	       if (*l == "none" && URI.find("$(LANGUAGE)") != std::string::npos)
+	       if (*l == "none" && MetaKey.find("$(LANGUAGE)") != std::string::npos)
 		  continue;
 
-	       struct SubstVar subst[] = {
-		  { "$(SITE)", &Site },
-		  { "$(RELEASE)", &Release },
-		  { "$(COMPONENT)", &((*I)->Section) },
-		  { "$(LANGUAGE)", &(*l) },
-		  { "$(ARCHITECTURE)", &(a->first) },
-		  { NULL, NULL }
-	       };
-	       Call(baseURI, *T, URI, ShortDesc, LongDesc, IsOptional, subst);
+	       std::map<std::string, std::string> Options;
+	       Options.insert(std::make_pair("SITE", Site));
+	       Options.insert(std::make_pair("RELEASE", Release));
+	       Options.insert(std::make_pair("COMPONENT", (*I)->Section));
+	       Options.insert(std::make_pair("LANGUAGE", *l));
+	       Options.insert(std::make_pair("ARCHITECTURE", a->first));
+	       Options.insert(std::make_pair("BASE_URI", baseURI));
+	       Options.insert(std::make_pair("CREATED_BY", *T));
+	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
-	       if (URI.find("$(LANGUAGE)") == std::string::npos)
+	       if (MetaKey.find("$(LANGUAGE)") == std::string::npos)
 		  break;
 	    }
 
-	    if (URI.find("$(COMPONENT)") == std::string::npos)
+	    if (MetaKey.find("$(COMPONENT)") == std::string::npos)
 	       break;
 	 }
 
-	 if (URI.find("$(ARCHITECTURE)") == std::string::npos)
+	 if (MetaKey.find("$(ARCHITECTURE)") == std::string::npos)
 	    break;
       }
    }
@@ -207,30 +208,23 @@ struct ComputeIndexTargetsClass
 {
    vector <IndexTarget *> * const IndexTargets;
 
-   void operator()(std::string const &baseURI, std::string const &/*TargetName*/,
-	 std::string const &URI, std::string const &ShortDesc, std::string const &LongDesc,
-	 bool const IsOptional, struct SubstVar const * const subst)
+   void operator()(std::string MetaKey, std::string ShortDesc, std::string LongDesc,
+	 bool const IsOptional, std::map<std::string, std::string> Options)
    {
-      std::string const name = SubstVar(URI, subst);
-      IndexTarget * Target;
-      if (IsOptional == true)
+      for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
       {
-	 Target = new OptionalIndexTarget(
-	       name,
-	       SubstVar(ShortDesc, subst),
-	       SubstVar(LongDesc, subst),
-	       baseURI + name
-	       );
+	 MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
+	 ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
+	 LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
       }
-      else
-      {
-	 Target = new IndexTarget(
-	       name,
-	       SubstVar(ShortDesc, subst),
-	       SubstVar(LongDesc, subst),
-	       baseURI + name
-	       );
-      }
+      IndexTarget * Target = new IndexTarget(
+	    MetaKey,
+	    ShortDesc,
+	    LongDesc,
+	    Options.find("BASE_URI")->second + MetaKey,
+	    IsOptional,
+	    Options
+	    );
       IndexTargets->push_back(Target);
    }
 
@@ -256,7 +250,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 
    // special case for --print-uris
    vector <IndexTarget *> const * const targets = ComputeIndexTargets();
-#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X))
+#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
    pkgAcqMetaBase * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
 	 targets, iR);
@@ -309,33 +303,33 @@ struct GetIndexFilesClass
    std::string const Release;
    bool const IsTrusted;
 
-   void operator()(std::string const &/*baseURI*/, std::string const &TargetName,
-	 std::string const &/*URI*/, std::string const &/*ShortDesc*/, std::string const &/*LongDesc*/,
-	 bool const /*IsOptional*/, struct SubstVar const * const subst)
+   void operator()(std::string const &/*URI*/, std::string const &/*ShortDesc*/, std::string const &/*LongDesc*/,
+	 bool const /*IsOptional*/, std::map<std::string, std::string> Options)
    {
+      std::string const TargetName = Options.find("CREATED_BY")->second;
       if (TargetName == "Packages")
       {
 	 Indexes->push_back(new debPackagesIndex(
 		  URI,
 		  Release,
-		  SubstVar("$(COMPONENT)", subst),
+		  Options.find("COMPONENT")->second,
 		  IsTrusted,
-		  SubstVar("$(ARCHITECTURE)", subst)
+		  Options.find("ARCHITECTURE")->second
 		  ));
       }
       else if (TargetName == "Sources")
 	 Indexes->push_back(new debSourcesIndex(
 		  URI,
 		  Release,
-		  SubstVar("$(COMPONENT)", subst),
+		  Options.find("COMPONENT")->second,
 		  IsTrusted
 		  ));
       else if (TargetName == "Translations")
 	 Indexes->push_back(new debTranslationsIndex(
 		  URI,
 		  Release,
-		  SubstVar("$(COMPONENT)", subst),
-		  SubstVar("$(LANGUAGE)", subst)
+		  Options.find("COMPONENT")->second,
+		  Options.find("LANGUAGE")->second
 		  ));
    }
 

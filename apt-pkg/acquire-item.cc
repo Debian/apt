@@ -382,6 +382,15 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
 }
 									/*}}}*/
 
+// IndexTarget - Constructor						/*{{{*/
+IndexTarget::IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
+      std::string const &LongDesc, std::string const &URI, bool const IsOptional,
+      std::map<std::string, std::string> const &Options) :
+   URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey), IsOptional(IsOptional), Options(Options)
+{
+}
+									/*}}}*/
+
 class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 /* The sole purpose of this class is having an item which does nothing to
    reach its done state to prevent cleanup deleting the mentioned file.
@@ -955,7 +964,7 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 if (TransactionManager->MetaIndexParser->Exists((*Target)->MetaKey) == false)
 	 {
 	    // optional targets that we do not have in the Release file are skipped
-	    if ((*Target)->IsOptional())
+	    if ((*Target)->IsOptional)
 	       continue;
 
 	    Status = StatAuthError;
@@ -2388,7 +2397,7 @@ string pkgAcqIndex::Custom600Headers() const
    if (stat(Final.c_str(),&Buf) == 0)
       msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 
-   if(Target->IsOptional())
+   if(Target->IsOptional)
       msg += "\nFail-Ignore: true";
 
    return msg;
@@ -2410,7 +2419,7 @@ void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * 
       }
    }
 
-   if(Target->IsOptional() && GetExpectedHashes().empty() && Stage == STAGE_DOWNLOAD)
+   if(Target->IsOptional && GetExpectedHashes().empty() && Stage == STAGE_DOWNLOAD)
       Status = StatDone;
    else
       TransactionManager->AbortTransaction();

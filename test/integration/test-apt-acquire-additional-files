@@ -31,7 +31,7 @@ testempty find rootdir/var/lib/apt/lists -name '*Contents*'
 
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
 APT::Acquire::Targets::deb::Contents {
-	URI "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
+	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
 	ShortDescription "Contents";
 	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
 };
@@ -54,7 +54,7 @@ testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Co
 # only if we downloaded a compressed file, but target was uncompressed
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
 APT::Acquire::Targets::deb::Contents {
-	URI "\$(COMPONENT)/Contents-\$(ARCHITECTURE).gz";
+	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE).gz";
 	ShortDescription "Contents.gz";
 	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents.gz";
 };

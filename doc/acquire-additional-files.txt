@@ -33,11 +33,11 @@ instructing the Acquire system to download the Packages files would look
 like this (see also apt.conf(5) manpage for configuration file syntax):
 
 	APT::Acquire::Targets::deb::Packages {
-		URI "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages";
+		MetaKey "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages";
 		ShortDescription "Packages";
 		Description "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages";
 
-		flatURI "Packages";
+		flatMetaKey "Packages";
 		flatDescription "$(SITE) $(RELEASE) Packages";
 
 		Optional "false";
@@ -47,18 +47,18 @@ All files which should be downloaded (nicknamed 'Targets') are mentioned
 below the APT::Acquire::Targets scope. 'deb' is here the type of the
 sources.list entry the file should be acquired for. The only other
 supported value is hence 'deb-src'. Beware: You can't specify multiple
-types here and you can't download the same URI for multiple types!
+types here and you can't download the same MetaKey form multiple types!
 
 After the type you can pick any valid and unique string which preferable
 refers to the file it downloads (In the example we picked 'Packages').
 This string is never shown or used.
 
 All targets have three main properties you can define:
-* URI: The identifier of the file to be downloaded as used in the
+* MetaKey: The identifier of the file to be downloaded as used in the
   Release file.  It is also the relative location of the file from the
   Release file.  You can neither download from a different server
-  entirely (absolute URI) nor should you try to access directories above
-  the Release file (e.g. "../../").
+  entirely (absolute URI) nor access directories above the Release file
+  (e.g. "../../").
 * ShortDescription: Very short string intended to be displayed to the
   user e.g.  while reporting progress. apt will e.g. use this string in
   the last line to indicate progress of e.g. the download of a specific
@@ -69,7 +69,7 @@ All targets have three main properties you can define:
   progress lines.
 
 Additional optional properties:
-* flat{URI,Description}: APT supports two types of repositories:
+* flat{MetaKey,Description}: APT supports two types of repositories:
   dists-style repositories which are the default and by far the most
   common which are named after the fact that the files are in an
   elaborated directory structure.  In contrast a flat-style repositories
@@ -96,20 +96,20 @@ look like this:
 
 APT::Acquire::Targets {
 	deb::Translations {
-		URI "$(COMPONENT)/i18n/Translation-$(LANGUAGE)";
+		MetaKey "$(COMPONENT)/i18n/Translation-$(LANGUAGE)";
 		ShortDescription "Translation-$(LANGUAGE)";
 		Description "$(SITE) $(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)";
 
-		flatURI "$(LANGUAGE)";
+		flatMetaKey "$(LANGUAGE)";
 		flatDescription "$(SITE) $(RELEASE) Translation-$(LANGUAGE)";
 	};
 
 	deb-src::Sources {
-		URI "$(COMPONENT)/source/Sources";
+		MetaKey "$(COMPONENT)/source/Sources";
 		ShortDescription "Sources";
 		Description "$(SITE) $(RELEASE)/$(COMPONENT) Sources";
 
-		flatURI "Sources";
+		flatMetaKey "Sources";
 		flatDescription "$(SITE) $(RELEASE) Sources";
 
 		Optional "false";
@@ -133,10 +133,7 @@ printed literally.
   have a meaningful value here.
 * $(LANGUAGE): Values are all entries (expect "none") of configuration
   option Acquire::Languages, e.g. "en", "de" or "de_AT".
-
-These values are defined both for 'deb' as well as 'deb-src' targets.
-'deb' targets additional have the variable:
-
 * $(ARCHITECTURE): Values are all entries of configuration option
   APT::Architectures (potentially modified by sources.list options),
-  e.g. "amd64", "i386" or "armel".
+  e.g. "amd64", "i386" or "armel" for the 'deb' type. In type 'deb-src'
+  this variable has the value "source".

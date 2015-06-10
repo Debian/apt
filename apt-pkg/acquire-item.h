@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/indexfile.h>
@@ -49,7 +50,7 @@ class pkgSourceList;
 class IndexTarget;
 class pkgAcqMetaBase;
 
-class APT_HIDDEN IndexTarget						/*{{{*/
+class IndexTarget							/*{{{*/
 /** \brief Information about an index file. */
 {
    public:
@@ -63,30 +64,18 @@ class APT_HIDDEN IndexTarget						/*{{{*/
    std::string const ShortDesc;
 
    /** \brief The key by which this index file should be
-    *  looked up within the meta signature file.
-    */
+       looked up within the meta index file. */
    std::string const MetaKey;
 
-   virtual bool IsOptional() const {
-      return false;
-   }
+   /** \brief Is it okay if the file isn't found in the meta index */
+   bool const IsOptional;
+
+   /** \brief Target specific options defined by the implementation */
+   std::map<std::string, std::string> const Options;
 
    IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
-	 std::string const &LongDesc, std::string const &URI) :
-      URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey) {}
-};
-									/*}}}*/
-class APT_HIDDEN OptionalIndexTarget : public IndexTarget		/*{{{*/
-/** \brief Information about an optional index file. */
-{
-   public:
-   virtual bool IsOptional() const {
-      return true;
-   }
-
-   OptionalIndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
-	 std::string const &LongDesc, std::string const &URI) :
-      IndexTarget(MetaKey, ShortDesc, LongDesc, URI) {}
+	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
+	 std::map<std::string, std::string> const &Options);
 };
 									/*}}}*/
 class pkgAcquire::Item : public WeakPointable				/*{{{*/
