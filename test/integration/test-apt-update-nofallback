@@ -33,7 +33,7 @@ EOF
 
 assert_update_is_refused_and_last_good_state_used()
 {
-    testfailuremsg "E: The repository 'file: unstable Release' is no longer signed." aptget update
+    testfailuremsg "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed." aptget update
 
     assert_repo_is_intact
 }
@@ -171,7 +171,7 @@ test_inrelease_to_invalid_inrelease()
     sed -i 's/^Codename:.*/Codename: evil!/' $APTARCHIVE/dists/unstable/InRelease
     inject_evil_package
 
-    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable InRelease: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
@@ -195,7 +195,7 @@ test_release_gpg_to_invalid_release_release_gpg()
     echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
     inject_evil_package
 
-    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable Release: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 

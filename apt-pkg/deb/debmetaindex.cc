@@ -25,7 +25,7 @@ using namespace std;
 
 string debReleaseIndex::MetaIndexInfo(const char *Type) const
 {
-   string Info = ::URI::SiteOnly(URI) + ' ';
+   string Info = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -105,7 +105,7 @@ void foreachTarget(std::string const URI, std::string const Dist,
    else
       baseURI += "dists/" + Dist + "/";
    std::string const Release = (Dist == "/") ? "" : Dist;
-   std::string const Site = ::URI::SiteOnly(URI);
+   std::string const Site = ::URI::ArchiveOnly(URI);
    std::vector<std::string> lang = APT::Configuration::getLanguages(true);
    if (lang.empty())
       lang.push_back("none");

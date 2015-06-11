@@ -57,7 +57,7 @@ string debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const &Record,
 				   pkgSrcRecords::File const &File) const
 {
    string Res;
-   Res = ::URI::NoUserPassword(URI) + ' ';
+   Res = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -116,7 +116,7 @@ string debSourcesIndex::Describe(bool Short) const
 /* */
 string debSourcesIndex::Info(const char *Type) const
 {
-   string Info = ::URI::NoUserPassword(URI) + ' ';
+   string Info = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -210,7 +210,7 @@ debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string
 /* This is a shorter version that is designed to be < 60 chars or so */
 string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
 {
-   string Res = ::URI::NoUserPassword(URI) + ' ';
+   string Res = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -248,7 +248,7 @@ string debPackagesIndex::Describe(bool Short) const
 /* */
 string debPackagesIndex::Info(const char *Type) const 
 {
-   string Info = ::URI::NoUserPassword(URI) + ' ';
+   string Info = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -473,7 +473,7 @@ string debTranslationsIndex::Describe(bool Short) const
 /* */
 string debTranslationsIndex::Info(const char *Type) const 
 {
-   string Info = ::URI::NoUserPassword(URI) + ' ';
+   string Info = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")

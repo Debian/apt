@@ -1637,8 +1637,6 @@ URI::operator string()
 }
 									/*}}}*/
 // URI::SiteOnly - Return the schema and site for the URI		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 string URI::SiteOnly(const string &URI)
 {
    ::URI U(URI);
@@ -1648,9 +1646,18 @@ string URI::SiteOnly(const string &URI)
    return U;
 }
 									/*}}}*/
+// URI::ArchiveOnly - Return the schema, site and cleaned path for the URI /*{{{*/
+string URI::ArchiveOnly(const string &URI)
+{
+   ::URI U(URI);
+   U.User.clear();
+   U.Password.clear();
+   if (U.Path.empty() == false && U.Path[U.Path.length() - 1] == '/')
+      U.Path.erase(U.Path.length() - 1);
+   return U;
+}
+									/*}}}*/
 // URI::NoUserPassword - Return the schema, site and path for the URI	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 string URI::NoUserPassword(const string &URI)
 {
    ::URI U(URI);

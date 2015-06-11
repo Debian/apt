@@ -20,7 +20,7 @@ testequalpolicy() {
 	testsuccessequal "Package files:
  $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
      release a=now
- $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/  Packages
+ $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}  Packages
      release c=
 Pinned packages:" aptcache policy $*
 }
@@ -105,11 +105,11 @@ testequalpolicycoolstuff() {
 	local BPO1ARCHIVE=""
 	local BPO2ARCHIVE=""
 	if [ ! "$7" = "2.0~bpo2" ]; then
-		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 	else
 		BPO2ARCHIVE="
      2.0~bpo2 $PB
-        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 		SB="$(echo "$SB" | tail -n 1)"
 		shift
 	fi
@@ -121,7 +121,7 @@ testequalpolicycoolstuff() {
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
  $IS 1.0 $PB
-        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ stable/main i386 Packages$SS" \
+        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main i386 Packages$SS" \
 		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
 }
 

@@ -167,6 +167,7 @@ class URI
    inline void operator =(const std::string &From) {CopyFrom(From);}
    inline bool empty() {return Access.empty();};
    static std::string SiteOnly(const std::string &URI);
+   static std::string ArchiveOnly(const std::string &URI);
    static std::string NoUserPassword(const std::string &URI);
    
    URI(std::string Path) {CopyFrom(Path);}
