@@ -21,6 +21,7 @@
 #define PKGLIB_ACQUIRE_ITEM_H
 
 #include <apt-pkg/acquire.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/weakptr.h>
 #include <apt-pkg/pkgcache.h>
@@ -31,7 +32,6 @@
 #include <map>
 
 #ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgrecords.h>
@@ -47,37 +47,8 @@
 class indexRecords;
 class pkgRecords;
 class pkgSourceList;
-class IndexTarget;
 class pkgAcqMetaBase;
 
-class IndexTarget							/*{{{*/
-/** \brief Information about an index file. */
-{
-   public:
-   /** \brief A URI from which the index file can be downloaded. */
-   std::string URI;
-
-   /** \brief A description of the index file. */
-   std::string Description;
-
-   /** \brief A shorter description of the index file. */
-   std::string ShortDesc;
-
-   /** \brief The key by which this index file should be
-       looked up within the meta index file. */
-   std::string MetaKey;
-
-   /** \brief Is it okay if the file isn't found in the meta index */
-   bool IsOptional;
-
-   /** \brief Target specific options defined by the implementation */
-   std::map<std::string, std::string> Options;
-
-   IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
-	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
-	 std::map<std::string, std::string> const &Options);
-};
-									/*}}}*/
 class pkgAcquire::Item : public WeakPointable				/*{{{*/
 /** \brief Represents the process by which a pkgAcquire object should
  *  retrieve a file or a collection of files.

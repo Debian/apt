@@ -10,8 +10,10 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
@@ -50,25 +52,24 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
    return 0;
 }
 									/*}}}*/
+pkgIndexFile::pkgIndexFile(bool Trusted) :				/*{{{*/
+   Trusted(Trusted)
+{
+}
+									/*}}}*/
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator /*Ver*/) const
 {
    return std::string();
 }
 									/*}}}*/
 // IndexFile::FindInCache - Stub					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 pkgCache::PkgFileIterator pkgIndexFile::FindInCache(pkgCache &Cache) const
 {
    return pkgCache::PkgFileIterator(Cache);
 }
 									/*}}}*/
 // IndexFile::SourceIndex - Stub					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &/*Record*/,
 				pkgSrcRecords::File const &/*File*/) const
 {
@@ -108,5 +109,79 @@ APT_DEPRECATED std::string pkgIndexFile::LanguageCode() {
 	if (TranslationsAvailable() == false)
 		return "";
 	return APT::Configuration::getLanguages()[0];
+}
+									/*}}}*/
+
+// IndexTarget - Constructor						/*{{{*/
+IndexTarget::IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
+      std::string const &LongDesc, std::string const &URI, bool const IsOptional,
+      std::map<std::string, std::string> const &Options) :
+   URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey), IsOptional(IsOptional), Options(Options)
+{
+}
+									/*}}}*/
+std::string IndexTarget::Option(std::string const &Key) const		/*{{{*/
+{
+   std::map<std::string,std::string>::const_iterator const M = Options.find(Key);
+   if (M == Options.end())
+      return "";
+   return M->second;
+}
+									/*}}}*/
+
+pkgIndexTargetFile::pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted) :/*{{{*/
+   pkgIndexFile(Trusted), Target(Target)
+{
+}
+									/*}}}*/
+std::string pkgIndexTargetFile::ArchiveURI(std::string File) const/*{{{*/
+{
+   return Target.Option("REPO_URI") + File;
+}
+									/*}}}*/
+std::string pkgIndexTargetFile::Describe(bool Short) const		/*{{{*/
+{
+   if (Short)
+      return Target.Description;
+   return Target.Description + " (" + IndexFileName() + ")";
+}
+									/*}}}*/
+std::string pkgIndexTargetFile::IndexFileName() const			/*{{{*/
+{
+   std::string const s =_config->FindDir("Dir::State::lists") + URItoFileName(Target.URI);
+   if (FileExists(s))
+      return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      std::string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
+}
+									/*}}}*/
+unsigned long pkgIndexTargetFile::Size() const				/*{{{*/
+{
+   unsigned long size = 0;
+
+   /* we need to ignore errors here; if the lists are absent, just return 0 */
+   _error->PushToStack();
+
+   FileFd f(IndexFileName(), FileFd::ReadOnly, FileFd::Extension);
+   if (!f.Failed())
+      size = f.Size();
+
+   if (_error->PendingError() == true)
+       size = 0;
+   _error->RevertToStack();
+
+   return size;
+}
+									/*}}}*/
+bool pkgIndexTargetFile::Exists() const					/*{{{*/
+{
+   return FileExists(IndexFileName());
 }
 									/*}}}*/

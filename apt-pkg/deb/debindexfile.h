@@ -30,19 +30,16 @@ class pkgCacheGenerator;
 
 class APT_HIDDEN debStatusIndex : public pkgIndexFile
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
-
    protected:
    std::string File;
 
    public:
 
    virtual const Type *GetType() const APT_CONST;
-   
+
    // Interface for acquire
    virtual std::string Describe(bool /*Short*/) const {return File;};
-   
+
    // Interface for the Cache Generator
    virtual bool Exists() const;
    virtual bool HasPackages() const {return true;};
@@ -54,91 +51,42 @@ class APT_HIDDEN debStatusIndex : public pkgIndexFile
    debStatusIndex(std::string File);
    virtual ~debStatusIndex();
 };
-    
-class APT_HIDDEN debPackagesIndex : public pkgIndexFile
+
+class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
-
-   std::string URI;
-   std::string Dist;
-   std::string Section;
-   std::string Architecture;
-
-   APT_HIDDEN std::string Info(const char *Type) const;
-   APT_HIDDEN std::string IndexFile(const char *Type) const;
-   APT_HIDDEN std::string IndexURI(const char *Type) const;
-
    public:
-   
+
    virtual const Type *GetType() const APT_CONST;
 
    // Stuff for accessing files on remote items
    virtual std::string ArchiveInfo(pkgCache::VerIterator Ver) const;
-   virtual std::string ArchiveURI(std::string File) const {return URI + File;};
-   
-   // Interface for acquire
-   virtual std::string Describe(bool Short) const;   
-   
+
    // Interface for the Cache Generator
-   virtual bool Exists() const;
    virtual bool HasPackages() const {return true;};
-   virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debPackagesIndex(std::string const &URI, std::string const &Dist, std::string const &Section,
-			bool const &Trusted, std::string const &Arch = "native");
+   debPackagesIndex(IndexTarget const &Target, bool const Trusted);
    virtual ~debPackagesIndex();
 };
 
-class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
+class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
-
-   std::string const URI;
-   std::string const Dist;
-   std::string const Section;
-   std::string const Language;
-
-   APT_HIDDEN std::string Info(const char *Type) const;
-   APT_HIDDEN std::string IndexFile(const char *Type) const;
-   APT_HIDDEN std::string IndexURI(const char *Type) const;
-
-   APT_HIDDEN std::string TranslationFile() const {return std::string("Translation-").append(Language);};
-
    public:
 
    virtual const Type *GetType() const APT_CONST;
 
-   // Interface for acquire
-   virtual std::string Describe(bool Short) const;
-
    // Interface for the Cache Generator
-   virtual bool Exists() const;
    virtual bool HasPackages() const;
-   virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debTranslationsIndex(std::string const &URI,std::string const &Dist,std::string const &Section, std::string const &Language);
+   debTranslationsIndex(IndexTarget const &Target);
    virtual ~debTranslationsIndex();
 };
 
-class APT_HIDDEN debSourcesIndex : public pkgIndexFile
+class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
-
-   std::string URI;
-   std::string Dist;
-   std::string Section;
-
-   APT_HIDDEN std::string Info(const char *Type) const;
-   APT_HIDDEN std::string IndexFile(const char *Type) const;
-   APT_HIDDEN std::string IndexURI(const char *Type) const;
-
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -146,20 +94,14 @@ class APT_HIDDEN debSourcesIndex : public pkgIndexFile
    // Stuff for accessing files on remote items
    virtual std::string SourceInfo(pkgSrcRecords::Parser const &Record,
 			     pkgSrcRecords::File const &File) const;
-   virtual std::string ArchiveURI(std::string File) const {return URI + File;};
-   
-   // Interface for acquire
-   virtual std::string Describe(bool Short) const;   
 
    // Interface for the record parsers
    virtual pkgSrcRecords::Parser *CreateSrcParser() const;
-   
+
    // Interface for the Cache Generator
-   virtual bool Exists() const;
    virtual bool HasPackages() const {return false;};
-   virtual unsigned long Size() const;
-   
-   debSourcesIndex(std::string URI,std::string Dist,std::string Section,bool Trusted);
+
+   debSourcesIndex(IndexTarget const &Target, bool const Trusted);
    virtual ~debSourcesIndex();
 };
 

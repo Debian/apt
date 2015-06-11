@@ -382,15 +382,6 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
 }
 									/*}}}*/
 
-// IndexTarget - Constructor						/*{{{*/
-IndexTarget::IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
-      std::string const &LongDesc, std::string const &URI, bool const IsOptional,
-      std::map<std::string, std::string> const &Options) :
-   URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey), IsOptional(IsOptional), Options(Options)
-{
-}
-									/*}}}*/
-
 class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 /* The sole purpose of this class is having an item which does nothing to
    reach its done state to prevent cleanup deleting the mentioned file.

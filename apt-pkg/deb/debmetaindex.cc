@@ -140,6 +140,7 @@ void foreachTarget(std::string const URI, std::string const Dist,
 	       Options.insert(std::make_pair("LANGUAGE", *l));
 	       Options.insert(std::make_pair("ARCHITECTURE", "source"));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
+	       Options.insert(std::make_pair("REPO_URI", URI));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
@@ -186,6 +187,7 @@ void foreachTarget(std::string const URI, std::string const Dist,
 	       Options.insert(std::make_pair("LANGUAGE", *l));
 	       Options.insert(std::make_pair("ARCHITECTURE", a->first));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
+	       Options.insert(std::make_pair("REPO_URI", URI));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
@@ -294,55 +296,25 @@ bool debReleaseIndex::IsTrusted() const
    return FileExists(VerifiedSigFile);
 }
 
-struct GetIndexFilesClass
-{
-   vector <pkgIndexFile *> * const Indexes;
-   std::string const URI;
-   std::string const Release;
-   bool const IsTrusted;
-
-   void operator()(std::string const &/*URI*/, std::string const &/*ShortDesc*/, std::string const &/*LongDesc*/,
-	 bool const /*IsOptional*/, std::map<std::string, std::string> Options)
-   {
-      std::string const TargetName = Options.find("CREATED_BY")->second;
-      if (TargetName == "Packages")
-      {
-	 Indexes->push_back(new debPackagesIndex(
-		  URI,
-		  Release,
-		  Options.find("COMPONENT")->second,
-		  IsTrusted,
-		  Options.find("ARCHITECTURE")->second
-		  ));
-      }
-      else if (TargetName == "Sources")
-	 Indexes->push_back(new debSourcesIndex(
-		  URI,
-		  Release,
-		  Options.find("COMPONENT")->second,
-		  IsTrusted
-		  ));
-      else if (TargetName == "Translations")
-	 Indexes->push_back(new debTranslationsIndex(
-		  URI,
-		  Release,
-		  Options.find("COMPONENT")->second,
-		  Options.find("LANGUAGE")->second
-		  ));
-   }
-
-   GetIndexFilesClass(std::string const &URI, std::string const &Release, bool const IsTrusted) :
-      Indexes(new vector <pkgIndexFile*>), URI(URI), Release(Release), IsTrusted(IsTrusted) {}
-};
-
 std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
 {
    if (Indexes != NULL)
       return Indexes;
 
-   GetIndexFilesClass comp(URI, Dist, IsTrusted());
-   foreachTarget(URI, Dist, ArchEntries, comp);
-   return Indexes = comp.Indexes;
+   Indexes = new std::vector<pkgIndexFile*>();
+   std::vector<IndexTarget> const Targets = GetIndexTargets();
+   bool const istrusted = IsTrusted();
+   for (std::vector<IndexTarget>::const_iterator T = Targets.begin(); T != Targets.end(); ++T)
+   {
+      std::string const TargetName = T->Options.find("CREATED_BY")->second;
+      if (TargetName == "Packages")
+	 Indexes->push_back(new debPackagesIndex(*T, istrusted));
+      else if (TargetName == "Sources")
+	 Indexes->push_back(new debSourcesIndex(*T, istrusted));
+      else if (TargetName == "Translations")
+	 Indexes->push_back(new debTranslationsIndex(*T));
+   }
+   return Indexes;
 }
 
 void debReleaseIndex::PushSectionEntry(vector<string> const &Archs, const debSectionEntry *Entry) {
