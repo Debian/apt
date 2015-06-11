@@ -79,8 +79,11 @@ class IndexTarget							/*{{{*/
       BASE_URI,
       REPO_URI,
       CREATED_BY,
+      TARGET_OF,
+      FILENAME,
    };
    std::string Option(OptionKeys const Key) const;
+   std::string Format(std::string format) const;
 };
 									/*}}}*/
 

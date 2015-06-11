@@ -86,6 +86,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <set>
 #include <string>
 #include <vector>
@@ -1602,6 +1603,91 @@ static bool DoChangelog(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoFiles - Lists all IndexTargets					/*{{{*/
+static std::string format_key(std::string key)
+{
+   // deb822 is case-insensitive, but the human eye prefers candy
+   std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+   key[0] = ::toupper(key[0]);
+   size_t found = key.find("_uri");
+   if (found != std::string::npos)
+      key.replace(found, 4, "-URI");
+   while ((found = key.find('_')) != std::string::npos)
+   {
+      key[found] = '-';
+      key[found + 1] = ::toupper(key[found + 1]);
+   }
+   return key;
+}
+static bool DoFiles(CommandLine &CmdL)
+{
+   pkgCacheFile CacheFile;
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+
+   if (SrcList == NULL)
+      return false;
+
+   std::string const Format = _config->Find("APT::Get::Files::Format");
+   bool Filtered = CmdL.FileSize() > 1;
+   for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); ++S)
+   {
+      std::vector<IndexTarget> const targets = (*S)->GetIndexTargets();
+      std::map<std::string, string> AddOptions;
+      AddOptions.insert(std::make_pair("TRUSTED", ((*S)->IsTrusted() ? "yes" : "no")));
+
+      for (std::vector<IndexTarget>::const_iterator T = targets.begin(); T != targets.end(); ++T)
+      {
+	 std::ostringstream stanza;
+	 if (Filtered || Format.empty())
+	 {
+	    stanza << "MetaKey: " << T->MetaKey << "\n"
+	       << "ShortDesc: " << T->ShortDesc << "\n"
+	       << "Description: " << T->Description << "\n"
+	       << "URI: " << T->URI << "\n"
+	       << "Filename: " << T->Option(IndexTarget::FILENAME) << "\n"
+	       << "Optional: " << (T->IsOptional ? "yes" : "no") << "\n";
+	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
+	       stanza << format_key(O->first) << ": " << O->second << "\n";
+	    for (std::map<std::string,std::string>::const_iterator O = T->Options.begin(); O != T->Options.end(); ++O)
+	       stanza << format_key(O->first) << ": " << O->second << "\n";
+	    stanza << "\n";
+
+	    if (Filtered)
+	    {
+	       // that is a bit crude, but good enough for now
+	       bool found = true;
+	       std::string haystack = std::string("\n") + stanza.str() + "\n";
+	       std::transform(haystack.begin(), haystack.end(), haystack.begin(), ::tolower);
+	       size_t const filesize = CmdL.FileSize() - 1;
+	       for (size_t i = 0; i != filesize; ++i)
+	       {
+		  std::string needle = std::string("\n") + CmdL.FileList[i + 1] + "\n";
+		  std::transform(needle.begin(), needle.end(), needle.begin(), ::tolower);
+		  if (haystack.find(needle) != std::string::npos)
+		     continue;
+		  found = false;
+		  break;
+	       }
+	       if (found == false)
+		  continue;
+	    }
+	 }
+
+	 if (Format.empty())
+	    cout << stanza.str();
+	 else
+	 {
+	    std::string out = T->Format(Format);
+	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
+	       out = SubstVar(out, std::string("$(") + O->first + ")", O->second);
+	    cout << out << std::endl;
+	 }
+      }
+   }
+
+   return true;
+}
+									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1716,6 +1802,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 				   {"source",&DoSource},
                                    {"download",&DoDownload},
                                    {"changelog",&DoChangelog},
+				   {"files",&DoFiles},
 				   {"moo",&DoMoo},
 				   {"help",&ShowHelp},
                                    {0,0}};

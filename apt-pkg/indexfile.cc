@@ -133,13 +133,29 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(ARCHITECTURE);
       APT_CASE(BASE_URI);
       APT_CASE(REPO_URI);
+      APT_CASE(TARGET_OF);
       APT_CASE(CREATED_BY);
 #undef APT_CASE
+      case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
    }
    std::map<std::string,std::string>::const_iterator const M = Options.find(Key);
    if (M == Options.end())
       return "";
    return M->second;
+}
+									/*}}}*/
+std::string IndexTarget::Format(std::string format) const		/*{{{*/
+{
+   for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
+   {
+      format = SubstVar(format, std::string("$(") + O->first + ")", O->second);
+   }
+   format = SubstVar(format, "$(METAKEY)", MetaKey);
+   format = SubstVar(format, "$(SHORTDESC)", ShortDesc);
+   format = SubstVar(format, "$(DESCRIPTION)", Description);
+   format = SubstVar(format, "$(URI)", URI);
+   format = SubstVar(format, "$(FILENAME)", Option(IndexTarget::FILENAME));
+   return format;
 }
 									/*}}}*/
 
@@ -162,7 +178,7 @@ std::string pkgIndexTargetFile::Describe(bool Short) const		/*{{{*/
 									/*}}}*/
 std::string pkgIndexTargetFile::IndexFileName() const			/*{{{*/
 {
-   std::string const s =_config->FindDir("Dir::State::lists") + URItoFileName(Target.URI);
+   std::string const s = Target.Option(IndexTarget::FILENAME);
    if (FileExists(s))
       return s;
 

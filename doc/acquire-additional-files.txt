@@ -47,11 +47,13 @@ All files which should be downloaded (nicknamed 'Targets') are mentioned
 below the APT::Acquire::Targets scope. 'deb' is here the type of the
 sources.list entry the file should be acquired for. The only other
 supported value is hence 'deb-src'. Beware: You can't specify multiple
-types here and you can't download the same MetaKey form multiple types!
+types here and you can't download the same (evaluated) MetaKey from
+multiple types!
 
 After the type you can pick any valid and unique string which preferable
 refers to the file it downloads (In the example we picked 'Packages').
-This string is never shown or used.
+This string is used as identifier for the target class and accessible as
+'Created-By' e.g. in the "apt-get files" output as detailed below.
 
 All targets have three main properties you can define:
 * MetaKey: The identifier of the file to be downloaded as used in the
@@ -123,11 +125,12 @@ by the acquire system. The following variables are known; note that
 unknown variables have no default value nor are they touched: They are
 printed literally.
 
-* $(SITE): An identifier of the site we access, e.g.
-  "http://example.org/".
+* $(SITE): An identifier of the site we access as seen in sources.list,
+  e.g. "http://example.org/debian" or "file:/path/to/a/repository".
 * $(RELEASE): This is usually an archive- or codename, e.g. "stable" or
   "stretch".  Note that flat-style repositories do not have a archive-
   or codename per-se, so the value might very well be just "/" or so.
+  Again, as seen in the sources.list.
 * $(COMPONENT): as given in the sources.list, e.g. "main", "non-free" or
   "universe".  Note that flat-style repositories again do not really
   have a meaningful value here.
@@ -137,3 +140,79 @@ printed literally.
   APT::Architectures (potentially modified by sources.list options),
   e.g. "amd64", "i386" or "armel" for the 'deb' type. In type 'deb-src'
   this variable has the value "source".
+
+Note that while more variables might exist in the implementation, these
+are to be considered undefined and their usage strongly discouraged. If
+you have a need for another variable contact us instead.
+
+# Accessing files
+
+Do NOT hardcode specific file locations, names or compression types in
+your application! You will notice that the configuration options give
+you no choice over where the downloaded files will be stored. This is by
+design so multiple applications can download and use the same file
+rather than each and every one of them potentially downloads and uses
+its own copy somewhere on disk.
+
+"apt-get files" can be used to get the location as well as other
+information about all files downloaded (aka: you will see Packages,
+Sources and Translation-* files here as well). Provide a line of the
+default output format as parameter to filter out all entries which do
+not have such a line. With --format, you can further more define your
+own output style. The variables are what you see in the output, just all
+uppercase and wrapped in $(), as in the configuration file.
+
+To get all the filenames of all Translation-en files you can e.g. call:
+	apt-get files --format '$(FILENAME)' "Created-By: Translations" "Language: en"
+
+Accessing this information via libapt is done by reading the
+sources.lists (pkgSourceList), iterating over the metaIndex objects this
+creates and calling GetIndexTargets() on them. See the sourcecode of
+"apt-get files" for a complete example.
+
+Remarks on the available fields:
+* MetaKey, ShortDesc, Description, Site, Release: as defined
+  by the configuration and described further above.
+* Created-By: configuration entity responsible for this target
+* Target-Of: type of the sources.list entry
+* URI, Repo-URI: avoid using. Contains potentially username/password.
+  Prefer 'Site', especially for display.
+* Filename: The mentioned file doesn't need to exist, e.g. because the
+  file wasn't downloaded yet – or it does exist compressed. libapt users
+  are encouraged to use FileFd to open such files as it can handle
+  decompression transparently.
+* Trusted: As of the last 'apt-get update' call denoting if e.g. apt-get
+  would print the unauthenticated warning while installing packages
+  mentioned in this file (example assumes Packages file) [Not really
+  a property of the target itself, but of the metaIndex].
+* Optional: Decodes the option of the same name from the configuration.
+  Note that it is using 'yes' and 'no' instead of 'true' and 'false'.
+* Language, Architecture, Component: as defined further above, but with
+  the catch that they might be missing if they don't effect the target
+  (aka: They weren't used while evaluating the MetaKey template).
+
+Again, additional fields might be visible in certain implementation, but
+you should avoid using them and instead talk to us about a portable
+implementation.
+
+# Multiple application requiring the same files
+
+It is highly encouraged that applications talk to each other and to us
+about which files they require. It is usually best to have a common
+package ship the configuration needed to get the files, but specific
+needs might require specific solutions. Again: talk to us.
+
+# Acquiring files not mentioned in the Release file
+
+You can't. This is by design as these files couldn't be verified to not
+be modified in transit, corrupted by the download process or simple if
+they are present at all on the server, which would require apt to probe
+for them. APT did this in the past for legacy reasons, we do not intend
+to go back to these dark times.
+
+This is also why you can't request files from a different server. It
+would have the additional problem that this server might not even be
+accessible (e.g. proxy settings) or that local sources (file:/, cdrom:/)
+start requesting online files…
+
+In other words: We would be opening Pandora's box.

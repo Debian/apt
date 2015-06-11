@@ -163,6 +163,10 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       // once sbuild is fixed, this option can be removed
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
    }
+   else if (CmdMatches("files"))
+   {
+      addArg(0,"format","APT::Get::Files::Format", CommandLine::HasArg);
+   }
    else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
       ;

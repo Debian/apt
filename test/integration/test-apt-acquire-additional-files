@@ -48,6 +48,7 @@ Get:1 http://localhost:8080 unstable/main amd64 Contents [$(stat -c%s aptarchive
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' find rootdir/var/lib/apt/lists -name '*Contents*'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' 'aptarchive/dists/unstable/main/Contents-amd64'
 
 # no automatic uncompress based on the name please,
@@ -72,6 +73,7 @@ Get:1 http://localhost:8080 unstable/main amd64 Contents.gz [$(stat -c%s aptarch
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' find rootdir/var/lib/apt/lists -name '*Contents*'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' 'aptarchive/dists/unstable/main/Contents-amd64.gz'
 
 rm -f rootdir/etc/apt/apt.conf.d/content-target.conf

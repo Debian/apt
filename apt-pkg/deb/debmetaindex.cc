@@ -136,11 +136,14 @@ void foreachTarget(std::string const URI, std::string const Dist,
 	       std::map<std::string, std::string> Options;
 	       Options.insert(std::make_pair("SITE", Site));
 	       Options.insert(std::make_pair("RELEASE", Release));
-	       Options.insert(std::make_pair("COMPONENT", (*I)->Section));
-	       Options.insert(std::make_pair("LANGUAGE", *l));
+	       if (MetaKey.find("$(COMPONENT)") != std::string::npos)
+		  Options.insert(std::make_pair("COMPONENT", (*I)->Section));
+	       if (MetaKey.find("$(LANGUAGE)") != std::string::npos)
+		  Options.insert(std::make_pair("LANGUAGE", *l));
 	       Options.insert(std::make_pair("ARCHITECTURE", "source"));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
 	       Options.insert(std::make_pair("REPO_URI", URI));
+	       Options.insert(std::make_pair("TARGET_OF", "deb-src"));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
@@ -183,11 +186,15 @@ void foreachTarget(std::string const URI, std::string const Dist,
 	       std::map<std::string, std::string> Options;
 	       Options.insert(std::make_pair("SITE", Site));
 	       Options.insert(std::make_pair("RELEASE", Release));
-	       Options.insert(std::make_pair("COMPONENT", (*I)->Section));
-	       Options.insert(std::make_pair("LANGUAGE", *l));
-	       Options.insert(std::make_pair("ARCHITECTURE", a->first));
+	       if (MetaKey.find("$(COMPONENT)") != std::string::npos)
+		  Options.insert(std::make_pair("COMPONENT", (*I)->Section));
+	       if (MetaKey.find("$(LANGUAGE)") != std::string::npos)
+		  Options.insert(std::make_pair("LANGUAGE", *l));
+	       if (MetaKey.find("$(ARCHITECTURE)") != std::string::npos)
+		  Options.insert(std::make_pair("ARCHITECTURE", a->first));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
 	       Options.insert(std::make_pair("REPO_URI", URI));
+	       Options.insert(std::make_pair("TARGET_OF", "deb"));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
