@@ -93,9 +93,9 @@ debPackagesIndex::debPackagesIndex(IndexTarget const &Target, bool const Trusted
 /* This is a shorter version that is designed to be < 60 chars or so */
 string debPackagesIndex::ArchiveInfo(pkgCache::VerIterator Ver) const
 {
-   std::string const Dist = Target.Option("RELEASE");
-   string Res = Target.Option("SITE") + " " + Dist;
-   std::string const Component = Target.Option("COMPONENT");
+   std::string const Dist = Target.Option(IndexTarget::RELEASE);
+   string Res = Target.Option(IndexTarget::SITE) + " " + Dist;
+   std::string const Component = Target.Option(IndexTarget::COMPONENT);
    if (Component.empty() == false)
       Res += "/" + Component;
 
@@ -115,7 +115,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    string const PackageFile = IndexFileName();
    FileFd Pkg(PackageFile,FileFd::ReadOnly, FileFd::Extension);
-   debListParser Parser(&Pkg, Target.Option("ARCHITECTURE"));
+   debListParser Parser(&Pkg, Target.Option(IndexTarget::ARCHITECTURE));
 
    if (_error->PendingError() == true)
       return _error->Error("Problem opening %s",PackageFile.c_str());
@@ -123,8 +123,8 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
       Prog->SubProgress(0, Target.Description);
 
 
-   std::string const URI = Target.Option("REPO_URI");
-   std::string Dist = Target.Option("RELEASE");
+   std::string const URI = Target.Option(IndexTarget::REPO_URI);
+   std::string Dist = Target.Option(IndexTarget::RELEASE);
    if (Dist.empty())
       Dist = "/";
    ::URI Tmp(URI);
@@ -158,7 +158,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
       if (_error->PendingError() == true)
 	 return false;
-      Parser.LoadReleaseInfo(File, Rel, Target.Option("COMPONENT"));
+      Parser.LoadReleaseInfo(File, Rel, Target.Option(IndexTarget::COMPONENT));
    }
    
    return true;

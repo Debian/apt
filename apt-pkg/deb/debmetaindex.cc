@@ -306,7 +306,7 @@ std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
    bool const istrusted = IsTrusted();
    for (std::vector<IndexTarget>::const_iterator T = Targets.begin(); T != Targets.end(); ++T)
    {
-      std::string const TargetName = T->Options.find("CREATED_BY")->second;
+      std::string const TargetName = T->Option(IndexTarget::CREATED_BY);
       if (TargetName == "Packages")
 	 Indexes->push_back(new debPackagesIndex(*T, istrusted));
       else if (TargetName == "Sources")

@@ -61,14 +61,26 @@ class IndexTarget							/*{{{*/
    /** \brief Is it okay if the file isn't found in the meta index */
    bool IsOptional;
 
-   /** \brief Target specific options defined by the implementation */
+   /** \brief options with which this target was created
+       Prefer the usage of #Option if at all possible.
+       Beware: Not all of these options are intended for public use */
    std::map<std::string, std::string> Options;
 
    IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
 	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
 	 std::map<std::string, std::string> const &Options);
 
-   std::string Option(std::string const &Key) const;
+   enum OptionKeys {
+      SITE,
+      RELEASE,
+      COMPONENT,
+      LANGUAGE,
+      ARCHITECTURE,
+      BASE_URI,
+      REPO_URI,
+      CREATED_BY,
+   };
+   std::string Option(OptionKeys const Key) const;
 };
 									/*}}}*/
 

@@ -120,8 +120,22 @@ IndexTarget::IndexTarget(std::string const &MetaKey, std::string const &ShortDes
 {
 }
 									/*}}}*/
-std::string IndexTarget::Option(std::string const &Key) const		/*{{{*/
+std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
 {
+   std::string Key;
+   switch (EnumKey)
+   {
+#define APT_CASE(X) case X: Key = #X; break
+      APT_CASE(SITE);
+      APT_CASE(RELEASE);
+      APT_CASE(COMPONENT);
+      APT_CASE(LANGUAGE);
+      APT_CASE(ARCHITECTURE);
+      APT_CASE(BASE_URI);
+      APT_CASE(REPO_URI);
+      APT_CASE(CREATED_BY);
+#undef APT_CASE
+   }
    std::map<std::string,std::string>::const_iterator const M = Options.find(Key);
    if (M == Options.end())
       return "";
@@ -136,7 +150,7 @@ pkgIndexTargetFile::pkgIndexTargetFile(IndexTarget const &Target, bool const Tru
 									/*}}}*/
 std::string pkgIndexTargetFile::ArchiveURI(std::string File) const/*{{{*/
 {
-   return Target.Option("REPO_URI") + File;
+   return Target.Option(IndexTarget::REPO_URI) + File;
 }
 									/*}}}*/
 std::string pkgIndexTargetFile::Describe(bool Short) const		/*{{{*/
