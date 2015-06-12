@@ -49,7 +49,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (Prog != NULL)
       Prog->SubProgress(0,File);
-   if (Gen.SelectFile(File, *this, "edsp") == false)
+   if (Gen.SelectFile(File, *this, "", "edsp") == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 
    // Store the IMS information

@@ -102,7 +102,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};
-   bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Component, unsigned long Flags = 0);
+   bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, unsigned long Flags = 0);
    bool SelectReleaseFile(const std::string &File, const std::string &Site, unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};

@@ -128,7 +128,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    if (Dist.empty())
       Dist = "/";
    ::URI Tmp(URI);
-   if (Gen.SelectFile(PackageFile, *this, Target.Option(IndexTarget::COMPONENT)) == false)
+   if (Gen.SelectFile(PackageFile, *this, Target.Option(IndexTarget::ARCHITECTURE), Target.Option(IndexTarget::COMPONENT)) == false)
       return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
 
    // Store the IMS information
@@ -203,7 +203,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
      if (Prog != NULL)
 	Prog->SubProgress(0, Target.Description);
-     if (Gen.SelectFile(TranslationFile, *this, Target.Option(IndexTarget::COMPONENT), pkgCache::Flag::NotSource) == false)
+     if (Gen.SelectFile(TranslationFile, *this, "", Target.Option(IndexTarget::COMPONENT), pkgCache::Flag::NotSource) == false)
        return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
 
      // Store the IMS information
@@ -284,7 +284,7 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (Prog != NULL)
       Prog->SubProgress(0,File);
-   if (Gen.SelectFile(File, *this, "now", pkgCache::Flag::NotSource) == false)
+   if (Gen.SelectFile(File, *this, "", "now", pkgCache::Flag::NotSource) == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 
    // Store the IMS information
@@ -409,7 +409,7 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // and give it to the list parser
    debDebFileParser Parser(DebControl, DebFile);
-   if(Gen.SelectFile(DebFile, *this, "now", pkgCache::Flag::LocalSource) == false)
+   if(Gen.SelectFile(DebFile, *this, "", "now", pkgCache::Flag::LocalSource) == false)
       return _error->Error("Problem with SelectFile %s", DebFile.c_str());
 
    pkgCache::PkgFileIterator File = Gen.GetCurFile();

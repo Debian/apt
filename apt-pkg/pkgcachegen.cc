@@ -1113,6 +1113,7 @@ bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
    added versions. The caller is responsible for setting the IMS fields. */
 bool pkgCacheGenerator::SelectFile(std::string const &File,
 				   pkgIndexFile const &Index,
+				   std::string const &Architecture,
 				   std::string const &Component,
 				   unsigned long const Flags)
 {
@@ -1133,6 +1134,15 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
    if (unlikely(idxIndexType == 0))
       return false;
    CurrentFile->IndexType = idxIndexType;
+   if (Architecture.empty())
+      CurrentFile->Architecture = 0;
+   else
+   {
+      map_stringitem_t const arch = StoreString(pkgCacheGenerator::MIXED, Architecture);
+      if (unlikely(arch == 0))
+	 return false;
+      CurrentFile->Architecture = arch;
+   }
    map_stringitem_t const component = StoreString(pkgCacheGenerator::MIXED, Component);
    if (unlikely(component == 0))
       return false;
