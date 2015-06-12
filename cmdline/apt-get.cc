@@ -1628,15 +1628,34 @@ static bool DoFiles(CommandLine &CmdL)
       return false;
 
    std::string const Format = _config->Find("APT::Get::Files::Format");
+   bool const ReleaseInfo = _config->FindB("APT::Get::Files::ReleaseInfo", true);
    bool Filtered = CmdL.FileSize() > 1;
    for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); ++S)
    {
       std::vector<IndexTarget> const targets = (*S)->GetIndexTargets();
       std::map<std::string, string> AddOptions;
-      AddOptions.insert(std::make_pair("TRUSTED", ((*S)->IsTrusted() ? "yes" : "no")));
+      if (ReleaseInfo)
+      {
+	 AddOptions.insert(std::make_pair("TRUSTED", ((*S)->IsTrusted() ? "yes" : "no")));
+	 pkgCache &Cache = *CacheFile.GetPkgCache();
+	 pkgCache::RlsFileIterator const RlsFile = (*S)->FindInCache(Cache, false);
+	 if (RlsFile.end())
+	    continue;
+#define APT_RELEASE(X,Y) if (RlsFile.Y() != NULL) AddOptions.insert(std::make_pair(X, RlsFile.Y()))
+	 APT_RELEASE("CODENAME", Codename);
+	 APT_RELEASE("SUITE", Archive);
+	 APT_RELEASE("VERSION", Version);
+	 APT_RELEASE("ORIGIN", Origin);
+	 APT_RELEASE("LABEL", Label);
+#undef APT_RELEASE
+      }
 
       for (std::vector<IndexTarget>::const_iterator T = targets.begin(); T != targets.end(); ++T)
       {
+	 std::string filename = T->Option(ReleaseInfo ? IndexTarget::EXISTING_FILENAME : IndexTarget::FILENAME);
+	 if (filename.empty())
+	    continue;
+
 	 std::ostringstream stanza;
 	 if (Filtered || Format.empty())
 	 {
@@ -1644,7 +1663,7 @@ static bool DoFiles(CommandLine &CmdL)
 	       << "ShortDesc: " << T->ShortDesc << "\n"
 	       << "Description: " << T->Description << "\n"
 	       << "URI: " << T->URI << "\n"
-	       << "Filename: " << T->Option(IndexTarget::FILENAME) << "\n"
+	       << "Filename: " << filename << "\n"
 	       << "Optional: " << (T->IsOptional ? "yes" : "no") << "\n";
 	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
 	       stanza << format_key(O->first) << ": " << O->second << "\n";
@@ -1677,7 +1696,8 @@ static bool DoFiles(CommandLine &CmdL)
 	    cout << stanza.str();
 	 else
 	 {
-	    std::string out = T->Format(Format);
+	    std::string out = SubstVar(Format, "$(FILENAME)", filename);
+	    out = T->Format(out);
 	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
 	       out = SubstVar(out, std::string("$(") + O->first + ")", O->second);
 	    cout << out << std::endl;

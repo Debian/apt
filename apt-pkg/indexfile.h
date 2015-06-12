@@ -81,6 +81,7 @@ class IndexTarget							/*{{{*/
       CREATED_BY,
       TARGET_OF,
       FILENAME,
+      EXISTING_FILENAME,
    };
    std::string Option(OptionKeys const Key) const;
    std::string Format(std::string format) const;

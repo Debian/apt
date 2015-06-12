@@ -51,7 +51,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
    virtual std::vector<IndexTarget> GetIndexTargets() const;
 
    virtual std::string Describe() const;
-   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache) const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    std::string MetaIndexInfo(const char *Type) const;

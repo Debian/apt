@@ -54,7 +54,7 @@ class metaIndex
    virtual bool IsTrusted() const = 0;
 
    virtual std::string Describe() const;
-   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache) const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    metaIndex(std::string const &URI, std::string const &Dist,

@@ -1224,7 +1224,7 @@ static bool CheckValidity(const string &CacheFile,
    {
       if (Debug == true)
 	 std::clog << "Checking RlsFile " << (*i)->Describe() << ": ";
-      pkgCache::RlsFileIterator const RlsFile = (*i)->FindInCache(Cache);
+      pkgCache::RlsFileIterator const RlsFile = (*i)->FindInCache(Cache, true);
       if (RlsFile.end() == true)
       {
 	 if (Debug == true)
@@ -1348,7 +1348,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    {
       for (pkgSourceList::const_iterator i = List->begin(); i != List->end(); ++i)
       {
-	 if ((*i)->FindInCache(Gen.GetCache()).end() == false)
+	 if ((*i)->FindInCache(Gen.GetCache(), false).end() == false)
 	 {
 	    _error->Warning("Duplicate sources.list entry %s",
 		  (*i)->Describe().c_str());

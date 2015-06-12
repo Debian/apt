@@ -28,7 +28,7 @@ std::string metaIndex::Describe() const
    return "Release";
 }
 
-pkgCache::RlsFileIterator metaIndex::FindInCache(pkgCache &Cache) const
+pkgCache::RlsFileIterator metaIndex::FindInCache(pkgCache &Cache, bool const) const
 {
    return pkgCache::RlsFileIterator(Cache);
 }

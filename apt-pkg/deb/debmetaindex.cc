@@ -422,7 +422,7 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
 }
 									/*}}}*/
 // ReleaseIndex::FindInCache - Find this index				/*{{{*/
-pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache) const
+pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache, bool const ModifyCheck) const
 {
    std::string ReleaseFile;
    bool const releaseExists = ReleaseFileName(this, ReleaseFile);
@@ -434,7 +434,7 @@ pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache) const
 	 continue;
 
        // empty means the file does not exist by "design"
-       if (releaseExists == false && File->Size == 0)
+       if (ModifyCheck == false || (releaseExists == false && File->Size == 0))
 	  return File;
 
       struct stat St;

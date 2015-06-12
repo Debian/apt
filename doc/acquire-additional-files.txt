@@ -18,12 +18,6 @@ might want to use and would therefore need to be downloaded as well
 This file describes the configuration scheme such a frontend can use to
 instruct the Acquire system to download those additional files.
 
-Note that you can't download files from other sources. It must be files
-in the same repository and below the Release file. The Release file must
-also contain hashes for the file itself as well as for the compressed
-file if wanted, otherwise a download isn't even tried!
-
-
 # The Configuration Stanza
 
 The Acquire system uses the same configuration settings to implement the
@@ -81,15 +75,17 @@ Additional optional properties:
 * Optional: The default value is 'true' and should be kept at this
   value.  If enabled the acquire system will skip the download if the
   file isn't mentioned in the Release file. Otherwise this is treated as
-  a hard error and the update process fails.
+  a hard error and the update process fails. Note that failures while
+  downloading (e.g. 404 or hash verification errors) are failures,
+  regardless of this setting.
 
 
-Note that the acquire system will automatically choose to download
-a compressed file if it is available and uncompress it for you, just as
-it will also use pdiff patching if provided by the repository and
-enabled by the user. You only have to ensure that the Release file
-contains the information about the compressed files/pdiffs to make this
-happen. NO properties have to be set to enable this.
+The acquire system will automatically choose to download a compressed
+file if it is available and uncompress it for you, just as it will also
+use pdiff patching if provided by the repository and enabled by the
+user. You only have to ensure that the Release file contains the
+information about the compressed files/pdiffs to make this happen.
+NO properties have to be set to enable this.
 
 # More examples
 
@@ -123,10 +119,12 @@ APT::Acquire::Targets {
 As seen in the examples, properties can contain placeholders filled in
 by the acquire system. The following variables are known; note that
 unknown variables have no default value nor are they touched: They are
-printed literally.
+printed as-is.
 
 * $(SITE): An identifier of the site we access as seen in sources.list,
-  e.g. "http://example.org/debian" or "file:/path/to/a/repository".
+  e.g. "http://example.org/debian" or "file:/path/to/a/repository". You
+  can't use this field in {,flat}MetaKey, it is for description proposes
+  only.
 * $(RELEASE): This is usually an archive- or codename, e.g. "stable" or
   "stretch".  Note that flat-style repositories do not have a archive-
   or codename per-se, so the value might very well be just "/" or so.
@@ -143,7 +141,7 @@ printed literally.
 
 Note that while more variables might exist in the implementation, these
 are to be considered undefined and their usage strongly discouraged. If
-you have a need for another variable contact us instead.
+you have a need for other variables contact us.
 
 # Accessing files
 
@@ -170,29 +168,42 @@ sources.lists (pkgSourceList), iterating over the metaIndex objects this
 creates and calling GetIndexTargets() on them. See the sourcecode of
 "apt-get files" for a complete example.
 
-Remarks on the available fields:
+Note that by default targets are not listed if they weren't downloaded.
+If you want to see all targets, you can use the --no-release-info, which
+also removes the Codename, Suite, Version, Origin, Label and Trusted
+fields from the output as these also display data which needs to be
+downloaded first and could hence be inaccurate [on the pro-side: This
+mode is faster as it doesn't require a valid binary cache to operate].
+The most notable difference perhaps is in the Filename field through: By
+default it indicates an existing file, potentially compressed (Hint:
+libapt users can use FileFd to open compressed files transparently). In
+the --no-release-info mode the indicated file doesn't need to exist and
+it will always refer to an uncompressed file, even if the index would be
+(or is) stored compressed.
+
+Remarks on fields only available in (default) --release-info mode:
+* Trusted: Denotes with a 'yes' or 'no' if the data in this file is
+  authenticated by a trustchain rooted in a trusted gpg key. You should
+  be careful with untrusted data and warn the user if you use it.
+* Codename, Suite, Version, Origin and Label are fields from the Release
+  file, are only present if they are present in the Release file and
+  contain the same data.
+
+Remarks on other available fields:
 * MetaKey, ShortDesc, Description, Site, Release: as defined
   by the configuration and described further above.
 * Created-By: configuration entity responsible for this target
 * Target-Of: type of the sources.list entry
 * URI, Repo-URI: avoid using. Contains potentially username/password.
   Prefer 'Site', especially for display.
-* Filename: The mentioned file doesn't need to exist, e.g. because the
-  file wasn't downloaded yet – or it does exist compressed. libapt users
-  are encouraged to use FileFd to open such files as it can handle
-  decompression transparently.
-* Trusted: As of the last 'apt-get update' call denoting if e.g. apt-get
-  would print the unauthenticated warning while installing packages
-  mentioned in this file (example assumes Packages file) [Not really
-  a property of the target itself, but of the metaIndex].
 * Optional: Decodes the option of the same name from the configuration.
   Note that it is using 'yes' and 'no' instead of 'true' and 'false'.
 * Language, Architecture, Component: as defined further above, but with
   the catch that they might be missing if they don't effect the target
   (aka: They weren't used while evaluating the MetaKey template).
 
-Again, additional fields might be visible in certain implementation, but
-you should avoid using them and instead talk to us about a portable
+Again, additional fields might be visible in certain implementations,
+but you should avoid using them and instead talk to us about a portable
 implementation.
 
 # Multiple application requiring the same files

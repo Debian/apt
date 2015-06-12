@@ -37,6 +37,12 @@ APT::Acquire::Targets::deb::Contents {
 };
 EOF
 
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget files --no-release-info --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget files --format '$(FILENAME)' 'Created-By: Contents'
+# lets fake the existence of a compressed Contents file
+touch ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
+
 testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
 'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
 'http://localhost:8080/dists/unstable/main/binary-amd64/Packages.bz2' localhost:8080_dists_unstable_main_binary-amd64_Packages 0 

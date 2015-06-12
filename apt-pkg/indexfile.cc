@@ -137,6 +137,18 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(CREATED_BY);
 #undef APT_CASE
       case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
+      case EXISTING_FILENAME:
+	 std::string const filename = Option(FILENAME);
+	 std::vector<std::string> const types = APT::Configuration::getCompressionTypes();
+	 for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	 {
+	    if (t->empty())
+	       continue;
+	    std::string const file = (*t == "uncompressed") ? filename : (filename + "." + *t);
+	    if (FileExists(file))
+	       return file;
+	 }
+	 return "";
    }
    std::map<std::string,std::string>::const_iterator const M = Options.find(Key);
    if (M == Options.end())
