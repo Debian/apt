@@ -951,43 +951,6 @@ bool debListParser::Step()
    return false;
 }
 									/*}}}*/
-// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
-				    FileFd &File, string component)
-{
-   // apt-secure does no longer download individual (per-section) Release
-   // file. to provide Component pinning we use the section name now
-   map_stringitem_t const storage = StoreString(pkgCacheGenerator::MIXED, component);
-   FileI->Component = storage;
-
-   pkgTagFile TagFile(&File, File.Size());
-   pkgTagSection Section;
-   if (_error->PendingError() == true || TagFile.Step(Section) == false)
-      return false;
-
-   std::string data;
-   #define APT_INRELEASE(TYPE, TAG, STORE) \
-   data = Section.FindS(TAG); \
-   if (data.empty() == false) \
-   { \
-      map_stringitem_t const storage = StoreString(pkgCacheGenerator::TYPE, data); \
-      STORE = storage; \
-   }
-   APT_INRELEASE(MIXED, "Suite", FileI->Archive)
-   APT_INRELEASE(MIXED, "Component", FileI->Component)
-   APT_INRELEASE(VERSIONNUMBER, "Version", FileI->Version)
-   APT_INRELEASE(MIXED, "Origin", FileI->Origin)
-   APT_INRELEASE(MIXED, "Codename", FileI->Codename)
-   APT_INRELEASE(MIXED, "Label", FileI->Label)
-   #undef APT_INRELEASE
-   Section.FindFlag("NotAutomatic", FileI->Flags, pkgCache::Flag::NotAutomatic);
-   Section.FindFlag("ButAutomaticUpgrades", FileI->Flags, pkgCache::Flag::ButAutomaticUpgrades);
-
-   return !_error->PendingError();
-}
-									/*}}}*/
 // ListParser::GetPrio - Convert the priority from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

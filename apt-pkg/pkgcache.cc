@@ -61,6 +61,7 @@ pkgCache::Header::Header()
    HeaderSz = sizeof(pkgCache::Header);
    GroupSz = sizeof(pkgCache::Group);
    PackageSz = sizeof(pkgCache::Package);
+   ReleaseFileSz = sizeof(pkgCache::ReleaseFile);
    PackageFileSz = sizeof(pkgCache::PackageFile);
    VersionSz = sizeof(pkgCache::Version);
    DescriptionSz = sizeof(pkgCache::Description);
@@ -74,6 +75,7 @@ pkgCache::Header::Header()
    VersionCount = 0;
    DescriptionCount = 0;
    DependsCount = 0;
+   ReleaseFileCount = 0;
    PackageFileCount = 0;
    VerFileCount = 0;
    DescFileCount = 0;
@@ -82,6 +84,7 @@ pkgCache::Header::Header()
    MaxDescFileSize = 0;
    
    FileList = 0;
+   RlsFileList = 0;
 #if APT_PKG_ABI < 413
    APT_IGNORE_DEPRECATED(StringList = 0;)
 #endif
@@ -102,6 +105,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
    if (HeaderSz == Against.HeaderSz &&
        GroupSz == Against.GroupSz &&
        PackageSz == Against.PackageSz &&
+       ReleaseFileSz == Against.ReleaseFileSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
        DescriptionSz == Against.DescriptionSz &&
@@ -140,6 +144,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
    DescFileP = (DescFile *)Map.Data();
+   RlsFileP = (ReleaseFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
    DescP = (Description *)Map.Data();
@@ -814,7 +819,7 @@ APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
-      if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
+      if (Files.File().Flagged(pkgCache::Flag::NotSource) == false)
 	 return true;
    return false;
 }
@@ -828,7 +833,7 @@ APT_PURE bool pkgCache::VerIterator::Automatic() const
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
       // Do not check ButAutomaticUpgrades here as it is kind of automatic…
-      if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
+      if (Files.File().Flagged(pkgCache::Flag::NotAutomatic) == false)
 	 return true;
    return false;
 }
@@ -861,27 +866,27 @@ string pkgCache::VerIterator::RelStr() const
    for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
-      pkgCache::PkgFileIterator File = I.File();
-      if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+      pkgCache::PkgFileIterator const File = I.File();
+      if (File.Flagged(pkgCache::Flag::NotSource))
 	 continue;
 
       // See if we have already printed this out..
       bool Seen = false;
       for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
       {
-	 pkgCache::PkgFileIterator File2 = J.File();
-	 if (File2->Label == 0 || File->Label == 0)
+	 pkgCache::PkgFileIterator const File2 = J.File();
+	 if (File2.Label() == 0 || File.Label() == 0)
 	    continue;
 
 	 if (strcmp(File.Label(),File2.Label()) != 0)
 	    continue;
 	 
-	 if (File2->Version == File->Version)
+	 if (File2.Version() == File.Version())
 	 {
 	    Seen = true;
 	    break;
 	 }
-	 if (File2->Version == 0 || File->Version == 0)
+	 if (File2.Version() == 0 || File.Version() == 0)
 	    break;
 	 if (strcmp(File.Version(),File2.Version()) == 0)
 	    Seen = true;
@@ -895,12 +900,12 @@ string pkgCache::VerIterator::RelStr() const
       else
 	 First = false;
       
-      if (File->Label != 0)
+      if (File.Label() != 0)
 	 Res = Res + File.Label() + ':';
 
-      if (File->Archive != 0)
+      if (File.Archive() != 0)
       {
-	 if (File->Version == 0)
+	 if (File.Version() == 0)
 	    Res += File.Archive();
 	 else
 	    Res = Res + File.Version() + '/' +  File.Archive();
@@ -908,7 +913,7 @@ string pkgCache::VerIterator::RelStr() const
       else
       {
 	 // No release file, print the host name that this came from
-	 if (File->Site == 0 || File.Site()[0] == 0)
+	 if (File.Site() == 0 || File.Site()[0] == 0)
 	    Res += "localhost";
 	 else
 	    Res += File.Site();
@@ -931,10 +936,44 @@ const char * pkgCache::VerIterator::MultiArchType() const
    return "none";
 }
 									/*}}}*/
+// RlsFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
+// ---------------------------------------------------------------------
+/* This stats the file and compares its stats with the ones that were
+   stored during generation. Date checks should probably also be
+   included here. */
+bool pkgCache::RlsFileIterator::IsOk()
+{
+   struct stat Buf;
+   if (stat(FileName(),&Buf) != 0)
+      return false;
+
+   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
+      return false;
+
+   return true;
+}
+									/*}}}*/
+// RlsFileIterator::RelStr - Return the release string			/*{{{*/
+string pkgCache::RlsFileIterator::RelStr()
+{
+   string Res;
+   if (Version() != 0)
+      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
+   if (Origin() != 0)
+      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
+   if (Archive() != 0)
+      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Codename() != 0)
+      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
+   if (Label() != 0)
+      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
+   return Res;
+}
+									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
 // ---------------------------------------------------------------------
 /* This stats the file and compares its stats with the ones that were
-   stored during generation. Date checks should probably also be 
+   stored during generation. Date checks should probably also be
    included here. */
 bool pkgCache::PkgFileIterator::IsOk()
 {
@@ -948,24 +987,20 @@ bool pkgCache::PkgFileIterator::IsOk()
    return true;
 }
 									/*}}}*/
-// PkgFileIterator::RelStr - Return the release string			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgCache::PkgFileIterator::RelStr()
+string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
 {
-   string Res;
-   if (Version() != 0)
-      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
-   if (Origin() != 0)
-      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
-   if (Archive() != 0)
-      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
-   if (Codename() != 0)
-      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
-   if (Label() != 0)
-      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
-   if (Component() != 0)
-      Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   std::string Res;
+   if (ReleaseFile() == 0)
+   {
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"a=":",a=")  + Component();
+   }
+   else
+   {
+      Res = ReleaseFile().RelStr();
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   }
    if (Architecture() != 0)
       Res = Res + (Res.empty() == true?"b=":",b=")  + Architecture();
    return Res;

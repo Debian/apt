@@ -49,15 +49,14 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (Prog != NULL)
       Prog->SubProgress(0,File);
-   if (Gen.SelectFile(File,std::string(),*this) == false)
+   if (Gen.SelectFile(File, *this, "edsp") == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 
    // Store the IMS information
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(CFile);
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "edsp::scenario");
-   CFile->Archive = storage;
 
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",File.c_str());

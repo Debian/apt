@@ -413,17 +413,21 @@ static bool Stats(CommandLine &)
 	    stritems.insert(Prv->ProvideVersion);
       }
    }
-   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+   for (pkgCache::RlsFileIterator F = Cache->RlsFileBegin(); F != Cache->RlsFileEnd(); ++F)
    {
       stritems.insert(F->FileName);
       stritems.insert(F->Archive);
       stritems.insert(F->Codename);
-      stritems.insert(F->Component);
       stritems.insert(F->Version);
       stritems.insert(F->Origin);
       stritems.insert(F->Label);
-      stritems.insert(F->Architecture);
       stritems.insert(F->Site);
+   }
+   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+   {
+      stritems.insert(F->FileName);
+      stritems.insert(F->Architecture);
+      stritems.insert(F->Component);
       stritems.insert(F->IndexType);
    }
    unsigned long Size = 0;
@@ -446,6 +450,7 @@ static bool Stats(CommandLine &)
       APT_CACHESIZE(VersionCount, VersionSz) +
       APT_CACHESIZE(DescriptionCount, DescriptionSz) +
       APT_CACHESIZE(DependsCount, DependencySz) +
+      APT_CACHESIZE(ReleaseFileCount, ReleaseFileSz) +
       APT_CACHESIZE(PackageFileCount, PackageFileSz) +
       APT_CACHESIZE(VerFileCount, VerFileSz) +
       APT_CACHESIZE(DescFileCount, DescFileSz) +

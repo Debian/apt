@@ -1,5 +1,6 @@
 #include <config.h>
 
+#include <apt-pkg/error.h>
 #include <apt-pkg/debmetaindex.h>
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/strutl.h>
@@ -10,16 +11,23 @@
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/macros.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/gpgv.h>
+#include <apt-pkg/macros.h>
 
-#include <string.h>
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 #include <set>
 #include <algorithm>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
 
 using namespace std;
 
@@ -36,6 +44,10 @@ string debReleaseIndex::MetaIndexInfo(const char *Type) const
    Info += " ";
    Info += Type;
    return Info;
+}
+std::string debReleaseIndex::Describe() const
+{
+   return MetaIndexInfo("Release");
 }
 
 string debReleaseIndex::MetaIndexFile(const char *Type) const
@@ -338,6 +350,114 @@ void debReleaseIndex::PushSectionEntry(string const &Arch, const debSectionEntry
 debReleaseIndex::debSectionEntry::debSectionEntry (string const &Section,
 		bool const &IsSrc): Section(Section), IsSrc(IsSrc)
 {}
+
+static bool ReleaseFileName(debReleaseIndex const * const That, std::string &ReleaseFile)
+{
+   ReleaseFile = That->MetaIndexFile("InRelease");
+   bool releaseExists = false;
+   if (FileExists(ReleaseFile) == true)
+      releaseExists = true;
+   else
+   {
+      ReleaseFile = That->MetaIndexFile("Release");
+      if (FileExists(ReleaseFile))
+	 releaseExists = true;
+   }
+   return releaseExists;
+}
+
+bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/*{{{*/
+{
+   std::string ReleaseFile;
+   bool const releaseExists = ReleaseFileName(this, ReleaseFile);
+
+   ::URI Tmp(URI);
+   if (Gen.SelectReleaseFile(ReleaseFile, Tmp.Host) == false)
+      return _error->Error("Problem with SelectReleaseFile %s", ReleaseFile.c_str());
+
+   if (releaseExists == false)
+      return true;
+
+   FileFd Rel;
+   // Beware: The 'Release' file might be clearsigned in case the
+   // signature for an 'InRelease' file couldn't be checked
+   if (OpenMaybeClearSignedFile(ReleaseFile, Rel) == false)
+      return false;
+   if (_error->PendingError() == true)
+      return false;
+
+   // Store the IMS information
+   pkgCache::RlsFileIterator File = Gen.GetCurRlsFile();
+   pkgCacheGenerator::Dynamic<pkgCache::RlsFileIterator> DynFile(File);
+   // Rel can't be used as this is potentially a temporary file
+   struct stat Buf;
+   if (stat(ReleaseFile.c_str(), &Buf) != 0)
+      return _error->Errno("fstat", "Unable to stat file %s", ReleaseFile.c_str());
+   File->Size = Buf.st_size;
+   File->mtime = Buf.st_mtime;
+
+   pkgTagFile TagFile(&Rel, Rel.Size());
+   pkgTagSection Section;
+   if (_error->PendingError() == true || TagFile.Step(Section) == false)
+      return false;
+
+   std::string data;
+   #define APT_INRELEASE(TYPE, TAG, STORE) \
+   data = Section.FindS(TAG); \
+   if (data.empty() == false) \
+   { \
+      map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::TYPE, data); \
+      STORE = storage; \
+   }
+   APT_INRELEASE(MIXED, "Suite", File->Archive)
+   APT_INRELEASE(VERSIONNUMBER, "Version", File->Version)
+   APT_INRELEASE(MIXED, "Origin", File->Origin)
+   APT_INRELEASE(MIXED, "Codename", File->Codename)
+   APT_INRELEASE(MIXED, "Label", File->Label)
+   #undef APT_INRELEASE
+   Section.FindFlag("NotAutomatic", File->Flags, pkgCache::Flag::NotAutomatic);
+   Section.FindFlag("ButAutomaticUpgrades", File->Flags, pkgCache::Flag::ButAutomaticUpgrades);
+
+   return !_error->PendingError();
+}
+									/*}}}*/
+// ReleaseIndex::FindInCache - Find this index				/*{{{*/
+pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache) const
+{
+   std::string ReleaseFile;
+   bool const releaseExists = ReleaseFileName(this, ReleaseFile);
+
+   pkgCache::RlsFileIterator File = Cache.RlsFileBegin();
+   for (; File.end() == false; ++File)
+   {
+       if (File->FileName == 0 || ReleaseFile != File.FileName())
+	 continue;
+
+       // empty means the file does not exist by "design"
+       if (releaseExists == false && File->Size == 0)
+	  return File;
+
+      struct stat St;
+      if (stat(File.FileName(),&St) != 0)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "ReleaseIndex::FindInCache - stat failed on " << File.FileName() << std::endl;
+	 return pkgCache::RlsFileIterator(Cache);
+      }
+      if ((unsigned)St.st_size != File->Size || St.st_mtime != File->mtime)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "ReleaseIndex::FindInCache - size (" << St.st_size << " <> " << File->Size
+			<< ") or mtime (" << St.st_mtime << " <> " << File->mtime
+			<< ") doesn't match for " << File.FileName() << std::endl;
+	 return pkgCache::RlsFileIterator(Cache);
+      }
+      return File;
+   }
+
+   return File;
+}
+									/*}}}*/
 
 class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 {

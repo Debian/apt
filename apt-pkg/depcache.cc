@@ -1685,13 +1685,13 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
       
       for (VerFileIterator J = I.FileList(); J.end() == false; ++J)
       {
-	 if ((J.File()->Flags & Flag::NotSource) != 0)
+	 if (J.File().Flagged(Flag::NotSource))
 	    continue;
 
 	 /* Stash the highest version of a not-automatic source, we use it
 	    if there is nothing better */
-	 if ((J.File()->Flags & Flag::NotAutomatic) != 0 ||
-	     (J.File()->Flags & Flag::ButAutomaticUpgrades) != 0)
+	 if (J.File().Flagged(Flag::NotAutomatic) ||
+	     J.File().Flagged(Flag::ButAutomaticUpgrades))
 	 {
 	    if (Last.end() == true)
 	       Last = I;

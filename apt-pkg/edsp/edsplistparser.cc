@@ -86,8 +86,8 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 }
 									/*}}}*/
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::PkgFileIterator & /*FileI*/,
-				    FileFd & /*File*/, std::string /*component*/)
+APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
+				    FileFd & /*File*/, std::string const &/*component*/)
 {
    return true;
 }

@@ -63,9 +63,9 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
       pkgVersionMatch vm("", pkgVersionMatch::None);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if ((F->Archive != 0 && vm.ExpressionMatches(DefRel, F.Archive()) == true) ||
-	     (F->Codename != 0 && vm.ExpressionMatches(DefRel, F.Codename()) == true) ||
-	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true) ||
+	 if (vm.ExpressionMatches(DefRel, F.Archive()) ||
+	     vm.ExpressionMatches(DefRel, F.Codename()) ||
+	     vm.ExpressionMatches(DefRel, F.Version()) ||
 	     (DefRel.length() > 2 && DefRel[1] == '='))
 	    found = true;
       }
@@ -86,11 +86,11 @@ bool pkgPolicy::InitDefaults()
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
       PFPriority[I->ID] = 500;
-      if ((I->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+      if (I.Flagged(pkgCache::Flag::NotSource))
 	 PFPriority[I->ID] = 100;
-      else if ((I->Flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
+      else if (I.Flagged(pkgCache::Flag::ButAutomaticUpgrades))
 	 PFPriority[I->ID] = 100;
-      else if ((I->Flags & pkgCache::Flag::NotAutomatic) == pkgCache::Flag::NotAutomatic)
+      else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
    }
 
@@ -170,8 +170,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 	    then it is not a candidate for installation, ever. This weeds
 	    out bogus entries that may be due to config-file states, or
 	    other. */
-	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource &&
-	     instVer == false)
+	 if (VF.File().Flagged(pkgCache::Flag::NotSource) && instVer == false)
 	    continue;
 
 	 signed Prio = PFPriority[VF.File()->ID];

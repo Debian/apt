@@ -367,6 +367,37 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	}
 };
 									/*}}}*/
+// Release file								/*{{{*/
+class pkgCache::RlsFileIterator : public Iterator<ReleaseFile, RlsFileIterator> {
+	protected:
+	inline ReleaseFile* OwnerPointer() const {
+		return (Owner != 0) ? Owner->RlsFileP : 0;
+	}
+
+	public:
+	// Iteration
+	void operator ++(int) {if (S != Owner->RlsFileP) S = Owner->RlsFileP + S->NextFile;}
+	inline void operator ++() {operator ++(0);}
+
+	// Accessors
+	inline const char *FileName() const {return S->FileName == 0?0:Owner->StrP + S->FileName;}
+	inline const char *Archive() const {return S->Archive == 0?0:Owner->StrP + S->Archive;}
+	inline const char *Version() const {return S->Version == 0?0:Owner->StrP + S->Version;}
+	inline const char *Origin() const {return S->Origin == 0?0:Owner->StrP + S->Origin;}
+	inline const char *Codename() const {return S->Codename ==0?0:Owner->StrP + S->Codename;}
+	inline const char *Label() const {return S->Label == 0?0:Owner->StrP + S->Label;}
+	inline const char *Site() const {return S->Site == 0?0:Owner->StrP + S->Site;}
+	inline bool Flagged(pkgCache::Flag::ReleaseFileFlags const flag) const {return (S->Flags & flag) == flag; }
+
+	bool IsOk();
+	std::string RelStr();
+
+	// Constructors
+	inline RlsFileIterator() : Iterator<ReleaseFile, RlsFileIterator>() {}
+	inline RlsFileIterator(pkgCache &Owner) : Iterator<ReleaseFile, RlsFileIterator>(Owner, Owner.RlsFileP) {}
+	inline RlsFileIterator(pkgCache &Owner,ReleaseFile *Trg) : Iterator<ReleaseFile, RlsFileIterator>(Owner, Trg) {}
+};
+									/*}}}*/
 // Package file								/*{{{*/
 class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> {
 	protected:
@@ -381,13 +412,16 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 
 	// Accessors
 	inline const char *FileName() const {return S->FileName == 0?0:Owner->StrP + S->FileName;}
-	inline const char *Archive() const {return S->Archive == 0?0:Owner->StrP + S->Archive;}
+	inline pkgCache::RlsFileIterator ReleaseFile() const {return RlsFileIterator(*Owner, Owner->RlsFileP + S->Release);}
+	inline const char *Archive() const {return S->Release == 0 ? Component() : ReleaseFile().Archive();}
+	inline const char *Version() const {return S->Release == 0 ? NULL : ReleaseFile().Version();}
+	inline const char *Origin() const {return S->Release == 0 ? NULL : ReleaseFile().Origin();}
+	inline const char *Codename() const {return S->Release == 0 ? NULL : ReleaseFile().Codename();}
+	inline const char *Label() const {return S->Release == 0 ? NULL : ReleaseFile().Label();}
+	inline const char *Site() const {return S->Release == 0 ? NULL : ReleaseFile().Site();}
+	inline bool Flagged(pkgCache::Flag::ReleaseFileFlags const flag) const {return S->Release== 0 ? false : ReleaseFile().Flagged(flag);}
+	inline bool Flagged(pkgCache::Flag::PkgFFlags const flag) const {return (S->Flags & flag) == flag;}
 	inline const char *Component() const {return S->Component == 0?0:Owner->StrP + S->Component;}
-	inline const char *Version() const {return S->Version == 0?0:Owner->StrP + S->Version;}
-	inline const char *Origin() const {return S->Origin == 0?0:Owner->StrP + S->Origin;}
-	inline const char *Codename() const {return S->Codename ==0?0:Owner->StrP + S->Codename;}
-	inline const char *Label() const {return S->Label == 0?0:Owner->StrP + S->Label;}
-	inline const char *Site() const {return S->Site == 0?0:Owner->StrP + S->Site;}
 	inline const char *Architecture() const {return S->Architecture == 0?0:Owner->StrP + S->Architecture;}
 	inline const char *IndexType() const {return S->IndexType == 0?0:Owner->StrP + S->IndexType;}
 

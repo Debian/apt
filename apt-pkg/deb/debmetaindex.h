@@ -20,6 +20,8 @@ class pkgAcquire;
 class pkgIndexFile;
 class debDebPkgFileIndex;
 class IndexTarget;
+class pkgCacheGenerator;
+class OpProgress;
 
 class APT_HIDDEN debReleaseIndex : public metaIndex {
    public:
@@ -47,6 +49,10 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
    virtual std::vector<IndexTarget> GetIndexTargets() const;
+
+   virtual std::string Describe() const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;

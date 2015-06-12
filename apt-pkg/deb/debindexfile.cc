@@ -128,7 +128,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    if (Dist.empty())
       Dist = "/";
    ::URI Tmp(URI);
-   if (Gen.SelectFile(PackageFile,Tmp.Host,*this) == false)
+   if (Gen.SelectFile(PackageFile, *this, Target.Option(IndexTarget::COMPONENT)) == false)
       return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
 
    // Store the IMS information
@@ -136,31 +136,10 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
    File->Size = Pkg.FileSize();
    File->mtime = Pkg.ModificationTime();
-   
+
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",PackageFile.c_str());
 
-   // Check the release file
-   string ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("InRelease");
-   bool releaseExists = false;
-   if (FileExists(ReleaseFile) == true)
-      releaseExists = true;
-   else
-      ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("Release");
-
-   if (releaseExists == true || FileExists(ReleaseFile) == true)
-   {
-      FileFd Rel;
-      // Beware: The 'Release' file might be clearsigned in case the
-      // signature for an 'InRelease' file couldn't be checked
-      if (OpenMaybeClearSignedFile(ReleaseFile, Rel) == false)
-	 return false;
-
-      if (_error->PendingError() == true)
-	 return false;
-      Parser.LoadReleaseInfo(File, Rel, Target.Option(IndexTarget::COMPONENT));
-   }
-   
    return true;
 }
 									/*}}}*/
@@ -221,17 +200,17 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
      debTranslationsParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
-     
+
      if (Prog != NULL)
 	Prog->SubProgress(0, Target.Description);
-     if (Gen.SelectFile(TranslationFile,string(),*this) == false)
+     if (Gen.SelectFile(TranslationFile, *this, Target.Option(IndexTarget::COMPONENT), pkgCache::Flag::NotSource) == false)
        return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
 
      // Store the IMS information
      pkgCache::PkgFileIterator TransFile = Gen.GetCurFile();
      TransFile->Size = Trans.FileSize();
      TransFile->mtime = Trans.ModificationTime();
-   
+
      if (Gen.MergeList(TransParser) == false)
        return _error->Error("Problem with MergeList %s",TranslationFile.c_str());
    }
@@ -305,18 +284,17 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (Prog != NULL)
       Prog->SubProgress(0,File);
-   if (Gen.SelectFile(File,string(),*this,pkgCache::Flag::NotSource) == false)
+   if (Gen.SelectFile(File, *this, "now", pkgCache::Flag::NotSource) == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 
    // Store the IMS information
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(CFile);
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "now");
-   CFile->Archive = storage;
-   
+
    if (Gen.MergeList(Parser) == false)
-      return _error->Error("Problem with MergeList %s",File.c_str());   
+      return _error->Error("Problem with MergeList %s",File.c_str());
    return true;
 }
 									/*}}}*/
@@ -431,7 +409,7 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // and give it to the list parser
    debDebFileParser Parser(DebControl, DebFile);
-   if(Gen.SelectFile(DebFile, "local", *this, pkgCache::Flag::LocalSource) == false)
+   if(Gen.SelectFile(DebFile, *this, "now", pkgCache::Flag::LocalSource) == false)
       return _error->Error("Problem with SelectFile %s", DebFile.c_str());
 
    pkgCache::PkgFileIterator File = Gen.GetCurFile();

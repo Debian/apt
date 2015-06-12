@@ -80,9 +80,9 @@ class APT_HIDDEN debListParser : public pkgCacheGenerator::ListParser
    virtual map_filesize_t Size() {return Section.size();};
 
    virtual bool Step();
-   
-   bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
-			std::string section);
+
+   bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
+			std::string const &section);
 
    APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op);

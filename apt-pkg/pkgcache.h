@@ -133,6 +133,7 @@ class pkgCache								/*{{{*/
    struct Header;
    struct Group;
    struct Package;
+   struct ReleaseFile;
    struct PackageFile;
    struct Version;
    struct Description;
@@ -150,6 +151,7 @@ class pkgCache								/*{{{*/
    class DescIterator;
    class DepIterator;
    class PrvIterator;
+   class RlsFileIterator;
    class PkgFileIterator;
    class VerFileIterator;
    class DescFileIterator;
@@ -192,9 +194,11 @@ class pkgCache								/*{{{*/
       enum PkgFlags {Auto=(1<<0),Essential=(1<<3),Important=(1<<4)};
       enum PkgFFlags {
 	 NotSource=(1<<0), /*!< packages can't be fetched from here, e.g. dpkg/status file */
-	 NotAutomatic=(1<<1), /*!< archive has a default pin of 1 */
-	 ButAutomaticUpgrades=(1<<2), /*!< (together with the previous) archive has a default pin of 100 */
-	 LocalSource=(1<<3), /*!< local sources can't and will not be verified by hashes */
+	 LocalSource=(1<<1), /*!< local sources can't and will not be verified by hashes */
+      };
+      enum ReleaseFileFlags {
+	 NotAutomatic=(1<<0), /*!< archive has a default pin of 1 */
+	 ButAutomaticUpgrades=(1<<1), /*!< (together with the previous) archive has a default pin of 100 */
       };
    };
    
@@ -215,6 +219,7 @@ class pkgCache								/*{{{*/
    Package *PkgP;
    VerFile *VerFileP;
    DescFile *DescFileP;
+   ReleaseFile *RlsFileP;
    PackageFile *PkgFileP;
    Version *VerP;
    Description *DescP;
@@ -247,6 +252,8 @@ class pkgCache								/*{{{*/
    inline PkgIterator PkgEnd();
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
+   inline RlsFileIterator RlsFileBegin();
+   inline RlsFileIterator RlsFileEnd();
 
    inline bool MultiArchCache() const { return MultiArchEnabled; }
    inline char const * NativeArch();
@@ -296,6 +303,7 @@ struct pkgCache::Header
    unsigned short HeaderSz;
    unsigned short GroupSz;
    unsigned short PackageSz;
+   unsigned short ReleaseFileSz;
    unsigned short PackageFileSz;
    unsigned short VersionSz;
    unsigned short DescriptionSz;
@@ -314,6 +322,7 @@ struct pkgCache::Header
    map_id_t VersionCount;
    map_id_t DescriptionCount;
    map_id_t DependsCount;
+   map_fileid_t ReleaseFileCount;
    map_fileid_t PackageFileCount;
    map_fileid_t VerFileCount;
    map_fileid_t DescFileCount;
@@ -324,6 +333,9 @@ struct pkgCache::Header
        The PackageFile structures are singly linked lists that represent
        all package files that have been merged into the cache. */
    map_pointer_t FileList;
+   /** \brief index of the first ReleaseFile structure */
+   map_pointer_t RlsFileList;
+
 #if APT_PKG_ABI < 413
    APT_DEPRECATED map_pointer_t StringList;
 #endif
@@ -482,6 +494,46 @@ struct pkgCache::Package
    unsigned long Flags;
 };
 									/*}}}*/
+// Release File structure						/*{{{*/
+/** \brief stores information about the release files used to generate the cache
+
+    PackageFiles reference ReleaseFiles as we need to keep record of which
+    version belongs to which release e.g. for pinning. */
+struct pkgCache::ReleaseFile
+{
+   /** \brief physical disk file that this ReleaseFile represents */
+   map_stringitem_t FileName;
+   /** \brief the release information
+
+       Please see the files document for a description of what the
+       release information means. */
+   map_stringitem_t Archive;
+   map_stringitem_t Codename;
+   map_stringitem_t Version;
+   map_stringitem_t Origin;
+   map_stringitem_t Label;
+   /** \brief The site the index file was fetched from */
+   map_stringitem_t Site;
+
+   /** \brief Size of the file
+
+       Used together with the modification time as a
+       simple check to ensure that the Packages
+       file has not been altered since Cache generation. */
+   map_filesize_t Size;
+   /** \brief Modification time for the file */
+   time_t mtime;
+
+   /** @TODO document PackageFile::Flags */
+   unsigned long Flags;
+
+   // Linked list
+   /** \brief Link to the next ReleaseFile in the Cache */
+   map_pointer_t NextFile;
+   /** \brief unique sequel ID */
+   should_be_map_fileid_t ID;
+};
+									/*}}}*/
 // Package File structure						/*{{{*/
 /** \brief stores information about the files used to generate the cache
 
@@ -492,19 +544,12 @@ struct pkgCache::PackageFile
 {
    /** \brief physical disk file that this PackageFile represents */
    map_stringitem_t FileName;
-   /** \brief the release information
+   /** \brief the release information */
+   map_pointer_t Release;
 
-       Please see the files document for a description of what the
-       release information means. */
-   map_stringitem_t Archive;
-   map_stringitem_t Codename;
    map_stringitem_t Component;
-   map_stringitem_t Version;
-   map_stringitem_t Origin;
-   map_stringitem_t Label;
    map_stringitem_t Architecture;
-   /** \brief The site the index file was fetched from */
-   map_stringitem_t Site;
+
    /** \brief indicates what sort of index file this is
 
        @TODO enumerate at least the possible indexes */
@@ -744,6 +789,11 @@ inline pkgCache::PkgFileIterator pkgCache::FileBegin()
        {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);}
 inline pkgCache::PkgFileIterator pkgCache::FileEnd()
        {return PkgFileIterator(*this,PkgFileP);}
+inline pkgCache::RlsFileIterator pkgCache::RlsFileBegin()
+       {return RlsFileIterator(*this,RlsFileP + HeaderP->RlsFileList);}
+inline pkgCache::RlsFileIterator pkgCache::RlsFileEnd()
+       {return RlsFileIterator(*this,RlsFileP);}
+
 
 // Oh I wish for Real Name Space Support
 class pkgCache::Namespace						/*{{{*/
@@ -755,6 +805,7 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::DescIterator DescIterator;
    typedef pkgCache::DepIterator DepIterator;
    typedef pkgCache::PrvIterator PrvIterator;
+   typedef pkgCache::RlsFileIterator RlsFileIterator;
    typedef pkgCache::PkgFileIterator PkgFileIterator;
    typedef pkgCache::VerFileIterator VerFileIterator;
    typedef pkgCache::Version Version;

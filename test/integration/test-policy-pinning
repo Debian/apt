@@ -22,7 +22,7 @@ testequalpolicy() {
      release a=now
  $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}  Packages
      release c=
-Pinned packages:" aptcache policy $*
+Pinned packages:" aptcache policy "$@"
 }
 
 testglobalpolicy() {

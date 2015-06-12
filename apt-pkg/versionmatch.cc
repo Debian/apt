@@ -137,7 +137,10 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 // ---------------------------------------------------------------------
 /* */
 bool pkgVersionMatch::MatchVer(const char *A,string B,bool Prefix)
-{   
+{
+   if (A == NULL)
+      return false;
+
    const char *Ab = A;
    const char *Ae = Ab + strlen(A);
    
@@ -178,13 +181,16 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
    // This will be Ended by now.
    return Ver;
 }
+									/*}}}*/
 
 #ifndef FNM_CASEFOLD
 #define FNM_CASEFOLD 0
 #endif
 
-bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
+bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)/*{{{*/
 {
+   if (pattern == NULL || string == NULL)
+      return false;
    if (pattern[0] == '/') {
       size_t length = strlen(pattern);
       if (pattern[length - 1] == '/') {
@@ -230,38 +236,30 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
 	 return false;
 
       if (RelVerStr.empty() == false)
-	 if (File->Version == 0 ||
-	     (MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false &&
-	      ExpressionMatches(RelVerStr, File.Version()) == false))
+	 if (MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false &&
+	       ExpressionMatches(RelVerStr, File.Version()) == false)
 	    return false;
       if (RelOrigin.empty() == false)
-	 if (File->Origin == 0 || !ExpressionMatches(RelOrigin,File.Origin()))
+	 if (!ExpressionMatches(RelOrigin,File.Origin()))
 	    return false;
       if (RelArchive.empty() == false)
-	 if (File->Archive == 0 ||
-	     !ExpressionMatches(RelArchive,File.Archive()))
+	 if (!ExpressionMatches(RelArchive,File.Archive()))
             return false;
       if (RelCodename.empty() == false)
-	 if (File->Codename == 0 ||
-	     !ExpressionMatches(RelCodename,File.Codename()))
+	 if (!ExpressionMatches(RelCodename,File.Codename()))
             return false;
       if (RelRelease.empty() == false)
-	 if ((File->Archive == 0 ||
-	     !ExpressionMatches(RelRelease,File.Archive())) &&
-             (File->Codename == 0 ||
-	      !ExpressionMatches(RelRelease,File.Codename())))
+	 if (!ExpressionMatches(RelRelease,File.Archive()) &&
+             !ExpressionMatches(RelRelease,File.Codename()))
 	       return false;
       if (RelLabel.empty() == false)
-	 if (File->Label == 0 ||
-	     !ExpressionMatches(RelLabel,File.Label()))
+	 if (!ExpressionMatches(RelLabel,File.Label()))
 	    return false;
       if (RelComponent.empty() == false)
-	 if (File->Component == 0 ||
-	     !ExpressionMatches(RelComponent,File.Component()))
+	 if (!ExpressionMatches(RelComponent,File.Component()))
 	    return false;
       if (RelArchitecture.empty() == false)
-	 if (File->Architecture == 0 ||
-	     !ExpressionMatches(RelArchitecture,File.Architecture()))
+	 if (!ExpressionMatches(RelArchitecture,File.Architecture()))
 	    return false;
       return true;
    }
@@ -269,11 +267,14 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    if (Type == Origin)
    {
       if (OrSite.empty() == false) {
-	 if (File->Site == 0)
+	 if (File.Site() == NULL)
 	    return false;
       } else // so we are talking about file:// or status file
-	 if (strcmp(File.Site(),"") == 0 && File->Archive != 0 && strcmp(File.Archive(),"now") == 0) // skip the status file
+      {
+	 pkgCache::RlsFileIterator const RlsFile = File.ReleaseFile();
+	 if (strcmp(File.Site(),"") == 0 && RlsFile->Archive != 0 && strcmp(RlsFile.Archive(),"now") == 0) // skip the status file
 	    return false;
+      }
       return (ExpressionMatches(OrSite, File.Site())); /* both strings match */
    }
 

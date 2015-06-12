@@ -54,10 +54,8 @@ using std::string;
 /* We set the dirty flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
-		    FoundFileDeps(0)
+		     CurrentRlsFile(NULL), CurrentFile(NULL), FoundFileDeps(0)
 {
-   CurrentFile = 0;
-
    if (_error->PendingError() == true)
       return;
 
@@ -145,6 +143,7 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
    Cache.ReMap(false);
 
    CurrentFile += (pkgCache::PackageFile const * const) newMap - (pkgCache::PackageFile const * const) oldMap;
+   CurrentRlsFile += (pkgCache::ReleaseFile const * const) newMap - (pkgCache::ReleaseFile const * const) oldMap;
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
@@ -166,6 +165,9 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
       (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PkgFileIterator>::toReMap.end(); ++i)
+      (*i)->ReMap(oldMap, newMap);
+   for (std::vector<pkgCache::RlsFileIterator*>::const_iterator i = Dynamic<pkgCache::RlsFileIterator>::toReMap.begin();
+	i != Dynamic<pkgCache::RlsFileIterator>::toReMap.end(); ++i)
       (*i)->ReMap(oldMap, newMap);
 }									/*}}}*/
 // CacheGenerator::WriteStringInMap					/*{{{*/
@@ -1072,13 +1074,47 @@ bool pkgCacheGenerator::ListParser::SameVersion(unsigned short const Hash,/*{{{*
    return Hash == Ver->Hash;
 }
 									/*}}}*/
+// CacheGenerator::SelectReleaseFile - Select the current release file the indexes belong to	/*{{{*/
+bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
+				   unsigned long Flags)
+{
+   if (File.empty() && Site.empty())
+   {
+      CurrentRlsFile = NULL;
+      return true;
+   }
+
+   // Get some space for the structure
+   map_pointer_t const idxFile = AllocateInMap(sizeof(*CurrentRlsFile));
+   if (unlikely(idxFile == 0))
+      return false;
+   CurrentRlsFile = Cache.RlsFileP + idxFile;
+
+   // Fill it in
+   map_stringitem_t const idxFileName = WriteStringInMap(File);
+   map_stringitem_t const idxSite = StoreString(MIXED, Site);
+   if (unlikely(idxFileName == 0 || idxSite == 0))
+      return false;
+   CurrentRlsFile->FileName = idxFileName;
+   CurrentRlsFile->Site = idxSite;
+   CurrentRlsFile->NextFile = Cache.HeaderP->RlsFileList;
+   CurrentRlsFile->Flags = Flags;
+   CurrentRlsFile->ID = Cache.HeaderP->ReleaseFileCount;
+   RlsFileName = File;
+   Cache.HeaderP->RlsFileList = CurrentRlsFile - Cache.RlsFileP;
+   Cache.HeaderP->ReleaseFileCount++;
+
+   return true;
+}
+									/*}}}*/
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used to select which file is to be associated with all newly
    added versions. The caller is responsible for setting the IMS fields. */
-bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
-				   const pkgIndexFile &Index,
-				   unsigned long Flags)
+bool pkgCacheGenerator::SelectFile(std::string const &File,
+				   pkgIndexFile const &Index,
+				   std::string const &Component,
+				   unsigned long const Flags)
 {
    // Get some space for the structure
    map_pointer_t const idxFile = AllocateInMap(sizeof(*CurrentFile));
@@ -1088,18 +1124,24 @@ bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
 
    // Fill it in
    map_stringitem_t const idxFileName = WriteStringInMap(File);
-   map_stringitem_t const idxSite = StoreString(MIXED, Site);
-   if (unlikely(idxFileName == 0 || idxSite == 0))
+   if (unlikely(idxFileName == 0))
       return false;
    CurrentFile->FileName = idxFileName;
-   CurrentFile->Site = idxSite;
    CurrentFile->NextFile = Cache.HeaderP->FileList;
-   CurrentFile->Flags = Flags;
    CurrentFile->ID = Cache.HeaderP->PackageFileCount;
    map_stringitem_t const idxIndexType = StoreString(MIXED, Index.GetType()->Label);
    if (unlikely(idxIndexType == 0))
       return false;
    CurrentFile->IndexType = idxIndexType;
+   map_stringitem_t const component = StoreString(pkgCacheGenerator::MIXED, Component);
+   if (unlikely(component == 0))
+      return false;
+   CurrentFile->Component = component;
+   CurrentFile->Flags = Flags;
+   if (CurrentRlsFile != NULL)
+      CurrentFile->Release = CurrentRlsFile - Cache.RlsFileP;
+   else
+      CurrentFile->Release = 0;
    PkgFileName = File;
    Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
    Cache.HeaderP->PackageFileCount++;
@@ -1174,35 +1216,59 @@ static bool CheckValidity(const string &CacheFile,
       _error->Discard();
       return false;
    }
-   
+
+   SPtrArray<bool> RlsVisited = new bool[Cache.HeaderP->ReleaseFileCount];
+   memset(RlsVisited,0,sizeof(*RlsVisited)*Cache.HeaderP->ReleaseFileCount);
+   std::vector<pkgIndexFile *> Files;
+   for (pkgSourceList::const_iterator i = List.begin(); i != List.end(); ++i)
+   {
+      if (Debug == true)
+	 std::clog << "Checking RlsFile " << (*i)->Describe() << ": ";
+      pkgCache::RlsFileIterator const RlsFile = (*i)->FindInCache(Cache);
+      if (RlsFile.end() == true)
+      {
+	 if (Debug == true)
+	    std::clog << "FindInCache returned end-Pointer" << std::endl;
+	 return false;
+      }
+
+      RlsVisited[RlsFile->ID] = true;
+      if (Debug == true)
+	 std::clog << "with ID " << RlsFile->ID << " is valid" << std::endl;
+
+      std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
+      for (std::vector<pkgIndexFile *>::const_iterator j = Indexes->begin(); j != Indexes->end(); ++j)
+	 if ((*j)->HasPackages())
+	    Files.push_back (*j);
+   }
+   for (unsigned I = 0; I != Cache.HeaderP->ReleaseFileCount; ++I)
+      if (RlsVisited[I] == false)
+      {
+	 if (Debug == true)
+	    std::clog << "RlsFile with ID" << I << " wasn't visited" << std::endl;
+	 return false;
+      }
+
+   for (; Start != End; ++Start)
+      Files.push_back(*Start);
+
    /* Now we check every index file, see if it is in the cache,
       verify the IMS data and check that it is on the disk too.. */
    SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
    memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
-   for (; Start != End; ++Start)
+   for (std::vector<pkgIndexFile *>::const_reverse_iterator PkgFile = Files.rbegin(); PkgFile != Files.rend(); ++PkgFile)
    {
       if (Debug == true)
-	 std::clog << "Checking PkgFile " << (*Start)->Describe() << ": ";
-      if ((*Start)->HasPackages() == false)
+	 std::clog << "Checking PkgFile " << (*PkgFile)->Describe() << ": ";
+      if ((*PkgFile)->Exists() == false)
       {
-         if (Debug == true)
-	    std::clog << "Has NO packages" << std::endl;
-	 continue;
-      }
-    
-      if ((*Start)->Exists() == false)
-      {
-#if 0 // mvo: we no longer give a message here (Default Sources spec)
-	 _error->WarningE("stat",_("Couldn't stat source package list %s"),
-			  (*Start)->Describe().c_str());
-#endif
          if (Debug == true)
 	    std::clog << "file doesn't exist" << std::endl;
 	 continue;
       }
 
       // FindInCache is also expected to do an IMS check.
-      pkgCache::PkgFileIterator File = (*Start)->FindInCache(Cache);
+      pkgCache::PkgFileIterator File = (*PkgFile)->FindInCache(Cache);
       if (File.end() == true)
       {
 	 if (Debug == true)
@@ -1214,15 +1280,15 @@ static bool CheckValidity(const string &CacheFile,
       if (Debug == true)
 	 std::clog << "with ID " << File->ID << " is valid" << std::endl;
    }
-   
+
    for (unsigned I = 0; I != Cache.HeaderP->PackageFileCount; I++)
       if (Visited[I] == false)
       {
 	 if (Debug == true)
-	    std::clog << "File with ID" << I << " wasn't visited" << std::endl;
+	    std::clog << "PkgFile with ID" << I << " wasn't visited" << std::endl;
 	 return false;
       }
-   
+
    if (_error->PendingError() == true)
    {
       if (Debug == true)
@@ -1243,9 +1309,20 @@ static bool CheckValidity(const string &CacheFile,
 // ---------------------------------------------------------------------
 /* Size is kind of an abstract notion that is only used for the progress
    meter */
-static map_filesize_t ComputeSize(FileIterator Start,FileIterator End)
+static map_filesize_t ComputeSize(pkgSourceList const * const List, FileIterator Start,FileIterator End)
 {
    map_filesize_t TotalSize = 0;
+   if (List !=  NULL)
+   {
+      for (pkgSourceList::const_iterator i = List->begin(); i != List->end(); ++i)
+      {
+	 std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
+	 for (std::vector<pkgIndexFile *>::const_iterator j = Indexes->begin(); j != Indexes->end(); ++j)
+	    if ((*j)->HasPackages() == true)
+	       TotalSize += (*j)->Size();
+      }
+   }
+
    for (; Start < End; ++Start)
    {
       if ((*Start)->HasPackages() == false)
@@ -1261,11 +1338,63 @@ static map_filesize_t ComputeSize(FileIterator Start,FileIterator End)
 static bool BuildCache(pkgCacheGenerator &Gen,
 		       OpProgress *Progress,
 		       map_filesize_t &CurrentSize,map_filesize_t TotalSize,
+		       pkgSourceList const * const List,
 		       FileIterator Start, FileIterator End)
 {
+   std::vector<pkgIndexFile *> Files;
+   bool const HasFileDeps = Gen.HasFileDeps();
+
+   if (List !=  NULL)
+   {
+      for (pkgSourceList::const_iterator i = List->begin(); i != List->end(); ++i)
+      {
+	 if ((*i)->FindInCache(Gen.GetCache()).end() == false)
+	 {
+	    _error->Warning("Duplicate sources.list entry %s",
+		  (*i)->Describe().c_str());
+	    continue;
+	 }
+
+	 if ((*i)->Merge(Gen, Progress) == false)
+	    return false;
+
+	 std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
+	 for (std::vector<pkgIndexFile *>::const_iterator I = Indexes->begin(); I != Indexes->end(); ++I)
+	 {
+	    if (HasFileDeps)
+	       Files.push_back(*I);
+
+	    if ((*I)->HasPackages() == false)
+	       continue;
+
+	    if ((*I)->Exists() == false)
+	       continue;
+
+	    if ((*I)->FindInCache(Gen.GetCache()).end() == false)
+	    {
+	       _error->Warning("Duplicate sources.list entry %s",
+		     (*I)->Describe().c_str());
+	       continue;
+	    }
+
+	    map_filesize_t Size = (*I)->Size();
+	    if (Progress != NULL)
+	       Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
+	    CurrentSize += Size;
+
+	    if ((*I)->Merge(Gen,Progress) == false)
+	       return false;
+	 }
+      }
+   }
+
+   Gen.SelectReleaseFile("", "");
    FileIterator I;
    for (I = Start; I != End; ++I)
    {
+      if (HasFileDeps)
+	 Files.push_back(*I);
+
       if ((*I)->HasPackages() == false)
 	 continue;
       
@@ -1288,13 +1417,13 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 	 return false;
    }   
 
-   if (Gen.HasFileDeps() == true)
+   if (HasFileDeps == true)
    {
       if (Progress != NULL)
 	 Progress->Done();
-      TotalSize = ComputeSize(Start, End);
+      TotalSize = ComputeSize(List, Start, End);
       CurrentSize = 0;
-      for (I = Start; I != End; ++I)
+      for (std::vector<pkgIndexFile *>::const_iterator I = Files.begin(); I != Files.end(); ++I)
       {
 	 map_filesize_t Size = (*I)->Size();
 	 if (Progress != NULL)
@@ -1339,6 +1468,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
 
    std::vector<pkgIndexFile *> Files;
+   /*
    for (std::vector<metaIndex *>::const_iterator i = List.begin();
         i != List.end();
         ++i)
@@ -1349,8 +1479,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	   ++j)
          Files.push_back (*j);
    }
-   
-   map_filesize_t const EndOfSource = Files.size();
+*/
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
@@ -1442,8 +1571,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    // Lets try the source cache.
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
-   if (CheckValidity(SrcCacheFile, List, Files.begin(),
-		     Files.begin()+EndOfSource) == true)
+   if (CheckValidity(SrcCacheFile, List, Files.end(),
+		     Files.end()) == true)
    {
       if (Debug == true)
 	 std::clog << "srcpkgcache.bin is valid - populate MMap with it." << std::endl;
@@ -1455,28 +1584,28 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 				SCacheF.Size()) == false)
 	 return false;
 
-      TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
+      TotalSize = ComputeSize(NULL, Files.begin(), Files.end());
 
       // Build the status cache
       pkgCacheGenerator Gen(Map.Get(),Progress);
       if (_error->PendingError() == true)
 	 return false;
-      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
-		     Files.begin()+EndOfSource,Files.end()) == false)
+      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, NULL,
+		     Files.begin(),Files.end()) == false)
 	 return false;
    }
    else
    {
       if (Debug == true)
 	 std::clog << "srcpkgcache.bin is NOT valid - rebuild" << std::endl;
-      TotalSize = ComputeSize(Files.begin(),Files.end());
+      TotalSize = ComputeSize(&List, Files.begin(),Files.end());
       
       // Build the source cache
       pkgCacheGenerator Gen(Map.Get(),Progress);
       if (_error->PendingError() == true)
 	 return false;
-      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
-		     Files.begin(),Files.begin()+EndOfSource) == false)
+      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, &List,
+		     Files.end(),Files.end()) == false)
 	 return false;
       
       // Write it back
@@ -1503,8 +1632,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       }
       
       // Build the status cache
-      if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
-		     Files.begin()+EndOfSource,Files.end()) == false)
+      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, NULL,
+		     Files.begin(), Files.end()) == false)
 	 return false;
    }
    if (Debug == true)
@@ -1536,7 +1665,6 @@ APT_DEPRECATED bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **Ou
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
    std::vector<pkgIndexFile *> Files;
-   map_filesize_t EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
@@ -1544,7 +1672,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
    
-   TotalSize = ComputeSize(Files.begin()+EndOfSource,Files.end());
+   TotalSize = ComputeSize(NULL, Files.begin(), Files.end());
    
    // Build the status cache
    if (Progress != NULL)
@@ -1552,8 +1680,8 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    pkgCacheGenerator Gen(Map.Get(),Progress);
    if (_error->PendingError() == true)
       return false;
-   if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
-		  Files.begin()+EndOfSource,Files.end()) == false)
+   if (BuildCache(Gen,Progress,CurrentSize,TotalSize, NULL,
+		  Files.begin(), Files.end()) == false)
       return false;
 
    if (_error->PendingError() == true)

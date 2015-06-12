@@ -2568,7 +2568,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sour
    // Skip not source sources, they do not have file fields.
    for (; Vf.end() == false; ++Vf)
    {
-      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+      if (Vf.File().Flagged(pkgCache::Flag::NotSource))
 	 continue;
       break;
    }
@@ -2636,14 +2636,14 @@ bool pkgAcqArchive::QueueNext()
    {
       pkgCache::PkgFileIterator const PkgF = Vf.File();
       // Ignore not source sources
-      if ((PkgF->Flags & pkgCache::Flag::NotSource) != 0)
+      if (PkgF.Flagged(pkgCache::Flag::NotSource))
 	 continue;
 
       // Try to cross match against the source list
       pkgIndexFile *Index;
       if (Sources->FindIndex(PkgF, Index) == false)
 	    continue;
-      LocalSource = (PkgF->Flags & pkgCache::Flag::LocalSource) == pkgCache::Flag::LocalSource;
+      LocalSource = PkgF.Flagged(pkgCache::Flag::LocalSource);
 
       // only try to get a trusted package from another source if that source
       // is also trusted

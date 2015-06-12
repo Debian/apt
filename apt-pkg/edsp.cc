@@ -129,7 +129,7 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
       signed short const p = Cache.GetPolicy().GetPriority(File);
       if (Pin < p)
 	 Pin = p;
-      if ((File->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource) {
+      if (File.Flagged(pkgCache::Flag::NotSource) == false) {
 	 string Release = File.RelStr();
 	 if (!Release.empty())
 	    Releases.insert(Release);

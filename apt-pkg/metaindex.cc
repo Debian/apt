@@ -1,4 +1,5 @@
 // Include Files                                                       /*{{{*/
+#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 
@@ -21,6 +22,22 @@ std::string metaIndex::LocalFileName() const
    return "";
 }
 #endif
+
+std::string metaIndex::Describe() const
+{
+   return "Release";
+}
+
+pkgCache::RlsFileIterator metaIndex::FindInCache(pkgCache &Cache) const
+{
+   return pkgCache::RlsFileIterator(Cache);
+}
+
+bool metaIndex::Merge(pkgCacheGenerator &Gen,OpProgress *) const
+{
+   return Gen.SelectReleaseFile("", "");
+}
+
 
 metaIndex::metaIndex(std::string const &URI, std::string const &Dist,
       char const * const Type)

@@ -45,7 +45,6 @@ class APT_HIDDEN debStatusIndex : public pkgIndexFile
    virtual bool HasPackages() const {return true;};
    virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
-   bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog, unsigned long const Flag) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debStatusIndex(std::string File);

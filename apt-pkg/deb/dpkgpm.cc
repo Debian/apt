@@ -205,8 +205,10 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       for (pkgCache::VerFileIterator Vf = Ver.FileList(); Vf.end() == false; ++Vf)
 	 for (pkgCache::PkgFileIterator F = Vf.File(); F.end() == false; ++F)
-	    if (F->Archive != 0 && strcmp(F.Archive(), "now") == 0)
+	 {
+	    if (F.Archive() != 0 && strcmp(F.Archive(), "now") == 0)
 	       return Ver;
+	 }
    return Ver;
 }
 									/*}}}*/

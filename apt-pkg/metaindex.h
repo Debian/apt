@@ -23,6 +23,8 @@ using std::string;
 
 class pkgAcquire;
 class IndexTarget;
+class pkgCacheGenerator;
+class OpProgress;
 
 class metaIndex
 {
@@ -50,6 +52,10 @@ class metaIndex
    virtual std::vector<IndexTarget> GetIndexTargets() const = 0;
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0;
    virtual bool IsTrusted() const = 0;
+
+   virtual std::string Describe() const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    metaIndex(std::string const &URI, std::string const &Dist,
              char const * const Type);
