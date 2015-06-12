@@ -1638,6 +1638,8 @@ static bool Policy(CommandLine &CmdL)
       cout << _("Package files:") << endl;   
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
       {
+	 if (F.Flagged(pkgCache::Flag::NoPackages))
+	    continue;
 	 // Locate the associated index files so we can derive a description
 	 pkgIndexFile *Indx;
 	 if (SrcList->FindIndex(F,Indx) == false &&

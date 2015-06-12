@@ -203,7 +203,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
      if (Prog != NULL)
 	Prog->SubProgress(0, Target.Description);
-     if (Gen.SelectFile(TranslationFile, *this, "", Target.Option(IndexTarget::COMPONENT), pkgCache::Flag::NotSource) == false)
+     if (Gen.SelectFile(TranslationFile, *this, "", Target.Option(IndexTarget::COMPONENT), pkgCache::Flag::NotSource | pkgCache::Flag::NoPackages) == false)
        return _error->Error("Problem with SelectFile %s",TranslationFile.c_str());
 
      // Store the IMS information

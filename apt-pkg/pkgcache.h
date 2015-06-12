@@ -195,6 +195,7 @@ class pkgCache								/*{{{*/
       enum PkgFFlags {
 	 NotSource=(1<<0), /*!< packages can't be fetched from here, e.g. dpkg/status file */
 	 LocalSource=(1<<1), /*!< local sources can't and will not be verified by hashes */
+	 NoPackages=(1<<2), /*!< the file includes no package records itself, but additions like Translations */
       };
       enum ReleaseFileFlags {
 	 NotAutomatic=(1<<0), /*!< archive has a default pin of 1 */
