@@ -1410,196 +1410,70 @@ static bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// GetChangelogPath - return a path pointing to a changelog file or dir /*{{{*/
-// ---------------------------------------------------------------------
-/* This returns a "path" string for the changelog url construction.
- * Please note that its not complete, it either needs a "/changelog"
- * appended (for the packages.debian.org/changelogs site) or a
- * ".changelog" (for third party sites that store the changelog in the
- * pool/ next to the deb itself)
- * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
- */
-static string GetChangelogPath(CacheFile &Cache,
-                        pkgCache::VerIterator Ver)
-{
-   pkgRecords Recs(Cache);
-   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-   string path = flNotFile(rec.FileName());
-#if APT_PKG_ABI >= 413
-   path.append(Ver.SourcePkgName());
-   path.append("_");
-   path.append(StripEpoch(Ver.SourceVerStr()));
-#else
-   string srcpkg = rec.SourcePkg().empty() ? Ver.ParentPkg().Name() : rec.SourcePkg();
-   string ver = Ver.VerStr();
-   // if there is a source version it always wins
-   if (rec.SourceVer() != "")
-      ver = rec.SourceVer();
-   path += srcpkg + "_" + StripEpoch(ver);
-#endif
-   return path;
-}
-									/*}}}*/
-// GuessThirdPartyChangelogUri - return url 			        /*{{{*/
-// ---------------------------------------------------------------------
-/* Contruct a changelog file path for third party sites that do not use
- * packages.debian.org/changelogs
- * This simply uses the ArchiveURI() of the source pkg and looks for
- * a .changelog file there, Example for "mediabuntu":
- * apt-get changelog mplayer-doc:
- *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
- */
-static bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
-                                 pkgCache::VerIterator Ver,
-                                 string &out_uri)
-{
-   // get the binary deb server path
-   pkgCache::VerFileIterator Vf = Ver.FileList();
-   if (Vf.end() == true)
-      return false;
-   pkgCache::PkgFileIterator F = Vf.File();
-   pkgIndexFile *index;
-   pkgSourceList *SrcList = Cache.GetSourceList();
-   if(SrcList->FindIndex(F, index) == false)
-      return false;
-
-   // get archive uri for the binary deb
-   string path_without_dot_changelog = GetChangelogPath(Cache, Ver);
-   out_uri = index->ArchiveURI(path_without_dot_changelog + ".changelog");
-
-   // now strip away the filename and add srcpkg_srcver.changelog
-   return true;
-}
-									/*}}}*/
-// DownloadChangelog - Download the changelog 			        /*{{{*/
-// ---------------------------------------------------------------------
-static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
-                       pkgCache::VerIterator Ver, string targetfile)
-/* Download a changelog file for the given package version to
- * targetfile. This will first try the server from Apt::Changelogs::Server
- * (http://packages.debian.org/changelogs by default) and if that gives
- * a 404 tries to get it from the archive directly (see 
- * GuessThirdPartyChangelogUri for details how)
- */
-{
-   // make the server root configurable
-   string const server = _config->Find("Apt::Changelogs::Server",
-                          "http://packages.debian.org/changelogs");
-   string const path = GetChangelogPath(CacheFile, Ver);
-   string changelog_uri;
-   if (APT::String::Endswith(server, "/") == true)
-      strprintf(changelog_uri, "%s%s/changelog", server.c_str(), path.c_str());
-   else
-      strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
-   if (_config->FindB("APT::Get::Print-URIs", false) == true)
-   {
-      std::cout << '\'' << changelog_uri << '\'' << std::endl;
-      return true;
-   }
-   pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
-
-   string descr;
-   strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
-   // queue it
-   pkgAcquire::Item const * itm = new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
-
-   // Disable drop-privs if "_apt" can not write to the target dir
-   CheckDropPrivsMustBeDisabled(Fetcher);
-
-   // try downloading it, if that fails, try third-party-changelogs location
-   // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?
-   Fetcher.Run();
-   if (itm->Status != pkgAcquire::Item::StatDone)
-   {
-      string third_party_uri;
-      if (GuessThirdPartyChangelogUri(CacheFile, Ver, third_party_uri))
-      {
-         strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
-         itm = new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
-         Fetcher.Run();
-      }
-   }
-
-   if (itm->Status == pkgAcquire::Item::StatDone)
-      return true;
-
-   // error
-   return _error->Error("changelog download failed");
-}
-									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/
-// ---------------------------------------------------------------------
 static bool DoChangelog(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
       return false;
-   
+
    APT::CacheSetHelper helper;
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
-
-   if (_config->FindB("APT::Get::Print-URIs", false) == true)
-   {
-      bool Success = true;
-      for (APT::VersionList::const_iterator Ver = verset.begin();
-	   Ver != verset.end(); ++Ver)
-	 Success &= DownloadChangelog(Cache, Fetcher, Ver, "");
-      return Success;
-   }
-
    AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    Fetcher.SetLog(&Stat);
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
+   bool const printOnly = _config->FindB("APT::Get::Print-URIs", false);
 
-   char tmpname[100];
-   const char* tmpdir = NULL;
-   if (downOnly == false)
+   for (APT::VersionList::const_iterator Ver = verset.begin();
+        Ver != verset.end();
+        ++Ver)
    {
-      std::string systemTemp = GetTempDir();
-      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", 
-               systemTemp.c_str());
-      tmpdir = mkdtemp(tmpname);
-      if (tmpdir == NULL)
-	 return _error->Errno("mkdtemp", "mkdtemp failed");
-
-      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-      if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
-      {
-	 struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-	 struct group const * const gr = getgrnam("root");
-	 if (pw != NULL && gr != NULL)
-	 {
-	    // chown the tmp dir directory we use to the sandbox user
-	    if(chown(tmpdir, pw->pw_uid, gr->gr_gid) != 0)
-	       _error->WarningE("DoChangelog", "chown to %s:%s of directory %s failed", SandboxUser.c_str(), "root", tmpdir);
-	 }
-      }
-   }
-
-   for (APT::VersionList::const_iterator Ver = verset.begin(); 
-        Ver != verset.end(); 
-        ++Ver) 
-   {
-      string changelogfile;
-      if (downOnly == false)
-	 changelogfile.append(tmpname).append("/changelog");
+      if (printOnly)
+	 new pkgAcqChangelog(&Fetcher, Ver, "/dev/null");
+      else if (downOnly)
+	 new pkgAcqChangelog(&Fetcher, Ver, ".");
       else
-	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
-      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)
-      {
-         DisplayFileInPager(changelogfile);
-         // cleanup temp file
-	 unlink(changelogfile.c_str());
-      }
+	 new pkgAcqChangelog(&Fetcher, Ver);
    }
-   // clenaup tmp dir
-   if (tmpdir != NULL)
-      rmdir(tmpdir);
+
+   if (printOnly == false)
+   {
+      // Disable drop-privs if "_apt" can not write to the target dir
+      CheckDropPrivsMustBeDisabled(Fetcher);
+      if (_error->PendingError() == true)
+	 return false;
+
+      bool Failed = false;
+      if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
+	 return false;
+   }
+
+   if (downOnly == false || printOnly == true)
+   {
+      bool Failed = false;
+      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+      {
+	 if (printOnly)
+	 {
+	    if ((*I)->ErrorText.empty() == false)
+	    {
+	       Failed = true;
+	       _error->Error("%s", (*I)->ErrorText.c_str());
+	    }
+	    else
+	       cout << '\'' << (*I)->DescURI() << "' " << flNotDir((*I)->DestFile)  << std::endl;
+	 }
+	 else
+	    DisplayFileInPager((*I)->DestFile);
+      }
+      return Failed == false;
+   }
+
    return true;
 }
 									/*}}}*/

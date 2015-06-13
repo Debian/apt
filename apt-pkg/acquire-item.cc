@@ -31,6 +31,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/gpgv.h>
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -2833,6 +2834,216 @@ std::string pkgAcqArchive::DescURI() const				/*{{{*/
 std::string pkgAcqArchive::ShortDesc() const				/*{{{*/
 {
    return Desc.ShortDesc;
+}
+									/*}}}*/
+
+// AcqChangelog::pkgAcqChangelog - Constructors				/*{{{*/
+pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::VerIterator const &Ver,
+      std::string const &DestDir, std::string const &DestFilename) :
+   pkgAcquire::Item(Owner), d(NULL), SrcName(Ver.SourcePkgName()), SrcVersion(Ver.SourceVerStr())
+{
+   Desc.URI = URI(Ver);
+   Init(DestDir, DestFilename);
+}
+// some parameters are char* here as they come likely from char* interfaces – which can also return NULL
+pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::RlsFileIterator const &RlsFile,
+      char const * const Component, char const * const SrcName, char const * const SrcVersion,
+      const string &DestDir, const string &DestFilename) :
+   pkgAcquire::Item(Owner), d(NULL), SrcName(SrcName), SrcVersion(SrcVersion)
+{
+   Desc.URI = URI(RlsFile, Component, SrcName, SrcVersion);
+   Init(DestDir, DestFilename);
+}
+pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner,
+      std::string const &URI, char const * const SrcName, char const * const SrcVersion,
+      const string &DestDir, const string &DestFilename) :
+   pkgAcquire::Item(Owner), d(NULL), SrcName(SrcName), SrcVersion(SrcVersion)
+{
+   Desc.URI = URI;
+   Init(DestDir, DestFilename);
+}
+void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFilename)
+{
+   if (Desc.URI.empty())
+   {
+      Status = StatError;
+      // TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
+      strprintf(ErrorText, _("Changelog unavailable for %s=%s"), SrcName.c_str(), SrcVersion.c_str());
+      // Let the error message print something sensible rather than "Failed to fetch /"
+      if (DestFilename.empty())
+	 DestFile = SrcName + ".changelog";
+      else
+	 DestFile = DestFilename;
+      Desc.URI = "changelog:/" + DestFile;
+      return;
+   }
+
+   if (DestDir.empty())
+   {
+      std::string const systemTemp = GetTempDir();
+      char tmpname[100];
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", systemTemp.c_str());
+      if (NULL == mkdtemp(tmpname))
+      {
+	 _error->Errno("mkdtemp", "mkdtemp failed in changelog acquire of %s %s", SrcName.c_str(), SrcVersion.c_str());
+	 Status = StatError;
+	 return;
+      }
+      DestFile = TemporaryDirectory = tmpname;
+   }
+   else
+      DestFile = DestDir;
+
+   if (DestFilename.empty())
+      DestFile = flCombine(DestFile, SrcName + ".changelog");
+   else
+      DestFile = flCombine(DestFile, DestFilename);
+
+   Desc.ShortDesc = "Changelog";
+   strprintf(Desc.Description, "%s %s %s Changelog", URI::SiteOnly(Desc.URI).c_str(), SrcName.c_str(), SrcVersion.c_str());
+   Desc.Owner = this;
+   QueueURI(Desc);
+
+   if (Status == StatDone) // this happens if we queue the same changelog two times
+   {
+      Complete = true;
+      for (pkgAcquire::UriIterator I = Owner->UriBegin(); I != Owner->UriEnd(); ++I)
+	 if (I->URI == Desc.URI)
+	    if (DestFile != I->Owner->DestFile)
+	       if (symlink(I->Owner->DestFile.c_str(), DestFile.c_str()) != 0)
+	       {
+		  ; // ignore error, there isn't anthing we could do to handle the edgecase of an edgecase
+	       }
+   }
+}
+									/*}}}*/
+std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
+{
+   char const * const SrcName = Ver.SourcePkgName();
+   char const * const SrcVersion = Ver.SourceVerStr();
+   pkgCache::PkgFileIterator PkgFile;
+   // find the first source for this version which promises a changelog
+   for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
+   {
+      pkgCache::PkgFileIterator const PF = VF.File();
+      if (PF.Flagged(pkgCache::Flag::NotSource) || PF->Release == 0)
+	 continue;
+      PkgFile = PF;
+      pkgCache::RlsFileIterator const RF = PF.ReleaseFile();
+      std::string const uri = URI(RF, PF.Component(), SrcName, SrcVersion);
+      if (uri.empty())
+	 continue;
+      return uri;
+   }
+   return "";
+}
+std::string pkgAcqChangelog::URITemplate(pkgCache::RlsFileIterator const &Rls)
+{
+   if (Rls.end() == true || (Rls->Label == 0 && Rls->Origin == 0))
+      return "";
+   std::string const serverConfig = "Acquire::Changelogs::URI";
+   std::string server;
+#define APT_EMPTY_SERVER \
+   if (server.empty() == false) \
+   { \
+      if (server != "no") \
+	 return server; \
+      return ""; \
+   }
+#define APT_CHECK_SERVER(X, Y) \
+   if (Rls->X != 0) \
+   { \
+      std::string const specialServerConfig = serverConfig + "::" + Y + #X + "::" + Rls.X(); \
+      server = _config->Find(specialServerConfig); \
+      APT_EMPTY_SERVER \
+   }
+   // this way e.g. Debian-Security can fallback to Debian
+   APT_CHECK_SERVER(Label, "Override::")
+   APT_CHECK_SERVER(Origin, "Override::")
+
+   if (RealFileExists(Rls.FileName()))
+   {
+      _error->PushToStack();
+      FileFd rf;
+      /* This can be costly. A caller wanting to get millions of URIs might
+	 want to do this on its own once and use Override settings.
+	 We don't do this here as Origin/Label are not as unique as they
+	 should be so this could produce request order-dependent anomalies */
+      if (OpenMaybeClearSignedFile(Rls.FileName(), rf) == true)
+      {
+	 pkgTagFile TagFile(&rf, rf.Size());
+	 pkgTagSection Section;
+	 if (TagFile.Step(Section) == true)
+	    server = Section.FindS("Changelogs");
+      }
+      _error->RevertToStack();
+      APT_EMPTY_SERVER
+   }
+
+   APT_CHECK_SERVER(Label, "")
+   APT_CHECK_SERVER(Origin, "")
+#undef APT_CHECK_SERVER
+#undef APT_EMPTY_SERVER
+   return "";
+}
+std::string pkgAcqChangelog::URI(pkgCache::RlsFileIterator const &Rls,
+	 char const * const Component, char const * const SrcName,
+	 char const * const SrcVersion)
+{
+   return URI(URITemplate(Rls), Component, SrcName, SrcVersion);
+}
+std::string pkgAcqChangelog::URI(std::string const &Template,
+	 char const * const Component, char const * const SrcName,
+	 char const * const SrcVersion)
+{
+   if (Template.find("CHANGEPATH") == std::string::npos)
+      return "";
+
+   // the path is: COMPONENT/SRC/SRCNAME/SRCNAME_SRCVER, e.g. main/a/apt/1.1 or contrib/liba/libapt/2.0
+   std::string Src = SrcName;
+   std::string path = APT::String::Startswith(SrcName, "lib") ? Src.substr(0, 4) : Src.substr(0,1);
+   path.append("/").append(Src).append("/");
+   path.append(Src).append("_").append(StripEpoch(SrcVersion));
+   // we omit component for releases without one (= flat-style repositories)
+   if (Component != NULL && strlen(Component) != 0)
+      path = std::string(Component) + "/" + path;
+
+   return SubstVar(Template, "CHANGEPATH", path);
+}
+									/*}}}*/
+// AcqChangelog::Failed - Failure handler				/*{{{*/
+void pkgAcqChangelog::Failed(string const &Message, pkgAcquire::MethodConfig const * const Cnf)
+{
+   Item::Failed(Message,Cnf);
+
+   std::string errText;
+   // TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
+   strprintf(errText, _("Changelog unavailable for %s=%s"), SrcName.c_str(), SrcVersion.c_str());
+
+   // Error is probably something techy like 404 Not Found
+   if (ErrorText.empty())
+      ErrorText = errText;
+   else
+      ErrorText = errText + " (" + ErrorText + ")";
+   return;
+}
+									/*}}}*/
+// AcqChangelog::Done - Item downloaded OK				/*{{{*/
+void pkgAcqChangelog::Done(string const &Message,HashStringList const &CalcHashes,
+		      pkgAcquire::MethodConfig const * const Cnf)
+{
+   Item::Done(Message,CalcHashes,Cnf);
+
+   Complete = true;
+}
+									/*}}}*/
+pkgAcqChangelog::~pkgAcqChangelog()					/*{{{*/
+{
+   if (TemporaryDirectory.empty() == false)
+   {
+      unlink(DestFile.c_str());
+      rmdir(TemporaryDirectory.c_str());
+   }
 }
 									/*}}}*/
 

@@ -5,44 +5,98 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'native'
 
-buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+buildsimplenativepackage 'foo' 'all' '1.0' 'stable'
+buildsimplenativepackage 'libbar' 'all' '1.0' 'stable'
+
+getlabelfromsuite() { echo 'Testcases'; }
+getoriginfromsuite() { echo 'Debian'; }
 
 setupaptarchive --no-update
 changetowebserver
 testsuccess aptget update
 
-# simulate normal user with non-existent root-owned directories
-rm -rf rootdir/var/cache/apt/archives/
-mkdir rootdir/var/cache/apt/archives/
-addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/cache/apt/archives || true;"
-chmod -R -w rootdir/var/cache/apt/archives
+testsuccessequal "'http://metadata.ftp-master.debian.org/changelogs/main/f/foo/foo_1.0_changelog' foo.changelog
+'http://metadata.ftp-master.debian.org/changelogs/main/libb/libbar/libbar_1.0_changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
-echo 'Apt::Changelogs::Server "http://localhost:8080/";' > rootdir/etc/apt/apt.conf.d/changelog.conf
+releasechanger() {
+	# modifying the Release files in lists… bad stuff. Good that this is only a test…
+	sed -i "s#^${1}: .*#${1}: ${2}#" $(find rootdir/var/lib/apt/lists -name '*Release')
+	rm -f rootdir/var/cache/apt/*.bin
+}
+releasechanger 'Origin' 'Ubuntu'
+testsuccessequal "'http://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'http://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
-testsuccessequal "'http://localhost:8080/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+releasechanger 'Label' 'Debian'
+testsuccessequal "'http://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'http://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
-testsuccessequal "'http://localhost:8080/pool/apt_1.0/changelog'
-'http://localhost:8080/pool/apt_1.0/changelog'" aptget changelog apt apt --print-uris
+testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0.changelog' foo.changelog
+'http://localhost:8080/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+
+sed -i '/^Origin: / a\
+Changelogs: http://example.org/CHANGEPATH-changelog' $(find rootdir/var/lib/apt/lists -name '*Release')
+rm -f rootdir/var/cache/apt/*.bin
+
+testsuccessequal "'http://example.org/main/f/foo/foo_1.0-changelog' foo.changelog
+'http://example.org/main/libb/libbar/libbar_1.0-changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+
+testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0.changelog' foo.changelog
+'http://localhost:8080/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Override::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+
+releasechanger 'Changelogs' 'no'
+testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0
+' aptget changelog foo -qq -d
+
+sed -i '/^Changelogs: / d' $(find rootdir/var/lib/apt/lists -name '*Release')
+releasechanger 'Label' 'Testcases'
+
+echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/CHANGEPATH/change.txt";' > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0/change.txt' foo.changelog
+'http://localhost:8080/main/libb/libbar/libbar_1.0/change.txt' libbar.changelog" aptget changelog foo libbar --print-uris
+
+echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/pool/CHANGEPATH/changelog";' > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo --print-uris
 
 cd downloaded
 
-testsuccess aptget changelog apt -qq
-testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/apt_1.0/changelog)"
+testsuccess aptget changelog foo -qq
+testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 
-testsuccess aptget changelog apt -d
-testfileequal 'apt.changelog' "$(cat  ../aptarchive/pool/apt_1.0/changelog)"
-testfilestats 'apt.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
-rm -f apt.changelog ../aptarchive/pool/apt_1.0/changelog
+testsuccess aptget changelog foo libbar -qq
+testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)
+$(cat ../aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
 
-testequal "$(cat ../aptarchive/pool/apt_1.0.changelog)" aptget changelog apt \
-	-qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
+testsuccess aptget changelog foo -d
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+rm -f foo.changelog
 
-testsuccess aptget changelog apt -d
-testfileequal 'apt.changelog' "$(cat ../aptarchive/pool/apt_1.0.changelog)"
-testfilestats 'apt.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
-rm -f apt.changelog ../aptarchive/pool/apt_1.0.changelog
+testsuccess aptget changelog libbar foo -d
+testfilestats 'libbar.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfileequal 'libbar.changelog' "$(cat  ../aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
+testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+rm -f libbar.changelog foo.changelog
 
-testequal 'E: changelog download failed' aptget changelog apt -qq -d -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
-testfailure test -e apt.changelog
+# as such bogus, but can happen with multiple binaries from the same source
+testsuccessequal "'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo foo --print-uris
+testsuccess aptget changelog foo foo -qq
+testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)
+$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testsuccess aptget changelog foo foo -d
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+rm -f foo.changelog
+
+# no CHANGEPATH in the URI
+testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0
+' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases='http://localhost:8080/change.txt'
+testfailure test -e foo.changelog
+
+testequal 'E: Failed to fetch http://localhost:8080/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
+' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases='http://localhost:8080/does/not/exist/CHANGEPATH/change.txt'
+testfailure test -e foo.changelog

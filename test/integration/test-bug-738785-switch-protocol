@@ -10,6 +10,7 @@ configarchitecture "i386"
 buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 
 # setup http redirecting to https
+getlabelfromsuite() { echo 'Testcases'; }
 setupaptarchive --no-update
 changetowebserver -o 'aptwebserver::redirect::replace::/redirectme/=https://localhost:4433/' \
 	-o 'aptwebserver::redirect::replace::/downgrademe/=http://localhost:8080/' \
@@ -20,10 +21,10 @@ sed -i -e 's#:4433/#:8080/redirectme#' -e 's# https:# http:#' rootdir/etc/apt/so
 testsuccess aptget update -o Debug::Acquire::http=1 -o Debug::Acquire::https=1 -o Debug::pkgAcquire::Worker=1
 
 msgtest 'Test that the webserver does not answer' 'http requests'
-downloadfile 'http://localhost:8080/pool/apt_1.0/changelog' changelog >/dev/null 2>&1 && msgfail || msgpass
+downloadfile 'http://localhost:8080/pool/main/a/apt/apt_1.0/changelog' changelog >/dev/null 2>&1 && msgfail || msgpass
 
-echo 'Apt::Changelogs::Server "http://localhost:8080/redirectme";' > rootdir/etc/apt/apt.conf.d/changelog.conf
-testsuccessequal "'http://localhost:8080/redirectme/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/redirectme/pool/CHANGEPATH/changelog";' > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:8080/redirectme/pool/main/a/apt/apt_1.0/changelog' apt.changelog" aptget changelog apt --print-uris
 
 cd downloaded
 testsuccess aptget changelog apt -d

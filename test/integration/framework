@@ -520,6 +520,12 @@ Package: $NAME" > debian/control
 
 buildsimplenativepackage() {
 	local NAME="$1"
+	local NM
+	if [ "$(echo "$NAME" | cut -c 1-3)" = 'lib' ]; then
+		NM="$(echo "$NAME" | cut -c 1-4)"
+	else
+		NM="$(echo "$NAME" | cut -c 1)"
+	fi
 	local ARCH="$2"
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
@@ -600,15 +606,15 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
-		# ensure the right permissions as dpkg-deb ensists
+		# ensure the right permissions as dpkg-deb insists
 		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
 		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/..
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
-	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
+	local CHANGEPATH="${BUILDDIR}/../${DISTSECTION}/${NM}/${NAME}/${NAME}_${VERSION}"
+	mkdir -p $CHANGEPATH
+	cp ${BUILDDIR}/debian/changelog $CHANGEPATH
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -876,6 +882,7 @@ getcodenamefromsuite() {
 }
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
+getoriginfromsuite() { true; }
 
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
@@ -887,16 +894,21 @@ generatereleasefiles() {
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
 			local LABEL="$(getlabelfromsuite $SUITE)"
+			local ORIGIN="$(getoriginfromsuite $SUITE)"
 			if [ -n "$VERSION" ]; then
 				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
 			fi
 			if [ -n "$LABEL" ]; then
 				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
 			fi
+			if [ -n "$ORIGIN" ]; then
+				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
+			fi
 			aptftparchive -qq release $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
 				${LABEL} \
+				${ORIGIN} \
 				${VERSION} \
 					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
@@ -1450,9 +1462,9 @@ testfilestats() {
 		msgpass
 	else
 		echo >&2
-		ls -ld >&2 "$1"
+		ls -ld >&2 "$1" || true
 		echo -n >&2 "stat(1) reports for $2: "
-		stat --format "$2" "$1"
+		stat --format "$2" "$1" || true
 		msgfail
 	fi
 }

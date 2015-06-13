@@ -1031,6 +1031,120 @@ class pkgAcqArchive : public pkgAcquire::Item
 		 std::string &StoreFilename);
 };
 									/*}}}*/
+/** \brief Retrieve the changelog for the given version			{{{
+ *
+ *  Downloads the changelog to a temporary file it will also remove again
+ *  while it is deconstructed or downloads it to a named location.
+ */
+class pkgAcqChangelog : public pkgAcquire::Item
+{
+   void *d;
+   std::string TemporaryDirectory;
+   std::string const SrcName;
+   std::string const SrcVersion;
+
+   public:
+   // we will never have hashes for changelogs.
+   // If you need verified ones, download the deb and extract the changelog.
+   virtual HashStringList GetExpectedHashes() const { return HashStringList(); }
+   virtual bool HashesRequired() const { return false; }
+
+   // Specialized action members
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
+		     pkgAcquire::MethodConfig const * const Cnf);
+   virtual std::string DescURI() const {return Desc.URI;};
+
+   /** returns the URI to the changelog of this version
+    *
+    * @param Ver is the version to get the changelog for
+    * @return the URI which will be used to acquire the changelog
+    */
+   static std::string URI(pkgCache::VerIterator const &Ver);
+
+   /** returns the URI to the changelog of this version
+    *
+    *  \param Rls is the Release file the package comes from
+    *  \param Component in which the package resides, can be empty
+    *  \param SrcName is the source package name
+    *  \param SrcVersion is the source package version
+    * @return the URI which will be used to acquire the changelog
+    */
+   static std::string URI(pkgCache::RlsFileIterator const &Rls,
+	 char const * const Component, char const * const SrcName,
+	 char const * const SrcVersion);
+
+   /** returns the URI to the changelog of this version
+    *
+    *  \param Template URI where CHANGEPATH has to be filled in
+    *  \param Component in which the package resides, can be empty
+    *  \param SrcName is the source package name
+    *  \param SrcVersion is the source package version
+    * @return the URI which will be used to acquire the changelog
+    */
+   static std::string URI(std::string const &Template,
+	 char const * const Component, char const * const SrcName,
+	 char const * const SrcVersion);
+
+   /** returns the URI template for this release file
+    *
+    *  \param Rls is a Release file
+    * @return the URI template to use for this release file
+    */
+   static std::string URITemplate(pkgCache::RlsFileIterator const &Rls);
+
+   /** \brief Create a new pkgAcqChangelog object.
+    *
+    *  \param Owner The pkgAcquire object with which this object is
+    *  associated.
+    *  \param Ver is the version to get the changelog for
+    *  \param DestDir The directory the file should be downloaded into.
+    *  Will be an autocreated (and cleaned up) temporary directory if not set.
+    *  \param DestFilename The filename the file should have in #DestDir
+    *  Defaults to sourcepackagename.changelog if not set.
+    */
+   pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::VerIterator const &Ver,
+	 std::string const &DestDir="", std::string const &DestFilename="");
+
+   /** \brief Create a new pkgAcqChangelog object.
+    *
+    *  \param Owner The pkgAcquire object with which this object is
+    *  associated.
+    *  \param Rls is the Release file the package comes from
+    *  \param Component in which the package resides, can be empty
+    *  \param SrcName is the source package name
+    *  \param SrcVersion is the source package version
+    *  \param DestDir The directory the file should be downloaded into.
+    *  Will be an autocreated (and cleaned up) temporary directory if not set.
+    *  \param DestFilename The filename the file should have in #DestDir
+    *  Defaults to sourcepackagename.changelog if not set.
+    */
+   pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::RlsFileIterator const &Rls,
+	 char const * const Component, char const * const SrcName, char const * const SrcVersion,
+	 std::string const &DestDir="", std::string const &DestFilename="");
+
+   /** \brief Create a new pkgAcqChangelog object.
+    *
+    *  \param Owner The pkgAcquire object with which this object is
+    *  associated.
+    *  \param URI is to be used to get the changelog
+    *  \param SrcName is the source package name
+    *  \param SrcVersion is the source package version
+    *  \param DestDir The directory the file should be downloaded into.
+    *  Will be an autocreated (and cleaned up) temporary directory if not set.
+    *  \param DestFilename The filename the file should have in #DestDir
+    *  Defaults to sourcepackagename.changelog if not set.
+    */
+   pkgAcqChangelog(pkgAcquire * const Owner, std::string const &URI,
+	 char const * const SrcName, char const * const SrcVersion,
+	 std::string const &DestDir="", std::string const &DestFilename="");
+
+   virtual ~pkgAcqChangelog();
+
+private:
+   APT_HIDDEN void Init(std::string const &DestDir, std::string const &DestFilename);
+};
+									/*}}}*/
 /** \brief Retrieve an arbitrary file to the current directory.		{{{
  *
  *  The file is retrieved even if it is accessed via a URL type that
