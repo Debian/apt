@@ -955,7 +955,7 @@ std::string pkgAcquire::Queue::QItem::Custom600Headers() const		/*{{{*/
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(0), Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(-1), Update(true), MorePulses(false)
 {
    Start();
 }
@@ -1054,13 +1054,17 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Time = NewTime;
    }
 
+   double const OldPercent = Percent;
    // calculate the percentage, if we have too little data assume 1%
    if (TotalBytes > 0 && UnfetchedReleaseFiles)
       Percent = 0;
-   else 
+   else
       // use both files and bytes because bytes can be unreliable
-      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) + 
+      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) +
                  0.2 * (CurrentItems/float(TotalItems)*100.0));
+   double const DiffPercent = Percent - OldPercent;
+   if (DiffPercent < 0.001 && _config->FindB("Acquire::Progress::Diffpercent", false) == true)
+      return true;
 
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0) 
@@ -1078,11 +1082,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
       else
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
-	 
+
       // build the status str
       status << "dlstatus:" << i
              << ":"  << std::setprecision(3) << Percent
-             << ":" << msg 
+             << ":" << msg
              << endl;
 
       std::string const dlstatus = status.str();

@@ -273,16 +273,19 @@ EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
 
-	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
-		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
-	fi
-	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
-	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
-	# too distracting for users, but helpful to detect changes
-	echo 'Acquire::Progress::Ignore::ShowErrorText "true";' >> aptconfig.conf
-	# in testcases, it can appear as if localhost has a rotation setup,
-	# hide this as we can't really deal with it properly
-	echo 'Acquire::Failure::ShowIP "false";' >> aptconfig.conf
+	{
+		if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
+			echo "DPKG::options:: \"--force-architecture\";" # Added to test multiarch before dpkg is ready for it…
+		fi
+		echo 'quiet::NoUpdate "true";'
+		echo 'quiet::NoStatistic "true";'
+		# too distracting for users, but helpful to detect changes
+		echo 'Acquire::Progress::Ignore::ShowErrorText "true";'
+		echo 'Acquire::Progress::Diffpercent "true";'
+		# in testcases, it can appear as if localhost has a rotation setup,
+		# hide this as we can't really deal with it properly
+		echo 'Acquire::Failure::ShowIP "false";'
+	} >> aptconfig.conf
 
 	cp "${TESTDIRECTORY}/apt.pem" "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	if [ "$(id -u)" = '0' ]; then
