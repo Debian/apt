@@ -136,13 +136,15 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 mv rootdir/media/cdrom-unmounted rootdir/media/cdrom-ejected
 msgmsg "ensure an update doesn't mess with cdrom sources"
 testsuccess aptget update
-testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+testfileequal rootdir/tmp/testsuccess.output 'Hit cdrom://Debian APT Testdisk 0.8.15 stable InRelease
+Reading package lists...'
 mv rootdir/media/cdrom-ejected rootdir/media/cdrom-unmounted
 testcdromusage
 
 msgmsg 'and again to check that it withstands the temptation even if it could mount'
 testsuccess aptget update
-testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+testfileequal rootdir/tmp/testsuccess.output 'Hit cdrom://Debian APT Testdisk 0.8.15 stable InRelease
+Reading package lists...'
 testcdromusage
 
 msgmsg 'Check that nothing touched our' 'CD-ROM'

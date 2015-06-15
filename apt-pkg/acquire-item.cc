@@ -519,19 +519,14 @@ void pkgAcquire::Item::Done(string const &Message, HashStringList const &Hashes,
 			    pkgAcquire::MethodConfig const * const /*Cnf*/)
 {
    // We just downloaded something..
-   string FileName = LookupTag(Message,"Filename");
    UsedMirror = LookupTag(Message,"UsedMirror");
-   unsigned long long const downloadedSize = Hashes.FileSize();
-   if (downloadedSize != 0)
+   if (FileSize == 0)
    {
-      if (Complete == false && !Local && FileName == DestFile)
+      unsigned long long const downloadedSize = Hashes.FileSize();
+      if (downloadedSize != 0)
       {
-	 if (Owner->Log != 0)
-	    Owner->Log->Fetched(Hashes.FileSize(),atoi(LookupTag(Message,"Resume-Point","0").c_str()));
+	 FileSize = downloadedSize;
       }
-
-      if (FileSize == 0)
-	 FileSize= downloadedSize;
    }
    Status = StatDone;
    ErrorText = string();

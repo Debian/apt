@@ -9,6 +9,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture "i386"
+configcompression '.' 'gz'
 
 # a "normal" package with source and binary
 buildsimplenativepackage 'foo' 'all' '2.0'
@@ -31,11 +32,17 @@ testsuccessequal 'Listing...' apt list foo
 testequal 'lock
 partial' ls rootdir/var/lib/apt/lists
 
+filesize() {
+	stat -c%s "$(aptget files --no-release-info --format '$(URI)' "Created-By: $1" | cut -d'/' -f 3- ).gz"
+}
 # allow override
 testwarningequal "Ign file:$APTARCHIVE unstable InRelease
   File not found
 Ign file:$APTARCHIVE unstable Release
   File not found
+Get:1 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
+Get:2 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages') B]
+Get:3 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
 W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
 # ensure we can not install the package

@@ -362,7 +362,6 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
 	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
-
 	    for (pkgAcquire::Queue::QItem::owner_iterator O = ItmOwners.begin(); O != ItmOwners.end(); ++O)
 	    {
 	       pkgAcquire::Item * const Owner = *O;

@@ -58,7 +58,10 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	 {
 	    HashStringList const hsl = Itm->ExpectedHashes;
 	    if (Itm->ExpectedHashes.VerifyFile(File))
+	    {
+	       Res.Filename = Itm->DestFile;
 	       Res.IMSHit = true;
+	    }
 	 }
       }
    }
@@ -78,7 +81,14 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	 if (filesize != 0 && filesize == Res.Size)
 	    Res.IMSHit = true;
       }
+
+      Hashes Hash(Itm->ExpectedHashes);
+      FileFd Fd(File, FileFd::ReadOnly);
+      Hash.AddFD(Fd);
+      Res.TakeHashes(Hash);
    }
+   if (Res.IMSHit == false)
+      URIStart(Res);
 
    // See if the uncompressed file exists and reuse it
    FetchResult AltRes;
@@ -101,14 +111,6 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	 }
 	 // no break here as we could have situations similar to '.gz' vs '.tar.gz' here
       }
-   }
-
-   if (Res.Filename.empty() == false)
-   {
-      Hashes Hash(Itm->ExpectedHashes);
-      FileFd Fd(Res.Filename, FileFd::ReadOnly);
-      Hash.AddFD(Fd);
-      Res.TakeHashes(Hash);
    }
 
    if (AltRes.Filename.empty() == false)

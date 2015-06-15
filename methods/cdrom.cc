@@ -260,7 +260,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(Res.Filename.c_str(),&Buf) != 0)
       return _error->Error(_("File not found"));
-   
+
+   URIStart(Res);
    if (NewID.empty() == false)
       CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;

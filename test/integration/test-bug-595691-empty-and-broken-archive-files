@@ -27,9 +27,6 @@ testaptgetupdate() {
 
 createemptyarchive() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
-	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
-	fi
 	touch aptarchive/Packages
 	echo -n "" | $COMPRESSOR_CMD > aptarchive/${1}.$COMPRESS
 	generatereleasefiles
@@ -39,9 +36,6 @@ createemptyarchive() {
 
 createemptyfile() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
-	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
-	fi
 	touch aptarchive/Packages aptarchive/${1}.$COMPRESS
 	generatereleasefiles
 	signreleasefiles
@@ -52,19 +46,13 @@ testoverfile() {
 	local APTARCHIVE="$(readlink -f ./aptarchive)"
 	forcecompressor "$1"
 
-	createemptyfile 'en'
-	testaptgetupdate 'Reading package lists...' "empty file en.$COMPRESS over file"
-
-	createemptyarchive 'en'
-	testaptgetupdate 'Reading package lists...' "empty archive en.$COMPRESS over file"
-
 	createemptyarchive 'Packages'
-	# FIXME: Why omits the file transport the Packages Get line?
-	#Get:3 file:  Packages []
-	testaptgetupdate 'Reading package lists...' "empty archive Packages.$COMPRESS over file"
+	testaptgetupdate "Get: file:$APTARCHIVE  Packages []
+Reading package lists..." "empty archive Packages.$COMPRESS over file"
 
 	createemptyfile 'Packages'
-	testaptgetupdate "Err file:$APTARCHIVE  Packages
+	testaptgetupdate "Get: file:$APTARCHIVE  Packages
+Err file:$APTARCHIVE  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:${APTARCHIVE}/Packages.$COMPRESS  Empty files can't be valid archives
 
