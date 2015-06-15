@@ -48,8 +48,24 @@ bool FileMethod::Fetch(FetchItem *Itm)
    if (Get.Host.empty() == false)
       return _error->Error(_("Invalid URI, local URIS must not start with //"));
 
-   // See if the file exists
    struct stat Buf;
+   // deal with destination files which might linger around
+   if (lstat(Itm->DestFile.c_str(), &Buf) == 0)
+   {
+      if ((Buf.st_mode & S_IFREG) != 0)
+      {
+	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+	 {
+	    HashStringList const hsl = Itm->ExpectedHashes;
+	    if (Itm->ExpectedHashes.VerifyFile(File))
+	       Res.IMSHit = true;
+	 }
+      }
+   }
+   if (Res.IMSHit != true)
+      unlink(Itm->DestFile.c_str());
+
+   // See if the file exists
    if (stat(File.c_str(),&Buf) == 0)
    {
       Res.Size = Buf.st_size;
@@ -65,6 +81,8 @@ bool FileMethod::Fetch(FetchItem *Itm)
    }
 
    // See if the uncompressed file exists and reuse it
+   FetchResult AltRes;
+   AltRes.Filename.clear();
    std::vector<std::string> extensions = APT::Configuration::getCompressorExtensions();
    for (std::vector<std::string>::const_iterator ext = extensions.begin(); ext != extensions.end(); ++ext)
    {
@@ -73,29 +91,33 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	 std::string const unfile = File.substr(0, File.length() - ext->length() - 1);
 	 if (stat(unfile.c_str(),&Buf) == 0)
 	 {
-	    FetchResult AltRes;
 	    AltRes.Size = Buf.st_size;
 	    AltRes.Filename = unfile;
 	    AltRes.LastModified = Buf.st_mtime;
 	    AltRes.IMSHit = false;
 	    if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	       AltRes.IMSHit = true;
-
-	    URIDone(Res,&AltRes);
-	    return true;
+	    break;
 	 }
 	 // no break here as we could have situations similar to '.gz' vs '.tar.gz' here
       }
    }
 
-   if (Res.Filename.empty() == true)
+   if (Res.Filename.empty() == false)
+   {
+      Hashes Hash(Itm->ExpectedHashes);
+      FileFd Fd(Res.Filename, FileFd::ReadOnly);
+      Hash.AddFD(Fd);
+      Res.TakeHashes(Hash);
+   }
+
+   if (AltRes.Filename.empty() == false)
+      URIDone(Res,&AltRes);
+   else if (Res.Filename.empty() == false)
+      URIDone(Res);
+   else
       return _error->Error(_("File not found"));
 
-   Hashes Hash(Itm->ExpectedHashes);
-   FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd);
-   Res.TakeHashes(Hash);
-   URIDone(Res);
    return true;
 }
 									/*}}}*/
