@@ -116,14 +116,10 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
-   // Ignore certain kinds of transient failures (bad code)
-   if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
-      return;
-
    AssignItemID(Itm);
    clearLastLine();
 
-   if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
+   if (Itm.Owner->Status == pkgAcquire::Item::StatDone || Itm.Owner->Status == pkgAcquire::Item::StatIdle)
    {
       // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
       // which failed to download, but the error is ignored (compare "Err:")

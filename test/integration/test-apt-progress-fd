@@ -16,7 +16,6 @@ setupaptarchive
 exec 3> apt-progress.log
 testsuccess aptget install testing=0.1 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0:Retrieving file 1 of 1
-dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
@@ -33,7 +32,6 @@ pmstatus:dpkg-exec:83.3333:Running dpkg'
 exec 3> apt-progress.log
 testsuccess aptget install testing=0.8.15 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0:Retrieving file 1 of 1
-dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
@@ -50,7 +48,6 @@ pmstatus:dpkg-exec:83.3333:Running dpkg'
 exec 3> apt-progress.log
 testsuccess aptget install testing=0.8.15 --reinstall -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0:Retrieving file 1 of 1
-dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing:0:Installing testing (amd64)
@@ -77,7 +74,6 @@ pmstatus:dpkg-exec:75:Running dpkg'
 exec 3> apt-progress.log
 testsuccess aptget install testing2:i386 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0:Retrieving file 1 of 1
-dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:20:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
 pmstatus:testing2:0:Installing testing2 (i386)

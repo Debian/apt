@@ -245,7 +245,7 @@ setupenvironment() {
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
+	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# store apt-key were we can access it, even if we run it as a different user
 	# destroys coverage reporting though, so just do it for root for now
 	if [ "$(id -u)" = '0' ]; then
@@ -786,6 +786,8 @@ insertsource() {
 	local SPATH="aptarchive/dists/${RELEASE}/main/source"
 	mkdir -p $SPATH
 	local FILE="${SPATH}/Sources"
+	local DSCFILE="${NAME}_${VERSION}.dsc"
+	local TARFILE="${NAME}_${VERSION}.tar.gz"
 	echo "Package: $NAME
 Binary: $NAME
 Version: $VERSION
@@ -793,8 +795,8 @@ Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
 	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
 	echo "Files:
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.dsc
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.tar.gz
+ $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
+ $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
 " >> $FILE
 }
 

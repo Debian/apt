@@ -21,11 +21,11 @@ testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.d
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget dist-upgrade -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget install apt -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget download apt -qq --print-uris
-testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source apt -qq --print-uris
+testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 MD5Sum:16ff470aaedad0f06fb951ed89ffdd3a
+'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 MD5Sum:ab2b546f59ff9e8f5cc7a2d987ff3373" aptget source apt -qq --print-uris
 testsuccessequal "'http://metadata.ftp-master.debian.org/changelogs/main/a/apt/apt_2_changelog' apt.changelog" aptget changelog apt -qq --print-uris
 
-testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/apt2_1.dsc' apt2_1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/apt2_1.tar.gz' apt2_1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source apt apt2 -qq --print-uris
+testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 MD5Sum:16ff470aaedad0f06fb951ed89ffdd3a
+'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 MD5Sum:ab2b546f59ff9e8f5cc7a2d987ff3373
+'file://${APTARCHIVE}/apt2_1.dsc' apt2_1.dsc 10 MD5Sum:4c572ce45f1e2bedbb30da7f5e1c241c
+'file://${APTARCHIVE}/apt2_1.tar.gz' apt2_1.tar.gz 13 MD5Sum:2a96fec139f8722d93312a1ff8281232" aptget source apt apt2 -qq --print-uris

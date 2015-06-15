@@ -45,7 +45,7 @@ changetowebserver -o aptwebserver::redirect::replace::/foo2=/foo
 
 httpdown() {
 	msgtest 'Downloading the same URI to different files' 'twice over http'
-	testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1
+	testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 	cp rootdir/tmp/testsuccess.output download.log
 	testsuccess cmp $TESTDIR/framework ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2
@@ -57,7 +57,7 @@ testrun 'httpdown'
 
 httpredirectdown() {
 	msgtest 'Redirect leads' 'first URI to the second URI'
-	testsuccess --nomsg apthelper download-file http://localhost:8080/foo2 ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1
+	testsuccess --nomsg apthelper download-file http://localhost:8080/foo2 ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 	cp rootdir/tmp/testsuccess.output download.log
 	testsuccess cmp $TESTDIR/framework ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2

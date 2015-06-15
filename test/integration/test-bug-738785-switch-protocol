@@ -39,18 +39,15 @@ cd - >/dev/null
 testsuccess aptget install apt -y
 testdpkginstalled 'apt'
 
-# create a copy of all methods, expect https
-eval `aptconfig shell METHODS Dir::Bin::Methods/d`
-COPYMETHODS='usr/lib/apt/methods'
-mv rootdir/${COPYMETHODS} rootdir/${COPYMETHODS}.bak
-mkdir -p rootdir/$COPYMETHODS
-cd rootdir/$COPYMETHODS
-find $METHODS \! -type d | while read meth; do
-	ln -s $meth
+# install a slowed down file: otherwise its to fast to reproduce combining
+NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
+OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
+rm $NEWMETHODS
+mkdir $NEWMETHODS
+for METH in $(find $OLDMETHODS ! -type d); do
+	ln -s $OLDMETHODS/$(basename $METH) $NEWMETHODS
 done
-rm https
-cd - >/dev/null
-echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
+rm $NEWMETHODS/https
 
 cd downloaded
 testfailureequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
@@ -59,8 +56,7 @@ testfailure test -e apt_1.0_all.deb
 cd - >/dev/null
 
 # revert to all methods
-rm -rf rootdir/$COPYMETHODS
-mv rootdir/${COPYMETHODS}.bak rootdir/${COPYMETHODS}
+ln -s $OLDMETHODS/https $NEWMETHODS
 
 # check that downgrades from https to http are not allowed
 webserverconfig 'aptwebserver::support::http' 'true'
