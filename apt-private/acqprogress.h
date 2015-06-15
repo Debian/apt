@@ -23,7 +23,8 @@ class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
    unsigned long ID;
    unsigned long Quiet;
 
-   void clearLastLine();
+   APT_HIDDEN void clearLastLine();
+   APT_HIDDEN void AssignItemID(pkgAcquire::ItemDesc &Itm);
 
    public:
 

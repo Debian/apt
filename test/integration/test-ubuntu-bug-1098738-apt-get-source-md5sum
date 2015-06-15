@@ -176,10 +176,10 @@ testmismatch() {
 Building dependency tree...
 Need to get 6 B of source archives.
 Get:1 http://localhost:8080  $1 1.0 (dsc) [3 B]
-Err http://localhost:8080  $1 1.0 (dsc)
+Err:1 http://localhost:8080  $1 1.0 (dsc)
   Hash Sum mismatch
 Get:2 http://localhost:8080  $1 1.0 (tar) [3 B]
-Err http://localhost:8080  $1 1.0 (tar)
+Err:2 http://localhost:8080  $1 1.0 (tar)
   Hash Sum mismatch
 E: Failed to fetch http://localhost:8080/${1}_1.0.dsc  Hash Sum mismatch
 
@@ -242,7 +242,7 @@ Building dependency tree...
 Need to get 6 B of source archives.
 Get:1 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (tar) [3 B]
 Get:2 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (dsc) [3 B]
-Err http://localhost:8080  pkg-mixed-sha1-bad 1.0 (dsc)
+Err:2 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (dsc)
   Hash Sum mismatch
 E: Failed to fetch http://localhost:8080/pkg-mixed-sha1-bad_1.0.dsc  Hash Sum mismatch
 
@@ -253,7 +253,7 @@ testfailureequal 'Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
 Get:1 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (tar) [3 B]
-Err http://localhost:8080  pkg-mixed-sha2-bad 1.0 (tar)
+Err:1 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (tar)
   Hash Sum mismatch
 Get:2 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (dsc) [3 B]
 E: Failed to fetch http://localhost:8080/pkg-mixed-sha2-bad_1.0.tar.gz  Hash Sum mismatch

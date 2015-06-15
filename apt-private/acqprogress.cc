@@ -49,6 +49,16 @@ void AcqTextStatus::Start()
    ID = 1;
 }
 									/*}}}*/
+void AcqTextStatus::AssignItemID(pkgAcquire::ItemDesc &Itm)		/*{{{*/
+{
+   /* In theory calling it from Fetch() would be enough, but to be
+      safe we call it from IMSHit and Fail as well.
+      Also, an Item can pass through multiple stages, so ensure
+      that it keeps the same number */
+   if (Itm.Owner->ID == 0)
+      Itm.Owner->ID = ID++;
+}
+									/*}}}*/
 // AcqTextStatus::IMSHit - Called when an item got a HIT response	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -57,9 +67,11 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
+   AssignItemID(Itm);
    clearLastLine();
 
-   out << _("Hit ") << Itm.Description;
+   // TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+   ioprintf(out, _("Hit:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
    out << std::endl;
    Update = true;
 }
@@ -72,15 +84,16 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    Update = true;
    if (Itm.Owner->Complete == true)
       return;
-
-   Itm.Owner->ID = ID++;
+   AssignItemID(Itm);
 
    if (Quiet > 1)
       return;
 
    clearLastLine();
 
-   out << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
+   // TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+   // Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+   ioprintf(out, _("Get:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
    if (Itm.Owner->FileSize != 0)
       out << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    out << std::endl;
@@ -89,9 +102,10 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
 // AcqTextStatus::Done - Completed a download				/*{{{*/
 // ---------------------------------------------------------------------
 /* We don't display anything... */
-void AcqTextStatus::Done(pkgAcquire::ItemDesc &/*Itm*/)
+void AcqTextStatus::Done(pkgAcquire::ItemDesc &Itm)
 {
    Update = true;
+   AssignItemID(Itm);
 }
 									/*}}}*/
 // AcqTextStatus::Fail - Called when an item fails to download		/*{{{*/
@@ -106,19 +120,25 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
       return;
 
+   AssignItemID(Itm);
    clearLastLine();
 
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
-      out << _("Ign ") << Itm.Description << std::endl;
+      // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+      // which failed to download, but the error is ignored (compare "Err:")
+      ioprintf(out, _("Ign:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
       if (Itm.Owner->ErrorText.empty() == false &&
 	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == true)
-	 out << "  " << Itm.Owner->ErrorText << std::endl;
+	 out << std::endl << "  " << Itm.Owner->ErrorText;
+      out << std::endl;
    }
    else
    {
-      out << _("Err ") << Itm.Description << std::endl;
-      out << "  " << Itm.Owner->ErrorText << std::endl;
+      // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+      // which failed to download and the error is critical (compare "Ign:")
+      ioprintf(out, _("Err:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
+      out << std::endl << "  " << Itm.Owner->ErrorText << std::endl;
    }
 
    Update = true;

@@ -405,7 +405,7 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 // Acquire::Item::Item - Constructor					/*{{{*/
 APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const Owner) :
-   FileSize(0), PartialSize(0), Mode(0), Complete(false), Local(false),
+   FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
     QueueCounter(0), ExpectedAdditionalItems(0), Owner(Owner)
 {
    Owner->Add(this);

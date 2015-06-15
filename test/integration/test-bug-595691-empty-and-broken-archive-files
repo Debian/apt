@@ -13,7 +13,7 @@ setupflataptarchive
 testaptgetupdate() {
 	rm -rf rootdir/var/lib/apt
 	aptget update >testaptgetupdate.diff 2>&1 || true
-	sed -i -e '/Ign /,+1d' -e '/Release/ d' -e 's#Get:[0-9]\+ #Get: #' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
+	sed -i -e '/Ign /,+1d' -e '/Release/ d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
 	GIVEN="$1"
 	shift
 	msgtest "Test for correctness of" "apt-get update with $*"
@@ -47,12 +47,12 @@ testoverfile() {
 	forcecompressor "$1"
 
 	createemptyarchive 'Packages'
-	testaptgetupdate "Get: file:$APTARCHIVE  Packages []
+	testaptgetupdate "Get:2 file:$APTARCHIVE  Packages []
 Reading package lists..." "empty archive Packages.$COMPRESS over file"
 
 	createemptyfile 'Packages'
-	testaptgetupdate "Get: file:$APTARCHIVE  Packages
-Err file:$APTARCHIVE  Packages
+	testaptgetupdate "Get:2 file:$APTARCHIVE  Packages
+Err:2 file:$APTARCHIVE  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:${APTARCHIVE}/Packages.$COMPRESS  Empty files can't be valid archives
 
@@ -63,13 +63,13 @@ testoverhttp() {
 	forcecompressor "$1"
 
 	createemptyarchive 'Packages'
-	testaptgetupdate "Get: http://localhost:8080  Packages []
+	testaptgetupdate "Get:2 http://localhost:8080  Packages []
 Reading package lists..." "empty archive Packages.$COMPRESS over http"
 
 	createemptyfile 'Packages'
 	#FIXME: we should response with a good error message instead
-	testaptgetupdate "Get: http://localhost:8080  Packages
-Err http://localhost:8080  Packages
+	testaptgetupdate "Get:2 http://localhost:8080  Packages
+Err:2 http://localhost:8080  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages.${COMPRESS})  Empty files can't be valid archives
 
