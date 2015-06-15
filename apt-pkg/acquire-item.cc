@@ -438,6 +438,11 @@ APT_PURE pkgAcquire * pkgAcquire::Item::GetOwner() const		/*{{{*/
    return Owner;
 }
 									/*}}}*/
+pkgAcquire::ItemDesc &pkgAcquire::Item::GetItemDesc()			/*{{{*/
+{
+   return Desc;
+}
+									/*}}}*/
 APT_CONST bool pkgAcquire::Item::IsTrusted() const			/*{{{*/
 {
    return false;
@@ -840,7 +845,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
       return false;
    }
 
-   if (FileName != I->DestFile)
+   if (FileName != I->DestFile && RealFileExists(I->DestFile) == false)
    {
       I->Local = true;
       I->Desc.URI = "copy:" + FileName;
@@ -2482,7 +2487,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
 
    // Methods like e.g. "file:" will give us a (compressed) FileName that is
    // not the "DestFile" we set, in this case we uncompress from the local file
-   if (FileName != DestFile)
+   if (FileName != DestFile && RealFileExists(DestFile) == false)
       Local = true;
    else
       EraseFileName = FileName;
@@ -2760,7 +2765,7 @@ void pkgAcqArchive::Done(string const &Message, HashStringList const &Hashes,
    }
 
    // Reference filename
-   if (FileName != DestFile)
+   if (DestFile !=  FileName && RealFileExists(DestFile) == false)
    {
       StoreFilename = DestFile = FileName;
       Local = true;
@@ -2903,18 +2908,6 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
    strprintf(Desc.Description, "%s %s %s Changelog", URI::SiteOnly(Desc.URI).c_str(), SrcName.c_str(), SrcVersion.c_str());
    Desc.Owner = this;
    QueueURI(Desc);
-
-   if (Status == StatDone) // this happens if we queue the same changelog two times
-   {
-      Complete = true;
-      for (pkgAcquire::UriIterator I = Owner->UriBegin(); I != Owner->UriEnd(); ++I)
-	 if (I->URI == Desc.URI)
-	    if (DestFile != I->Owner->DestFile)
-	       if (symlink(I->Owner->DestFile.c_str(), DestFile.c_str()) != 0)
-	       {
-		  ; // ignore error, there isn't anthing we could do to handle the edgecase of an edgecase
-	       }
-   }
 }
 									/*}}}*/
 std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
@@ -3107,7 +3100,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
       return;
 
    // We have to copy it into place
-   if (FileName != DestFile)
+   if (RealFileExists(DestFile.c_str()) == false)
    {
       Local = true;
       if (_config->FindB("Acquire::Source-Symlinks",true) == false ||

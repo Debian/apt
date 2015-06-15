@@ -249,6 +249,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 
    /** \return the acquire process with which this item is associated. */
    pkgAcquire *GetOwner() const;
+   pkgAcquire::ItemDesc &GetItemDesc();
 
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() const;

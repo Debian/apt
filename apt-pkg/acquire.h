@@ -68,9 +68,10 @@
 
 #include <apt-pkg/macros.h>
 #include <apt-pkg/weakptr.h>
+#include <apt-pkg/hashes.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <stddef.h>
 #include <sys/time.h>
@@ -390,13 +391,13 @@ class pkgAcquire
  */
 struct pkgAcquire::ItemDesc : public WeakPointable
 {
-   /** \brief The URI from which to download this item. */
+   /** \brief URI from which to download this item. */
    std::string URI;
-   /** brief A description of this item. */
+   /** \brief description of this item. */
    std::string Description;
-   /** brief A shorter description of this item. */
+   /** \brief shorter description of this item. */
    std::string ShortDesc;
-   /** brief The underlying item which is to be downloaded. */
+   /** \brief underlying item which is to be downloaded. */
    Item *Owner;
 };
 									/*}}}*/
@@ -419,12 +420,25 @@ class pkgAcquire::Queue
    protected:
 
    /** \brief A single item placed in this queue. */
-   struct QItem : pkgAcquire::ItemDesc
+   struct QItem : public WeakPointable
    {
       /** \brief The next item in the queue. */
       QItem *Next;
       /** \brief The worker associated with this item, if any. */
       pkgAcquire::Worker *Worker;
+
+      /** \brief The URI from which to download this item. */
+      std::string URI;
+      /** \brief A description of this item. */
+      std::string Description;
+      /** \brief A shorter description of this item. */
+      std::string ShortDesc;
+      /** \brief The underlying items interested in the download */
+      std::vector<Item*> Owners;
+      // both, backward compatibility and easy access as syncing is interal
+      Item * Owner;
+
+      typedef std::vector<Item*>::const_iterator owner_iterator;
 
       /** \brief Assign the ItemDesc portion of this QItem from
        *  another ItemDesc
@@ -434,10 +448,24 @@ class pkgAcquire::Queue
 	 URI = I.URI;
 	 Description = I.Description;
 	 ShortDesc = I.ShortDesc;
+	 Owners.clear();
+	 Owners.push_back(I.Owner);
 	 Owner = I.Owner;
       };
+
+      /** @return the sum of all expected hashes by all owners */
+      HashStringList GetExpectedHashes() const;
+
+      /** @return smallest maximum size of all owners */
+      unsigned long long GetMaximumSize() const;
+
+      /** \brief get partial files in order */
+      void SyncDestinationFiles() const;
+
+      /** @return the custom headers to use for this item */
+      std::string Custom600Headers() const;
    };
-   
+
    /** \brief The name of this queue. */
    std::string Name;
 
@@ -590,7 +618,7 @@ class pkgAcquire::UriIterator
       }
    };
    
-   inline pkgAcquire::ItemDesc const *operator ->() const {return CurItem;};
+   inline pkgAcquire::Queue::QItem const *operator ->() const {return CurItem;};
    inline bool operator !=(UriIterator const &rhs) const {return rhs.CurQ != CurQ || rhs.CurItem != CurItem;};
    inline bool operator ==(UriIterator const &rhs) const {return rhs.CurQ == CurQ && rhs.CurItem == CurItem;};
    

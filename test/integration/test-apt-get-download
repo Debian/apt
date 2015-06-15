@@ -38,7 +38,7 @@ testdownload() {
 		APT="${APT}/${3}"
 	fi
 	msgtest "Test download of package file $1 with" "$APT"
-	testsuccess --nomsg aptget download ${APT}
+	testsuccess --nomsg aptget download ${APT} -o Debug::pkgAcquire::Worker=1 -o Debug::pkgAcquire::Auth=1
 	testsuccess test -f "$1"
 	rm -f "$1"
 }

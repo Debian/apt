@@ -23,6 +23,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -682,7 +683,8 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
    for (; *I != 0; I = &(*I)->Next)
       if (Item.URI == (*I)->URI) 
       {
-	 Item.Owner->Status = Item::StatDone;
+	 (*I)->Owners.push_back(Item.Owner);
+	 Item.Owner->Status = (*I)->Owner->Status;
 	 return false;
       }
 
@@ -705,13 +707,13 @@ bool pkgAcquire::Queue::Dequeue(Item *Owner)
 {
    if (Owner->Status == pkgAcquire::Item::StatFetching)
       return _error->Error("Tried to dequeue a fetching object");
-       
+
    bool Res = false;
-   
+
    QItem **I = &Items;
    for (; *I != 0;)
    {
-      if ((*I)->Owner == Owner)
+      if (Owner == (*I)->Owner)
       {
 	 QItem *Jnk= *I;
 	 *I = (*I)->Next;
@@ -722,7 +724,7 @@ bool pkgAcquire::Queue::Dequeue(Item *Owner)
       else
 	 I = &(*I)->Next;
    }
-   
+
    return Res;
 }
 									/*}}}*/
@@ -799,9 +801,12 @@ pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Wor
 bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 {
    PipeDepth--;
-   if (Itm->Owner->Status == pkgAcquire::Item::StatFetching)
-      Itm->Owner->Status = pkgAcquire::Item::StatDone;
-   
+   for (QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+   {
+      if ((*O)->Status == pkgAcquire::Item::StatFetching)
+	 (*O)->Status = pkgAcquire::Item::StatDone;
+   }
+
    if (Itm->Owner->QueueCounter <= 1)
       Owner->Dequeue(Itm->Owner);
    else
@@ -809,7 +814,7 @@ bool pkgAcquire::Queue::ItemDone(QItem *Itm)
       Dequeue(Itm->Owner);
       Owner->Bump();
    }
-   
+
    return Cycle();
 }
 									/*}}}*/
@@ -824,7 +829,7 @@ bool pkgAcquire::Queue::Cycle()
 
    if (PipeDepth < 0)
       return _error->Error("Pipedepth failure");
-			   
+
    // Look for a queable item
    QItem *I = Items;
    while (PipeDepth < (signed)MaxPipeDepth)
@@ -832,18 +837,19 @@ bool pkgAcquire::Queue::Cycle()
       for (; I != 0; I = I->Next)
 	 if (I->Owner->Status == pkgAcquire::Item::StatIdle)
 	    break;
-      
+
       // Nothing to do, queue is idle.
       if (I == 0)
 	 return true;
-      
+
       I->Worker = Workers;
-      I->Owner->Status = pkgAcquire::Item::StatFetching;
+      for (QItem::owner_iterator O = I->Owners.begin(); O != I->Owners.end(); ++O)
+	 (*O)->Status = pkgAcquire::Item::StatFetching;
       PipeDepth++;
       if (Workers->QueueItem(I) == false)
 	 return false;
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -855,6 +861,94 @@ void pkgAcquire::Queue::Bump()
    Cycle();
 }
 									/*}}}*/
+HashStringList pkgAcquire::Queue::QItem::GetExpectedHashes() const	/*{{{*/
+{
+   /* each Item can have multiple owners and each owner might have different
+      hashes, even if that is unlikely in practice and if so at least some
+      owners will later fail. There is one situation through which is not a
+      failure and still needs this handling: Two owners who expect the same
+      file, but one owner only knows the SHA1 while the other only knows SHA256. */
+   HashStringList superhsl;
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      HashStringList const hsl = (*O)->GetExpectedHashes();
+      if (hsl.usable() == false)
+	 continue;
+      if (superhsl.usable() == false)
+	 superhsl = hsl;
+      else
+      {
+	 // we merge both lists - if we find disagreement send no hashes
+	 HashStringList::const_iterator hs = hsl.begin();
+	 for (; hs != hsl.end(); ++hs)
+	    if (superhsl.push_back(*hs) == false)
+	       break;
+	 if (hs != hsl.end())
+	 {
+	    superhsl.clear();
+	    break;
+	 }
+      }
+   }
+   return superhsl;
+}
+									/*}}}*/
+APT_PURE unsigned long long pkgAcquire::Queue::QItem::GetMaximumSize() const	/*{{{*/
+{
+   unsigned long long Maximum = std::numeric_limits<unsigned long long>::max();
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      if ((*O)->FileSize == 0)
+	 continue;
+      Maximum = std::min(Maximum, (*O)->FileSize);
+   }
+   if (Maximum == std::numeric_limits<unsigned long long>::max())
+      return 0;
+   return Maximum;
+}
+									/*}}}*/
+void pkgAcquire::Queue::QItem::SyncDestinationFiles() const		/*{{{*/
+{
+   /* ensure that the first owner has the best partial file of all and
+      the rest have (potentially dangling) symlinks to it so that
+      everything (like progress reporting) finds it easily */
+   std::string superfile = Owner->DestFile;
+   off_t supersize = 0;
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      if ((*O)->DestFile == superfile)
+	 continue;
+      struct stat file;
+      if (lstat((*O)->DestFile.c_str(),&file) == 0)
+      {
+	 if ((file.st_mode & S_IFREG) == 0)
+	    unlink((*O)->DestFile.c_str());
+	 else if (supersize < file.st_size)
+	 {
+	    supersize = file.st_size;
+	    unlink(superfile.c_str());
+	    rename((*O)->DestFile.c_str(), superfile.c_str());
+	 }
+	 else
+	    unlink((*O)->DestFile.c_str());
+	 if (symlink(superfile.c_str(), (*O)->DestFile.c_str()) != 0)
+	 {
+	    ; // not a problem per-se and no real alternative
+	 }
+      }
+   }
+}
+									/*}}}*/
+std::string pkgAcquire::Queue::QItem::Custom600Headers() const		/*{{{*/
+{
+   /* The others are relatively easy to merge, but this one?
+      Lets not merge and see how far we can run with it…
+      Likely, nobody will ever notice as all the items will
+      be of the same class and hence generate the same headers. */
+   return Owner->Custom600Headers();
+}
+									/*}}}*/
+
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -914,9 +1008,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       {
 	 CurrentBytes += I->CurrentSize;
 	 ResumeSize += I->ResumePoint;
-	 
+
 	 // Files with unknown size always have 100% completion
-	 if (I->CurrentItem->Owner->FileSize == 0 && 
+	 if (I->CurrentItem->Owner->FileSize == 0 &&
 	     I->CurrentItem->Owner->Complete == false)
 	    TotalBytes += I->CurrentSize;
       }

@@ -326,6 +326,9 @@ class pkgAcquire::Worker : public WeakPointable
     *  \b false, also rudely interrupts the worker with a SIGINT.
     */
    virtual ~Worker();
+
+private:
+   APT_HIDDEN void PrepareFiles(char const * const caller, pkgAcquire::Queue::QItem const * const Itm);
 };
 
 /** @} */

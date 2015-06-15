@@ -258,18 +258,27 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    ItemDone();
 
-	    pkgAcquire::Item *Owner = Itm->Owner;
-	    pkgAcquire::ItemDesc Desc = *Itm;
-
 	    // Change the status so that it can be dequeued
-	    Owner->Status = pkgAcquire::Item::StatIdle;
+	    for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+	    {
+	       pkgAcquire::Item *Owner = *O;
+	       Owner->Status = pkgAcquire::Item::StatIdle;
+	    }
 	    // Mark the item as done (taking care of all queues)
 	    // and then put it in the main queue again
+	    std::vector<Item*> const ItmOwners = Itm->Owners;
 	    OwnerQ->ItemDone(Itm);
-	    OwnerQ->Owner->Enqueue(Desc);
+	    Itm = NULL;
+	    for (pkgAcquire::Queue::QItem::owner_iterator O = ItmOwners.begin(); O != ItmOwners.end(); ++O)
+	    {
+	       pkgAcquire::Item *Owner = *O;
+	       pkgAcquire::ItemDesc desc = Owner->GetItemDesc();
+	       desc.URI = NewURI;
+	       OwnerQ->Owner->Enqueue(desc);
 
-	    if (Log != 0)
-	       Log->Done(Desc);
+	       if (Log != 0)
+		  Log->Done(Owner->GetItemDesc());
+	    }
             break;
          }
 
@@ -286,14 +295,18 @@ bool pkgAcquire::Worker::RunMessages()
 	    CurrentSize = 0;
 	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
 	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
-	    Itm->Owner->Start(Message, TotalSize);
+	    for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+	    {
+	       (*O)->Start(Message, TotalSize);
 
-	    // Display update before completion
-	    if (Log != 0 && Log->MorePulses == true)
-	       Log->Pulse(Itm->Owner->GetOwner());
-
-	    if (Log != 0)
-	       Log->Fetch(*Itm);
+	       // Display update before completion
+	       if (Log != 0)
+	       {
+		  if (Log->MorePulses == true)
+		     Log->Pulse((*O)->GetOwner());
+		  Log->Fetch((*O)->GetItemDesc());
+	       }
+	    }
 
 	    break;
 	 }
@@ -307,105 +320,110 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
-	    pkgAcquire::Item *Owner = Itm->Owner;
-	    pkgAcquire::ItemDesc Desc = *Itm;
-
-	    if (RealFileExists(Owner->DestFile))
-	       ChangeOwnerAndPermissionOfFile("201::URIDone", Owner->DestFile.c_str(), "root", "root", 0644);
+	    PrepareFiles("201::URIDone", Itm);
 
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
-	       Log->Pulse(Owner->GetOwner());
+	       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+		  Log->Pulse((*O)->GetOwner());
 
-	    OwnerQ->ItemDone(Itm);
-
-	    HashStringList const ExpectedHashes = Owner->GetExpectedHashes();
-	    // see if we got hashes to verify
+	    std::string const filename = LookupTag(Message, "Filename", Itm->Owner->DestFile.c_str());
 	    HashStringList ReceivedHashes;
-	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
-	       std::string const tagname = std::string(*type) + "-Hash";
-	       std::string const hashsum = LookupTag(Message, tagname.c_str());
-	       if (hashsum.empty() == false)
-		  ReceivedHashes.push_back(HashString(*type, hashsum));
-	    }
-	    // not all methods always sent Hashes our way
-	    if (ExpectedHashes.usable() == true && ReceivedHashes.usable() == false)
-	    {
-	       std::string const filename = LookupTag(Message, "Filename", Owner->DestFile.c_str());
-	       if (filename.empty() == false && RealFileExists(filename))
+	       // see if we got hashes to verify
+	       for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	       {
-		  Hashes calc(ExpectedHashes);
-		  FileFd file(filename, FileFd::ReadOnly, FileFd::None);
-		  calc.AddFD(file);
-		  ReceivedHashes = calc.GetHashStringList();
+		  std::string const tagname = std::string(*type) + "-Hash";
+		  std::string const hashsum = LookupTag(Message, tagname.c_str());
+		  if (hashsum.empty() == false)
+		     ReceivedHashes.push_back(HashString(*type, hashsum));
 	       }
-	    }
-
-	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
-	    {
-	       std::clog << "201 URI Done: " << Owner->DescURI() << endl
-		  << "ReceivedHash:" << endl;
-	       for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
-		  std::clog <<  "\t- " << hs->toStr() << std::endl;
-	       std::clog << "ExpectedHash:" << endl;
-	       for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
-		  std::clog <<  "\t- " << hs->toStr() << std::endl;
-	       std::clog << endl;
-	    }
-
-	    // decide if what we got is what we expected
-	    bool consideredOkay = false;
-	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
-	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
-	    if (ExpectedHashes.usable())
-	    {
+	       // not all methods always sent Hashes our way
 	       if (ReceivedHashes.usable() == false)
 	       {
-		  /* IMS-Hits can't be checked here as we will have uncompressed file,
-		     but the hashes for the compressed file. What we have was good through
-		     so all we have to ensure later is that we are not stalled. */
-		  consideredOkay = isIMSHit;
-	       }
-	       else if (ReceivedHashes == ExpectedHashes)
-		  consideredOkay = true;
-	       else
-		  consideredOkay = false;
-
-	    }
-	    else if (Owner->HashesRequired() == true)
-	       consideredOkay = false;
-	    else
-	       consideredOkay = true;
-
-	    if (consideredOkay == true)
-	    {
-	       Owner->Done(Message, ReceivedHashes, Config);
-	       ItemDone();
-
-	       // Log that we are done
-	       if (Log != 0)
-	       {
-		  if (isIMSHit)
+		  HashStringList const ExpectedHashes = Itm->GetExpectedHashes();
+		  if (ExpectedHashes.usable() == true && RealFileExists(filename))
 		  {
-		     /* Hide 'hits' for local only sources - we also manage to
-			hide gets */
-		     if (Config->LocalOnly == false)
-			Log->IMSHit(Desc);
+		     Hashes calc(ExpectedHashes);
+		     FileFd file(filename, FileFd::ReadOnly, FileFd::None);
+		     calc.AddFD(file);
+		     ReceivedHashes = calc.GetHashStringList();
 		  }
-		  else
-		     Log->Done(Desc);
 	       }
 	    }
-	    else
-	    {
-	       Owner->Status = pkgAcquire::Item::StatAuthError;
-	       Owner->Failed(Message,Config);
-	       ItemDone();
 
-	       if (Log != 0)
-		  Log->Fail(Desc);
+	    // only local files can refer other filenames and counting them as fetched would be unfair
+	    if (Log !=  NULL && filename != Itm->Owner->DestFile)
+	       Log->Fetched(ReceivedHashes.FileSize(),atoi(LookupTag(Message,"Resume-Point","0").c_str()));
+
+	    std::vector<Item*> const ItmOwners = Itm->Owners;
+	    OwnerQ->ItemDone(Itm);
+	    Itm = NULL;
+
+	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
+	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
+
+	    for (pkgAcquire::Queue::QItem::owner_iterator O = ItmOwners.begin(); O != ItmOwners.end(); ++O)
+	    {
+	       pkgAcquire::Item * const Owner = *O;
+	       HashStringList const ExpectedHashes = Owner->GetExpectedHashes();
+	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
+	       {
+		  std::clog << "201 URI Done: " << Owner->DescURI() << endl
+		     << "ReceivedHash:" << endl;
+		  for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
+		     std::clog <<  "\t- " << hs->toStr() << std::endl;
+		  std::clog << "ExpectedHash:" << endl;
+		  for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
+		     std::clog <<  "\t- " << hs->toStr() << std::endl;
+		  std::clog << endl;
+	       }
+
+	       // decide if what we got is what we expected
+	       bool consideredOkay = false;
+	       if (ExpectedHashes.usable())
+	       {
+		  if (ReceivedHashes.usable() == false)
+		  {
+		     /* IMS-Hits can't be checked here as we will have uncompressed file,
+			but the hashes for the compressed file. What we have was good through
+			so all we have to ensure later is that we are not stalled. */
+		     consideredOkay = isIMSHit;
+		  }
+		  else if (ReceivedHashes == ExpectedHashes)
+		     consideredOkay = true;
+		  else
+		     consideredOkay = false;
+
+	       }
+	       else if (Owner->HashesRequired() == true)
+		  consideredOkay = false;
+	       else
+		  consideredOkay = true;
+
+	       if (consideredOkay == true)
+	       {
+		  Owner->Done(Message, ReceivedHashes, Config);
+
+		  // Log that we are done
+		  if (Log != 0)
+		  {
+		     if (isIMSHit)
+			Log->IMSHit(Owner->GetItemDesc());
+		     else
+			Log->Done(Owner->GetItemDesc());
+		  }
+	       }
+	       else
+	       {
+		  Owner->Status = pkgAcquire::Item::StatAuthError;
+		  Owner->Failed(Message,Config);
+
+		  if (Log != 0)
+		     Log->Fail(Owner->GetItemDesc());
+	       }
 	    }
+	    ItemDone();
 	    break;
 	 }
 
@@ -419,30 +437,32 @@ bool pkgAcquire::Worker::RunMessages()
 	       break;
 	    }
 
+	    PrepareFiles("400::URIFailure", Itm);
+
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
-	       Log->Pulse(Itm->Owner->GetOwner());
+	       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+		  Log->Pulse((*O)->GetOwner());
 
-	    pkgAcquire::Item *Owner = Itm->Owner;
-	    pkgAcquire::ItemDesc Desc = *Itm;
-
-	    if (RealFileExists(Owner->DestFile))
-	       ChangeOwnerAndPermissionOfFile("400::URIFailure", Owner->DestFile.c_str(), "root", "root", 0644);
-
+	    std::vector<Item*> const ItmOwners = Itm->Owners;
 	    OwnerQ->ItemDone(Itm);
+	    Itm = NULL;
 
-	    // set some status
-	    if(LookupTag(Message,"FailReason") == "Timeout" || 
-	       LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
-	       LookupTag(Message,"FailReason") == "ResolveFailure" ||
-	       LookupTag(Message,"FailReason") == "ConnectionRefused") 
-	       Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+	    for (pkgAcquire::Queue::QItem::owner_iterator O = ItmOwners.begin(); O != ItmOwners.end(); ++O)
+	    {
+	       // set some status
+	       if(LookupTag(Message,"FailReason") == "Timeout" ||
+		     LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
+		     LookupTag(Message,"FailReason") == "ResolveFailure" ||
+		     LookupTag(Message,"FailReason") == "ConnectionRefused")
+		  (*O)->Status = pkgAcquire::Item::StatTransientNetworkError;
 
-	    Owner->Failed(Message,Config);
+	       (*O)->Failed(Message,Config);
+
+	       if (Log != 0)
+		  Log->Fail((*O)->GetItemDesc());
+	    }
 	    ItemDone();
-
-	    if (Log != 0)
-	       Log->Fail(Desc);
 
 	    break;
 	 }
@@ -578,16 +598,24 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
-   HashStringList const hsl = Item->Owner->GetExpectedHashes();
+
+   HashStringList const hsl = Item->GetExpectedHashes();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
-   if(Item->Owner->FileSize > 0)
+
+   if (hsl.FileSize() == 0)
    {
-      string MaximumSize;
-      strprintf(MaximumSize, "%llu", Item->Owner->FileSize);
-      Message += "\nMaximum-Size: " + MaximumSize;
+      unsigned long long FileSize = Item->GetMaximumSize();
+      if(FileSize > 0)
+      {
+	 string MaximumSize;
+	 strprintf(MaximumSize, "%llu", FileSize);
+	 Message += "\nMaximum-Size: " + MaximumSize;
+      }
    }
-   Message += Item->Owner->Custom600Headers();
+
+   Item->SyncDestinationFiles();
+   Message += Item->Custom600Headers();
    Message += "\n\n";
 
    if (RealFileExists(Item->Owner->DestFile))
@@ -684,5 +712,35 @@ void pkgAcquire::Worker::ItemDone()
    CurrentSize = 0;
    TotalSize = 0;
    Status = string();
+}
+									/*}}}*/
+void pkgAcquire::Worker::PrepareFiles(char const * const caller, pkgAcquire::Queue::QItem const * const Itm)/*{{{*/
+{
+   if (RealFileExists(Itm->Owner->DestFile))
+   {
+      ChangeOwnerAndPermissionOfFile(caller, Itm->Owner->DestFile.c_str(), "root", "root", 0644);
+      std::string const filename = Itm->Owner->DestFile;
+      for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+      {
+	 pkgAcquire::Item const * const Owner = *O;
+	 if (Owner->DestFile == filename)
+	    continue;
+	 unlink(Owner->DestFile.c_str());
+	 if (link(filename.c_str(), Owner->DestFile.c_str()) != 0)
+	 {
+	    // diferent mounts can't happen for us as we download to lists/ by default,
+	    // but if the system is reused by others the locations can potentially be on
+	    // different disks, so use symlink as poor-men replacement.
+	    // FIXME: Real copying as last fallback, but that is costly, so offload to a method preferable
+	    if (symlink(filename.c_str(), Owner->DestFile.c_str()) != 0)
+	       _error->Error("Can't create (sym)link of file %s to %s", filename.c_str(), Owner->DestFile.c_str());
+	 }
+      }
+   }
+   else
+   {
+      for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+	 unlink((*O)->DestFile.c_str());
+   }
 }
 									/*}}}*/
