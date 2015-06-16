@@ -178,3 +178,7 @@ bool pkgSrcRecords::Parser::Files2(std::vector<pkgSrcRecords::File2> &F2)/*{{{*/
    return true;
 }
 									/*}}}*/
+
+
+pkgSrcRecords::Parser::Parser(const pkgIndexFile *Index) : iIndex(Index) {}
+pkgSrcRecords::Parser::~Parser() {}

@@ -95,7 +95,9 @@ pkgDepCache::ActionGroup::~ActionGroup()
 // ---------------------------------------------------------------------
 /* */
 pkgDepCache::pkgDepCache(pkgCache *pCache,Policy *Plcy) :
-  group_level(0), Cache(pCache), PkgState(0), DepState(0)
+  group_level(0), Cache(pCache), PkgState(0), DepState(0),
+   iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
+   iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0)
 {
    DebugMarker = _config->FindB("Debug::pkgDepCache::Marker", false);
    DebugAutoInstall = _config->FindB("Debug::pkgDepCache::AutoInstall", false);
@@ -947,7 +949,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 /* */
 struct CompareProviders {
    pkgCache::PkgIterator const Pkg;
-   CompareProviders(pkgCache::DepIterator const &Dep) : Pkg(Dep.TargetPkg()) {};
+   explicit CompareProviders(pkgCache::DepIterator const &Dep) : Pkg(Dep.TargetPkg()) {};
    //bool operator() (APT::VersionList::iterator const &AV, APT::VersionList::iterator const &BV)
    bool operator() (pkgCache::VerIterator const &AV, pkgCache::VerIterator const &BV)
    {

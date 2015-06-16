@@ -42,7 +42,7 @@ class pkgRecords							/*{{{*/
    Parser &Lookup(pkgCache::DescFileIterator const &Desc);
 
    // Construct destruct
-   pkgRecords(pkgCache &Cache);
+   explicit pkgRecords(pkgCache &Cache);
    virtual ~pkgRecords();
 };
 									/*}}}*/

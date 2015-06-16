@@ -122,7 +122,7 @@ class pkgOrderList : protected pkgCache::Namespace
 
    int Score(PkgIterator Pkg);
 
-   pkgOrderList(pkgDepCache *Cache);
+   explicit pkgOrderList(pkgDepCache *Cache);
    virtual ~pkgOrderList();
 };
 

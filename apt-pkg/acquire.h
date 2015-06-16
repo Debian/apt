@@ -369,7 +369,7 @@ class pkgAcquire
    bool GetLock(std::string const &Lock);
 
    /** \brief Construct a new pkgAcquire. */
-   pkgAcquire(pkgAcquireStatus *Log);
+   explicit pkgAcquire(pkgAcquireStatus *Log);
    pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.
@@ -584,7 +584,7 @@ class pkgAcquire::Queue
     *  \param Name The name of the new queue.
     *  \param Owner The download process that owns the new queue.
     */
-   Queue(std::string Name,pkgAcquire *Owner);
+   Queue(std::string const &Name,pkgAcquire * const Owner);
 
    /** Shut down all the worker processes associated with this queue
     *  and empty the queue.
@@ -625,7 +625,7 @@ class pkgAcquire::UriIterator
     *
     *  \param Q The queue over which this UriIterator should iterate.
     */
-   UriIterator(pkgAcquire::Queue *Q);
+   explicit UriIterator(pkgAcquire::Queue *Q);
    virtual ~UriIterator();
 };
 									/*}}}*/

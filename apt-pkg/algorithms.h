@@ -67,7 +67,7 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
 	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
       }
       
-      Policy(pkgDepCache *Cache) : Cache(Cache) {};
+      explicit Policy(pkgDepCache *Cache) : Cache(Cache) {};
    };
    
    unsigned char *Flags;
@@ -87,7 +87,7 @@ private:
 
    public:
 
-   pkgSimulate(pkgDepCache *Cache);
+   explicit pkgSimulate(pkgDepCache *Cache);
    virtual ~pkgSimulate();
 };
 									/*}}}*/
@@ -155,7 +155,7 @@ class pkgProblemResolver						/*{{{*/
 
    APT_DEPRECATED void InstallProtect();
 
-   pkgProblemResolver(pkgDepCache *Cache);
+   explicit pkgProblemResolver(pkgDepCache *Cache);
    virtual ~pkgProblemResolver();
 };
 									/*}}}*/

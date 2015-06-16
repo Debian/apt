@@ -24,7 +24,7 @@ class DebFile : public pkgDirStream
 	unsigned long ControlLen;
 	
 public:
-	DebFile(const char *FileName);
+	explicit DebFile(const char *FileName);
 	~DebFile();
 	bool DoItem(Item &I, int &fd);
 	bool Process(pkgDirStream::Item &I, const unsigned char *data, 

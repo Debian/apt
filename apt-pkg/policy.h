@@ -59,7 +59,7 @@ class pkgPolicy : public pkgDepCache::Policy
    struct PkgPin : Pin
    {
       std::string Pkg;
-      PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
+      explicit PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
    
    Pin *Pins;
@@ -85,7 +85,7 @@ class pkgPolicy : public pkgDepCache::Policy
 
    bool InitDefaults();
    
-   pkgPolicy(pkgCache *Owner);
+   explicit pkgPolicy(pkgCache *Owner);
    virtual ~pkgPolicy();
    private:
    pkgCache::VerIterator GetCandidateVerNew(pkgCache::PkgIterator const &Pkg);

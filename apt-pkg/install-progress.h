@@ -69,7 +69,7 @@ namespace Progress {
     void WriteToStatusFd(std::string msg);
 
  public:
-    PackageManagerProgressFd(int progress_fd);
+    explicit PackageManagerProgressFd(int progress_fd);
     virtual ~PackageManagerProgressFd();
 
     virtual void StartDpkg();
@@ -100,7 +100,7 @@ namespace Progress {
     void WriteToStatusFd(std::string msg);
 
  public:
-    PackageManagerProgressDeb822Fd(int progress_fd);
+    explicit PackageManagerProgressDeb822Fd(int progress_fd);
     virtual ~PackageManagerProgressDeb822Fd();
 
     virtual void StartDpkg();

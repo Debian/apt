@@ -54,7 +54,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    template<typename Iter> class Dynamic {
       public:
       static std::vector<Iter*> toReMap;
-      Dynamic(Iter &I) {
+      explicit Dynamic(Iter &I) {
 	 toReMap.push_back(&I);
       }
 

@@ -47,7 +47,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
-			   pkgAcquireStatus *Log) : Log(Log)
+			   pkgAcquireStatus *log) : Log(log)
 {
    OwnerQ = Q;
    Config = Cnf;

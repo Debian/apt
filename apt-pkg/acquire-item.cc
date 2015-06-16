@@ -120,7 +120,7 @@ static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser
    return false;
 }
 									/*}}}*/
-static HashStringList GetExpectedHashesFromFor(indexRecords * const Parser, std::string const MetaKey)/*{{{*/
+static HashStringList GetExpectedHashesFromFor(indexRecords * const Parser, std::string const &MetaKey)/*{{{*/
 {
    if (Parser == NULL)
       return HashStringList();
@@ -393,7 +393,7 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
    virtual std::string DescURI() const {return Target.URI;};
    virtual HashStringList GetExpectedHashes()  const {return HashStringList();};
 
-   NoActionItem(pkgAcquire * const Owner, IndexTarget const Target) :
+   NoActionItem(pkgAcquire * const Owner, IndexTarget const &Target) :
       pkgAcquire::Item(Owner), Target(Target)
    {
       Status = StatDone;
@@ -404,9 +404,9 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 APT_IGNORE_DEPRECATED_PUSH
-pkgAcquire::Item::Item(pkgAcquire * const Owner) :
+pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Owner(Owner)
+    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -661,8 +661,8 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
 									/*}}}*/
 
 pkgAcqTransactionItem::pkgAcqTransactionItem(pkgAcquire * const Owner,	/*{{{*/
-      pkgAcqMetaBase * const TransactionManager, IndexTarget const Target) :
-   pkgAcquire::Item(Owner), Target(Target), TransactionManager(TransactionManager)
+      pkgAcqMetaBase * const transactionManager, IndexTarget const &target) :
+   pkgAcquire::Item(Owner), Target(target), TransactionManager(transactionManager)
 {
    if (TransactionManager != this)
       TransactionManager->Add(this);
@@ -672,7 +672,7 @@ pkgAcqTransactionItem::~pkgAcqTransactionItem()				/*{{{*/
 {
 }
 									/*}}}*/
-HashStringList pkgAcqTransactionItem::GetExpectedHashesFor(std::string const MetaKey) const	/*{{{*/
+HashStringList pkgAcqTransactionItem::GetExpectedHashesFor(std::string const &MetaKey) const	/*{{{*/
 {
    return GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, MetaKey);
 }
@@ -681,7 +681,7 @@ HashStringList pkgAcqTransactionItem::GetExpectedHashesFor(std::string const Met
 // AcqMetaBase - Constructor						/*{{{*/
 pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire * const Owner,
       pkgAcqMetaBase * const TransactionManager,
-      std::vector<IndexTarget> const IndexTargets,
+      std::vector<IndexTarget> const &IndexTargets,
       IndexTarget const &DataTarget,
       indexRecords * const MetaIndexParser)
 : pkgAcqTransactionItem(Owner, TransactionManager, DataTarget),
@@ -1103,11 +1103,11 @@ pkgAcqMetaBase::~pkgAcqMetaBase() {}
 pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       IndexTarget const &ClearsignedTarget,
       IndexTarget const &DetachedDataTarget, IndexTarget const &DetachedSigTarget,
-      std::vector<IndexTarget> const IndexTargets,
+      std::vector<IndexTarget> const &IndexTargets,
       indexRecords * const MetaIndexParser) :
    pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget, IndexTargets, MetaIndexParser),
    ClearsignedTarget(ClearsignedTarget),
-   DetachedDataTarget(DetachedDataTarget), DetachedSigTarget(DetachedSigTarget)
+   DetachedDataTarget(DetachedDataTarget)
 {
    // index targets + (worst case:) Release/Release.gpg
    ExpectedAdditionalItems = IndexTargets.size() + 2;
@@ -1243,7 +1243,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire * const Owner,		/*{{{*/
                                  pkgAcqMetaBase * const TransactionManager,
 				 IndexTarget const &DataTarget,
 				 IndexTarget const &DetachedSigTarget,
-				 vector<IndexTarget> const IndexTargets,
+				 vector<IndexTarget> const &IndexTargets,
 				 indexRecords * const MetaIndexParser) :
    pkgAcqMetaBase(Owner, TransactionManager, IndexTargets, DataTarget, MetaIndexParser),
    DetachedSigTarget(DetachedSigTarget)
@@ -1325,7 +1325,7 @@ pkgAcqMetaIndex::~pkgAcqMetaIndex() {}
 // AcqMetaSig::AcqMetaSig - Constructor					/*{{{*/
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire * const Owner,
       pkgAcqMetaBase * const TransactionManager,
-      IndexTarget const Target,
+      IndexTarget const &Target,
       pkgAcqMetaIndex * const MetaIndex) :
    pkgAcqTransactionItem(Owner, TransactionManager, Target), MetaIndex(MetaIndex)
 {
@@ -1488,7 +1488,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
 // AcqBaseIndex - Constructor						/*{{{*/
 pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
       pkgAcqMetaBase * const TransactionManager,
-      IndexTarget const Target)
+      IndexTarget const &Target)
 : pkgAcqTransactionItem(Owner, TransactionManager, Target)
 {
 }
@@ -1504,7 +1504,7 @@ pkgAcqBaseIndex::~pkgAcqBaseIndex() {}
  */
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
                                  pkgAcqMetaBase * const TransactionManager,
-                                 IndexTarget const Target)
+                                 IndexTarget const &Target)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -1905,7 +1905,7 @@ pkgAcqDiffIndex::~pkgAcqDiffIndex() {}
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
                                    pkgAcqMetaBase * const TransactionManager,
-                                   IndexTarget const Target,
+                                   IndexTarget const &Target,
 				   vector<DiffInfo> const &diffs)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target),
      available_patches(diffs)
@@ -2128,7 +2128,7 @@ pkgAcqIndexDiffs::~pkgAcqIndexDiffs() {}
 // AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
                                              pkgAcqMetaBase * const TransactionManager,
-                                             IndexTarget const Target,
+                                             IndexTarget const &Target,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
   : pkgAcqBaseIndex(Owner, TransactionManager, Target),
@@ -2273,8 +2273,8 @@ pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs() {}
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
                          pkgAcqMetaBase * const TransactionManager,
-                         IndexTarget const Target)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target)
+                         IndexTarget const &Target)
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), Stage(STAGE_DOWNLOAD)
 {
    // autoselect the compression method
    AutoSelectCompression();

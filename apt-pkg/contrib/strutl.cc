@@ -1308,7 +1308,7 @@ void ioprintf(ostream &out,const char *format,...)
    va_list args;
    ssize_t size = 400;
    while (true) {
-      bool ret = false;
+      bool ret;
       va_start(args,format);
       ret = iovprintf(out, format, args, size);
       va_end(args);
@@ -1322,7 +1322,7 @@ void strprintf(string &out,const char *format,...)
    ssize_t size = 400;
    std::ostringstream outstr;
    while (true) {
-      bool ret = false;
+      bool ret;
       va_start(args,format);
       ret = iovprintf(outstr, format, args, size);
       va_end(args);

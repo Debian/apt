@@ -276,7 +276,7 @@ public:
    unsigned long long FileSize;
    unsigned int CalcHashes;
 
-   PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
+   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
 };
 									/*}}}*/
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/

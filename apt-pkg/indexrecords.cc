@@ -42,7 +42,7 @@ APT_PURE bool indexRecords::GetSupportsAcquireByHash() const
    return this->SupportsAcquireByHash;
 }
 
-APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
+APT_PURE bool indexRecords::CheckDist(string const &MaybeDist) const
 {
    return (this->Dist == MaybeDist
 	   || this->Suite == MaybeDist);
@@ -63,7 +63,7 @@ APT_PURE time_t indexRecords::GetDate() const
    return this->Date;
 }
 
-APT_PURE indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
+APT_PURE indexRecords::checkSum *indexRecords::Lookup(string const &MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())
@@ -76,7 +76,7 @@ APT_PURE bool indexRecords::Exists(string const &MetaKey) const
    return Entries.find(MetaKey) != Entries.end();
 }
 
-bool indexRecords::Load(const string Filename)				/*{{{*/
+bool indexRecords::Load(string const &Filename)				/*{{{*/
 {
    FileFd Fd;
    if (OpenMaybeClearSignedFile(Filename, Fd) == false)
@@ -272,23 +272,10 @@ void indexRecords::SetTrusted(bool const Trusted)
       this->Trusted = NEVER_TRUSTED;
 }
 
-#if APT_PKG_ABI >= 413
 indexRecords::indexRecords(const string &ExpectedDist) :
    Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
    SupportsAcquireByHash(false)
 {
 }
-#else
-indexRecords::indexRecords() :
-   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(""), ValidUntil(0),
-   SupportsAcquireByHash(false)
-{
-}
-indexRecords::indexRecords(const string ExpectedDist) :
-   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
-   SupportsAcquireByHash(false)
-{
-}
-#endif
 
 indexRecords::~indexRecords() {}

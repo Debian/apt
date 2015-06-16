@@ -317,7 +317,7 @@ class pkgAcquire::Worker : public WeakPointable
     *  \param Config A location in which to store information about
     *  the fetch method.
     */
-   Worker(MethodConfig *Config);
+   explicit Worker(MethodConfig *Config);
 
    /** \brief Clean up this worker.
     *

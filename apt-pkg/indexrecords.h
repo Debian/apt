@@ -40,21 +40,16 @@ class indexRecords
    std::map<std::string,checkSum *> Entries;
 
    public:
-#if APT_PKG_ABI >= 413
-   indexRecords(const std::string &ExpectedDist = "");
-#else
-   indexRecords();
-   indexRecords(const std::string ExpectedDist);
-#endif
+   explicit indexRecords(const std::string &ExpectedDist = "");
 
    // Lookup function
-   virtual checkSum *Lookup(const std::string MetaKey);
+   virtual checkSum *Lookup(std::string const &MetaKey);
    /** \brief tests if a checksum for this file is available */
    bool Exists(std::string const &MetaKey) const;
    std::vector<std::string> MetaKeys();
 
-   virtual bool Load(std::string Filename);
-   virtual bool CheckDist(const std::string MaybeDist) const;
+   virtual bool Load(std::string const &Filename);
+   virtual bool CheckDist(std::string const &MaybeDist) const;
 
    std::string GetDist() const;
    std::string GetSuite() const;

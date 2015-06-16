@@ -265,7 +265,7 @@ APT_IGNORE_DEPRECATED_POP
 	void setConstructor(CacheSetHelper::PkgSelector const by) { ConstructedBy = by; }
 	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
 	PackageContainerInterface();
-	PackageContainerInterface(CacheSetHelper::PkgSelector const by);
+	explicit PackageContainerInterface(CacheSetHelper::PkgSelector const by);
 	virtual ~PackageContainerInterface();
 
 	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
@@ -310,7 +310,7 @@ public:									/*{{{*/
 			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {
 		typename Container::const_iterator _iter;
 	public:
-		const_iterator(typename Container::const_iterator i) : _iter(i) {}
+		explicit const_iterator(typename Container::const_iterator i) : _iter(i) {}
 		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; }
 		operator typename Container::const_iterator(void) const { return _iter; }
@@ -324,7 +324,7 @@ public:									/*{{{*/
 			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
 		typename Container::iterator _iter;
 	public:
-		iterator(typename Container::iterator i) : _iter(i) {}
+		explicit iterator(typename Container::iterator i) : _iter(i) {}
 		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; }
 		operator typename Container::iterator(void) const { return _iter; }
@@ -359,7 +359,7 @@ public:									/*{{{*/
 	const_iterator find(pkgCache::PkgIterator const &P) const { return const_iterator(_cont.find(P)); }
 
 	PackageContainer() : PackageContainerInterface(CacheSetHelper::UNKNOWN) {}
-	PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
+	explicit PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
 APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
 APT_IGNORE_DEPRECATED_POP
@@ -568,7 +568,7 @@ public:
 	APT_PUBLIC iterator begin() { return _cont->PkgBegin(); }
 	APT_PUBLIC iterator end() { return _cont->PkgEnd(); }
 
-	APT_PUBLIC PackageUniverse(pkgCache * const Owner);
+	explicit APT_PUBLIC PackageUniverse(pkgCache * const Owner);
 	APT_PUBLIC virtual ~PackageUniverse();
 
 private:
@@ -744,7 +744,7 @@ public:									/*{{{*/
 			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {/*{{{*/
 		typename Container::const_iterator _iter;
 	public:
-		const_iterator(typename Container::const_iterator i) : _iter(i) {}
+		explicit const_iterator(typename Container::const_iterator i) : _iter(i) {}
 		pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; }
 		operator typename Container::const_iterator(void) const { return _iter; }
@@ -758,7 +758,7 @@ public:									/*{{{*/
 			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
 		typename Container::iterator _iter;
 	public:
-		iterator(typename Container::iterator i) : _iter(i) {}
+		explicit iterator(typename Container::iterator i) : _iter(i) {}
 		pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; }
 		operator typename Container::iterator(void) const { return _iter; }

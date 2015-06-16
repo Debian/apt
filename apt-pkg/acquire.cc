@@ -653,8 +653,8 @@ pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(fals
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : d(NULL), Next(0),
-   Name(Name), Items(0), Workers(0), Owner(Owner), PipeDepth(0), MaxPipeDepth(1)
+pkgAcquire::Queue::Queue(string const &name,pkgAcquire * const owner) : d(NULL), Next(0),
+   Name(name), Items(0), Workers(0), Owner(owner), PipeDepth(0), MaxPipeDepth(1)
 {
 }
 									/*}}}*/

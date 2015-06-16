@@ -103,7 +103,7 @@ debReleaseIndex::~debReleaseIndex() {
 }
 
 template<typename CallC>
-void foreachTarget(std::string const URI, std::string const Dist,
+void foreachTarget(std::string const &URI, std::string const &Dist,
       std::map<std::string, std::vector<debReleaseIndex::debSectionEntry const *> > const &ArchEntries,
       CallC &Call)
 {

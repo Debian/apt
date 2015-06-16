@@ -59,7 +59,7 @@ public:
       unsigned int StartValue;
       unsigned int NextInBucket;
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
+      explicit TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
    };
    std::vector<TagData> Tags;
 };

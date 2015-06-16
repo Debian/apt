@@ -424,7 +424,6 @@ bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 // PackageCopy::RewriteEntry - Rewrite the entry with a new filename	/*{{{*/
 bool PackageCopy::RewriteEntry(FileFd &Target,string const &File)
 {
-   string const Dir(File,0,File.rfind('/'));
    std::vector<pkgTagSection::Tag> Changes;
    Changes.push_back(pkgTagSection::Tag::Rewrite("Filename", File));
 

@@ -107,7 +107,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	public:
 	// This constructor is the 'begin' constructor, never use it.
-	inline GrpIterator(pkgCache &Owner) : Iterator<Group, GrpIterator>(Owner), HashIndex(-1) {
+	explicit inline GrpIterator(pkgCache &Owner) : Iterator<Group, GrpIterator>(Owner), HashIndex(-1) {
 		S = OwnerPointer();
 		operator ++(0);
 	}
@@ -148,7 +148,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 
 	public:
 	// This constructor is the 'begin' constructor, never use it.
-	inline PkgIterator(pkgCache &Owner) : Iterator<Package, PkgIterator>(Owner), HashIndex(-1) {
+	explicit inline PkgIterator(pkgCache &Owner) : Iterator<Package, PkgIterator>(Owner), HashIndex(-1) {
 		S = OwnerPointer();
 		operator ++(0);
 	}
@@ -394,7 +394,7 @@ class pkgCache::RlsFileIterator : public Iterator<ReleaseFile, RlsFileIterator> 
 
 	// Constructors
 	inline RlsFileIterator() : Iterator<ReleaseFile, RlsFileIterator>() {}
-	inline RlsFileIterator(pkgCache &Owner) : Iterator<ReleaseFile, RlsFileIterator>(Owner, Owner.RlsFileP) {}
+	explicit inline RlsFileIterator(pkgCache &Owner) : Iterator<ReleaseFile, RlsFileIterator>(Owner, Owner.RlsFileP) {}
 	inline RlsFileIterator(pkgCache &Owner,ReleaseFile *Trg) : Iterator<ReleaseFile, RlsFileIterator>(Owner, Trg) {}
 };
 									/*}}}*/
@@ -430,7 +430,7 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 
 	// Constructors
 	inline PkgFileIterator() : Iterator<PackageFile, PkgFileIterator>() {}
-	inline PkgFileIterator(pkgCache &Owner) : Iterator<PackageFile, PkgFileIterator>(Owner, Owner.PkgFileP) {}
+	explicit inline PkgFileIterator(pkgCache &Owner) : Iterator<PackageFile, PkgFileIterator>(Owner, Owner.PkgFileP) {}
 	inline PkgFileIterator(pkgCache &Owner,PackageFile *Trg) : Iterator<PackageFile, PkgFileIterator>(Owner, Trg) {}
 };
 									/*}}}*/

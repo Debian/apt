@@ -53,7 +53,7 @@ public:
 class NOTMatcher : public Matcher {
    Matcher * const matcher;
 public:
-   NOTMatcher(Matcher * const matcher);
+   explicit NOTMatcher(Matcher * const matcher);
    virtual bool operator() (pkgCache::PkgIterator const &Pkg);
    virtual bool operator() (pkgCache::GrpIterator const &Grp);
    virtual bool operator() (pkgCache::VerIterator const &Ver);
@@ -65,7 +65,7 @@ class ANDMatcher : public Matcher {
 public:
    // 5 ought to be enough for everybody… c++11 variadic templates would be nice
    ANDMatcher();
-   ANDMatcher(Matcher * const matcher1);
+   explicit ANDMatcher(Matcher * const matcher1);
    ANDMatcher(Matcher * const matcher1, Matcher * const matcher2);
    ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3);
    ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
@@ -81,7 +81,7 @@ class ORMatcher : public Matcher {
 public:
    // 5 ought to be enough for everybody… c++11 variadic templates would be nice
    ORMatcher();
-   ORMatcher(Matcher * const matcher1);
+   explicit ORMatcher(Matcher * const matcher1);
    ORMatcher(Matcher * const matcher1, Matcher * const matcher2);
    ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3);
    ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
@@ -96,7 +96,7 @@ public:
 class PackageNameMatchesRegEx : public PackageMatcher {			/*{{{*/
 	regex_t* pattern;
 public:
-	PackageNameMatchesRegEx(std::string const &Pattern);
+	explicit PackageNameMatchesRegEx(std::string const &Pattern);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::GrpIterator const &Grp);
 	virtual ~PackageNameMatchesRegEx();
@@ -105,7 +105,7 @@ public:
 class PackageNameMatchesFnmatch : public PackageMatcher {		/*{{{*/
 	const std::string Pattern;
 public:
-	PackageNameMatchesFnmatch(std::string const &Pattern);
+	explicit PackageNameMatchesFnmatch(std::string const &Pattern);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::GrpIterator const &Grp);
 	virtual ~PackageNameMatchesFnmatch() {};
@@ -140,7 +140,7 @@ public:
 class PackageIsNewInstall : public PackageMatcher {			/*{{{*/
 	pkgCacheFile * const Cache;
 public:
-	PackageIsNewInstall(pkgCacheFile * const Cache);
+	explicit PackageIsNewInstall(pkgCacheFile * const Cache);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual ~PackageIsNewInstall();
 };

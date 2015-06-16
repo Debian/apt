@@ -179,7 +179,7 @@ class pkgDepCache : protected pkgCache::Namespace
 	*  As long as this object exists, no automatic cleanup
 	*  operations will be undertaken.
 	*/
-       ActionGroup(pkgDepCache &cache);
+       explicit ActionGroup(pkgDepCache &cache);
 
        /** \brief Clean up the action group before it is destroyed.
         *

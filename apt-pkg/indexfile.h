@@ -144,7 +144,7 @@ class pkgIndexFile
 
    bool IsTrusted() const { return Trusted; };
 
-   pkgIndexFile(bool Trusted);
+   explicit pkgIndexFile(bool Trusted);
    virtual ~pkgIndexFile();
 };
 

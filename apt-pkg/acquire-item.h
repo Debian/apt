@@ -276,7 +276,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *
     *  \param Owner The new owner of this item.
     */
-   Item(pkgAcquire * const Owner);
+   explicit Item(pkgAcquire * const Owner);
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -347,7 +347,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    void *d;
    protected:
    IndexTarget const Target;
-   HashStringList GetExpectedHashesFor(std::string const MetaKey) const;
+   HashStringList GetExpectedHashesFor(std::string const &MetaKey) const;
 
    bool QueueURI(pkgAcquire::ItemDesc &Item);
 
@@ -370,7 +370,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    virtual bool HashesRequired() const;
 
 
-   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const Target);
+   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const &Target);
    virtual ~pkgAcqTransactionItem();
 
    friend class pkgAcqMetaBase;
@@ -474,7 +474,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    virtual std::string GetFinalFilename() const;
 
    pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-		  std::vector<IndexTarget> const IndexTargets,
+		  std::vector<IndexTarget> const &IndexTargets,
 		  IndexTarget const &DataTarget,
 		  indexRecords* const MetaIndexParser);
    virtual ~pkgAcqMetaBase();
@@ -511,7 +511,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
 		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
-		   std::vector<IndexTarget> const IndexTargets, indexRecords * const MetaIndexParser);
+		   std::vector<IndexTarget> const &IndexTargets, indexRecords * const MetaIndexParser);
    virtual ~pkgAcqMetaIndex();
 
    friend class pkgAcqMetaSig;
@@ -548,7 +548,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 		     pkgAcquire::MethodConfig const * const Cnf);
 
    /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const Target,
+   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const &Target,
 	 pkgAcqMetaIndex * const MetaIndex);
    virtual ~pkgAcqMetaSig();
 };
@@ -560,7 +560,6 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 
    IndexTarget const ClearsignedTarget;
    IndexTarget const DetachedDataTarget;
-   IndexTarget const DetachedSigTarget;
 
 public:
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
@@ -573,7 +572,7 @@ public:
 		IndexTarget const &ClearsignedTarget,
 		IndexTarget const &DetachedDataTarget,
 		IndexTarget const &DetachedSigTarget,
-		std::vector<IndexTarget> const IndexTargets,
+		std::vector<IndexTarget> const &IndexTargets,
 		indexRecords * const MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };
@@ -588,7 +587,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
    virtual std::string GetFinalFilename() const;
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                   IndexTarget const Target);
+                   IndexTarget const &Target);
    virtual ~pkgAcqBaseIndex();
 };
 									/*}}}*/
@@ -652,7 +651,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  \param ShortDesc A short description of the list file to download.
     */
    pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                   IndexTarget const Target);
+                   IndexTarget const &Target);
    virtual ~pkgAcqDiffIndex();
  private:
    APT_HIDDEN void QueueOnIMSHit() const;
@@ -751,7 +750,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                         IndexTarget const Target, DiffInfo const &patch,
+                         IndexTarget const &Target, DiffInfo const &patch,
                          std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
    virtual ~pkgAcqIndexMergeDiffs();
 };
@@ -865,7 +864,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-                    IndexTarget const Target,
+                    IndexTarget const &Target,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>());
    virtual ~pkgAcqIndexDiffs();
 };
@@ -943,7 +942,7 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual std::string GetMetaKey() const;
 
    pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
-               IndexTarget const Target);
+               IndexTarget const &Target);
    virtual ~pkgAcqIndex();
 
    private:

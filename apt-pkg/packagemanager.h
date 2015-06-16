@@ -141,7 +141,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    /** \brief returns all packages dpkg let disappear */
    inline std::set<std::string> GetDisappearedPackages() { return disappearedPkgs; };
 
-   pkgPackageManager(pkgDepCache *Cache);
+   explicit pkgPackageManager(pkgDepCache *Cache);
    virtual ~pkgPackageManager();
 
    private:

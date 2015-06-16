@@ -117,7 +117,7 @@ class pkgSourceList
    time_t GetLastModifiedTime();
 
    pkgSourceList();
-   pkgSourceList(std::string File);
+   explicit pkgSourceList(std::string File);
    virtual ~pkgSourceList();
 };
 
