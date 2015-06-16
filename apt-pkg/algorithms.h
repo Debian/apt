@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.10 2001/05/22 04:17:41 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -55,6 +54,7 @@ using std::ostream;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
+   void *d;
    protected:
 
    class Policy : public pkgDepCache::Policy
@@ -88,7 +88,7 @@ private:
    public:
 
    pkgSimulate(pkgDepCache *Cache);
-   ~pkgSimulate();
+   virtual ~pkgSimulate();
 };
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
@@ -156,7 +156,7 @@ class pkgProblemResolver						/*{{{*/
    APT_DEPRECATED void InstallProtect();
 
    pkgProblemResolver(pkgDepCache *Cache);
-   ~pkgProblemResolver();
+   virtual ~pkgProblemResolver();
 };
 									/*}}}*/
 bool pkgApplyStatus(pkgDepCache &Cache);

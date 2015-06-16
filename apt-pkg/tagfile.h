@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.20 2003/05/19 17:13:57 doogie Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -47,7 +46,6 @@ class pkgTagSection
    APT_DEPRECATED unsigned int TagCount;
 #endif
 
-   // dpointer placeholder (for later in case we need it)
    pkgTagSectionPrivate *d;
 
    protected:

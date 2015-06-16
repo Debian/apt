@@ -50,9 +50,8 @@ class CacheSetHelper {							/*{{{*/
 */
 public:									/*{{{*/
 	CacheSetHelper(bool const ShowError = true,
-		GlobalError::MsgType ErrorType = GlobalError::ERROR) :
-			ShowError(ShowError), ErrorType(ErrorType) {}
-	virtual ~CacheSetHelper() {}
+		GlobalError::MsgType ErrorType = GlobalError::ERROR);
+	virtual ~CacheSetHelper();
 
 	enum PkgSelector { UNKNOWN, REGEX, TASK, FNMATCH, PACKAGENAME, STRING };
 
@@ -203,6 +202,8 @@ protected:
 	bool PackageFromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
 	bool PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
 	bool PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
+private:
+	void *d;
 };									/*}}}*/
 
 class PackageContainerInterface {					/*{{{*/
@@ -263,8 +264,9 @@ APT_IGNORE_DEPRECATED_POP
 
 	void setConstructor(CacheSetHelper::PkgSelector const by) { ConstructedBy = by; }
 	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
-	PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN) {}
-	PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by) {}
+	PackageContainerInterface();
+	PackageContainerInterface(CacheSetHelper::PkgSelector const by);
+	virtual ~PackageContainerInterface();
 
 	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::TASK, pci, Cache, pattern); }
@@ -292,6 +294,7 @@ APT_IGNORE_DEPRECATED_POP
 
 private:
 	CacheSetHelper::PkgSelector ConstructedBy;
+	void *d;
 };
 									/*}}}*/
 template<class Container> class PackageContainer : public PackageContainerInterface {/*{{{*/
@@ -355,7 +358,7 @@ public:									/*{{{*/
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::PkgIterator const &P) const { return const_iterator(_cont.find(P)); }
 
-	PackageContainer() : PackageContainerInterface() {}
+	PackageContainer() : PackageContainerInterface(CacheSetHelper::UNKNOWN) {}
 	PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
 APT_IGNORE_DEPRECATED_PUSH
 	APT_DEPRECATED PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
@@ -552,6 +555,7 @@ template<> template<class Compare> inline bool PackageContainer<std::vector<pkgC
     private methods. */
 class APT_HIDDEN PackageUniverse : public PackageContainerInterface {
 	pkgCache * const _cont;
+	void *d;
 public:
 	typedef pkgCache::PkgIterator iterator;
 	typedef pkgCache::PkgIterator const_iterator;
@@ -564,7 +568,8 @@ public:
 	APT_PUBLIC iterator begin() { return _cont->PkgBegin(); }
 	APT_PUBLIC iterator end() { return _cont->PkgEnd(); }
 
-	APT_PUBLIC PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+	APT_PUBLIC PackageUniverse(pkgCache * const Owner);
+	APT_PUBLIC virtual ~PackageUniverse();
 
 private:
 	bool insert(pkgCache::PkgIterator const &) { return true; }
@@ -700,6 +705,11 @@ APT_IGNORE_DEPRECATED_PUSH
 	   return FromDependency(vci, Cache, D, (CacheSetHelper::VerSelector)selector, helper);
 	}
 APT_IGNORE_DEPRECATED_POP
+
+	VersionContainerInterface();
+	virtual ~VersionContainerInterface();
+private:
+	void *d;
 
 protected:								/*{{{*/
 

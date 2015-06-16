@@ -1022,3 +1022,9 @@ pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
       dlclose(libudev_handle);
 }
 									/*}}}*/
+
+pkgCdromStatus::pkgCdromStatus() : totalSteps(0) {}
+pkgCdromStatus::~pkgCdromStatus() {}
+
+pkgCdrom::pkgCdrom() {}
+pkgCdrom::~pkgCdrom() {}

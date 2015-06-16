@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.h,v 1.29.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Acquire - File Acquiration
@@ -626,14 +625,7 @@ class pkgAcquire::UriIterator
     *
     *  \param Q The queue over which this UriIterator should iterate.
     */
-   UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
-   {
-      while (CurItem == 0 && CurQ != 0)
-      {
-	 CurItem = CurQ->Items;
-	 CurQ = CurQ->Next;
-      }
-   }   
+   UriIterator(pkgAcquire::Queue *Q);
    virtual ~UriIterator();
 };
 									/*}}}*/

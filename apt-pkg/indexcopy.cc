@@ -770,4 +770,14 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 }
 									/*}}}*/
 
+IndexCopy::IndexCopy() {}
 APT_CONST IndexCopy::~IndexCopy() {}
+
+PackageCopy::PackageCopy() : IndexCopy() {}
+APT_CONST PackageCopy::~PackageCopy() {}
+SourceCopy::SourceCopy() : IndexCopy() {}
+APT_CONST SourceCopy::~SourceCopy() {}
+TranslationsCopy::TranslationsCopy() {}
+APT_CONST TranslationsCopy::~TranslationsCopy() {}
+SigVerify::SigVerify() {}
+APT_CONST SigVerify::~SigVerify() {}

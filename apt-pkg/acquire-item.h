@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-item.h,v 1.26.2.3 2004/01/02 18:51:00 mdz Exp $
 /* ######################################################################
 
    Acquire Item - Item to acquire
@@ -345,6 +344,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
 /** \brief baseclass for the indexes files to manage them all together */
 {
+   void *d;
    protected:
    IndexTarget const Target;
    HashStringList GetExpectedHashesFor(std::string const MetaKey) const;
@@ -380,7 +380,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
 /** \brief the manager of a transaction */
 {
    void *d;
-
  protected:
    std::vector<pkgAcqTransactionItem*> Transaction;
 
@@ -478,6 +477,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
 		  std::vector<IndexTarget> const IndexTargets,
 		  IndexTarget const &DataTarget,
 		  indexRecords* const MetaIndexParser);
+   virtual ~pkgAcqMetaBase();
 };
 									/*}}}*/
 /** \brief An item that is responsible for downloading the meta-index	{{{
@@ -493,7 +493,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
 class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
 {
    void *d;
-
    protected:
    IndexTarget const DetachedSigTarget;
 
@@ -513,6 +512,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
 		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
 		   std::vector<IndexTarget> const IndexTargets, indexRecords * const MetaIndexParser);
+   virtual ~pkgAcqMetaIndex();
 
    friend class pkgAcqMetaSig;
 };
@@ -589,6 +589,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
                    IndexTarget const Target);
+   virtual ~pkgAcqBaseIndex();
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -652,6 +653,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     */
    pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
                    IndexTarget const Target);
+   virtual ~pkgAcqDiffIndex();
  private:
    APT_HIDDEN void QueueOnIMSHit() const;
 };
@@ -751,6 +753,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
                          IndexTarget const Target, DiffInfo const &patch,
                          std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
+   virtual ~pkgAcqIndexMergeDiffs();
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching server-merge patches {{{
@@ -864,6 +867,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
    pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
                     IndexTarget const Target,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>());
+   virtual ~pkgAcqIndexDiffs();
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching an index	{{{
@@ -940,8 +944,10 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 
    pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
                IndexTarget const Target);
+   virtual ~pkgAcqIndex();
 
-   void Init(std::string const &URI, std::string const &URIDesc,
+   private:
+   APT_HIDDEN void Init(std::string const &URI, std::string const &URIDesc,
              std::string const &ShortDesc);
 };
 									/*}}}*/
@@ -1030,6 +1036,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sources,
 		 pkgRecords * const Recs,pkgCache::VerIterator const &Version,
 		 std::string &StoreFilename);
+   virtual ~pkgAcqArchive();
 };
 									/*}}}*/
 /** \brief Retrieve the changelog for the given version			{{{
@@ -1211,6 +1218,7 @@ class pkgAcqFile : public pkgAcquire::Item
 	      std::string const &Desc, std::string const &ShortDesc,
 	      std::string const &DestDir="", std::string const &DestFilename="",
 	      bool const IsIndexFile=false);
+   virtual ~pkgAcqFile();
 };
 									/*}}}*/
 /** @} */

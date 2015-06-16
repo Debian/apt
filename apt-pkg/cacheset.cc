@@ -37,7 +37,6 @@
 #include <apti18n.h>
 									/*}}}*/
 namespace APT {
-
 // PackageFrom - selecting the appropriate method for package selection	/*{{{*/
 bool CacheSetHelper::PackageFrom(enum PkgSelector const select, PackageContainerInterface * const pci,
       pkgCacheFile &Cache, std::string const &pattern) {
@@ -812,4 +811,18 @@ APT_CONST void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &
 					 bool const /*verIsRel*/) {
 }
 									/*}}}*/
+
+CacheSetHelper::CacheSetHelper(bool const ShowError, GlobalError::MsgType ErrorType) :
+   ShowError(ShowError), ErrorType(ErrorType) {}
+CacheSetHelper::~CacheSetHelper() {}
+
+PackageContainerInterface::PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN) {}
+PackageContainerInterface::PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by) {}
+PackageContainerInterface::~PackageContainerInterface() {}
+
+PackageUniverse::PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+PackageUniverse::~PackageUniverse() {}
+
+VersionContainerInterface::VersionContainerInterface() {}
+VersionContainerInterface::~VersionContainerInterface() {}
 }

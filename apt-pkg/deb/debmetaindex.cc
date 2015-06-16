@@ -459,6 +459,8 @@ pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache, bool con
 }
 									/*}}}*/
 
+debDebFileMetaIndex::~debDebFileMetaIndex() {}
+
 class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 {
    protected:

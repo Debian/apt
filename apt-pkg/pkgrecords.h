@@ -43,7 +43,7 @@ class pkgRecords							/*{{{*/
 
    // Construct destruct
    pkgRecords(pkgCache &Cache);
-   ~pkgRecords();
+   virtual ~pkgRecords();
 };
 									/*}}}*/
 class pkgRecords::Parser						/*{{{*/
@@ -106,10 +106,12 @@ class pkgRecords::Parser						/*{{{*/
 
    // The record in binary form
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};
-   
-   virtual ~Parser() {};
+
+   Parser();
+   virtual ~Parser();
 
    private:
+   void *d;
    APT_HIDDEN std::string GetHashFromHashes(char const * const type) const
    {
       HashStringList const hashes = Hashes();

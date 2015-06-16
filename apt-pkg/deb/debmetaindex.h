@@ -75,6 +75,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 class APT_HIDDEN debDebFileMetaIndex : public metaIndex
 {
  private:
+    void *d;
    std::string DebFile;
    debDebPkgFileIndex *DebIndex;
  public:
@@ -94,7 +95,7 @@ class APT_HIDDEN debDebFileMetaIndex : public metaIndex
       return true;
    }
    debDebFileMetaIndex(std::string const &DebFile);
-   virtual ~debDebFileMetaIndex() {};
+   virtual ~debDebFileMetaIndex();
 
 };
 

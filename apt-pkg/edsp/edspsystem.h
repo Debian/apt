@@ -42,7 +42,7 @@ class APT_HIDDEN edspSystem : public pkgSystem
 			  pkgIndexFile *&Found) const;
 
    edspSystem();
-   ~edspSystem();
+   virtual ~edspSystem();
 };
 
 #endif

@@ -27,6 +27,7 @@
 
 class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {
+   void *d;
  protected:
    pkgTagSection Section;
 
@@ -50,12 +51,13 @@ class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 
    virtual void GetRec(const char *&Start,const char *&Stop);
 
-   debRecordParserBase() : Parser() {}
+   debRecordParserBase();
    virtual ~debRecordParserBase();
 };
 
 class APT_HIDDEN debRecordParser : public debRecordParserBase
 {
+   void *d;
  protected:
    FileFd File;
    pkgTagFile Tags;
@@ -71,20 +73,21 @@ class APT_HIDDEN debRecordParser : public debRecordParserBase
 // custom record parser that reads deb files directly
 class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
 {
+   void *d;
    std::string debFileName;
    std::string controlContent;
 
    APT_HIDDEN bool LoadContent();
  protected:
    // single file files, so no jumping whatsoever
-   bool Jump(pkgCache::VerFileIterator const &) { return LoadContent(); }
-   bool Jump(pkgCache::DescFileIterator const &) { return LoadContent(); }
+   bool Jump(pkgCache::VerFileIterator const &);
+   bool Jump(pkgCache::DescFileIterator const &);
 
  public:
-   virtual std::string FileName() { return debFileName; }
+   virtual std::string FileName();
 
-   debDebFileRecordParser(std::string FileName)
-      : debRecordParserBase(), debFileName(FileName) {};
+   debDebFileRecordParser(std::string FileName);
+   virtual ~debDebFileRecordParser();
 };
 
 #endif

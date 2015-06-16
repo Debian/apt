@@ -1143,6 +1143,15 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
 }
 									/*}}}*/
 
+pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
+{
+   while (CurItem == 0 && CurQ != 0)
+   {
+      CurItem = CurQ->Items;
+      CurQ = CurQ->Next;
+   }
+}
+
 APT_CONST pkgAcquire::UriIterator::~UriIterator() {}
 APT_CONST pkgAcquire::MethodConfig::~MethodConfig() {}
 APT_CONST pkgAcquireStatus::~pkgAcquireStatus() {}

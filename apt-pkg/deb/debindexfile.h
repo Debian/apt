@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debindexfile.h,v 1.3.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Debian Index Files
@@ -30,6 +29,7 @@ class pkgCacheGenerator;
 
 class APT_HIDDEN debStatusIndex : public pkgIndexFile
 {
+   void *d;
    protected:
    std::string File;
 
@@ -53,6 +53,7 @@ class APT_HIDDEN debStatusIndex : public pkgIndexFile
 
 class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
 {
+   void *d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -71,6 +72,7 @@ class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
 
 class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
 {
+   void *d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -86,6 +88,7 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
 
 class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
 {
+   void *d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -145,6 +148,7 @@ class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
 class APT_HIDDEN debDscFileIndex : public pkgIndexFile
 {
  private:
+   void *d;
    std::string DscFile;
  public:
    virtual const Type *GetType() const APT_CONST;
@@ -157,7 +161,7 @@ class APT_HIDDEN debDscFileIndex : public pkgIndexFile
    };
 
    debDscFileIndex(std::string &DscFile);
-   virtual ~debDscFileIndex() {};
+   virtual ~debDscFileIndex();
 };
 
 class APT_HIDDEN debDebianSourceDirIndex : public debDscFileIndex

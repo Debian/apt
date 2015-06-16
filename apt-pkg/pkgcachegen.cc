@@ -1720,3 +1720,6 @@ bool pkgCacheGenerator::FinishCache(OpProgress * /*Progress*/)
    return true;
 }
 									/*}}}*/
+
+pkgCacheGenerator::ListParser::ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {}
+pkgCacheGenerator::ListParser::~ListParser() {}

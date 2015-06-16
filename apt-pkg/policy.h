@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.h,v 1.4 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -85,7 +84,9 @@ class pkgPolicy : public pkgDepCache::Policy
    bool InitDefaults();
    
    pkgPolicy(pkgCache *Owner);
-   virtual ~pkgPolicy() {delete [] PFPriority; delete [] Pins;};
+   virtual ~pkgPolicy();
+   private:
+   void *d;
 };
 
 bool ReadPinFile(pkgPolicy &Plcy, std::string File = "");

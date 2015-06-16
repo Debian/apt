@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.h,v 1.3 2001/05/03 05:25:04 jgg Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian

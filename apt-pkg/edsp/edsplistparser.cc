@@ -92,3 +92,5 @@ APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*Fil
    return true;
 }
 									/*}}}*/
+
+edspListParser::~edspListParser() {}

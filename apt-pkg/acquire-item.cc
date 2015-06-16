@@ -438,7 +438,7 @@ APT_PURE pkgAcquire * pkgAcquire::Item::GetOwner() const		/*{{{*/
    return Owner;
 }
 									/*}}}*/
-pkgAcquire::ItemDesc &pkgAcquire::Item::GetItemDesc()			/*{{{*/
+APT_CONST pkgAcquire::ItemDesc &pkgAcquire::Item::GetItemDesc()		/*{{{*/
 {
    return Desc;
 }
@@ -1098,6 +1098,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
    return true;
 }
 									/*}}}*/
+pkgAcqMetaBase::~pkgAcqMetaBase() {}
 
 pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       IndexTarget const &ClearsignedTarget,
@@ -1319,6 +1320,7 @@ std::string pkgAcqMetaIndex::DescURI() const				/*{{{*/
    return Target.URI;
 }
 									/*}}}*/
+pkgAcqMetaIndex::~pkgAcqMetaIndex() {}
 
 // AcqMetaSig::AcqMetaSig - Constructor					/*{{{*/
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire * const Owner,
@@ -1491,6 +1493,7 @@ pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
 {
 }
 									/*}}}*/
+pkgAcqBaseIndex::~pkgAcqBaseIndex() {}
 
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -1893,6 +1896,7 @@ void pkgAcqDiffIndex::Done(string const &Message,HashStringList const &Hashes,	/
    return;
 }
 									/*}}}*/
+pkgAcqDiffIndex::~pkgAcqDiffIndex() {}
 
 // AcqIndexDiffs::AcqIndexDiffs - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -2119,6 +2123,7 @@ std::string pkgAcqIndexDiffs::Custom600Headers() const			/*{{{*/
    return patchhashes.str();
 }
 									/*}}}*/
+pkgAcqIndexDiffs::~pkgAcqIndexDiffs() {}
 
 // AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
@@ -2263,6 +2268,7 @@ std::string pkgAcqIndexMergeDiffs::Custom600Headers() const		/*{{{*/
    return patchhashes.str();
 }
 									/*}}}*/
+pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs() {}
 
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
@@ -2539,6 +2545,7 @@ void pkgAcqIndex::StageDecompressDone(string const &,
    return;
 }
 									/*}}}*/
+pkgAcqIndex::~pkgAcqIndex() {}
 
 
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
@@ -2836,6 +2843,7 @@ std::string pkgAcqArchive::ShortDesc() const				/*{{{*/
    return Desc.ShortDesc;
 }
 									/*}}}*/
+pkgAcqArchive::~pkgAcqArchive() {}
 
 // AcqChangelog::pkgAcqChangelog - Constructors				/*{{{*/
 pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::VerIterator const &Ver,
@@ -3156,3 +3164,4 @@ string pkgAcqFile::Custom600Headers() const				/*{{{*/
    return "";
 }
 									/*}}}*/
+pkgAcqFile::~pkgAcqFile() {}

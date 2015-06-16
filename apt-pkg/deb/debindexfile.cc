@@ -576,3 +576,4 @@ debTranslationsIndex::~debTranslationsIndex() {}
 debSourcesIndex::~debSourcesIndex() {}
 
 debDebPkgFileIndex::~debDebPkgFileIndex() {}
+debDscFileIndex::~debDscFileIndex() {}

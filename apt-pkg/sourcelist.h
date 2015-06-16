@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.12.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -54,6 +53,7 @@ class metaIndex;
 
 class pkgSourceList
 {
+   void *d;
    public:
 
    // List of supported source list types
@@ -118,7 +118,7 @@ class pkgSourceList
 
    pkgSourceList();
    pkgSourceList(std::string File);
-   ~pkgSourceList();      
+   virtual ~pkgSourceList();
 };
 
 #endif

@@ -478,5 +478,9 @@ void pkgAcqMethod::Dequeue() {						/*{{{*/
    delete Tmp;
 }
 									/*}}}*/
-
 pkgAcqMethod::~pkgAcqMethod() {}
+
+pkgAcqMethod::FetchItem::FetchItem() {}
+pkgAcqMethod::FetchItem::~FetchItem() {}
+
+pkgAcqMethod::FetchResult::~FetchResult() {}

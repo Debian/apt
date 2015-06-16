@@ -227,3 +227,6 @@ bool pkgIndexTargetFile::Exists() const					/*{{{*/
    return FileExists(IndexFileName());
 }
 									/*}}}*/
+
+APT_CONST pkgIndexFile::~pkgIndexFile() {}
+APT_CONST pkgIndexTargetFile::~pkgIndexTargetFile() {}

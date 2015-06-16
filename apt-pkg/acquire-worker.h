@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.12 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager

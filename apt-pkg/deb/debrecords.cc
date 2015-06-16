@@ -51,6 +51,7 @@ bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
 									/*}}}*/
 debRecordParser::~debRecordParser() {}
 
+debRecordParserBase::debRecordParserBase() : Parser() {}
 // RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
 string debRecordParserBase::FileName()
 {
@@ -207,3 +208,9 @@ bool debDebFileRecordParser::LoadContent()
       return _error->Error(_("Unable to parse package file %s (%d)"), debFileName.c_str(), 3);
    return true;
 }
+bool debDebFileRecordParser::Jump(pkgCache::VerFileIterator const &) { return LoadContent(); }
+bool debDebFileRecordParser::Jump(pkgCache::DescFileIterator const &) { return LoadContent(); }
+std::string debDebFileRecordParser::FileName() { return debFileName; }
+
+debDebFileRecordParser::debDebFileRecordParser(std::string FileName) : debRecordParserBase(), debFileName(FileName) {}
+debDebFileRecordParser::~debDebFileRecordParser() {}

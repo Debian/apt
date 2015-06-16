@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.h,v 1.6.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/source file.
@@ -90,6 +89,7 @@ class IndexTarget							/*{{{*/
 
 class pkgIndexFile
 {
+   void *d;
    protected:
    bool Trusted;
 
@@ -145,11 +145,12 @@ class pkgIndexFile
    bool IsTrusted() const { return Trusted; };
 
    pkgIndexFile(bool Trusted);
-   virtual ~pkgIndexFile() {};
+   virtual ~pkgIndexFile();
 };
 
 class pkgIndexTargetFile : public pkgIndexFile
 {
+   void *d;
 protected:
    IndexTarget const Target;
 
@@ -162,6 +163,7 @@ public:
    virtual unsigned long Size() const;
 
    pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted);
+   virtual ~pkgIndexTargetFile();
 };
 
 #endif

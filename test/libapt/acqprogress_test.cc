@@ -25,21 +25,23 @@ TEST(AcqProgress, IMSHit)
    AcqTextStatus Stat(out, width, 0);
    Stat.Start();
 
+   pkgAcquire Acq(&Stat);
    pkgAcquire::ItemDesc hit;
    hit.URI = "http://example.org/file";
    hit.Description = "Example File from example.org";
    hit.ShortDesc = "Example File";
-   hit.Owner = NULL;
+   TestItem hitO(&Acq);
+   hit.Owner = &hitO;
 
    EXPECT_EQ("", out.str());
    Stat.IMSHit(hit);
-   EXPECT_EQ("Hit Example File from example.org\n", out.str());
+   EXPECT_EQ("Hit:1 Example File from example.org\n", out.str());
    Stat.IMSHit(hit);
-   EXPECT_EQ("Hit Example File from example.org\n"
-	     "Hit Example File from example.org\n", out.str());
+   EXPECT_EQ("Hit:1 Example File from example.org\n"
+	     "Hit:1 Example File from example.org\n", out.str());
    Stat.Stop();
-   EXPECT_EQ("Hit Example File from example.org\n"
-	     "Hit Example File from example.org\n", out.str());
+   EXPECT_EQ("Hit:1 Example File from example.org\n"
+	     "Hit:1 Example File from example.org\n", out.str());
 }
 TEST(AcqProgress, FetchNoFileSize)
 {
@@ -61,10 +63,10 @@ TEST(AcqProgress, FetchNoFileSize)
    EXPECT_EQ("Get:1 Example File from example.org\n", out.str());
    Stat.Fetch(fetch);
    EXPECT_EQ("Get:1 Example File from example.org\n"
-	     "Get:2 Example File from example.org\n", out.str());
+	     "Get:1 Example File from example.org\n", out.str());
    Stat.Stop();
    EXPECT_EQ("Get:1 Example File from example.org\n"
-	     "Get:2 Example File from example.org\n", out.str());
+	     "Get:1 Example File from example.org\n", out.str());
 }
 TEST(AcqProgress, FetchFileSize)
 {
@@ -88,10 +90,10 @@ TEST(AcqProgress, FetchFileSize)
    fetchO.FileSize = 42;
    Stat.Fetch(fetch);
    EXPECT_EQ("Get:1 Example File from example.org [100 B]\n"
-	     "Get:2 Example File from example.org [42 B]\n", out.str());
+	     "Get:1 Example File from example.org [42 B]\n", out.str());
    Stat.Stop();
    EXPECT_EQ("Get:1 Example File from example.org [100 B]\n"
-	     "Get:2 Example File from example.org [42 B]\n", out.str());
+	     "Get:1 Example File from example.org [42 B]\n", out.str());
 }
 TEST(AcqProgress, Fail)
 {
@@ -112,30 +114,34 @@ TEST(AcqProgress, Fail)
 
    EXPECT_EQ("", out.str());
    Stat.Fail(fetch);
-   EXPECT_EQ("", out.str());
+   EXPECT_EQ("Ign:1 Example File from example.org\n", out.str());
    fetchO.Status = pkgAcquire::Item::StatDone;
    Stat.Fail(fetch);
-   EXPECT_EQ("Ign Example File from example.org\n", out.str());
+   EXPECT_EQ("Ign:1 Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n", out.str());
    fetchO.Status = pkgAcquire::Item::StatError;
    fetchO.ErrorText = "An error test!";
    Stat.Fail(fetch);
-   EXPECT_EQ("Ign Example File from example.org\n"
-	     "Err Example File from example.org\n"
+   EXPECT_EQ("Ign:1 Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n"
+	     "Err:1 Example File from example.org\n"
 	     "  An error test!\n", out.str());
    _config->Set("Acquire::Progress::Ignore::ShowErrorText", true);
    fetchO.Status = pkgAcquire::Item::StatDone;
    Stat.Fail(fetch);
-   EXPECT_EQ("Ign Example File from example.org\n"
-	     "Err Example File from example.org\n"
+   EXPECT_EQ("Ign:1 Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n"
+	     "Err:1 Example File from example.org\n"
 	     "  An error test!\n"
-	     "Ign Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n"
 	     "  An error test!\n", out.str());
    _config->Set("Acquire::Progress::Ignore::ShowErrorText", true);
    Stat.Stop();
-   EXPECT_EQ("Ign Example File from example.org\n"
-	     "Err Example File from example.org\n"
+   EXPECT_EQ("Ign:1 Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n"
+	     "Err:1 Example File from example.org\n"
 	     "  An error test!\n"
-	     "Ign Example File from example.org\n"
+	     "Ign:1 Example File from example.org\n"
 	     "  An error test!\n", out.str());
 }
 TEST(AcqProgress, Pulse)

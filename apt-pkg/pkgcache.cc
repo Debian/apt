@@ -1059,3 +1059,5 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
    return false;
 }
 									/*}}}*/
+
+pkgCache::~pkgCache() {}

@@ -439,3 +439,5 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    return true;
 }
 									/*}}}*/
+
+pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins;}

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.19 2002/07/08 03:13:30 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -123,9 +122,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    void ReMap(void const * const oldMap, void const * const newMap);
 
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
-   ~pkgCacheGenerator();
+   virtual ~pkgCacheGenerator();
 
    private:
+   void *d;
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
@@ -151,7 +151,9 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
 
    // Flag file dependencies
    bool FoundFileDeps;
-      
+
+   void *d;
+
    protected:
 
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string const &S) {return Owner->StoreString(type, S);};
@@ -182,10 +184,7 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
     * \param Hash of the currently parsed version
     * \param Ver to compare with
     */
-#if APT_PKG_ABI >= 413
-   virtual
-#endif
-      APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
+   virtual bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
    virtual map_filesize_t Offset() = 0;
@@ -197,8 +196,8 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {};
-   virtual ~ListParser() {};
+   ListParser();
+   virtual ~ListParser();
 };
 									/*}}}*/
 

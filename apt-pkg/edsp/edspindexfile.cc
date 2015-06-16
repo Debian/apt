@@ -81,3 +81,5 @@ const pkgIndexFile::Type *edspIndex::GetType() const
    return &_apt_Universe;
 }
 									/*}}}*/
+
+edspIndex::~edspIndex() {}

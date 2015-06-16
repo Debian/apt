@@ -266,11 +266,12 @@ class pkgCache								/*{{{*/
    static const char *CompTypeDeb(unsigned char Comp) APT_CONST;
    static const char *CompType(unsigned char Comp) APT_CONST;
    static const char *DepType(unsigned char Dep);
-   
+
    pkgCache(MMap *Map,bool DoMap = true);
-   virtual ~pkgCache() {}
+   virtual ~pkgCache();
 
 private:
+   void *d;
    bool MultiArchEnabled;
    APT_HIDDEN PkgIterator SingleArchFindPkg(const std::string &Name);
 };

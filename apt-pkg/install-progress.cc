@@ -69,6 +69,7 @@ PackageManagerProgressFd::PackageManagerProgressFd(int progress_fd)
 {
    OutStatusFd = progress_fd;
 }
+PackageManagerProgressFd::~PackageManagerProgressFd() {}
 
 void PackageManagerProgressFd::WriteToStatusFd(std::string s)
 {
@@ -157,6 +158,7 @@ PackageManagerProgressDeb822Fd::PackageManagerProgressDeb822Fd(int progress_fd)
 {
    OutStatusFd = progress_fd;
 }
+PackageManagerProgressDeb822Fd::~PackageManagerProgressDeb822Fd() {}
 
 void PackageManagerProgressDeb822Fd::WriteToStatusFd(std::string s)
 {
@@ -432,6 +434,10 @@ bool PackageManagerText::StatusChanged(std::string PackageName,
 
    return true;
 }
+
+PackageManagerText::PackageManagerText() : PackageManager() {}
+PackageManagerText::~PackageManagerText() {}
+
 
 
 

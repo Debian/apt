@@ -1,6 +1,5 @@
 // -*- mode: c++; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.h,v 1.14 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    DepCache - Dependency Extension data for the cache
@@ -164,6 +163,7 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    class ActionGroup
    {
+       void *d;
        pkgDepCache &cache;
 
        bool released;
@@ -192,7 +192,7 @@ class pkgDepCache : protected pkgCache::Namespace
 	*  If this is the last action group, the automatic cache
 	*  cleanup operations will be undertaken.
 	*/
-       ~ActionGroup();
+       virtual ~ActionGroup();
    };
 
    /** \brief Returns \b true for packages matching a regular
@@ -503,6 +503,8 @@ class pkgDepCache : protected pkgCache::Namespace
 	 bool const rPurge, unsigned long const Depth, bool const FromUser);
 
    private:
+   void *d;
+
    APT_HIDDEN bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 			unsigned long const Depth, bool const FromUser);
 };

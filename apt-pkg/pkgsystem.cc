@@ -45,3 +45,5 @@ APT_PURE pkgSystem *pkgSystem::GetSystem(const char *Label)
    return 0;   
 }
 									/*}}}*/
+
+pkgSystem::~pkgSystem() {}

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.h,v 1.14 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager
@@ -146,6 +145,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual ~pkgPackageManager();
 
    private:
+   void *d;
    enum APT_HIDDEN SmartAction { UNPACK_IMMEDIATE, UNPACK, CONFIGURE };
    APT_HIDDEN bool NonLoopingSmart(SmartAction const action, pkgCache::PkgIterator &Pkg,
       pkgCache::PkgIterator DepPkg, int const Depth, bool const PkgLoop,
