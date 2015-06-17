@@ -33,7 +33,7 @@ GTEST_DIR = /usr/src/gtest
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
-CPPFLAGS += -isystem $(GTEST_DIR)/include
+#CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -pthread
@@ -41,6 +41,7 @@ CXXFLAGS += -pthread
 CXXFLAGS+= -Wno-missing-declarations
 CXXFLAGS+= -Wno-missing-field-initializers
 CXXFLAGS+= -Wno-suggest-attribute=pure -Wno-suggest-attribute=const -Wno-suggest-attribute=noreturn
+CXXFLAGS+= -Wno-undef
 
 # All Google Test headers.  Usually you shouldn't change this definition.
 GTEST_HEADERS = /usr/include/gtest/*.h \

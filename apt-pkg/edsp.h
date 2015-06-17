@@ -211,6 +211,6 @@ namespace EDSP								/*{{{*/
 	bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
 				    bool const upgrade, bool const distUpgrade,
 				    bool const autoRemove, OpProgress *Progress = NULL);
-};
+}
 									/*}}}*/
 #endif

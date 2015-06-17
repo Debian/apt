@@ -122,7 +122,7 @@ namespace Configuration {							/*{{{*/
 	/** \return Return a comma-separated list of enabled build profile specifications */
 	std::string const getBuildProfilesString();
 									/*}}}*/
-};
+}
 									/*}}}*/
 }
 #endif

@@ -60,7 +60,15 @@ class SPtrArray
    
    inline SPtrArray(T *Ptr) : Ptr(Ptr) {};
    inline SPtrArray() : Ptr(0) {};
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunsafe-loop-optimizations"
+	// gcc warns about this, but we can do nothing here…
+#endif
    inline ~SPtrArray() {delete [] Ptr;};
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 };
 
 #endif
