@@ -346,13 +346,10 @@ public:									/*{{{*/
 
 	bool empty() const { return _cont.empty(); }
 	void clear() { return _cont.clear(); }
-	//FIXME: on ABI break, replace the first with the second without bool
-	void erase(iterator position) { _cont.erase((typename Container::iterator)position); }
-	iterator& erase(iterator &position, bool) { return position = _cont.erase((typename Container::iterator)position); }
-	size_t erase(const pkgCache::PkgIterator x) { return _cont.erase(x); }
-	void erase(iterator first, iterator last) { _cont.erase(first, last); }
 	size_t size() const { return _cont.size(); }
-
+	iterator erase( iterator pos ) { return iterator(_cont.erase(pos)); }
+	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first, last)); }
+	size_t erase(pkgCache::PkgIterator const & P) { size_t oldsize = size(); _cont.erase(std::remove(_cont.begin(), _cont.end(), P), _cont.end()); return oldsize - size(); }
 	const_iterator begin() const { return const_iterator(_cont.begin()); }
 	const_iterator end() const { return const_iterator(_cont.end()); }
 	iterator begin() { return iterator(_cont.begin()); }
@@ -578,9 +575,9 @@ private:
 	void insert(const_iterator, const_iterator) { }
 
 	void clear() { }
-	iterator& erase(iterator &iter) { return iter; }
-	size_t erase(const pkgCache::PkgIterator) { return 0; }
-	void erase(iterator, iterator) { }
+	iterator erase( iterator pos );
+	iterator erase( iterator first, iterator last );
+	size_t erase(pkgCache::PkgIterator const & P);
 };
 									/*}}}*/
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
@@ -780,12 +777,10 @@ public:									/*{{{*/
 	void insert(const_iterator begin, const_iterator end) { _cont.insert(begin, end); }
 	bool empty() const { return _cont.empty(); }
 	void clear() { return _cont.clear(); }
-	//FIXME: on ABI break, replace the first with the second without bool
-	void erase(iterator position) { _cont.erase((typename Container::iterator)position); }
-	iterator& erase(iterator &position, bool) { return position = _cont.erase((typename Container::iterator)position); }
-	size_t erase(const pkgCache::VerIterator x) { return _cont.erase(x); }
-	void erase(iterator first, iterator last) { _cont.erase(first, last); }
 	size_t size() const { return _cont.size(); }
+	iterator erase( iterator pos ) { return iterator(_cont.erase(pos)); }
+	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first, last)); }
+	size_t erase(pkgCache::VerIterator const & V) { size_t oldsize = size(); _cont.erase(std::remove(_cont.begin(), _cont.end(), V), _cont.end()); return oldsize - size(); }
 
 	const_iterator begin() const { return const_iterator(_cont.begin()); }
 	const_iterator end() const { return const_iterator(_cont.end()); }
@@ -988,6 +983,13 @@ template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::in
 		_cont.push_back(*v);
 }
 									/*}}}*/
+
+template<> inline size_t PackageContainer<std::set<pkgCache::PkgIterator> >::erase(pkgCache::PkgIterator const &P) {
+	return _cont.erase(P);
+}
+template<> inline size_t VersionContainer<std::set<pkgCache::VerIterator> >::erase(pkgCache::VerIterator const &V) {
+	return _cont.erase(V);
+}
 
 template<> template<class Compare> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::sort(Compare Comp) {
 	std::sort(_cont.begin(), _cont.end(), Comp);

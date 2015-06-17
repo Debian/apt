@@ -77,7 +77,6 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	inline pkgCache *Cache() const {return Owner;}
 
 	// Mixed stuff
-	inline void operator =(const Itr &B) {S = B.S; Owner = B.Owner;}
 	inline bool IsGood() const { return S && Owner && ! end();}
 	inline unsigned long Index() const {return S - OwnerPointer();}
 

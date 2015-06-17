@@ -238,7 +238,7 @@ static bool DoHold(CommandLine &CmdL)
 	    ioprintf(c1out,_("%s was already set on hold.\n"), Pkg.FullName(true).c_str());
 	 else
 	    ioprintf(c1out,_("%s was already not hold.\n"), Pkg.FullName(true).c_str());
-	 Pkg = pkgset.erase(Pkg, true);
+	 Pkg = pkgset.erase(Pkg);
       }
       else
 	 ++Pkg;
