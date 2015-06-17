@@ -271,7 +271,7 @@ class pkgCache								/*{{{*/
    virtual ~pkgCache();
 
 private:
-   void *d;
+   void * const d;
    bool MultiArchEnabled;
    APT_HIDDEN PkgIterator SingleArchFindPkg(const std::string &Name);
 };

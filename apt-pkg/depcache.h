@@ -163,7 +163,7 @@ class pkgDepCache : protected pkgCache::Namespace
     */
    class ActionGroup
    {
-       void *d;
+       void * const d;
        pkgDepCache &cache;
 
        bool released;
@@ -503,7 +503,7 @@ class pkgDepCache : protected pkgCache::Namespace
 	 bool const rPurge, unsigned long const Depth, bool const FromUser);
 
    private:
-   void *d;
+   void * const d;
 
    APT_HIDDEN bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 			unsigned long const Depth, bool const FromUser);

@@ -34,7 +34,7 @@ using std::string;
 
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
-   debRecordParserBase(), File(FileName, FileFd::ReadOnly, FileFd::Extension),
+   debRecordParserBase(), d(NULL), File(FileName, FileFd::ReadOnly, FileFd::Extension),
    Tags(&File, std::max(Cache.Head().MaxVerFileSize, Cache.Head().MaxDescFileSize) + 200)
 {
 }
@@ -51,7 +51,7 @@ bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
 									/*}}}*/
 debRecordParser::~debRecordParser() {}
 
-debRecordParserBase::debRecordParserBase() : Parser() {}
+debRecordParserBase::debRecordParserBase() : Parser(), d(NULL) {}
 // RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
 string debRecordParserBase::FileName()
 {
@@ -212,5 +212,5 @@ bool debDebFileRecordParser::Jump(pkgCache::VerFileIterator const &) { return Lo
 bool debDebFileRecordParser::Jump(pkgCache::DescFileIterator const &) { return LoadContent(); }
 std::string debDebFileRecordParser::FileName() { return debFileName; }
 
-debDebFileRecordParser::debDebFileRecordParser(std::string FileName) : debRecordParserBase(), debFileName(FileName) {}
+debDebFileRecordParser::debDebFileRecordParser(std::string FileName) : debRecordParserBase(), d(NULL), debFileName(FileName) {}
 debDebFileRecordParser::~debDebFileRecordParser() {}

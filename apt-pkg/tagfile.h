@@ -46,7 +46,7 @@ class pkgTagSection
    APT_DEPRECATED unsigned int TagCount;
 #endif
 
-   pkgTagSectionPrivate *d;
+   pkgTagSectionPrivate * const d;
 
    protected:
    const char *Stop;
@@ -145,7 +145,7 @@ class pkgTagSection
 class pkgTagFilePrivate;
 class pkgTagFile
 {
-   pkgTagFilePrivate *d;
+   pkgTagFilePrivate * const d;
 
    APT_HIDDEN bool Fill();
    APT_HIDDEN bool Resize();
@@ -157,9 +157,9 @@ class pkgTagFile
    unsigned long Offset();
    bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
-   void Init(FileFd *F,unsigned long long Size = 32*1024);
+   void Init(FileFd * const F,unsigned long long const Size = 32*1024);
 
-   pkgTagFile(FileFd *F,unsigned long long Size = 32*1024);
+   pkgTagFile(FileFd * const F,unsigned long long Size = 32*1024);
    virtual ~pkgTagFile();
 };
 

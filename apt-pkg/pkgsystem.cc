@@ -27,7 +27,8 @@ unsigned long pkgSystem::GlobalListLen = 0;
 // System::pkgSystem - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* Add it to the global list.. */
-pkgSystem::pkgSystem() : Label(NULL), VS(NULL)
+pkgSystem::pkgSystem(char const * const label, pkgVersioningSystem * const vs) :
+   Label(label), VS(vs), d(NULL)
 {
    assert(GlobalListLen < sizeof(SysList)/sizeof(*SysList));
    SysList[GlobalListLen] = this;

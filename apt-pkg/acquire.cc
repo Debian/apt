@@ -51,13 +51,13 @@ using namespace std;
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
-pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
+pkgAcquire::pkgAcquire() : LockFD(-1), d(NULL), Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
    Initialize();
 }
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), Queues(0), Workers(0),
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), d(NULL), Queues(0), Workers(0),
 			   Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)

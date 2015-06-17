@@ -236,11 +236,11 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 // SourceList::pkgSourceList - Constructors				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgSourceList::pkgSourceList()
+pkgSourceList::pkgSourceList() : d(NULL)
 {
 }
 
-pkgSourceList::pkgSourceList(string File)
+pkgSourceList::pkgSourceList(string File) : d(NULL)
 {
    Read(File);
 }

@@ -86,11 +86,11 @@ std::string debReleaseIndex::LocalFileName() const
 }
 
 debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist) :
-					metaIndex(URI, Dist, "deb"), Trusted(CHECK_TRUST)
+					metaIndex(URI, Dist, "deb"), d(NULL), Trusted(CHECK_TRUST)
 {}
 
 debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist, bool const Trusted) :
-					metaIndex(URI, Dist, "deb") {
+					metaIndex(URI, Dist, "deb"), d(NULL) {
 	SetTrusted(Trusted);
 }
 
@@ -541,7 +541,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 };
 
 debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)
-   : metaIndex(DebFile, "local-uri", "deb-dist"), DebFile(DebFile)
+   : metaIndex(DebFile, "local-uri", "deb-dist"), d(NULL), DebFile(DebFile)
 {
    DebIndex = new debDebPkgFileIndex(DebFile);
    Indexes = new vector<pkgIndexFile *>();

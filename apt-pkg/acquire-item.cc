@@ -406,7 +406,7 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner)
+    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner), d(NULL)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -662,7 +662,7 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
 
 pkgAcqTransactionItem::pkgAcqTransactionItem(pkgAcquire * const Owner,	/*{{{*/
       pkgAcqMetaBase * const transactionManager, IndexTarget const &target) :
-   pkgAcquire::Item(Owner), Target(target), TransactionManager(transactionManager)
+   pkgAcquire::Item(Owner), d(NULL), Target(target), TransactionManager(transactionManager)
 {
    if (TransactionManager != this)
       TransactionManager->Add(this);
@@ -684,7 +684,7 @@ pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire * const Owner,
       std::vector<IndexTarget> const &IndexTargets,
       IndexTarget const &DataTarget,
       indexRecords * const MetaIndexParser)
-: pkgAcqTransactionItem(Owner, TransactionManager, DataTarget),
+: pkgAcqTransactionItem(Owner, TransactionManager, DataTarget), d(NULL),
    MetaIndexParser(MetaIndexParser), LastMetaIndexParser(NULL), IndexTargets(IndexTargets),
    AuthPass(false), IMSHit(false)
 {
@@ -1106,7 +1106,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       std::vector<IndexTarget> const &IndexTargets,
       indexRecords * const MetaIndexParser) :
    pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget, IndexTargets, MetaIndexParser),
-   ClearsignedTarget(ClearsignedTarget),
+   d(NULL), ClearsignedTarget(ClearsignedTarget),
    DetachedDataTarget(DetachedDataTarget)
 {
    // index targets + (worst case:) Release/Release.gpg
@@ -1245,7 +1245,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire * const Owner,		/*{{{*/
 				 IndexTarget const &DetachedSigTarget,
 				 vector<IndexTarget> const &IndexTargets,
 				 indexRecords * const MetaIndexParser) :
-   pkgAcqMetaBase(Owner, TransactionManager, IndexTargets, DataTarget, MetaIndexParser),
+   pkgAcqMetaBase(Owner, TransactionManager, IndexTargets, DataTarget, MetaIndexParser), d(NULL),
    DetachedSigTarget(DetachedSigTarget)
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -1327,7 +1327,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire * const Owner,
       pkgAcqMetaBase * const TransactionManager,
       IndexTarget const &Target,
       pkgAcqMetaIndex * const MetaIndex) :
-   pkgAcqTransactionItem(Owner, TransactionManager, Target), MetaIndex(MetaIndex)
+   pkgAcqTransactionItem(Owner, TransactionManager, Target), d(NULL), MetaIndex(MetaIndex)
 {
    DestFile = GetPartialFileNameFromURI(Target.URI);
 
@@ -1489,7 +1489,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
 pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
       pkgAcqMetaBase * const TransactionManager,
       IndexTarget const &Target)
-: pkgAcqTransactionItem(Owner, TransactionManager, Target)
+: pkgAcqTransactionItem(Owner, TransactionManager, Target), d(NULL)
 {
 }
 									/*}}}*/
@@ -1505,7 +1505,7 @@ pkgAcqBaseIndex::~pkgAcqBaseIndex() {}
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
                                  pkgAcqMetaBase * const TransactionManager,
                                  IndexTarget const &Target)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target)
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
@@ -1907,7 +1907,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
                                    pkgAcqMetaBase * const TransactionManager,
                                    IndexTarget const &Target,
 				   vector<DiffInfo> const &diffs)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target),
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL),
      available_patches(diffs)
 {
    DestFile = GetPartialFileNameFromURI(Target.URI);
@@ -2131,7 +2131,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
                                              IndexTarget const &Target,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionManager, Target),
+  : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL),
      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -2274,7 +2274,7 @@ pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs() {}
 pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
                          pkgAcqMetaBase * const TransactionManager,
                          IndexTarget const &Target)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target), Stage(STAGE_DOWNLOAD)
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), Stage(STAGE_DOWNLOAD)
 {
    // autoselect the compression method
    AutoSelectCompression();
@@ -2555,7 +2555,7 @@ pkgAcqIndex::~pkgAcqIndex() {}
 pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sources,
 			     pkgRecords * const Recs,pkgCache::VerIterator const &Version,
 			     string &StoreFilename) :
-               Item(Owner), LocalSource(false), Version(Version), Sources(Sources), Recs(Recs),
+               Item(Owner), d(NULL), LocalSource(false), Version(Version), Sources(Sources), Recs(Recs),
                StoreFilename(StoreFilename), Vf(Version.FileList()),
 	       Trusted(false)
 {
@@ -3048,7 +3048,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire * const Owner,string const &URI, HashStringLis
 		       unsigned long long const Size,string const &Dsc,string const &ShortDesc,
 		       const string &DestDir, const string &DestFilename,
                        bool const IsIndexFile) :
-                       Item(Owner), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
+                       Item(Owner), d(NULL), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
 {
    Retries = _config->FindI("Acquire::Retries",0);
 

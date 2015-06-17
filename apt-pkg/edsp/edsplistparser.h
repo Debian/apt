@@ -27,7 +27,7 @@ class FileFd;
 
 class APT_HIDDEN edspListParser : public debListParser
 {
-   void *d;
+   void * const d;
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver);
    virtual std::string Description();

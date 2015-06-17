@@ -22,7 +22,7 @@
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/
-edspListParser::edspListParser(FileFd *File, std::string const &Arch) : debListParser(File, Arch)
+edspListParser::edspListParser(FileFd *File, std::string const &Arch) : debListParser(File, Arch), d(NULL)
 {}
 									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/

@@ -47,7 +47,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
-			   pkgAcquireStatus *log) : Log(log)
+			   pkgAcquireStatus *log) : d(NULL), Log(log)
 {
    OwnerQ = Q;
    Config = Cnf;
@@ -62,15 +62,10 @@ pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
 // Worker::Worker - Constructor for method config startup		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Worker::Worker(MethodConfig *Cnf)
+pkgAcquire::Worker::Worker(MethodConfig *Cnf) : d(NULL), OwnerQ(NULL), Config(Cnf),
+						Access(Cnf->Access), CurrentItem(NULL),
+						CurrentSize(0), TotalSize(0)
 {
-   OwnerQ = 0;
-   Config = Cnf;
-   Access = Cnf->Access;
-   CurrentItem = 0;
-   TotalSize = 0;
-   CurrentSize = 0;
-
    Construct();
 }
 									/*}}}*/

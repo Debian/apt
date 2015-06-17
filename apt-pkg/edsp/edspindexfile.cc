@@ -29,7 +29,7 @@
 // edspIndex::edspIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-edspIndex::edspIndex(std::string File) : debStatusIndex(File)
+edspIndex::edspIndex(std::string File) : debStatusIndex(File), d(NULL)
 {
 }
 									/*}}}*/

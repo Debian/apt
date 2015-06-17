@@ -130,28 +130,17 @@ class FileFd
    inline bool Eof() {return (Flags & HitEof) == HitEof;};
    inline bool IsCompressed() {return (Flags & Compressed) == Compressed;};
    inline std::string &Name() {return FileName;};
-   
-   FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode = 0666) : iFd(-1), Flags(0), d(NULL)
-   {
-      Open(FileName,Mode, None, AccessMode);
-   };
-   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode = 0666) : iFd(-1), Flags(0), d(NULL)
-   {
-      Open(FileName,Mode, Compress, AccessMode);
-   };
-   FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {};
-   FileFd(int const Fd, unsigned int const Mode = ReadWrite, CompressMode Compress = None) : iFd(-1), Flags(0), d(NULL)
-   {
-      OpenDescriptor(Fd, Mode, Compress);
-   };
-   FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(NULL)
-   {
-      OpenDescriptor(Fd, ReadWrite, None, AutoClose);
-   };
+
+   FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode = 0666);
+   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode = 0666);
+   FileFd();
+   FileFd(int const Fd, unsigned int const Mode = ReadWrite, CompressMode Compress = None);
+   FileFd(int const Fd, bool const AutoClose);
    virtual ~FileFd();
 
    private:
-   FileFdPrivate* d;
+   FileFdPrivate * d;
+   APT_HIDDEN FileFd & operator=(const FileFd &);
    APT_HIDDEN bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 
    // private helpers to set Fail flag and call _error->Error

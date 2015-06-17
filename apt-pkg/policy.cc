@@ -45,7 +45,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
    file matches the V0 policy engine. */
-pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
+pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner), d(NULL)
 {
    if (Owner == 0)
       return;

@@ -47,7 +47,7 @@
 class pkgAcquire::Worker : public WeakPointable
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
   
    friend class pkgAcquire;
    

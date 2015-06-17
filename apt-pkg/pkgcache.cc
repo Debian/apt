@@ -122,7 +122,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 // ---------------------------------------------------------------------
 /* */
 APT_IGNORE_DEPRECATED_PUSH
-pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
+pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map), d(NULL)
 {
    // call getArchitectures() with cached=false to ensure that the 
    // architectures cache is re-evaulated. this is needed in cases

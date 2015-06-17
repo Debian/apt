@@ -45,7 +45,7 @@ bool pkgPackageManager::SigINTStop = false;
 // ---------------------------------------------------------------------
 /* */
 pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
-							    List(NULL), Res(Incomplete)
+							    List(NULL), Res(Incomplete), d(NULL)
 {
    FileNames = new string[Cache.Head().PackageCount];
    Debug = _config->FindB("Debug::pkgPackageManager",false);

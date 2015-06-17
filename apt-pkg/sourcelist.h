@@ -53,7 +53,7 @@ class metaIndex;
 
 class pkgSourceList
 {
-   void *d;
+   void * const d;
    public:
 
    // List of supported source list types

@@ -37,7 +37,7 @@ class pkgDPkgPMPrivate;
 class pkgDPkgPM : public pkgPackageManager
 {
    private:
-   pkgDPkgPMPrivate *d;
+   pkgDPkgPMPrivate * const d;
 
    /** \brief record the disappear action and handle accordingly
 

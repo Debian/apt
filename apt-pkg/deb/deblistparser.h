@@ -39,7 +39,7 @@ class APT_HIDDEN debListParser : public pkgCacheGenerator::ListParser
 
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    protected:
    pkgTagFile Tags;

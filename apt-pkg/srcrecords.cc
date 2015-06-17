@@ -180,5 +180,5 @@ bool pkgSrcRecords::Parser::Files2(std::vector<pkgSrcRecords::File2> &F2)/*{{{*/
 									/*}}}*/
 
 
-pkgSrcRecords::Parser::Parser(const pkgIndexFile *Index) : iIndex(Index) {}
+pkgSrcRecords::Parser::Parser(const pkgIndexFile *Index) : d(NULL), iIndex(Index) {}
 pkgSrcRecords::Parser::~Parser() {}

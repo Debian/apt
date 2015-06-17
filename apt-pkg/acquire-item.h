@@ -336,7 +336,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    virtual std::string GetFinalFilename() const;
 
    private:
-   void *d;
+   void * const d;
 
    friend class pkgAcqMetaBase;
 };
@@ -344,7 +344,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
 /** \brief baseclass for the indexes files to manage them all together */
 {
-   void *d;
+   void * const d;
    protected:
    IndexTarget const Target;
    HashStringList GetExpectedHashesFor(std::string const &MetaKey) const;
@@ -379,7 +379,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
 class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
 /** \brief the manager of a transaction */
 {
-   void *d;
+   void * const d;
  protected:
    std::vector<pkgAcqTransactionItem*> Transaction;
 
@@ -492,7 +492,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
  */
 class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
 {
-   void *d;
+   void * const d;
    protected:
    IndexTarget const DetachedSigTarget;
 
@@ -527,7 +527,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
  */
 class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 {
-   void *d;
+   void * const d;
 
    pkgAcqMetaIndex * const MetaIndex;
 
@@ -556,7 +556,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 /** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
 class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 {
-   void *d;
+   void * const d;
 
    IndexTarget const ClearsignedTarget;
    IndexTarget const DetachedDataTarget;
@@ -580,7 +580,7 @@ public:
 /** \brief Common base class for all classes that deal with fetching indexes	{{{*/
 class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
 {
-   void *d;
+   void * const d;
 
  public:
    /** \brief Get the full pathname of the final file for the current URI */
@@ -602,7 +602,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
  */
 class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
-   void *d;
+   void * const d;
 
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
@@ -684,7 +684,7 @@ struct APT_HIDDEN DiffInfo {						/*{{{*/
  */
 class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
-   void *d;
+   void * const d;
 
    protected:
 
@@ -768,7 +768,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  */
 class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
-   void *d;
+   void * const d;
 
    private:
 
@@ -878,7 +878,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
  */
 class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 {
-   void *d;
+   void * const d;
 
    protected:
 
@@ -957,7 +957,7 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
  */
 class pkgAcqArchive : public pkgAcquire::Item
 {
-   void *d;
+   void * const d;
 
    bool LocalSource;
    HashStringList ExpectedHashes;
@@ -1045,7 +1045,7 @@ class pkgAcqArchive : public pkgAcquire::Item
  */
 class pkgAcqChangelog : public pkgAcquire::Item
 {
-   void *d;
+   void * const d;
    std::string TemporaryDirectory;
    std::string const SrcName;
    std::string const SrcVersion;
@@ -1160,7 +1160,7 @@ private:
  */
 class pkgAcqFile : public pkgAcquire::Item
 {
-   void *d;
+   void * const d;
 
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.

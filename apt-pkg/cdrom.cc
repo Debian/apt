@@ -917,7 +917,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 }
 									/*}}}*/
 pkgUdevCdromDevices::pkgUdevCdromDevices()				/*{{{*/
-: libudev_handle(NULL), udev_new(NULL), udev_enumerate_add_match_property(NULL),
+: d(NULL), libudev_handle(NULL), udev_new(NULL), udev_enumerate_add_match_property(NULL),
    udev_enumerate_scan_devices(NULL), udev_enumerate_get_list_entry(NULL),
    udev_device_new_from_syspath(NULL), udev_enumerate_get_udev(NULL),
    udev_list_entry_get_name(NULL), udev_device_get_devnode(NULL),
@@ -1023,8 +1023,8 @@ pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
 }
 									/*}}}*/
 
-pkgCdromStatus::pkgCdromStatus() : totalSteps(0) {}
+pkgCdromStatus::pkgCdromStatus() : d(NULL), totalSteps(0) {}
 pkgCdromStatus::~pkgCdromStatus() {}
 
-pkgCdrom::pkgCdrom() {}
+pkgCdrom::pkgCdrom() : d(NULL) {}
 pkgCdrom::~pkgCdrom() {}

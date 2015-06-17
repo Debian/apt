@@ -53,7 +53,7 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
 }
 									/*}}}*/
 pkgIndexFile::pkgIndexFile(bool Trusted) :				/*{{{*/
-   Trusted(Trusted)
+   d(NULL), Trusted(Trusted)
 {
 }
 									/*}}}*/
@@ -172,7 +172,7 @@ std::string IndexTarget::Format(std::string format) const		/*{{{*/
 									/*}}}*/
 
 pkgIndexTargetFile::pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted) :/*{{{*/
-   pkgIndexFile(Trusted), Target(Target)
+   pkgIndexFile(Trusted), d(NULL), Target(Target)
 {
 }
 									/*}}}*/

@@ -86,7 +86,7 @@ pkgOrderList *pkgOrderList::Me = 0;
 // OrderList::pkgOrderList - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache),
+pkgOrderList::pkgOrderList(pkgDepCache *pCache) : d(NULL), Cache(*pCache),
 						  Primary(NULL), Secondary(NULL),
 						  RevDepends(NULL), Remove(NULL),
 						  AfterEnd(NULL), FileList(NULL),

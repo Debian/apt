@@ -60,8 +60,8 @@ class pkgSystem
    static unsigned long GlobalListLen;
    static pkgSystem *GetSystem(const char *Label);
    
-   const char *Label;
-   pkgVersioningSystem *VS;
+   const char * const Label;
+   pkgVersioningSystem * const VS;
    
    /* Prevent other programs from touching shared data not covered by
       other locks (cache or state locks) */
@@ -90,11 +90,11 @@ class pkgSystem
    virtual signed Score(Configuration const &/*Cnf*/) {
       return 0;
    };
-   
-   pkgSystem();
+
+   pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
    virtual ~pkgSystem();
    private:
-   void *d;
+   void * const d;
 };
 
 // The environment we are operating in.

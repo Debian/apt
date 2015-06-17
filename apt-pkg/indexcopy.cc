@@ -769,14 +769,14 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 }
 									/*}}}*/
 
-IndexCopy::IndexCopy() {}
+IndexCopy::IndexCopy() : d(NULL) {}
 APT_CONST IndexCopy::~IndexCopy() {}
 
-PackageCopy::PackageCopy() : IndexCopy() {}
+PackageCopy::PackageCopy() : IndexCopy(), d(NULL) {}
 APT_CONST PackageCopy::~PackageCopy() {}
-SourceCopy::SourceCopy() : IndexCopy() {}
+SourceCopy::SourceCopy() : IndexCopy(), d(NULL) {}
 APT_CONST SourceCopy::~SourceCopy() {}
-TranslationsCopy::TranslationsCopy() {}
+TranslationsCopy::TranslationsCopy() : d(NULL) {}
 APT_CONST TranslationsCopy::~TranslationsCopy() {}
-SigVerify::SigVerify() {}
+SigVerify::SigVerify() : d(NULL) {}
 APT_CONST SigVerify::~SigVerify() {}

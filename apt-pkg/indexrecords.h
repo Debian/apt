@@ -27,7 +27,7 @@ class indexRecords
    private:
    enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
    // dpointer (for later)
-   void * d;
+   void * const d;
 
    protected:
    std::string Dist;

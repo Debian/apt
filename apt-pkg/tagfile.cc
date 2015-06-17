@@ -32,13 +32,22 @@ using std::string;
 class pkgTagFilePrivate
 {
 public:
-   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Buffer(NULL),
-							     Start(NULL), End(NULL),
-							     Done(false), iOffset(0),
-							     Size(Size)
+   void Reset(FileFd * const pFd, unsigned long long const pSize)
    {
+      Fd = pFd;
+      Buffer = NULL;
+      Start = NULL;
+      End = NULL;
+      Done = false;
+      iOffset = 0;
+      Size = pSize;
    }
-   FileFd &Fd;
+
+   pkgTagFilePrivate(FileFd * const pFd, unsigned long long const Size)
+   {
+      Reset(pFd, Size);
+   }
+   FileFd * Fd;
    char *Buffer;
    char *Start;
    char *End;
@@ -83,27 +92,21 @@ static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
-   : d(NULL)
+pkgTagFile::pkgTagFile(FileFd * const pFd,unsigned long long const Size)
+   : d(new pkgTagFilePrivate(pFd, Size + 4))
 {
    Init(pFd, Size);
 }
-
-void pkgTagFile::Init(FileFd *pFd,unsigned long long Size)
+void pkgTagFile::Init(FileFd * const pFd,unsigned long long Size)
 {
    /* The size is increased by 4 because if we start with the Size of the
       filename we need to try to read 1 char more to see an EOF faster, 1
       char the end-pointer can be on and maybe 2 newlines need to be added
       to the end of the file -> 4 extra chars */
    Size += 4;
-   if(d != NULL)
-   {
-      free(d->Buffer);
-      delete d;
-   }
-   d = new pkgTagFilePrivate(pFd, Size);
+   d->Reset(pFd, Size);
 
-   if (d->Fd.IsOpen() == false)
+   if (d->Fd->IsOpen() == false)
       d->Start = d->End = d->Buffer = 0;
    else
       d->Buffer = (char*)malloc(sizeof(char) * Size);
@@ -184,7 +187,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 
 	 if (Resize() == false)
 	    return _error->Error(_("Unable to parse package file %s (%d)"),
-		  d->Fd.Name().c_str(), 1);
+		  d->Fd->Name().c_str(), 1);
 
       } while (Tag.Scan(d->Start,d->End - d->Start, false) == false);
    }
@@ -213,7 +216,7 @@ bool pkgTagFile::Fill()
    {
       // See if only a bit of the file is left
       unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
-      if (d->Fd.Read(d->End, dataSize, &Actual) == false)
+      if (d->Fd->Read(d->End, dataSize, &Actual) == false)
 	 return false;
       if (Actual != dataSize)
 	 d->Done = true;
@@ -268,7 +271,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
    // Reposition and reload..
    d->iOffset = Offset;
    d->Done = false;
-   if (d->Fd.Seek(Offset) == false)
+   if (d->Fd->Seek(Offset) == false)
       return false;
    d->End = d->Start = d->Buffer;
    
@@ -283,7 +286,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       return false;
    
    if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
-      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd.Name().c_str(), 2);
+      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd->Name().c_str(), 2);
    
    return true;
 }
@@ -293,9 +296,8 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 /* */
 APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
-   : Section(0), d(NULL), Stop(0)
+   : Section(0), d(new pkgTagSectionPrivate()), Stop(0)
 {
-   d = new pkgTagSectionPrivate();
 #if APT_PKG_ABI < 413
    TagCount = 0;
    memset(&Indexes, 0, sizeof(Indexes));

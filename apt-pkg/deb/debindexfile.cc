@@ -45,7 +45,7 @@ using std::string;
 // ---------------------------------------------------------------------
 /* */
 debSourcesIndex::debSourcesIndex(IndexTarget const &Target,bool const Trusted) :
-     pkgIndexTargetFile(Target, Trusted)
+     pkgIndexTargetFile(Target, Trusted), d(NULL)
 {
 }
 									/*}}}*/
@@ -84,7 +84,7 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 // ---------------------------------------------------------------------
 /* */
 debPackagesIndex::debPackagesIndex(IndexTarget const &Target, bool const Trusted) :
-                  pkgIndexTargetFile(Target, Trusted)
+                  pkgIndexTargetFile(Target, Trusted), d(NULL)
 {
 }
 									/*}}}*/
@@ -179,7 +179,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 
 // TranslationsIndex::debTranslationsIndex - Contructor			/*{{{*/
 debTranslationsIndex::debTranslationsIndex(IndexTarget const &Target) :
-			pkgIndexTargetFile(Target, true)
+			pkgIndexTargetFile(Target, true), d(NULL)
 {}
 									/*}}}*/
 bool debTranslationsIndex::HasPackages() const				/*{{{*/
@@ -255,7 +255,7 @@ pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) con
 // StatusIndex::debStatusIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debStatusIndex::debStatusIndex(string File) : pkgIndexFile(true), File(File)
+debStatusIndex::debStatusIndex(string File) : pkgIndexFile(true), d(NULL), File(File)
 {
 }
 									/*}}}*/
@@ -341,7 +341,7 @@ APT_CONST bool debStatusIndex::Exists() const
 
 // debDebPkgFile - Single .deb file					/*{{{*/
 debDebPkgFileIndex::debDebPkgFileIndex(std::string DebFile)
-   : pkgIndexFile(true), DebFile(DebFile)
+   : pkgIndexFile(true), d(NULL), DebFile(DebFile)
 {
    DebFileFullPath = flAbsPath(DebFile);
 }
@@ -445,7 +445,7 @@ unsigned long debDebPkgFileIndex::Size() const
 
 // debDscFileIndex stuff
 debDscFileIndex::debDscFileIndex(std::string &DscFile) 
-   : pkgIndexFile(true), DscFile(DscFile)
+   : pkgIndexFile(true), d(NULL), DscFile(DscFile)
 {
 }
 

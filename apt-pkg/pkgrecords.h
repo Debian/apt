@@ -31,7 +31,7 @@ class pkgRecords							/*{{{*/
    
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    
    pkgCache &Cache;
    std::vector<Parser *>Files;
@@ -111,7 +111,7 @@ class pkgRecords::Parser						/*{{{*/
    virtual ~Parser();
 
    private:
-   void *d;
+   void * const d;
    APT_HIDDEN std::string GetHashFromHashes(char const * const type) const
    {
       HashStringList const hashes = Hashes();

@@ -28,7 +28,7 @@ class debStatusIndex;
 class debSystem : public pkgSystem
 {
    // private d-pointer
-   debSystemPrivate *d;
+   debSystemPrivate * const d;
    APT_HIDDEN bool CheckUpdates();
 
    public:

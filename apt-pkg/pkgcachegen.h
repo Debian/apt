@@ -125,7 +125,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    virtual ~pkgCacheGenerator();
 
    private:
-   void *d;
+   void * const d;
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
@@ -152,7 +152,7 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
    // Flag file dependencies
    bool FoundFileDeps;
 
-   void *d;
+   void * const d;
 
    protected:
 

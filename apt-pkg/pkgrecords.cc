@@ -77,5 +77,5 @@ pkgRecords::Parser &pkgRecords::Lookup(pkgCache::DescFileIterator const &Desc)
 }
 									/*}}}*/
 
-pkgRecords::Parser::Parser() {}
+pkgRecords::Parser::Parser() : d(NULL) {}
 pkgRecords::Parser::~Parser() {}

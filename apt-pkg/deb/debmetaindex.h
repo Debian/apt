@@ -36,7 +36,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    std::map<std::string, std::vector<debSectionEntry const*> > ArchEntries;
    enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
 
@@ -75,7 +75,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
 class APT_HIDDEN debDebFileMetaIndex : public metaIndex
 {
  private:
-    void *d;
+    void * const d;
    std::string DebFile;
    debDebPkgFileIndex *DebIndex;
  public:

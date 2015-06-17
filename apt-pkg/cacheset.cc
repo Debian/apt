@@ -813,16 +813,25 @@ APT_CONST void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &
 									/*}}}*/
 
 CacheSetHelper::CacheSetHelper(bool const ShowError, GlobalError::MsgType ErrorType) :
-   ShowError(ShowError), ErrorType(ErrorType) {}
+   ShowError(ShowError), ErrorType(ErrorType), d(NULL) {}
 CacheSetHelper::~CacheSetHelper() {}
 
-PackageContainerInterface::PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN) {}
-PackageContainerInterface::PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by) {}
+PackageContainerInterface::PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN), d(NULL) {}
+PackageContainerInterface::PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by), d(NULL) {}
+PackageContainerInterface& PackageContainerInterface::operator=(PackageContainerInterface const &other) {
+   if (this != &other)
+      this->ConstructedBy = other.ConstructedBy;
+   return *this;
+}
 PackageContainerInterface::~PackageContainerInterface() {}
 
-PackageUniverse::PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+PackageUniverse::PackageUniverse(pkgCache * const Owner) : _cont(Owner), d(NULL) { }
 PackageUniverse::~PackageUniverse() {}
 
-VersionContainerInterface::VersionContainerInterface() {}
+VersionContainerInterface::VersionContainerInterface() : d(NULL) {}
+VersionContainerInterface& VersionContainerInterface::operator=(VersionContainerInterface const &) {
+   return *this;
+}
+
 VersionContainerInterface::~VersionContainerInterface() {}
 }

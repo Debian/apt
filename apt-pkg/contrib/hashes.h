@@ -182,7 +182,7 @@ class HashStringList
 class PrivateHashes;
 class Hashes
 {
-   PrivateHashes *d;
+   PrivateHashes * const d;
 
    public:
    /* those will disappear in the future as it is hard to add new ones this way.

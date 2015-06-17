@@ -89,7 +89,7 @@ class IndexTarget							/*{{{*/
 
 class pkgIndexFile
 {
-   void *d;
+   void * const d;
    protected:
    bool Trusted;
 
@@ -150,7 +150,7 @@ class pkgIndexFile
 
 class pkgIndexTargetFile : public pkgIndexFile
 {
-   void *d;
+   void * const d;
 protected:
    IndexTarget const Target;
 

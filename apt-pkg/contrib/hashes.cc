@@ -277,6 +277,18 @@ public:
    unsigned int CalcHashes;
 
    explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
+   explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
+      unsigned int calcHashes = Hashes.usable() ? 0 : ~0;
+      if (Hashes.find("MD5Sum") != NULL)
+	 calcHashes |= Hashes::MD5SUM;
+      if (Hashes.find("SHA1") != NULL)
+	 calcHashes |= Hashes::SHA1SUM;
+      if (Hashes.find("SHA256") != NULL)
+	 calcHashes |= Hashes::SHA256SUM;
+      if (Hashes.find("SHA512") != NULL)
+	 calcHashes |= Hashes::SHA512SUM;
+      CalcHashes = calcHashes;
+   }
 };
 									/*}}}*/
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/
@@ -372,19 +384,8 @@ APT_IGNORE_DEPRECATED_POP
    return hashes;
 }
 APT_IGNORE_DEPRECATED_PUSH
-Hashes::Hashes() { d = new PrivateHashes(~0); }
-Hashes::Hashes(unsigned int const Hashes) { d = new PrivateHashes(Hashes); }
-Hashes::Hashes(HashStringList const &Hashes) {
-   unsigned int calcHashes = Hashes.usable() ? 0 : ~0;
-   if (Hashes.find("MD5Sum") != NULL)
-      calcHashes |= MD5SUM;
-   if (Hashes.find("SHA1") != NULL)
-      calcHashes |= SHA1SUM;
-   if (Hashes.find("SHA256") != NULL)
-      calcHashes |= SHA256SUM;
-   if (Hashes.find("SHA512") != NULL)
-      calcHashes |= SHA512SUM;
-   d = new PrivateHashes(calcHashes);
-}
+Hashes::Hashes() : d(new PrivateHashes(~0)) { }
+Hashes::Hashes(unsigned int const Hashes) : d(new PrivateHashes(Hashes)) {}
+Hashes::Hashes(HashStringList const &Hashes) : d(new PrivateHashes(Hashes)) {}
 Hashes::~Hashes() { delete d; }
 APT_IGNORE_DEPRECATED_POP

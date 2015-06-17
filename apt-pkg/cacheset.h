@@ -203,7 +203,7 @@ protected:
 	bool PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
 	bool PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 private:
-	void *d;
+	void * const d;
 };									/*}}}*/
 
 class PackageContainerInterface {					/*{{{*/
@@ -266,6 +266,7 @@ APT_IGNORE_DEPRECATED_POP
 	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
 	PackageContainerInterface();
 	explicit PackageContainerInterface(CacheSetHelper::PkgSelector const by);
+	PackageContainerInterface& operator=(PackageContainerInterface const &other);
 	virtual ~PackageContainerInterface();
 
 	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
@@ -294,7 +295,7 @@ APT_IGNORE_DEPRECATED_POP
 
 private:
 	CacheSetHelper::PkgSelector ConstructedBy;
-	void *d;
+	void * const d;
 };
 									/*}}}*/
 template<class Container> class PackageContainer : public PackageContainerInterface {/*{{{*/
@@ -555,7 +556,7 @@ template<> template<class Compare> inline bool PackageContainer<std::vector<pkgC
     private methods. */
 class APT_HIDDEN PackageUniverse : public PackageContainerInterface {
 	pkgCache * const _cont;
-	void *d;
+	void * const d;
 public:
 	typedef pkgCache::PkgIterator iterator;
 	typedef pkgCache::PkgIterator const_iterator;
@@ -707,9 +708,10 @@ APT_IGNORE_DEPRECATED_PUSH
 APT_IGNORE_DEPRECATED_POP
 
 	VersionContainerInterface();
+	VersionContainerInterface& operator=(VersionContainerInterface const &other);
 	virtual ~VersionContainerInterface();
 private:
-	void *d;
+	void * const d;
 
 protected:								/*{{{*/
 

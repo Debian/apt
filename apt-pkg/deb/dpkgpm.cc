@@ -216,10 +216,9 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache)
+   : pkgPackageManager(Cache),d(new pkgDPkgPMPrivate()), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
 {
-   d = new pkgDPkgPMPrivate();
 }
 									/*}}}*/
 // DPkgPM::pkgDPkgPM - Destructor					/*{{{*/

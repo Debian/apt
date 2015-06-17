@@ -54,7 +54,7 @@ using std::string;
 /* We set the dirty flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
-		     CurrentRlsFile(NULL), CurrentFile(NULL), FoundFileDeps(0)
+		     CurrentRlsFile(NULL), CurrentFile(NULL), FoundFileDeps(0), d(NULL)
 {
    if (_error->PendingError() == true)
       return;
@@ -1721,5 +1721,5 @@ bool pkgCacheGenerator::FinishCache(OpProgress * /*Progress*/)
 }
 									/*}}}*/
 
-pkgCacheGenerator::ListParser::ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {}
+pkgCacheGenerator::ListParser::ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false), d(NULL) {}
 pkgCacheGenerator::ListParser::~ListParser() {}

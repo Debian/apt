@@ -50,7 +50,7 @@ static debListParser::WordList PrioList[] = {
 /* Provide an architecture and only this one and "all" will be accepted
    in Step(), if no Architecture is given we will accept every arch
    we would accept in general with checkArchitecture() */
-debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
+debListParser::debListParser(FileFd *File, string const &Arch) :  d(NULL), Tags(File),
 				Arch(Arch) {
    if (Arch == "native")
       this->Arch = _config->Find("APT::Architecture");

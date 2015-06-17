@@ -43,7 +43,7 @@ pkgProblemResolver *pkgProblemResolver::This = 0;
 /* The legacy translations here of input Pkg iterators is obsolete, 
    this is not necessary since the pkgCaches are fully shared now. */
 pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
-		            iPolicy(Cache),
+		            d(NULL), iPolicy(Cache),
 			    Sim(&Cache->GetCache(),&iPolicy),
 			    group(Sim)
 {

@@ -27,7 +27,7 @@
 
 class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {
-   void *d;
+   void * const d;
  protected:
    pkgTagSection Section;
 
@@ -57,7 +57,7 @@ class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 
 class APT_HIDDEN debRecordParser : public debRecordParserBase
 {
-   void *d;
+   void * const d;
  protected:
    FileFd File;
    pkgTagFile Tags;
@@ -73,7 +73,7 @@ class APT_HIDDEN debRecordParser : public debRecordParserBase
 // custom record parser that reads deb files directly
 class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
 {
-   void *d;
+   void * const d;
    std::string debFileName;
    std::string controlContent;
 

@@ -457,7 +457,7 @@ void pkgAcqMethod::Redirect(const string &NewURI)
 // ---------------------------------------------------------------------
 /* */
 pkgAcqMethod::FetchResult::FetchResult() : LastModified(0),
-                                   IMSHit(false), Size(0), ResumePoint(0)
+                                   IMSHit(false), Size(0), ResumePoint(0), d(NULL)
 {
 }
 									/*}}}*/
@@ -480,7 +480,7 @@ void pkgAcqMethod::Dequeue() {						/*{{{*/
 									/*}}}*/
 pkgAcqMethod::~pkgAcqMethod() {}
 
-pkgAcqMethod::FetchItem::FetchItem() {}
+pkgAcqMethod::FetchItem::FetchItem() : d(NULL) {}
 pkgAcqMethod::FetchItem::~FetchItem() {}
 
 pkgAcqMethod::FetchResult::~FetchResult() {}

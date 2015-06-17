@@ -54,7 +54,7 @@ using std::ostream;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
-   void *d;
+   void * const d;
    protected:
 
    class Policy : public pkgDepCache::Policy
@@ -95,7 +95,7 @@ class pkgProblemResolver						/*{{{*/
 {
  private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;

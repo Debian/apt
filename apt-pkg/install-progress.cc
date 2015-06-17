@@ -65,7 +65,7 @@ bool PackageManager::StatusChanged(std::string /*PackageName*/,
 }
 
 PackageManagerProgressFd::PackageManagerProgressFd(int progress_fd)
-   : StepsDone(0), StepsTotal(1)
+   : d(NULL), StepsDone(0), StepsTotal(1)
 {
    OutStatusFd = progress_fd;
 }
@@ -154,7 +154,7 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
 
 
 PackageManagerProgressDeb822Fd::PackageManagerProgressDeb822Fd(int progress_fd)
-   : StepsDone(0), StepsTotal(1)
+   : d(NULL), StepsDone(0), StepsTotal(1)
 {
    OutStatusFd = progress_fd;
 }
@@ -235,7 +235,7 @@ bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
 
 
 PackageManagerFancy::PackageManagerFancy()
-   : child_pty(-1)
+   : d(NULL), child_pty(-1)
 {
    // setup terminal size
    old_SIGWINCH = signal(SIGWINCH, PackageManagerFancy::staticSIGWINCH);
@@ -435,7 +435,7 @@ bool PackageManagerText::StatusChanged(std::string PackageName,
    return true;
 }
 
-PackageManagerText::PackageManagerText() : PackageManager() {}
+PackageManagerText::PackageManagerText() : PackageManager(), d(NULL) {}
 PackageManagerText::~PackageManagerText() {}
 
 

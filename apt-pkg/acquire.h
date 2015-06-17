@@ -101,7 +101,7 @@ class pkgAcquire
    /** \brief FD of the Lock file we acquire in Setup (if any) */
    int LockFD;
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    public:
    
@@ -411,7 +411,7 @@ class pkgAcquire::Queue
    friend class pkgAcquire::Worker;
 
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    /** \brief The next queue in the pkgAcquire object's list of queues. */
    Queue *Next;
@@ -596,7 +596,7 @@ class pkgAcquire::Queue
 class pkgAcquire::UriIterator
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    /** The next queue to iterate over. */
    pkgAcquire::Queue *CurQ;
@@ -633,7 +633,7 @@ class pkgAcquire::UriIterator
 struct pkgAcquire::MethodConfig
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    
    /** \brief The next link on the acquire method list.
     *
@@ -694,7 +694,7 @@ struct pkgAcquire::MethodConfig
 class pkgAcquireStatus
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    protected:
    

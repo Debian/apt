@@ -1011,6 +1011,25 @@ class FileFdPrivate {							/*{{{*/
 	~FileFdPrivate() { CloseDown(""); }
 };
 									/*}}}*/
+// FileFd Constructors							/*{{{*/
+FileFd::FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+{
+   Open(FileName,Mode, None, AccessMode);
+}
+FileFd::FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+{
+   Open(FileName,Mode, Compress, AccessMode);
+}
+FileFd::FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {}
+FileFd::FileFd(int const Fd, unsigned int const Mode, CompressMode Compress) : iFd(-1), Flags(0), d(NULL)
+{
+   OpenDescriptor(Fd, Mode, Compress);
+}
+FileFd::FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(NULL)
+{
+   OpenDescriptor(Fd, ReadWrite, None, AutoClose);
+}
+									/*}}}*/
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */

@@ -25,7 +25,7 @@ class edspIndex;
 class APT_HIDDEN edspSystem : public pkgSystem
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    edspIndex *StatusFile;
 

@@ -29,7 +29,7 @@ class pkgCacheGenerator;
 
 class APT_HIDDEN debStatusIndex : public pkgIndexFile
 {
-   void *d;
+   void * const d;
    protected:
    std::string File;
 
@@ -53,7 +53,7 @@ class APT_HIDDEN debStatusIndex : public pkgIndexFile
 
 class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
 {
-   void *d;
+   void * const d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -72,7 +72,7 @@ class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
 
 class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
 {
-   void *d;
+   void * const d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -88,7 +88,7 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
 
 class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
 {
-   void *d;
+   void * const d;
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -110,7 +110,7 @@ class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
 class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
 {
  private:
-   void *d;
+   void * const d;
    std::string DebFile;
    std::string DebFileFullPath;
 
@@ -148,7 +148,7 @@ class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
 class APT_HIDDEN debDscFileIndex : public pkgIndexFile
 {
  private:
-   void *d;
+   void * const d;
    std::string DscFile;
  public:
    virtual const Type *GetType() const APT_CONST;

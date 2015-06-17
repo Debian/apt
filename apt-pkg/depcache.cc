@@ -63,7 +63,7 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
 }
 									/*}}}*/
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :		/*{{{*/
-  cache(cache), released(false)
+  d(NULL), cache(cache), released(false)
 {
   ++cache.group_level;
 }
@@ -97,7 +97,7 @@ pkgDepCache::ActionGroup::~ActionGroup()
 pkgDepCache::pkgDepCache(pkgCache *pCache,Policy *Plcy) :
   group_level(0), Cache(pCache), PkgState(0), DepState(0),
    iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
-   iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0)
+   iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(NULL)
 {
    DebugMarker = _config->FindB("Debug::pkgDepCache::Marker", false);
    DebugAutoInstall = _config->FindB("Debug::pkgDepCache::AutoInstall", false);

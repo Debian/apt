@@ -26,13 +26,9 @@
 #include <apti18n.h>
 									/*}}}*/
 
-// System::debSystem - Constructor					/*{{{*/
-edspSystem::edspSystem()
+// System::edspSystem - Constructor					/*{{{*/
+edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(NULL), StatusFile(NULL)
 {
-   StatusFile = 0;
-
-   Label = "Debian APT solver interface";
-   VS = &debVS;
 }
 									/*}}}*/
 // System::~debSystem - Destructor					/*{{{*/

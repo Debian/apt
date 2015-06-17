@@ -28,7 +28,7 @@ class OpProgress;
 
 class metaIndex
 {
-   void *d;
+   void * const d;
    protected:
    std::vector <pkgIndexFile *> *Indexes;
    const char *Type;

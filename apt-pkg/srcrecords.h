@@ -48,7 +48,7 @@ APT_IGNORE_DEPRECATED_POP
    // Abstract parser for each source record
    class Parser
    {
-      void *d;
+      void * const d;
       protected:
       
       const pkgIndexFile *iIndex;
@@ -93,7 +93,7 @@ APT_IGNORE_DEPRECATED_POP
    
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    
    // The list of files and the current parser pointer
    std::vector<Parser*> Files;
