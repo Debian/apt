@@ -281,12 +281,9 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
       if (OrSite.empty() == false) {
 	 if (File.Site() == NULL)
 	    return false;
-      } else // so we are talking about file:// or status file
-      {
-	 pkgCache::RlsFileIterator const RlsFile = File.ReleaseFile();
-	 if (strcmp(File.Site(),"") == 0 && RlsFile->Archive != 0 && strcmp(RlsFile.Archive(),"now") == 0) // skip the status file
-	    return false;
       }
+      else if (File->Release == 0)// only 'bad' files like dpkg.status file has no release file
+	 return false;
       return (ExpressionMatches(OrSite, File.Site())); /* both strings match */
    }
 
