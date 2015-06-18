@@ -32,10 +32,15 @@ struct VersionSortDescriptionLocality
    bool operator () (const pkgCache::VerIterator &v_lhs, 
                      const pkgCache::VerIterator &v_rhs)
     {
-        pkgCache::DescFile *A = v_lhs.TranslatedDescription().FileList();
-        pkgCache::DescFile *B = v_rhs.TranslatedDescription().FileList();
-        if (A == 0 && B == 0)
-           return false;
+       pkgCache::DescFile const *A = NULL;
+       pkgCache::DescFile const *B = NULL;
+       if (v_lhs->DescriptionList != 0)
+	  A = v_lhs.TranslatedDescription().FileList();
+       if (v_rhs->DescriptionList != 0)
+	  B = v_rhs.TranslatedDescription().FileList();
+
+       if (A == 0 && B == 0)
+	  return false;
 
        if (A == 0)
           return true;

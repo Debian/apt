@@ -20,7 +20,7 @@ class SourceList : public pkgSourceList {
 TEST(SourceListTest,ParseFileDeb822)
 {
    FileFd fd;
-   char * tempfile = NULL;
+   std::string tempfile;
    createTemporaryFile("parsefiledeb822", fd, &tempfile,
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
@@ -39,5 +39,6 @@ TEST(SourceListTest,ParseFileDeb822)
    EXPECT_EQ(2, sources.ParseFileDeb822(tempfile));
    EXPECT_EQ(2, sources.size());
 
-   unlink(tempfile);
+   if (tempfile.empty() == false)
+      unlink(tempfile.c_str());
 }

@@ -1015,9 +1015,6 @@ static bool DoBuildDep(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
-#if APT_PKG_ABI < 413
-   pkgRecords Recs(Cache);
-#endif
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -1039,6 +1036,7 @@ static bool DoBuildDep(CommandLine &CmdL)
    {
       string Src;
       pkgSrcRecords::Parser *Last = 0;
+      SPtr<pkgSrcRecords::Parser> LastOwner;
 
       // an unpacked debian source tree
       using APT::String::Startswith;
@@ -1050,7 +1048,7 @@ static bool DoBuildDep(CommandLine &CmdL)
          std::string TypeName = "debian/control File Source Index";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
-            Last = Type->CreateSrcPkgParser(*I);
+            LastOwner = Last = Type->CreateSrcPkgParser(*I);
       }
       // if its a local file (e.g. .dsc) use this
       else if (FileExists(*I))
@@ -1061,7 +1059,7 @@ static bool DoBuildDep(CommandLine &CmdL)
          string TypeName = flExtension(*I) + " File Source Index";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
-            Last = Type->CreateSrcPkgParser(*I);
+            LastOwner = Last = Type->CreateSrcPkgParser(*I);
       } else {
          // normal case, search the cache for the source file
 #if APT_PKG_ABI >= 413

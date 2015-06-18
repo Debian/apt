@@ -16,6 +16,8 @@ CXXFLAGS+= -Wctor-dtor-privacy -Wdisabled-optimization -Winit-self -Wmissing-inc
 #CXXFLAGS+= -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
 # gcc reports currently lots of them at the end of file - unknown reason
 CXXFLAGS+= -Wno-deprecated-declarations
+# sanitize options to be enabled for testing
+#CXXFLAGS+= -fsanitize=address -fsanitize=undefined -fno-sanitize=vptr
 # a bit too pedantic to be run by default
 #CXXFLAGS+= -Wpedantic -Wno-long-long -Wno-vla -Wno-variadic-macros
 NUM_PROCS = @NUM_PROCS@

@@ -199,10 +199,12 @@ static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &reco
    std::string ShortDescription = "(none)";
    if(ver)
    {
-      pkgCache::DescIterator Desc = ver.TranslatedDescription();
-      pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
-
-      ShortDescription = parser.ShortDesc();
+      pkgCache::DescIterator const Desc = ver.TranslatedDescription();
+      if (Desc.end() == false)
+      {
+	 pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+	 ShortDescription = parser.ShortDesc();
+      }
    }
    return ShortDescription;
 }
@@ -222,11 +224,14 @@ static std::string GetLongDescription(pkgCacheFile &CacheFile, pkgRecords &recor
       return EmptyDescription;
 
    pkgCache::DescIterator const Desc = ver.TranslatedDescription();
-   pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
-   std::string const longdesc = parser.LongDesc();
-   if (longdesc.empty() == true)
-      return EmptyDescription;
-   return SubstVar(longdesc, "\n ", "\n  ");
+   if (Desc.end() == false)
+   {
+      pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+      std::string const longdesc = parser.LongDesc();
+      if (longdesc.empty() == false)
+	 return SubstVar(longdesc, "\n ", "\n  ");
+   }
+   return EmptyDescription;
 }
 									/*}}}*/
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/

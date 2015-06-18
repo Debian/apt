@@ -1484,6 +1484,10 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	      a != Args.end(); ++a)
 	    clog << *a << ' ';
 	 clog << endl;
+	 for (std::vector<char *>::const_iterator p = Packages.begin();
+	       p != Packages.end(); ++p)
+	    free(*p);
+	 Packages.clear();
 	 continue;
       }
       Args.push_back(NULL);

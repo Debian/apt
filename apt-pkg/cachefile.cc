@@ -65,8 +65,8 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 
    if (_config->FindB("pkgCacheFile::Generate", true) == false)
    {
-      Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),
-		     FileFd::ReadOnly),MMap::Public|MMap::ReadOnly);
+      FileFd file(_config->FindFile("Dir::Cache::pkgcache"), FileFd::ReadOnly);
+      Map = new MMap(file, MMap::Public|MMap::ReadOnly);
       Cache = new pkgCache(Map);
       if (_error->PendingError() == true)
          return false;

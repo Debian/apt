@@ -69,22 +69,29 @@ static void ConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf)
 									/*}}}*/
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 FTWScanner::FTWScanner(FileFd * const GivenOutput, string const &Arch): Arch(Arch), DoHashes(~0)
 {
    if (GivenOutput == NULL)
    {
       Output = new FileFd;
+      OwnsOutput = true;
       Output->OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
    }
    else
+   {
       Output = GivenOutput;
+      OwnsOutput = false;
+   }
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
    ConfigToDoHashes(DoHashes, "APT::FTPArchive");
 }
 									/*}}}*/
+FTWScanner::~FTWScanner()
+{
+   if (Output != NULL && OwnsOutput)
+      delete Output;
+}
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the FTW scanner, it processes each directory element in the
@@ -324,9 +331,10 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(FileFd * const GivenOutput, string const &DB,string const &Overrides,string const &ExtOverrides,
-			       string const &Arch) :
-   FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats), TransWriter(NULL)
+PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * const transWriter,
+      string const &DB,string const &Overrides,string const &ExtOverrides,
+      string const &Arch) :
+   FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats), TransWriter(transWriter)
 {
    SetExts(".deb .udeb");
    DeLinkLimit = 0;
@@ -377,7 +385,6 @@ bool FTWScanner::SetExts(string const &Vals)
 
    return true;
 }
-
 									/*}}}*/
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
@@ -524,12 +531,16 @@ bool PackagesWriter::DoPackage(string FileName)
    return Db.Finish();
 }
 									/*}}}*/
+PackagesWriter::~PackagesWriter()					/*{{{*/
+{
+}
+									/*}}}*/
 
 // TranslationWriter::TranslationWriter - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* Create a Translation-Master file for this Packages file */
 TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
-					mode_t const &Permissions) : RefCounter(0)
+					mode_t const &Permissions) : Comp(NULL), Output(NULL)
 {
    if (File.empty() == true)
       return;
@@ -568,10 +579,8 @@ bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
 /* */
 TranslationWriter::~TranslationWriter()
 {
-   if (Comp == NULL)
-      return;
-
-   delete Comp;
+   if (Comp != NULL)
+      delete Comp;
 }
 									/*}}}*/
 

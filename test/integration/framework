@@ -143,6 +143,7 @@ gdb() {
 	aptcache) CMD="apt-cache";;
 	aptmark) CMD="apt-mark";;
 	apthelper) CMD="apt-helper";;
+	aptftparchive) CMD="apt-ftparchive";;
 	*) CMD="$1";;
 	esac
 	shift
@@ -1415,6 +1416,8 @@ testfailure() {
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+			elif grep -q -E '==ERROR' "$OUTPUT"; then
+				msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
 			elif ! grep -q -E '^E: ' "$OUTPUT"; then
 				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
 			else

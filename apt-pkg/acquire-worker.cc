@@ -722,7 +722,7 @@ void pkgAcquire::Worker::PrepareFiles(char const * const caller, pkgAcquire::Que
 	 unlink(Owner->DestFile.c_str());
 	 if (link(filename.c_str(), Owner->DestFile.c_str()) != 0)
 	 {
-	    // diferent mounts can't happen for us as we download to lists/ by default,
+	    // different mounts can't happen for us as we download to lists/ by default,
 	    // but if the system is reused by others the locations can potentially be on
 	    // different disks, so use symlink as poor-men replacement.
 	    // FIXME: Real copying as last fallback, but that is costly, so offload to a method preferable

@@ -24,6 +24,6 @@ void helperCreateDirectory(std::string const &dir, std::string const &name);
 void helperCreateLink(std::string const &dir, std::string const &targetname, std::string const &linkname);
 #define createTemporaryFile(id, fd, filename, content) \
    ASSERT_NO_FATAL_FAILURE(helperCreateTemporaryFile(id, fd, filename, content))
-void helperCreateTemporaryFile(std::string const &id, FileFd &fd, char * * const filename, char const * const content);
+void helperCreateTemporaryFile(std::string const &id, FileFd &fd, std::string * const filename, char const * const content);
 
 #endif

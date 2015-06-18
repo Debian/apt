@@ -46,7 +46,8 @@
 class indexRecords;
 class pkgRecords;
 class pkgSourceList;
-class pkgAcqMetaBase;
+class pkgAcqMetaClearSig;
+class pkgAcqIndexMergeDiffs;
 
 class pkgAcquire::Item : public WeakPointable				/*{{{*/
 /** \brief Represents the process by which a pkgAcquire object should
@@ -339,6 +340,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    void * const d;
 
    friend class pkgAcqMetaBase;
+   friend class pkgAcqMetaClearSig;
 };
 									/*}}}*/
 class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
@@ -356,7 +358,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    std::string PartialFile;
 
    /** \brief TransactionManager */
-   pkgAcqMetaBase * const TransactionManager;
+   pkgAcqMetaClearSig * const TransactionManager;
 
    enum TransactionStates {
       TransactionCommit,
@@ -370,10 +372,11 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    virtual bool HashesRequired() const;
 
 
-   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const &Target);
+   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target);
    virtual ~pkgAcqTransactionItem();
 
    friend class pkgAcqMetaBase;
+   friend class pkgAcqMetaClearSig;
 };
 									/*}}}*/
 class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
@@ -382,12 +385,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    void * const d;
  protected:
    std::vector<pkgAcqTransactionItem*> Transaction;
-
- public:
-   /** \brief A package-system-specific parser for the meta-index file. */
-   indexRecords *MetaIndexParser;
-   indexRecords *LastMetaIndexParser;
- protected:
 
    /** \brief The index files which should be looked up in the meta-index
     *  and then downloaded.
@@ -473,10 +470,9 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
 
-   pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
 		  std::vector<IndexTarget> const &IndexTargets,
-		  IndexTarget const &DataTarget,
-		  indexRecords* const MetaIndexParser);
+		  IndexTarget const &DataTarget);
    virtual ~pkgAcqMetaBase();
 };
 									/*}}}*/
@@ -509,9 +505,9 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    virtual void Finished();
 
    /** \brief Create a new pkgAcqMetaIndex. */
-   pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
 		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
-		   std::vector<IndexTarget> const &IndexTargets, indexRecords * const MetaIndexParser);
+		   std::vector<IndexTarget> const &IndexTargets);
    virtual ~pkgAcqMetaIndex();
 
    friend class pkgAcqMetaSig;
@@ -548,8 +544,8 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 		     pkgAcquire::MethodConfig const * const Cnf);
 
    /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager, IndexTarget const &Target,
-	 pkgAcqMetaIndex * const MetaIndex);
+   pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
+	 IndexTarget const &Target, pkgAcqMetaIndex * const MetaIndex);
    virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
@@ -561,7 +557,11 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
    IndexTarget const ClearsignedTarget;
    IndexTarget const DetachedDataTarget;
 
-public:
+ public:
+   /** \brief A package-system-specific parser for the meta-index file. */
+   indexRecords *MetaIndexParser;
+   indexRecords *LastMetaIndexParser;
+
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
    virtual std::string Custom600Headers() const;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
@@ -586,7 +586,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const;
 
-   pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                    IndexTarget const &Target);
    virtual ~pkgAcqBaseIndex();
 };
@@ -603,6 +603,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
 class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
    void * const d;
+   std::vector<pkgAcqIndexMergeDiffs*> * diffs;
 
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
@@ -650,7 +651,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     *
     *  \param ShortDesc A short description of the list file to download.
     */
-   pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                    IndexTarget const &Target);
    virtual ~pkgAcqDiffIndex();
  private:
@@ -749,7 +750,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  \param allPatches contains all related items so that each item can
     *  check if it was the last one to complete the download step
     */
-   pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                          IndexTarget const &Target, DiffInfo const &patch,
                          std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
    virtual ~pkgAcqIndexMergeDiffs();
@@ -863,7 +864,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  should be ordered so that each diff appears before any diff
     *  that depends on it.
     */
-   pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                     IndexTarget const &Target,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>());
    virtual ~pkgAcqIndexDiffs();
@@ -941,7 +942,7 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual std::string DescURI() const {return Desc.URI;};
    virtual std::string GetMetaKey() const;
 
-   pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaBase * const TransactionManager,
+   pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                IndexTarget const &Target);
    virtual ~pkgAcqIndex();
 

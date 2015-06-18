@@ -1484,6 +1484,7 @@ static bool Search(CommandLine &CmdL)
    delete [] PatternMatch;
    for (unsigned I = 0; I != NumPatterns; I++)
       regfree(&Patterns[I]);
+   delete [] Patterns;
    if (ferror(stdout))
        return _error->Error("Write to stdout failed");
    return true;

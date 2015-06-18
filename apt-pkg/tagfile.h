@@ -136,7 +136,7 @@ class pkgTagSection
     *
     * @param File to write the section to
     * @param Order in which tags should appear in the file
-    * @param Rewrite is a set of tags to be renamed, rewitten and/or removed
+    * @param Rewrite is a set of tags to be renamed, rewritten and/or removed
     * @return \b true if successful, otherwise \b false
     */
    bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;

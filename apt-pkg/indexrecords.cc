@@ -278,4 +278,7 @@ indexRecords::indexRecords(const string &ExpectedDist) :
 {
 }
 
-indexRecords::~indexRecords() {}
+indexRecords::~indexRecords() {
+   for (std::map<std::string, checkSum*>::const_iterator S = Entries.begin(); S != Entries.end(); ++S)
+      delete S->second;
+}

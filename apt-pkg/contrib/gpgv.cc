@@ -296,6 +296,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       // all the rest is whitespace, unsigned garbage or additional message blocks we ignore
    }
    fclose(in);
+   if (buf != NULL)
+      free(buf);
 
    if (found_signature == true)
       return _error->Error("Signature in file %s wasn't closed", InFile.c_str());

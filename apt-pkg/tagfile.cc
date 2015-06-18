@@ -34,8 +34,10 @@ class pkgTagFilePrivate
 public:
    void Reset(FileFd * const pFd, unsigned long long const pSize)
    {
-      Fd = pFd;
+      if (Buffer != NULL)
+	 free(Buffer);
       Buffer = NULL;
+      Fd = pFd;
       Start = NULL;
       End = NULL;
       Done = false;
@@ -43,7 +45,7 @@ public:
       Size = pSize;
    }
 
-   pkgTagFilePrivate(FileFd * const pFd, unsigned long long const Size)
+   pkgTagFilePrivate(FileFd * const pFd, unsigned long long const Size) : Buffer(NULL)
    {
       Reset(pFd, Size);
    }
@@ -54,6 +56,12 @@ public:
    bool Done;
    unsigned long long iOffset;
    unsigned long long Size;
+
+   ~pkgTagFilePrivate()
+   {
+      if (Buffer != NULL)
+	 free(Buffer);
+   }
 };
 
 class pkgTagSectionPrivate
@@ -127,7 +135,6 @@ void pkgTagFile::Init(FileFd * const pFd,unsigned long long Size)
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   free(d->Buffer);
    delete d;
 }
 									/*}}}*/

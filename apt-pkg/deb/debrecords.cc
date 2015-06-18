@@ -42,10 +42,14 @@ debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
 // RecordParser::Jump - Jump to a specific record			/*{{{*/
 bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 {
+   if (Ver.end() == true)
+      return false;
    return Tags.Jump(Section,Ver->Offset);
 }
 bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
 {
+   if (Desc.end() == true)
+      return false;
    return Tags.Jump(Section,Desc->Offset);
 }
 									/*}}}*/

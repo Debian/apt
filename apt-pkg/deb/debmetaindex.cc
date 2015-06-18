@@ -270,7 +270,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
    // special case for --print-uris
    std::vector<IndexTarget> const targets = GetIndexTargets();
 #define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
-   pkgAcqMetaBase * const TransactionManager = new pkgAcqMetaClearSig(Owner,
+   pkgAcqMetaClearSig * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
 	 targets, iR);
 #undef APT_TARGET
