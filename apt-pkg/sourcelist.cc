@@ -82,15 +82,15 @@ bool pkgSourceList::Type::FixupURI(string &URI) const
    return true;
 }
 									/*}}}*/
-bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
+bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
                                       pkgTagSection &Tags,
-                                      int i,
+                                      unsigned int const i,
                                       FileFd &Fd)
 {
    map<string, string> Options;
 
    string Enabled = Tags.FindS("Enabled");
-   if (Enabled.size() > 0 && StringToBool(Enabled) == false)
+   if (Enabled.empty() == false && StringToBool(Enabled) == false)
       return true;
 
    std::map<char const * const, char const * const> mapping;
@@ -115,46 +115,63 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    // now create one item per suite/section
    string Suite = Tags.FindS("Suites");
    Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
-   string const Section = Tags.FindS("Sections");
-   string URIS = Tags.FindS("URIs");
+   string const Component = Tags.FindS("Components");
+   string const URIS = Tags.FindS("URIs");
 
-   std::vector<std::string> list_uris = StringSplit(URIS, " ");
-   std::vector<std::string> list_dist = StringSplit(Suite, " ");
-   std::vector<std::string> list_section = StringSplit(Section, " ");
-   
+   std::vector<std::string> const list_uris = VectorizeString(URIS, ' ');
+   std::vector<std::string> const list_suite = VectorizeString(Suite, ' ');
+   std::vector<std::string> const list_comp = VectorizeString(Component, ' ');
+
+   if (list_uris.empty())
+      // TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "URI");
+
    for (std::vector<std::string>::const_iterator U = list_uris.begin();
         U != list_uris.end(); ++U)
    {
-      std::string URI = (*U);
-      if (!FixupURI(URI))
-      {
-         _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
-         return false;
-      }
+      std::string URI = *U;
+      if (U->empty() || FixupURI(URI) == false)
+	 return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "URI parse");
 
-      for (std::vector<std::string>::const_iterator I = list_dist.begin();
-           I != list_dist.end(); ++I)
+      if (list_suite.empty())
+	 return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "Suite");
+
+      for (std::vector<std::string>::const_iterator S = list_suite.begin();
+           S != list_suite.end(); ++S)
       {
-         for (std::vector<std::string>::const_iterator J = list_section.begin();
-              J != list_section.end(); ++J)
-         {
-            if (CreateItem(List, URI, (*I), (*J), Options) == false)
-            {
-               return false;
-            }
-         }
+	 if (S->empty() == false && (*S)[S->size() - 1] == '/')
+	 {
+	    if (list_comp.empty() == false)
+	       return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "absolute Suite Component");
+	    if (CreateItem(List, URI, *S, "", Options) == false)
+	       return false;
+	 }
+	 else
+	 {
+	    if (list_comp.empty())
+	       return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "Component");
+
+	    for (std::vector<std::string>::const_iterator C = list_comp.begin();
+		  C != list_comp.end(); ++C)
+	    {
+	       if (CreateItem(List, URI, *S, *C, Options) == false)
+	       {
+		  return false;
+	       }
+	    }
+	 }
       }
    }
    return true;
 }
-
+									/*}}}*/
 // Type::ParseLine - Parse a single line				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a generic one that is the 'usual' format for sources.list
    Weird types may override this. */
 bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 				    const char *Buffer,
-				    unsigned long const &CurLine,
+				    unsigned int const CurLine,
 				    string const &File) const
 {
    for (;Buffer != 0 && isspace(*Buffer); ++Buffer); // Skip whitespaces
@@ -171,10 +188,10 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 	 // get one option, e.g. option1=value1
 	 string option;
 	 if (ParseQuoteWord(Buffer,option) == false)
-	    return _error->Error(_("Malformed line %lu in source list %s ([option] unparseable)"),CurLine,File.c_str());
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] unparseable");
 
 	 if (option.length() < 3)
-	    return _error->Error(_("Malformed line %lu in source list %s ([option] too short)"),CurLine,File.c_str());
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] too short");
 
 	 // accept options even if the last has no space before the ]-end marker
 	 if (option.at(option.length()-1) == ']')
@@ -185,16 +202,16 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 
 	 size_t const needle = option.find('=');
 	 if (needle == string::npos)
-	    return _error->Error(_("Malformed line %lu in source list %s ([%s] is not an assignment)"),CurLine,File.c_str(), option.c_str());
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] not assignment");
 
 	 string const key = string(option, 0, needle);
 	 string const value = string(option, needle + 1, option.length());
 
 	 if (key.empty() == true)
-	    return _error->Error(_("Malformed line %lu in source list %s ([%s] has no key)"),CurLine,File.c_str(), option.c_str());
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] no key");
 
 	 if (value.empty() == true)
-	    return _error->Error(_("Malformed line %lu in source list %s ([%s] key %s has no value)"),CurLine,File.c_str(),option.c_str(),key.c_str());
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] no value");
 
 	 Options[key] = value;
       }
@@ -207,33 +224,33 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    string Section;
 
    if (ParseQuoteWord(Buffer,URI) == false)
-      return _error->Error(_("Malformed line %lu in source list %s (URI)"),CurLine,File.c_str());
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "URI");
    if (ParseQuoteWord(Buffer,Dist) == false)
-      return _error->Error(_("Malformed line %lu in source list %s (dist)"),CurLine,File.c_str());
-      
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "Suite");
+
    if (FixupURI(URI) == false)
-      return _error->Error(_("Malformed line %lu in source list %s (URI parse)"),CurLine,File.c_str());
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "URI parse");
 
    // Check for an absolute dists specification.
    if (Dist.empty() == false && Dist[Dist.size() - 1] == '/')
    {
       if (ParseQuoteWord(Buffer,Section) == true)
-	 return _error->Error(_("Malformed line %lu in source list %s (absolute dist)"),CurLine,File.c_str());
+	 return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "absolute Suite Component");
       Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
       return CreateItem(List, URI, Dist, Section, Options);
    }
-   
+
    // Grab the rest of the dists
    if (ParseQuoteWord(Buffer,Section) == false)
-      return _error->Error(_("Malformed line %lu in source list %s (dist parse)"),CurLine,File.c_str());
-   
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "Component");
+
    do
    {
       if (CreateItem(List, URI, Dist, Section, Options) == false)
 	 return false;
    }
    while (ParseQuoteWord(Buffer,Section) == true);
-   
+
    return true;
 }
 									/*}}}*/
@@ -242,11 +259,6 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 /* */
 pkgSourceList::pkgSourceList() : d(NULL)
 {
-}
-
-pkgSourceList::pkgSourceList(string File) : d(NULL)
-{
-   Read(File);
 }
 									/*}}}*/
 // SourceList::~pkgSourceList - Destructor				/*{{{*/
@@ -305,7 +317,7 @@ void pkgSourceList::Reset()
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::Read(string File)
+bool pkgSourceList::Read(string const &File)
 {
    Reset();
    return ReadAppend(File);
@@ -314,71 +326,63 @@ bool pkgSourceList::Read(string File)
 // SourceList::ReadAppend - Parse a sourcelist file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::ReadAppend(string File)
+bool pkgSourceList::ReadAppend(string const &File)
 {
-   if (_config->FindB("APT::Sources::Use-Deb822", false) == true)
-   {
-      int lines_parsed =ParseFileDeb822(File);
-      if (lines_parsed < 0)
-         return false;
-      else if (lines_parsed > 0)
-         return true;
-      // no lines parsed  ... fall through and use old style parser
-   }
-   return ParseFileOldStyle(File);
+   if (flExtension(File) == "sources")
+      return ParseFileDeb822(File);
+   else
+      return ParseFileOldStyle(File);
 }
 
 // SourceList::ReadFileOldStyle - Read Traditional style sources.list 	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::ParseFileOldStyle(string File)
+bool pkgSourceList::ParseFileOldStyle(std::string const &File)
 {
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (F.fail() == true)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
 
-   // CNC:2003-12-10 - 300 is too short.
-   char Buffer[1024];
-
-   int CurLine = 0;
-   while (F.eof() == false)
+   std::string Buffer;
+   for (unsigned int CurLine = 1; std::getline(F, Buffer); ++CurLine)
    {
-      F.getline(Buffer,sizeof(Buffer));
-      CurLine++;
-      _strtabexpand(Buffer,sizeof(Buffer));
-      if (F.fail() && !F.eof())
-	 return _error->Error(_("Line %u too long in source list %s."),
-			      CurLine,File.c_str());
+      // remove comments
+      size_t curpos = 0;
+      while ((curpos = Buffer.find('#', curpos)) != std::string::npos)
+      {
+	 size_t const openbrackets = std::count(Buffer.begin(), Buffer.begin() + curpos, '[');
+	 size_t const closedbrackets = std::count(Buffer.begin(), Buffer.begin() + curpos, ']');
+	 if (openbrackets > closedbrackets)
+	 {
+	    // a # in an option, unlikely, but oh well, it was supported so stick to it
+	    ++curpos;
+	    continue;
+	 }
+	 Buffer.erase(curpos);
+	 break;
+      }
+      // remove spaces before/after
+      curpos = Buffer.find_first_not_of(" \t\r");
+      if (curpos != 0)
+	 Buffer.erase(0, curpos);
+      curpos = Buffer.find_last_not_of(" \t\r");
+      if (curpos != std::string::npos)
+	 Buffer.erase(curpos + 1);
 
-      
-      char *I;
-      // CNC:2003-02-20 - Do not break if '#' is inside [].
-      for (I = Buffer; *I != 0 && *I != '#'; I++)
-         if (*I == '[')
-         {
-	    char *b_end = strchr(I + 1, ']');
-            if (b_end != NULL)
-               I = b_end;
-         }
-      *I = 0;
-      
-      const char *C = _strstrip(Buffer);
-      
-      // Comment or blank
-      if (C[0] == '#' || C[0] == 0)
+      if (Buffer.empty())
 	 continue;
-      	    
+
       // Grok it
-      string LineType;
-      if (ParseQuoteWord(C,LineType) == false)
+      std::string const LineType = Buffer.substr(0, Buffer.find(' '));
+      if (LineType.empty() || LineType == Buffer)
 	 return _error->Error(_("Malformed line %u in source list %s (type)"),CurLine,File.c_str());
 
       Type *Parse = Type::GetType(LineType.c_str());
       if (Parse == 0)
 	 return _error->Error(_("Type '%s' is not known on line %u in source list %s"),LineType.c_str(),CurLine,File.c_str());
-      
-      if (Parse->ParseLine(SrcList, C, CurLine, File) == false)
+
+      if (Parse->ParseLine(SrcList, Buffer.c_str() + LineType.length(), CurLine, File) == false)
 	 return false;
    }
    return true;
@@ -387,30 +391,25 @@ bool pkgSourceList::ParseFileOldStyle(string File)
 // SourceList::ParseFileDeb822 - Parse deb822 style sources.list 	/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns: the number of stanzas parsed*/
-int pkgSourceList::ParseFileDeb822(string File)
+bool pkgSourceList::ParseFileDeb822(string const &File)
 {
-   pkgTagSection Tags;
-   unsigned int i=0;
+   pkgUserTagSection Tags;
+   unsigned int i = 1;
 
    // see if we can read the file
-   _error->PushToStack();
    FileFd Fd(File, FileFd::ReadOnly);
    pkgTagFile Sources(&Fd);
    if (_error->PendingError() == true)
-   {
-      _error->RevertToStack();
-      return 0;
-   }
-   _error->MergeWithStack();
-   
+      return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
+
    // read step by step
    while (Sources.Step(Tags) == true)
    {
-      if(!Tags.Exists("Types")) 
-         continue;
+      if(Tags.Exists("Types") == false)
+	 return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
 
       string const types = Tags.FindS("Types");
-      std::vector<std::string> list_types = StringSplit(types, " ");
+      std::vector<std::string> const list_types = VectorizeString(types, ' ');
       for (std::vector<std::string>::const_iterator I = list_types.begin();
         I != list_types.end(); ++I)
       {
@@ -418,18 +417,16 @@ int pkgSourceList::ParseFileDeb822(string File)
          if (Parse == 0)
          {
             _error->Error(_("Type '%s' is not known on stanza %u in source list %s"), (*I).c_str(),i,Fd.Name().c_str());
-            return -1;
+            return false;
          }
-         
-         if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
-            return -1;
 
-         i++;
+         if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
+            return false;
+
+         ++i;
       }
    }
-
-   // we are done, return the number of stanzas read
-   return i;
+   return true;
 }
 									/*}}}*/
 // SourceList::FindIndex - Get the index associated with a file		/*{{{*/
@@ -471,9 +468,12 @@ bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 // Based on ReadConfigDir()						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSourceList::ReadSourceDir(string Dir)
+bool pkgSourceList::ReadSourceDir(string const &Dir)
 {
-   vector<string> const List = GetListOfFilesInDir(Dir, "list", true);
+   std::vector<std::string> ext;
+   ext.push_back("list");
+   ext.push_back("sources");
+   std::vector<std::string> const List = GetListOfFilesInDir(Dir, ext, true);
 
    // Read the files
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)

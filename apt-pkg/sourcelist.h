@@ -72,11 +72,11 @@ class pkgSourceList
       bool FixupURI(std::string &URI) const;
       virtual bool ParseStanza(std::vector<metaIndex *> &List,
                                pkgTagSection &Tags,
-                               int stanza_n,
+                               unsigned int const stanza_n,
                                FileFd &Fd);
       virtual bool ParseLine(std::vector<metaIndex *> &List,
 			     const char *Buffer,
-			     unsigned long const &CurLine,std::string const &File) const;
+			     unsigned int const CurLine,std::string const &File) const;
       virtual bool CreateItem(std::vector<metaIndex *> &List,std::string const &URI,
 			      std::string const &Dist,std::string const &Section,
 			      std::map<std::string, std::string> const &Options) const = 0;
@@ -90,18 +90,19 @@ class pkgSourceList
 
    std::vector<metaIndex *> SrcList;
 
-   int ParseFileDeb822(std::string File);
-   bool ParseFileOldStyle(std::string File);
+   private:
+   APT_HIDDEN bool ParseFileDeb822(std::string const &File);
+   APT_HIDDEN bool ParseFileOldStyle(std::string const &File);
 
    public:
 
    bool ReadMainList();
-   bool Read(std::string File);
+   bool Read(std::string const &File);
 
    // CNC:2003-03-03
    void Reset();
-   bool ReadAppend(std::string File);
-   bool ReadSourceDir(std::string Dir);
+   bool ReadAppend(std::string const &File);
+   bool ReadSourceDir(std::string const &Dir);
    
    // List accessors
    inline const_iterator begin() const {return SrcList.begin();};
@@ -117,7 +118,6 @@ class pkgSourceList
    time_t GetLastModifiedTime();
 
    pkgSourceList();
-   explicit pkgSourceList(std::string File);
    virtual ~pkgSourceList();
 };
 

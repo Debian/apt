@@ -775,6 +775,14 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 }
 									/*}}}*/
 
+void pkgUserTagSection::TrimRecord(bool /*BeforeRecord*/, const char* &End)/*{{{*/
+{
+   for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
+      if (Stop[0] == '#')
+	 Stop = (const char*) memchr(Stop,'\n',End-Stop);
+}
+									/*}}}*/
+
 #include "tagfile-order.c"
 
 // TFRewrite - Rewrite a control record					/*{{{*/

@@ -44,6 +44,10 @@ apt-key script and the keyring-package in particular as a dependency for apt.
 
 The field current-codename is optional and can be used in sources.list.in.
 
+The fields sourceslist-list-format and sourceslist-sources-format are used as
+examples in the sources.list manpage and the first one is additionally
+available in the sources.list.in template.
+They should in general reflect the default sources of your distro.
 
 == sources.list.in
 
@@ -55,6 +59,7 @@ You can use some placeholders in this file, namely:
 * &debian-oldstable-codename;
 * &debian-testing-codename;
 * &ubuntu-codename;
+* &sourceslist-list-format;
 with the value you would expect based on the name.
 
 The placeholder &current-codename; is yours and can be set in apt-vendor.ent
@@ -63,4 +68,5 @@ The placeholder &current-codename; is yours and can be set in apt-vendor.ent
 == apt.conf-*
 
 Files in your vendor directory following this naming scheme will be picked up
-by the debian/rules file and installed in /etc/apt/apt.conf.d/ directory.
+by the debian/rules file and installed in /etc/apt/apt.conf.d/ directory, with
+"apt.conf-" removed from the beginning of the filename.

@@ -12,31 +12,26 @@
 
 #include "file-helpers.h"
 
-class SourceList : public pkgSourceList {
-   public:
-      using pkgSourceList::ParseFileDeb822;
-};
-
 TEST(SourceListTest,ParseFileDeb822)
 {
    FileFd fd;
    std::string tempfile;
-   createTemporaryFile("parsefiledeb822", fd, &tempfile,
+   createTemporaryFile("parsefiledeb822.XXXXXX.sources", fd, &tempfile,
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
       "Suites: stable\n"
-      "Sections: main\n"
+      "Components: main\n"
       "Description: short\n"
       " long description that can be very long\n"
       "\n"
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
       "Suites: unstable\n"
-      "Sections: main non-free\n");
+      "Components: main non-free\n");
    fd.Close();
 
-   SourceList sources;
-   EXPECT_EQ(2, sources.ParseFileDeb822(tempfile));
+   pkgSourceList sources;
+   EXPECT_EQ(true, sources.Read(tempfile));
    EXPECT_EQ(2, sources.size());
 
    if (tempfile.empty() == false)

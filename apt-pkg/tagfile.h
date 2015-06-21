@@ -142,6 +142,14 @@ class pkgTagSection
    bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
 };
 
+
+/* For user generated file the parser should be a bit more relaxed in exchange
+   for being a bit slower to allow comments and new lines all over the place */
+class pkgUserTagSection : public pkgTagSection
+{
+   virtual void TrimRecord(bool BeforeRecord, const char* &End);
+};
+
 class pkgTagFilePrivate;
 class pkgTagFile
 {
