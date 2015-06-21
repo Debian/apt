@@ -37,25 +37,26 @@
 using namespace std;
 
 // Global list of Items supported
-static  pkgSourceList::Type *ItmList[10];
+static pkgSourceList::Type *ItmList[10];
 pkgSourceList::Type **pkgSourceList::Type::GlobalList = ItmList;
 unsigned long pkgSourceList::Type::GlobalListLen = 0;
 
 // Type::Type - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* Link this to the global list of items*/
-pkgSourceList::Type::Type() : Name(NULL), Label(NULL)
+pkgSourceList::Type::Type(char const * const pName, char const * const pLabel) : Name(pName), Label(pLabel)
 {
    ItmList[GlobalListLen] = this;
-   GlobalListLen++;
+   ++GlobalListLen;
 }
+pkgSourceList::Type::~Type() {}
 									/*}}}*/
 // Type::GetType - Get a specific meta for a given type			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgSourceList::Type *pkgSourceList::Type::GetType(const char *Type)
 {
-   for (unsigned I = 0; I != GlobalListLen; I++)
+   for (unsigned I = 0; I != GlobalListLen; ++I)
       if (strcmp(GlobalList[I]->Name,Type) == 0)
 	 return GlobalList[I];
    return 0;
@@ -91,23 +92,26 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    string Enabled = Tags.FindS("Enabled");
    if (Enabled.size() > 0 && StringToBool(Enabled) == false)
       return true;
-   
-   // Define external/internal options
-   const char* option_deb822[] = { 
-      "Architectures", "Architectures-Add", "Architectures-Remove", "Trusted",
-   };
-   const char* option_internal[] = { 
-      "arch", "arch+", "arch-", "trusted",
-   };
-   for (unsigned int j=0; j < sizeof(option_deb822)/sizeof(char*); j++)
-      if (Tags.Exists(option_deb822[j]))
+
+   std::map<char const * const, char const * const> mapping;
+#define APT_PLUSMINUS(X, Y) \
+   mapping.insert(std::make_pair(X, Y)); \
+   mapping.insert(std::make_pair(X "Add", Y "+")); \
+   mapping.insert(std::make_pair(X "Remove", Y "-"))
+   APT_PLUSMINUS("Architectures", "arch");
+   APT_PLUSMINUS("Languages", "lang");
+   APT_PLUSMINUS("Targets", "target");
+#undef APT_PLUSMINUS
+   mapping.insert(std::make_pair("Trusted", "trusted"));
+   for (std::map<char const * const, char const * const>::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
+      if (Tags.Exists(m->first))
       {
          // for deb822 the " " is the delimiter, but the backend expects ","
-         std::string option = Tags.FindS(option_deb822[j]);
+         std::string option = Tags.FindS(m->first);
          std::replace(option.begin(), option.end(), ' ', ',');
-         Options[option_internal[j]] = option;
+         Options[m->second] = option;
       }
-   
+
    // now create one item per suite/section
    string Suite = Tags.FindS("Suites");
    Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
@@ -209,7 +213,7 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
       
    if (FixupURI(URI) == false)
       return _error->Error(_("Malformed line %lu in source list %s (URI parse)"),CurLine,File.c_str());
-   
+
    // Check for an absolute dists specification.
    if (Dist.empty() == false && Dist[Dist.size() - 1] == '/')
    {

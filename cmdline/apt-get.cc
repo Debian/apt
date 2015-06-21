@@ -1045,7 +1045,7 @@ static bool DoBuildDep(CommandLine &CmdL)
       {
          ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), *I);
          // FIXME: how can we make this more elegant?
-         std::string TypeName = "debian/control File Source Index";
+         std::string TypeName = "Debian control file";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
             LastOwner = Last = Type->CreateSrcPkgParser(*I);
@@ -1056,7 +1056,7 @@ static bool DoBuildDep(CommandLine &CmdL)
          ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), *I);
 
          // see if we can get a parser for this pkgIndexFile type
-         string TypeName = flExtension(*I) + " File Source Index";
+         string TypeName = "Debian " + flExtension(*I) + " file";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
             LastOwner = Last = Type->CreateSrcPkgParser(*I);

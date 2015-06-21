@@ -137,9 +137,25 @@
    can be used to specify for which architectures information should
    be downloaded. If this option is not set all architectures defined by the
    <literal>APT::Architectures</literal> option will be downloaded.</para></listitem>
+
    <listitem><para><literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
    and <literal>arch-=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
    which can be used to add/remove architectures from the set which will be downloaded.</para></listitem>
+
+   <listitem><para><literal>lang=<replaceable>lang1</replaceable>,<replaceable>lang2</replaceable>,…</literal>,
+   <literal>lang+=<replaceable>lang1</replaceable>,<replaceable>lang2</replaceable>,…</literal> and
+   <literal>lang-=<replaceable>lang1</replaceable>,<replaceable>lang2</replaceable>,…</literal> functioning in
+   the same way as the <literal>arch</literal>-options described before. They can be used to specify for
+   which languages apt will acquire metadata, like translated package descriptions, for. If not specified, the
+   default set is defined by the <literal>Acquire::Languages</literal> config option.</para></listitem>
+
+   <listitem><para><literal>target=<replaceable>target1</replaceable>,<replaceable>target2</replaceable>,…</literal>,
+   <literal>target+=<replaceable>target1</replaceable>,<replaceable>target2</replaceable>,…</literal> and
+   <literal>target-=<replaceable>target1</replaceable>,<replaceable>target2</replaceable>,…</literal> again functioning in
+   the same way as the <literal>arch</literal>-options described before. They can be used to specify which
+   targets apt will try to acquire from this source. If not specified, the default set is defined by
+   the <literal>APT::Acquire::Targets</literal> configuration scope.</para></listitem>
+
    <listitem><para><literal>trusted=yes</literal> can be set to indicate that packages
    from this source are always authenticated even if the <filename>Release</filename> file
    is not signed or the signature can't be checked. This disables parts of &apt-secure;

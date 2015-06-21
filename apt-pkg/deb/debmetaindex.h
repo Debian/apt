@@ -1,4 +1,3 @@
-// ijones, walters
 #ifndef PKGLIB_DEBMETAINDEX_H
 #define PKGLIB_DEBMETAINDEX_H
 
@@ -22,25 +21,19 @@ class debDebPkgFileIndex;
 class IndexTarget;
 class pkgCacheGenerator;
 class OpProgress;
+class debReleaseIndexPrivate;
 
-class APT_HIDDEN debReleaseIndex : public metaIndex {
-   public:
+class APT_HIDDEN debReleaseIndex : public metaIndex
+{
+   debReleaseIndexPrivate * const d;
 
-   class debSectionEntry
-   {
-      public:
-      debSectionEntry (std::string const &Section, bool const &IsSrc);
-      std::string const Section;
-      bool const IsSrc;
-   };
-
-   private:
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void * const d;
-   std::map<std::string, std::vector<debSectionEntry const*> > ArchEntries;
    enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
 
    public:
+
+   APT_HIDDEN std::string MetaIndexInfo(const char *Type) const;
+   APT_HIDDEN std::string MetaIndexFile(const char *Types) const;
+   APT_HIDDEN std::string MetaIndexURI(const char *Type) const;
 
    debReleaseIndex(std::string const &URI, std::string const &Dist);
    debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted);
@@ -54,22 +47,17 @@ class APT_HIDDEN debReleaseIndex : public metaIndex {
    virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
-   std::string MetaIndexInfo(const char *Type) const;
-   std::string MetaIndexFile(const char *Types) const;
-   std::string MetaIndexURI(const char *Type) const;
-
-#if APT_PKG_ABI >= 413
-   virtual
-#endif
-   std::string LocalFileName() const;
+   virtual std::string LocalFileName() const;
 
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
    void SetTrusted(bool const Trusted);
    virtual bool IsTrusted() const;
 
-   void PushSectionEntry(std::vector<std::string> const &Archs, const debSectionEntry *Entry);
-   void PushSectionEntry(std::string const &Arch, const debSectionEntry *Entry);
+   void AddComponent(bool const isSrc, std::string const &Name,
+	 std::vector<std::string> const &Targets,
+	 std::vector<std::string> const &Architectures,
+	 std::vector<std::string> Languages);
 };
 
 class APT_HIDDEN debDebFileMetaIndex : public metaIndex

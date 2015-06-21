@@ -29,11 +29,25 @@
 #include <unistd.h>
 #include <string.h>
 
-using namespace std;
-
-string debReleaseIndex::MetaIndexInfo(const char *Type) const
+class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 {
-   string Info = ::URI::ArchiveOnly(URI) + ' ';
+   public:
+   struct APT_HIDDEN debSectionEntry
+   {
+      std::string Name;
+      std::vector<std::string> Targets;
+      std::vector<std::string> Architectures;
+      std::vector<std::string> Languages;
+   };
+
+   std::vector<debSectionEntry> DebEntries;
+   std::vector<debSectionEntry> DebSrcEntries;
+};
+									/*}}}*/
+// ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
+std::string debReleaseIndex::MetaIndexInfo(const char *Type) const
+{
+   std::string Info = ::URI::ArchiveOnly(URI) + ' ';
    if (Dist[Dist.size() - 1] == '/')
    {
       if (Dist != "/")
@@ -50,15 +64,15 @@ std::string debReleaseIndex::Describe() const
    return MetaIndexInfo("Release");
 }
 
-string debReleaseIndex::MetaIndexFile(const char *Type) const
+std::string debReleaseIndex::MetaIndexFile(const char *Type) const
 {
    return _config->FindDir("Dir::State::lists") +
       URItoFileName(MetaIndexURI(Type));
 }
 
-string debReleaseIndex::MetaIndexURI(const char *Type) const
+std::string debReleaseIndex::MetaIndexURI(const char *Type) const
 {
-   string Res;
+   std::string Res;
 
    if (Dist == "/")
       Res = URI;
@@ -70,8 +84,8 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    Res += Type;
    return Res;
 }
-
-std::string debReleaseIndex::LocalFileName() const
+									/*}}}*/
+std::string debReleaseIndex::LocalFileName() const			/*{{{*/
 {
    // see if we have a InRelease file
    std::string PathInRelease =  MetaIndexFile("InRelease");
@@ -84,28 +98,24 @@ std::string debReleaseIndex::LocalFileName() const
 
    return "";
 }
-
-debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist) :
-					metaIndex(URI, Dist, "deb"), d(NULL), Trusted(CHECK_TRUST)
+									/*}}}*/
+// ReleaseIndex Con- and Destructors					/*{{{*/
+debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist) :
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate()), Trusted(CHECK_TRUST)
 {}
-
-debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist, bool const Trusted) :
-					metaIndex(URI, Dist, "deb"), d(NULL) {
+debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted) :
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate()) {
 	SetTrusted(Trusted);
 }
-
 debReleaseIndex::~debReleaseIndex() {
-	for (map<string, vector<debSectionEntry const*> >::const_iterator A = ArchEntries.begin();
-	     A != ArchEntries.end(); ++A)
-		for (vector<const debSectionEntry *>::const_iterator S = A->second.begin();
-		     S != A->second.end(); ++S)
-			delete *S;
+   if (d != NULL)
+      delete d;
 }
-
-template<typename CallC>
-void foreachTarget(std::string const &URI, std::string const &Dist,
-      std::map<std::string, std::vector<debReleaseIndex::debSectionEntry const *> > const &ArchEntries,
-      CallC &Call)
+									/*}}}*/
+// ReleaseIndex::GetIndexTargets					/*{{{*/
+static void GetIndexTargetsFor(char const * const Type, std::string const &URI, std::string const &Dist,
+      std::vector<debReleaseIndexPrivate::debSectionEntry> const &entries,
+      std::vector<IndexTarget> &IndexTargets)
 {
    bool const flatArchive = (Dist[Dist.length() - 1] == '/');
    std::string baseURI = URI;
@@ -118,148 +128,101 @@ void foreachTarget(std::string const &URI, std::string const &Dist,
       baseURI += "dists/" + Dist + "/";
    std::string const Release = (Dist == "/") ? "" : Dist;
    std::string const Site = ::URI::ArchiveOnly(URI);
-   std::vector<std::string> lang = APT::Configuration::getLanguages(true);
-   if (lang.empty())
-      lang.push_back("none");
-   map<string, vector<debReleaseIndex::debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
-   if (src != ArchEntries.end())
+
+   for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
-      std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb-src", "", true);
-      for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
+      for (std::vector<std::string>::const_iterator T = E->Targets.begin(); T != E->Targets.end(); ++T)
       {
-#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb-src::") + *T + "::" + (X))
-	 std::string const MetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
-	 std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
-	 std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
+#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::") + Type  + "::" + *T + "::" + (X))
+	 std::string const tplMetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
+	 std::string const tplShortDesc = APT_T_CONFIG("ShortDescription");
+	 std::string const tplLongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
 	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb-src::") + *T + "::Optional", true);
 #undef APT_T_CONFIG
-	 if (MetaKey.empty())
+	 if (tplMetaKey.empty())
 	    continue;
 
-	 vector<debReleaseIndex::debSectionEntry const*> const SectionEntries = src->second;
-	 for (vector<debReleaseIndex::debSectionEntry const*>::const_iterator I = SectionEntries.begin();
-	       I != SectionEntries.end(); ++I)
+	 for (std::vector<std::string>::const_iterator L = E->Languages.begin(); L != E->Languages.end(); ++L)
 	 {
-	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
+	    if (*L == "none" && tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
+	       continue;
+
+	    for (std::vector<std::string>::const_iterator A = E->Architectures.begin(); A != E->Architectures.end(); ++A)
 	    {
-	       if (*l == "none" && MetaKey.find("$(LANGUAGE)") != std::string::npos)
-		  continue;
 
 	       std::map<std::string, std::string> Options;
 	       Options.insert(std::make_pair("SITE", Site));
 	       Options.insert(std::make_pair("RELEASE", Release));
-	       if (MetaKey.find("$(COMPONENT)") != std::string::npos)
-		  Options.insert(std::make_pair("COMPONENT", (*I)->Section));
-	       if (MetaKey.find("$(LANGUAGE)") != std::string::npos)
-		  Options.insert(std::make_pair("LANGUAGE", *l));
-	       Options.insert(std::make_pair("ARCHITECTURE", "source"));
+	       if (tplMetaKey.find("$(COMPONENT)") != std::string::npos)
+		  Options.insert(std::make_pair("COMPONENT", E->Name));
+	       if (tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
+		  Options.insert(std::make_pair("LANGUAGE", *L));
+	       if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
+		  Options.insert(std::make_pair("ARCHITECTURE", *A));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
 	       Options.insert(std::make_pair("REPO_URI", URI));
 	       Options.insert(std::make_pair("TARGET_OF", "deb-src"));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
-	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
 
-	       if (MetaKey.find("$(LANGUAGE)") == std::string::npos)
+	       std::string MetaKey = tplMetaKey;
+	       std::string ShortDesc = tplShortDesc;
+	       std::string LongDesc = tplLongDesc;
+	       for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
+	       {
+		  MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
+		  ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
+		  LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
+	       }
+	       IndexTarget Target(
+		     MetaKey,
+		     ShortDesc,
+		     LongDesc,
+		     Options.find("BASE_URI")->second + MetaKey,
+		     IsOptional,
+		     Options
+		     );
+	       IndexTargets.push_back(Target);
+
+	       if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
 		  break;
+
 	    }
 
-	    if (MetaKey.find("$(COMPONENT)") == std::string::npos)
+	    if (tplMetaKey.find("$(LANGUAGE)") == std::string::npos)
 	       break;
-	 }
-      }
-   }
 
-   std::vector<std::string> const targets = _config->FindVector("APT::Acquire::Targets::deb", "", true);
-   for (std::vector<std::string>::const_iterator T = targets.begin(); T != targets.end(); ++T)
-   {
-#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::deb::") + *T + "::" + (X))
-      std::string const MetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
-      std::string const ShortDesc = APT_T_CONFIG("ShortDescription");
-      std::string const LongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
-      bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb::") + *T + "::Optional", true);
-#undef APT_T_CONFIG
-      if (MetaKey.empty())
-	 continue;
-
-      for (map<string, vector<debReleaseIndex::debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
-	    a != ArchEntries.end(); ++a)
-      {
-	 if (a->first == "source")
-	    continue;
-
-	 for (vector <const debReleaseIndex::debSectionEntry *>::const_iterator I = a->second.begin();
-	       I != a->second.end(); ++I) {
-
-	    for (vector<std::string>::const_iterator l = lang.begin(); l != lang.end(); ++l)
-	    {
-	       if (*l == "none" && MetaKey.find("$(LANGUAGE)") != std::string::npos)
-		  continue;
-
-	       std::map<std::string, std::string> Options;
-	       Options.insert(std::make_pair("SITE", Site));
-	       Options.insert(std::make_pair("RELEASE", Release));
-	       if (MetaKey.find("$(COMPONENT)") != std::string::npos)
-		  Options.insert(std::make_pair("COMPONENT", (*I)->Section));
-	       if (MetaKey.find("$(LANGUAGE)") != std::string::npos)
-		  Options.insert(std::make_pair("LANGUAGE", *l));
-	       if (MetaKey.find("$(ARCHITECTURE)") != std::string::npos)
-		  Options.insert(std::make_pair("ARCHITECTURE", a->first));
-	       Options.insert(std::make_pair("BASE_URI", baseURI));
-	       Options.insert(std::make_pair("REPO_URI", URI));
-	       Options.insert(std::make_pair("TARGET_OF", "deb"));
-	       Options.insert(std::make_pair("CREATED_BY", *T));
-	       Call(MetaKey, ShortDesc, LongDesc, IsOptional, Options);
-
-	       if (MetaKey.find("$(LANGUAGE)") == std::string::npos)
-		  break;
-	    }
-
-	    if (MetaKey.find("$(COMPONENT)") == std::string::npos)
-	       break;
 	 }
 
-	 if (MetaKey.find("$(ARCHITECTURE)") == std::string::npos)
-	    break;
       }
    }
 }
-
-
-struct ComputeIndexTargetsClass
-{
-   vector <IndexTarget> IndexTargets;
-
-   void operator()(std::string MetaKey, std::string ShortDesc, std::string LongDesc,
-	 bool const IsOptional, std::map<std::string, std::string> Options)
-   {
-      for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
-      {
-	 MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
-	 ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
-	 LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
-      }
-      IndexTarget Target(
-	    MetaKey,
-	    ShortDesc,
-	    LongDesc,
-	    Options.find("BASE_URI")->second + MetaKey,
-	    IsOptional,
-	    Options
-	    );
-      IndexTargets.push_back(Target);
-   }
-};
-
 std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
 {
-   ComputeIndexTargetsClass comp;
-   foreachTarget(URI, Dist, ArchEntries, comp);
-   return comp.IndexTargets;
+   std::vector<IndexTarget> IndexTargets;
+   GetIndexTargetsFor("deb-src", URI, Dist, d->DebSrcEntries, IndexTargets);
+   GetIndexTargetsFor("deb", URI, Dist, d->DebEntries, IndexTargets);
+   return IndexTargets;
 }
-
-
 									/*}}}*/
-bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
+void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{{{*/
+	 std::vector<std::string> const &Targets,
+	 std::vector<std::string> const &Architectures,
+	 std::vector<std::string> Languages)
+{
+   if (Languages.empty() == true)
+      Languages.push_back("none");
+   debReleaseIndexPrivate::debSectionEntry const entry = {
+      Name, Targets, Architectures, Languages
+   };
+   if (isSrc)
+      d->DebSrcEntries.push_back(entry);
+   else
+      d->DebEntries.push_back(entry);
+}
+									/*}}}*/
+
+
+bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const/*{{{*/
 {
    indexRecords * const iR = new indexRecords(Dist);
    if (Trusted == ALWAYS_TRUSTED)
@@ -282,7 +245,8 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 
    return true;
 }
-
+									/*}}}*/
+// ReleaseIndex::*Trusted setters and checkers				/*{{{*/
 void debReleaseIndex::SetTrusted(bool const Trusted)
 {
 	if (Trusted == true)
@@ -290,7 +254,6 @@ void debReleaseIndex::SetTrusted(bool const Trusted)
 	else
 		this->Trusted = NEVER_TRUSTED;
 }
-
 bool debReleaseIndex::IsTrusted() const
 {
    if (Trusted == ALWAYS_TRUSTED)
@@ -303,19 +266,13 @@ bool debReleaseIndex::IsTrusted() const
       if(URI.substr(0,strlen("cdrom:")) == "cdrom:")
 	 return true;
 
-   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-      URItoFileName(MetaIndexURI("Release")) + ".gpg";
-
-   if (FileExists(VerifiedSigFile))
+   if (FileExists(MetaIndexFile("Release.gpg")))
       return true;
 
-   VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-      URItoFileName(MetaIndexURI("InRelease"));
-
-   return FileExists(VerifiedSigFile);
+   return FileExists(MetaIndexFile("InRelease"));
 }
-
-std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
+									/*}}}*/
+std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/
 {
    if (Indexes != NULL)
       return Indexes;
@@ -335,23 +292,9 @@ std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()
    }
    return Indexes;
 }
+									/*}}}*/
 
-void debReleaseIndex::PushSectionEntry(vector<string> const &Archs, const debSectionEntry *Entry) {
-	for (vector<string>::const_iterator a = Archs.begin();
-	     a != Archs.end(); ++a)
-		ArchEntries[*a].push_back(new debSectionEntry(Entry->Section, Entry->IsSrc));
-	delete Entry;
-}
-
-void debReleaseIndex::PushSectionEntry(string const &Arch, const debSectionEntry *Entry) {
-	ArchEntries[Arch].push_back(Entry);
-}
-
-debReleaseIndex::debSectionEntry::debSectionEntry (string const &Section,
-		bool const &IsSrc): Section(Section), IsSrc(IsSrc)
-{}
-
-static bool ReleaseFileName(debReleaseIndex const * const That, std::string &ReleaseFile)
+static bool ReleaseFileName(debReleaseIndex const * const That, std::string &ReleaseFile)/*{{{*/
 {
    ReleaseFile = That->MetaIndexFile("InRelease");
    bool releaseExists = false;
@@ -365,7 +308,7 @@ static bool ReleaseFileName(debReleaseIndex const * const That, std::string &Rel
    }
    return releaseExists;
 }
-
+									/*}}}*/
 bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/*{{{*/
 {
    std::string ReleaseFile;
@@ -459,46 +402,46 @@ pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache, bool con
 }
 									/*}}}*/
 
-debDebFileMetaIndex::~debDebFileMetaIndex() {}
+static std::vector<std::string> parsePlusMinusOptions(std::string const &Name, /*{{{*/
+      std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
+{
+   std::map<std::string, std::string>::const_iterator val = Options.find(Name);
+   std::vector<std::string> Values;
+   if (val != Options.end())
+      Values = VectorizeString(val->second, ',');
+   else
+      Values = defaultValues;
 
-class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
+   if ((val = Options.find(Name + "+")) != Options.end())
+   {
+      std::vector<std::string> const plusArch = VectorizeString(val->second, ',');
+      for (std::vector<std::string>::const_iterator plus = plusArch.begin(); plus != plusArch.end(); ++plus)
+	 if (std::find(Values.begin(), Values.end(), *plus) == Values.end())
+	    Values.push_back(*plus);
+   }
+   if ((val = Options.find(Name + "-")) != Options.end())
+   {
+      std::vector<std::string> const minusArch = VectorizeString(val->second, ',');
+      for (std::vector<std::string>::const_iterator minus = minusArch.begin(); minus != minusArch.end(); ++minus)
+      {
+	 std::vector<std::string>::iterator kill = std::find(Values.begin(), Values.end(), *minus);
+	 if (kill != Values.end())
+	    Values.erase(kill);
+      }
+   }
+   return Values;
+}
+									/*}}}*/
+class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 {
    protected:
 
-   bool CreateItemInternal(vector<metaIndex *> &List, string const &URI,
-			   string const &Dist, string const &Section,
-			   bool const &IsSrc, map<string, string> const &Options) const
+   bool CreateItemInternal(std::vector<metaIndex *> &List, std::string const &URI,
+			   std::string const &Dist, std::string const &Section,
+			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
    {
-      // parse arch=, arch+= and arch-= settings
-      map<string, string>::const_iterator arch = Options.find("arch");
-      vector<string> Archs;
-      if (arch != Options.end())
-	 Archs = VectorizeString(arch->second, ',');
-      else
-	 Archs = APT::Configuration::getArchitectures();
-
-      if ((arch = Options.find("arch+")) != Options.end())
-      {
-	 std::vector<std::string> const plusArch = VectorizeString(arch->second, ',');
-	 for (std::vector<std::string>::const_iterator plus = plusArch.begin(); plus != plusArch.end(); ++plus)
-	    if (std::find(Archs.begin(), Archs.end(), *plus) == Archs.end())
-	       Archs.push_back(*plus);
-      }
-      if ((arch = Options.find("arch-")) != Options.end())
-      {
-	 std::vector<std::string> const minusArch = VectorizeString(arch->second, ',');
-	 for (std::vector<std::string>::const_iterator minus = minusArch.begin(); minus != minusArch.end(); ++minus)
-	 {
-	    std::vector<std::string>::iterator kill = std::find(Archs.begin(), Archs.end(), *minus);
-	    if (kill != Archs.end())
-	       Archs.erase(kill);
-	 }
-      }
-
-      map<string, string>::const_iterator const trusted = Options.find("trusted");
-
       debReleaseIndex *Deb = NULL;
-      for (vector<metaIndex *>::const_iterator I = List.begin();
+      for (std::vector<metaIndex *>::const_iterator I = List.begin();
 	   I != List.end(); ++I)
       {
 	 // We only worry about debian entries here
@@ -523,87 +466,86 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 	 List.push_back(Deb);
       }
 
-      if (IsSrc == true)
-	 Deb->PushSectionEntry ("source", new debReleaseIndex::debSectionEntry(Section, IsSrc));
-      else
-      {
-	 if (Dist[Dist.size() - 1] == '/')
-	    Deb->PushSectionEntry ("any", new debReleaseIndex::debSectionEntry(Section, IsSrc));
-	 else
-	    Deb->PushSectionEntry (Archs, new debReleaseIndex::debSectionEntry(Section, IsSrc));
-      }
+      Deb->AddComponent(
+	    IsSrc,
+	    Section,
+	    parsePlusMinusOptions("target", Options, _config->FindVector(std::string("APT::Acquire::Targets::") + Name, "", true)),
+	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
+	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true))
+	    );
 
+      std::map<std::string, std::string>::const_iterator const trusted = Options.find("trusted");
       if (trusted != Options.end())
 	 Deb->SetTrusted(StringToBool(trusted->second, false));
 
       return true;
    }
+
+   debSLTypeDebian(char const * const Name, char const * const Label) : Type(Name, Label)
+   {
+   }
 };
-
-debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)
-   : metaIndex(DebFile, "local-uri", "deb-dist"), d(NULL), DebFile(DebFile)
-{
-   DebIndex = new debDebPkgFileIndex(DebFile);
-   Indexes = new vector<pkgIndexFile *>();
-   Indexes->push_back(DebIndex);
-}
-
-
-class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian
+									/*}}}*/
+class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian			/*{{{*/
 {
    public:
 
-   bool CreateItem(vector<metaIndex *> &List, string const &URI,
-		   string const &Dist, string const &Section,
-		   std::map<string, string> const &Options) const
+   bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
+		   std::string const &Dist, std::string const &Section,
+		   std::map<std::string, std::string> const &Options) const
    {
       return CreateItemInternal(List, URI, Dist, Section, false, Options);
    }
 
-   debSLTypeDeb()
+   debSLTypeDeb() : debSLTypeDebian("deb", "Debian binary tree")
    {
-      Name = "deb";
-      Label = "Standard Debian binary tree";
-   }   
+   }
 };
-
-class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian
+									/*}}}*/
+class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian		/*{{{*/
 {
    public:
 
-   bool CreateItem(vector<metaIndex *> &List, string const &URI,
-		   string const &Dist, string const &Section,
-		   std::map<string, string> const &Options) const
+   bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
+		   std::string const &Dist, std::string const &Section,
+		   std::map<std::string, std::string> const &Options) const
    {
       return CreateItemInternal(List, URI, Dist, Section, true, Options);
    }
-   
-   debSLTypeDebSrc()
-   {
-      Name = "deb-src";
-      Label = "Standard Debian source tree";
-   }   
-};
 
-class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type
+   debSLTypeDebSrc() : debSLTypeDebian("deb-src", "Debian source tree")
+   {
+   }
+};
+									/*}}}*/
+
+debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)	/*{{{*/
+   : metaIndex(DebFile, "local-uri", "deb-dist"), d(NULL), DebFile(DebFile)
+{
+   DebIndex = new debDebPkgFileIndex(DebFile);
+   Indexes = new std::vector<pkgIndexFile *>();
+   Indexes->push_back(DebIndex);
+}
+debDebFileMetaIndex::~debDebFileMetaIndex() {}
+									/*}}}*/
+class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type		/*{{{*/
 {
    public:
 
-   bool CreateItem(vector<metaIndex *> &List, string const &URI,
-		   string const &/*Dist*/, string const &/*Section*/,
-		   std::map<string, string> const &/*Options*/) const
+   bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
+		   std::string const &/*Dist*/, std::string const &/*Section*/,
+		   std::map<std::string, std::string> const &/*Options*/) const
    {
       metaIndex *mi = new debDebFileMetaIndex(URI);
       List.push_back(mi);
       return true;
    }
-   
-   debSLTypeDebFile()
+
+   debSLTypeDebFile() : Type("deb-file", "Debian local deb file")
    {
-      Name = "deb-file";
-      Label = "Debian Deb File";
-   }   
+   }
 };
+									/*}}}*/
 
 APT_HIDDEN debSLTypeDeb _apt_DebType;
 APT_HIDDEN debSLTypeDebSrc _apt_DebSrcType;

@@ -66,8 +66,8 @@ class pkgSourceList
       static unsigned long GlobalListLen;
       static Type *GetType(const char *Type) APT_PURE;
 
-      const char *Name;
-      const char *Label;
+      char const * const Name;
+      char const * const Label;
 
       bool FixupURI(std::string &URI) const;
       virtual bool ParseStanza(std::vector<metaIndex *> &List,
@@ -80,8 +80,8 @@ class pkgSourceList
       virtual bool CreateItem(std::vector<metaIndex *> &List,std::string const &URI,
 			      std::string const &Dist,std::string const &Section,
 			      std::map<std::string, std::string> const &Options) const = 0;
-      Type();
-      virtual ~Type() {};
+      Type(char const * const Name, char const * const Label);
+      virtual ~Type();
    };
 
    typedef std::vector<metaIndex *>::const_iterator const_iterator;

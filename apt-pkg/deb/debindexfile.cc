@@ -510,7 +510,7 @@ class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
    {
       return new debDebFileRecordParser(File.FileName());
    };
-   debIFTypeDebPkgFile() {Label = "deb Package file";};
+   debIFTypeDebPkgFile() {Label = "Debian deb file";};
 };
 class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
 {
@@ -519,7 +519,7 @@ class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
    {
       return new debDscRecordParser(DscFile, NULL);
    };
-   debIFTypeDscFile() {Label = "dsc File Source Index";};
+   debIFTypeDscFile() {Label = "Debian dsc file";};
 };
 class APT_HIDDEN debIFTypeDebianSourceDir : public pkgIndexFile::Type
 {
@@ -528,7 +528,7 @@ class APT_HIDDEN debIFTypeDebianSourceDir : public pkgIndexFile::Type
    {
       return new debDscRecordParser(SourceDir + string("/debian/control"), NULL);
    };
-   debIFTypeDebianSourceDir() {Label = "debian/control File Source Index";};
+   debIFTypeDebianSourceDir() {Label = "Debian control file";};
 };
 
 APT_HIDDEN debIFTypeSrc _apt_Src;
