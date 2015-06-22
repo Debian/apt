@@ -223,7 +223,15 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		source. If not specified, the default set is defined by the
 		<literal>APT::Acquire::Targets</literal> configuration scope.
 	  </para></listitem>
+       </itemizedlist>
 
+       Further more, there are options which if set effect
+       <emphasis>all</emphasis> sources with the same URI and Suite, so they
+       have to be set on all such entries and can not be varied between
+       different components. APT will try to detect and error out on such
+       anomalies.
+
+       <itemizedlist>
 	  <listitem><para><literal>Trusted</literal> (<literal>trusted</literal>)
 		is a tri-state value which defaults to APT deciding if a source
 		is considered trusted or if warnings should be raised before e.g.

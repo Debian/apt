@@ -34,7 +34,6 @@ class metaIndex
    const char *Type;
    std::string URI;
    std::string Dist;
-   bool Trusted;
 
    public:
 

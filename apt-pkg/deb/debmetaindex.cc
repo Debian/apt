@@ -29,6 +29,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <apti18n.h>
+
 class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 {
    public:
@@ -42,6 +44,11 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 
    std::vector<debSectionEntry> DebEntries;
    std::vector<debSectionEntry> DebSrcEntries;
+
+   debReleaseIndex::TriState Trusted;
+
+   debReleaseIndexPrivate() : Trusted(debReleaseIndex::TRI_UNSET) {}
+   debReleaseIndexPrivate(bool const pTrusted) : Trusted(pTrusted ? debReleaseIndex::TRI_YES : debReleaseIndex::TRI_NO) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -101,12 +108,11 @@ std::string debReleaseIndex::LocalFileName() const			/*{{{*/
 									/*}}}*/
 // ReleaseIndex Con- and Destructors					/*{{{*/
 debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist) :
-					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate()), Trusted(CHECK_TRUST)
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate())
 {}
 debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted) :
-					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate()) {
-	SetTrusted(Trusted);
-}
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate(Trusted))
+{}
 debReleaseIndex::~debReleaseIndex() {
    if (d != NULL)
       delete d;
@@ -225,9 +231,9 @@ void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const/*{{{*/
 {
    indexRecords * const iR = new indexRecords(Dist);
-   if (Trusted == ALWAYS_TRUSTED)
+   if (d->Trusted == TRI_YES)
       iR->SetTrusted(true);
-   else if (Trusted == NEVER_TRUSTED)
+   else if (d->Trusted == TRI_NO)
       iR->SetTrusted(false);
 
    // special case for --print-uris
@@ -246,19 +252,21 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const/*{
    return true;
 }
 									/*}}}*/
-// ReleaseIndex::*Trusted setters and checkers				/*{{{*/
-void debReleaseIndex::SetTrusted(bool const Trusted)
+// ReleaseIndex::IsTrusted						/*{{{*/
+bool debReleaseIndex::SetTrusted(TriState const Trusted)
 {
-	if (Trusted == true)
-		this->Trusted = ALWAYS_TRUSTED;
-	else
-		this->Trusted = NEVER_TRUSTED;
+   if (d->Trusted == TRI_UNSET)
+      d->Trusted = Trusted;
+   else if (d->Trusted != Trusted)
+      // TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
+      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Trusted", URI.c_str(), Dist.c_str());
+   return true;
 }
 bool debReleaseIndex::IsTrusted() const
 {
-   if (Trusted == ALWAYS_TRUSTED)
+   if (d->Trusted == TRI_YES)
       return true;
-   else if (Trusted == NEVER_TRUSTED)
+   else if (d->Trusted == TRI_NO)
       return false;
 
 
@@ -476,7 +484,12 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 
       std::map<std::string, std::string>::const_iterator const trusted = Options.find("trusted");
       if (trusted != Options.end())
-	 Deb->SetTrusted(StringToBool(trusted->second, false));
+      {
+	 if (Deb->SetTrusted(StringToBool(trusted->second, false) ? debReleaseIndex::TRI_YES : debReleaseIndex::TRI_NO) == false)
+	    return false;
+      }
+      else if (Deb->SetTrusted(debReleaseIndex::TRI_DONTCARE) == false)
+	 return false;
 
       return true;
    }

@@ -27,8 +27,6 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 {
    debReleaseIndexPrivate * const d;
 
-   enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
-
    public:
 
    APT_HIDDEN std::string MetaIndexInfo(const char *Type) const;
@@ -51,7 +49,11 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
-   void SetTrusted(bool const Trusted);
+   enum APT_HIDDEN TriState {
+      TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET
+   };
+   bool SetTrusted(TriState const Trusted);
+
    virtual bool IsTrusted() const;
 
    void AddComponent(bool const isSrc, std::string const &Name,

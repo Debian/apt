@@ -18,7 +18,7 @@ aptgetupdate() {
 PKGTEXT="$(aptget install cool --assume-no -d | head -n 8)"
 DOWNLOG="$(echo "$PKGTEXT" | tail -n 1)"
 PKGTEXT="$(echo "$PKGTEXT" | head -n 7)"
-DEBFILE='rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list'
+DEBFILE='rootdir/etc/apt/sources.list.d/apt-test-unstable-*.list'
 
 testsuccessequal "$PKGTEXT
 $DOWNLOG
@@ -28,7 +28,7 @@ testsuccessequal "$PKGTEXT
 $DOWNLOG
 Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
-sed -i -e 's#deb#deb [trusted=no]#' $DEBFILE
+sed -i -e 's#\(deb\(-src\)\?\) #\1 [trusted=no] #' $DEBFILE
 aptgetupdate 'testsuccess'
 
 testfailureequal "$PKGTEXT
@@ -38,7 +38,7 @@ Install these packages without verification? [y/N] N
 E: Some packages could not be authenticated" aptget install cool --assume-no -d
 
 find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
-sed -i -e 's#deb \[trusted=no\]#deb#' $DEBFILE
+sed -i -e 's#\(deb\(-src\)\?\) \[trusted=no\] #\1 #' $DEBFILE
 aptgetupdate
 
 testfailureequal "$PKGTEXT
@@ -54,7 +54,7 @@ Authentication warning overridden.
 $DOWNLOG
 Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
-sed -i -e 's#deb#deb [trusted=yes]#' $DEBFILE
+sed -i -e 's#\(deb\(-src\)\?\) #\1 [trusted=yes] #' $DEBFILE
 aptgetupdate
 
 testsuccessequal "$PKGTEXT
