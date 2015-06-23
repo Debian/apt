@@ -9,20 +9,6 @@
 #include <vector>
                                                                        /*}}}*/
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-std::string metaIndex::LocalFileName() const { return ""; }
-#else
-#include <apt-pkg/debmetaindex.h>
-std::string metaIndex::LocalFileName() const
-{
-   debReleaseIndex const * deb = dynamic_cast<debReleaseIndex const*>(this);
-   if (deb != NULL)
-      return deb->LocalFileName();
-
-   return "";
-}
-#endif
-
 std::string metaIndex::Describe() const
 {
    return "Release";
@@ -38,10 +24,11 @@ bool metaIndex::Merge(pkgCacheGenerator &Gen,OpProgress *) const
    return Gen.SelectReleaseFile("", "");
 }
 
-
 metaIndex::metaIndex(std::string const &URI, std::string const &Dist,
       char const * const Type)
-: d(NULL), Indexes(NULL), Type(Type), URI(URI), Dist(Dist)
+: d(NULL), Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(TRI_UNSET),
+   LoadedSuccessfully(TRI_UNSET),
+   Date(0), ValidUntil(0), SupportsAcquireByHash(false)
 {
    /* nothing */
 }
@@ -55,3 +42,60 @@ metaIndex::~metaIndex()
       delete *I;
    delete Indexes;
 }
+
+// one line Getters for public fields					/*{{{*/
+APT_PURE std::string metaIndex::GetURI() const { return URI; }
+APT_PURE std::string metaIndex::GetDist() const { return Dist; }
+APT_PURE const char* metaIndex::GetType() const { return Type; }
+APT_PURE metaIndex::TriState metaIndex::GetTrusted() const { return Trusted; }
+APT_PURE std::string metaIndex::GetCodename() const { return Codename; }
+APT_PURE std::string metaIndex::GetSuite() const { return Suite; }
+APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
+APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
+APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
+APT_PURE metaIndex::TriState metaIndex::GetLoadedSuccessfully() const { return LoadedSuccessfully; }
+
+APT_PURE bool metaIndex::CheckDist(string const &MaybeDist) const
+{
+   return (this->Codename == MaybeDist
+	   || this->Suite == MaybeDist);
+}
+APT_PURE std::string metaIndex::GetExpectedDist() const
+{
+   // TODO: Used to be an explicit value set in the constructor
+   return "";
+}
+									/*}}}*/
+APT_PURE metaIndex::checkSum *metaIndex::Lookup(string const &MetaKey) const /*{{{*/
+{
+   std::map<std::string, metaIndex::checkSum* >::const_iterator sum = Entries.find(MetaKey);
+   if (sum == Entries.end())
+      return NULL;
+   return sum->second;
+}
+									/*}}}*/
+APT_PURE bool metaIndex::Exists(string const &MetaKey) const		/*{{{*/
+{
+   return Entries.find(MetaKey) != Entries.end();
+}
+									/*}}}*/
+std::vector<std::string> metaIndex::MetaKeys() const			/*{{{*/
+{
+   std::vector<std::string> keys;
+   std::map<string,checkSum *>::const_iterator I = Entries.begin();
+   while(I != Entries.end()) {
+      keys.push_back((*I).first);
+      ++I;
+   }
+   return keys;
+}
+									/*}}}*/
+void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
+{
+   std::swap(Entries, OldMetaIndex->Entries);
+   std::swap(Date, OldMetaIndex->Date);
+   std::swap(ValidUntil, OldMetaIndex->ValidUntil);
+   std::swap(SupportsAcquireByHash, OldMetaIndex->SupportsAcquireByHash);
+   std::swap(LoadedSuccessfully, OldMetaIndex->LoadedSuccessfully);
+}
+									/*}}}*/

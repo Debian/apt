@@ -25,9 +25,9 @@ using std::vector;
 #endif
 
 class pkgTagSection;
-class indexRecords;
 class pkgCdromStatus;
 class FileFd;
+class metaIndex;
 
 class IndexCopy								/*{{{*/
 {
@@ -106,7 +106,7 @@ class SigVerify								/*{{{*/
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
 
-   APT_HIDDEN bool Verify(std::string prefix,std::string file, indexRecords *records);
+   APT_HIDDEN bool Verify(std::string prefix,std::string file, metaIndex *records);
    APT_HIDDEN bool CopyMetaIndex(std::string CDROM, std::string CDName,
 		      std::string prefix, std::string file);
 

@@ -137,11 +137,9 @@ static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
-// GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
-                                      pkgSrcRecords::Parser *Parse)
+// GetReleaseFileForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
+static pkgCache::RlsFileIterator GetReleaseFileForSourceRecord(CacheFile &CacheFile,
+      pkgSourceList *SrcList, pkgSrcRecords::Parser *Parse)
 {
    // try to find release
    const pkgIndexFile& CurrentIndexFile = Parse->Index();
@@ -154,18 +152,10 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
            IF != Indexes->end(); ++IF)
       {
          if (&CurrentIndexFile == (*IF))
-         {
-            std::string const path = (*S)->LocalFileName();
-            if (path != "")
-            {
-               indexRecords records;
-               records.Load(path);
-               return records.GetSuite();
-            }
-         }
+	    return (*S)->FindInCache(CacheFile, false);
       }
    }
-   return "";
+   return pkgCache::RlsFileIterator(CacheFile);
 }
 									/*}}}*/
 // FindSrc - Find a source record					/*{{{*/
@@ -379,13 +369,16 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
          // See if we need to look for a specific release tag
          if (RelTag != "" && UserRequestedVerTag == "")
          {
-            const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
-
-            if (Rel == RelTag)
+	    pkgCache::RlsFileIterator const Rls = GetReleaseFileForSourceRecord(CacheFile, SrcList, Parse);
+            if (Rls.end() == false)
             {
-               Last = Parse;
-               Offset = Parse->Offset();
-               Version = Ver;
+	       if ((Rls->Archive != 0 && RelTag == Rls.Archive()) ||
+		     (Rls->Codename != 0 && RelTag == Rls.Codename()))
+	       {
+		  Last = Parse;
+		  Offset = Parse->Offset();
+		  Version = Ver;
+	       }
             }
          }
 

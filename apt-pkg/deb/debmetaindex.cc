@@ -8,7 +8,6 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/indexrecords.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/metaindex.h>
@@ -45,10 +44,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    std::vector<debSectionEntry> DebEntries;
    std::vector<debSectionEntry> DebSrcEntries;
 
-   debReleaseIndex::TriState Trusted;
-
-   debReleaseIndexPrivate() : Trusted(debReleaseIndex::TRI_UNSET) {}
-   debReleaseIndexPrivate(bool const pTrusted) : Trusted(pTrusted ? debReleaseIndex::TRI_YES : debReleaseIndex::TRI_NO) {}
+   debReleaseIndexPrivate() {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -92,27 +88,15 @@ std::string debReleaseIndex::MetaIndexURI(const char *Type) const
    return Res;
 }
 									/*}}}*/
-std::string debReleaseIndex::LocalFileName() const			/*{{{*/
-{
-   // see if we have a InRelease file
-   std::string PathInRelease =  MetaIndexFile("InRelease");
-   if (FileExists(PathInRelease))
-      return PathInRelease;
-
-   // and if not return the normal one
-   if (FileExists(PathInRelease))
-      return MetaIndexFile("Release");
-
-   return "";
-}
-									/*}}}*/
 // ReleaseIndex Con- and Destructors					/*{{{*/
 debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist) :
 					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate())
 {}
-debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted) :
-					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate(Trusted))
-{}
+debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const pTrusted) :
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate())
+{
+   Trusted = pTrusted ? TRI_YES : TRI_NO;
+}
 debReleaseIndex::~debReleaseIndex() {
    if (d != NULL)
       delete d;
@@ -227,22 +211,197 @@ void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{
 }
 									/*}}}*/
 
-
-bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const/*{{{*/
+bool debReleaseIndex::Load(std::string const &Filename, std::string * const ErrorText)/*{{{*/
 {
-   indexRecords * const iR = new indexRecords(Dist);
-   if (d->Trusted == TRI_YES)
-      iR->SetTrusted(true);
-   else if (d->Trusted == TRI_NO)
-      iR->SetTrusted(false);
+   LoadedSuccessfully = TRI_NO;
+   FileFd Fd;
+   if (OpenMaybeClearSignedFile(Filename, Fd) == false)
+      return false;
 
-   // special case for --print-uris
+   pkgTagFile TagFile(&Fd, Fd.Size());
+   if (_error->PendingError() == true)
+   {
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, _("Unable to parse Release file %s"),Filename.c_str());
+      return false;
+   }
+
+   pkgTagSection Section;
+   const char *Start, *End;
+   if (TagFile.Step(Section) == false)
+   {
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, _("No sections in Release file %s"), Filename.c_str());
+      return false;
+   }
+   // FIXME: find better tag name
+   SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
+
+   Suite = Section.FindS("Suite");
+   Codename = Section.FindS("Codename");
+
+   bool FoundHashSum = false;
+   for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
+   {
+      if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
+	 continue;
+
+      std::string Name;
+      std::string Hash;
+      unsigned long long Size;
+      while (Start < End)
+      {
+	 if (!parseSumData(Start, End, Name, Hash, Size))
+	    return false;
+
+         if (Entries.find(Name) == Entries.end())
+         {
+            metaIndex::checkSum *Sum = new metaIndex::checkSum;
+            Sum->MetaKeyFilename = Name;
+            Sum->Size = Size;
+	    Sum->Hashes.FileSize(Size);
+            APT_IGNORE_DEPRECATED(Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);)
+            Entries[Name] = Sum;
+         }
+         Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
+         FoundHashSum = true;
+      }
+   }
+
+   if(FoundHashSum == false)
+   {
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+
+   std::string const StrDate = Section.FindS("Date");
+   if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
+   {
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+
+   std::string const Label = Section.FindS("Label");
+   std::string const StrValidUntil = Section.FindS("Valid-Until");
+
+   // if we have a Valid-Until header in the Release file, use it as default
+   if (StrValidUntil.empty() == false)
+   {
+      if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+      {
+	 if (ErrorText != NULL)
+	    strprintf(*ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
+	 return false;
+      }
+   }
+   // get the user settings for this archive and use what expires earlier
+   int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
+   if (Label.empty() == false)
+      MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+   int MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
+   if (Label.empty() == false)
+      MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+
+   LoadedSuccessfully = TRI_YES;
+   if(MaxAge == 0 &&
+      (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file
+      return true;
+
+   if (MinAge != 0 && ValidUntil != 0) {
+      time_t const min_date = Date + MinAge;
+      if (ValidUntil < min_date)
+	 ValidUntil = min_date;
+   }
+   if (MaxAge != 0) {
+      time_t const max_date = Date + MaxAge;
+      if (ValidUntil == 0 || ValidUntil > max_date)
+	 ValidUntil = max_date;
+   }
+
+   return true;
+}
+									/*}}}*/
+metaIndex * debReleaseIndex::UnloadedClone() const			/*{{{*/
+{
+   if (Trusted == TRI_NO)
+      return new debReleaseIndex(URI, Dist, false);
+   else if (Trusted == TRI_YES)
+      return new debReleaseIndex(URI, Dist, true);
+   else
+      return new debReleaseIndex(URI, Dist);
+}
+									/*}}}*/
+bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
+				   std::string &Name, std::string &Hash, unsigned long long &Size)
+{
+   Name = "";
+   Hash = "";
+   Size = 0;
+   /* Skip over the first blank */
+   while ((*Start == '\t' || *Start == ' ' || *Start == '\n' || *Start == '\r')
+	  && Start < End)
+      Start++;
+   if (Start >= End)
+      return false;
+
+   /* Move EntryEnd to the end of the first entry (the hash) */
+   const char *EntryEnd = Start;
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ')
+	  && EntryEnd < End)
+      EntryEnd++;
+   if (EntryEnd == End)
+      return false;
+
+   Hash.append(Start, EntryEnd-Start);
+
+   /* Skip over intermediate blanks */
+   Start = EntryEnd;
+   while (*Start == '\t' || *Start == ' ')
+      Start++;
+   if (Start >= End)
+      return false;
+   
+   EntryEnd = Start;
+   /* Find the end of the second entry (the size) */
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ' )
+	  && EntryEnd < End)
+      EntryEnd++;
+   if (EntryEnd == End)
+      return false;
+   
+   Size = strtoull (Start, NULL, 10);
+      
+   /* Skip over intermediate blanks */
+   Start = EntryEnd;
+   while (*Start == '\t' || *Start == ' ')
+      Start++;
+   if (Start >= End)
+      return false;
+   
+   EntryEnd = Start;
+   /* Find the end of the third entry (the filename) */
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && 
+           *EntryEnd != '\n' && *EntryEnd != '\r')
+	  && EntryEnd < End)
+      EntryEnd++;
+
+   Name.append(Start, EntryEnd-Start);
+   Start = EntryEnd; //prepare for the next round
+   return true;
+}
+									/*}}}*/
+
+bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
+{
    std::vector<IndexTarget> const targets = GetIndexTargets();
 #define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
    pkgAcqMetaClearSig * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
-	 targets, iR);
+	 targets, this);
 #undef APT_TARGET
+   // special case for --print-uris
    if (GetAll)
    {
       for (std::vector<IndexTarget>::const_iterator Target = targets.begin(); Target != targets.end(); ++Target)
@@ -253,20 +412,20 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const/*{
 }
 									/*}}}*/
 // ReleaseIndex::IsTrusted						/*{{{*/
-bool debReleaseIndex::SetTrusted(TriState const Trusted)
+bool debReleaseIndex::SetTrusted(TriState const pTrusted)
 {
-   if (d->Trusted == TRI_UNSET)
-      d->Trusted = Trusted;
-   else if (d->Trusted != Trusted)
+   if (Trusted == TRI_UNSET)
+      Trusted = pTrusted;
+   else if (Trusted != pTrusted)
       // TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
       return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Trusted", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::IsTrusted() const
 {
-   if (d->Trusted == TRI_YES)
+   if (Trusted == TRI_YES)
       return true;
-   else if (d->Trusted == TRI_NO)
+   else if (Trusted == TRI_NO)
       return false;
 
 

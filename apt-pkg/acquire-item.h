@@ -34,7 +34,6 @@
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexrecords.h>
 #endif
 
 /** \addtogroup acquire
@@ -43,11 +42,11 @@
  *  \file acquire-item.h
  */
 
-class indexRecords;
 class pkgRecords;
 class pkgSourceList;
 class pkgAcqMetaClearSig;
 class pkgAcqIndexMergeDiffs;
+class metaIndex;
 
 class pkgAcquire::Item : public WeakPointable				/*{{{*/
 /** \brief Represents the process by which a pkgAcquire object should
@@ -559,8 +558,8 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 
  public:
    /** \brief A package-system-specific parser for the meta-index file. */
-   indexRecords *MetaIndexParser;
-   indexRecords *LastMetaIndexParser;
+   metaIndex *MetaIndexParser;
+   metaIndex *LastMetaIndexParser;
 
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
    virtual std::string Custom600Headers() const;
@@ -573,7 +572,7 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 		IndexTarget const &DetachedDataTarget,
 		IndexTarget const &DetachedSigTarget,
 		std::vector<IndexTarget> const &IndexTargets,
-		indexRecords * const MetaIndexParser);
+		metaIndex * const MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };
 									/*}}}*/

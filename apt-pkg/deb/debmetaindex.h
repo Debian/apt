@@ -27,6 +27,8 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 {
    debReleaseIndexPrivate * const d;
 
+   APT_HIDDEN bool parseSumData(const char *&Start, const char *End, std::string &Name,
+		     std::string &Hash, unsigned long long &Size);
    public:
 
    APT_HIDDEN std::string MetaIndexInfo(const char *Type) const;
@@ -38,20 +40,18 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    virtual ~debReleaseIndex();
 
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
-   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
+   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false);
    virtual std::vector<IndexTarget> GetIndexTargets() const;
 
    virtual std::string Describe() const;
    virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
-   virtual std::string LocalFileName() const;
+   virtual bool Load(std::string const &Filename, std::string * const ErrorText);
+   virtual metaIndex * UnloadedClone() const;
 
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
-   enum APT_HIDDEN TriState {
-      TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET
-   };
    bool SetTrusted(TriState const Trusted);
 
    virtual bool IsTrusted() const;
@@ -64,15 +64,15 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
 class APT_HIDDEN debDebFileMetaIndex : public metaIndex
 {
- private:
-    void * const d;
+private:
+   void * const d;
    std::string DebFile;
    debDebPkgFileIndex *DebIndex;
- public:
+public:
    virtual std::string ArchiveURI(std::string const& /*File*/) const {
       return DebFile;
    }
-   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) const {
+   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) {
       return true;
    }
    virtual std::vector<IndexTarget> GetIndexTargets() const {
@@ -83,6 +83,17 @@ class APT_HIDDEN debDebFileMetaIndex : public metaIndex
    }
    virtual bool IsTrusted() const {
       return true;
+   }
+   virtual bool Load(std::string const &, std::string * const ErrorText)
+   {
+      LoadedSuccessfully = TRI_NO;
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, "Unparseable metaindex as it represents the standalone deb file %s", DebFile.c_str());
+      return false;
+   }
+   virtual metaIndex * UnloadedClone() const
+   {
+      return NULL;
    }
    debDebFileMetaIndex(std::string const &DebFile);
    virtual ~debDebFileMetaIndex();

@@ -24,7 +24,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
-#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
@@ -109,9 +109,9 @@ static std::string GetDiffsPatchFileName(std::string const &Final)	/*{{{*/
 }
 									/*}}}*/
 
-static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I) /*{{{*/
+static bool AllowInsecureRepositories(metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I) /*{{{*/
 {
-   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if(MetaIndexParser->GetTrusted() == metaIndex::TRI_YES || _config->FindB("Acquire::AllowInsecureRepositories") == true)
       return true;
 
    _error->Error(_("Use --allow-insecure-repositories to force the update"));
@@ -120,11 +120,11 @@ static bool AllowInsecureRepositories(indexRecords const * const MetaIndexParser
    return false;
 }
 									/*}}}*/
-static HashStringList GetExpectedHashesFromFor(indexRecords * const Parser, std::string const &MetaKey)/*{{{*/
+static HashStringList GetExpectedHashesFromFor(metaIndex * const Parser, std::string const &MetaKey)/*{{{*/
 {
    if (Parser == NULL)
       return HashStringList();
-   indexRecords::checkSum * const R = Parser->Lookup(MetaKey);
+   metaIndex::checkSum * const R = Parser->Lookup(MetaKey);
    if (R == NULL)
       return HashStringList();
    return R->Hashes;
@@ -144,7 +144,8 @@ APT_CONST bool pkgAcqTransactionItem::HashesRequired() const
       we can at least trust them for integrity of the download itself.
       Only repositories without a Release file can (obviously) not have
       hashes – and they are very uncommon and strongly discouraged */
-   return TransactionManager->MetaIndexParser != NULL;
+   return TransactionManager->MetaIndexParser != NULL &&
+      TransactionManager->MetaIndexParser->GetLoadedSuccessfully() != metaIndex::TRI_UNSET;
 }
 HashStringList pkgAcqTransactionItem::GetExpectedHashes() const
 {
@@ -900,26 +901,28 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
       }
       if (RealFileExists(FinalInRelease) || RealFileExists(FinalRelease))
       {
-	 TransactionManager->LastMetaIndexParser = new indexRecords;
-	 _error->PushToStack();
-	 if (RealFileExists(FinalInRelease))
-	    TransactionManager->LastMetaIndexParser->Load(FinalInRelease);
-	 else
-	    TransactionManager->LastMetaIndexParser->Load(FinalRelease);
-	 // its unlikely to happen, but if what we have is bad ignore it
-	 if (_error->PendingError())
+	 TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
+	 if (TransactionManager->LastMetaIndexParser != NULL)
 	 {
-	    delete TransactionManager->LastMetaIndexParser;
-	    TransactionManager->LastMetaIndexParser = NULL;
+	    _error->PushToStack();
+	    if (RealFileExists(FinalInRelease))
+	       TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
+	    else
+	       TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
+	    // its unlikely to happen, but if what we have is bad ignore it
+	    if (_error->PendingError())
+	    {
+	       delete TransactionManager->LastMetaIndexParser;
+	       TransactionManager->LastMetaIndexParser = NULL;
+	    }
+	    _error->RevertToStack();
 	 }
-	 _error->RevertToStack();
       }
    }
 
-   if (TransactionManager->MetaIndexParser->Load(DestFile) == false)
+   if (TransactionManager->MetaIndexParser->Load(DestFile, &ErrorText) == false)
    {
       Status = StatAuthError;
-      ErrorText = TransactionManager->MetaIndexParser->ErrorText;
       return false;
    }
 
@@ -1065,14 +1068,16 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
       TransactionManager->IMSHit = true;
       unlink(DestFile.c_str());
       PartialFile = DestFile = GetFinalFilename();
-      delete TransactionManager->MetaIndexParser;
-      TransactionManager->MetaIndexParser = TransactionManager->LastMetaIndexParser;
+      // load the 'old' file in the 'new' one instead of flipping pointers as
+      // the new one isn't owned by us, while the old one is so cleanup would be confused.
+      TransactionManager->MetaIndexParser->swapLoad(TransactionManager->LastMetaIndexParser);
+      delete TransactionManager->LastMetaIndexParser;
       TransactionManager->LastMetaIndexParser = NULL;
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
    {
-      std::cerr << "Got Codename: " << TransactionManager->MetaIndexParser->GetDist() << std::endl;
+      std::cerr << "Got Codename: " << TransactionManager->MetaIndexParser->GetCodename() << std::endl;
       std::cerr << "Expecting Dist: " << TransactionManager->MetaIndexParser->GetExpectedDist() << std::endl;
       std::cerr << "Transformed Dist: " << Transformed << std::endl;
    }
@@ -1083,14 +1088,14 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
 //       Status = StatAuthError;
 //       ErrorText = "Conflicting distribution; expected "
 //          + MetaIndexParser->GetExpectedDist() + " but got "
-//          + MetaIndexParser->GetDist();
+//          + MetaIndexParser->GetCodename();
 //       return false;
       if (!Transformed.empty())
       {
          _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
                          Desc.Description.c_str(),
                          Transformed.c_str(),
-                         TransactionManager->MetaIndexParser->GetDist().c_str());
+                         TransactionManager->MetaIndexParser->GetCodename().c_str());
       }
    }
 
@@ -1105,7 +1110,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       IndexTarget const &ClearsignedTarget,
       IndexTarget const &DetachedDataTarget, IndexTarget const &DetachedSigTarget,
       std::vector<IndexTarget> const &IndexTargets,
-      indexRecords * const MetaIndexParser) :
+      metaIndex * const MetaIndexParser) :
    pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget, IndexTargets),
    d(NULL), ClearsignedTarget(ClearsignedTarget),
    DetachedDataTarget(DetachedDataTarget),
@@ -1118,8 +1123,6 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
 									/*}}}*/
 pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 {
-   if (MetaIndexParser != NULL)
-      delete MetaIndexParser;
    if (LastMetaIndexParser != NULL)
       delete LastMetaIndexParser;
 }
@@ -1218,25 +1221,28 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	    // open the last Release if we have it
 	    if (TransactionManager->IMSHit == false)
 	    {
-	       TransactionManager->LastMetaIndexParser = new indexRecords;
-	       _error->PushToStack();
-	       if (RealFileExists(FinalInRelease))
-		  TransactionManager->LastMetaIndexParser->Load(FinalInRelease);
-	       else
-		  TransactionManager->LastMetaIndexParser->Load(FinalRelease);
-	       // its unlikely to happen, but if what we have is bad ignore it
-	       if (_error->PendingError())
+	       TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
+	       if (TransactionManager->LastMetaIndexParser != NULL)
 	       {
-		  delete TransactionManager->LastMetaIndexParser;
-		  TransactionManager->LastMetaIndexParser = NULL;
+		  _error->PushToStack();
+		  if (RealFileExists(FinalInRelease))
+		     TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
+		  else
+		     TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
+		  // its unlikely to happen, but if what we have is bad ignore it
+		  if (_error->PendingError())
+		  {
+		     delete TransactionManager->LastMetaIndexParser;
+		     TransactionManager->LastMetaIndexParser = NULL;
+		  }
+		  _error->RevertToStack();
 	       }
-	       _error->RevertToStack();
 	    }
 	 }
 
 	 // we parse the indexes here because at this point the user wanted
 	 // a repository that may potentially harm him
-	 if (TransactionManager->MetaIndexParser->Load(PartialRelease) == false || VerifyVendor(Message) == false)
+	 if (TransactionManager->MetaIndexParser->Load(PartialRelease, &ErrorText) == false || VerifyVendor(Message) == false)
 	    /* expired Release files are still a problem you need extra force for */;
 	 else
 	    QueueIndexes(true);
@@ -1303,8 +1309,6 @@ void pkgAcqMetaIndex::Failed(string const &Message,
    {
       // ensure old Release files are removed
       TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
-      delete TransactionManager->MetaIndexParser;
-      TransactionManager->MetaIndexParser = NULL;
 
       // queue without any kind of hashsum support
       QueueIndexes(false);
@@ -1453,25 +1457,28 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
 	 // open the last Release if we have it
 	 if (TransactionManager->IMSHit == false)
 	 {
-	    TransactionManager->LastMetaIndexParser = new indexRecords;
-	    _error->PushToStack();
-	    if (RealFileExists(FinalInRelease))
-	       TransactionManager->LastMetaIndexParser->Load(FinalInRelease);
-	    else
-	       TransactionManager->LastMetaIndexParser->Load(FinalRelease);
-	    // its unlikely to happen, but if what we have is bad ignore it
-	    if (_error->PendingError())
+	    TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
+	    if (TransactionManager->LastMetaIndexParser != NULL)
 	    {
-	       delete TransactionManager->LastMetaIndexParser;
-	       TransactionManager->LastMetaIndexParser = NULL;
+	       _error->PushToStack();
+	       if (RealFileExists(FinalInRelease))
+		  TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
+	       else
+		  TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
+	       // its unlikely to happen, but if what we have is bad ignore it
+	       if (_error->PendingError())
+	       {
+		  delete TransactionManager->LastMetaIndexParser;
+		  TransactionManager->LastMetaIndexParser = NULL;
+	       }
+	       _error->RevertToStack();
 	    }
-	    _error->RevertToStack();
 	 }
       }
 
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
-      if (TransactionManager->MetaIndexParser->Load(MetaIndex->DestFile) == false || MetaIndex->VerifyVendor(Message) == false)
+      if (TransactionManager->MetaIndexParser->Load(MetaIndex->DestFile, &ErrorText) == false || MetaIndex->VerifyVendor(Message) == false)
 	 /* expired Release files are still a problem you need extra force for */;
       else
 	 MetaIndex->QueueIndexes(true);
