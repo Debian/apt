@@ -44,7 +44,11 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    std::vector<debSectionEntry> DebEntries;
    std::vector<debSectionEntry> DebSrcEntries;
 
-   debReleaseIndexPrivate() {}
+   metaIndex::TriState CheckValidUntil;
+   time_t ValidUntilMin;
+   time_t ValidUntilMax;
+
+   debReleaseIndexPrivate() : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -283,43 +287,56 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       return false;
    }
 
-   std::string const Label = Section.FindS("Label");
-   std::string const StrValidUntil = Section.FindS("Valid-Until");
+   bool CheckValidUntil = _config->FindB("Acquire::Check-Valid-Until", true);
+   if (d->CheckValidUntil == metaIndex::TRI_NO)
+      CheckValidUntil = false;
+   else if (d->CheckValidUntil == metaIndex::TRI_YES)
+      CheckValidUntil = true;
 
-   // if we have a Valid-Until header in the Release file, use it as default
-   if (StrValidUntil.empty() == false)
+   if (CheckValidUntil == true)
    {
-      if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+      std::string const Label = Section.FindS("Label");
+      std::string const StrValidUntil = Section.FindS("Valid-Until");
+
+      // if we have a Valid-Until header in the Release file, use it as default
+      if (StrValidUntil.empty() == false)
       {
-	 if (ErrorText != NULL)
-	    strprintf(*ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
-	 return false;
+	 if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+	 {
+	    if (ErrorText != NULL)
+	       strprintf(*ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
+	    return false;
+	 }
+      }
+      // get the user settings for this archive and use what expires earlier
+      time_t MaxAge = d->ValidUntilMax;
+      if (MaxAge == 0)
+      {
+	 MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
+	 if (Label.empty() == false)
+	    MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+      }
+      time_t MinAge = d->ValidUntilMin;
+      if (MinAge == 0)
+      {
+	 MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
+	 if (Label.empty() == false)
+	    MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+      }
+
+      if (MinAge != 0 && ValidUntil != 0) {
+	 time_t const min_date = Date + MinAge;
+	 if (ValidUntil < min_date)
+	    ValidUntil = min_date;
+      }
+      if (MaxAge != 0) {
+	 time_t const max_date = Date + MaxAge;
+	 if (ValidUntil == 0 || ValidUntil > max_date)
+	    ValidUntil = max_date;
       }
    }
-   // get the user settings for this archive and use what expires earlier
-   int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
-   if (Label.empty() == false)
-      MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
-   int MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
-   if (Label.empty() == false)
-      MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
 
    LoadedSuccessfully = TRI_YES;
-   if(MaxAge == 0 &&
-      (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file
-      return true;
-
-   if (MinAge != 0 && ValidUntil != 0) {
-      time_t const min_date = Date + MinAge;
-      if (ValidUntil < min_date)
-	 ValidUntil = min_date;
-   }
-   if (MaxAge != 0) {
-      time_t const max_date = Date + MaxAge;
-      if (ValidUntil == 0 || ValidUntil > max_date)
-	 ValidUntil = max_date;
-   }
-
    return true;
 }
 									/*}}}*/
@@ -411,7 +428,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
    return true;
 }
 									/*}}}*/
-// ReleaseIndex::IsTrusted						/*{{{*/
+// ReleaseIndex::Set* TriState options					/*{{{*/
 bool debReleaseIndex::SetTrusted(TriState const pTrusted)
 {
    if (Trusted == TRI_UNSET)
@@ -421,6 +438,32 @@ bool debReleaseIndex::SetTrusted(TriState const pTrusted)
       return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Trusted", URI.c_str(), Dist.c_str());
    return true;
 }
+bool debReleaseIndex::SetCheckValidUntil(TriState const pCheckValidUntil)
+{
+   if (d->CheckValidUntil == TRI_UNSET)
+      d->CheckValidUntil = pCheckValidUntil;
+   else if (d->CheckValidUntil != pCheckValidUntil)
+      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Check-Valid-Until", URI.c_str(), Dist.c_str());
+   return true;
+}
+bool debReleaseIndex::SetValidUntilMin(time_t const Valid)
+{
+   if (d->ValidUntilMin == 0)
+      d->ValidUntilMin = Valid;
+   else if (d->ValidUntilMin != Valid)
+      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Min-ValidTime", URI.c_str(), Dist.c_str());
+   return true;
+}
+bool debReleaseIndex::SetValidUntilMax(time_t const Valid)
+{
+   if (d->ValidUntilMax == 0)
+      d->ValidUntilMax = Valid;
+   else if (d->ValidUntilMax != Valid)
+      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Max-ValidTime", URI.c_str(), Dist.c_str());
+   return true;
+}
+									/*}}}*/
+// ReleaseIndex::IsTrusted						/*{{{*/
 bool debReleaseIndex::IsTrusted() const
 {
    if (Trusted == TRI_YES)
@@ -601,6 +644,22 @@ static std::vector<std::string> parsePlusMinusOptions(std::string const &Name, /
 									/*}}}*/
 class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 {
+   metaIndex::TriState GetTriStateOption(std::map<std::string, std::string>const &Options, char const * const name) const
+   {
+      std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
+      if (opt != Options.end())
+	 return StringToBool(opt->second, false) ? metaIndex::TRI_YES : metaIndex::TRI_NO;
+      return metaIndex::TRI_DONTCARE;
+   }
+
+   time_t GetTimeOption(std::map<std::string, std::string>const &Options, char const * const name) const
+   {
+      std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
+      if (opt == Options.end())
+	 return 0;
+      return strtoull(opt->second.c_str(), NULL, 10);
+   }
+
    protected:
 
    bool CreateItemInternal(std::vector<metaIndex *> &List, std::string const &URI,
@@ -641,13 +700,10 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true))
 	    );
 
-      std::map<std::string, std::string>::const_iterator const trusted = Options.find("trusted");
-      if (trusted != Options.end())
-      {
-	 if (Deb->SetTrusted(StringToBool(trusted->second, false) ? debReleaseIndex::TRI_YES : debReleaseIndex::TRI_NO) == false)
-	    return false;
-      }
-      else if (Deb->SetTrusted(debReleaseIndex::TRI_DONTCARE) == false)
+      if (Deb->SetTrusted(GetTriStateOption(Options, "trusted")) == false ||
+	 Deb->SetCheckValidUntil(GetTriStateOption(Options, "check-valid-until")) == false ||
+	 Deb->SetValidUntilMax(GetTimeOption(Options, "valid-until-max")) == false ||
+	 Deb->SetValidUntilMin(GetTimeOption(Options, "valid-until-min")) == false)
 	 return false;
 
       return true;

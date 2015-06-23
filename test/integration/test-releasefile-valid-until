@@ -46,3 +46,12 @@ runtest 'accepted' 'good Min-Valid (bad Until, good Max-Valid) <' 'now - 7 days'
 runtest 'rejected' 'bad Max-Valid (bad Until, good Min-Valid) >' 'now - 7 days' 'now - 2 days' -o Acquire::Max-ValidTime=12096 -o Acquire::Min-ValidTime=2419200
 runtest 'rejected' 'bad Max-Valid (bad Until, bad Min-Valid) <' 'now - 7 days' 'now - 2 days' -o Acquire::Min-ValidTime=12096 -o Acquire::Max-ValidTime=241920
 runtest 'rejected' 'bad Max-Valid (bad Until, bad Min-Valid) >' 'now - 7 days' 'now - 2 days' -o Acquire::Max-ValidTime=12096 -o Acquire::Min-ValidTime=241920
+
+sed -i -e 's#\(deb\(-src\)\?\) #\1 [check-valid-until=no] #' rootdir/etc/apt/sources.list.d/*
+runtest 'accepted' 'bad Until but overriden by sources option' 'now - 7 days' 'now - 4 days'
+
+sed -i -e 's#\(deb\(-src\)\?\) \[check-valid-until=no\] #\1 [valid-until-max=86400] #' rootdir/etc/apt/sources.list.d/*
+runtest 'rejected' 'bad Max-Valid (good Until) via sources option' 'now - 7 days' 'now + 4 days'
+
+sed -i -e 's#\(deb\(-src\)\?\) \[valid-until-max=86400\] #\1 [valid-until-min=1209600] #' rootdir/etc/apt/sources.list.d/*
+runtest 'accepted' 'good Min-Valid (bad Until) via sources option' 'now - 7 days' 'now - 4 days'

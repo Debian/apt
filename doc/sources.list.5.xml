@@ -202,26 +202,26 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
        APT versions.
 
        <itemizedlist>
-	  <listitem><para><literal>Architectures</literal>
-		(<literal>arch</literal>) is a multivalue option defining for
+	  <listitem><para><option>Architectures</option>
+		(<option>arch</option>) is a multivalue option defining for
 		which architectures information should be downloaded. If this
 		option isn't set the default is all architectures as defined by
-		the <literal>APT::Architectures</literal> config option.
+		the <option>APT::Architectures</option> config option.
 	  </para></listitem>
 
-	  <listitem><para><literal>Languages</literal>
-		(<literal>lang</literal>) is a multivalue option defining for
+	  <listitem><para><option>Languages</option>
+		(<option>lang</option>) is a multivalue option defining for
 		which languages information like translated package
 		descriptions should be downloaded.  If this option isn't set
 		the default is all languages as defined by the
-		<literal>Acquire::Languages</literal> config option.
+		<option>Acquire::Languages</option> config option.
 	  </para></listitem>
 
-	  <listitem><para><literal>Targets</literal>
-		(<literal>target</literal>) is a multivalue option defining
+	  <listitem><para><option>Targets</option>
+		(<option>target</option>) is a multivalue option defining
 		which download targets apt will try to acquire from this
 		source. If not specified, the default set is defined by the
-		<literal>APT::Acquire::Targets</literal> configuration scope.
+		<option>APT::Acquire::Targets</option> configuration scope.
 	  </para></listitem>
        </itemizedlist>
 
@@ -232,7 +232,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
        anomalies.
 
        <itemizedlist>
-	  <listitem><para><literal>Trusted</literal> (<literal>trusted</literal>)
+	  <listitem><para><option>Trusted</option> (<option>trusted</option>)
 		is a tri-state value which defaults to APT deciding if a source
 		is considered trusted or if warnings should be raised before e.g.
 		packages are installed from this source. This option can be used
@@ -245,6 +245,41 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		as untrusted even if the authentication checks passed successfully.
 		The default value can't be set explicitly.
 	  </para></listitem>
+
+	  <listitem><para><option>Check-Valid-Until</option> (<option>check-valid-until</option>)
+		is a yes/no value which controls if APT should try to detect
+		replay attacks. A repository creator can declare until then the
+		data provided in the repository should be considered valid and
+		if this time is reached, but no new data is provided the data
+		is considered expired and an error is raised.  Beside
+		increasing security as a malicious attacker can't sent old data
+		forever denying a user to be able to upgrade to a new version,
+		this also helps users identify mirrors which are no longer
+		updated. Some repositories like historic archives aren't
+		updated anymore by design through, so this check can be
+		disabled by setting this option to <literal>no</literal>.
+		Defaults to the value of configuration option
+		<option>Acquire::Check-Valid-Until</option> which itself
+		defaults to <literal>yes</literal>.
+	  </para></listitem>
+
+	  <listitem><para><option>Valid-Until-Min</option>
+		(<option>check-valid-min</option>) and
+		<option>Valid-Until-Max</option>
+		(<option>valid-until-max</option>) can be used to raise or
+		lower the time period in seconds in which the data from this
+		repository is considered valid. -Max can be especially useful
+		if the repository provides no Valid-Until field on its Release
+		file to set your own value, while -Min can be used to increase
+		the valid time on seldomly updated (local) mirrors of a more
+		frequently updated but less accessible archive (which is in the
+		sources.list as well) instead of disabling the check entirely.
+		Default to the value of the configuration options
+		<option>Acquire::Min-ValidTime</option> and
+		<option>Acquire::Max-ValidTime</option> which are both unset by
+		default.
+	  </para></listitem>
+
        </itemizedlist>
 
     </para>

@@ -531,9 +531,13 @@
      </varlistentry>
 
      <varlistentry><term><option>--allow-unauthenticated</option></term>
-     <listitem><para>Ignore if packages can't be authenticated and don't prompt about it.
-     This is useful for tools like pbuilder.
-     Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
+     <listitem><para>Ignore if packages can't be authenticated and don't prompt
+	   about it.  This can be useful while working with local repositories,
+	   but is a huge security risk if data authenticity isn't ensured in
+	   another way by the user itself.  The usage of the
+	   <option>Trusted</option> option for &sources-list; entries should
+	   usually be preferred over this global override.  Configuration Item:
+	   <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--no-allow-insecure-repositories</option></term>

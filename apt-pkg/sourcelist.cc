@@ -103,6 +103,9 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    APT_PLUSMINUS("Targets", "target");
 #undef APT_PLUSMINUS
    mapping.insert(std::make_pair("Trusted", "trusted"));
+   mapping.insert(std::make_pair("Check-Valid-Until", "check-valid-until"));
+   mapping.insert(std::make_pair("Valid-Until-Min", "valid-until-min"));
+   mapping.insert(std::make_pair("Valid-Until-Max", "valid-until-max"));
 
    for (std::map<char const * const, char const * const>::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
       if (Tags.Exists(m->first))

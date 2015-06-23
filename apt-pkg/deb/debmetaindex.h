@@ -53,6 +53,9 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
    bool SetTrusted(TriState const Trusted);
+   bool SetCheckValidUntil(TriState const Trusted);
+   bool SetValidUntilMin(time_t const Valid);
+   bool SetValidUntilMax(time_t const Valid);
 
    virtual bool IsTrusted() const;
 

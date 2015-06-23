@@ -1041,8 +1041,8 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
       Transformed = "";
    }
 
-   if (_config->FindB("Acquire::Check-Valid-Until", true) == true &&
-       TransactionManager->MetaIndexParser->GetValidUntil() > 0) {
+   if (TransactionManager->MetaIndexParser->GetValidUntil() > 0)
+   {
       time_t const invalid_since = time(NULL) - TransactionManager->MetaIndexParser->GetValidUntil();
       if (invalid_since > 0)
       {

@@ -301,6 +301,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <literal>Valid-Until</literal> header, but if they don't or a
      stricter value is desired the <literal>Max-ValidTime</literal>
      option below can be used.
+     The <option>Check-Valid-Until</option> option of &sources-list; entries should be
+     preferred to disable the check selectively instead of using this global override.
      </para></listitem>
      </varlistentry>
 
@@ -312,7 +314,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 the earlier date of the two is used as the expiration date.
 	 The default value is <literal>0</literal> which stands for "valid forever".
 	 Archive specific settings can be made by appending the label of the archive
-	 to the option name.
+	 to the option name. Preferably, the same can be achieved for specific
+	 &sources-list; entries by using the <option>Valid-Until-Max</option> option there.
 	 </para></listitem>
      </varlistentry>
 
@@ -324,7 +327,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 frequently updated archive with a <literal>Valid-Until</literal> header
 	 instead of completely disabling the expiration date checking.
 	 Archive specific settings can and should be used by appending the label of
-	 the archive to the option name.
+	 the archive to the option name. Preferably, the same can be achieved for specific
+	 &sources-list; entries by using the <option>Valid-Until-Min</option> option there.
 	 </para></listitem>
      </varlistentry>
 
