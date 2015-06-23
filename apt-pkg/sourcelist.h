@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.12.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -52,23 +51,16 @@ class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
 
-class pkgSource
+class pkgSourceList
 {
-   protected:
-
-   std::vector<metaIndex *> SrcList;
-
-};
-
-class pkgSourceList : public pkgSource
-{
+   void *d;
    public:
-   
+
    // List of supported source list types
    class Type
    {
       public:
-      
+
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
@@ -91,13 +83,17 @@ class pkgSourceList : public pkgSource
       Type();
       virtual ~Type() {};
    };
-   
+
    typedef std::vector<metaIndex *>::const_iterator const_iterator;
-   
-   public:
+
+   protected:
+
+   std::vector<metaIndex *> SrcList;
 
    int ParseFileDeb822(std::string File);
    bool ParseFileOldStyle(std::string File);
+
+   public:
 
    bool ReadMainList();
    bool Read(std::string File);
@@ -122,7 +118,7 @@ class pkgSourceList : public pkgSource
 
    pkgSourceList();
    pkgSourceList(std::string File);
-   ~pkgSourceList();      
+   virtual ~pkgSourceList();
 };
 
 #endif

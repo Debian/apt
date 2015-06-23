@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgcachegen.h,v 1.19 2002/07/08 03:13:30 jgg Exp $
 /* ######################################################################
    
    Package Cache Generator - Generator for the cache structure.
@@ -34,7 +33,7 @@ class pkgSourceList;
 class OpProgress;
 class pkgIndexFile;
 
-class pkgCacheGenerator							/*{{{*/
+class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 {
    private:
    APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
@@ -69,7 +68,9 @@ class pkgCacheGenerator							/*{{{*/
    DynamicMMap &Map;
    pkgCache Cache;
    OpProgress *Progress;
-   
+
+   std::string RlsFileName;
+   pkgCache::ReleaseFile *CurrentRlsFile;
    std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
 
@@ -100,28 +101,31 @@ class pkgCacheGenerator							/*{{{*/
    inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};
-   bool SelectFile(const std::string &File,const std::string &Site,pkgIndexFile const &Index,
-		   unsigned long Flags = 0);
+   bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, unsigned long Flags = 0);
+   bool SelectReleaseFile(const std::string &File, const std::string &Site, unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};
    inline pkgCache::PkgFileIterator GetCurFile() 
          {return pkgCache::PkgFileIterator(Cache,CurrentFile);};
+   inline pkgCache::RlsFileIterator GetCurRlsFile() 
+         {return pkgCache::RlsFileIterator(Cache,CurrentRlsFile);};
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
    bool FinishCache(OpProgress *Progress) APT_DEPRECATED APT_CONST;
 
-   static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
+   APT_PUBLIC static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
-   static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
-   static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
+   APT_PUBLIC static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
+   APT_PUBLIC static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
 
    void ReMap(void const * const oldMap, void const * const newMap);
 
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
-   ~pkgCacheGenerator();
+   virtual ~pkgCacheGenerator();
 
    private:
+   void *d;
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
@@ -136,7 +140,7 @@ class pkgCacheGenerator							/*{{{*/
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
-class pkgCacheGenerator::ListParser
+class APT_HIDDEN pkgCacheGenerator::ListParser
 {
    pkgCacheGenerator *Owner;
    friend class pkgCacheGenerator;
@@ -147,7 +151,9 @@ class pkgCacheGenerator::ListParser
 
    // Flag file dependencies
    bool FoundFileDeps;
-      
+
+   void *d;
+
    protected:
 
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string const &S) {return Owner->StoreString(type, S);};
@@ -178,10 +184,7 @@ class pkgCacheGenerator::ListParser
     * \param Hash of the currently parsed version
     * \param Ver to compare with
     */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   virtual
-#endif
-      APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
+   virtual bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
    virtual map_filesize_t Offset() = 0;
@@ -193,8 +196,8 @@ class pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {};
-   virtual ~ListParser() {};
+   ListParser();
+   virtual ~ListParser();
 };
 									/*}}}*/
 

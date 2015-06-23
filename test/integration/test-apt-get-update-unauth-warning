@@ -9,6 +9,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture "i386"
+configcompression '.' 'gz'
 
 # a "normal" package with source and binary
 buildsimplenativepackage 'foo' 'all' '2.0'
@@ -19,25 +20,65 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 rm -f $APTARCHIVE/dists/unstable/*Release*
 
 # update without authenticated files leads to warning
-testequal "Ign file: unstable InRelease
+testfailureequal "Get:1 file:$APTARCHIVE unstable InRelease
+Ign:1 file:$APTARCHIVE unstable InRelease
   File not found
-Err file: unstable Release
+Get:2 file:$APTARCHIVE unstable Release
+Err:2 file:$APTARCHIVE unstable Release
   File not found
-W: The repository 'file: unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository.
+W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository.
 E: Use --allow-insecure-repositories to force the update" aptget update --no-allow-insecure-repositories
 
 # no package foo
-testequal "Listing..." apt list foo
-testequal "partial" ls rootdir/var/lib/apt/lists
+testsuccessequal 'Listing...' apt list foo
+testequal 'lock
+partial' ls rootdir/var/lib/apt/lists
 
+filesize() {
+	stat -c%s "$(aptget files --no-release-info --format '$(URI)' "Created-By: $1" | cut -d'/' -f 3- ).gz"
+}
 # allow override
-testequal "Ign file: unstable InRelease
+#aptget update --allow-insecure-repositories -o Debug::pkgAcquire::worker=1
+#exit
+testwarningequal "Get:1 file:$APTARCHIVE unstable InRelease
+Ign:1 file:$APTARCHIVE unstable InRelease
   File not found
-Ign file: unstable Release
+Get:2 file:$APTARCHIVE unstable Release
+Ign:2 file:$APTARCHIVE unstable Release
   File not found
+Get:3 file:$APTARCHIVE unstable/main Sources
+Ign:3 file:$APTARCHIVE unstable/main Sources
+  File not found
+Get:4 file:$APTARCHIVE unstable/main i386 Packages
+Ign:4 file:$APTARCHIVE unstable/main i386 Packages
+  File not found
+Get:5 file:$APTARCHIVE unstable/main Translation-en
+Ign:5 file:$APTARCHIVE unstable/main Translation-en
+  File not found
+Get:3 file:$APTARCHIVE unstable/main Sources
+Ign:3 file:$APTARCHIVE unstable/main Sources
+  File not found
+Get:4 file:$APTARCHIVE unstable/main i386 Packages
+Ign:4 file:$APTARCHIVE unstable/main i386 Packages
+  File not found
+Get:5 file:$APTARCHIVE unstable/main Translation-en
+Ign:5 file:$APTARCHIVE unstable/main Translation-en
+  File not found
+Get:3 file:$APTARCHIVE unstable/main Sources
+Ign:3 file:$APTARCHIVE unstable/main Sources
+  File not found
+Get:4 file:$APTARCHIVE unstable/main i386 Packages
+Ign:4 file:$APTARCHIVE unstable/main i386 Packages
+  File not found
+Get:5 file:$APTARCHIVE unstable/main Translation-en
+Ign:5 file:$APTARCHIVE unstable/main Translation-en
+  File not found
+Get:3 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
+Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages') B]
+Get:5 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
-W: The repository 'file: unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
+W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
 # ensure we can not install the package
-testequal "WARNING: The following packages cannot be authenticated!
+testfailureequal "WARNING: The following packages cannot be authenticated!
   foo
 E: There are problems and -y was used without --force-yes" aptget install -qq -y foo

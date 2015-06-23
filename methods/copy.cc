@@ -28,16 +28,16 @@
 class CopyMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
-   void CalculateHashes(FetchResult &Res);
+   void CalculateHashes(FetchItem const * const Itm, FetchResult &Res);
    
    public:
    
    CopyMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
 };
 
-void CopyMethod::CalculateHashes(FetchResult &Res)
+void CopyMethod::CalculateHashes(FetchItem const * const Itm, FetchResult &Res)
 {
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd::CompressMode CompressMode = FileFd::None;
    if (_config->FindB("Acquire::GzipIndexes", false) == true)
       CompressMode = FileFd::Extension;
@@ -65,21 +65,13 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    Res.Size = Buf.st_size;
    Res.Filename = Itm->DestFile;
    Res.LastModified = Buf.st_mtime;
-   Res.IMSHit = false;      
+   Res.IMSHit = false;
    URIStart(Res);
 
-   // when the files are identical, just compute the hashes
-   if(File == Itm->DestFile)
-   {
-      CalculateHashes(Res);
-      URIDone(Res);
-      return true;
-   }
-   
    // just calc the hashes if the source and destination are identical
    if (File == Itm->DestFile)
    {
-      CalculateHashes(Res);
+      CalculateHashes(Itm, Res);
       URIDone(Res);
       return true;
    }
@@ -112,7 +104,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    if (utimes(Res.Filename.c_str(), times) != 0)
       return _error->Errno("utimes",_("Failed to set modification time"));
 
-   CalculateHashes(Res);
+   CalculateHashes(Itm, Res);
 
    URIDone(Res);
    return true;

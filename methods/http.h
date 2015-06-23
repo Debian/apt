@@ -111,7 +111,7 @@ struct HttpServerState: public ServerState
    virtual bool Open();
    virtual bool IsOpen();
    virtual bool Close();
-   virtual bool InitHashes(FileFd &File);
+   virtual bool InitHashes(HashStringList const &ExpectedHashes);
    virtual Hashes * GetHashes();
    virtual bool Die(FileFd &File);
    virtual bool Flush(FileFd * const File);

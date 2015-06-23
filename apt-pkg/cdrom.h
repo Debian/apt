@@ -18,12 +18,13 @@ class OpProgress;
 
 class pkgCdromStatus							/*{{{*/
 {
+   void *d;
  protected:
    int totalSteps;
 
  public:
-   pkgCdromStatus() : totalSteps(0) {};
-   virtual ~pkgCdromStatus() {};
+   pkgCdromStatus();
+   virtual ~pkgCdromStatus();
 
    // total steps
    virtual void SetTotal(int total) { totalSteps = total; };
@@ -74,7 +75,12 @@ class pkgCdrom								/*{{{*/
    bool Ident(std::string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
 
+   pkgCdrom();
+   virtual ~pkgCdrom();
+
  private:
+   void *d;
+
    APT_HIDDEN bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
 	 std::string &ident, pkgCdromStatus * const log, bool const interactive);
    APT_HIDDEN bool UnmountCDROM(std::string const &CDROM, pkgCdromStatus * const log);
@@ -92,6 +98,7 @@ struct CdromDevice							/*{{{*/
 									/*}}}*/
 class pkgUdevCdromDevices						/*{{{*/
 {
+   void *d;
  protected:
    // libudev dlopen structure
    void *libudev_handle;

@@ -25,21 +25,13 @@
 #include <apt-pkg/indexfile.h>
 #endif
 
-class debRecordParser : public pkgRecords::Parser
+class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
-   
  protected:
-   FileFd File;
-   pkgTagFile Tags;
    pkgTagSection Section;
-   
-   virtual bool Jump(pkgCache::VerFileIterator const &Ver);
-   virtual bool Jump(pkgCache::DescFileIterator const &Desc);
-   
- public:
 
+ public:
    // These refer to the archive file for the Version
    virtual std::string FileName();
    virtual std::string SourcePkg();
@@ -58,20 +50,44 @@ class debRecordParser : public pkgRecords::Parser
    virtual std::string RecordField(const char *fieldName);
 
    virtual void GetRec(const char *&Start,const char *&Stop);
-   
+
+   debRecordParserBase();
+   virtual ~debRecordParserBase();
+};
+
+class APT_HIDDEN debRecordParser : public debRecordParserBase
+{
+   void *d;
+ protected:
+   FileFd File;
+   pkgTagFile Tags;
+
+   virtual bool Jump(pkgCache::VerFileIterator const &Ver);
+   virtual bool Jump(pkgCache::DescFileIterator const &Desc);
+
+ public:
    debRecordParser(std::string FileName,pkgCache &Cache);
    virtual ~debRecordParser();
 };
 
 // custom record parser that reads deb files directly
-class debDebFileRecordParser : public debRecordParser
+class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
 {
+   void *d;
+   std::string debFileName;
+   std::string controlContent;
+
+   APT_HIDDEN bool LoadContent();
+ protected:
+   // single file files, so no jumping whatsoever
+   bool Jump(pkgCache::VerFileIterator const &);
+   bool Jump(pkgCache::DescFileIterator const &);
+
  public:
-   virtual std::string FileName() {
-      return File.Name();
-   }
-   debDebFileRecordParser(std::string FileName,pkgCache &Cache)
-      : debRecordParser(FileName, Cache) {};
+   virtual std::string FileName();
+
+   debDebFileRecordParser(std::string FileName);
+   virtual ~debDebFileRecordParser();
 };
 
 #endif

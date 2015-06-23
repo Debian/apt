@@ -230,19 +230,30 @@
      </varlistentry>
 
      <varlistentry><term><option>changelog</option></term>
-       <listitem><para><literal>changelog</literal> downloads a package changelog and displays
-           it through <command>sensible-pager</command>. The server name and base
-           directory is defined in the <literal>APT::Changelogs::Server</literal>
-	   variable (e.g. <ulink url="http://packages.debian.org/changelogs">packages.debian.org/changelogs</ulink> for
-	   Debian or <ulink url="http://changelogs.ubuntu.com/changelogs">changelogs.ubuntu.com/changelogs</ulink> for
-           Ubuntu).
-           By default it displays the changelog for the version that is
-           installed.  However, you can specify the same options as for
-           the <option>install</option> command.
-         </para>
+	<listitem><para><literal>changelog</literal> tries to download the
+	      changelog of a package and displays it through
+	      <command>sensible-pager</command>.  By default it
+	      displays the changelog for the version that is installed.
+	      However, you can specify the same options as for the
+	      <option>install</option> command.</para>
        </listitem>
      </varlistentry>
 
+     <varlistentry><term><option>files</option></term>
+	<listitem><para>Displays by default a deb822 formatted listing of
+	      information about all data files <command>apt-get
+		 update</command> would download. Supports a
+	      <option>--format</option> option to modify the output format as
+	      well as accepts lines of the default output to filter the records
+	      by. The command is mainly used as an interface for external tools
+	      working with APT to get information as well as filenames for
+	      downloaded files so they can use them as well instead of
+	      downloading them again on their own. Detailed documentation is
+	      omitted here and can instead be found in the source tree in
+	      <literal><filename>doc/acquire-additional-files.txt</filename></literal>.
+	   </para>
+	</listitem>
+     </varlistentry>
 
 
    </variablelist>

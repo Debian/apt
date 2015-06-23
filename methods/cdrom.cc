@@ -260,13 +260,14 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(Res.Filename.c_str(),&Buf) != 0)
       return _error->Error(_("File not found"));
-   
+
+   URIStart(Res);
    if (NewID.empty() == false)
       CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;
    Res.Size = Buf.st_size;
 
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);

@@ -48,32 +48,42 @@ static bool DoDownloadFile(CommandLine &CmdL)
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
-   std::string download_uri = CmdL.FileList[1];
-   std::string targetfile = CmdL.FileList[2];
-   std::string hash;
-   if (CmdL.FileSize() > 3)
-      hash = CmdL.FileList[3];
-   // we use download_uri as descr and targetfile as short-descr
-   new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile, 
-                  "dest-dir-ignored", targetfile);
+   size_t fileind = 0;
+   std::vector<std::string> targetfiles;
+   while (fileind + 2 <= CmdL.FileSize())
+   {
+      std::string download_uri = CmdL.FileList[fileind + 1];
+      std::string targetfile = CmdL.FileList[fileind + 2];
+      std::string hash;
+      if (CmdL.FileSize() > fileind + 3)
+	 hash = CmdL.FileList[fileind + 3];
+      // we use download_uri as descr and targetfile as short-descr
+      new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile,
+	    "dest-dir-ignored", targetfile);
+      targetfiles.push_back(targetfile);
+      fileind += 3;
+   }
 
    // Disable drop-privs if "_apt" can not write to the target dir
    CheckDropPrivsMustBeDisabled(Fetcher);
 
    bool Failed = false;
-   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true ||
-	 FileExists(targetfile) == false)
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
       return _error->Error(_("Download Failed"));
+   if (targetfiles.empty() == false)
+      for (std::vector<std::string>::const_iterator f = targetfiles.begin(); f != targetfiles.end(); ++f)
+	 if (FileExists(*f) == false)
+	    return _error->Error(_("Download Failed"));
+
    return true;
 }
 
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    if (_config->FindB("version") == true)
      return true;
@@ -108,25 +118,8 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(),_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      if (_config->FindB("version") == true)
-	 ShowHelp(CmdL);
-      _error->DumpErrors();
-      return 100;
-   }
-
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
    InitOutput();
 

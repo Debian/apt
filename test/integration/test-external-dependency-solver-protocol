@@ -12,7 +12,10 @@ insertinstalledpackage 'stuff' 'all' '1'
 insertpackage 'unstable' 'cool' 'all' '2' 'Multi-Arch: foreign'
 insertpackage 'unstable' 'stuff' 'all' '2' 'Multi-Arch: foreign'
 insertpackage 'unstable' 'coolstuff' 'i386,amd64' '2' 'Depends: cool, stuff'
-insertpackage 'unstable' 'awesome' 'all' '2' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'awesome' 'all' '2' 'Multi-Arch: foreign
+Conflicts: badstuff'
+insertpackage 'unstable' 'badstuff' 'all' '2' 'Multi-Arch: foreign
+Conflicts: awesome'
 insertpackage 'unstable' 'awesomecoolstuff' 'i386' '2' 'Depends: coolstuff, awesome'
 
 insertpackage 'experimental' 'cool' 'all' '3' 'Multi-Arch: foreign'
@@ -22,7 +25,7 @@ insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
 setupaptarchive
 
 rm -f /tmp/dump.edsp
-testequal 'Reading package lists...
+testfailureequal 'Reading package lists...
 Building dependency tree...
 Execute external solver...
 The solver encountered an error of type: ERR_JUST_DUMPING
@@ -35,7 +38,7 @@ testsuccess test -s /tmp/dump.edsp
 rm -f /tmp/dump.edsp
 
 #FIXME: this should be unstable, but we don't support pinning yet
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 Execute external solver...
 The following NEW packages will be installed:
@@ -43,6 +46,14 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
 Inst coolstuff (3 experimental [amd64])
 Conf coolstuff (3 experimental [amd64])' aptget install --solver apt coolstuff -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Execute external solver...
+The following packages will be REMOVED:
+  cool*
+0 upgraded, 0 newly installed, 1 to remove and 1 not upgraded.
+Purg cool [1]' aptget purge --solver apt cool -s
 
 testsuccess aptget install awesomecoolstuff:i386 -s
 testsuccess aptget install --solver apt awesomecoolstuff:i386 -s
@@ -57,9 +68,13 @@ testsuccess aptget dist-upgrade -s --solver apt
 testsuccess aptget upgrade -s
 testsuccess aptget upgrade -s --solver apt
 
+testfailure aptget install awesome badstuff -s
+testfailure aptget install awesome badstuff -s --solver apt
+testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
+
 configarchitecture 'armel'
 msgtest 'Test direct calling is okay for' 'apt-internal-solver'
-cat /tmp/dump.edsp | aptinternalsolver > solver.result 2>&1 || true
+cat /tmp/dump.edsp | aptinternalsolver -q=0 > solver.result 2>&1 || true
 if [ "$(tail -n2 solver.result | head -n1 )" = "Message: Done" ]; then
 	msgpass
 else
@@ -69,3 +84,16 @@ fi
 rm -f /tmp/dump.edsp
 
 testfailure aptget install --solver apt awesomecoolstuff:i386 -s
+
+testsuccess aptinternalsolver scenario
+testsuccessequal 'Package: stuff
+Source: stuff
+Architecture: all
+Version: 1
+Installed: yes
+APT-ID: 2
+Priority: optional
+Section: other
+APT-Pin: 100
+APT-Candidate: yes
+' aptinternalsolver scenario stuff

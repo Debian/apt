@@ -38,7 +38,7 @@ using std::string;
 
 debSystem debSys;
 
-class debSystemPrivate {
+class APT_HIDDEN debSystemPrivate {
 public:
    debSystemPrivate() : LockFD(-1), LockCount(0), StatusFile(0)
    {

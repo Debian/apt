@@ -2,12 +2,17 @@
 #include <config.h>
 
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/error.h>
 
 #include <apt-private/private-cmndline.h>
 
 #include <vector>
 #include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -158,6 +163,11 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       // once sbuild is fixed, this option can be removed
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
    }
+   else if (CmdMatches("files"))
+   {
+      addArg(0,"format","APT::Get::Files::Format", CommandLine::HasArg);
+      addArg(0,"release-info","APT::Get::Files::ReleaseInfo", 0);
+   }
    else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
       ;
@@ -165,7 +175,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "color", "APT::Moo::Color", 0);
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "deselect-upgrade", "autoremove", "clean", "autoclean", "check",
+	    "dselect-upgrade", "autoremove", "clean", "autoclean", "check",
 	    "build-dep", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
@@ -287,3 +297,31 @@ std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char c
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
+void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, CommandLine::Args * const Args,/*{{{*/
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
+{
+   CmdL = CommandLine(Args,_config);
+   if ((Cnf != NULL && pkgInitConfig(**Cnf) == false) ||
+       CmdL.Parse(argc,argv) == false ||
+       (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
+   {
+      if (_config->FindB("version") == true)
+	 ShowHelp(CmdL);
+
+      _error->DumpErrors();
+      exit(100);
+   }
+
+   // See if the help should be shown
+   if (_config->FindB("help") == true || _config->FindB("version") == true)
+   {
+      ShowHelp(CmdL);
+      exit(0);
+   }
+   if (Cmds != NULL && CmdL.FileSize() == 0)
+   {
+      ShowHelp(CmdL);
+      exit(1);
+   }
+}
+									/*}}}*/

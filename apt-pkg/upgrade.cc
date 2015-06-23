@@ -24,7 +24,7 @@
    
    The problem resolver is used to resolve the problems.
  */
-bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
+static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal")
@@ -119,6 +119,10 @@ bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
    if (Progress != NULL)
       Progress->Done();
    return success;
+}
+bool pkgDistUpgrade(pkgDepCache &Cache)
+{
+   return pkgDistUpgrade(Cache, NULL);
 }
 									/*}}}*/
 // AllUpgradeNoNewPackages - Upgrade but no removals or new pkgs        /*{{{*/
@@ -229,9 +233,13 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
 /* Right now the system must be consistent before this can be called.
    It also will not change packages marked for install, it only tries
    to install packages not marked for install */
-bool pkgAllUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
+static bool pkgAllUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
 {
    return pkgAllUpgradeNoNewPackages(Cache, Progress);
+}
+bool pkgAllUpgrade(pkgDepCache &Cache)
+{
+   return pkgAllUpgrade(Cache, NULL);
 }
 									/*}}}*/
 // MinimizeUpgrade - Minimizes the set of packages to be upgraded	/*{{{*/
@@ -280,13 +288,15 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 }
 									/*}}}*/
 // APT::Upgrade::Upgrade - Upgrade using a specific strategy		/*{{{*/
+#if APT_PKG_ABI < 413
+bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode)
+{
+   return Upgrade(Cache, mode, NULL);
+}
+#endif
 bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Progress)
 {
-#if __GNUC__ >= 4
-	// the deprecated methods will become our privates, so that is fine
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    if (mode == ALLOW_EVERYTHING)
       return pkgDistUpgrade(Cache, Progress);
    else if ((mode & ~FORBID_REMOVE_PACKAGES) == 0)
@@ -295,9 +305,7 @@ bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Prog
       return pkgAllUpgradeNoNewPackages(Cache, Progress);
    else
       _error->Error("pkgAllUpgrade called with unsupported mode %i", mode);
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
    return false;
 }
 									/*}}}*/

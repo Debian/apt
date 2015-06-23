@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.h,v 1.6 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -93,7 +92,9 @@ class pkgSystem
    };
    
    pkgSystem();
-   virtual ~pkgSystem() {};
+   virtual ~pkgSystem();
+   private:
+   void *d;
 };
 
 // The environment we are operating in.

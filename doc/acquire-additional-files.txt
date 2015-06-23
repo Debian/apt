@@ -1,0 +1,229 @@
+# Acquire additional files in 'update' operations
+
+The download and verification of data from multiple sources in different
+compression formats, with partial downloads and patches is an involved
+process which is hard to implement correctly and securely.
+
+APT frontends share the code and binaries to make this happen in libapt
+with the Acquire system, supported by helpers shipped in the apt package
+itself and additional transports in individual packages like
+apt-transport-https.
+
+For its own operation libapt needs or can make use of Packages, Sources
+and Translation-* files, which it will acquire by default, but
+a repository might contain more data files (e.g.  Contents) a frontend
+might want to use and would therefore need to be downloaded as well
+(e.g. apt-file).
+
+This file describes the configuration scheme such a frontend can use to
+instruct the Acquire system to download those additional files.
+
+# The Configuration Stanza
+
+The Acquire system uses the same configuration settings to implement the
+files it downloads by default. These settings are the default, but if
+they would be written in a configuration file the configuration
+instructing the Acquire system to download the Packages files would look
+like this (see also apt.conf(5) manpage for configuration file syntax):
+
+	APT::Acquire::Targets::deb::Packages {
+		MetaKey "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages";
+		ShortDescription "Packages";
+		Description "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages";
+
+		flatMetaKey "Packages";
+		flatDescription "$(SITE) $(RELEASE) Packages";
+
+		Optional "false";
+	};
+
+All files which should be downloaded (nicknamed 'Targets') are mentioned
+below the APT::Acquire::Targets scope. 'deb' is here the type of the
+sources.list entry the file should be acquired for. The only other
+supported value is hence 'deb-src'. Beware: You can't specify multiple
+types here and you can't download the same (evaluated) MetaKey from
+multiple types!
+
+After the type you can pick any valid and unique string which preferable
+refers to the file it downloads (In the example we picked 'Packages').
+This string is used as identifier for the target class and accessible as
+'Created-By' e.g. in the "apt-get files" output as detailed below.
+
+All targets have three main properties you can define:
+* MetaKey: The identifier of the file to be downloaded as used in the
+  Release file.  It is also the relative location of the file from the
+  Release file.  You can neither download from a different server
+  entirely (absolute URI) nor access directories above the Release file
+  (e.g. "../../").
+* ShortDescription: Very short string intended to be displayed to the
+  user e.g.  while reporting progress. apt will e.g. use this string in
+  the last line to indicate progress of e.g. the download of a specific
+  item.
+* Description: A preferable human understandable and readable identifier
+  of which file is acquired exactly. Mainly used for progress reporting
+  and error messages. apt will e.g. use this string in the Get/Hit/Err
+  progress lines.
+
+Additional optional properties:
+* flat{MetaKey,Description}: APT supports two types of repositories:
+  dists-style repositories which are the default and by far the most
+  common which are named after the fact that the files are in an
+  elaborated directory structure.  In contrast a flat-style repositories
+  lumps all files together in one directory.  Support for these flat
+  repositories exists mainly for legacy purposes only.  It is therefore
+  recommend to not set these values.
+* Optional: The default value is 'true' and should be kept at this
+  value.  If enabled the acquire system will skip the download if the
+  file isn't mentioned in the Release file. Otherwise this is treated as
+  a hard error and the update process fails. Note that failures while
+  downloading (e.g. 404 or hash verification errors) are failures,
+  regardless of this setting.
+
+
+The acquire system will automatically choose to download a compressed
+file if it is available and uncompress it for you, just as it will also
+use pdiff patching if provided by the repository and enabled by the
+user. You only have to ensure that the Release file contains the
+information about the compressed files/pdiffs to make this happen.
+NO properties have to be set to enable this.
+
+# More examples
+
+The stanzas for Translation-* files as well as for Sources files would
+look like this:
+
+APT::Acquire::Targets {
+	deb::Translations {
+		MetaKey "$(COMPONENT)/i18n/Translation-$(LANGUAGE)";
+		ShortDescription "Translation-$(LANGUAGE)";
+		Description "$(SITE) $(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)";
+
+		flatMetaKey "$(LANGUAGE)";
+		flatDescription "$(SITE) $(RELEASE) Translation-$(LANGUAGE)";
+	};
+
+	deb-src::Sources {
+		MetaKey "$(COMPONENT)/source/Sources";
+		ShortDescription "Sources";
+		Description "$(SITE) $(RELEASE)/$(COMPONENT) Sources";
+
+		flatMetaKey "Sources";
+		flatDescription "$(SITE) $(RELEASE) Sources";
+
+		Optional "false";
+	};
+};
+
+# Substitution variables
+
+As seen in the examples, properties can contain placeholders filled in
+by the acquire system. The following variables are known; note that
+unknown variables have no default value nor are they touched: They are
+printed as-is.
+
+* $(SITE): An identifier of the site we access as seen in sources.list,
+  e.g. "http://example.org/debian" or "file:/path/to/a/repository". You
+  can't use this field in {,flat}MetaKey, it is for description proposes
+  only.
+* $(RELEASE): This is usually an archive- or codename, e.g. "stable" or
+  "stretch".  Note that flat-style repositories do not have a archive-
+  or codename per-se, so the value might very well be just "/" or so.
+  Again, as seen in the sources.list.
+* $(COMPONENT): as given in the sources.list, e.g. "main", "non-free" or
+  "universe".  Note that flat-style repositories again do not really
+  have a meaningful value here.
+* $(LANGUAGE): Values are all entries (expect "none") of configuration
+  option Acquire::Languages, e.g. "en", "de" or "de_AT".
+* $(ARCHITECTURE): Values are all entries of configuration option
+  APT::Architectures (potentially modified by sources.list options),
+  e.g. "amd64", "i386" or "armel" for the 'deb' type. In type 'deb-src'
+  this variable has the value "source".
+
+Note that while more variables might exist in the implementation, these
+are to be considered undefined and their usage strongly discouraged. If
+you have a need for other variables contact us.
+
+# Accessing files
+
+Do NOT hardcode specific file locations, names or compression types in
+your application! You will notice that the configuration options give
+you no choice over where the downloaded files will be stored. This is by
+design so multiple applications can download and use the same file
+rather than each and every one of them potentially downloads and uses
+its own copy somewhere on disk.
+
+"apt-get files" can be used to get the location as well as other
+information about all files downloaded (aka: you will see Packages,
+Sources and Translation-* files here as well). Provide a line of the
+default output format as parameter to filter out all entries which do
+not have such a line. With --format, you can further more define your
+own output style. The variables are what you see in the output, just all
+uppercase and wrapped in $(), as in the configuration file.
+
+To get all the filenames of all Translation-en files you can e.g. call:
+	apt-get files --format '$(FILENAME)' "Created-By: Translations" "Language: en"
+
+Accessing this information via libapt is done by reading the
+sources.lists (pkgSourceList), iterating over the metaIndex objects this
+creates and calling GetIndexTargets() on them. See the sourcecode of
+"apt-get files" for a complete example.
+
+Note that by default targets are not listed if they weren't downloaded.
+If you want to see all targets, you can use the --no-release-info, which
+also removes the Codename, Suite, Version, Origin, Label and Trusted
+fields from the output as these also display data which needs to be
+downloaded first and could hence be inaccurate [on the pro-side: This
+mode is faster as it doesn't require a valid binary cache to operate].
+The most notable difference perhaps is in the Filename field through: By
+default it indicates an existing file, potentially compressed (Hint:
+libapt users can use FileFd to open compressed files transparently). In
+the --no-release-info mode the indicated file doesn't need to exist and
+it will always refer to an uncompressed file, even if the index would be
+(or is) stored compressed.
+
+Remarks on fields only available in (default) --release-info mode:
+* Trusted: Denotes with a 'yes' or 'no' if the data in this file is
+  authenticated by a trustchain rooted in a trusted gpg key. You should
+  be careful with untrusted data and warn the user if you use it.
+* Codename, Suite, Version, Origin and Label are fields from the Release
+  file, are only present if they are present in the Release file and
+  contain the same data.
+
+Remarks on other available fields:
+* MetaKey, ShortDesc, Description, Site, Release: as defined
+  by the configuration and described further above.
+* Created-By: configuration entity responsible for this target
+* Target-Of: type of the sources.list entry
+* URI, Repo-URI: avoid using. Contains potentially username/password.
+  Prefer 'Site', especially for display.
+* Optional: Decodes the option of the same name from the configuration.
+  Note that it is using 'yes' and 'no' instead of 'true' and 'false'.
+* Language, Architecture, Component: as defined further above, but with
+  the catch that they might be missing if they don't effect the target
+  (aka: They weren't used while evaluating the MetaKey template).
+
+Again, additional fields might be visible in certain implementations,
+but you should avoid using them and instead talk to us about a portable
+implementation.
+
+# Multiple application requiring the same files
+
+It is highly encouraged that applications talk to each other and to us
+about which files they require. It is usually best to have a common
+package ship the configuration needed to get the files, but specific
+needs might require specific solutions. Again: talk to us.
+
+# Acquiring files not mentioned in the Release file
+
+You can't. This is by design as these files couldn't be verified to not
+be modified in transit, corrupted by the download process or simple if
+they are present at all on the server, which would require apt to probe
+for them. APT did this in the past for legacy reasons, we do not intend
+to go back to these dark times.
+
+This is also why you can't request files from a different server. It
+would have the additional problem that this server might not even be
+accessible (e.g. proxy settings) or that local sources (file:/, cdrom:/)
+start requesting online files…
+
+In other words: We would be opening Pandora's box.

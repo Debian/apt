@@ -20,8 +20,10 @@ class pkgAcquire;
 class pkgIndexFile;
 class debDebPkgFileIndex;
 class IndexTarget;
+class pkgCacheGenerator;
+class OpProgress;
 
-class debReleaseIndex : public metaIndex {
+class APT_HIDDEN debReleaseIndex : public metaIndex {
    public:
 
    class debSectionEntry
@@ -46,23 +48,21 @@ class debReleaseIndex : public metaIndex {
 
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
-   std::vector <IndexTarget *>* ComputeIndexTargets() const;
-   std::string Info(const char *Type, std::string const &Section, std::string const &Arch="") const;
+   virtual std::vector<IndexTarget> GetIndexTargets() const;
+
+   virtual std::string Describe() const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;
    std::string MetaIndexURI(const char *Type) const;
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   virtual std::string LocalFileName() const;
+#if APT_PKG_ABI >= 413
+   virtual
 #endif
+   std::string LocalFileName() const;
 
-   std::string IndexURI(const char *Type, std::string const &Section, std::string const &Arch="native") const;
-   std::string IndexURISuffix(const char *Type, std::string const &Section, std::string const &Arch="native") const;
-   std::string SourceIndexURI(const char *Type, const std::string &Section) const;
-   std::string SourceIndexURISuffix(const char *Type, const std::string &Section) const;
-   std::string TranslationIndexURI(const char *Type, const std::string &Section) const;
-   std::string TranslationIndexURISuffix(const char *Type, const std::string &Section) const;
    virtual std::vector <pkgIndexFile *> *GetIndexFiles();
 
    void SetTrusted(bool const Trusted);
@@ -70,12 +70,12 @@ class debReleaseIndex : public metaIndex {
 
    void PushSectionEntry(std::vector<std::string> const &Archs, const debSectionEntry *Entry);
    void PushSectionEntry(std::string const &Arch, const debSectionEntry *Entry);
-   void PushSectionEntry(const debSectionEntry *Entry);
 };
 
-class debDebFileMetaIndex : public metaIndex
+class APT_HIDDEN debDebFileMetaIndex : public metaIndex
 {
  private:
+    void *d;
    std::string DebFile;
    debDebPkgFileIndex *DebIndex;
  public:
@@ -85,6 +85,9 @@ class debDebFileMetaIndex : public metaIndex
    virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) const {
       return true;
    }
+   virtual std::vector<IndexTarget> GetIndexTargets() const {
+      return std::vector<IndexTarget>();
+   }
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() {
       return Indexes;
    }
@@ -92,7 +95,7 @@ class debDebFileMetaIndex : public metaIndex
       return true;
    }
    debDebFileMetaIndex(std::string const &DebFile);
-   virtual ~debDebFileMetaIndex() {};
+   virtual ~debDebFileMetaIndex();
 
 };
 

@@ -38,8 +38,8 @@ bool DoUpdate(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
 
    // Create the progress
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
-      
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {

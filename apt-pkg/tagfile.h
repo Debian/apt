@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.20 2003/05/19 17:13:57 doogie Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -33,35 +32,34 @@
 #endif
 
 class FileFd;
+class pkgTagSectionPrivate;
 
 class pkgTagSection
 {
    const char *Section;
-   struct TagData {
-      unsigned int StartTag;
-      unsigned int EndTag;
-      unsigned int StartValue;
-      unsigned int NextInBucket;
+   // We have a limit of 256 tags per section with the old abi
+#if APT_PKG_ABI < 413
+   APT_DEPRECATED unsigned int Indexes[256];
+#endif
+   unsigned int AlphaIndexes[0x100];
+#if APT_PKG_ABI < 413
+   APT_DEPRECATED unsigned int TagCount;
+#endif
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
-   };
-   std::vector<TagData> Tags;
-   unsigned int LookupTable[0x100];
-
-   // dpointer placeholder (for later in case we need it)
-   void *d;
+   pkgTagSectionPrivate *d;
 
    protected:
    const char *Stop;
 
    public:
-   
+
    inline bool operator ==(const pkgTagSection &rhs) {return Section == rhs.Section;};
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
-   
+
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned int &Pos) const;
    std::string FindS(const char *Tag) const;
+   std::string FindRawS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const;
    bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
@@ -86,7 +84,13 @@ class pkgTagSection
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!
     */
+#if APT_PKG_ABI >= 413
    APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
+#else
+   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart);
+   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength);
+#endif
+
    inline unsigned long size() const {return Stop - Section;};
    void Trim();
    virtual void TrimRecord(bool BeforeRecord, const char* &End);
@@ -97,19 +101,45 @@ class pkgTagSection
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
+#if APT_PKG_ABI >= 413
    bool Exists(const char* const Tag) const;
+#else
+   bool Exists(const char* const Tag);
+#endif
 
-   inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
-                   {Start = Section + Tags[I].StartTag; Stop = Section + Tags[I+1].StartTag;}
+   void Get(const char *&Start,const char *&Stop,unsigned int I) const;
 
    inline void GetSection(const char *&Start,const char *&Stop) const
    {
       Start = Section;
       Stop = this->Stop;
    };
-   
+
    pkgTagSection();
    virtual ~pkgTagSection();
+
+   struct Tag
+   {
+      enum ActionType { REMOVE, RENAME, REWRITE } Action;
+      std::string Name;
+      std::string Data;
+
+      static Tag Remove(std::string const &Name);
+      static Tag Rename(std::string const &OldName, std::string const &NewName);
+      static Tag Rewrite(std::string const &Name, std::string const &Data);
+      private:
+      Tag(ActionType const Action, std::string const &Name, std::string const &Data) :
+	 Action(Action), Name(Name), Data(Data) {}
+   };
+
+   /** Write this section (with optional rewrites) to a file
+    *
+    * @param File to write the section to
+    * @param Order in which tags should appear in the file
+    * @param Rewrite is a set of tags to be renamed, rewitten and/or removed
+    * @return \b true if successful, otherwise \b false
+    */
+   bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
 };
 
 class pkgTagFilePrivate;
@@ -133,20 +163,19 @@ class pkgTagFile
    virtual ~pkgTagFile();
 };
 
-/* This is the list of things to rewrite. The rewriter
-   goes through and changes or adds each of these headers
-   to suit. A zero forces the header to be erased, an empty string
-   causes the old value to be used. (rewrite rule ignored) */
-struct TFRewriteData
+extern const char **TFRewritePackageOrder;
+extern const char **TFRewriteSourceOrder;
+
+// Use pkgTagSection::Tag and pkgTagSection::Write() instead
+APT_IGNORE_DEPRECATED_PUSH
+struct APT_DEPRECATED TFRewriteData
 {
    const char *Tag;
    const char *Rewrite;
    const char *NewTag;
 };
-extern const char **TFRewritePackageOrder;
-extern const char **TFRewriteSourceOrder;
-
-bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
+APT_DEPRECATED bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite);
+APT_IGNORE_DEPRECATED_POP
 
 #endif

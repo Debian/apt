@@ -17,7 +17,7 @@ configarchitecture "amd64"
 
 if [ ! -x ${BUILDDIRECTORY}/apt ]; then
     msgmsg "No ${BUILDDIRECTORY}/apt"
-    msgskip 
+    msgskip
     exit 0
 fi
 
@@ -33,9 +33,9 @@ cp $APTARCHIVE/dists/unstable/main/binary-amd64/Packages \
 
 # ensure that there is no Version for the package foo generated out of
 # the corrupted Translation-en file
-testequal "foo:
+testsuccessequal "foo:
   Installed: (none)
   Candidate: 1.0
   Version table:
      1.0 0
-        500 file:$APTARCHIVE/ unstable/main amd64 Packages" aptcache policy foo
+        500 file:$APTARCHIVE unstable/main amd64 Packages" aptcache policy foo

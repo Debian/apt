@@ -10,35 +10,68 @@ configarchitecture "i386"
 insertpackage 'unstable' 'apt' 'all' '1.0'
 
 setupaptarchive --no-update
+cp -a aptarchive/dists aptarchive/dists.good
+
+test_inreleasetoobig() {
+	# make InRelease really big to trigger fallback
+	dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2 2>/dev/null
+	touch -d '+1hour' aptarchive/dists/unstable/InRelease
+	testsuccess aptget update -o Apt::Get::List-Cleanup=0  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0
+	msgtest 'Check that the max write warning is triggered'
+	cp rootdir/tmp/testsuccess.output update.output
+	testsuccess --nomsg grep -q 'Writing more data than expected' update.output
+	rm -f update.output
+	# ensure the failed InRelease file got renamed
+	testsuccess ls rootdir/var/lib/apt/lists/partial/*InRelease.FAILED
+}
+
+test_packagestoobig() {
+	insertpackage 'unstable' 'foo' 'all' '1.0'
+	buildaptarchivefromfiles '+1 hour'
+	signreleasefiles
+	# append junk at the end of the Packages.gz/Packages
+	SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
+	find aptarchive/dists -name 'Packages*' | while read pkg; do
+		echo "1234567890" >> "$pkg"
+		touch -d '+1hour' "$pkg"
+	done
+	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
+	testfailuremsg "W: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
+}
+
+methodtest() {
+	# less complicated test setup this way
+	webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
+	webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
+
+	msgmsg 'Test with' "$1" 'and clean start'
+	rm -rf rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
+	# normal update works fine
+	testsuccess aptget update
+	mv rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
+
+	# starting fresh works
+	test_inreleasetoobig "$1"
+	rm -rf aptarchive/dists rootdir/var/lib/apt/lists
+	cp -a aptarchive/dists.good aptarchive/dists
+	test_packagestoobig "$1"
+	rm -rf aptarchive/dists rootdir/var/lib/apt/lists
+	cp -a aptarchive/dists.good aptarchive/dists
+
+	msgmsg 'Test with' "$1" 'and existing old data'
+	cp -a rootdir/var/lib/apt/lists.good rootdir/var/lib/apt/lists
+	test_inreleasetoobig "$1"
+	rm -rf aptarchive/dists rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists.good rootdir/var/lib/apt/lists
+	cp -a aptarchive/dists.good aptarchive/dists
+	test_packagestoobig "$1"
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
+}
+
 changetowebserver
+methodtest 'http://localhost:8080'
 
-# normal update works fine
-testsuccess aptget update
-
-# make InRelease really big to trigger fallback
-mv aptarchive/dists/unstable/InRelease aptarchive/dists/unstable/InRelease.good
-dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2 2>/dev/null
-touch -d '+1hour' aptarchive/dists/unstable/InRelease
-testsuccess aptget update -o Apt::Get::List-Cleanup=0  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0
-msgtest 'Check that the max write warning is triggered'
-if grep -q "Writing more data than expected" rootdir/tmp/testsuccess.output; then
-    msgpass
-else
-    cat rootdir/tmp/testsuccess.output
-    msgfail
-fi
-# ensure the failed InRelease file got renamed
-testsuccess ls rootdir/var/lib/apt/lists/partial/*InRelease.FAILED
-mv aptarchive/dists/unstable/InRelease.good aptarchive/dists/unstable/InRelease
-
-
-# append junk at the end of the Packages.gz/Packages
-SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
-find aptarchive -name 'Packages*' | while read pkg; do
-	echo "1234567890" >> "$pkg"
-done
-NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
-rm -f rootdir/var/lib/apt/lists/localhost*
-testequal "W: Failed to fetch http://localhost:8080/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
-
-E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+changetohttpswebserver
+methodtest 'https://localhost:4433'

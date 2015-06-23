@@ -34,8 +34,16 @@ struct ServerState
    char Code[360];
 
    // These are some statistics from the last parsed header lines
-   unsigned long long Size;
+
+   // total size of the usable content (aka: the file)
+   unsigned long long TotalFileSize;
+   // size we actually download (can be smaller than Size if we have partial content)
+   unsigned long long DownloadSize;
+   // size of junk content (aka: server error pages)
+   unsigned long long JunkSize;
+   // The start of the data (for partial content)
    unsigned long long StartPos;
+
    time_t Date;
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
@@ -71,9 +79,10 @@ struct ServerState
    };
    /** \brief Get the headers before the data */
    RunHeadersResult RunHeaders(FileFd * const File, const std::string &Uri);
+   bool AddPartialFileToHashes(FileFd &File);
 
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
-   virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
+   virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; TotalFileSize = 0; JunkSize = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
 		 State = Header; Persistent = false; Pipeline = true; MaximumSize = 0;};
    virtual bool WriteResponse(std::string const &Data) = 0;
@@ -84,7 +93,7 @@ struct ServerState
    virtual bool Open() = 0;
    virtual bool IsOpen() = 0;
    virtual bool Close() = 0;
-   virtual bool InitHashes(FileFd &File) = 0;
+   virtual bool InitHashes(HashStringList const &ExpectedHashes) = 0;
    virtual Hashes * GetHashes() = 0;
    virtual bool Die(FileFd &File) = 0;
    virtual bool Flush(FileFd * const File) = 0;

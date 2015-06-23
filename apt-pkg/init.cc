@@ -89,7 +89,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
    // Repository security
-   // FIXME: this is set to "true" for backward compatiblity, once
+   // FIXME: this is set to "true" for backward compatibility, once
    //        jessie is out we want to change this to "false" to
    //        improve security
    Cnf.CndSet("Acquire::AllowInsecureRepositories", true);
@@ -101,8 +101,30 @@ bool pkgInitConfig(Configuration &Cnf)
    // The default user we drop to in the methods
    Cnf.CndSet("APT::Sandbox::User", "_apt");
 
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::MetaKey", "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::flatMetaKey", "Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::ShortDescription", "Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::Description", "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::flatDescription", "$(SITE) $(RELEASE) Packages");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Packages::Optional", false);
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::MetaKey", "$(COMPONENT)/i18n/Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::flatMetaKey", "$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::ShortDescription", "Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::Description", "$(SITE) $(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb::Translations::flatDescription", "$(SITE) $(RELEASE) Translation-$(LANGUAGE)");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::MetaKey", "$(COMPONENT)/source/Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::flatMetaKey", "Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::ShortDescription", "Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::Description", "$(SITE) $(RELEASE)/$(COMPONENT) Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::flatDescription", "$(SITE) $(RELEASE) Sources");
+   Cnf.CndSet("APT::Acquire::Targets::deb-src::Sources::Optional", false);
+
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "http://metadata.ftp-master.debian.org/changelogs/CHANGEPATH_changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "http://changelogs.ubuntu.com/changelogs/pool/CHANGEPATH/changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/CHANGEPATH/changelog.txt");
+
    bool Res = true;
-   
+
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
    if (Cfg != 0 && strlen(Cfg) != 0)

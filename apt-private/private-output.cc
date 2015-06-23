@@ -52,14 +52,14 @@ static void SigWinch(int)
 #endif
 }
 									/*}}}*/
-bool InitOutput()							/*{{{*/
+bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
 {
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
-   c0out.rdbuf(cout.rdbuf());
-   c1out.rdbuf(cout.rdbuf());
-   c2out.rdbuf(cout.rdbuf());
+   c0out.rdbuf(out);
+   c1out.rdbuf(out);
+   c2out.rdbuf(out);
    if (_config->FindI("quiet",0) > 0)
       c0out.rdbuf(devnull.rdbuf());
    if (_config->FindI("quiet",0) > 1)

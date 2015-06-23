@@ -17,78 +17,66 @@ testequalpolicy() {
 	local SP="$1"
 	local AP="$2"
 	shift 2
-	testequal "Package files:
+	testsuccessequal "Package files:
  $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
      release a=now
- $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/  Packages
+ $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}  Packages
      release c=
-Pinned packages:" aptcache policy $*
+Pinned packages:" aptcache policy "$@"
 }
 
+testglobalpolicy() {
+	aptgetupdate
+
+	testequalpolicy 100 500
+	testequalpolicy 990 500 -t now
+
+	sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
+	aptgetupdate
+
+	testequalpolicy 100 1 -o Test=NotAutomatic
+	testequalpolicy 990 1 -o Test=NotAutomatic -t now
+
+	sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
+	aptgetupdate
+
+	testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
+	testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
+
+	sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
+	aptgetupdate
+
+	testequalpolicy 100 500 -o Test=Automatic
+	testequalpolicy 990 500 -o Test=Automatic -t now
+
+	sed -i aptarchive/Release -e '/NotAutomatic: / d' -e '/ButAutomaticUpgrades: / d'
+}
+
+msgmsg 'Test with not signed archive'
 aptgetupdate() {
-	# just to be sure that no old files are used
 	rm -rf rootdir/var/lib/apt
-	if aptget update  --allow-insecure-repositories -qq 2>&1 | grep '^E: '; then
-		msgwarn 'apt-get update failed with an error'
-	fi
+	testwarning aptget update  --allow-insecure-repositories
 }
+testglobalpolicy
 
-### not signed archive
+msgmsg 'Test with signed but no key in trusted'
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt
+	signreleasefiles 'Marvin Paranoid'
+	testwarning aptget update  --allow-insecure-repositories
+}
+testglobalpolicy
 
-aptgetupdate
+# much the same tests will be executed below in more detail again for this one
+msgmsg 'Test with signed and valid key'
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt
+	signreleasefiles 'Joe Sixpack'
+	testsuccess aptget update
+}
+testglobalpolicy
 
-testequalpolicy 100 500
-testequalpolicy 990 500 -t now
-
-sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
-aptgetupdate
-
-testequalpolicy 100 1 -o Test=NotAutomatic
-testequalpolicy 990 1 -o Test=NotAutomatic -t now
-
-sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
-aptgetupdate
-
-testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
-testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
-
-sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
-aptgetupdate
-
-testequalpolicy 100 500 -o Test=Automatic
-testequalpolicy 990 500 -o Test=Automatic -t now
-
-sed -i aptarchive/Release -e '/NotAutomatic: / d' -e '/ButAutomaticUpgrades: / d'
-
-### signed but no key in trusted
-
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-testequalpolicy 100 500
-testequalpolicy 990 500 -t now
-
-sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 1 -o Test=NotAutomatic
-testequalpolicy 990 1 -o Test=NotAutomatic -t now
-
-sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
-testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
-
-sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 500 -o Test=Automatic
-testequalpolicy 990 500 -o Test=Automatic -t now
-
-### signed and valid key
+msgmsg 'Test with specific packages'
 
 buildsimplenativepackage "coolstuff" "all" "1.0" "stable"
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
@@ -117,23 +105,23 @@ testequalpolicycoolstuff() {
 	local BPO1ARCHIVE=""
 	local BPO2ARCHIVE=""
 	if [ ! "$7" = "2.0~bpo2" ]; then
-		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 	else
 		BPO2ARCHIVE="
      2.0~bpo2 $PB
-        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ backports/main i386 Packages"
+        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 		SB="$(echo "$SB" | tail -n 1)"
 		shift
 	fi
 	shift 6
-	testequal "coolstuff:
+	testsuccessequal "coolstuff:
   Installed: $INSTALLED
   Candidate: $CANDIDATE
   ${PINVERSION}Version table:${BPO2ARCHIVE}
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
  $IS 1.0 $PB
-        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/ stable/main i386 Packages$SS" \
+        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main i386 Packages$SS" \
 		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
 }
 

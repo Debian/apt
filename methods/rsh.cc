@@ -477,7 +477,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    }
 
    // Open the file
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    {
       FileFd Fd(Itm->DestFile,FileFd::WriteAny);
       if (_error->PendingError() == true)

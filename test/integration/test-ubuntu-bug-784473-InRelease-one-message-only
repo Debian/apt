@@ -31,7 +31,7 @@ msgtest 'The unsigned garbage before signed block is' 'ignored'
 aptget update -qq 2>&1 | grep -q 'W:.*Does not start with a cleartext signature' && msgpass || msgfail
 
 ROOTDIR="$(readlink -f .)"
-testequal "Package files:
+testsuccessequal "Package files:
  100 ${ROOTDIR}/rootdir/var/lib/dpkg/status
      release a=now
 Pinned packages:" aptcache policy

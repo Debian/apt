@@ -86,33 +86,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    FILE *pipein = fdopen(fd[0], "r");
 
    // Loop over the output of apt-key (which really is gnupg), and check the signatures.
-   size_t buffersize = 64;
-   char *buffer = (char *) malloc(buffersize);
-   size_t bufferoff = 0;
+   size_t buffersize = 0;
+   char *buffer = NULL;
    while (1)
    {
-      int c;
-
-      // Read a line.  Sigh.
-      while ((c = getc(pipein)) != EOF && c != '\n')
-      {
-	 if (bufferoff == buffersize)
-	 {
-	    char* newBuffer = (char *) realloc(buffer, buffersize *= 2);
-	    if (newBuffer == NULL)
-	    {
-	       free(buffer);
-	       return "Couldn't allocate a buffer big enough for reading";
-	    }
-	    buffer = newBuffer;
-	 }
-         *(buffer+bufferoff) = c;
-         bufferoff++;
-      }
-      if (bufferoff == 0 && c == EOF)
-         break;
-      *(buffer+bufferoff) = '\0';
-      bufferoff = 0;
+      if (getline(&buffer, &buffersize, pipein) == -1)
+	 break;
       if (Debug == true)
          std::clog << "Read: " << buffer << std::endl;
 
@@ -126,7 +105,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::clog << "Got BADSIG! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
-      
+
       if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
       {
          if (Debug == true)

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexfile.h,v 1.6.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Index File - Abstraction for an index of archive/source file.
@@ -28,6 +27,7 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
+#include <map>
 #include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
@@ -40,17 +40,65 @@ class pkgAcquire;
 class pkgCacheGenerator;
 class OpProgress;
 
+class IndexTarget							/*{{{*/
+/** \brief Information about an index file. */
+{
+   public:
+   /** \brief A URI from which the index file can be downloaded. */
+   std::string URI;
+
+   /** \brief A description of the index file. */
+   std::string Description;
+
+   /** \brief A shorter description of the index file. */
+   std::string ShortDesc;
+
+   /** \brief The key by which this index file should be
+       looked up within the meta index file. */
+   std::string MetaKey;
+
+   /** \brief Is it okay if the file isn't found in the meta index */
+   bool IsOptional;
+
+   /** \brief options with which this target was created
+       Prefer the usage of #Option if at all possible.
+       Beware: Not all of these options are intended for public use */
+   std::map<std::string, std::string> Options;
+
+   IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
+	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
+	 std::map<std::string, std::string> const &Options);
+
+   enum OptionKeys {
+      SITE,
+      RELEASE,
+      COMPONENT,
+      LANGUAGE,
+      ARCHITECTURE,
+      BASE_URI,
+      REPO_URI,
+      CREATED_BY,
+      TARGET_OF,
+      FILENAME,
+      EXISTING_FILENAME,
+   };
+   std::string Option(OptionKeys const Key) const;
+   std::string Format(std::string format) const;
+};
+									/*}}}*/
+
 class pkgIndexFile
 {
+   void *d;
    protected:
    bool Trusted;
-     
+
    public:
 
    class Type
    {
       public:
-      
+
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
@@ -70,7 +118,7 @@ class pkgIndexFile
    virtual std::string ArchiveInfo(pkgCache::VerIterator Ver) const;
    virtual std::string SourceInfo(pkgSrcRecords::Parser const &Record,
 			     pkgSrcRecords::File const &File) const;
-   virtual std::string Describe(bool Short = false) const = 0;   
+   virtual std::string Describe(bool Short = false) const = 0;
 
    // Interface for acquire
    virtual std::string ArchiveURI(std::string /*File*/) const {return std::string();};
@@ -95,9 +143,27 @@ class pkgIndexFile
    static std::string LanguageCode();
 
    bool IsTrusted() const { return Trusted; };
-   
-   pkgIndexFile(bool Trusted): Trusted(Trusted) {};
-   virtual ~pkgIndexFile() {};
+
+   pkgIndexFile(bool Trusted);
+   virtual ~pkgIndexFile();
+};
+
+class pkgIndexTargetFile : public pkgIndexFile
+{
+   void *d;
+protected:
+   IndexTarget const Target;
+
+   std::string IndexFileName() const;
+
+public:
+   virtual std::string ArchiveURI(std::string File) const;
+   virtual std::string Describe(bool Short = false) const;
+   virtual bool Exists() const;
+   virtual unsigned long Size() const;
+
+   pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted);
+   virtual ~pkgIndexTargetFile();
 };
 
 #endif

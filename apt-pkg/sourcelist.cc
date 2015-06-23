@@ -331,7 +331,7 @@ bool pkgSourceList::ParseFileOldStyle(string File)
 {
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
-   if (!F != 0)
+   if (F.fail() == true)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
 
    // CNC:2003-12-10 - 300 is too short.

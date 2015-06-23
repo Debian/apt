@@ -8,23 +8,20 @@ setupenvironment
 configarchitecture "i386"
 
 # regression test for #754904
-testequal 'E: Unable to locate package /dev/null' aptget install -qq /dev/null
+testfailureequal 'E: Unable to locate package /dev/null' aptget install -qq /dev/null
 
 # and ensure we fail for invalid debs
 cat > foo.deb <<EOF
 I'm not a deb, I'm a teapot.
 EOF
-testequal 'E: Sub-process Popen returned an error code (100)
-E: Encountered a section with no Package: header
+testfailure aptget install ./foo.deb
+testsuccess grep '^E: Sub-process Popen returned an error code' rootdir/tmp/testfailure.output
+testequal 'E: Encountered a section with no Package: header
 E: Problem with MergeLister for ./foo.deb
-E: The package lists or status file could not be parsed or opened.' aptget install -qq ./foo.deb
+E: The package lists or status file could not be parsed or opened.' tail -n 3 rootdir/tmp/testfailure.output
 
 # fakeroot is currently not found, framwork needs updating
-#
-#buildsimplenativepackage 'foo' 'all' '1.0' 
-#
-#testequal 'Selecting previously unselected package foo.
-#(Reading database ... 0 files and directories currently installed.)
-# Preparing to unpack .../incoming/foo_1.0_all.deb ...
-#Unpacking foo (1.0) ...
-#Setting up foo (1.0) ...' aptget install -qq ./incoming/foo_1.0_all.deb
+buildsimplenativepackage 'foo' 'all' '1.0'
+testdpkgnotinstalled 'foo'
+testsuccess aptget install ./incoming/foo_1.0_all.deb
+testdpkginstalled 'foo'

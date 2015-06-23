@@ -13,13 +13,18 @@
 #include <apt-pkg/macros.h>
 
 #include <string>
+#include <iostream>
 
 class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 {
+   std::ostream &out;
    unsigned int &ScreenWidth;
-   char BlankLine[1024];
+   size_t LastLineLength;
    unsigned long ID;
    unsigned long Quiet;
+
+   APT_HIDDEN void clearLastLine();
+   APT_HIDDEN void AssignItemID(pkgAcquire::ItemDesc &Itm);
 
    public:
 
@@ -33,7 +38,7 @@ class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 
    bool Pulse(pkgAcquire *Owner);
 
-   AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet);
+   AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet);
 };
 
 #endif

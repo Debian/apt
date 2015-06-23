@@ -468,7 +468,7 @@ void pkgProblemResolver::MakeScores()
 	 if (D->Version != 0)
 	 {
 	    pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
-	    if (IV.end() == true || D.IsSatisfied(IV) != D.IsNegative())
+	    if (IV.end() == true || D.IsSatisfied(IV) == false)
 	       continue;
 	 }
 	 Scores[T->ID] += DepMap[D->Type];
@@ -640,6 +640,12 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 // ProblemResolver::Resolve - calls a resolver to fix the situation	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+#if APT_PKG_ABI < 413
+bool pkgProblemResolver::Resolve(bool BrokenFix)
+{
+   return Resolve(BrokenFix, NULL);
+}
+#endif
 bool pkgProblemResolver::Resolve(bool BrokenFix, OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
@@ -1138,6 +1144,12 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 /* This is the work horse of the soft upgrade routine. It is very gental 
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
+#if APT_PKG_ABI < 413
+bool pkgProblemResolver::ResolveByKeep()
+{
+   return ResolveByKeep(NULL);
+}
+#endif
 bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");

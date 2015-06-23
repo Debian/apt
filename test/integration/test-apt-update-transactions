@@ -8,6 +8,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture 'i386'
+configcompression '.' 'gz'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
 insertsource 'unstable' 'foo' 'all' '1.0'
@@ -15,7 +16,8 @@ insertsource 'unstable' 'foo' 'all' '1.0'
 setupaptarchive --no-update
 
 breakfile() {
-	mv "$1" "${1}.bak"
+	mv "${1}" "${1}.bak"
+	mv "${1}.gz" "${1}.gz.bak"
 	cat > "$1" <<EOF
 Package: bar
 EOF
@@ -23,9 +25,16 @@ EOF
 }
 restorefile() {
 	mv "${1}.bak" "$1"
+	mv "${1}.gz.bak" "${1}.gz"
 }
 
 testrun() {
+	rm -rf aptarchive/dists.good
+	cp -a aptarchive/dists aptarchive/dists.good
+	insertpackage 'unstable' 'bar' 'all' '1.0'
+	insertsource 'unstable' 'bar' 'all' '1.0'
+	buildaptarchivefromfiles '+1 hour'
+
 	# produce an unsigned repository
 	find aptarchive \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
 	testfailure aptget update --no-allow-insecure-repositories
@@ -34,34 +43,48 @@ testrun() {
 	# signed but broken
 	signreleasefiles
 
+	onehashbroken() {
+		testfailure aptget update
+		# each file generates two messages with this string
+		testequal '2' grep --count 'Hash Sum mismatch' rootdir/tmp/testfailure.output
+		testfileequal "$1" "$(listcurrentlistsdirectory)"
+	}
+
 	breakfile aptarchive/dists/unstable/main/binary-i386/Packages
-	testfailure aptget update
-	testfileequal "$1" "$(listcurrentlistsdirectory)"
+	onehashbroken "$1"
 	restorefile aptarchive/dists/unstable/main/binary-i386/Packages
 
 	breakfile aptarchive/dists/unstable/main/source/Sources
-	testfailure aptget update
-	testfileequal "$1" "$(listcurrentlistsdirectory)"
+	onehashbroken "$1"
 	restorefile aptarchive/dists/unstable/main/source/Sources
+
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
 }
 
 testsetup() {
 	msgmsg 'Test with no initial data over' "$1"
 	rm -rf rootdir/var/lib/apt/lists
-	mkdir -m 700 -p rootdir/var/lib/apt/lists/partial
-	if [ "$(id -u)" = '0' ]; then
-		chown _apt:root rootdir/var/lib/apt/lists/partial
-	fi
+	mkdir -p rootdir/var/lib/apt/lists/partial
 	listcurrentlistsdirectory > listsdir.lst
 	testrun 'listsdir.lst'
 
 	msgmsg 'Test with initial data over' "$1"
-	testsuccess aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess aptget update -o Debug::pkgAcquire::Worker=1
 	listcurrentlistsdirectory > listsdir.lst
 	testrun 'listsdir.lst'
 }
 
 testsetup 'file'
+
 changetowebserver
+webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
+webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
+webserverconfig 'aptwebserver::support::range' 'false' "$1"
+
 testsetup 'http'
 
+changetohttpswebserver
+
+testsetup 'https'

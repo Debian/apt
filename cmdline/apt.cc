@@ -39,8 +39,7 @@
 
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(c1out,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(c1out, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    // FIXME: generate from CommandLine
    c1out << 
@@ -119,15 +118,10 @@ int main(int argc, const char *argv[])					/*{{{*/
    _config->CndSet("APT::Cmd::Show-Update-Stats", true);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(), _config);
-   if (CmdL.Parse(argc, argv) == false ||
-       pkgInitSystem(*_config, _system) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), NULL, &_system, argc, argv, ShowHelp);
 
-   if(!isatty(STDOUT_FILENO) && 
+   if(!isatty(STDOUT_FILENO) &&
       _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
    {
       std::cerr << std::endl
@@ -136,15 +130,6 @@ int main(int argc, const char *argv[])					/*{{{*/
                 << "Use with caution in scripts."
                 << std::endl
                 << std::endl;
-   }
-
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
    }
 
    // see if we are in simulate mode

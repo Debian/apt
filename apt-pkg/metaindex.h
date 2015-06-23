@@ -22,9 +22,13 @@ using std::string;
 #endif
 
 class pkgAcquire;
+class IndexTarget;
+class pkgCacheGenerator;
+class OpProgress;
 
 class metaIndex
 {
+   void *d;
    protected:
    std::vector <pkgIndexFile *> *Indexes;
    const char *Type;
@@ -40,33 +44,23 @@ class metaIndex
    virtual const char* GetType() const {return Type;}
 
    // interface to to query it
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   // returns the path of the local file (or "" if its not available)
-   virtual std::string LocalFileName() const {return "";};
-#endif
+   /** \return the path of the local file (or "" if its not available) */
+   virtual std::string LocalFileName() const;
 
    // Interface for acquire
    virtual std::string ArchiveURI(std::string const& File) const = 0;
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const = 0;
-   virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0; 
+   virtual std::vector<IndexTarget> GetIndexTargets() const = 0;
+   virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0;
    virtual bool IsTrusted() const = 0;
 
-   metaIndex(std::string const &URI, std::string const &Dist, 
-             char const * const Type) 
-      : Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(false)
-   {
-      /* nothing */
-   }
+   virtual std::string Describe() const;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
-   virtual ~metaIndex() 
-   {
-      if (Indexes == 0)
-	 return;
-      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin();
-           I != (*Indexes).end(); ++I)
-	 delete *I;
-      delete Indexes;
-   }
+   metaIndex(std::string const &URI, std::string const &Dist,
+             char const * const Type);
+   virtual ~metaIndex();
 };
 
 #endif

@@ -1,0 +1,81 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+TESTFILE="$TESTDIR/framework"
+cp $TESTFILE aptarchive/foo
+APTARCHIVE="$(readlink -f ./aptarchive)"
+
+getcodenamefromsuite() { echo "jessie"; }
+buildsimplenativepackage 'foo' 'all' '1.0' 'stable'
+setupaptarchive --no-update
+ln -s "${APTARCHIVE}/dists/stable" "${APTARCHIVE}/dists/jessie"
+for FILE in rootdir/etc/apt/sources.list.d/*-stable-* ; do
+	sed 's#stable#jessie#g' $FILE > $(echo "$FILE" | sed 's#stable#jessie#g')
+done
+
+# install a slowed down file: otherwise its to fast to reproduce combining
+NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
+OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
+rm $NEWMETHODS
+mkdir $NEWMETHODS
+for METH in $(find $OLDMETHODS ! -type d); do
+	ln -s $OLDMETHODS/$(basename $METH) $NEWMETHODS
+done
+rm $NEWMETHODS/file
+cat >$NEWMETHODS/file <<EOF
+#!/bin/sh
+while read line; do
+	echo "\$line"
+	if [ -z "\$line" ]; then
+		sleep 0.5
+	fi
+done | $OLDMETHODS/file
+EOF
+chmod +x $NEWMETHODS/file
+
+tworepos() {
+	msgtest "Downloading the same repository twice over $1" "$3"
+	testsuccess --nomsg aptget update -o Debug::pkgAcquire::Worker=1
+	cp rootdir/tmp/testsuccess.output download.log
+	#cat download.log
+	aptget files --format '$(FILENAME)' --no-release-info | sort > file.lst
+	testequal "$(find $(readlink -f ./rootdir/var/lib/apt/lists) -name '*_dists_*' \( ! -name '*InRelease' \) -type f | sort)" cat file.lst
+	testsuccess aptcache policy
+	testequal "foo:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 0
+        500 $1:$2 jessie/main amd64 Packages
+        500 $1:$2 stable/main amd64 Packages" aptcache policy foo
+	testfailure aptcache show foo/unstable
+	testsuccess aptcache show foo/stable
+	testsuccess aptcache show foo/jessie
+}
+
+tworepos 'file' "$APTARCHIVE" 'no partial'
+testequal '12' grep -c '200%20URI%20Start' ./download.log
+testequal '12' grep -c '201%20URI%20Done' ./download.log
+testequal '6' grep -c '^ @ Queue: Action combined' ./download.log
+tworepos 'file' "$APTARCHIVE" 'hit'
+testequal '6' grep -c '200%20URI%20Start' ./download.log
+testequal '6' grep -c '201%20URI%20Done' ./download.log
+testequal '0' grep -c '^ @ Queue: Action combined' ./download.log
+rm -rf rootdir/var/lib/apt/lists
+
+changetowebserver
+
+tworepos 'http' '//localhost:8080' 'no partial'
+testequal '10' grep -c '200%20URI%20Start' ./download.log
+testequal '10' grep -c '201%20URI%20Done' ./download.log
+testequal '6' grep -c '^ @ Queue: Action combined' ./download.log
+tworepos 'http' '//localhost:8080' 'hit'
+testequal '2' grep -c '200%20URI%20Start' ./download.log
+testequal '4' grep -c '201%20URI%20Done' ./download.log
+testequal '0' grep -c '^ @ Queue: Action combined' ./download.log
+rm -rf rootdir/var/lib/apt/lists

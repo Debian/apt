@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -204,8 +205,8 @@ static bool DoIdent(CommandLine &)
 // ShowHelp - Show the help screen					/*{{{*/
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
+
    if (_config->FindB("version") == true)
       return true;
    
@@ -249,24 +250,11 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(),_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
-   // See if the help should be shown
-   if (_config->FindB("help") == true || _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-      return ShowHelp(CmdL);
+   InitOutput();
 
-   // Deal with stdout not being a tty
-   if (isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
-   
    // Match the operation
    bool returned = CmdL.DispatchArg(Cmds);
 

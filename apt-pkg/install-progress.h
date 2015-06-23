@@ -61,6 +61,7 @@ namespace Progress {
 
  class PackageManagerProgressFd : public PackageManager
  {
+    void *d;
  protected:
     int OutStatusFd;
     int StepsDone;
@@ -69,6 +70,7 @@ namespace Progress {
 
  public:
     PackageManagerProgressFd(int progress_fd);
+    virtual ~PackageManagerProgressFd();
 
     virtual void StartDpkg();
     virtual void Stop();
@@ -90,6 +92,7 @@ namespace Progress {
 
  class PackageManagerProgressDeb822Fd : public PackageManager
  {
+    void *d;
  protected:
     int OutStatusFd;
     int StepsDone;
@@ -98,6 +101,7 @@ namespace Progress {
 
  public:
     PackageManagerProgressDeb822Fd(int progress_fd);
+    virtual ~PackageManagerProgressDeb822Fd();
 
     virtual void StartDpkg();
     virtual void Stop();
@@ -118,6 +122,7 @@ namespace Progress {
 
  class PackageManagerFancy : public PackageManager
  {
+    void *d;
  private:
     APT_HIDDEN static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
@@ -138,7 +143,7 @@ namespace Progress {
 
  public:
     PackageManagerFancy();
-    ~PackageManagerFancy();
+    virtual ~PackageManagerFancy();
     virtual void Start(int child_pty=-1);
     virtual void Stop();
     virtual bool StatusChanged(std::string PackageName,
@@ -153,11 +158,15 @@ namespace Progress {
 
  class PackageManagerText : public PackageManager
  {
+    void *d;
  public:
     virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
+
+    PackageManagerText();
+    virtual ~PackageManagerText();
  };
 
 

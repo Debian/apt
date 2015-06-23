@@ -15,6 +15,7 @@
 #define PKGLIB_EXTRACTTAR_H
 
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
 
@@ -39,7 +40,11 @@ class ExtractTar
                   GNU_LongLink = 'K',GNU_LongName = 'L'};
 
    FileFd &File;
+#if APT_PKG_ABI >= 413
    unsigned long long MaxInSize;
+#else
+   unsigned long MaxInSize;
+#endif
    int GZPid;
    FileFd InFd;
    bool Eof;
@@ -52,8 +57,12 @@ class ExtractTar
    public:
 
    bool Go(pkgDirStream &Stream);
-   
+
+#if APT_PKG_ABI >= 413
    ExtractTar(FileFd &Fd,unsigned long long Max,std::string DecompressionProgram);
+#else
+   ExtractTar(FileFd &Fd,unsigned long Max,std::string DecompressionProgram);
+#endif
    virtual ~ExtractTar();
 };
 

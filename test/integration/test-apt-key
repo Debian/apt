@@ -17,7 +17,7 @@ testaptkeys() {
 	if ! aptkey list | grep '^pub' > aptkey.list; then
 		echo -n > aptkey.list
 	fi
-	testequal "$1" cat ./aptkey.list
+	testfileequal './aptkey.list' "$1"
 }
 
 echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
@@ -35,7 +35,7 @@ testrun() {
 
 	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
-	testequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
+	testsuccessequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1' aptkey --fakeroot update
 
@@ -71,6 +71,12 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
 	testsuccess aptkey --fakeroot del DBAC8DAE
+	testempty aptkey list
+
+	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewher between 8byte and short
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
 	testempty aptkey list
 
 	msgtest 'Test key removal with' 'single key in real file'
@@ -181,3 +187,4 @@ setupgpgcommand 'gpg'
 testrun
 setupgpgcommand 'gpg2'
 testrun
+

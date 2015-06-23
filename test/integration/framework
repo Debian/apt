@@ -3,7 +3,7 @@
 EXIT_CODE=0
 
 # we all like colorful messages
-if [ "$MSGCOLOR" != 'NO' ]; then
+if [ "$MSGCOLOR" != 'NO' ] && [ "$MSGCOLOR" != 'ALWAYS' ]; then
 	if [ ! -t 1 ]; then # but check that we output to a terminal
 		export MSGCOLOR='NO'
 	fi
@@ -128,15 +128,23 @@ aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
 aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
+aptdumpsolver() { runapt "${APTDUMPSOLVER}" "$@"; }
 
 dpkg() {
-	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
+	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
 dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
 }
 gdb() {
-	local CMD="$1"
+	local CMD
+	case "$1" in
+	aptget) CMD="apt-get";;
+	aptcache) CMD="apt-cache";;
+	aptmark) CMD="apt-mark";;
+	apthelper) CMD="apt-helper";;
+	*) CMD="$1";;
+	esac
 	shift
 	runapt command gdb --quiet -ex run "${BUILDDIRECTORY}/$CMD" --args "${BUILDDIRECTORY}/$CMD" "$@"
 }
@@ -188,12 +196,14 @@ setupenvironment() {
 
 	TESTDIRECTORY=$(readlink -f $(dirname $0))
         # allow overriding the default BUILDDIR location
+	SOURCEDIRECTORY=${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}
 	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
 	LIBRARYPATH=${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
         APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
         APTINTERNALSOLVER=${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}
+	APTDUMPSOLVER=${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
@@ -201,7 +211,7 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p usr/bin var/cache var/lib/apt var/log tmp
+	mkdir -p usr/bin var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
@@ -234,9 +244,8 @@ setupenvironment() {
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
-	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
+	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# store apt-key were we can access it, even if we run it as a different user
 	# destroys coverage reporting though, so just do it for root for now
 	if [ "$(id -u)" = '0' ]; then
@@ -246,22 +255,37 @@ setupenvironment() {
 	else
 		echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	fi
-	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
-	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
-	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
-		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
+
+	cat << EOF > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+#!/bin/sh
+set -e
+if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
+	if [ -n "\$LD_PRELOAD" ]; then
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}"
+	else
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
 	fi
-	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
-	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
-	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
-	# too distracting for users, but helpful to detect changes
-	echo 'Acquire::Progress::Ignore::ShowErrorText "true";' >> aptconfig.conf
-	# in testcases, it can appear as if localhost has a rotation setup,
-	# hide this as we can't really deal with it properly
-	echo 'Acquire::Failure::ShowIP "false";' >> aptconfig.conf
+fi
+exec fakeroot dpkg --root="${TMPWORKINGDIRECTORY}/rootdir" \\
+	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
+	--force-not-root --force-bad-path "\$@"
+EOF
+	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
+
+	{
+		if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
+			echo "DPKG::options:: \"--force-architecture\";" # Added to test multiarch before dpkg is ready for it…
+		fi
+		echo 'quiet::NoUpdate "true";'
+		echo 'quiet::NoStatistic "true";'
+		# too distracting for users, but helpful to detect changes
+		echo 'Acquire::Progress::Ignore::ShowErrorText "true";'
+		echo 'Acquire::Progress::Diffpercent "true";'
+		# in testcases, it can appear as if localhost has a rotation setup,
+		# hide this as we can't really deal with it properly
+		echo 'Acquire::Failure::ShowIP "false";'
+	} >> aptconfig.conf
 
 	cp "${TESTDIRECTORY}/apt.pem" "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	if [ "$(id -u)" = '0' ]; then
@@ -270,6 +294,14 @@ setupenvironment() {
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
+
+	# create some files in /tmp and look at user/group to get what this means
+	TEST_DEFAULT_USER="$USER"
+	if [ "$(uname)" = 'GNU/kFreeBSD' ]; then
+		TEST_DEFAULT_GROUP='root'
+	else
+		TEST_DEFAULT_GROUP="$USER"
+	fi
 
         # Acquire::AllowInsecureRepositories=false is not yet the default
         # but we want it to be the default soon
@@ -299,7 +331,7 @@ getarchitecture() {
 }
 
 getarchitectures() {
-	echo "$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+	aptconfig dump --no-empty --format '%v%n' APT::Architecture APT::Architectures | sort -u | tr '\n' ' '
 }
 
 getarchitecturesfromcommalist() {
@@ -347,6 +379,47 @@ configdpkg() {
 			fi
 		fi
 	fi
+}
+
+configdpkgnoopchroot() {
+	# create a library to noop chroot() and rewrite maintainer script executions
+	# via execvp() as used by dpkg as we don't want our rootdir to be a fullblown
+	# chroot directory dpkg could chroot into to execute the maintainer scripts
+	msgtest 'Building library to preload to make maintainerscript work in' 'dpkg'
+	cat << EOF > noopchroot.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dlfcn.h>
+
+static char * chrootdir = NULL;
+
+int chroot(const char *path) {
+	printf("WARNING: CHROOTing to %s was ignored!\n", path);
+	free(chrootdir);
+	chrootdir = strdup(path);
+	return 0;
+}
+int execvp(const char *file, char *const argv[]) {
+	static int (*func_execvp) (const char *, char * const []) = NULL;
+	if (func_execvp == NULL)
+		func_execvp = (int (*) (const char *, char * const [])) dlsym(RTLD_NEXT, "execvp");
+	if (chrootdir == NULL || strncmp(file, "/var/lib/dpkg/", strlen("/var/lib/dpkg/")) != 0)
+		return func_execvp(file, argv);
+	printf("REWRITE execvp call %s into %s\n", file, chrootdir);
+	char newfile[strlen(chrootdir) + strlen(file)];
+	strcpy(newfile, chrootdir);
+	strcat(newfile, file);
+	char const * const baseadmindir = "/var/lib/dpkg";
+	char admindir[strlen(chrootdir) + strlen(baseadmindir)];
+	strcpy(admindir, chrootdir);
+	strcat(admindir, baseadmindir);
+	setenv("DPKG_ADMINDIR", admindir, 1);
+	return func_execvp(newfile, argv);
+}
+EOF
+	testsuccess --nomsg gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
 }
 
 configallowinsecurerepositories() {
@@ -450,6 +523,12 @@ Package: $NAME" > debian/control
 
 buildsimplenativepackage() {
 	local NAME="$1"
+	local NM
+	if [ "$(echo "$NAME" | cut -c 1-3)" = 'lib' ]; then
+		NM="$(echo "$NAME" | cut -c 1-4)"
+	else
+		NM="$(echo "$NAME" | cut -c 1)"
+	fi
 	local ARCH="$2"
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
@@ -471,7 +550,7 @@ buildsimplenativepackage() {
 	fi
 	local BUILDDIR=${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}
 
-	msgninfo "Build package ${NAME} in ${VERSION} for ${RELEASE} in ${DISTSECTION}… "
+	msgtest "Build source package in version ${VERSION} for ${RELEASE} in ${DISTSECTION}" "$NAME"
 	mkdir -p $BUILDDIR/debian/source
 	echo "* most suckless software product ever" > ${BUILDDIR}/FEATURES
 	echo "#!/bin/sh
@@ -503,7 +582,10 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	echo "Description: $DESCRIPTION" >> ${BUILDDIR}/debian/control
 
 	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
-	(cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' \
+	cd ${BUILDDIR}/..
+	testsuccess --nomsg dpkg-source -b ${NAME}-${VERSION}
+	cd - >/dev/null
+	sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output \
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
@@ -515,6 +597,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	done
 
 	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
+		msgtest "Build binary package for ${RELEASE} in ${SECTION}" "$NAME"
 		rm -rf ${BUILDDIR}/debian/tmp
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
@@ -526,19 +609,15 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
-		# ensure the right permissions as dpkg-deb ensists
+		# ensure the right permissions as dpkg-deb insists
 		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
-		if ! dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
-			cat $LOG
-			false
-		fi
-		rm $LOG
+		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/..
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
-	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
+	local CHANGEPATH="${BUILDDIR}/../${DISTSECTION}/${NM}/${NAME}/${NAME}_${VERSION}"
+	mkdir -p $CHANGEPATH
+	cp ${BUILDDIR}/debian/changelog $CHANGEPATH
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -550,15 +629,13 @@ buildpackage() {
 	local ARCH=$(getarchitecture $4)
 	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
 	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
-	msgninfo "Build package ${PKGNAME} for ${RELEASE} in ${SECTION}… "
+	msgtest "Build package for ${RELEASE} in ${SECTION}" "$PKGNAME"
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	if ! dpkg-buildpackage -uc -us -a$ARCH >$BUILDLOG 2>&1 ; then
-		cat $BUILDLOG
-		false
-	fi
+	testsuccess --nomsg dpkg-buildpackage -uc -us -a$ARCH
+	cp ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output $BUILDLOG
 	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
 	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
@@ -568,7 +645,6 @@ buildpackage() {
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.srclist
 	done
-	msgdone "info"
 }
 
 buildaptarchive() {
@@ -581,12 +657,8 @@ buildaptarchive() {
 
 createaptftparchiveconfig() {
 	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
-	COMPRESSORS="${COMPRESSORS%* }"
-	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
-	if [ -z "$ARCHS" ]; then
-		# the pool is empty, so we will operate on faked packages - let us use the configured archs
-		ARCHS="$(getarchitectures)"
-	fi
+	local COMPRESSORS="${COMPRESSORS%* }"
+	local ARCHS="$(getarchitectures)"
 	echo -n 'Dir {
 	ArchiveDir "' >> ftparchive.conf
 	echo -n $(readlink -f .) >> ftparchive.conf
@@ -717,6 +789,8 @@ insertsource() {
 	local SPATH="aptarchive/dists/${RELEASE}/main/source"
 	mkdir -p $SPATH
 	local FILE="${SPATH}/Sources"
+	local DSCFILE="${NAME}_${VERSION}.dsc"
+	local TARFILE="${NAME}_${VERSION}.tar.gz"
 	echo "Package: $NAME
 Binary: $NAME
 Version: $VERSION
@@ -724,8 +798,8 @@ Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
 	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
 	echo "Files:
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.dsc
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.tar.gz
+ $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
+ $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
 " >> $FILE
 }
 
@@ -771,7 +845,7 @@ buildaptarchivefromincoming() {
 	[ -e ftparchive.conf ] || createaptftparchiveconfig
 	[ -e dists ] || buildaptftparchivedirectorystructure
 	msgninfo "\tGenerate Packages, Sources and Contents files… "
-	aptftparchive -qq generate ftparchive.conf
+	testsuccess aptftparchive generate ftparchive.conf
 	cd - > /dev/null
 	msgdone "info"
 	generatereleasefiles "$@"
@@ -779,7 +853,9 @@ buildaptarchivefromincoming() {
 
 buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
-	find aptarchive -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
+	local DIR='aptarchive'
+	if [ -d "${DIR}/dists" ]; then DIR="${DIR}/dists"; fi
+	find "$DIR" -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
 		msgninfo "\t${line} file… "
 		compressfile "$line" "$1"
 		msgdone "info"
@@ -811,6 +887,7 @@ getcodenamefromsuite() {
 }
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
+getoriginfromsuite() { true; }
 
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
@@ -822,16 +899,21 @@ generatereleasefiles() {
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
 			local LABEL="$(getlabelfromsuite $SUITE)"
+			local ORIGIN="$(getoriginfromsuite $SUITE)"
 			if [ -n "$VERSION" ]; then
 				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
 			fi
 			if [ -n "$LABEL" ]; then
 				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
 			fi
+			if [ -n "$ORIGIN" ]; then
+				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
+			fi
 			aptftparchive -qq release $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
 				${LABEL} \
+				${ORIGIN} \
 				${VERSION} \
 					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
@@ -949,7 +1031,17 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+redatereleasefiles() {
+	local DATE="$(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
+	for release in $(find aptarchive/ -name 'Release'); do
+		sed -i "s/^Date: .*$/Date: ${DATE}/" $release
+		touch -d "$DATE" $release
+	done
+	signreleasefiles "${2:-Joe Sixpack}"
+}
+
 webserverconfig() {
+	local WEBSERVER="${3:-http://localhost:8080}"
 	local NOCHECK=false
 	if [ "$1" = '--no-check' ]; then
 		NOCHECK=true
@@ -961,10 +1053,10 @@ webserverconfig() {
 	local URI
 	if [ -n "$2" ]; then
 		msgtest "Set webserver config option '${1}' to" "$2"
-		URI="http://localhost:8080/_config/set/${1}/${2}"
+		URI="${WEBSERVER}/_config/set/${1}/${2}"
 	else
 		msgtest 'Clear webserver config option' "${1}"
-		URI="http://localhost:8080/_config/clear/${1}"
+		URI="${WEBSERVER}/_config/clear/${1}"
 	fi
 	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass
@@ -1069,9 +1161,11 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 }
 
 downloadfile() {
-	local PROTO="$(echo "$1" | cut -d':' -f 1 )"
-	apthelper -o Debug::Acquire::${PROTO}=1 \
-		download-file "$1" "$2" 2>&1 || true
+	local PROTO="${1%%:*}"
+	if ! apthelper -o Debug::Acquire::${PROTO}=1 -o Debug::pkgAcquire::Worker=1 \
+		download-file "$1" "$2" "$3" 2>&1 ; then
+		return 1
+	fi
 	# only if the file exists the download was successful
 	if [ -r "$2" ]; then
 		return 0
@@ -1096,9 +1190,9 @@ testfileequal() {
 	shift
 	msgtest "Test for correctness of file" "$FILE"
 	if [ -z "$*" ]; then
-		echo -n "" | checkdiff $FILE - && msgpass || msgfail
+		echo -n "" | checkdiff - $FILE && msgpass || msgfail
 	else
-		echo "$*" | checkdiff $FILE - && msgpass || msgfail
+		echo "$*" | checkdiff - $FILE && msgpass || msgfail
 	fi
 }
 
@@ -1108,6 +1202,7 @@ testempty() {
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
 		msgpass
 	else
+		echo
 		cat $COMPAREFILE
 		msgfail
 	fi
@@ -1186,10 +1281,13 @@ testnopackage() {
 	fi
 }
 
-testdpkginstalled() {
-	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
-	if [ "$PKGS" != $# ]; then
+testdpkgstatus() {
+	local STATE="$1"
+	local NR="$2"
+	shift 2
+	msgtest "Test that $NR package(s) are in state $STATE with" "dpkg -l $*"
+	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep "^${STATE}" | wc -l)"
+	if [ "$PKGS" != $NR ]; then
 		echo >&2 $PKGS
 		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
@@ -1198,16 +1296,12 @@ testdpkginstalled() {
 	fi
 }
 
+testdpkginstalled() {
+	testdpkgstatus 'ii' "$#" "$@"
+}
+
 testdpkgnotinstalled() {
-	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
-	if [ "$PKGS" != 0 ]; then
-		echo
-		dpkg -l "$@" | grep '^[a-z]' >&2
-		msgfail
-	else
-		msgpass
-	fi
+	testdpkgstatus 'ii' '0' "$@"
 }
 
 testmarkedauto() {
@@ -1283,7 +1377,7 @@ testwarning() {
 	else
 		msgtest 'Test for successful execution with warnings of' "$*"
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output"
 	if "$@" >${OUTPUT} 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
@@ -1333,15 +1427,49 @@ testfailure() {
 	aptautotest 'testfailure' "$@"
 }
 
+testsuccessequal() {
+	local CMP="$1"
+	shift
+	testsuccess "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$CMP"
+}
+testwarningequal() {
+	local CMP="$1"
+	shift
+	testwarning "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" "$CMP"
+}
+testfailureequal() {
+	local CMP="$1"
+	shift
+	testfailure "$@"
+	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
+}
+
+testfailuremsg() {
+	local CMP="$1"
+	shift
+	testfailure "$@"
+	msgtest 'Check that the output of the previous failed command has expected' 'failures and warnings'
+	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output" 2>&1 || true
+	if echo "$CMP" | checkdiff - "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output"; then
+		msgpass
+	else
+		echo '### Complete output ###'
+		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
+		msgfail
+	fi
+}
+
 testfilestats() {
 	msgtest "Test that file $1 has $2 $3" "$4"
 	if [ "$4" "$3" "$(stat --format "$2" "$1")" ]; then
 		msgpass
 	else
 		echo >&2
-		ls -l >&2 "$1"
+		ls -ld >&2 "$1" || true
 		echo -n >&2 "stat(1) reports for $2: "
-		stat --format "$2" "$1"
+		stat --format "$2" "$1" || true
 		msgfail
 	fi
 }
@@ -1376,12 +1504,32 @@ pause() {
 }
 
 listcurrentlistsdirectory() {
-	find rootdir/var/lib/apt/lists -maxdepth 1 -type d | while read line; do
-		stat --format '%U:%G:%a:%n' "$line"
-	done
-	find rootdir/var/lib/apt/lists -maxdepth 1 \! -type d | while read line; do
-		stat --format '%U:%G:%a:%s:%y:%n' "$line"
-	done
+	{
+		find rootdir/var/lib/apt/lists -maxdepth 1 -type d | while read line; do
+			stat --format '%U:%G:%a:%n' "$line"
+		done
+		find rootdir/var/lib/apt/lists -maxdepth 1 \! -type d | while read line; do
+			stat --format '%U:%G:%a:%s:%y:%n' "$line"
+		done
+	} | sort
+}
+
+### convinience hacks ###
+mkdir() {
+	# creating some directories by hand is a tedious task, so make it look simple
+	if [ "$*" = '-p rootdir/var/lib/apt/lists' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" ] ||
+	   [ "$*" = '-p rootdir/var/lib/apt/lists/partial' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" ]; then
+		# only the last directory created by mkdir is effected by the -m !
+		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt"
+		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"
+		command mkdir -m 700 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+		touch "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/lock"
+		if [ "$(id -u)" = '0' ]; then
+			chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+		fi
+	else
+		command mkdir "$@"
+	fi
 }
 
 ### The following tests are run by most test methods automatically to check
@@ -1407,10 +1555,39 @@ aptautotest() {
 }
 
 aptautotest_aptget_update() {
-	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
-	# all copied files are properly chmodded
-	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -maxdepth 1 -type f); do
-		testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:644"
+	local TESTCALL="$1"
+	while [ -n "$2" ]; do
+		if [ "$2" = '--print-uris' ]; then return; fi # simulation mode
+		shift
 	done
+	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
+	# all copied files are properly chmodded
+	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
+		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+	done
+	if [ "$TESTCALL" = 'testsuccess' ]; then
+		# failure cases can retain partial files and such
+		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)
+	fi
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
+aptautotest_aptcdrom_add() { aptautotest_aptget_update "$@"; }
+
+testaptautotestnodpkgwarning() {
+	local TESTCALL="$1"
+	while [ -n "$2" ]; do
+		if expr match "$2" '^-[a-z]*s' >/dev/null 2>&1; then return; fi # simulation mode
+		if expr match "$2" '^-dy\?' >/dev/null 2>&1; then return; fi # download-only mode
+		shift
+	done
+	testfailure grep '^dpkg: warning:.*ignor.*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"
+}
+
+aptautotest_aptget_install() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_aptget_remove() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_aptget_purge() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_install() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_remove() { testaptautotestnodpkgwarning "$@"; }
+aptautotest_apt_purge() { testaptautotestnodpkgwarning "$@"; }

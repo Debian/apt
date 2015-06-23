@@ -41,7 +41,7 @@ version_test_gt ()
 	return "$?"
 }
 
-list="$(${DPKG} -l | awk '/^ii[ ]+(linux|kfreebsd|gnumach)-image-[0-9]/ && $2 !~ /-dbg$/ { print $2 }' | sed -e 's#\(linux\|kfreebsd\|gnumach\)-image-##')"
+list="$(${DPKG} -l | awk '/^ii[ ]+(linux|kfreebsd|gnumach)-image-[0-9]+\./ && $2 !~ /-dbg$/ { print $2 }' | sed -e 's#\(linux\|kfreebsd\|gnumach\)-image-##')"
 
 latest_version=""
 previous_version=""

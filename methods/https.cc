@@ -37,21 +37,19 @@
 									/*}}}*/
 using namespace std;
 
-bool HttpsMethod::Configuration(std::string Message)
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
+struct APT_HIDDEN CURLUserPointer {
+   HttpsMethod * const https;
+   HttpsMethod::FetchResult * const Res;
+   HttpsMethod::FetchItem const * const Itm;
+   CURLUserPointer(HttpsMethod * const https, HttpsMethod::FetchResult * const Res,
+	 HttpsMethod::FetchItem const * const Itm) : https(https), Res(Res), Itm(Itm) {}
+};
 
 size_t
 HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    size_t len = size * nmemb;
-   HttpsMethod *me = (HttpsMethod *)userp;
+   CURLUserPointer *me = (CURLUserPointer *)userp;
    std::string line((char*) buffer, len);
    for (--len; len > 0; --len)
       if (isspace(line[len]) == 0)
@@ -63,20 +61,52 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
    if (line.empty() == true)
    {
-      if (me->Server->Result != 416 && me->Server->StartPos != 0)
+      if (me->https->Server->Result != 416 && me->https->Server->StartPos != 0)
 	 ;
-      else if (me->Server->Result == 416 && me->Server->Size == me->File->FileSize())
+      else if (me->https->Server->Result == 416)
       {
-         me->Server->Result = 200;
-	 me->Server->StartPos = me->Server->Size;
+	 bool partialHit = false;
+	 if (me->Itm->ExpectedHashes.usable() == true)
+	 {
+	    Hashes resultHashes(me->Itm->ExpectedHashes);
+	    FileFd file(me->Itm->DestFile, FileFd::ReadOnly);
+	    me->https->Server->TotalFileSize = file.FileSize();
+	    me->https->Server->Date = file.ModificationTime();
+	    resultHashes.AddFD(file);
+	    HashStringList const hashList = resultHashes.GetHashStringList();
+	    partialHit = (me->Itm->ExpectedHashes == hashList);
+	 }
+	 else if (me->https->Server->Result == 416 && me->https->Server->TotalFileSize == me->https->File->FileSize())
+	    partialHit = true;
+
+	 if (partialHit == true)
+	 {
+	    me->https->Server->Result = 200;
+	    me->https->Server->StartPos = me->https->Server->TotalFileSize;
+	    // the actual size is not important for https as curl will deal with it
+	    // by itself and e.g. doesn't bother us with transport-encoding…
+	    me->https->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
+	 }
+	 else
+	    me->https->Server->StartPos = 0;
       }
       else
-	 me->Server->StartPos = 0;
+	 me->https->Server->StartPos = 0;
 
-      me->File->Truncate(me->Server->StartPos);
-      me->File->Seek(me->Server->StartPos);
+      me->Res->LastModified = me->https->Server->Date;
+      me->Res->Size = me->https->Server->TotalFileSize;
+      me->Res->ResumePoint = me->https->Server->StartPos;
+
+      // we expect valid data, so tell our caller we get the file now
+      if (me->https->Server->Result >= 200 && me->https->Server->Result < 300)
+      {
+	 if (me->https->Server->JunkSize == 0 && me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
+	    me->https->URIStart(*me->Res);
+	 if (me->https->Server->AddPartialFileToHashes(*(me->https->File)) == false)
+	    return 0;
+      }
    }
-   else if (me->Server->HeaderLine(line) == false)
+   else if (me->https->Server->HeaderLine(line) == false)
       return 0;
 
    return size*nmemb;
@@ -86,41 +116,54 @@ size_t
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    HttpsMethod *me = (HttpsMethod *)userp;
+   size_t buffer_size = size * nmemb;
+   // we don't need to count the junk here, just drop anything we get as
+   // we don't always know how long it would be, e.g. in chunked encoding.
+   if (me->Server->JunkSize != 0)
+      return buffer_size;
 
-   if (me->Res.Size == 0)
-      me->URIStart(me->Res);
-   if(me->File->Write(buffer, size*nmemb) != true)
-      return false;
+   if(me->File->Write(buffer, buffer_size) != true)
+      return 0;
 
-   if(me->Queue->MaximumSize > 0 && me->File->Tell() > me->Queue->MaximumSize)
+   if(me->Queue->MaximumSize > 0)
    {
-      me->SetFailReason("MaximumSizeExceeded");
-      return _error->Error("Writing more data than expected (%llu > %llu)",
-                           me->TotalWritten, me->Queue->MaximumSize);
+      unsigned long long const TotalWritten = me->File->Tell();
+      if (TotalWritten > me->Queue->MaximumSize)
+      {
+	 me->SetFailReason("MaximumSizeExceeded");
+	 _error->Error("Writing more data than expected (%llu > %llu)",
+	       TotalWritten, me->Queue->MaximumSize);
+	 return 0;
+      }
    }
-   return size*nmemb;
-}
 
-int
-HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
-			      double /*ultotal*/, double /*ulnow*/)
-{
-   HttpsMethod *me = (HttpsMethod *)clientp;
-   if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = (unsigned long long)dltotal;
-   }
-   return 0;
+   if (me->Server->GetHashes()->Add((unsigned char const * const)buffer, buffer_size) == false)
+      return 0;
+
+   return buffer_size;
 }
 
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
-HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * /*Owner*/) : ServerState(Srv, NULL)
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner), Hash(NULL)
 {
    TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
    Reset();
 }
 									/*}}}*/
+bool HttpsServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
+{
+   delete Hash;
+   Hash = new Hashes(ExpectedHashes);
+   return true;
+}
+									/*}}}*/
+APT_PURE Hashes * HttpsServerState::GetHashes()				/*{{{*/
+{
+   return Hash;
+}
+									/*}}}*/
 
-void HttpsMethod::SetupProxy()  					/*{{{*/
+void HttpsMethod::SetupProxy()						/*{{{*/
 {
    URI ServerName = Queue->Uri;
 
@@ -183,7 +226,7 @@ void HttpsMethod::SetupProxy()  					/*{{{*/
 bool HttpsMethod::Fetch(FetchItem *Itm)
 {
    struct stat SBuf;
-   struct curl_slist *headers=NULL;  
+   struct curl_slist *headers=NULL;
    char curl_errorstr[CURL_ERROR_SIZE];
    URI Uri = Itm->Uri;
    string remotehost = Uri.Host;
@@ -198,16 +241,16 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 
+   FetchResult Res;
+   CURLUserPointer userp(this, &Res, Itm);
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
-   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
+   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, &userp);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
-   curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
    // options
-   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
+   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
    // only allow curl to handle https, not the other stuff it supports
    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
@@ -316,13 +359,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
    // set redirect options and default to 10 redirects
-   bool const AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
-	_config->FindB("Acquire::http::AllowRedirect",true));
    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
 
    // debug
-   if(_config->FindB("Debug::Acquire::https", false))
+   if (Debug == true)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 
    // error handling
@@ -359,7 +400,9 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   Server = new HttpsServerState(Itm->Uri, this);
+   Server = CreateServerState(Itm->Uri);
+   if (Server->InitHashes(Itm->ExpectedHashes) == false)
+      return false;
 
    // keep apt updated
    Res.Filename = Itm->DestFile;
@@ -379,7 +422,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (success != 0)
    {
       _error->Error("%s", curl_errorstr);
-      unlink(File->Name().c_str());
       return false;
    }
 
@@ -402,10 +444,19 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       char err[255];
       snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
       SetFailReason(err);
-      _error->Error("%s", err);
+      _error->Error("%i %s", Server->Result, Server->Code);
       // unlink, no need keep 401/404 page content in partial/
       unlink(File->Name().c_str());
       return false;
+   }
+
+   // invalid range-request
+   if (Server->Result == 416)
+   {
+      unlink(File->Name().c_str());
+      delete File;
+      Redirect(Itm->Uri);
+      return true;
    }
 
    struct stat resultStat;
@@ -415,16 +466,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
    Res.Size = resultStat.st_size;
-
-   // invalid range-request
-   if (Server->Result == 416)
-   {
-      unlink(File->Name().c_str());
-      Res.Size = 0;
-      delete File;
-      Redirect(Itm->Uri);
-      return true;
-   }
 
    // Timestamp
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
@@ -440,20 +481,35 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.LastModified = resultStat.st_mtime;
 
    // take hashes
-   Hashes Hash;
-   FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd);
-   Res.TakeHashes(Hash);
+   Res.TakeHashes(*(Server->GetHashes()));
 
    // keep apt updated
    URIDone(Res);
 
    // cleanup
-   Res.Size = 0;
    delete File;
 
    return true;
 }
+									/*}}}*/
+// HttpsMethod::Configuration - Handle a configuration message		/*{{{*/
+bool HttpsMethod::Configuration(string Message)
+{
+   if (ServerMethod::Configuration(Message) == false)
+      return false;
+
+   AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
+	_config->FindB("Acquire::http::AllowRedirect", true));
+   Debug = _config->FindB("Debug::Acquire::https",false);
+
+   return true;
+}
+									/*}}}*/
+ServerState * HttpsMethod::CreateServerState(URI uri)			/*{{{*/
+{
+   return new HttpsServerState(uri, this);
+}
+									/*}}}*/
 
 int main()
 {

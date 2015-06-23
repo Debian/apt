@@ -13,9 +13,9 @@ insertinstalledpackage 'base-files' 'all' '5.0.0-1'
 setupaptarchive
 
 STATUS=$(readlink -f rootdir/var/lib/dpkg/status)
-APTARCHIVE="$(readlink -f aptarchive)/"
+APTARCHIVE="$(readlink -f aptarchive)"
 
-testequal "base-files:
+testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
   Version table:
@@ -24,58 +24,70 @@ testequal "base-files:
      5.0.0 0
         500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=0
 
-echo 'Package: base-files
+writepin() {
+	echo "Package: $1
 Pin: release a=unstable
-Pin-Priority: 99' > rootdir/etc/apt/preferences
+Pin-Priority: $2" > rootdir/etc/apt/preferences
+}
 
-testequal "base-files:
+
+
+testpinning() {
+	local PKGPIN=''
+	local PKGPINPRIO='0'
+	local REPPINPRIO=''
+	if [ "$1" != '*' ]; then
+		PKGPINPRIO=''
+		REPPINPRIO=' 500'
+		PKGPIN='Package pin: 5.0.0
+  '
+	fi
+	writepin "$1" '99'
+	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  Package pin: 5.0.0
-  Version table:
- *** 5.0.0-1 99
+  ${PKGPIN}Version table:
+ *** 5.0.0-1 ${PKGPINPRIO:-99}
         100 $STATUS
-     5.0.0 99
-        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=99
+     5.0.0 ${PKGPINPRIO:-99}
+       ${REPPINPRIO:-  99} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=99
 
-echo 'Package: base-files
-Pin: release a=unstable
-Pin-Priority: 100' > rootdir/etc/apt/preferences
-
-testequal "base-files:
+	writepin "$1" '100'
+	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  Package pin: 5.0.0
-  Version table:
- *** 5.0.0-1 100
+  ${PKGPIN}Version table:
+ *** 5.0.0-1 ${PKGPINPRIO:-100}
         100 $STATUS
-     5.0.0 100
-        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=100
+     5.0.0 ${PKGPINPRIO:-100}
+       ${REPPINPRIO:- 100} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=100
 
-echo 'Package: base-files
-Pin: release a=unstable
-Pin-Priority: 999' > rootdir/etc/apt/preferences
-
-testequal "base-files:
+	writepin "$1" '999'
+	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  Package pin: 5.0.0
-  Version table:
- *** 5.0.0-1 999
+  ${PKGPIN}Version table:
+ *** 5.0.0-1 ${PKGPINPRIO:-999}
         100 $STATUS
-     5.0.0 999
-        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=999
+     5.0.0 ${PKGPINPRIO:-999}
+       ${REPPINPRIO:- 999} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=999
 
-echo 'Package: base-files
-Pin: release a=unstable
-Pin-Priority: 1000' > rootdir/etc/apt/preferences
-
-testequal "base-files:
+	writepin "$1" '1000'
+	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0
-  Package pin: 5.0.0
-  Version table:
- *** 5.0.0-1 1000
+  ${PKGPIN}Version table:
+ *** 5.0.0-1 ${PKGPINPRIO:-1000}
         100 $STATUS
-     5.0.0 1000
-        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=1000
+     5.0.0 ${PKGPINPRIO:-1000}
+       ${REPPINPRIO:-1000} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=1000
+}
+
+msgmsg 'Tests with generic-form pin'
+testpinning '*'
+msgmsg 'Tests with specific-form pin'
+testpinning 'base-files'
+msgmsg 'Tests with specific-form pin with glob'
+testpinning 'base-fil*'
+msgmsg 'Tests with specific-form pin with regex'
+testpinning '/^base-f[iI]les$/'

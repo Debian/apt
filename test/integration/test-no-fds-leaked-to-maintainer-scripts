@@ -1,0 +1,119 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+configdpkgnoopchroot
+
+setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
+BUILDDIR="incoming/fdleaks-1.0"
+for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
+	cat > ${BUILDDIR}/debian/$script << EOF
+#!/bin/sh
+if [ -e "$(pwd)/rootdir/tmp/read_stdin" ]; then
+	read line;
+	echo "STDIN: -\$line-"
+fi
+ls -l /proc/self/fd/
+EOF
+done
+buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+rm -rf "$BUILDDIR"
+
+PKGNAME='fdleaks:all'
+if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null >/dev/null 2>&1; then
+	PKGNAME='fdleaks'
+fi
+
+setupaptarchive
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess aptget install -y fdleaks -qq < /dev/null
+
+checkfdleak() {
+	msgtest 'Check if fds were not' 'leaked'
+	if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = "$1" ]; then
+		msgpass
+	else
+		echo
+		cat rootdir/tmp/testsuccess.output
+		msgfail
+	fi
+}
+checkinstall() {
+	checkfdleak 8
+
+	cp rootdir/tmp/testsuccess.output terminal.output
+	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+	testfileequal 'terminal.log' "$(cat terminal.output)"
+
+	testequal "startup archives unpack
+install $PKGNAME <none> 1.0
+status half-installed $PKGNAME 1.0
+status unpacked $PKGNAME 1.0
+status unpacked $PKGNAME 1.0
+startup packages configure
+configure $PKGNAME 1.0 <none>
+status unpacked $PKGNAME 1.0
+status half-configured $PKGNAME 1.0
+status installed $PKGNAME 1.0
+startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+}
+checkinstall
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess aptget purge -y fdleaks -qq
+checkpurge() {
+	checkfdleak 12
+
+	cp rootdir/tmp/testsuccess.output terminal.output
+	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
+	testfileequal 'terminal.log' "$(cat terminal.output)"
+
+	testequal "startup packages purge
+status installed $PKGNAME 1.0
+remove $PKGNAME 1.0 <none>
+status half-configured $PKGNAME 1.0
+status half-installed $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+purge $PKGNAME 1.0 <none>
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+status not-installed $PKGNAME <none>
+startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+}
+checkpurge
+
+msgtest 'setsid provided is new enough to support' '-w'
+if dpkg-checkbuilddeps -d 'util-linux (>= 2.24.2-1)' /dev/null >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip "$(command dpkg -l util-linux)"
+	exit
+fi
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" install -y fdleaks -qq < /dev/null
+checkinstall
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" purge -y fdleaks -qq
+checkpurge
+
+touch rootdir/tmp/read_stdin
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+for i in $(seq 1 10); do echo "$i"; done | testsuccess aptget install -y fdleaks -qq
+checkinstall
+testequal '2' grep -c '^STDIN: ' rootdir/var/log/apt/term.log
+
+rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
+yes '' | testsuccess runapt command setsid -w "${BUILDDIRECTORY}/apt-get" purge -y fdleaks -qq
+checkpurge
+testequal '3' grep -c '^STDIN: ' rootdir/var/log/apt/term.log

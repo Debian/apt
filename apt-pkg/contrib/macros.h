@@ -89,7 +89,7 @@
 	#define APT_MUSTCHECK		__attribute__((warn_unused_result))
 #else
 	#define APT_NONNULL(...)
-	#define APT_REQRET
+	#define APT_MUSTCHECK
 #endif
 
 #if APT_GCC_VERSION >= 0x0400
@@ -132,6 +132,22 @@
 #endif
 #endif
 
+#if __GNUC__ >= 4
+	#define APT_IGNORE_DEPRECATED_PUSH \
+		_Pragma("GCC diagnostic push") \
+		_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+	#define APT_IGNORE_DEPRECATED_POP \
+		_Pragma("GCC diagnostic pop")
+	#define APT_IGNORE_DEPRECATED(XXX) \
+		APT_IGNORE_DEPRECATED_PUSH \
+		XXX \
+		APT_IGNORE_DEPRECATED_POP
+#else
+	#define APT_IGNORE_DEPRECATED_PUSH
+	#define APT_IGNORE_DEPRECATED_POP
+	#define APT_IGNORE_DEPRECATED(XXX) XXX
+#endif
+
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all
 // reverse-dependencies of libapt-pkg against the new SONAME.
@@ -140,5 +156,6 @@
 #define APT_PKG_MAJOR 4
 #define APT_PKG_MINOR 15
 #define APT_PKG_RELEASE 0
+#define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 
 #endif

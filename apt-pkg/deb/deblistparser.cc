@@ -141,6 +141,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       map_stringitem_t const idx = StoreString(pkgCacheGenerator::SECTION, Start, Stop - Start);
       Ver->Section = idx;
    }
+#if APT_PKG_ABI >= 413
    // Parse the source package name
    pkgCache::GrpIterator const G = Ver.ParentPkg().Group();
    Ver->SourcePkgName = G->Name;
@@ -192,6 +193,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 }
       }
    }
+#endif
 
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
@@ -804,7 +806,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 if (NewDepends(Ver,Package,"none",Version,Op,Type) == false)
 	    return false;
       }
-      else if (MultiArchEnabled == true && found != string::npos &&
+      else if (found != string::npos &&
 	       strcmp(Package.c_str() + found, ":any") != 0)
       {
 	 string Arch = Package.substr(found+1, string::npos);
@@ -851,10 +853,16 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       while (1)
       {
 	 Start = ParseDepends(Start,Stop,Package,Version,Op);
+	 const size_t archfound = Package.rfind(':');
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
 	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
 	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
+	 } else if (archfound != string::npos) {
+	    string OtherArch = Package.substr(archfound+1, string::npos);
+	    Package = Package.substr(0, archfound);
+	    if (NewProvides(Ver, Package, OtherArch, Version) == false)
+	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;
@@ -943,43 +951,6 @@ bool debListParser::Step()
    return false;
 }
 									/*}}}*/
-// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
-				    FileFd &File, string component)
-{
-   // apt-secure does no longer download individual (per-section) Release
-   // file. to provide Component pinning we use the section name now
-   map_stringitem_t const storage = StoreString(pkgCacheGenerator::MIXED, component);
-   FileI->Component = storage;
-
-   pkgTagFile TagFile(&File, File.Size());
-   pkgTagSection Section;
-   if (_error->PendingError() == true || TagFile.Step(Section) == false)
-      return false;
-
-   std::string data;
-   #define APT_INRELEASE(TYPE, TAG, STORE) \
-   data = Section.FindS(TAG); \
-   if (data.empty() == false) \
-   { \
-      map_stringitem_t const storage = StoreString(pkgCacheGenerator::TYPE, data); \
-      STORE = storage; \
-   }
-   APT_INRELEASE(MIXED, "Suite", FileI->Archive)
-   APT_INRELEASE(MIXED, "Component", FileI->Component)
-   APT_INRELEASE(VERSIONNUMBER, "Version", FileI->Version)
-   APT_INRELEASE(MIXED, "Origin", FileI->Origin)
-   APT_INRELEASE(MIXED, "Codename", FileI->Codename)
-   APT_INRELEASE(MIXED, "Label", FileI->Label)
-   #undef APT_INRELEASE
-   Section.FindFlag("NotAutomatic", FileI->Flags, pkgCache::Flag::NotAutomatic);
-   Section.FindFlag("ButAutomaticUpgrades", FileI->Flags, pkgCache::Flag::ButAutomaticUpgrades);
-
-   return !_error->PendingError();
-}
-									/*}}}*/
 // ListParser::GetPrio - Convert the priority from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -992,7 +963,7 @@ unsigned char debListParser::GetPrio(string Str)
    return Out;
 }
 									/*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {

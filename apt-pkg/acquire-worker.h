@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-worker.h,v 1.12 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Acquire Worker - Worker process manager
@@ -326,6 +325,9 @@ class pkgAcquire::Worker : public WeakPointable
     *  \b false, also rudely interrupts the worker with a SIGINT.
     */
    virtual ~Worker();
+
+private:
+   APT_HIDDEN void PrepareFiles(char const * const caller, pkgAcquire::Queue::QItem const * const Itm);
 };
 
 /** @} */

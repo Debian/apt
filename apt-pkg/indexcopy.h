@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: indexcopy.h,v 1.3 2001/05/27 04:46:54 jgg Exp $
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
@@ -28,6 +27,7 @@ using std::vector;
 class pkgTagSection;
 class indexRecords;
 class pkgCdromStatus;
+class FileFd;
 
 class IndexCopy								/*{{{*/
 {
@@ -45,7 +45,7 @@ class IndexCopy								/*{{{*/
    void ConvertToSourceList(std::string CD,std::string &Path);
    bool GrabFirst(std::string Path,std::string &To,unsigned int Depth);
    virtual bool GetFile(std::string &Filename,unsigned long long &Size) = 0;
-   virtual bool RewriteEntry(FILE *Target,std::string File) = 0;
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File) = 0;
    virtual const char *GetFileName() = 0;
    virtual const char *Type() = 0;
    
@@ -53,39 +53,52 @@ class IndexCopy								/*{{{*/
 
    bool CopyPackages(std::string CDROM,std::string Name,std::vector<std::string> &List,
 		     pkgCdromStatus *log);
+   IndexCopy();
    virtual ~IndexCopy();
 };
 									/*}}}*/
 class PackageCopy : public IndexCopy					/*{{{*/
 {
+   void *d;
    protected:
-   
+
    virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FILE *Target,std::string File);
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
    virtual const char *GetFileName() {return "Packages";};
    virtual const char *Type() {return "Package";};
-   
+
+   public:
+   PackageCopy();
+   virtual ~PackageCopy();
 };
 									/*}}}*/
 class SourceCopy : public IndexCopy					/*{{{*/
 {
+   void *d;
    protected:
    
    virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FILE *Target,std::string File);
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
    virtual const char *GetFileName() {return "Sources";};
    virtual const char *Type() {return "Source";};
-   
+
+   public:
+   SourceCopy();
+   virtual ~SourceCopy();
 };
 									/*}}}*/
 class TranslationsCopy							/*{{{*/
 {
+   void *d;
    protected:
    pkgTagSection *Section;
 
    public:
    bool CopyTranslations(std::string CDROM,std::string Name,std::vector<std::string> &List,
 			 pkgCdromStatus *log);
+
+   TranslationsCopy();
+   virtual ~TranslationsCopy();
 };
 									/*}}}*/
 class SigVerify								/*{{{*/
@@ -105,6 +118,9 @@ class SigVerify								/*{{{*/
 		       int const &statusfd, int fd[2]);
    APT_DEPRECATED static bool RunGPGV(std::string const &File, std::string const &FileOut,
 			      int const &statusfd = -1);
+
+   SigVerify();
+   virtual ~SigVerify();
 };
 									/*}}}*/
 

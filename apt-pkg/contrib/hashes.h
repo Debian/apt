@@ -55,6 +55,8 @@ class HashString
    // get hash type used
    std::string HashType() const { return Type; };
    std::string HashValue() const { return Hash; };
+   APT_DEPRECATED std::string HashType() { return Type; };
+   APT_DEPRECATED std::string HashValue() { return Hash; };
 
    // verify the given filename against the currently loaded hash
    bool VerifyFile(std::string filename) const;
@@ -85,6 +87,22 @@ class HashStringList
     */
    HashString const * find(char const * const type) const;
    HashString const * find(std::string const &type) const { return find(type.c_str()); }
+
+   /** finds the filesize hash and returns it as number
+    *
+    * @return beware: if the size isn't known we return \b 0 here,
+    * just like we would do for an empty file. If that is a problem
+    * for you have to get the size manually out of the list.
+    */
+   unsigned long long FileSize() const;
+
+   /** sets the filesize hash
+    *
+    * @param Size of the file
+    * @return @see #push_back
+    */
+   bool FileSize(unsigned long long const Size);
+
    /** check if the given hash type is supported
     *
     * @param type to check
@@ -176,7 +194,8 @@ class Hashes
 
    static const int UntilEOF = 0;
 
-   bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes = ~0);
+   bool Add(const unsigned char * const Data, unsigned long long const Size);
+   APT_DEPRECATED bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes);
    inline bool Add(const char * const Data)
    {return Add((unsigned char const * const)Data,strlen(Data));};
    inline bool Add(const unsigned char * const Beg,const unsigned char * const End)
@@ -184,20 +203,26 @@ class Hashes
 
    enum SupportedHashes { MD5SUM = (1 << 0), SHA1SUM = (1 << 1), SHA256SUM = (1 << 2),
       SHA512SUM = (1 << 3) };
-   bool AddFD(int const Fd,unsigned long long Size = 0, unsigned int const Hashes = ~0);
-   bool AddFD(FileFd &Fd,unsigned long long Size = 0, unsigned int const Hashes = ~0);
+   bool AddFD(int const Fd,unsigned long long Size = 0);
+   APT_DEPRECATED bool AddFD(int const Fd,unsigned long long Size, unsigned int const Hashes);
+   bool AddFD(FileFd &Fd,unsigned long long Size = 0);
+   APT_DEPRECATED bool AddFD(FileFd &Fd,unsigned long long Size, unsigned int const Hashes);
 
    HashStringList GetHashStringList();
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
+   /** create a Hashes object to calculate all supported hashes
+    *
+    * If ALL is too much, you can limit which Hashes are calculated
+    * with the following other constructors which mention explicitly
+    * which hashes to generate. */
    Hashes();
+   /** @param Hashes bitflag composed of #SupportedHashes */
+   Hashes(unsigned int const Hashes);
+   /** @param Hashes is a list of hashes */
+   Hashes(HashStringList const &Hashes);
    virtual ~Hashes();
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
    private:
    APT_HIDDEN APT_CONST inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)
@@ -211,15 +236,16 @@ class Hashes
    }
 
    public:
+APT_IGNORE_DEPRECATED_PUSH
    APT_DEPRECATED bool AddFD(int const Fd, unsigned long long Size, bool const addMD5,
 	 bool const addSHA1, bool const addSHA256, bool const addSHA512) {
       return AddFD(Fd, Size, boolsToFlag(addMD5, addSHA1, addSHA256, addSHA512));
    };
-
    APT_DEPRECATED bool AddFD(FileFd &Fd, unsigned long long Size, bool const addMD5,
 	 bool const addSHA1, bool const addSHA256, bool const addSHA512) {
       return AddFD(Fd, Size, boolsToFlag(addMD5, addSHA1, addSHA256, addSHA512));
    };
+APT_IGNORE_DEPRECATED_POP
 };
 
 #endif

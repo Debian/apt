@@ -259,19 +259,21 @@ bool FTPConn::Login()
       {
 	 if (Opts->Value.empty() == true)
 	    continue;
-	 
+
 	 // Substitute the variables into the command
-	 char SitePort[20];
-	 if (ServerName.Port != 0)
-	    sprintf(SitePort,"%u",ServerName.Port);
-	 else
-	    strcpy(SitePort,"21");
 	 string Tmp = Opts->Value;
 	 Tmp = SubstVar(Tmp,"$(PROXY_USER)",Proxy.User);
 	 Tmp = SubstVar(Tmp,"$(PROXY_PASS)",Proxy.Password);
 	 Tmp = SubstVar(Tmp,"$(SITE_USER)",User);
 	 Tmp = SubstVar(Tmp,"$(SITE_PASS)",Pass);
-	 Tmp = SubstVar(Tmp,"$(SITE_PORT)",SitePort);
+	 if (ServerName.Port != 0)
+	 {
+	    std::string SitePort;
+	    strprintf(SitePort, "%u", ServerName.Port);
+	    Tmp = SubstVar(Tmp,"$(SITE_PORT)", SitePort);
+	 }
+	 else
+	    Tmp = SubstVar(Tmp,"$(SITE_PORT)", "21");
 	 Tmp = SubstVar(Tmp,"$(SITE)",ServerName.Host);
 
 	 // Send the command
@@ -1062,7 +1064,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    }
    
    // Open the file
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    {
       FileFd Fd(Itm->DestFile,FileFd::WriteAny);
       if (_error->PendingError() == true)

@@ -11,35 +11,35 @@
 #include <config.h>
 
 #include <apt-pkg/debrecords.h>
+#include <apt-pkg/debindexfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/error.h>
 
 #include <string.h>
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <langinfo.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
 
 // RecordParser::debRecordParser - Constructor				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
-                  File(FileName,FileFd::ReadOnly, FileFd::Extension),
-                  Tags(&File, std::max(Cache.Head().MaxVerFileSize, 
-				       Cache.Head().MaxDescFileSize) + 200)
+debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
+   debRecordParserBase(), File(FileName, FileFd::ReadOnly, FileFd::Extension),
+   Tags(&File, std::max(Cache.Head().MaxVerFileSize, Cache.Head().MaxDescFileSize) + 200)
 {
 }
 									/*}}}*/
 // RecordParser::Jump - Jump to a specific record			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 {
    return Tags.Jump(Section,Ver->Offset);
@@ -49,32 +49,29 @@ bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
    return Tags.Jump(Section,Desc->Offset);
 }
 									/*}}}*/
-// RecordParser::FileName - Return the archive filename on the site	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::FileName()
+debRecordParser::~debRecordParser() {}
+
+debRecordParserBase::debRecordParserBase() : Parser() {}
+// RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
+string debRecordParserBase::FileName()
 {
    return Section.FindS("Filename");
 }
 									/*}}}*/
-// RecordParser::Name - Return the package name				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::Name()
+// RecordParserBase::Name - Return the package name			/*{{{*/
+string debRecordParserBase::Name()
 {
    return Section.FindS("Package");
 }
 									/*}}}*/
-// RecordParser::Homepage - Return the package homepage		       	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::Homepage()
+// RecordParserBase::Homepage - Return the package homepage		/*{{{*/
+string debRecordParserBase::Homepage()
 {
    return Section.FindS("Homepage");
 }
 									/*}}}*/
-// RecordParser::Hashes - return the available archive hashes		/*{{{*/
-HashStringList debRecordParser::Hashes() const
+// RecordParserBase::Hashes - return the available archive hashes	/*{{{*/
+HashStringList debRecordParserBase::Hashes() const
 {
    HashStringList hashes;
    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
@@ -86,27 +83,20 @@ HashStringList debRecordParser::Hashes() const
    return hashes;
 }
 									/*}}}*/
-// RecordParser::Maintainer - Return the maintainer email		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::Maintainer()
+// RecordParserBase::Maintainer - Return the maintainer email		/*{{{*/
+string debRecordParserBase::Maintainer()
 {
    return Section.FindS("Maintainer");
 }
 									/*}}}*/
-// RecordParser::RecordField - Return the value of an arbitrary field       /*{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::RecordField(const char *fieldName)
+// RecordParserBase::RecordField - Return the value of an arbitrary field	/*{{*/
+string debRecordParserBase::RecordField(const char *fieldName)
 {
    return Section.FindS(fieldName);
 }
-
-                                                                        /*}}}*/
-// RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::ShortDesc(std::string const &lang)
+									/*}}}*/
+// RecordParserBase::ShortDesc - Return a 1 line description		/*{{{*/
+string debRecordParserBase::ShortDesc(std::string const &lang)
 {
    string const Res = LongDesc(lang);
    if (Res.empty() == true)
@@ -117,10 +107,8 @@ string debRecordParser::ShortDesc(std::string const &lang)
    return string(Res,0,Pos);
 }
 									/*}}}*/
-// RecordParser::LongDesc - Return a longer description			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::LongDesc(std::string const &lang)
+// RecordParserBase::LongDesc - Return a longer description		/*{{{*/
+string debRecordParserBase::LongDesc(std::string const &lang)
 {
    string orig;
    if (lang.empty() == true)
@@ -162,12 +150,9 @@ string debRecordParser::LongDesc(std::string const &lang)
 }
 									/*}}}*/
 
-static const char *SourceVerSeparators = " ()";
-
-// RecordParser::SourcePkg - Return the source package name if any	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SourcePkg()
+static const char * const SourceVerSeparators = " ()";
+// RecordParserBase::SourcePkg - Return the source package name if any	/*{{{*/
+string debRecordParserBase::SourcePkg()
 {
    string Res = Section.FindS("Source");
    string::size_type Pos = Res.find_first_of(SourceVerSeparators);
@@ -176,10 +161,8 @@ string debRecordParser::SourcePkg()
    return string(Res,0,Pos);
 }
 									/*}}}*/
-// RecordParser::SourceVer - Return the source version number if present	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SourceVer()
+// RecordParserBase::SourceVer - Return the source version number if present	/*{{{*/
+string debRecordParserBase::SourceVer()
 {
    string Pkg = Section.FindS("Source");
    string::size_type Pos = Pkg.find_first_of(SourceVerSeparators);
@@ -199,13 +182,35 @@ string debRecordParser::SourceVer()
      return string(Pkg, VerStart, VerEnd - VerStart);
 }
 									/*}}}*/
-// RecordParser::GetRec - Return the whole record			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void debRecordParser::GetRec(const char *&Start,const char *&Stop)
+// RecordParserBase::GetRec - Return the whole record			/*{{{*/
+void debRecordParserBase::GetRec(const char *&Start,const char *&Stop)
 {
    Section.GetSection(Start,Stop);
 }
 									/*}}}*/
+debRecordParserBase::~debRecordParserBase() {}
 
-debRecordParser::~debRecordParser() {}
+bool debDebFileRecordParser::LoadContent()
+{
+   // load content only once
+   if (controlContent.empty() == false)
+      return true;
+
+   std::ostringstream content;
+   if (debDebPkgFileIndex::GetContent(content, debFileName) == false)
+      return false;
+   // add two newlines to make sure the scanner finds the section,
+   // which is usually done by pkgTagFile automatically if needed.
+   content << "\n\n";
+
+   controlContent = content.str();
+   if (Section.Scan(controlContent.c_str(), controlContent.length()) == false)
+      return _error->Error(_("Unable to parse package file %s (%d)"), debFileName.c_str(), 3);
+   return true;
+}
+bool debDebFileRecordParser::Jump(pkgCache::VerFileIterator const &) { return LoadContent(); }
+bool debDebFileRecordParser::Jump(pkgCache::DescFileIterator const &) { return LoadContent(); }
+std::string debDebFileRecordParser::FileName() { return debFileName; }
+
+debDebFileRecordParser::debDebFileRecordParser(std::string FileName) : debRecordParserBase(), debFileName(FileName) {}
+debDebFileRecordParser::~debDebFileRecordParser() {}

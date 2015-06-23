@@ -48,7 +48,7 @@ class MultiCompress
    public:
    
    // The FD to write to for compression.
-   FILE *Input;
+   FileFd Input;
    unsigned long UpdateMTime;
    
    bool Finalize(unsigned long long &OutSize);

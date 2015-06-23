@@ -25,8 +25,9 @@
 
 class FileFd;
 
-class edspListParser : public debListParser
+class APT_HIDDEN edspListParser : public debListParser
 {
+   void *d;
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver);
    virtual std::string Description();
@@ -34,10 +35,11 @@ class edspListParser : public debListParser
    virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
 
-   bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
-			std::string section);
+   bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
+			std::string const &section);
 
    edspListParser(FileFd *File, std::string const &Arch = "");
+   virtual ~edspListParser();
 
    protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);

@@ -400,7 +400,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	       // Check if the current version of the package is available and will satisfy this dependency
 	       if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true &&
 		   List->IsFlag(DepPkg,pkgOrderList::Removed) == false &&
-		   DepPkg.State() == PkgIterator::NeedsNothing)
+		   DepPkg.State() == PkgIterator::NeedsNothing &&
+		   (Cache[DepPkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
 	       {
 		  Bad = false;
 		  break;
@@ -413,8 +414,13 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	       if (PkgLoop == true)
 	       {
 		  if (Debug)
-		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
-	          Bad = false;
+		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure";
+		  if (List->IsFlag(DepPkg,pkgOrderList::UnPacked))
+		     Bad = false;
+		  else if (Debug)
+		     std::clog << ", but it isn't unpacked yet";
+		  if (Debug)
+		     std::clog << std::endl;
 	       }
 	    }
 
@@ -426,7 +432,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          if (Bad == false)
          {
             if (Debug)
-               std::clog << OutputInDepth(Depth) << "Found ok dep " << D.TargetPkg() << std::endl;
+               std::clog << OutputInDepth(Depth) << "Found ok dep " << Start.TargetPkg() << std::endl;
             continue;
          }
 
@@ -444,7 +450,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	       // Check if the current version of the package is available and will satisfy this dependency
 	       if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true &&
 		   List->IsFlag(DepPkg,pkgOrderList::Removed) == false &&
-		   DepPkg.State() == PkgIterator::NeedsNothing)
+		   DepPkg.State() == PkgIterator::NeedsNothing &&
+		   (Cache[DepPkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
                   continue;
 
 	       // Check if the version that is going to be installed will satisfy the dependency
@@ -454,8 +461,13 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	       if (PkgLoop == true)
 	       {
 		  if (Debug)
-		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
-	          Bad = false;
+		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure";
+		  if (List->IsFlag(DepPkg,pkgOrderList::UnPacked))
+		     Bad = false;
+		  else if (Debug)
+		     std::clog << ", but it isn't unpacked yet";
+		  if (Debug)
+		     std::clog << std::endl;
 	       }
 	       else
 	       {
@@ -722,7 +734,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 
 		  // See if the current version is ok
 		  if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true &&
-		      Pkg.State() == PkgIterator::NeedsNothing)
+		      Pkg.State() == PkgIterator::NeedsNothing &&
+		      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
 		  {
 		     Bad = false;
 		     if (Debug)
@@ -744,8 +757,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  PkgIterator DepPkg = Ver.ParentPkg();
 
 		  // Not the install version
-		  if (Cache[DepPkg].InstallVer != *I ||
-		      (Cache[DepPkg].Keep() == true && DepPkg.State() == PkgIterator::NeedsNothing))
+		  if (Cache[DepPkg].InstallVer != *I)
+		     continue;
+
+		  if (Cache[DepPkg].Keep() == true && DepPkg.State() == PkgIterator::NeedsNothing &&
+			(Cache[DepPkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
 		     continue;
 
 		  if (List->IsFlag(DepPkg,pkgOrderList::Configured))
@@ -757,6 +773,16 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  // check if it needs unpack or if if configure is enough
 		  if (List->IsFlag(DepPkg,pkgOrderList::UnPacked) == false)
 		  {
+		     // two packages pre-depending on each other can't be handled sanely
+		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) && PkgLoop)
+		     {
+			// this isn't an error as there is potential for something else to satisfy it
+			// (like a provides or an or-group member)
+			if (Debug)
+			   clog << OutputInDepth(Depth) << "Unpack loop detected between " << DepPkg.FullName() << " and " << Pkg.FullName() << endl;
+			continue;
+		     }
+
 		     if (Debug)
 			clog << OutputInDepth(Depth) << "Trying to SmartUnpack " << DepPkg.FullName() << endl;
 		     if (NonLoopingSmart(UNPACK_IMMEDIATE, Pkg, DepPkg, Depth, PkgLoop, &Bad, &Changed) == false)
@@ -1059,7 +1085,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - compat /*{{{*/
 // ---------------------------------------------------------------------
 									/*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
@@ -1096,7 +1122,7 @@ pkgPackageManager::DoInstallPostFork(int statusFd)
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* compat */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(int statusFd)
 {
@@ -1120,7 +1146,7 @@ pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {

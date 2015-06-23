@@ -34,6 +34,9 @@ CommandLine::CommandLine(Args *AList,Configuration *Conf) : ArgList(AList),
                                  Conf(Conf), FileList(0)
 {
 }
+CommandLine::CommandLine() : ArgList(NULL), Conf(NULL), FileList(0)
+{
+}
 									/*}}}*/
 // CommandLine::~CommandLine - Destructor				/*{{{*/
 // ---------------------------------------------------------------------

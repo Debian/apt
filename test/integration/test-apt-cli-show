@@ -24,15 +24,26 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 
 # note that we do not display Description-md5 with the "apt" cmd
 # and also show some additional fields that are calculated
-testequal "Package: foo
+testsuccessequal "Package: foo
+Version: 1.0
 Priority: optional
 Section: other
-Installed-Size: 43.0 kB
 Maintainer: Joe Sixpack <joe@example.org>
-Version: 1.0
+Installed-Size: 43.0 kB
 Download-Size: unknown
 APT-Manual-Installed: yes
-APT-Sources: file:$APTARCHIVE/ unstable/main i386 Packages
+APT-Sources: file:$APTARCHIVE unstable/main i386 Packages
 Description: Some description 
  That has multiple lines
 " apt show foo
+
+# this is the default, but disabled by the testcases
+testsuccess apt show foo -o Apt::Cmd::Disable-Script-Warning=0
+cp rootdir/tmp/testsuccess.output aptshow.output
+testsuccess grep '^WARNING: ' aptshow.output
+
+if [ "$(id -u)" != '0' ]; then
+	testsuccess apt install foo -s -o APT::Get::Show-User-Simulation-Note=1
+	cp rootdir/tmp/testsuccess.output aptshow.output
+	testsuccess grep '^NOTE: ' aptshow.output
+fi

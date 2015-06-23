@@ -11,8 +11,6 @@ insertpackage 'unstable' 'foo' 'all' '1.0'
 
 setupaptarchive --no-update
 
-APTARCHIVE=$(readlink -f ./aptarchive)
-
 # make Packages *only* accessable by-hash for this test
 mkdir -p aptarchive/dists/unstable/main/binary-i386/by-hash/SHA512
 (cd  aptarchive/dists/unstable/main/binary-i386/by-hash/SHA512 && 
@@ -26,24 +24,28 @@ mkdir -p aptarchive/dists/unstable/main/source/by-hash/SHA512
 )
 
 # we moved the Packages file away, normal update won't work
-testfailure aptget upate
+testfailure aptget update
 
 # ensure we do not know about "foo"
-testequal "Reading package lists...
+testfailureequal "Reading package lists...
 Building dependency tree...
 E: Unable to locate package foo" aptget install -q -s foo
 
 # ensure we can apt-get update by hash
 testsuccess aptget update -o APT::Acquire::By-Hash=1 -o Acquire::Languages=none
 
-# ensure it works
-testequal "Inst foo (1.0 unstable [all])
+ensureitworks() {
+	testsuccessequal "Inst foo (1.0 unstable [all])
 Conf foo (1.0 unstable [all])" aptget install -qq -s foo
+}
+ensureitworks
 
 # add magic string to Release file ...
 MAGIC="Acquire-By-Hash: true"
 sed -i "s#Suite: unstable#Suite: unstable\n$MAGIC#" aptarchive/dists/unstable/Release
 signreleasefiles
 # ... and verify that it fetches by hash now
+rm -rf rootdir/var/lib/apt/lists
 testsuccess aptget update -o Acquire::Languages=none
 
+ensureitworks

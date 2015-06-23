@@ -33,6 +33,7 @@ aptcdromlog() {
 	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
 	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
 }
+aptautotest_aptcdromlog_add() { aptautotest_aptget_update "$@"; }
 
 CDROM_PRE="Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
 Unmounting CD-ROM...
@@ -49,12 +50,12 @@ deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 Unmounting CD-ROM...
 Repeat this process for the rest of the CDs in your set."
 
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 Found label 'Debian APT Testdisk 0.8.15'
 $CDROM_POST" aptcdromlog add
 
-testequal "Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
+testsuccessequal "Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
 Mounting CD-ROM...
 Stored label: Debian APT Testdisk 0.8.15
 Unmounting CD-ROM..." aptcdromlog ident
@@ -63,13 +64,13 @@ Unmounting CD-ROM..." aptcdromlog ident
 ident="$(LC_ALL=C aptcdrom ident 2>&1 )"
 CD_ID="$(echo "$ident" | grep "^Identifying" | head -n1 | cut -d" " -f2 | tr --delete '[]')"
 CD_LABEL="$(echo "$ident" | grep "^Stored label:" | head -n1 | sed "s/^[^:]*: //")"
-testequal "CD::${CD_ID} \"${CD_LABEL}\";
-CD::${CD_ID}::Label \"${CD_LABEL}\";" cat rootdir/var/lib/apt/cdroms.list
+testfileequal rootdir/var/lib/apt/cdroms.list "CD::${CD_ID} \"${CD_LABEL}\";
+CD::${CD_ID}::Label \"${CD_LABEL}\";"
 
 testcdromusage() {
 	touch rootdir/var/lib/apt/extended_states
 
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following NEW packages will be installed:
@@ -84,7 +85,7 @@ Conf testing (0.8.15 stable [amd64])' aptget install testing -s
 	testsuccess aptget purge testing -y
 	testdpkgnotinstalled testing
 
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following NEW packages will be installed:
@@ -114,19 +115,18 @@ Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 testcdromusage
 
 # check Idempotence of apt-cdrom (and disabling of Translation dropping)
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add -o APT::CDROM::DropTranslation=0
 
 # take Translations from previous runs as needed
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add
 msgtest 'Test for the german description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
 rm -rf rootdir/var/lib/apt/lists
-mkdir -p rootdir/var/lib/apt/lists/partial
-testequal "$CDROM_PRE
+testsuccessequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 $CDROM_POST" aptcdromlog add
 msgtest 'Test for the english description translation of' 'testing'
@@ -134,18 +134,20 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 
 # ensure cdrom method isn't trying to mount the cdrom
 mv rootdir/media/cdrom-unmounted rootdir/media/cdrom-ejected
-# ensure an update doesn't mess with cdrom sources
+msgmsg "ensure an update doesn't mess with cdrom sources"
 testsuccess aptget update
-testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+testfileequal rootdir/tmp/testsuccess.output 'Hit:1 cdrom://Debian APT Testdisk 0.8.15 stable InRelease
+Reading package lists...'
 mv rootdir/media/cdrom-ejected rootdir/media/cdrom-unmounted
 testcdromusage
 
-# and again to check that it withstands the temptation even if it could mount
+msgmsg 'and again to check that it withstands the temptation even if it could mount'
 testsuccess aptget update
-testfileequal rootdir/tmp/testsuccess.output 'Reading package lists...'
+testfileequal rootdir/tmp/testsuccess.output 'Hit:1 cdrom://Debian APT Testdisk 0.8.15 stable InRelease
+Reading package lists...'
 testcdromusage
 
 msgmsg 'Check that nothing touched our' 'CD-ROM'
 for file in $(find rootdir/media/cdrom-unmounted/dists); do
-	testfilestats "$file" '%U:%G:%a' '=' "${USER}:${USER}:555"
+	testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:555"
 done

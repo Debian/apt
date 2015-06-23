@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 PACKAGE="apt"
-PACKAGE_VERSION="1.1~exp7"
+PACKAGE_VERSION="1.0.9.8"
 PACKAGE_MAIL="APT Development Team <deity@lists.debian.org>"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")
@@ -91,7 +91,7 @@ AC_CHECK_LIB(curl, curl_easy_init,
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(gtest/gtest.h,,
-     AC_MSG_ERROR([failed: I need gtest to build tests]),
+     AC_MSG_WARN([failed: I need gtest (packaged as libgtest-dev) for unit testing]),
 )
 AC_LANG_POP([C++])
 

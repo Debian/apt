@@ -15,7 +15,7 @@ setupaptarchive --no-update
 APTARCHIVE=$(readlink -f ./aptarchive)
 
 everythingsucceeds() {
-	testequal 'Listing...
+	testsuccessequal 'Listing...
 foo/testing 2 amd64
 foo/stable 1 amd64
 ' apt list foo -a
@@ -32,7 +32,7 @@ foo/stable 1 amd64
 }
 
 everythingfails() {
-	testequal 'Listing...
+	testsuccessequal 'Listing...
 foo/testing 2 amd64
 foo/stable 1 amd64
 ' apt list foo -a

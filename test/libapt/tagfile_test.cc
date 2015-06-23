@@ -34,6 +34,12 @@ TEST(TagFileTest,SingleField)
    EXPECT_FALSE(section.Exists("FieldB-12345678"));
    // There is only one section in this tag file
    EXPECT_FALSE(tfile.Step(section));
+
+   // Now we scan an empty section to test reset
+   ASSERT_TRUE(section.Scan("\n\n", 2, true));
+   EXPECT_EQ(0, section.Count());
+   EXPECT_FALSE(section.Exists("FieldA-12345678"));
+   EXPECT_FALSE(section.Exists("FieldB-12345678"));
 }
 
 TEST(TagFileTest,MultipleSections)

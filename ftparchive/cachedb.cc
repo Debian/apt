@@ -322,12 +322,12 @@ bool CacheDB::LoadSource()						/*{{{*/
    if (Dsc.Read(FileName) == false)
       return false;
 
-   if (Dsc.Data == 0)
+   if (Dsc.Length == 0)
       return _error->Error(_("Failed to read .dsc"));
-   
+
    // Write back the control information
    InitQuerySource();
-   if (Put(Dsc.Data, Dsc.Length) == true)
+   if (Put(Dsc.Data.c_str(), Dsc.Length) == true)
       CurStat.Flags |= FlSource;
 
    return true;
@@ -441,8 +441,8 @@ bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
       if (OpenFile() == false)
 	 return false;
 
-      Hashes hashes;
-      if (Fd->Seek(0) == false || hashes.AddFD(*Fd, CurStat.FileSize, FlHashes) == false)
+      Hashes hashes(FlHashes);
+      if (Fd->Seek(0) == false || hashes.AddFD(*Fd, CurStat.FileSize) == false)
 	 return false;
 
       HashStringList hl = hashes.GetHashStringList();

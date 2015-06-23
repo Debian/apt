@@ -47,6 +47,23 @@ public:
    unsigned long long Size;
 };
 
+class pkgTagSectionPrivate
+{
+public:
+   pkgTagSectionPrivate()
+   {
+   }
+   struct TagData {
+      unsigned int StartTag;
+      unsigned int EndTag;
+      unsigned int StartValue;
+      unsigned int NextInBucket;
+
+      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
+   };
+   std::vector<TagData> Tags;
+};
+
 static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
 {
    /* This very simple hash function for the last 8 letters gives
@@ -166,8 +183,8 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 	    break;
 
 	 if (Resize() == false)
-	    return _error->Error(_("Unable to parse package file %s (1)"),
-		  d->Fd.Name().c_str());
+	    return _error->Error(_("Unable to parse package file %s (%d)"),
+		  d->Fd.Name().c_str(), 1);
 
       } while (Tag.Scan(d->Start,d->End - d->Start, false) == false);
    }
@@ -266,7 +283,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       return false;
    
    if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
-      return _error->Error(_("Unable to parse package file %s (2)"),d->Fd.Name().c_str());
+      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd.Name().c_str(), 2);
    
    return true;
 }
@@ -274,21 +291,34 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 // pkgTagSection::pkgTagSection - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
    : Section(0), d(NULL), Stop(0)
 {
-   memset(&LookupTable, 0, sizeof(LookupTable));
+   d = new pkgTagSectionPrivate();
+#if APT_PKG_ABI < 413
+   TagCount = 0;
+   memset(&Indexes, 0, sizeof(Indexes));
+#endif
+   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
+#if APT_PKG_ABI < 413
+bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
+{
+   return Scan(Start, MaxLength, true);
+}
+#endif
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
 {
    Section = Start;
    const char *End = Start + MaxLength;
 
-   if (Restart == false && Tags.empty() == false)
+   if (Restart == false && d->Tags.empty() == false)
    {
-      Stop = Section + Tags.back().StartTag;
+      Stop = Section + d->Tags.back().StartTag;
       if (End <= Stop)
 	 return false;
       Stop = (const char *)memchr(Stop,'\n',End - Stop);
@@ -299,19 +329,23 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
    else
    {
       Stop = Section;
-      if (Tags.empty() == false)
+      if (d->Tags.empty() == false)
       {
-	 memset(&LookupTable, 0, sizeof(LookupTable));
-	 Tags.clear();
+	 memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+	 d->Tags.clear();
       }
-      Tags.reserve(0x100);
+      d->Tags.reserve(0x100);
    }
-   size_t TagCount = Tags.size();
+#if APT_PKG_ABI >= 413
+   unsigned int TagCount = d->Tags.size();
+#else
+   APT_IGNORE_DEPRECATED(TagCount = d->Tags.size();)
+#endif
 
    if (Stop == 0)
       return false;
 
-   TagData lastTagData(0);
+   pkgTagSectionPrivate::TagData lastTagData(0);
    lastTagData.EndTag = 0;
    unsigned long lastTagHash = 0;
    while (Stop < End)
@@ -329,14 +363,20 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 // store the last found tag
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (LookupTable[lastTagHash] != 0)
-	       lastTagData.NextInBucket = LookupTable[lastTagHash];
-	    LookupTable[lastTagHash] = TagCount;
-	    Tags.push_back(lastTagData);
+	    if (AlphaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
+	    APT_IGNORE_DEPRECATED_PUSH
+	    AlphaIndexes[lastTagHash] = TagCount;
+#if APT_PKG_ABI < 413
+	    if (d->Tags.size() < sizeof(Indexes)/sizeof(Indexes[0]))
+	       Indexes[d->Tags.size()] = lastTagData.StartTag;
+#endif
+	    APT_IGNORE_DEPRECATED_POP
+	    d->Tags.push_back(lastTagData);
 	 }
 
-	 ++TagCount;
-	 lastTagData = TagData(Stop - Section);
+	 APT_IGNORE_DEPRECATED(++TagCount;)
+	 lastTagData = pkgTagSectionPrivate::TagData(Stop - Section);
 	 // find the colon separating tag and value
 	 char const * Colon = (char const *) memchr(Stop, ':', End - Stop);
 	 if (Colon == NULL)
@@ -371,14 +411,20 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       {
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (LookupTable[lastTagHash] != 0)
-	       lastTagData.NextInBucket = LookupTable[lastTagHash];
-	    LookupTable[lastTagHash] = TagCount;
-	    Tags.push_back(lastTagData);
+	    if (AlphaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
+	    APT_IGNORE_DEPRECATED(AlphaIndexes[lastTagHash] = TagCount;)
+#if APT_PKG_ABI < 413
+	    APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = lastTagData.StartTag;)
+#endif
+	    d->Tags.push_back(lastTagData);
 	 }
 
-	 TagData const td(Stop - Section);
-	 Tags.push_back(td);
+	 pkgTagSectionPrivate::TagData const td(Stop - Section);
+#if APT_PKG_ABI < 413
+	 APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = td.StartTag;)
+#endif
+	 d->Tags.push_back(td);
 	 TrimRecord(false,End);
 	 return true;
       }
@@ -408,7 +454,11 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
+#if APT_PKG_ABI >= 413
 bool pkgTagSection::Exists(const char* const Tag) const
+#else
+bool pkgTagSection::Exists(const char* const Tag)
+#endif
 {
    unsigned int tmp;
    return Find(Tag, tmp);
@@ -420,16 +470,16 @@ bool pkgTagSection::Exists(const char* const Tag) const
 bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
 {
    size_t const Length = strlen(Tag);
-   unsigned int Bucket = LookupTable[AlphaHash(Tag, Length)];
+   unsigned int Bucket = AlphaIndexes[AlphaHash(Tag, Length)];
    if (Bucket == 0)
       return false;
 
-   for (; Bucket != 0; Bucket = Tags[Bucket - 1].NextInBucket)
+   for (; Bucket != 0; Bucket = d->Tags[Bucket - 1].NextInBucket)
    {
-      if ((Tags[Bucket - 1].EndTag - Tags[Bucket - 1].StartTag) != Length)
+      if ((d->Tags[Bucket - 1].EndTag - d->Tags[Bucket - 1].StartTag) != Length)
 	 continue;
 
-      char const * const St = Section + Tags[Bucket - 1].StartTag;
+      char const * const St = Section + d->Tags[Bucket - 1].StartTag;
       if (strncasecmp(Tag,St,Length) != 0)
 	 continue;
 
@@ -447,9 +497,9 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
    if (Find(Tag, Pos) == false)
       return false;
 
-   Start = Section + Tags[Pos].StartValue;
+   Start = Section + d->Tags[Pos].StartValue;
    // Strip off the gunk from the end
-   End = Section + Tags[Pos + 1].StartTag;
+   End = Section + d->Tags[Pos + 1].StartTag;
    if (unlikely(Start > End))
       return _error->Error("Internal parsing error");
 
@@ -459,8 +509,6 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 }
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 string pkgTagSection::FindS(const char *Tag) const
 {
    const char *Start;
@@ -468,6 +516,24 @@ string pkgTagSection::FindS(const char *Tag) const
    if (Find(Tag,Start,End) == false)
       return string();
    return string(Start,End);      
+}
+									/*}}}*/
+// TagSection::FindRawS - Find a string					/*{{{*/
+string pkgTagSection::FindRawS(const char *Tag) const
+{
+   unsigned int Pos;
+   if (Find(Tag, Pos) == false)
+      return "";
+
+   char const *Start = (char const *) memchr(Section + d->Tags[Pos].EndTag, ':', d->Tags[Pos].StartValue - d->Tags[Pos].EndTag);
+   ++Start;
+   char const *End = Section + d->Tags[Pos + 1].StartTag;
+   if (unlikely(Start > End))
+      return "";
+
+   for (; isspace(End[-1]) != 0 && End > Start; --End);
+
+   return std::string(Start, End - Start);
 }
 									/*}}}*/
 // TagSection::FindI - Find an integer					/*{{{*/
@@ -561,78 +627,153 @@ bool pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
    return true;
 }
 									/*}}}*/
+void pkgTagSection::Get(const char *&Start,const char *&Stop,unsigned int I) const
+{
+   Start = Section + d->Tags[I].StartTag;
+   Stop = Section + d->Tags[I+1].StartTag;
+}
 APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
-   if (Tags.empty() == true)
+   if (d->Tags.empty() == true)
       return 0;
    // the last element is just marking the end and isn't a real one
-   return Tags.size() - 1;
+   return d->Tags.size() - 1;
 }
 									/*}}}*/
+// TagSection::Write - Ordered (re)writing of fields			/*{{{*/
+pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string const &Name)
+{
+   return Tag(REMOVE, Name, "");
+}
+pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string const &OldName, std::string const &NewName)
+{
+   return Tag(RENAME, OldName, NewName);
+}
+pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::string const &Data)
+{
+   if (Data.empty() == true)
+      return Tag(REMOVE, Name, "");
+   else
+      return Tag(REWRITE, Name, Data);
+}
+static bool WriteTag(FileFd &File, std::string Tag, std::string const &Value)
+{
+   if (Value.empty() || isspace(Value[0]) != 0)
+      Tag.append(":");
+   else
+      Tag.append(": ");
+   Tag.append(Value);
+   Tag.append("\n");
+   return File.Write(Tag.c_str(), Tag.length());
+}
+static bool RewriteTags(FileFd &File, pkgTagSection const * const This, char const * const Tag,
+      std::vector<pkgTagSection::Tag>::const_iterator &R,
+      std::vector<pkgTagSection::Tag>::const_iterator const &REnd)
+{
+   size_t const TagLen = strlen(Tag);
+   for (; R != REnd; ++R)
+   {
+      std::string data;
+      if (R->Name.length() == TagLen && strncasecmp(R->Name.c_str(), Tag, R->Name.length()) == 0)
+      {
+	 if (R->Action != pkgTagSection::Tag::REWRITE)
+	    break;
+	 data = R->Data;
+      }
+      else if(R->Action == pkgTagSection::Tag::RENAME && R->Data.length() == TagLen &&
+	    strncasecmp(R->Data.c_str(), Tag, R->Data.length()) == 0)
+	 data = This->FindRawS(R->Name.c_str());
+      else
+	 continue;
+
+      return WriteTag(File, Tag, data);
+   }
+   return true;
+}
+bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::vector<Tag> const &Rewrite) const
+{
+   // first pass: Write everything we have an order for
+   if (Order != NULL)
+   {
+      for (unsigned int I = 0; Order[I] != 0; ++I)
+      {
+	 std::vector<Tag>::const_iterator R = Rewrite.begin();
+	 if (RewriteTags(File, this, Order[I], R, Rewrite.end()) == false)
+	    return false;
+	 if (R != Rewrite.end())
+	    continue;
+
+	 if (Exists(Order[I]) == false)
+	    continue;
+
+	 if (WriteTag(File, Order[I], FindRawS(Order[I])) == false)
+	    return false;
+      }
+   }
+   // second pass: See if we have tags which aren't ordered
+   if (d->Tags.empty() == false)
+   {
+      for (std::vector<pkgTagSectionPrivate::TagData>::const_iterator T = d->Tags.begin(); T != d->Tags.end() - 1; ++T)
+      {
+	 char const * const fieldname = Section + T->StartTag;
+	 size_t fieldnamelen = T->EndTag - T->StartTag;
+	 if (Order != NULL)
+	 {
+	    unsigned int I = 0;
+	    for (; Order[I] != 0; ++I)
+	    {
+	       if (fieldnamelen == strlen(Order[I]) && strncasecmp(fieldname, Order[I], fieldnamelen) == 0)
+		  break;
+	    }
+	    if (Order[I] != 0)
+	       continue;
+	 }
+
+	 std::string const name(fieldname, fieldnamelen);
+	 std::vector<Tag>::const_iterator R = Rewrite.begin();
+	 if (RewriteTags(File, this, name.c_str(), R, Rewrite.end()) == false)
+	    return false;
+	 if (R != Rewrite.end())
+	    continue;
+
+	 if (WriteTag(File, name, FindRawS(name.c_str())) == false)
+	    return false;
+      }
+   }
+   // last pass: see if there are any rewrites remaining we haven't done yet
+   for (std::vector<Tag>::const_iterator R = Rewrite.begin(); R != Rewrite.end(); ++R)
+   {
+      if (R->Action == Tag::REMOVE)
+	 continue;
+      std::string const name = ((R->Action == Tag::RENAME) ? R->Data : R->Name);
+      if (Exists(name.c_str()))
+	 continue;
+      if (Order != NULL)
+      {
+	 unsigned int I = 0;
+	 for (; Order[I] != 0; ++I)
+	 {
+	    if (strncasecmp(name.c_str(), Order[I], name.length()) == 0 && name.length() == strlen(Order[I]))
+	       break;
+	 }
+	 if (Order[I] != 0)
+	    continue;
+      }
+
+      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRawS(R->Name.c_str()) : R->Data)) == false)
+	 return false;
+   }
+   return true;
+}
+									/*}}}*/
+
+#include "tagfile-order.c"
+
 // TFRewrite - Rewrite a control record					/*{{{*/
 // ---------------------------------------------------------------------
 /* This writes the control record to stdout rewriting it as necessary. The
    override map item specificies the rewriting rules to follow. This also
    takes the time to sort the feild list. */
-
-/* The order of this list is taken from dpkg source lib/parse.c the fieldinfos
-   array. */
-static const char *iTFRewritePackageOrder[] = {
-                          "Package",
-                          "Essential",
-                          "Status",
-                          "Priority",
-                          "Section",
-                          "Installed-Size",
-                          "Maintainer",
-                          "Original-Maintainer",
-                          "Architecture",
-                          "Source",
-                          "Version",
-                           "Revision",         // Obsolete
-                           "Config-Version",   // Obsolete
-                          "Replaces",
-                          "Provides",
-                          "Depends",
-                          "Pre-Depends",
-                          "Recommends",
-                          "Suggests",
-                          "Conflicts",
-                          "Breaks",
-                          "Conffiles",
-                          "Filename",
-                          "Size",
-                          "MD5sum",
-                          "SHA1",
-                          "SHA256",
-                          "SHA512",
-                           "MSDOS-Filename",   // Obsolete
-                          "Description",
-                          0};
-static const char *iTFRewriteSourceOrder[] = {"Package",
-                                      "Source",
-                                      "Binary",
-                                      "Version",
-                                      "Priority",
-                                      "Section",
-                                      "Maintainer",
-				      "Original-Maintainer",
-                                      "Build-Depends",
-                                      "Build-Depends-Indep",
-                                      "Build-Conflicts",
-                                      "Build-Conflicts-Indep",
-                                      "Architecture",
-                                      "Standards-Version",
-                                      "Format",
-                                      "Directory",
-                                      "Files",
-                                      0};   
-
-/* Two levels of initialization are used because gcc will set the symbol
-   size of an array to the length of the array, causing dynamic relinking 
-   errors. Doing this makes the symbol size constant */
-const char **TFRewritePackageOrder = iTFRewritePackageOrder;
-const char **TFRewriteSourceOrder = iTFRewriteSourceOrder;
-   
+APT_IGNORE_DEPRECATED_PUSH
 bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite)
 {
@@ -756,6 +897,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
       
    return true;
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 
-pkgTagSection::~pkgTagSection() {}
+pkgTagSection::~pkgTagSection() { delete d; }

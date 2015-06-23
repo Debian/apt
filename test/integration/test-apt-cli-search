@@ -25,48 +25,51 @@ setupaptarchive
 
 APTARCHIVE=$(readlink -f ./aptarchive)
 
+testfailureequal 'E: You must give at least one search pattern' aptcache search
+testfailureequal 'E: You must give at least one search pattern' apt search
+
 # with OP progress 
-testequal "Sorting...
+testsuccessequal "Sorting...
 Full Text Search...
 foo/unstable 1.0 all
   $DESCR
 " apt search xxyyzz
 
 # without op progress
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq xxyyzz
 testempty apt search -qq --names-only xxyyzz
 
 # search name
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq foo
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq --names-only foo
 
 # search with multiple words is a AND search
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq aabbcc xxyyzz
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq 'a+b+c+' 'i*xxy{0,2}zz'
 
 # search is not case-sensitive by default
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq uppercase
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq 'up[pP]erc[Aa]se'
 
 # search is done in the long description
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq 'long description'
-testequal "foo/unstable 1.0 all
+testsuccessequal "foo/unstable 1.0 all
   $DESCR
   Long description of stuff and such, with lines
   .
@@ -74,7 +77,7 @@ testequal "foo/unstable 1.0 all
 " apt search --full -qq 'long description'
 
 # output is sorted and search word finds both package
-testequal "bar/testing 2.0 i386
+testsuccessequal "bar/testing 2.0 i386
   $DESCR2
 
 foo/unstable 1.0 all

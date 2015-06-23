@@ -30,6 +30,8 @@ class pkgArchiveCleaner
    public:
 
    bool Go(std::string Dir,pkgCache &Cache);
+
+   pkgArchiveCleaner();
    virtual ~pkgArchiveCleaner();
 };
 

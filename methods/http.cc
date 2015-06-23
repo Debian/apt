@@ -64,8 +64,8 @@ const unsigned int CircleBuf::BW_HZ=10;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long long Size) 
-   : Size(Size), Hash(0), TotalWriten(0)
+CircleBuf::CircleBuf(unsigned long long Size)
+   : Size(Size), Hash(NULL), TotalWriten(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -84,10 +84,10 @@ void CircleBuf::Reset()
    TotalWriten = 0;
    MaxGet = (unsigned long long)-1;
    OutQueue = string();
-   if (Hash != 0)
+   if (Hash != NULL)
    {
       delete Hash;
-      Hash = new Hashes;
+      Hash = NULL;
    }
 }
 									/*}}}*/
@@ -222,7 +222,7 @@ bool CircleBuf::Write(int Fd)
 
       TotalWriten += Res;
       
-      if (Hash != 0)
+      if (Hash != NULL)
 	 Hash->Add(Buf + (OutP%Size),Res);
       
       OutP += Res;
@@ -442,10 +442,12 @@ bool HttpServerState::RunData(FileFd * const File)
    {
       /* Closes encoding is used when the server did not specify a size, the
          loss of the connection means we are done */
-      if (Encoding == Closes)
+      if (Persistent == false)
 	 In.Limit(-1);
+      else if (JunkSize != 0)
+	 In.Limit(JunkSize);
       else
-	 In.Limit(Size - StartPos);
+	 In.Limit(DownloadSize);
       
       // Just transfer the whole block.
       do
@@ -482,16 +484,14 @@ APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
    return (ServerFd != -1);
 }
 									/*}}}*/
-bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
+bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
 {
    delete In.Hash;
-   In.Hash = new Hashes;
-
-   // Set the expected size and read file for the hashes
-   File.Truncate(StartPos);
-   return In.Hash->AddFD(File, StartPos);
+   In.Hash = new Hashes(ExpectedHashes);
+   return true;
 }
 									/*}}}*/
+
 APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;
@@ -522,7 +522,7 @@ bool HttpServerState::Die(FileFd &File)
 
    // See if this is because the server finished the data stream
    if (In.IsLimit() == false && State != HttpServerState::Header &&
-       Encoding != HttpServerState::Closes)
+       Persistent == true)
    {
       Close();
       if (LErrno == 0)
@@ -569,7 +569,7 @@ bool HttpServerState::Flush(FileFd * const File)
 	    return true;
       }
 
-      if (In.IsLimit() == true || Encoding == ServerState::Closes)
+      if (In.IsLimit() == true || Persistent == false)
 	 return true;
    }
    return false;
@@ -769,8 +769,6 @@ bool HttpMethod::Configuration(string Message)
 {
    if (ServerMethod::Configuration(Message) == false)
       return false;
-
-   DropPrivsOrDie();
 
    AllowRedirect = _config->FindB("Acquire::http::AllowRedirect",true);
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",

@@ -1,0 +1,124 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+DESCR='Some description
+ That has multiple lines'
+insertpackage 'unstable' 'fancy' 'all' '1'
+insertpackage 'unstable,installed' 'foo' 'all' '1' 'Depends: bar
+Conflicts: foobar
+Recommends: cool (>= 2) | cooler (<< 5)' "$DESCR"
+insertpackage 'unstable' 'bar' 'all' '1' 'Depends: bar
+Breaks: foo (<< 1)
+Replaces: foo (<< 1)' "$DESCR"
+
+setupaptarchive
+
+# dpkg is installed by our framework
+testdpkginstalled 'dpkg'
+testempty aptcache unmet dpkg
+
+# FIXME: Find some usecase for unmet as it seems kinda useless/broken
+#testsuccess aptcache unmet
+#testsuccess aptcache unmet foo
+
+# not too useful to test, but makes coverage green…
+testsuccess aptcache stats
+cp rootdir/tmp/testsuccess.output stats.output
+testsuccess test -s stats.output
+testsuccess aptcache xvcg foo
+cp rootdir/tmp/testsuccess.output xvcg.output
+testsuccess test -s xvcg.output
+testsuccess aptcache dotty foo
+cp rootdir/tmp/testsuccess.output dotty.output
+testsuccess test -s dotty.output
+# for this, even the sourcecode says it is useless (expect debugging)
+testsuccess aptcache dump
+cp rootdir/tmp/testsuccess.output dump.output
+testsuccess test -s dump.output
+
+testsuccessequal 'dpkg
+bar
+fancy
+foo' aptcache pkgnames
+testsuccessequal 'bar' aptcache pkgnames bar
+testsuccessequal 'fancy
+foo' aptcache pkgnames f
+
+testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive unstable/main amd64 Packages" aptcache madison foo
+
+### depends
+
+testsuccessequal 'foo
+  Depends: bar
+ |Recommends: <cool>
+  Recommends: <cooler>
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>' aptcache depends foo
+testsuccessequal 'foo
+  Depends: bar
+  Recommends: <cool>
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowOnlyFirstOr=1
+testsuccessequal 'foo
+  Depends: bar
+ |Recommends: <cool> (>= 2)
+  Recommends: <cooler> (<< 5)
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowVersion=1
+testsuccessequal 'foo
+  Depends: bar
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>' aptcache depends foo --no-recommends
+testsuccessequal 'foo
+  Depends: bar' aptcache depends foo --important
+testsuccessequal 'foo
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>' aptcache depends foo --important --no-depends --conflicts
+testsuccessequal 'foo
+  Depends: bar
+ |Recommends: <cool>
+  Recommends: <cooler>
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>
+bar
+  Depends: bar
+  Breaks: foo
+  Breaks: <foo:i386>
+  Replaces: foo
+  Replaces: <foo:i386>
+<cool>
+<cooler>
+<foobar>
+<foobar:i386>
+<foo:i386>' aptcache depends foo --recurse
+testsuccessequal 'foo
+  Depends: bar
+bar
+  Depends: bar
+  Replaces: foo
+  Replaces: <foo:i386>
+<foo:i386>' aptcache depends foo --recurse --important --replaces
+
+## rdpends
+
+testsuccessequal 'foo
+Reverse Depends:
+  bar
+  bar' aptcache rdepends foo
+testsuccessequal 'foo
+Reverse Depends:
+  Replaces: bar
+  Breaks: bar' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1
+testsuccessequal 'foo
+Reverse Depends:
+  Replaces: bar (<< 1)
+  Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1
+testsuccessequal 'foo
+Reverse Depends:
+  Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1 --important --breaks

@@ -24,7 +24,7 @@ testauthfailure() {
 testauthsuccess() {
 	testsuccess apthelper download-file "${1}/bash" ./downloaded/bash
 	testfileequal ./downloaded/bash "$(cat aptarchive/bash)"
-	testfilestats ./downloaded/bash '%U:%G:%a' '=' "${USER}:${USER}:644"
+	testfilestats ./downloaded/bash '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	rm -f ./downloaded/bash
 
 	# lets see if got/retains acceptable permissions
@@ -32,13 +32,13 @@ testauthsuccess() {
 		if [ "$(id -u)" = '0' ]; then
 			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "_apt:root:600"
 		else
-			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "${USER}:${USER}:600"
+			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:600"
 		fi
 	fi
 
 	rm -rf rootdir/var/lib/apt/lists
 	testsuccess aptget update
-	testequal 'Reading package lists...
+	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   foo

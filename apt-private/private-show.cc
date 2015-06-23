@@ -97,28 +97,30 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       manual_installed = 0;
 
    // FIXME: add verbose that does not do the removal of the tags?
-   TFRewriteData RW[] = {
-      // delete, apt-cache show has this info and most users do not care
-      {"MD5sum", NULL, NULL},
-      {"SHA1", NULL, NULL},
-      {"SHA256", NULL, NULL},
-      {"Filename", NULL, NULL},
-      {"Multi-Arch", NULL, NULL},
-      {"Architecture", NULL, NULL},
-      {"Conffiles", NULL, NULL},
-      // we use the translated description
-      {"Description", NULL, NULL},
-      {"Description-md5", NULL, NULL},
-      // improve
-      {"Installed-Size", installed_size.c_str(), NULL},
-      {"Size", package_size.c_str(), "Download-Size"},
-      // add
-      {"APT-Manual-Installed", manual_installed, NULL},
-      {"APT-Sources", source_index_file.c_str(), NULL},
-      {NULL, NULL, NULL}
-   };
+   std::vector<pkgTagSection::Tag> RW;
+   // delete, apt-cache show has this info and most users do not care
+   RW.push_back(pkgTagSection::Tag::Remove("MD5sum"));
+   RW.push_back(pkgTagSection::Tag::Remove("SHA1"));
+   RW.push_back(pkgTagSection::Tag::Remove("SHA256"));
+   RW.push_back(pkgTagSection::Tag::Remove("SHA512"));
+   RW.push_back(pkgTagSection::Tag::Remove("Filename"));
+   RW.push_back(pkgTagSection::Tag::Remove("Multi-Arch"));
+   RW.push_back(pkgTagSection::Tag::Remove("Architecture"));
+   RW.push_back(pkgTagSection::Tag::Remove("Conffiles"));
+   // we use the translated description
+   RW.push_back(pkgTagSection::Tag::Remove("Description"));
+   RW.push_back(pkgTagSection::Tag::Remove("Description-md5"));
+   // improve
+   RW.push_back(pkgTagSection::Tag::Rewrite("Installed-Size", installed_size));
+   RW.push_back(pkgTagSection::Tag::Remove("Size"));
+   RW.push_back(pkgTagSection::Tag::Rewrite("Download-Size", package_size));
+   // add
+   RW.push_back(pkgTagSection::Tag::Rewrite("APT-Manual-Installed", manual_installed));
+   RW.push_back(pkgTagSection::Tag::Rewrite("APT-Sources", source_index_file));
 
-   if(TFRewrite(stdout, Tags, NULL, RW) == false)
+   FileFd stdoutfd;
+   if (stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false) == false ||
+	 Tags.Write(stdoutfd, TFRewritePackageOrder, RW) == false || stdoutfd.Close() == false)
       return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description

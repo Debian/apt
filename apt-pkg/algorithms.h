@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.10 2001/05/22 04:17:41 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -55,6 +54,7 @@ using std::ostream;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
+   void *d;
    protected:
 
    class Policy : public pkgDepCache::Policy
@@ -88,7 +88,7 @@ private:
    public:
 
    pkgSimulate(pkgDepCache *Cache);
-   ~pkgSimulate();
+   virtual ~pkgSimulate();
 };
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
@@ -138,15 +138,25 @@ class pkgProblemResolver						/*{{{*/
    inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
 
    // Try to intelligently resolve problems by installing and removing packages
+#if APT_PKG_ABI >= 413
    bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);
+#else
+   bool Resolve(bool BrokenFix = false);
+   bool Resolve(bool BrokenFix, OpProgress * const Progress);
+#endif
 
    // Try to resolve problems only by using keep
+#if APT_PKG_ABI >= 413
    bool ResolveByKeep(OpProgress * const Progress = NULL);
+#else
+   bool ResolveByKeep();
+   bool ResolveByKeep(OpProgress * const Progress);
+#endif
 
    APT_DEPRECATED void InstallProtect();
 
    pkgProblemResolver(pkgDepCache *Cache);
-   ~pkgProblemResolver();
+   virtual ~pkgProblemResolver();
 };
 									/*}}}*/
 bool pkgApplyStatus(pkgDepCache &Cache);

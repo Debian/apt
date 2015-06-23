@@ -1,0 +1,161 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'apt' 'all' '1.0'
+
+setupaptarchive --no-update
+
+methodtest() {
+	msgmsg 'Test InRelease with' "$1"
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a aptarchive/dists  aptarchive/dists.good
+	# get our cache populated
+	testsuccess aptget update
+	listcurrentlistsdirectory > listsdir.lst
+
+	# hit again with a good cache
+	testsuccessequal "Hit:1 $1 unstable InRelease
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+	# drop an architecture, which means the file should be gone now
+	configarchitecture 'i386'
+	sed '/_binary-amd64_Packages/ d' listsdir.lst > listsdir-without-amd64.lst
+	testsuccessequal "Hit:1 $1 unstable InRelease
+Reading package lists..." aptget update
+	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
+
+	# readd arch so its downloaded again…
+	configarchitecture 'amd64' 'i386'
+	# … but oh noes, hashsum mismatch!
+	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
+	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
+
+Package: thisisbad
+Architecture: amd64
+Version: 1
+EOF
+	compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
+	testfailureequal "Hit:1 $1 unstable InRelease
+Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Err:2 $1 unstable/main amd64 Packages
+  Hash Sum mismatch
+W: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
+	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
+
+	# … now everything is fine again
+	testsuccessequal "Hit:1 $1 unstable InRelease
+Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+	webserverconfig 'aptwebserver::support::modified-since' 'false'
+	webserverconfig 'aptwebserver::support::last-modified' 'false'
+	testsuccessequal "Get:1 $1 unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Reading package lists..." aptget update
+	webserverconfig 'aptwebserver::support::modified-since' 'true'
+	webserverconfig 'aptwebserver::support::last-modified' 'true'
+
+	msgmsg 'Test Release.gpg with' "$1"
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive/dists -name 'InRelease' -delete
+	# get our cache populated
+	testsuccess aptget update
+	listcurrentlistsdirectory > listsdir.lst
+
+	# hit again with a good cache
+	testsuccessequal "Ign:1 $1 unstable InRelease
+  404  Not Found
+Hit:2 $1 unstable Release
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+	# drop an architecture, which means the file should be gone now
+	configarchitecture 'i386'
+	sed '/_binary-amd64_Packages/ d' listsdir.lst > listsdir-without-amd64.lst
+	testsuccessequal "Ign:1 $1 unstable InRelease
+  404  Not Found
+Hit:2 $1 unstable Release
+Reading package lists..." aptget update
+	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
+
+	# readd arch so its downloaded again…
+	configarchitecture 'amd64' 'i386'
+	# … but oh noes, hashsum mismatch!
+	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
+	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
+
+Package: thisisbad
+Architecture: amd64
+Version: 1
+EOF
+	compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
+	testfailureequal "Ign:1 $1 unstable InRelease
+  404  Not Found
+Hit:2 $1 unstable Release
+Get:4 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Err:4 $1 unstable/main amd64 Packages
+  Hash Sum mismatch
+W: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
+	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
+	find aptarchive/dists -name 'InRelease' -delete
+
+	# … now everything is fine again
+	testsuccessequal "Ign:1 $1 unstable InRelease
+  404  Not Found
+Hit:2 $1 unstable Release
+Get:4 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Reading package lists..." aptget update
+	testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+	webserverconfig 'aptwebserver::support::modified-since' 'false'
+	webserverconfig 'aptwebserver::support::last-modified' 'false'
+	testsuccessequal "Ign:1 $1 unstable InRelease
+  404  Not Found
+Get:2 $1 unstable Release [$(stat -c '%s' 'aptarchive/dists/unstable/Release') B]
+Reading package lists..." aptget update
+	webserverconfig 'aptwebserver::support::modified-since' 'true'
+	webserverconfig 'aptwebserver::support::last-modified' 'true'
+
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
+
+	# new release file, but the indexes are the same
+	redatereleasefiles '+2 hours'
+
+	rm -rf rootdir/var/lib/apt/lists.good
+	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
+	testsuccessequal "Get:1 $1 unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Reading package lists..." aptget update
+
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists.good rootdir/var/lib/apt/lists
+	find rootdir/var/lib/apt/lists -name '*_Packages*' -delete
+	testsuccessequal "Get:1 $1 unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Get:3 $1 unstable/main i386 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-i386/Packages.gz') B]
+Reading package lists..." aptget update
+
+	rm -rf aptarchive/dists
+	cp -a aptarchive/dists.good aptarchive/dists
+}
+
+changetowebserver
+methodtest 'http://localhost:8080'
+
+changetohttpswebserver
+methodtest 'https://localhost:4433'

@@ -38,6 +38,7 @@
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,19 +239,19 @@ void GenContents::Add(const char *Dir,const char *Package)
 // GenContents::WriteSpace - Write a given number of white space chars	/*{{{*/
 // ---------------------------------------------------------------------
 /* We mod 8 it and write tabs where possible. */
-void GenContents::WriteSpace(FILE *Out,unsigned int Current,unsigned int Target)
+void GenContents::WriteSpace(std::string &out, size_t Current, size_t Target)
 {
    if (Target <= Current)
       Target = Current + 1;
-   
+
    /* Now we write tabs so long as the next tab stop would not pass
       the target */
    for (; (Current/8 + 1)*8 < Target; Current = (Current/8 + 1)*8)
-      fputc('\t',Out);
+      out.append("\t");
 
    // Fill the last bit with spaces
    for (; Current < Target; Current++)
-      fputc(' ',Out);
+      out.append(" ");
 }
 									/*}}}*/
 // GenContents::Print - Display the tree				/*{{{*/
@@ -259,13 +260,13 @@ void GenContents::WriteSpace(FILE *Out,unsigned int Current,unsigned int Target)
    calls itself and runs over each section of the tree printing out
    the pathname and the hit packages. We use Buf to build the pathname
    summed over all the directory parents of this node. */
-void GenContents::Print(FILE *Out)
+void GenContents::Print(FileFd &Out)
 {
    char Buffer[1024];
    Buffer[0] = 0;
    DoPrint(Out,&Root,Buffer);
 }
-void GenContents::DoPrint(FILE *Out,GenContents::Node *Top, char *Buf)
+void GenContents::DoPrint(FileFd &Out,GenContents::Node *Top, char *Buf)
 {
    if (Top == 0)
       return;
@@ -278,26 +279,27 @@ void GenContents::DoPrint(FILE *Out,GenContents::Node *Top, char *Buf)
    if (Top->Path != 0)
    {
       strcat(Buf,Top->Path);
-      
+
       // Do not show the item if it is a directory with dups
       if (Top->Path[strlen(Top->Path)-1] != '/' /*|| Top->Dups == 0*/)
       {
-	 fputs(Buf,Out);
-	 WriteSpace(Out,strlen(Buf),60);
+	 std::string out = Buf;
+	 WriteSpace(out, out.length(), 60);
 	 for (Node *I = Top; I != 0; I = I->Dups)
 	 {
 	    if (I != Top)
-	       fputc(',',Out);
-	    fputs(I->Package,Out);
+	       out.append(",");
+	    out.append(I->Package);
 	 }
-         fputc('\n',Out);
-      }      
-   }   
-   
+         out.append("\n");
+	 Out.Write(out.c_str(), out.length());
+      }
+   }
+
    // Go along the directory link
    DoPrint(Out,Top->DirDown,Buf);
    *OldEnd = 0;
-   
+
    // Go right
    DoPrint(Out,Top->BTreeRight,Buf);  
 }

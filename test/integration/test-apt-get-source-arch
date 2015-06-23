@@ -28,43 +28,42 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 
 HEADER="Reading package lists...
 Building dependency tree..."
+DOWNLOAD10="Need to get 0 B/25 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 MD5Sum:b998e085e36cf162e6a33c2801318fef
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 MD5Sum:d46b9a02af8487cbeb49165540c88184"
 
 # pick :amd64
-testequal "$HEADER
-Need to get 0 B of source archives.
-'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:amd64
+testsuccessequal "$HEADER
+$DOWNLOAD10" aptget source -q --print-uris foo:amd64
 
 # pick :i386
-testequal "$HEADER
-Need to get 0 B of source archives.
-'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386
+testsuccessequal "$HEADER
+Need to get 0 B/25 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 MD5Sum:c0de572c6f8aa576c8ff78c81132ed55
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 MD5Sum:e10bb487c375b2b938d27bd31c2d1f5f" aptget source -q --print-uris foo:i386
 
 # pick :i386 by release
-testequal "$HEADER
+testsuccessequal "$HEADER
 Selected version '0.1' (oldstable) for foo
-Need to get 0 B of source archives.
-'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386/oldstable
+Need to get 0 B/25 B of source archives.
+'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 MD5Sum:0811a4d85238056c613ea897f49f01af
+'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 MD5Sum:fa1ecb7a1a53e8e6f6551ca7db888a61" aptget source -q --print-uris foo:i386/oldstable
 
 # pick :i386 by version
-testequal "$HEADER
-Need to get 0 B of source archives.
-'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386=1.0
+testsuccessequal "$HEADER
+$DOWNLOAD10" aptget source -q --print-uris foo:i386=1.0
 
 # error on unknown arch
-testequal "$HEADER
+testfailureequal "$HEADER
 E: Can not find a package for architecture 'not-a-available-arch'
 E: Unable to find a source package for foo:not-a-available-arch" aptget source -q --print-uris foo:not-a-available-arch
 
 # error on unavailable version for arch
-testequal "$HEADER
+testfailureequal "$HEADER
 E: Can not find a package 'foo:amd64' with version '2.0'
 E: Unable to find a source package for foo:amd64=2.0" aptget source -q --print-uris foo:amd64=2.0
 
-# error on unavailable release for arch 
-testequal "$HEADER
+# error on unavailable release for arch
+testfailureequal "$HEADER
 E: Can not find a package 'foo:amd64' with release 'oldstable'
 E: Unable to find a source package for foo:amd64/oldstable" aptget source -q --print-uris foo:amd64/oldstable

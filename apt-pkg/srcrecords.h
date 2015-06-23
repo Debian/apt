@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.8.2.1 2003/12/26 16:27:34 mdz Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -30,23 +29,21 @@ class pkgSrcRecords
 {
    public:
 
-#if __GNUC__ >= 4
-	// ensure that con- & de-structor don't trigger this warning
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
    // Describes a single file
    struct File
    {
+      APT_DEPRECATED std::string MD5Hash;
+      APT_DEPRECATED unsigned long Size;
       std::string Path;
       std::string Type;
-      unsigned long long Size;
-      HashStringList Hashes;
-      APT_DEPRECATED std::string MD5Hash;
    };
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+   struct File2 : public File
+   {
+      unsigned long long FileSize;
+      HashStringList Hashes;
+   };
+APT_IGNORE_DEPRECATED_POP
 
    // Abstract parser for each source record
    class Parser
@@ -87,6 +84,7 @@ class pkgSrcRecords
       static const char *BuildDepType(unsigned char const &Type) APT_PURE;
 
       virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
+      bool Files2(std::vector<pkgSrcRecords::File2> &F);
       
       Parser(const pkgIndexFile *Index) : iIndex(Index) {};
       virtual ~Parser() {};

@@ -1,10 +1,9 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acqprogress.cc,v 1.24 2003/04/27 01:56:48 doogie Exp $
 /* ######################################################################
 
-   Acquire Progress - Command line progress meter 
-   
+   Acquire Progress - Command line progress meter
+
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
@@ -23,20 +22,18 @@
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
+#include <sstream>
 #include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/
 
-using namespace std;
-
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet) :
-    pkgAcquireStatus(), ScreenWidth(ScreenWidth), ID(0), Quiet(Quiet)
+AcqTextStatus::AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet) :
+    pkgAcquireStatus(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
 {
-   BlankLine[0] = 0;
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
       this->Quiet = 1;
@@ -48,8 +45,18 @@ AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet)
 void AcqTextStatus::Start()
 {
    pkgAcquireStatus::Start();
-   BlankLine[0] = 0;
+   LastLineLength = 0;
    ID = 1;
+}
+									/*}}}*/
+void AcqTextStatus::AssignItemID(pkgAcquire::ItemDesc &Itm)		/*{{{*/
+{
+   /* In theory calling it from Fetch() would be enough, but to be
+      safe we call it from IMSHit and Fail as well.
+      Also, an Item can pass through multiple stages, so ensure
+      that it keeps the same number */
+   if (Itm.Owner->ID == 0)
+      Itm.Owner->ID = ID++;
 }
 									/*}}}*/
 // AcqTextStatus::IMSHit - Called when an item got a HIT response	/*{{{*/
@@ -60,11 +67,12 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   AssignItemID(Itm);
+   clearLastLine();
 
-   cout << _("Hit ") << Itm.Description;
-   cout << endl;
+   // TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+   ioprintf(out, _("Hit:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
+   out << std::endl;
    Update = true;
 }
 									/*}}}*/
@@ -76,27 +84,28 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    Update = true;
    if (Itm.Owner->Complete == true)
       return;
-
-   Itm.Owner->ID = ID++;
+   AssignItemID(Itm);
 
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
+   clearLastLine();
 
-   cout << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
+   // TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+   // Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+   ioprintf(out, _("Get:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
    if (Itm.Owner->FileSize != 0)
-      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
-   cout << endl;
+      out << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
+   out << std::endl;
 }
 									/*}}}*/
 // AcqTextStatus::Done - Completed a download				/*{{{*/
 // ---------------------------------------------------------------------
 /* We don't display anything... */
-void AcqTextStatus::Done(pkgAcquire::ItemDesc &/*Itm*/)
+void AcqTextStatus::Done(pkgAcquire::ItemDesc &Itm)
 {
    Update = true;
+   AssignItemID(Itm);
 }
 									/*}}}*/
 // AcqTextStatus::Fail - Called when an item fails to download		/*{{{*/
@@ -107,24 +116,25 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Quiet > 1)
       return;
 
-   // Ignore certain kinds of transient failures (bad code)
-   if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
-      return;
+   AssignItemID(Itm);
+   clearLastLine();
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
-
-   if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
+   if (Itm.Owner->Status == pkgAcquire::Item::StatDone || Itm.Owner->Status == pkgAcquire::Item::StatIdle)
    {
-      cout << _("Ign ") << Itm.Description << endl;
+      // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+      // which failed to download, but the error is ignored (compare "Err:")
+      ioprintf(out, _("Ign:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
       if (Itm.Owner->ErrorText.empty() == false &&
 	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == true)
-	 cout << "  " << Itm.Owner->ErrorText << endl;
+	 out << std::endl << "  " << Itm.Owner->ErrorText;
+      out << std::endl;
    }
    else
    {
-      cout << _("Err ") << Itm.Description << endl;
-      cout << "  " << Itm.Owner->ErrorText << endl;
+      // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+      // which failed to download and the error is critical (compare "Ign:")
+      ioprintf(out, _("Err:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
+      out << std::endl << "  " << Itm.Owner->ErrorText << std::endl;
    }
 
    Update = true;
@@ -140,14 +150,13 @@ void AcqTextStatus::Stop()
    if (Quiet > 1)
       return;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r' << flush;
+   clearLastLine();
 
    if (_config->FindB("quiet::NoStatistic", false) == true)
       return;
 
    if (FetchedBytes != 0 && _error->PendingError() == false)
-      ioprintf(cout,_("Fetched %sB in %s (%sB/s)\n"),
+      ioprintf(out,_("Fetched %sB in %s (%sB/s)\n"),
 	       SizeToStr(FetchedBytes).c_str(),
 	       TimeToStr(ElapsedTime).c_str(),
 	       SizeToStr(CurrentCPS).c_str());
@@ -156,7 +165,7 @@ void AcqTextStatus::Stop()
 // AcqTextStatus::Pulse - Regular event pulse				/*{{{*/
 // ---------------------------------------------------------------------
 /* This draws the current progress. Each line has an overall percent
-   meter and a per active item status meter along with an overall 
+   meter and a per active item status meter along with an overall
    bandwidth and ETA indicator. */
 bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 {
@@ -167,77 +176,66 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    enum {Long = 0,Medium,Short} Mode = Medium;
 
-   char Buffer[sizeof(BlankLine)];
-   char *End = Buffer + sizeof(Buffer);
-   char *S = Buffer;
-   if (ScreenWidth >= sizeof(Buffer))
-      ScreenWidth = sizeof(Buffer)-1;
-
-   // Put in the percent done
-   sprintf(S,"%.0f%%", Percent);
-
-   bool Shown = false;
-   for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
-	I = Owner->WorkerStep(I))
+   std::string Line;
    {
-      S += strlen(S);
-
-      // There is no item running
-      if (I->CurrentItem == 0)
+      std::stringstream S;
+      for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
+	    I = Owner->WorkerStep(I))
       {
-	 if (I->Status.empty() == false)
+	 // There is no item running
+	 if (I->CurrentItem == 0)
 	 {
-	    snprintf(S,End-S," [%s]",I->Status.c_str());
-	    Shown = true;
+	    if (I->Status.empty() == false)
+	       S << " [" << I->Status << "]";
+
+	    continue;
 	 }
 
-	 continue;
-      }
+	 // Add in the short description
+	 S << " [";
+	 if (I->CurrentItem->Owner->ID != 0)
+	    S << I->CurrentItem->Owner->ID << " ";
+	 S << I->CurrentItem->ShortDesc;
 
-      Shown = true;
+	 // Show the short mode string
+	 if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
+	    S << " " << I->CurrentItem->Owner->ActiveSubprocess;
 
-      // Add in the short description
-      if (I->CurrentItem->Owner->ID != 0)
-	 snprintf(S,End-S," [%lu %s",I->CurrentItem->Owner->ID,
-		  I->CurrentItem->ShortDesc.c_str());
-      else
-	 snprintf(S,End-S," [%s",I->CurrentItem->ShortDesc.c_str());
-      S += strlen(S);
-
-      // Show the short mode string
-      if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
-      {
-	 snprintf(S,End-S, " %s", I->CurrentItem->Owner->ActiveSubprocess.c_str());
-	 S += strlen(S);
-      }
-
-      // Add the current progress
-      if (Mode == Long)
-	 snprintf(S,End-S," %llu",I->CurrentSize);
-      else
-      {
-	 if (Mode == Medium || I->TotalSize == 0)
-	    snprintf(S,End-S," %sB",SizeToStr(I->CurrentSize).c_str());
-      }
-      S += strlen(S);
-
-      // Add the total size and percent
-      if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
-      {
-	 if (Mode == Short)
-	    snprintf(S,End-S," %.0f%%",
-		     (I->CurrentSize*100.0)/I->TotalSize);
+	 // Add the current progress
+	 if (Mode == Long)
+	    S << " " << I->CurrentSize;
 	 else
-	    snprintf(S,End-S,"/%sB %.0f%%",SizeToStr(I->TotalSize).c_str(),
-		     (I->CurrentSize*100.0)/I->TotalSize);
-      }
-      S += strlen(S);
-      snprintf(S,End-S,"]");
-   }
+	 {
+	    if (Mode == Medium || I->TotalSize == 0)
+	       S << " " << SizeToStr(I->CurrentSize) << "B";
+	 }
 
-   // Show something..
-   if (Shown == false)
-      snprintf(S,End-S,_(" [Working]"));
+	 // Add the total size and percent
+	 if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
+	 {
+	    if (Mode == Short)
+	       ioprintf(S, " %.0f%%", (I->CurrentSize*100.0)/I->TotalSize);
+	    else
+	       ioprintf(S, "/%sB %.0f%%", SizeToStr(I->TotalSize).c_str(),
+		     (I->CurrentSize*100.0)/I->TotalSize);
+	 }
+	 S << "]";
+      }
+
+      // Show at least something
+      Line = S.str();
+      S.clear();
+      if (Line.empty() == true)
+	 Line = _(" [Working]");
+   }
+   // Put in the percent done
+   {
+      std::stringstream S;
+      ioprintf(S, "%.0f%%", Percent);
+      S << Line;
+      Line = S.str();
+      S.clear();
+   }
 
    /* Put in the ETA and cps meter, block off signals to prevent strangeness
       during resizing */
@@ -248,34 +246,33 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    if (CurrentCPS != 0)
    {
-      char Tmp[300];
       unsigned long long ETA = (TotalBytes - CurrentBytes)/CurrentCPS;
-      sprintf(Tmp," %sB/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
-      unsigned int Len = strlen(Buffer);
-      unsigned int LenT = strlen(Tmp);
-      if (Len + LenT < ScreenWidth)
+      std::string Tmp = " " + SizeToStr(CurrentCPS) + "B/s " + TimeToStr(ETA);
+      size_t alignment = Line.length() + Tmp.length();
+      if (alignment < ScreenWidth)
       {
-	 memset(Buffer + Len,' ',ScreenWidth - Len);
-	 strcpy(Buffer + ScreenWidth - LenT,Tmp);
+	 alignment = ScreenWidth - alignment;
+	 for (size_t i = 0; i < alignment; ++i)
+	    Line.append(" ");
+	 Line.append(Tmp);
       }
    }
-   Buffer[ScreenWidth] = 0;
-   BlankLine[ScreenWidth] = 0;
+   if (Line.length() > ScreenWidth)
+      Line.erase(ScreenWidth);
    sigprocmask(SIG_SETMASK,&OldSigs,0);
 
    // Draw the current status
    if (_config->FindB("Apt::Color", false) == true)
-      cout << _config->Find("APT::Color::Yellow");
-   if (strlen(Buffer) == strlen(BlankLine))
-      cout << '\r' << Buffer << flush;
+      out << _config->Find("APT::Color::Yellow");
+   if (LastLineLength > Line.length())
+      clearLastLine();
    else
-      cout << '\r' << BlankLine << '\r' << Buffer << flush;
+      out << '\r';
+   out << Line << std::flush;
    if (_config->FindB("Apt::Color", false) == true)
-      cout << _config->Find("APT::Color::Neutral") << flush;
+      out << _config->Find("APT::Color::Neutral") << std::flush;
 
-   memset(BlankLine,' ',strlen(Buffer));
-   BlankLine[strlen(Buffer)] = 0;
-
+   LastLineLength = Line.length();
    Update = false;
 
    return true;
@@ -284,7 +281,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 // AcqTextStatus::MediaChange - Media need to be swapped		/*{{{*/
 // ---------------------------------------------------------------------
 /* Prompt for a media swap */
-bool AcqTextStatus::MediaChange(string Media,string Drive)
+bool AcqTextStatus::MediaChange(std::string Media, std::string Drive)
 {
    // If we do not output on a terminal and one of the options to avoid user
    // interaction is given, we assume that no user is present who could react
@@ -296,9 +293,8 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
 
       return false;
 
-   if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';
-   ioprintf(cout,_("Media change: please insert the disc labeled\n"
+   clearLastLine();
+   ioprintf(out,_("Media change: please insert the disc labeled\n"
 		   " '%s'\n"
 		   "in the drive '%s' and press enter\n"),
 	    Media.c_str(),Drive.c_str());
@@ -315,5 +311,19 @@ bool AcqTextStatus::MediaChange(string Media,string Drive)
    if(bStatus)
       Update = true;
    return bStatus;
+}
+									/*}}}*/
+void AcqTextStatus::clearLastLine() {					/*{{{*/
+   if (Quiet > 0 || LastLineLength == 0)
+      return;
+
+   // do not try to clear more than the (now smaller) screen
+   if (LastLineLength > ScreenWidth)
+      LastLineLength = ScreenWidth;
+
+   out << '\r';
+   for (size_t i = 0; i < LastLineLength; ++i)
+      out << ' ';
+   out << '\r' << std::flush;
 }
 									/*}}}*/

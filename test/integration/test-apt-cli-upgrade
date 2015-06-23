@@ -23,7 +23,7 @@ setupaptarchive
 APTARCHIVE=$(readlink -f ./aptarchive)
 
 # default is to allow new dependencies
-testequal "The following NEW packages will be installed:
+testsuccessequal "The following NEW packages will be installed:
   foo-new-dependency
 The following packages will be upgraded:
   foo
@@ -33,7 +33,7 @@ Inst foo [1.0] (2.0 unstable [all])
 Conf foo-new-dependency (2.0 unstable [all])
 Conf foo (2.0 unstable [all])" apt upgrade -qq -s
 
-# ensure 
-testequal "The following packages have been kept back:
+# ensure the 'old' way works as well
+testsuccessequal "The following packages have been kept back:
   foo
 0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded." apt upgrade -qq -s --no-new-pkgs

@@ -1,0 +1,194 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+echo 'Package: coolstuff
+Version: 0.8.15
+Description: collection of stuff
+ A lot, too much to iterate all, but at least this:
+ - stuff
+ - more stuff
+ - even more stuff
+ .
+ And a cow.
+
+Package: oldstuff
+Version: 0-1
+Description: collection of outdated stuff
+ A lot, but of no use nowadays, but at least this:
+ - stuff
+ - more stuff
+ - even more stuff
+ .
+ And a dog.' > Packages
+
+testrred() {
+	msgtest "$1" "$2"
+	if [ -z "$3" ]; then
+		echo -n '' > Packages.ed
+	else
+		echo "$3" > Packages.ed
+	fi
+	rred() {
+		cat Packages | runapt "${METHODSDIR}/rred" "$@"
+	}
+	testsuccessequal "$4" --nomsg rred -f Packages.ed
+}
+
+testrred 'Remove' 'first line' '1d' "$(tail -n +2 ./Packages)"
+testrred 'Remove' 'empty line' '10d' "$(head -n 9 ./Packages)
+$(tail -n 9 ./Packages)"
+testrred 'Remove' 'line in a paragraph' '5d' "$(head -n 4 ./Packages)
+$(tail -n 14 ./Packages)"
+testrred 'Remove' 'last line' '19d' "$(head -n -1 ./Packages)"
+testrred 'Remove' 'multiple single lines' '17d
+7d' "$(sed -e '/^ - even more stuff$/ d' ./Packages)"
+testrred 'Remove' 'first paragraph' '1,10d' "$(tail -n 9 ./Packages)"
+testrred 'Remove' 'a few lines in the middle' '5,14d' "$(head -n 4 ./Packages)
+$(tail -n 5 ./Packages)"
+testrred 'Remove' 'second paragraph' '10,19d' "$(head -n 9 ./Packages)"
+testrred 'Mass Remove' 'all stuff lines' '15,17d
+13d
+11d
+5,7d
+3d
+1d' "$(sed '/stuff/ d' ./Packages)"
+
+testrred 'Single line add' 'first line' '0a
+Format: 3.0 (native)
+.' "Format: 3.0 (native)
+$(cat ./Packages)"
+testrred 'Single line add' 'last line' '19a
+Multi-Arch: foreign
+.' "$(cat ./Packages)
+Multi-Arch: foreign"
+testrred 'Single line add' 'middle' '9a
+Multi-Arch: foreign
+.' "$(head -n 9 ./Packages)
+Multi-Arch: foreign
+$(tail -n 10 ./Packages)"
+
+testrred 'Multi line add' 'first line' '0a
+Format: 3.0 (native)
+Source: apt
+.' "Format: 3.0 (native)
+Source: apt
+$(cat ./Packages)"
+testrred 'Multi line add' 'last line' '19a
+Multi-Arch: foreign
+Homepage: https://debian.org
+.' "$(cat ./Packages)
+Multi-Arch: foreign
+Homepage: https://debian.org"
+testrred 'Multi line add' 'middle' '9a
+Multi-Arch: foreign
+Homepage: https://debian.org
+.' "$(head -n 9 ./Packages)
+Multi-Arch: foreign
+Homepage: https://debian.org
+$(tail -n 10 ./Packages)"
+
+testrred 'Single line change' 'first line' '1c
+Package: supercoolstuff
+.' "Package: supercoolstuff
+$(tail -n +2 ./Packages)"
+testrred 'Single line change' 'in the middle' '9c
+ And a super cow.
+.' "$(head -n 8 ./Packages)
+ And a super cow.
+$(tail -n 10 ./Packages)"
+testrred 'Single line change' 'an empty line' '10c
+
+.' "$(head -n 9 ./Packages)
+
+$(tail -n 9 ./Packages)"
+testrred 'Single line change' 'a spacy line' '10c
+   	  
+.' "$(head -n 9 ./Packages)
+   	  
+$(tail -n 9 ./Packages)"
+testrred 'Single line change' 'last line' '19c
+ And a cat.
+.' "$(head -n -1 ./Packages)
+ And a cat."
+
+testrred 'Multi line change' 'exchange' '5,7c
+ - good stuff
+ - more good stuff
+ - even more good stuff
+.' "$(head -n 4 ./Packages)
+ - good stuff
+ - more good stuff
+ - even more good stuff
+$(tail -n 12 ./Packages)"
+testrred 'Multi line change' 'less' '5,7c
+ - good stuff
+ - more good stuff
+.' "$(head -n 4 ./Packages)
+ - good stuff
+ - more good stuff
+$(tail -n 12 ./Packages)"
+testrred 'Multi line change' 'more' '5,7c
+ - good stuff
+ - more good stuff
+ - even more good stuff
+ - bonus good stuff
+.' "$(head -n 4 ./Packages)
+ - good stuff
+ - more good stuff
+ - even more good stuff
+ - bonus good stuff
+$(tail -n 12 ./Packages)"
+
+failrred() {
+	msgtest 'Failure caused by' "$1"
+	echo "$2" > Packages.ed
+	rred() {
+		cat Packages | runapt "${METHODSDIR}/rred" "$@"
+	}
+	testfailure --nomsg rred -f Packages.ed
+}
+
+failrred 'Bogus content' '<html>
+</html>'
+
+# not a problem per-se, but we want our parser to be really strict
+failrred 'Empty patch file' ''
+failrred 'Empty line patch file' '
+'
+failrred 'Empty line before command' '
+1d'
+failrred 'Empty line after command' '1d
+'
+failrred 'Empty line between commands' '17d
+
+7d'
+failrred 'Empty spaces lines before command' '   	   
+1d'
+failrred 'Empty spaces lines after command' '1d
+  	   '
+failrred 'Empty spaces lines between commands' '17d
+  	   
+7d'
+
+# the line before the first one can't be deleted/changed
+failrred 'zero line delete' '0d'
+failrred 'zero line change' '0c
+Package: supercoolstuff
+.'
+# and this makes no sense at all
+failrred 'negative line delete' '-1d'
+failrred 'negative line change' '-1c
+Package: supercoolstuff
+.'
+failrred 'negative line add' '-1a
+Package: supercoolstuff
+.'
+failrred 'Wrong order of commands' '7d
+17d'
+failrred 'End before start' '7,6d'

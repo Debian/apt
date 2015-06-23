@@ -52,14 +52,14 @@ if [ "$1" = 'pre-export' ]; then
 		VERSION="$VERSION~$(date +%Y%m%d)"
 	fi
 
+	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.ac
+	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
+
 	if [ "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' po/apt-all.pot | cut -d' ' -f 2)" -o \
 	     "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' doc/po/apt-doc.pot | cut -d' ' -f 2)" ]; then
 		echo >&2 'POT files are not up-to-date. Execute »make update-po« for you…'
 		make update-po
 	fi
-
-	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.ac
-	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
 		echo >&2 "REMEMBER: Tag this release with »git tag ${VERSION}« if you are satisfied"
@@ -130,8 +130,8 @@ elif [ "$1" = 'coverage' ]; then
 	LCOVRC='--rc geninfo_checksum=1 --rc lcov_branch_coverage=1'
 	mkdir "$DIR"
 	lcov --no-external --directory . --capture --initial --output-file "${DIR}/apt.coverage.init" ${LCOVRC}
-	make test
-	./test/integration/run-tests -q
+	make test || true
+	./test/integration/run-tests -q || true
 	lcov --no-external --directory . --capture --output-file "${DIR}/apt.coverage.run" ${LCOVRC}
 	lcov -a "${DIR}/apt.coverage.init" -a "${DIR}/apt.coverage.run"  -o "${DIR}/apt.coverage.total" ${LCOVRC}
 	cp "${DIR}/apt.coverage.total" "${DIR}/apt.coverage.fixed"

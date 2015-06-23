@@ -41,14 +41,14 @@ The following packages have unmet dependencies:
  python-mips : Depends: python3:mips but it is not installable
 E: Unable to correct problems, you have held broken packages.'
 
-testequal "$INSTALLLOG" aptget install python3-gnupg -s
+testsuccessequal "$INSTALLLOG" aptget install python3-gnupg -s
 aptcache showpkg python3 > showpkg.log
-testequal "$FAILLOG" aptget install python-mips -s
+testfailureequal "$FAILLOG" aptget install python-mips -s
 
 # same test, but this time in a multi-arch environment
 configarchitecture 'amd64' 'armhf'
 rm rootdir/var/cache/apt/*.bin
 
-testequal "$INSTALLLOG" aptget install python3-gnupg -s
-testequal "$(sed 's#3.3.2-16 - python3#3.3.2-16 - python3:any:armhf python3#' showpkg.log)" aptcache showpkg python3
-testequal "$FAILLOG" aptget install python-mips -s
+testsuccessequal "$INSTALLLOG" aptget install python3-gnupg -s
+testsuccessequal "$(sed 's#3.3.2-16 - python3#3.3.2-16 - python3:any:armhf python3#' showpkg.log)" aptcache showpkg python3
+testfailureequal "$FAILLOG" aptget install python-mips -s

@@ -2,17 +2,17 @@
 set -e
 
 assert_correct_sources_file() {
-    testequal "Package: bar
+    testsuccessequal "Package: bar
+Format: 3.0 (native)
+Binary: bar
 Architecture: all
 Version: 1.0
-Binary: bar
-Format: 3.0 (native)
 Directory: pool/main
+Package-List:
+ bar deb admin extra
 Files:
  7b57dd065e51de5905288a5104d4bef5 406 bar_1.0.dsc
  d41d8cd98f00b204e9800998ecf8427e 0 bar_1.0.tar.gz
-Package-List:
- bar deb admin extra
 Checksums-Sha1:
  17a40b76715f393ab7fd6485c9392a02f1adf903 406 bar_1.0.dsc
  da39a3ee5e6b4b0d3255bfef95601890afd80709 0 bar_1.0.tar.gz
@@ -24,16 +24,16 @@ Checksums-Sha512:
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e 0 bar_1.0.tar.gz
 
 Package: foo
+Format: 3.0 (native)
+Binary: foo
 Architecture: all
 Version: 1.0
-Binary: foo
-Format: 3.0 (native)
 Directory: pool/main
+Package-List: 
+ foo deb admin extra
 Files:
  d144826e6f02831c1933e910c92cd7e0 171 foo_1.0.dsc
  d41d8cd98f00b204e9800998ecf8427e 0 foo_1.0.tar.gz
-Package-List: 
- foo deb admin extra
 Checksums-Sha1:
  979306aa3ccff3d61bba062bb6977e2493c6f907 171 foo_1.0.dsc
  da39a3ee5e6b4b0d3255bfef95601890afd80709 0 foo_1.0.tar.gz
@@ -43,7 +43,7 @@ Checksums-Sha256:
 Checksums-Sha512:
  3da0240fd764657c2f3661b4d750578a9a99b0580591b133756379d48117ebda87a5ed2467f513200d6e7eaf51422cbe91c15720eef7fb4bba2cc8ff81ebc547 171 foo_1.0.dsc
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e 0 foo_1.0.tar.gz
-" aptsortpkgs ./aptarchive/dists/test/main/source/Sources
+" aptsortpkgs ./aptarchive/dists/test/main/source/Sources -o APT::SortPkgs::Source=true
 }
 
 create_source_files() {
@@ -106,27 +106,21 @@ mkdir -p aptarchive/dists/test/main/source/
 mkdir aptarchive-overrides
 mkdir aptarchive-cache
 
-
-
-# generate with --db option
-(cd aptarchive && aptftparchive --db ./test.db sources pool/main/ \
-    -o APT::FTPArchive::ShowCacheMisses=1  \
-    > dists/test/main/source/Sources \
-    2> stats-out.txt
-    testequal " Misses in Cache: 2" grep Misses stats-out.txt
-)
+msgtest 'generate with --db option'
+cd aptarchive
+aptftparchive --db ./test.db sources pool/main/ -q=0 -o APT::FTPArchive::ShowCacheMisses=1  > dists/test/main/source/Sources 2>stats-out.txt && msgpass || msgfail
+testsuccess grep Misses stats-out.txt
+testfileequal '../rootdir/tmp/testsuccess.output' ' Misses in Cache: 2'
+cd ..
 assert_correct_sources_file
 
-# generate with --db option (again to ensure its in the cache)
-(cd aptarchive && aptftparchive --db ./test.db sources pool/main/ \
-    -o APT::FTPArchive::ShowCacheMisses=1  \
-    > dists/test/main/source/Sources \
-    2> stats-out.txt  
-    testequal " Misses in Cache: 0" grep Misses stats-out.txt
-)
+msgtest 'generate with --db option (again to ensure its in the cache)'
+cd aptarchive
+aptftparchive --db ./test.db sources pool/main/ -q=0 -o APT::FTPArchive::ShowCacheMisses=1  > dists/test/main/source/Sources 2>stats-out.txt && msgpass || msgfail
+testsuccess grep Misses stats-out.txt
+testfileequal '../rootdir/tmp/testsuccess.output' ' Misses in Cache: 0'
+cd ..
 assert_correct_sources_file
-
-
 
 # get ready for the "apt-ftparchive generate" command
 cat > apt-ftparchive.conf <<"EOF"
@@ -159,19 +153,20 @@ Tree "dists/test" {
 };
 EOF
 
-# generate (empty cachedb)
-aptftparchive generate apt-ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
-testequal " Misses in Cache: 2" grep Misses stats-out.txt
+msgtest 'generate (empty cachedb)'
+testsuccess aptftparchive generate apt-ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+cp rootdir/tmp/testsuccess.output stats-out.txt
+testsuccess grep Misses stats-out.txt
+testfileequal rootdir/tmp/testsuccess.output ' Misses in Cache: 2'
 assert_correct_sources_file
 
-
-# generate again out of the cache
+msgtest 'generate again out of the cache'
 rm -f ./aptarchive/dists/test/main/source/Sources
-aptftparchive generate apt-ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1  2> stats-out.txt
-testequal " Misses in Cache: 0" grep Misses stats-out.txt
+testsuccess aptftparchive generate apt-ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+cp rootdir/tmp/testsuccess.output stats-out.txt
+testsuccess grep Misses stats-out.txt
+testfileequal rootdir/tmp/testsuccess.output ' Misses in Cache: 0'
 assert_correct_sources_file
-
-
 
 # generate invalid files
 mkdir aptarchive/pool/invalid
@@ -185,14 +180,11 @@ testequal "
 E: Could not find a Source entry in the DSC 'aptarchive/pool/invalid/invalid_1.0.dsc'" aptftparchive sources aptarchive/pool/invalid
 rm -f aptarchive/pool/invalid/invalid_1.0.dsc
 
-dd if=/dev/zero of="aptarchive/pool/invalid/toobig_1.0.dsc" bs=1k count=129 2>/dev/null
-testequal "
-E: DSC file 'aptarchive/pool/invalid/toobig_1.0.dsc' is too large!" aptftparchive sources aptarchive/pool/invalid
-
 # ensure clean works
 rm -f aptarchive/pool/main/*
-aptftparchive clean apt-ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 
-testequal "0	Number of unique keys in the tree" grep unique clean-out.txt
-testequal "sources-main.db" grep sources-main.db clean-out.txt
-
-
+testsuccess aptftparchive clean apt-ftparchive.conf -q=0 -o Debug::APT::FTPArchive::Clean=1
+cp rootdir/tmp/testsuccess.output clean-out.txt
+testsuccess grep unique clean-out.txt
+testfileequal 'rootdir/tmp/testsuccess.output' "0	Number of unique keys in the tree"
+testsuccess grep sources-main.db clean-out.txt
+testfileequal 'rootdir/tmp/testsuccess.output' "sources-main.db"

@@ -18,7 +18,7 @@
 class OpProgress;
 class pkgCacheGenerator;
 
-class edspIndex : public debStatusIndex
+class APT_HIDDEN edspIndex : public debStatusIndex
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -30,6 +30,7 @@ class edspIndex : public debStatusIndex
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
    edspIndex(std::string File);
+   virtual ~edspIndex();
 };
 
 #endif

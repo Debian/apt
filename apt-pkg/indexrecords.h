@@ -1,7 +1,4 @@
 // -*- mode: cpp; mode: fold -*-
-// Description								/*{{{*/
-// $Id: indexrecords.h,v 1.1.2.1 2003/12/24 23:09:17 mdz Exp $
-									/*}}}*/
 #ifndef PKGLIB_INDEXRECORDS_H
 #define PKGLIB_INDEXRECORDS_H
 
@@ -36,14 +33,19 @@ class indexRecords
    std::string Dist;
    std::string Suite;
    std::string ExpectedDist;
+   time_t Date;
    time_t ValidUntil;
    bool SupportsAcquireByHash;
 
    std::map<std::string,checkSum *> Entries;
 
    public:
-
+#if APT_PKG_ABI >= 413
    indexRecords(const std::string &ExpectedDist = "");
+#else
+   indexRecords();
+   indexRecords(const std::string ExpectedDist);
+#endif
 
    // Lookup function
    virtual checkSum *Lookup(const std::string MetaKey);
@@ -58,6 +60,7 @@ class indexRecords
    std::string GetSuite() const;
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
+   time_t GetDate() const;
    std::string GetExpectedDist() const;
 
    /** \brief check if source is marked as always trusted */
@@ -76,11 +79,7 @@ class indexRecords
    virtual ~indexRecords();
 };
 
-#if __GNUC__ >= 4
-	// ensure that con- & de-structor don't trigger this warning
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+APT_IGNORE_DEPRECATED_PUSH
 struct indexRecords::checkSum
 {
    std::string MetaKeyFilename;
@@ -89,8 +88,6 @@ struct indexRecords::checkSum
 
    APT_DEPRECATED HashString Hash;
 };
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP
 
 #endif

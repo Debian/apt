@@ -49,15 +49,14 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (Prog != NULL)
       Prog->SubProgress(0,File);
-   if (Gen.SelectFile(File,std::string(),*this) == false)
+   if (Gen.SelectFile(File, *this, "", "edsp") == false)
       return _error->Error("Problem with SelectFile %s",File.c_str());
 
    // Store the IMS information
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(CFile);
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "edsp::scenario");
-   CFile->Archive = storage;
 
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",File.c_str());
@@ -65,7 +64,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 }
 									/*}}}*/
 // Index File types for APT						/*{{{*/
-class edspIFType: public pkgIndexFile::Type
+class APT_HIDDEN edspIFType: public pkgIndexFile::Type
 {
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator) const
@@ -75,10 +74,12 @@ class edspIFType: public pkgIndexFile::Type
    };
    edspIFType() {Label = "EDSP scenario file";};
 };
-static edspIFType _apt_Universe;
+APT_HIDDEN edspIFType _apt_Universe;
 
 const pkgIndexFile::Type *edspIndex::GetType() const
 {
    return &_apt_Universe;
 }
 									/*}}}*/
+
+edspIndex::~edspIndex() {}

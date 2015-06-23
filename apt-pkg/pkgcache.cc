@@ -61,6 +61,7 @@ pkgCache::Header::Header()
    HeaderSz = sizeof(pkgCache::Header);
    GroupSz = sizeof(pkgCache::Group);
    PackageSz = sizeof(pkgCache::Package);
+   ReleaseFileSz = sizeof(pkgCache::ReleaseFile);
    PackageFileSz = sizeof(pkgCache::PackageFile);
    VersionSz = sizeof(pkgCache::Version);
    DescriptionSz = sizeof(pkgCache::Description);
@@ -74,6 +75,7 @@ pkgCache::Header::Header()
    VersionCount = 0;
    DescriptionCount = 0;
    DependsCount = 0;
+   ReleaseFileCount = 0;
    PackageFileCount = 0;
    VerFileCount = 0;
    DescFileCount = 0;
@@ -82,10 +84,14 @@ pkgCache::Header::Header()
    MaxDescFileSize = 0;
    
    FileList = 0;
+   RlsFileList = 0;
+#if APT_PKG_ABI < 413
+   APT_IGNORE_DEPRECATED(StringList = 0;)
+#endif
    VerSysName = 0;
    Architecture = 0;
-   Architectures = 0;
-   HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
+   SetArchitectures(0);
+   SetHashTableSize(_config->FindI("APT::Cache-HashTableSize", 10 * 1048));
    memset(Pools,0,sizeof(Pools));
 
    CacheFileSize = 0;
@@ -99,6 +105,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
    if (HeaderSz == Against.HeaderSz &&
        GroupSz == Against.GroupSz &&
        PackageSz == Against.PackageSz &&
+       ReleaseFileSz == Against.ReleaseFileSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
        DescriptionSz == Against.DescriptionSz &&
@@ -114,6 +121,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 // Cache::pkgCache - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+APT_IGNORE_DEPRECATED_PUSH
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
 {
    // call getArchitectures() with cached=false to ensure that the 
@@ -123,6 +131,7 @@ pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
    if (DoMap == true)
       ReMap();
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Cache::ReMap - Reopen the cache file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -135,6 +144,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
    DescFileP = (DescFile *)Map.Data();
+   RlsFileP = (ReleaseFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
    DescP = (Description *)Map.Data();
@@ -162,7 +172,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    if (Map.Size() < HeaderP->CacheFileSize)
       return _error->Error(_("The package cache file is corrupted, it is too small"));
 
-   if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->Architectures == 0)
+   if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->GetArchitectures() == 0)
       return _error->Error(_("The package cache file is corrupted"));
 
    // Locate our VS..
@@ -176,8 +186,8 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    for (++a; a != archs.end(); ++a)
       list.append(",").append(*a);
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
-	 list != StrP + HeaderP->Architectures)
-      return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->Architectures, list.c_str());
+	 list != StrP + HeaderP->GetArchitectures())
+      return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->GetArchitectures(), list.c_str());
 
    return true;
 }
@@ -192,7 +202,7 @@ map_id_t pkgCache::sHash(const string &Str) const
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % HeaderP->HashTableSize;
+   return Hash % HeaderP->GetHashTableSize();
 }
 
 map_id_t pkgCache::sHash(const char *Str) const
@@ -200,7 +210,7 @@ map_id_t pkgCache::sHash(const char *Str) const
    unsigned long Hash = tolower_ascii(*Str);
    for (const char *I = Str + 1; *I != 0; ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % HeaderP->HashTableSize;
+   return Hash % HeaderP->GetHashTableSize();
 }
 									/*}}}*/
 // Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
@@ -211,8 +221,8 @@ map_id_t pkgCache::sHash(const char *Str) const
 pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 {
    // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
+   Package *Pkg = PkgP + HeaderP->PkgHashTableP()[Hash(Name)];
+   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
       int const cmp = strcmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
       if (cmp == 0)
@@ -229,12 +239,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	size_t const found = Name.find(':');
 	if (found == string::npos)
-	{
-		if (MultiArchCache() == false)
-			return SingleArchFindPkg(Name);
-		else
-			return FindPkg(Name, "native");
-	}
+	   return FindPkg(Name, "native");
 	string const Arch = Name.substr(found+1);
 	/* Beware: This is specialcased to handle pkg:any in dependencies as
 	   these are linked to virtual pkg:any named packages with all archs.
@@ -248,13 +253,6 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
-	if (MultiArchCache() == false && Arch != "none") {
-		if (Arch == "native" || Arch == "all" || Arch == "any" ||
-		    Arch == NativeArch())
-			return SingleArchFindPkg(Name);
-		else
-			return PkgIterator(*this,0);
-	}
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
 	   find than a package (less entries in the buckets) */
@@ -273,7 +271,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 		return GrpIterator(*this,0);
 
 	// Look at the hash bucket for the group
-	Group *Grp = GrpP + HeaderP->GrpHashTable()[sHash(Name)];
+	Group *Grp = GrpP + HeaderP->GrpHashTableP()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
 		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
 		if (cmp == 0)
@@ -359,7 +357,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 
 	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
-	     Pkg = Owner->PkgP + Pkg->Next) {
+	     Pkg = Owner->PkgP + Pkg->NextPackage) {
 		if (stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
@@ -407,7 +405,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	if (S->LastPackage == LastPkg.Index())
 		return PkgIterator(*Owner, 0);
 
-	return PkgIterator(*Owner, Owner->PkgP + LastPkg->Next);
+	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
 }
 									/*}}}*/
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
@@ -420,10 +418,10 @@ void pkgCache::GrpIterator::operator ++(int)
       S = Owner->GrpP + S->Next;
 
    // Follow the hash table
-   while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
+   while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
       HashIndex++;
-      S = Owner->GrpP + Owner->HeaderP->GrpHashTable()[HashIndex];
+      S = Owner->GrpP + Owner->HeaderP->GrpHashTableP()[HashIndex];
    }
 }
 									/*}}}*/
@@ -434,13 +432,13 @@ void pkgCache::PkgIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->PkgP)
-      S = Owner->PkgP + S->Next;
+      S = Owner->PkgP + S->NextPackage;
 
    // Follow the hash table
-   while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
       HashIndex++;
-      S = Owner->PkgP + Owner->HeaderP->PkgHashTable()[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->PkgHashTableP()[HashIndex];
    }
 }
 									/*}}}*/
@@ -821,7 +819,7 @@ APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
-      if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
+      if (Files.File().Flagged(pkgCache::Flag::NotSource) == false)
 	 return true;
    return false;
 }
@@ -835,7 +833,7 @@ APT_PURE bool pkgCache::VerIterator::Automatic() const
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
       // Do not check ButAutomaticUpgrades here as it is kind of automatic…
-      if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
+      if (Files.File().Flagged(pkgCache::Flag::NotAutomatic) == false)
 	 return true;
    return false;
 }
@@ -868,27 +866,27 @@ string pkgCache::VerIterator::RelStr() const
    for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
-      pkgCache::PkgFileIterator File = I.File();
-      if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+      pkgCache::PkgFileIterator const File = I.File();
+      if (File.Flagged(pkgCache::Flag::NotSource))
 	 continue;
 
       // See if we have already printed this out..
       bool Seen = false;
       for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
       {
-	 pkgCache::PkgFileIterator File2 = J.File();
-	 if (File2->Label == 0 || File->Label == 0)
+	 pkgCache::PkgFileIterator const File2 = J.File();
+	 if (File2.Label() == 0 || File.Label() == 0)
 	    continue;
 
 	 if (strcmp(File.Label(),File2.Label()) != 0)
 	    continue;
 	 
-	 if (File2->Version == File->Version)
+	 if (File2.Version() == File.Version())
 	 {
 	    Seen = true;
 	    break;
 	 }
-	 if (File2->Version == 0 || File->Version == 0)
+	 if (File2.Version() == 0 || File.Version() == 0)
 	    break;
 	 if (strcmp(File.Version(),File2.Version()) == 0)
 	    Seen = true;
@@ -902,12 +900,12 @@ string pkgCache::VerIterator::RelStr() const
       else
 	 First = false;
       
-      if (File->Label != 0)
+      if (File.Label() != 0)
 	 Res = Res + File.Label() + ':';
 
-      if (File->Archive != 0)
+      if (File.Archive() != 0)
       {
-	 if (File->Version == 0)
+	 if (File.Version() == 0)
 	    Res += File.Archive();
 	 else
 	    Res = Res + File.Version() + '/' +  File.Archive();
@@ -915,7 +913,7 @@ string pkgCache::VerIterator::RelStr() const
       else
       {
 	 // No release file, print the host name that this came from
-	 if (File->Site == 0 || File.Site()[0] == 0)
+	 if (File.Site() == 0 || File.Site()[0] == 0)
 	    Res += "localhost";
 	 else
 	    Res += File.Site();
@@ -938,10 +936,44 @@ const char * pkgCache::VerIterator::MultiArchType() const
    return "none";
 }
 									/*}}}*/
+// RlsFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
+// ---------------------------------------------------------------------
+/* This stats the file and compares its stats with the ones that were
+   stored during generation. Date checks should probably also be
+   included here. */
+bool pkgCache::RlsFileIterator::IsOk()
+{
+   struct stat Buf;
+   if (stat(FileName(),&Buf) != 0)
+      return false;
+
+   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
+      return false;
+
+   return true;
+}
+									/*}}}*/
+// RlsFileIterator::RelStr - Return the release string			/*{{{*/
+string pkgCache::RlsFileIterator::RelStr()
+{
+   string Res;
+   if (Version() != 0)
+      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
+   if (Origin() != 0)
+      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
+   if (Archive() != 0)
+      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Codename() != 0)
+      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
+   if (Label() != 0)
+      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
+   return Res;
+}
+									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
 // ---------------------------------------------------------------------
 /* This stats the file and compares its stats with the ones that were
-   stored during generation. Date checks should probably also be 
+   stored during generation. Date checks should probably also be
    included here. */
 bool pkgCache::PkgFileIterator::IsOk()
 {
@@ -955,24 +987,20 @@ bool pkgCache::PkgFileIterator::IsOk()
    return true;
 }
 									/*}}}*/
-// PkgFileIterator::RelStr - Return the release string			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgCache::PkgFileIterator::RelStr()
+string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
 {
-   string Res;
-   if (Version() != 0)
-      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
-   if (Origin() != 0)
-      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
-   if (Archive() != 0)
-      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
-   if (Codename() != 0)
-      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
-   if (Label() != 0)
-      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
-   if (Component() != 0)
-      Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   std::string Res;
+   if (ReleaseFile() == 0)
+   {
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"a=":",a=")  + Component();
+   }
+   else
+   {
+      Res = ReleaseFile().RelStr();
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   }
    if (Architecture() != 0)
       Res = Res + (Res.empty() == true?"b=":",b=")  + Architecture();
    return Res;
@@ -1031,9 +1059,5 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
    return false;
 }
 									/*}}}*/
-APT_DEPRECATED APT_PURE const char * pkgCache::PkgIterator::Section() const {/*{{{*/
-   if (S->VersionList == 0)
-      return 0;
-   return VersionList().Section();
-}
-									/*}}}*/
+
+pkgCache::~pkgCache() {}
