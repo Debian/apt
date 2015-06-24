@@ -73,7 +73,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	testsuccess aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
 
-	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewher between 8byte and short
+	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewhere between 8byte and short
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
@@ -166,6 +166,40 @@ pub   2048R/528144E2 2011-01-16'
 	msgtest 'Test merge-back of' 'removed duplicate keys'
 	testsuccess --nomsg aptkey adv --batch --yes --delete-keys DBAC8DAE
 	testaptkeys 'pub   2048R/528144E2 2011-01-16'
+
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	msgtest 'Test signing a file' 'with a key'
+	echo 'Verify me. This is my signature.' > signature
+	testsuccess --nomsg aptkey --quiet --keyring keys/marvinparanoid.pub --secret-keyring keys/marvinparanoid.sec --readonly \
+		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
+
+	msgtest 'Test verify a file' 'with all keys'
+	testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+
+	msgtest 'Test verify a file' 'with good keyring'
+	testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature
+
+	msgtest 'Test fail verify a file' 'with bad keyring'
+	testfailure --nomsg aptkey --quiet --readonly --keyring keys/joesixpack.pub verify signature.gpg signature
+
+	msgtest 'Test fail verify a file' 'with non-existing keyring'
+	testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
+	testfailure test -e keys/does-not-exist.pub
+
+	msgtest 'Test verify a file' 'with good keyid'
+	testsuccess --nomsg aptkey --quiet --readonly --keyid 'Paranoid' verify signature.gpg signature
+
+	msgtest 'Test fail verify a file' 'with bad keyid'
+	testfailure --nomsg aptkey --quiet --readonly --keyid 'Sixpack' verify signature.gpg signature
+
+	msgtest 'Test fail verify a file' 'with non-existing keyid'
+	testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
+
+	msgtest 'Test verify fails on' 'bad file'
+	echo 'lalalalala' > signature
+	testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature
 }
 
 setupgpgcommand() {
@@ -187,4 +221,3 @@ setupgpgcommand 'gpg'
 testrun
 setupgpgcommand 'gpg2'
 testrun
-

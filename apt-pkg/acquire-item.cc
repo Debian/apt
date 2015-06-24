@@ -808,7 +808,6 @@ string pkgAcqMetaBase::Custom600Headers() const
    Header += MaximumSize;
 
    string const FinalFile = GetFinalFilename();
-
    struct stat Buf;
    if (stat(FinalFile.c_str(),&Buf) == 0)
       Header += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
@@ -1132,6 +1131,10 @@ string pkgAcqMetaClearSig::Custom600Headers() const
 {
    string Header = pkgAcqMetaBase::Custom600Headers();
    Header += "\nFail-Ignore: true";
+   std::string const key = TransactionManager->MetaIndexParser->GetSignedBy();
+   if (key.empty() == false)
+      Header += "\nSigned-By: " + key;
+
    return Header;
 }
 									/*}}}*/
@@ -1372,6 +1375,16 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire * const Owner,
 									/*}}}*/
 pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 {
+}
+									/*}}}*/
+// pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
+std::string pkgAcqMetaSig::Custom600Headers() const
+{
+   std::string Header = pkgAcqTransactionItem::Custom600Headers();
+   std::string const key = TransactionManager->MetaIndexParser->GetSignedBy();
+   if (key.empty() == false)
+      Header += "\nSigned-By: " + key;
+   return Header;
 }
 									/*}}}*/
 // AcqMetaSig::Done - The signature was downloaded/verified		/*{{{*/

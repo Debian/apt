@@ -38,9 +38,12 @@ class FileFd;
  *
  * @param File is the message (unsigned or clear-signed)
  * @param FileSig is the signature (detached or clear-signed)
+ * @param statusfd is the fd given to gpgv as --status-fd
+ * @param fd is used as a pipe for the standard output of gpgv
+ * @param key is the specific one to be used instead of using all
  */
 void ExecGPGV(std::string const &File, std::string const &FileSig,
-      int const &statusfd, int fd[2]) APT_NORETURN;
+      int const &statusfd, int fd[2], std::string const &Key = "") APT_NORETURN;
 inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd = -1) {
    int fd[2];

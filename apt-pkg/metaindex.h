@@ -52,7 +52,7 @@ protected:
    std::string URI;
    std::string Dist;
    TriState Trusted;
-   TriState LoadedSuccessfully;
+   std::string SignedBy;
 
    // parsed from a file
    std::string Suite;
@@ -61,6 +61,7 @@ protected:
    time_t ValidUntil;
    bool SupportsAcquireByHash;
    std::map<std::string, checkSum *> Entries;
+   TriState LoadedSuccessfully;
 
 public:
    // Various accessors
@@ -68,6 +69,7 @@ public:
    std::string GetDist() const;
    const char* GetType() const;
    TriState GetTrusted() const;
+   std::string GetSignedBy() const;
 
    std::string GetCodename() const;
    std::string GetSuite() const;

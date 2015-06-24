@@ -199,7 +199,7 @@ remove_key_from_keyring() {
 foreach_keyring_do() {
    local ACTION="$1"
    shift
-   # if a --keyring was given, just remove from there
+   # if a --keyring was given, just work on this one
    if [ -n "$FORCED_KEYRING" ]; then
 	$ACTION "$FORCED_KEYRING" "$@"
    else
@@ -279,7 +279,14 @@ merge_back_changes() {
 }
 
 setup_merged_keyring() {
-    if [ -z "$FORCED_KEYRING" ]; then
+    if [ -n "$FORCED_KEYID" ]; then
+	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/allrings.gpg"
+	FORCED_KEYRING="${GPGHOMEDIR}/forcedkeyid.gpg"
+	TRUSTEDFILE="${FORCED_KEYRING}"
+	GPG="$GPG --keyring $TRUSTEDFILE"
+	# ignore error as this "just" means we haven't found the forced keyid and the keyring will be empty
+	$GPG_CMD --batch --yes --keyring "${GPGHOMEDIR}/allrings.gpg" --export "$FORCED_KEYID" | $GPG --batch --yes --import || true
+    elif [ -z "$FORCED_KEYRING" ]; then
 	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
 	if [ -r "${GPGHOMEDIR}/pubring.gpg" ]; then
 	    cp -a "${GPGHOMEDIR}/pubring.gpg" "${GPGHOMEDIR}/pubring.orig.gpg"
@@ -328,12 +335,17 @@ while [ -n "$1" ]; do
 	 TRUSTEDFILE="$1"
 	 FORCED_KEYRING="$1"
 	 ;;
+      --keyid)
+	 shift
+	 FORCED_KEYID="$1"
+	 ;;
       --secret-keyring)
 	 shift
 	 FORCED_SECRET_KEYRING="$1"
 	 ;;
       --readonly)
 	 merge_back_changes() { true; }
+	 create_new_keyring() { true; }
 	 ;;
       --fakeroot)
 	 requires_root() { true; }
@@ -460,7 +472,11 @@ case "$command" in
     verify)
 	setup_merged_keyring
 	if which gpgv >/dev/null 2>&1; then
-	    gpgv --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
+	    if [ -n "$FORCED_KEYRING" ]; then
+		gpgv --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
+	    else
+		gpgv --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
+	    fi
 	else
 	    $GPG --verify "$@"
 	fi

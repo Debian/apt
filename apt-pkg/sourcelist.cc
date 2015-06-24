@@ -93,27 +93,29 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    if (Enabled.empty() == false && StringToBool(Enabled) == false)
       return true;
 
-   std::map<char const * const, char const * const> mapping;
+   std::map<char const * const, std::pair<char const * const, bool> > mapping;
 #define APT_PLUSMINUS(X, Y) \
-   mapping.insert(std::make_pair(X, Y)); \
-   mapping.insert(std::make_pair(X "Add", Y "+")); \
-   mapping.insert(std::make_pair(X "Remove", Y "-"))
+   mapping.insert(std::make_pair(X, std::make_pair(Y, true))); \
+   mapping.insert(std::make_pair(X "Add", std::make_pair(Y "+", true))); \
+   mapping.insert(std::make_pair(X "Remove", std::make_pair(Y "-", true)))
    APT_PLUSMINUS("Architectures", "arch");
    APT_PLUSMINUS("Languages", "lang");
    APT_PLUSMINUS("Targets", "target");
 #undef APT_PLUSMINUS
-   mapping.insert(std::make_pair("Trusted", "trusted"));
-   mapping.insert(std::make_pair("Check-Valid-Until", "check-valid-until"));
-   mapping.insert(std::make_pair("Valid-Until-Min", "valid-until-min"));
-   mapping.insert(std::make_pair("Valid-Until-Max", "valid-until-max"));
+   mapping.insert(std::make_pair("Trusted", std::make_pair("trusted", false)));
+   mapping.insert(std::make_pair("Check-Valid-Until", std::make_pair("check-valid-until", false)));
+   mapping.insert(std::make_pair("Valid-Until-Min", std::make_pair("valid-until-min", false)));
+   mapping.insert(std::make_pair("Valid-Until-Max", std::make_pair("valid-until-max", false)));
+   mapping.insert(std::make_pair("Signed-By", std::make_pair("signed-by", false)));
 
-   for (std::map<char const * const, char const * const>::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
+   for (std::map<char const * const, std::pair<char const * const, bool> >::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
       if (Tags.Exists(m->first))
       {
-         // for deb822 the " " is the delimiter, but the backend expects ","
-         std::string option = Tags.FindS(m->first);
-         std::replace(option.begin(), option.end(), ' ', ',');
-         Options[m->second] = option;
+	 std::string option = Tags.FindS(m->first);
+	 // for deb822 the " " is the delimiter, but the backend expects ","
+	 if (m->second.second == true)
+	    std::replace(option.begin(), option.end(), ' ', ',');
+	 Options[m->second.first] = option;
       }
 
    // now create one item per suite/section

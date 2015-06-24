@@ -56,6 +56,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool SetCheckValidUntil(TriState const Trusted);
    bool SetValidUntilMin(time_t const Valid);
    bool SetValidUntilMax(time_t const Valid);
+   bool SetSignedBy(std::string const &SignedBy);
 
    virtual bool IsTrusted() const;
 

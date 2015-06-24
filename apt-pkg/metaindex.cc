@@ -27,8 +27,7 @@ bool metaIndex::Merge(pkgCacheGenerator &Gen,OpProgress *) const
 metaIndex::metaIndex(std::string const &URI, std::string const &Dist,
       char const * const Type)
 : d(NULL), Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(TRI_UNSET),
-   LoadedSuccessfully(TRI_UNSET),
-   Date(0), ValidUntil(0), SupportsAcquireByHash(false)
+   Date(0), ValidUntil(0), SupportsAcquireByHash(false), LoadedSuccessfully(TRI_UNSET)
 {
    /* nothing */
 }
@@ -48,6 +47,7 @@ APT_PURE std::string metaIndex::GetURI() const { return URI; }
 APT_PURE std::string metaIndex::GetDist() const { return Dist; }
 APT_PURE const char* metaIndex::GetType() const { return Type; }
 APT_PURE metaIndex::TriState metaIndex::GetTrusted() const { return Trusted; }
+APT_PURE std::string metaIndex::GetSignedBy() const { return SignedBy; }
 APT_PURE std::string metaIndex::GetCodename() const { return Codename; }
 APT_PURE std::string metaIndex::GetSuite() const { return Suite; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }

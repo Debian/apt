@@ -16,6 +16,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stddef.h>
+
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -42,7 +44,7 @@ static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
    of the lifting in regards to merging keyrings. Fun for the whole family.
 */
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
-             int const &statusfd, int fd[2])
+             int const &statusfd, int fd[2], std::string const &key)
 {
    #define EINTERNAL 111
    std::string const aptkey = _config->FindFile("Dir::Bin::apt-key", "/usr/bin/apt-key");
@@ -55,6 +57,19 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
    Args.push_back("--readonly");
+   if (key.empty() == false)
+   {
+      if (key[0] == '/')
+      {
+	 Args.push_back("--keyring");
+	 Args.push_back(key.c_str());
+      }
+      else
+      {
+	 Args.push_back("--keyid");
+	 Args.push_back(key.c_str());
+      }
+   }
    Args.push_back("verify");
 
    char statusfdstr[10];

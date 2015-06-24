@@ -541,6 +541,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf);
+   virtual std::string Custom600Headers() const;
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,

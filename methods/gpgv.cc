@@ -37,13 +37,14 @@ class GPGVMethod : public pkgAcqMethod
 {
    private:
    string VerifyGetSigners(const char *file, const char *outfile,
-				vector<string> &GoodSigners, 
+				std::string const &key,
+				vector<string> &GoodSigners,
                                 vector<string> &BadSigners,
                                 vector<string> &WorthlessSigners,
 				vector<string> &NoPubKeySigners);
    
    protected:
-   virtual bool Fetch(FetchItem *Itm);
+   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm);
    virtual bool Configuration(string Message);
    public:
    
@@ -61,6 +62,7 @@ bool GPGVMethod::Configuration(string Message)
 }
 
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
+					 std::string const &key,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
 					 vector<string> &WorthlessSigners,
@@ -80,7 +82,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (pid < 0)
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
-      ExecGPGV(outfile, file, 3, fd);
+      ExecGPGV(outfile, file, 3, fd, key);
    close(fd[1]);
 
    FILE *pipein = fdopen(fd[0], "r");
@@ -174,11 +176,11 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return _("Unknown error executing apt-key");
 }
 
-bool GPGVMethod::Fetch(FetchItem *Itm)
+bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
-   string Path = Get.Host + Get.Path; // To account for relative paths
-   string keyID;
+   URI const Get = Itm->Uri;
+   string const Path = Get.Host + Get.Path; // To account for relative paths
+   std::string const key = LookupTag(Message, "Signed-By");
    vector<string> GoodSigners;
    vector<string> BadSigners;
    // a worthless signature is a expired or revoked one
@@ -190,7 +192,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
 
    // Run apt-key on file, extract contents and get the key ID of the signer
-   string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
+   string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), key,
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  NoPubKeySigners);
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())

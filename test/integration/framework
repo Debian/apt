@@ -1414,14 +1414,23 @@ testfailure() {
 	else
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if grep -q -E ' runtime error: ' "$OUTPUT"; then
-				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-			elif grep -q -E '==ERROR' "$OUTPUT"; then
-				msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
-			elif ! grep -q -E '^E: ' "$OUTPUT"; then
-				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
+			if [ "$1" = 'aptkey' ]; then
+				if grep -q -E " Can't check signature: " "$OUTPUT" || \
+					grep -q -E " BAD signature from " "$OUTPUT"; then
+					msgpass
+				else
+					msgfailoutput "run failed with exitcode ${EXITCODE}, but no signature error" "$OUTPUT" "$@"
+				fi
 			else
-				msgpass
+				if grep -q -E ' runtime error: ' "$OUTPUT"; then
+					msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+				elif grep -q -E '==ERROR' "$OUTPUT"; then
+					msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
+				elif ! grep -q -E '^E: ' "$OUTPUT"; then
+					msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
+				else
+					msgpass
+				fi
 			fi
 		else
 			msgpass

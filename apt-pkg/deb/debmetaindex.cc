@@ -462,6 +462,29 @@ bool debReleaseIndex::SetValidUntilMax(time_t const Valid)
       return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Max-ValidTime", URI.c_str(), Dist.c_str());
    return true;
 }
+bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
+{
+   if (SignedBy.empty() == true && pSignedBy.empty() == false)
+   {
+      if (pSignedBy[0] == '/') // no check for existence as we could be chrooting later or such things
+	 ; // absolute path to a keyring file
+      else
+      {
+	 // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
+	 // but fingerprints are harder to fake than the others and this option is set once,
+	 // not interactively all the time so easy to type is not really a concern.
+	 std::string finger = pSignedBy;
+	 finger.erase(std::remove(finger.begin(), finger.end(), ' '), finger.end());
+	 std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
+	 if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
+	    return _error->Error(_("Invalid value set for option %s concerning source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
+      }
+      SignedBy = pSignedBy;
+   }
+   else if (SignedBy != pSignedBy)
+      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Signed-By", URI.c_str(), Dist.c_str());
+   return true;
+}
 									/*}}}*/
 // ReleaseIndex::IsTrusted						/*{{{*/
 bool debReleaseIndex::IsTrusted() const
@@ -705,6 +728,18 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 Deb->SetValidUntilMax(GetTimeOption(Options, "valid-until-max")) == false ||
 	 Deb->SetValidUntilMin(GetTimeOption(Options, "valid-until-min")) == false)
 	 return false;
+
+      std::map<std::string, std::string>::const_iterator const signedby = Options.find("signed-by");
+      if (signedby == Options.end())
+      {
+	 if (Deb->SetSignedBy("") == false)
+	    return false;
+      }
+      else
+      {
+	 if (Deb->SetSignedBy(signedby->second) == false)
+	    return false;
+      }
 
       return true;
    }

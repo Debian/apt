@@ -232,18 +232,18 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
        anomalies.
 
        <itemizedlist>
-	  <listitem><para><option>Trusted</option> (<option>trusted</option>)
-		is a tri-state value which defaults to APT deciding if a source
-		is considered trusted or if warnings should be raised before e.g.
-		packages are installed from this source. This option can be used
-		to override this decision either with the value <literal>yes</literal>,
-		which lets APT consider this source always as a trusted source
-		even if it has no or fails authentication checks by disabling parts
-		of &apt-secure; and should therefore only be used in a local and trusted
-		context (if at all) as otherwise security is breached. The opposite
-		can be achieved with the value no, which causes the source to be handled
-		as untrusted even if the authentication checks passed successfully.
-		The default value can't be set explicitly.
+	  <listitem><para><option>Signed-By</option> (<option>signed-by</option>)
+		is either an absolute path to a keyring file (has to be
+		accessible and readable for the <literal>_apt</literal> user,
+		so ensure everyone has read-permissions on the file) or a
+		fingerprint of a key in either the
+		<filename>trusted.gpg</filename> keyring or in one of the
+		keyrings in the <filename>trusted.gpg.d/</filename> directory
+		(see <command>apt-key fingerprint</command>). If the option is
+		set only the key(s) in this keyring or only the key with this
+		fingerprint is used for the &apt-secure; verification of this
+		repository. Otherwise all keys in the trusted keyrings are
+		considered valid signers for this repository.
 	  </para></listitem>
 
 	  <listitem><para><option>Check-Valid-Until</option> (<option>check-valid-until</option>)
