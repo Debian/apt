@@ -17,10 +17,6 @@
    list all you have is a list of package index files that have the ability
    to be Acquired.
    
-   The vendor machanism is similar, except the vendor types are hard 
-   wired. Before loading the source list the vendor list is loaded.
-   This doesn't load key data, just the checks to perform.
-   
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_SOURCELIST_H

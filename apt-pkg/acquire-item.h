@@ -31,7 +31,6 @@
 #include <map>
 
 #ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/vendor.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgrecords.h>
 #endif
