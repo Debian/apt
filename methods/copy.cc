@@ -38,11 +38,7 @@ class CopyMethod : public pkgAcqMethod
 void CopyMethod::CalculateHashes(FetchItem const * const Itm, FetchResult &Res)
 {
    Hashes Hash(Itm->ExpectedHashes);
-   FileFd::CompressMode CompressMode = FileFd::None;
-   if (_config->FindB("Acquire::GzipIndexes", false) == true)
-      CompressMode = FileFd::Extension;
-
-   FileFd Fd(Res.Filename, FileFd::ReadOnly, CompressMode);
+   FileFd Fd(Res.Filename, FileFd::ReadOnly, FileFd::Extension);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
 }
@@ -53,7 +49,7 @@ void CopyMethod::CalculateHashes(FetchItem const * const Itm, FetchResult &Res)
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
    // this ensures that relative paths work in copy
-   std::string File = Itm->Uri.substr(Itm->Uri.find(':')+1);
+   std::string const File = Itm->Uri.substr(Itm->Uri.find(':')+1);
 
    // Stat the file and send a start message
    struct stat Buf;

@@ -115,8 +115,9 @@ APT_DEPRECATED std::string pkgIndexFile::LanguageCode() {
 // IndexTarget - Constructor						/*{{{*/
 IndexTarget::IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
       std::string const &LongDesc, std::string const &URI, bool const IsOptional,
-      std::map<std::string, std::string> const &Options) :
-   URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey), IsOptional(IsOptional), Options(Options)
+      bool const KeepCompressed, std::map<std::string, std::string> const &Options) :
+   URI(URI), Description(LongDesc), ShortDesc(ShortDesc), MetaKey(MetaKey),
+   IsOptional(IsOptional), KeepCompressed(KeepCompressed), Options(Options)
 {
 }
 									/*}}}*/

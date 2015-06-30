@@ -60,6 +60,9 @@ class IndexTarget							/*{{{*/
    /** \brief Is it okay if the file isn't found in the meta index */
    bool IsOptional;
 
+   /** \brief If the file is downloaded compressed, do not unpack it */
+   bool KeepCompressed;
+
    /** \brief options with which this target was created
        Prefer the usage of #Option if at all possible.
        Beware: Not all of these options are intended for public use */
@@ -67,7 +70,7 @@ class IndexTarget							/*{{{*/
 
    IndexTarget(std::string const &MetaKey, std::string const &ShortDesc,
 	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
-	 std::map<std::string, std::string> const &Options);
+	 bool const KeepCompressed, std::map<std::string, std::string> const &Options);
 
    enum OptionKeys {
       SITE,

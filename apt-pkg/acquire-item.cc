@@ -80,18 +80,18 @@ static std::string GetFinalFileNameFromURI(std::string const &uri)	/*{{{*/
    return _config->FindDir("Dir::State::lists") + URItoFileName(uri);
 }
 									/*}}}*/
-static std::string GetCompressedFileName(std::string const &URI, std::string const &Name, std::string const &Ext) /*{{{*/
+static std::string GetCompressedFileName(IndexTarget const &Target, std::string const &Name, std::string const &Ext) /*{{{*/
 {
    if (Ext.empty() || Ext == "uncompressed")
       return Name;
 
    // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
    // file when its doing the indexcopy
-   if (URI.substr(0,6) == "cdrom:")
+   if (Target.URI.substr(0,6) == "cdrom:")
       return Name;
 
    // adjust DestFile if its compressed on disk
-   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+   if (Target.KeepCompressed == true)
       return Name + '.' + Ext;
    return Name;
 }
@@ -269,7 +269,7 @@ std::string pkgAcqDiffIndex::GetFinalFilename() const
 std::string pkgAcqIndex::GetFinalFilename() const
 {
    std::string const FinalFile = GetFinalFileNameFromURI(Target.URI);
-   return GetCompressedFileName(Target.URI, FinalFile, CurrentCompressionExtension);
+   return GetCompressedFileName(Target, FinalFile, CurrentCompressionExtension);
 }
 std::string pkgAcqMetaSig::GetFinalFilename() const
 {
@@ -2456,7 +2456,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
 {
    // update destfile to *not* include the compression extension when doing
    // a reverify (as its uncompressed on disk already)
-   DestFile = GetCompressedFileName(Target.URI, GetPartialFileNameFromURI(Target.URI), CurrentCompressionExtension);
+   DestFile = GetCompressedFileName(Target, GetPartialFileNameFromURI(Target.URI), CurrentCompressionExtension);
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();
@@ -2532,8 +2532,8 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
       return;
    }
 
-   // If we have compressed indexes enabled, queue for hash verification
-   if (_config->FindB("Acquire::GzipIndexes",false))
+   // If we want compressed indexes, just copy in place for hash verification
+   if (Target.KeepCompressed == true)
    {
       DestFile = GetPartialFileNameFromURI(Target.URI + '.' + CurrentCompressionExtension);
       EraseFileName = "";

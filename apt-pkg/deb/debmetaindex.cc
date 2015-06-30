@@ -123,6 +123,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
    std::string const Release = (Dist == "/") ? "" : Dist;
    std::string const Site = ::URI::ArchiveOnly(URI);
 
+   bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
       for (std::vector<std::string>::const_iterator T = E->Targets.begin(); T != E->Targets.end(); ++T)
@@ -131,7 +132,8 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 std::string const tplMetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
 	 std::string const tplShortDesc = APT_T_CONFIG("ShortDescription");
 	 std::string const tplLongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
-	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::deb-src::") + *T + "::Optional", true);
+	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::") + Type + "::" + *T + "::Optional", true);
+	 bool const KeepCompressed = _config->FindB(std::string("APT::Acquire::Targets::") + Type + "::" + *T + "::KeepCompressed", GzipIndex);
 #undef APT_T_CONFIG
 	 if (tplMetaKey.empty())
 	    continue;
@@ -173,6 +175,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		     LongDesc,
 		     Options.find("BASE_URI")->second + MetaKey,
 		     IsOptional,
+		     KeepCompressed,
 		     Options
 		     );
 	       IndexTargets.push_back(Target);
@@ -413,7 +416,7 @@ bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
 {
    std::vector<IndexTarget> const targets = GetIndexTargets();
-#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, std::map<std::string,std::string>())
+#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, false, std::map<std::string,std::string>())
    pkgAcqMetaClearSig * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
 	 targets, this);
