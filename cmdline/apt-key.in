@@ -145,7 +145,7 @@ update() {
     # attacker might as well replace the master-archive-keyring file
     # in the package and add his own keys. so this check wouldn't
     # add any security. we *need* this check on net-update though
-    $GPG_CMD --quiet --batch --keyring $ARCHIVE_KEYRING --export | $GPG --import
+    import_keyring_into_keyring "$ARCHIVE_KEYRING" '' && cat "${GPGHOMEDIR}/gpgoutput.log"
 
     if [ -r "$REMOVED_KEYS" ]; then
 	# remove no-longer supported/used keys
@@ -231,22 +231,49 @@ run_cmd_on_keyring() {
     $GPG_CMD --keyring "$KEYRINGFILE" --batch "$@" 2>/dev/null || true
 }
 
-import_keys_from_keyring() {
-    local IMPORT="$1"
-    local KEYRINGFILE="$2"
-    if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
-	false
+import_keyring_into_keyring() {
+    local FROM="${1:-${GPGHOMEDIR}/pubring.gpg}"
+    local TO="${2:-${GPGHOMEDIR}/pubring.gpg}"
+    shift 2
+    rm -f "${GPGHOMEDIR}/gpgoutput.log"
+    # the idea is simple: We take keys from one keyring and copy it to another
+    # we do this with so many checks inbetween to ensure that WE control the
+    # creation, so we know that the (potentially) created $TO keyring is a
+    # simple keyring rather than a keybox as gpg2 would create it which in turn
+    # can't be read by gpgv.
+    # BEWARE: This is designed more in the way to work with the current
+    # callers, than to have a well defined it would be easy to add new callers to.
+    if [ ! -s "$TO" ]; then
+	if [ -s "$FROM" ]; then
+	    if [ -z "$2" ]; then
+		if ! $GPG_CMD --keyring "$FROM" --export ${1:+"$1"} > "$TO" 2> "${GPGHOMEDIR}/gpgoutput.log"; then
+		    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
+		    false
+		else
+		    chmod 0644 -- "$TO"
+		fi
+	    else
+		create_new_keyring "$TO"
+	    fi
+	else
+	    create_new_keyring "$TO"
+	fi
+    elif [ -s "$FROM" ]; then
+	local EXPORTLIMIT="$1"
+	if [ -n "$1$2" ]; then shift; fi
+	if ! $GPG_CMD --keyring "$FROM" --export ${EXPORTLIMIT:+"$EXPORTLIMIT"} | $GPG_CMD --keyring "$TO" --batch --import "$@" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
+	    false
+	fi
     fi
 }
 
+import_keys_from_keyring() {
+    import_keyring_into_keyring "$1" "$2"
+}
+
 merge_keys_into_keyrings() {
-    local KEYRINGFILE="$1"
-    local IMPORT="$2"
-    if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import --import-options 'merge-only' "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
-	false
-    fi
+    import_keyring_into_keyring "$2" "$1" '' --import-options 'merge-only'
 }
 
 merge_back_changes() {
@@ -267,11 +294,7 @@ merge_back_changes() {
 	    foreach_keyring_do 'remove_key_from_keyring' "$key"
 	elif grep -q "^${key}$" "${GPGHOMEDIR}/pubring.keylst"; then
 	    # key is part of new keyring, so we need to import it
-	    create_new_keyring "$TRUSTEDFILE"
-	    if ! $GPG --batch --yes --export "$key" | $GPG_CMD --keyring "$TRUSTEDFILE" --batch --yes --import > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	       cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
-	       false
-	    fi
+	    import_keyring_into_keyring '' "$TRUSTEDFILE" "$key"
 	else
 	    echo >&2 "Errror: Key ${key} (dis)appeared out of nowhere"
 	fi
@@ -280,12 +303,12 @@ merge_back_changes() {
 
 setup_merged_keyring() {
     if [ -n "$FORCED_KEYID" ]; then
-	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/allrings.gpg"
+	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
 	FORCED_KEYRING="${GPGHOMEDIR}/forcedkeyid.gpg"
 	TRUSTEDFILE="${FORCED_KEYRING}"
 	GPG="$GPG --keyring $TRUSTEDFILE"
 	# ignore error as this "just" means we haven't found the forced keyid and the keyring will be empty
-	$GPG_CMD --batch --yes --keyring "${GPGHOMEDIR}/allrings.gpg" --export "$FORCED_KEYID" | $GPG --batch --yes --import || true
+	import_keyring_into_keyring '' "$TRUSTEDFILE" "$FORCED_KEYID" || true
     elif [ -z "$FORCED_KEYRING" ]; then
 	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
 	if [ -r "${GPGHOMEDIR}/pubring.gpg" ]; then
@@ -295,8 +318,8 @@ setup_merged_keyring() {
 	fi
 	GPG="$GPG --keyring ${GPGHOMEDIR}/pubring.gpg"
     else
-	GPG="$GPG --keyring $TRUSTEDFILE"
 	create_new_keyring "$TRUSTEDFILE"
+	GPG="$GPG --keyring $TRUSTEDFILE"
     fi
 }
 
@@ -345,7 +368,7 @@ while [ -n "$1" ]; do
 	 ;;
       --readonly)
 	 merge_back_changes() { true; }
-	 create_new_keyring() { true; }
+	 create_new_keyring() { if [ ! -r $FORCED_KEYRING ]; then TRUSTEDFILE='/dev/null'; FORCED_KEYRING="$TRUSTEDFILE"; fi; }
 	 ;;
       --fakeroot)
 	 requires_root() { true; }
@@ -437,6 +460,12 @@ if [ "$command" != "help" ]; then
 	rm -f "$SECRETKEYRING"
 	cp -a "$FORCED_SECRET_KEYRING" "$SECRETKEYRING"
     fi
+
+    # older gpg versions need a secring file, but newer versions take it as
+    # a hint to start a migration from earlier versions. The file is empty
+    # anyhow, so nothing actually happens, but its three lines of output
+    # nobody expects to see in apt-key context, so trigger it in silence
+    echo -n | $GPG --batch --import >/dev/null 2>&1 || true
 fi
 
 case "$command" in
@@ -482,11 +511,17 @@ case "$command" in
 	;;
     verify)
 	setup_merged_keyring
-	if which gpgv >/dev/null 2>&1; then
+	GPGV=''
+	eval $(apt-config shell GPGV Apt::Key::gpgvcommand)
+	if [ -n "$GPGV" ] && ! which "$GPGV" >/dev/null 2>&1; then GPGV='';
+	elif which gpgv >/dev/null 2>&1; then GPGV='gpgv';
+	elif which gpgv2 >/dev/null 2>&1; then GPGV='gpgv2';
+	fi
+	if [ -n "$GPGV" ]; then
 	    if [ -n "$FORCED_KEYRING" ]; then
-		gpgv --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
+		$GPGV --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
 	    else
-		gpgv --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
+		$GPGV --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
 	    fi
 	else
 	    $GPG --verify "$@"
