@@ -73,7 +73,7 @@ add_keys_with_verify_against_master_keyring() {
 	local TMP_KEYRING="${GPGHOMEDIR}/tmp-keyring.gpg"
 	$GPG_CMD --batch --yes --keyring "$ADD_KEYRING" --output "$TMP_KEYRING" --export "$add_key"
 	if ! $GPG_CMD --batch --yes --keyring "$TMP_KEYRING" --import "$MASTER" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	    cat "${GPGHOMEDIR}/gpgoutput.log"
+	    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
 	    false
 	fi
 	# check if signed with the master key and only add in this case
@@ -235,7 +235,7 @@ import_keys_from_keyring() {
     local IMPORT="$1"
     local KEYRINGFILE="$2"
     if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	cat "${GPGHOMEDIR}/gpgoutput.log"
+	cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
 	false
     fi
 }
@@ -244,7 +244,7 @@ merge_keys_into_keyrings() {
     local KEYRINGFILE="$1"
     local IMPORT="$2"
     if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import --import-options 'merge-only' "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	cat "${GPGHOMEDIR}/gpgoutput.log"
+	cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
 	false
     fi
 }
@@ -269,7 +269,7 @@ merge_back_changes() {
 	    # key is part of new keyring, so we need to import it
 	    create_new_keyring "$TRUSTEDFILE"
 	    if ! $GPG --batch --yes --export "$key" | $GPG_CMD --keyring "$TRUSTEDFILE" --batch --yes --import > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	       cat "${GPGHOMEDIR}/gpgoutput.log"
+	       cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
 	       false
 	    fi
 	else
@@ -353,6 +353,14 @@ while [ -n "$1" ]; do
       --quiet)
 	 aptkey_echo() { true; }
 	 ;;
+      --debug1)
+	 # some cmds like finger redirect stderr to /dev/null …
+	aptkey_execute() { echo 'EXEC:' "$@"; "$@"; }
+	;;
+      --debug2)
+	 # … other more complicated ones pipe gpg into gpg.
+	aptkey_execute() { echo >&2 'EXEC:' "$@"; "$@"; }
+	;;
       --*)
 	 echo >&2 "Unknown option: $1"
 	 usage
@@ -392,6 +400,9 @@ if [ "$command" != "help" ]; then
 	exit 255
     fi
 
+    if type aptkey_execute >/dev/null 2>&1; then
+	GPG_EXE="aptkey_execute $GPG_EXE"
+    fi
     GPG_CMD="$GPG_EXE --ignore-time-conflict --no-options --no-default-keyring"
 
     # gpg needs (in different versions more or less) files to function correctly,
