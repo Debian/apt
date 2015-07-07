@@ -188,7 +188,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
 
 
-	for GPGV in 'gpgv' 'gpgv2' '/does/not/exist'; do
+	for GPGV in '' 'gpgv' 'gpgv2'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
 
 		msgtest 'Test verify a file' 'with all keys'

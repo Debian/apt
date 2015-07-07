@@ -34,7 +34,8 @@ get_fingerprints_of_keyring() {
 	   elif [ "${fprline%%:*}" != 'fpr' ]; then continue; fi
 	   echo "$fprline" | cut -d':' -f 10
 	done
-    done
+	# order in the keyring shouldn't be important
+    done | sort
 }
 
 add_keys_with_verify_against_master_keyring() {
@@ -167,8 +168,10 @@ remove_key_from_keyring() {
 
     local GPG="$GPG_CMD --keyring $KEYRINGFILE"
     for KEY in "$@"; do
-	# check if the key is in this keyring: the key id is in the 5 column at the end
-	if ! get_fingerprints_of_keyring "$KEYRINGFILE" | grep -iq "^[0-9A-F]*${KEY}$"; then
+	local FINGERPRINTS="${GPGHOMEDIR}/keyringfile.keylst"
+	get_fingerprints_of_keyring "$KEYRINGFILE" > "$FINGERPRINTS"
+	# check if the key is in this keyring
+	if ! grep -iq "^[0-9A-F]*${KEY}$" "$FINGERPRINTS"; then
 	    continue
 	fi
 	if [ ! -w "$KEYRINGFILE" ]; then
@@ -176,7 +179,7 @@ remove_key_from_keyring() {
 	    continue
 	fi
 	# check if it is the only key in the keyring and if so remove the keyring altogether
-	if [ '1' = "$(get_fingerprints_of_keyring "$KEYRINGFILE" | wc -l)" ]; then
+	if [ '1' = "$(uniq "$FINGERPRINTS" | wc -l)" ]; then
 	    mv -f "$KEYRINGFILE" "${KEYRINGFILE}~" # behave like gpg
 	    return
 	fi
@@ -188,7 +191,7 @@ remove_key_from_keyring() {
 	    cp -a "$REALTARGET" "$KEYRINGFILE"
 	fi
 	# delete the key from the keyring
-	$GPG --batch --delete-key --yes "$KEY"
+	$GPG --batch --delete-keys --yes "$KEY"
 	if [ -n "$REALTARGET" ]; then
 	    # the real backup is the old link, not the copy we made
 	    mv -f "${KEYRINGFILE}.dpkg-tmp" "${KEYRINGFILE}~"
@@ -268,6 +271,33 @@ import_keyring_into_keyring() {
     fi
 }
 
+merge_all_trusted_keyrings_into_pubring() {
+    # does the same as:
+    # foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+    # but without using gpg, just cat and find
+    local PUBRING="${GPGHOMEDIR}/pubring.gpg"
+    # if a --keyring was given, just use this one
+    if [ -n "$FORCED_KEYRING" ]; then
+	if [ -s "$FORCED_KEYRING" ]; then
+	    cp --dereference "$FORCED_KEYRING" "$PUBRING"
+	fi
+    else
+	# otherwise all known keyrings are merged
+	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+	if [ -d "$TRUSTEDPARTS" ]; then
+	    # ignore errors mostly for non-existing $TRUSTEDFILE
+	    cat /dev/null "$TRUSTEDFILE" $(find -L "$TRUSTEDPARTS" -type f -name '*.gpg') > "$PUBRING" 2>/dev/null || true
+	elif [ -s "$TRUSTEDFILE" ]; then
+	    cp --dereference "$TRUSTEDFILE" "$PUBRING"
+	fi
+    fi
+
+    if [ ! -s "$PUBRING" ]; then
+	touch "$PUBRING"
+    fi
+}
+
 import_keys_from_keyring() {
     import_keyring_into_keyring "$1" "$2"
 }
@@ -288,29 +318,29 @@ merge_back_changes() {
     # look for keys which were added or removed
     get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.orig.gpg" > "${GPGHOMEDIR}/pubring.orig.keylst"
     get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.gpg" > "${GPGHOMEDIR}/pubring.keylst"
-    sort "${GPGHOMEDIR}/pubring.keylst" "${GPGHOMEDIR}/pubring.orig.keylst" | uniq --unique | while read key; do
-	if grep -q "^${key}$" "${GPGHOMEDIR}/pubring.orig.keylst"; then
-	    # key isn't part of new keyring, so remove
-	    foreach_keyring_do 'remove_key_from_keyring' "$key"
-	elif grep -q "^${key}$" "${GPGHOMEDIR}/pubring.keylst"; then
-	    # key is part of new keyring, so we need to import it
-	    import_keyring_into_keyring '' "$TRUSTEDFILE" "$key"
-	else
-	    echo >&2 "Errror: Key ${key} (dis)appeared out of nowhere"
-	fi
+    comm -3 "${GPGHOMEDIR}/pubring.keylst" "${GPGHOMEDIR}/pubring.orig.keylst" > "${GPGHOMEDIR}/pubring.diff"
+    # key isn't part of new keyring, so remove
+    cut -f 2 "${GPGHOMEDIR}/pubring.diff" | while read key; do
+	if [ -z "$key" ]; then continue; fi
+	foreach_keyring_do 'remove_key_from_keyring' "$key"
+    done
+    # key is only part of new keyring, so we need to import it
+    cut -f 1 "${GPGHOMEDIR}/pubring.diff" | while read key; do
+	if [ -z "$key" ]; then continue; fi
+	import_keyring_into_keyring '' "$TRUSTEDFILE" "$key"
     done
 }
 
 setup_merged_keyring() {
     if [ -n "$FORCED_KEYID" ]; then
-	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+	merge_all_trusted_keyrings_into_pubring
 	FORCED_KEYRING="${GPGHOMEDIR}/forcedkeyid.gpg"
 	TRUSTEDFILE="${FORCED_KEYRING}"
 	GPG="$GPG --keyring $TRUSTEDFILE"
 	# ignore error as this "just" means we haven't found the forced keyid and the keyring will be empty
 	import_keyring_into_keyring '' "$TRUSTEDFILE" "$FORCED_KEYID" || true
     elif [ -z "$FORCED_KEYRING" ]; then
-	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+	merge_all_trusted_keyrings_into_pubring
 	if [ -r "${GPGHOMEDIR}/pubring.gpg" ]; then
 	    cp -a "${GPGHOMEDIR}/pubring.gpg" "${GPGHOMEDIR}/pubring.orig.gpg"
 	else
@@ -407,7 +437,23 @@ if [ -z "$command" ]; then
 fi
 shift
 
-if [ "$command" != "help" ]; then
+create_gpg_home() {
+    # gpg needs (in different versions more or less) files to function correctly,
+    # so we give it its own homedir and generate some valid content for it later on
+    if [ -n "$TMPDIR" ]; then
+	# tmpdir is a directory and current user has rwx access to it
+	# same tests as in apt-pkg/contrib/fileutl.cc GetTempDir()
+	if [ ! -d "$TMPDIR" ] || [ ! -r "$TMPDIR" ] || [ ! -w "$TMPDIR" ] || [ ! -x "$TMPDIR" ]; then
+	    unset TMPDIR
+	fi
+    fi
+    GPGHOMEDIR="$(mktemp -d)"
+    CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
+    trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+    chmod 700 "$GPGHOMEDIR"
+}
+
+prepare_gpg_home() {
     eval $(apt-config shell GPG_EXE Apt::Key::gpgcommand)
 
     if [ -n "$GPG_EXE" ] && which "$GPG_EXE" >/dev/null 2>&1; then
@@ -418,7 +464,7 @@ if [ "$command" != "help" ]; then
 	GPG_EXE="gpg2"
     else
 	echo >&2 "Error: gnupg or gnupg2 do not seem to be installed,"
-	echo >&2 "Error: but apt-key requires gnupg or gnupg2 for operation."
+	echo >&2 "Error: but apt-key requires gnupg or gnupg2 for this operation."
 	echo >&2
 	exit 255
     fi
@@ -428,19 +474,8 @@ if [ "$command" != "help" ]; then
     fi
     GPG_CMD="$GPG_EXE --ignore-time-conflict --no-options --no-default-keyring"
 
-    # gpg needs (in different versions more or less) files to function correctly,
-    # so we give it its own homedir and generate some valid content for it
-    if [ -n "$TMPDIR" ]; then
-       # tmpdir is a directory and current user has rwx access to it
-       # same tests as in apt-pkg/contrib/fileutl.cc GetTempDir()
-       if [ ! -d "$TMPDIR" ] || [ ! -r "$TMPDIR" ] || [ ! -w "$TMPDIR" ] || [ ! -x "$TMPDIR" ]; then
-	  unset TMPDIR
-       fi
-    fi
-    GPGHOMEDIR="$(mktemp -d)"
-    CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
-    trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-    chmod 700 "$GPGHOMEDIR"
+    create_gpg_home
+
     # We don't use a secret keyring, of course, but gpg panics and
     # implodes if there isn't one available - and writeable for imports
     SECRETKEYRING="${GPGHOMEDIR}/secring.gpg"
@@ -466,6 +501,10 @@ if [ "$command" != "help" ]; then
     # anyhow, so nothing actually happens, but its three lines of output
     # nobody expects to see in apt-key context, so trigger it in silence
     echo -n | $GPG --batch --import >/dev/null 2>&1 || true
+}
+
+if [ "$command" != 'help' ] && [ "$command" != 'verify' ]; then
+    prepare_gpg_home
 fi
 
 case "$command" in
@@ -500,7 +539,7 @@ case "$command" in
 	foreach_keyring_do 'run_cmd_on_keyring' --fingerprint "$@"
 	;;
     export|exportall)
-	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+	merge_all_trusted_keyrings_into_pubring
 	$GPG_CMD --keyring "${GPGHOMEDIR}/pubring.gpg" --armor --export "$@"
 	;;
     adv*)
@@ -510,21 +549,26 @@ case "$command" in
 	merge_back_changes
 	;;
     verify)
-	setup_merged_keyring
 	GPGV=''
 	eval $(apt-config shell GPGV Apt::Key::gpgvcommand)
-	if [ -n "$GPGV" ] && ! which "$GPGV" >/dev/null 2>&1; then GPGV='';
+	if [ -n "$GPGV" ] && which "$GPGV" >/dev/null 2>&1; then true;
 	elif which gpgv >/dev/null 2>&1; then GPGV='gpgv';
 	elif which gpgv2 >/dev/null 2>&1; then GPGV='gpgv2';
-	fi
-	if [ -n "$GPGV" ]; then
-	    if [ -n "$FORCED_KEYRING" ]; then
-		$GPGV --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
-	    else
-		$GPGV --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
-	    fi
 	else
-	    $GPG --verify "$@"
+	   echo >&2 'ERROR: gpgv or gpgv2 required for verification'
+	   exit 29
+	fi
+	# for a forced keyid we need gpg --export, so full wrapping required
+	if [ -n "$FORCED_KEYID" ]; then
+	    prepare_gpg_home
+	else
+	    create_gpg_home
+	fi
+	setup_merged_keyring
+	if [ -n "$FORCED_KEYRING" ]; then
+	    $GPGV --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
+	else
+	    $GPGV --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
 	fi
 	;;
     help)
