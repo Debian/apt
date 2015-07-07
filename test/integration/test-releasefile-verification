@@ -92,7 +92,7 @@ touch aptarchive/apt.deb
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 updatewithwarnings() {
-	testwarning aptget update
+	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 	testsuccess grep -E "$1" rootdir/tmp/testwarning.output
 }
 
@@ -225,7 +225,7 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
-	updatewithwarnings '^W: .* NO_PUBKEY'
+	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
 
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
 }

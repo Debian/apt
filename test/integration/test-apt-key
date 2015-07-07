@@ -204,6 +204,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
 		testfailure test -e keys/does-not-exist.pub
 
+		# note: this isn't how apts gpgv method implements keyid for verify
 		msgtest 'Test verify a file' 'with good keyid'
 		testsuccess --nomsg aptkey --quiet --readonly --keyid 'Paranoid' verify signature.gpg signature
 
