@@ -419,7 +419,7 @@ static bool DoAutomaticRemove(CacheFile &Cache)
       bool Changed;
       do {
 	 Changed = false;
-	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
+	 for (APT::PackageSet::iterator Pkg = tooMuch.begin();
 	      Pkg != tooMuch.end(); ++Pkg)
 	 {
 	    APT::PackageSet too;

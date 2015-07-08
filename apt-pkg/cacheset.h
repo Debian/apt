@@ -12,6 +12,10 @@
 #include <fstream>
 #include <map>
 #include <set>
+#if __cplusplus >= 201103L
+#include <unordered_set>
+#include <forward_list>
+#endif
 #include <list>
 #include <vector>
 #include <string>
@@ -308,35 +312,66 @@ template<class Container> class PackageContainer : public PackageContainerInterf
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::PkgIterator */
 	class const_iterator : public PackageContainerInterface::const_iterator,/*{{{*/
-			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {
-		typename Container::const_iterator _iter;
+			       public std::iterator<typename std::iterator_traits<typename Container::const_iterator>::iterator_category, typename Container::const_iterator> {
+		typedef typename Container::const_iterator container_iterator;
+		container_iterator _iter;
+		typedef const_iterator iterator_type;
 	public:
-		explicit const_iterator(typename Container::const_iterator i) : _iter(i) {}
-		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
+		explicit const_iterator(container_iterator i) : _iter(i) {}
+		inline pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; }
-		operator typename Container::const_iterator(void) const { return _iter; }
-		inline const_iterator& operator++() { ++_iter; return *this; }
-		inline const_iterator operator++(int) { const_iterator tmp(*this); operator++(); return tmp; }
-		inline bool operator!=(const_iterator const &i) const { return _iter != i._iter; }
-		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; }
-		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
+		operator container_iterator(void) const { return _iter; }
+		inline iterator_type& operator++() { ++_iter; return *this; }
+		inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
+		inline iterator_type operator+(typename iterator_type::difference_type const &n) { return iterator_type(_iter + n); }
+		inline iterator_type operator+=(typename iterator_type::difference_type const &n) { _iter += n; return *this; }
+		inline iterator_type& operator--() { --_iter; return *this; }
+		inline iterator_type operator--(int) { iterator_type tmp(*this); operator--(); return tmp; }
+		inline iterator_type operator-(typename iterator_type::difference_type const &n) { return iterator_type(_iter - n); }
+		inline iterator_type operator-=(typename iterator_type::difference_type const &n) { _iter -= n; return *this; }
+		inline bool operator!=(iterator_type const &i) const { return _iter != i._iter; }
+		inline bool operator==(iterator_type const &i) const { return _iter == i._iter; }
+		inline bool operator<(iterator_type const &i) const { return _iter < i._iter; }
+		inline bool operator>(iterator_type const &i) const { return _iter > i._iter; }
+		inline bool operator<=(iterator_type const &i) const { return _iter <= i._iter; }
+		inline bool operator>=(iterator_type const &i) const { return _iter >= i._iter; }
+		inline typename iterator_type::reference operator[](typename iterator_type::difference_type const &n) const { return _iter[n]; }
+
+		friend std::ostream& operator<<(std::ostream& out, iterator_type i) { return operator<<(out, *i); }
+		friend class PackageContainer<Container>;
 	};
 	class iterator : public PackageContainerInterface::const_iterator,
-			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
-		typename Container::iterator _iter;
+			 public std::iterator<typename std::iterator_traits<typename Container::iterator>::iterator_category, typename Container::iterator> {
+		typedef typename Container::iterator container_iterator;
+		container_iterator _iter;
+		typedef iterator iterator_type;
 	public:
-		explicit iterator(typename Container::iterator i) : _iter(i) {}
-		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
+		explicit iterator(container_iterator i) : _iter(i) {}
+		inline pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; }
-		operator typename Container::iterator(void) const { return _iter; }
+		operator container_iterator(void) const { return _iter; }
+		inline iterator_type& operator++() { ++_iter; return *this; }
+		inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
+		inline iterator_type operator+(typename iterator_type::difference_type const &n) { return iterator_type(_iter + n); }
+		inline iterator_type operator+=(typename iterator_type::difference_type const &n) { _iter += n; return *this; }
+		inline iterator_type& operator--() { --_iter; return *this; }
+		inline iterator_type operator--(int) { iterator_type tmp(*this); operator--(); return tmp; }
+		inline iterator_type operator-(typename iterator_type::difference_type const &n) { return iterator_type(_iter - n); }
+		inline iterator_type operator-=(typename iterator_type::difference_type const &n) { _iter -= n; return *this; }
+		inline bool operator!=(iterator_type const &i) const { return _iter != i._iter; }
+		inline bool operator==(iterator_type const &i) const { return _iter == i._iter; }
+		inline bool operator<(iterator_type const &i) const { return _iter < i._iter; }
+		inline bool operator>(iterator_type const &i) const { return _iter > i._iter; }
+		inline bool operator<=(iterator_type const &i) const { return _iter <= i._iter; }
+		inline bool operator>=(iterator_type const &i) const { return _iter >= i._iter; }
+		inline typename iterator_type::reference operator[](typename iterator_type::difference_type const &n) const { return _iter[n]; }
+
 		operator typename PackageContainer<Container>::const_iterator() { return typename PackageContainer<Container>::const_iterator(_iter); }
-		inline iterator& operator++() { ++_iter; return *this; }
-		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
-		inline bool operator!=(iterator const &i) const { return _iter != i._iter; }
-		inline bool operator==(iterator const &i) const { return _iter == i._iter; }
-		inline iterator& operator=(iterator const &i) { _iter = i._iter; return *this; }
-		inline iterator& operator=(typename Container::iterator const &i) { _iter = i; return *this; }
-		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
+		inline iterator& operator=(iterator_type const &i) { _iter = i._iter; return *this; }
+		inline iterator& operator=(container_iterator const &i) { _iter = i; return *this; }
+
+		friend std::ostream& operator<<(std::ostream& out, iterator_type i) { return operator<<(out, *i); }
+		friend class PackageContainer<Container>;
 	};
 									/*}}}*/
 
@@ -347,11 +382,17 @@ public:									/*{{{*/
 	bool empty() const { return _cont.empty(); }
 	void clear() { return _cont.clear(); }
 	size_t size() const { return _cont.size(); }
-	iterator erase( iterator pos ) { return iterator(_cont.erase(pos)); }
-	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first, last)); }
-	size_t erase(pkgCache::PkgIterator const & P) { size_t oldsize = size(); _cont.erase(std::remove(_cont.begin(), _cont.end(), P), _cont.end()); return oldsize - size(); }
+#if __cplusplus >= 201103L
+	iterator erase( const_iterator pos ) { return iterator(_cont.erase(pos._iter)); }
+	iterator erase( const_iterator first, const_iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
+#else
+	iterator erase( iterator pos ) { return iterator(_cont.erase(pos._iter)); }
+	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
+#endif
 	const_iterator begin() const { return const_iterator(_cont.begin()); }
 	const_iterator end() const { return const_iterator(_cont.end()); }
+	const_iterator cbegin() const { return const_iterator(_cont.cbegin()); }
+	const_iterator cend() const { return const_iterator(_cont.cend()); }
 	iterator begin() { return iterator(_cont.begin()); }
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::PkgIterator const &P) const { return const_iterator(_cont.find(P)); }
@@ -510,11 +551,17 @@ template<> template<class Cont> void PackageContainer<std::list<pkgCache::PkgIte
 	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
 		_cont.push_back(*p);
 }
+#if __cplusplus >= 201103L
+template<> template<class Cont> void PackageContainer<std::forward_list<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
+	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
+		_cont.push_front(*p);
+}
+#endif
 template<> template<class Cont> void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
 	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
 		_cont.push_back(*p);
 }
-// these two are 'inline' as otherwise the linker has problems with seeing these untemplated
+// these are 'inline' as otherwise the linker has problems with seeing these untemplated
 // specializations again and again - but we need to see them, so that library users can use them
 template<> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
 	if (P.end() == true)
@@ -522,6 +569,14 @@ template<> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::inse
 	_cont.push_back(P);
 	return true;
 }
+#if __cplusplus >= 201103L
+template<> inline bool PackageContainer<std::forward_list<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
+	if (P.end() == true)
+		return false;
+	_cont.push_front(P);
+	return true;
+}
+#endif
 template<> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
 	if (P.end() == true)
 		return false;
@@ -532,16 +587,42 @@ template<> inline void PackageContainer<std::list<pkgCache::PkgIterator> >::inse
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
 }
+#if __cplusplus >= 201103L
+template<> inline void PackageContainer<std::forward_list<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator p = begin; p != end; ++p)
+		_cont.push_front(*p);
+}
+#endif
 template<> inline void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
 }
+#if __cplusplus < 201103L
+template<> inline PackageContainer<std::set<pkgCache::PkgIterator> >::iterator PackageContainer<std::set<pkgCache::PkgIterator> >::erase(iterator i) {
+	_cont.erase(i._iter);
+	return end();
+}
+template<> inline PackageContainer<std::set<pkgCache::PkgIterator> >::iterator PackageContainer<std::set<pkgCache::PkgIterator> >::erase(iterator first, iterator last) {
+	_cont.erase(first, last);
+	return end();
+}
+#endif
 									/*}}}*/
 
 template<> template<class Compare> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::sort(Compare Comp) {
 	std::sort(_cont.begin(), _cont.end(), Comp);
 	return true;
 }
+template<> template<class Compare> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::sort(Compare Comp) {
+	_cont.sort(Comp);
+	return true;
+}
+#if __cplusplus >= 201103L
+template<> template<class Compare> inline bool PackageContainer<std::forward_list<pkgCache::PkgIterator> >::sort(Compare Comp) {
+	_cont.sort(Comp);
+	return true;
+}
+#endif
 
 // class PackageUniverse - pkgCache as PackageContainerInterface	/*{{{*/
 /** \class PackageUniverse
@@ -563,6 +644,8 @@ public:
 
 	APT_PUBLIC const_iterator begin() const { return _cont->PkgBegin(); }
 	APT_PUBLIC const_iterator end() const { return  _cont->PkgEnd(); }
+	APT_PUBLIC const_iterator cbegin() const { return _cont->PkgBegin(); }
+	APT_PUBLIC const_iterator cend() const { return  _cont->PkgEnd(); }
 	APT_PUBLIC iterator begin() { return _cont->PkgBegin(); }
 	APT_PUBLIC iterator end() { return _cont->PkgEnd(); }
 
@@ -575,12 +658,15 @@ private:
 	void insert(const_iterator, const_iterator) { }
 
 	void clear() { }
-	iterator erase( iterator pos );
-	iterator erase( iterator first, iterator last );
-	size_t erase(pkgCache::PkgIterator const & P);
+	iterator erase( const_iterator pos );
+	iterator erase( const_iterator first, const_iterator last );
 };
 									/*}}}*/
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
+#if __cplusplus >= 201103L
+typedef PackageContainer<std::unordered_set<pkgCache::PkgIterator> > PackageUnorderedSet;
+typedef PackageContainer<std::forward_list<pkgCache::PkgIterator> > PackageForwardList;
+#endif
 typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
 typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
 
@@ -739,36 +825,67 @@ template<class Container> class VersionContainer : public VersionContainerInterf
 	Container _cont;
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::VerIterator */
-	class const_iterator : public VersionContainerInterface::const_iterator,
-			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {/*{{{*/
-		typename Container::const_iterator _iter;
+	class const_iterator : public VersionContainerInterface::const_iterator,/*{{{*/
+			       public std::iterator<typename std::iterator_traits<typename Container::const_iterator>::iterator_category, typename Container::const_iterator> {
+		typedef typename Container::const_iterator container_iterator;
+		container_iterator _iter;
+		typedef const_iterator iterator_type;
 	public:
-		explicit const_iterator(typename Container::const_iterator i) : _iter(i) {}
-		pkgCache::VerIterator getVer(void) const { return *_iter; }
+		explicit const_iterator(container_iterator i) : _iter(i) {}
+		inline pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; }
-		operator typename Container::const_iterator(void) const { return _iter; }
-		inline const_iterator& operator++() { ++_iter; return *this; }
-		inline const_iterator operator++(int) { const_iterator tmp(*this); operator++(); return tmp; }
-		inline bool operator!=(const_iterator const &i) const { return _iter != i._iter; }
-		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; }
-		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
+		operator container_iterator(void) const { return _iter; }
+		inline iterator_type& operator++() { ++_iter; return *this; }
+		inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
+		inline iterator_type operator+(typename iterator_type::difference_type const &n) { return iterator_type(_iter + n); }
+		inline iterator_type operator+=(typename iterator_type::difference_type const &n) { _iter += n; return *this; }
+		inline iterator_type& operator--() { --_iter; return *this; }
+		inline iterator_type operator--(int) { iterator_type tmp(*this); operator--(); return tmp; }
+		inline iterator_type operator-(typename iterator_type::difference_type const &n) { return iterator_type(_iter - n); }
+		inline iterator_type operator-=(typename iterator_type::difference_type const &n) { _iter -= n; return *this; }
+		inline bool operator!=(iterator_type const &i) const { return _iter != i._iter; }
+		inline bool operator==(iterator_type const &i) const { return _iter == i._iter; }
+		inline bool operator<(iterator_type const &i) const { return _iter < i._iter; }
+		inline bool operator>(iterator_type const &i) const { return _iter > i._iter; }
+		inline bool operator<=(iterator_type const &i) const { return _iter <= i._iter; }
+		inline bool operator>=(iterator_type const &i) const { return _iter >= i._iter; }
+		inline typename iterator_type::reference operator[](typename iterator_type::difference_type const &n) const { return _iter[n]; }
+
+		friend std::ostream& operator<<(std::ostream& out, iterator_type i) { return operator<<(out, *i); }
+		friend class VersionContainer<Container>;
 	};
 	class iterator : public VersionContainerInterface::const_iterator,
-			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
-		typename Container::iterator _iter;
+			 public std::iterator<typename std::iterator_traits<typename Container::iterator>::iterator_category, typename Container::iterator> {
+		typedef typename Container::iterator container_iterator;
+		container_iterator _iter;
+		typedef iterator iterator_type;
 	public:
-		explicit iterator(typename Container::iterator i) : _iter(i) {}
-		pkgCache::VerIterator getVer(void) const { return *_iter; }
+		explicit iterator(container_iterator i) : _iter(i) {}
+		inline pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; }
-		operator typename Container::iterator(void) const { return _iter; }
+		operator container_iterator(void) const { return _iter; }
+		inline iterator_type& operator++() { ++_iter; return *this; }
+		inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
+		inline iterator_type operator+(typename iterator_type::difference_type const &n) { return iterator_type(_iter + n); }
+		inline iterator_type operator+=(typename iterator_type::difference_type const &n) { _iter += n; return *this; }
+		inline iterator_type& operator--() { --_iter; return *this; }
+		inline iterator_type operator--(int) { iterator_type tmp(*this); operator--(); return tmp; }
+		inline iterator_type operator-(typename iterator_type::difference_type const &n) { return iterator_type(_iter - n); }
+		inline iterator_type operator-=(typename iterator_type::difference_type const &n) { _iter -= n; return *this; }
+		inline bool operator!=(iterator_type const &i) const { return _iter != i._iter; }
+		inline bool operator==(iterator_type const &i) const { return _iter == i._iter; }
+		inline bool operator<(iterator_type const &i) const { return _iter < i._iter; }
+		inline bool operator>(iterator_type const &i) const { return _iter > i._iter; }
+		inline bool operator<=(iterator_type const &i) const { return _iter <= i._iter; }
+		inline bool operator>=(iterator_type const &i) const { return _iter >= i._iter; }
+		inline typename iterator_type::reference operator[](typename iterator_type::difference_type const &n) const { return _iter[n]; }
+
 		operator typename VersionContainer<Container>::const_iterator() { return typename VersionContainer<Container>::const_iterator(_iter); }
-		inline iterator& operator++() { ++_iter; return *this; }
-		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
-		inline bool operator!=(iterator const &i) const { return _iter != i._iter; }
-		inline bool operator==(iterator const &i) const { return _iter == i._iter; }
-		inline iterator& operator=(iterator const &i) { _iter = i._iter; return *this; }
-		inline iterator& operator=(typename Container::iterator const &i) { _iter = i; return *this; }
-		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
+		inline iterator& operator=(iterator_type const &i) { _iter = i._iter; return *this; }
+		inline iterator& operator=(container_iterator const &i) { _iter = i; return *this; }
+
+		friend std::ostream& operator<<(std::ostream& out, iterator_type i) { return operator<<(out, *i); }
+		friend class VersionContainer<Container>;
 	};
 									/*}}}*/
 
@@ -778,12 +895,18 @@ public:									/*{{{*/
 	bool empty() const { return _cont.empty(); }
 	void clear() { return _cont.clear(); }
 	size_t size() const { return _cont.size(); }
-	iterator erase( iterator pos ) { return iterator(_cont.erase(pos)); }
-	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first, last)); }
-	size_t erase(pkgCache::VerIterator const & V) { size_t oldsize = size(); _cont.erase(std::remove(_cont.begin(), _cont.end(), V), _cont.end()); return oldsize - size(); }
+#if __cplusplus >= 201103L
+	iterator erase( const_iterator pos ) { return iterator(_cont.erase(pos._iter)); }
+	iterator erase( const_iterator first, const_iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
+#else
+	iterator erase( iterator pos ) { return iterator(_cont.erase(pos._iter)); }
+	iterator erase( iterator first, iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
+#endif
 
 	const_iterator begin() const { return const_iterator(_cont.begin()); }
 	const_iterator end() const { return const_iterator(_cont.end()); }
+	const_iterator cbegin() const { return const_iterator(_cont.cbegin()); }
+	const_iterator cend() const { return const_iterator(_cont.cend()); }
 	iterator begin() { return iterator(_cont.begin()); }
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::VerIterator const &V) const { return const_iterator(_cont.find(V)); }
@@ -956,11 +1079,17 @@ template<> template<class Cont> void VersionContainer<std::list<pkgCache::VerIte
 	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
 		_cont.push_back(*v);
 }
+#if __cplusplus >= 201103L
+template<> template<class Cont> void VersionContainer<std::forward_list<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
+	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
+		_cont.push_front(*v);
+}
+#endif
 template<> template<class Cont> void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
 	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
 		_cont.push_back(*v);
 }
-// these two are 'inline' as otherwise the linker has problems with seeing these untemplated
+// these are 'inline' as otherwise the linker has problems with seeing these untemplated
 // specializations again and again - but we need to see them, so that library users can use them
 template<> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
 	if (V.end() == true)
@@ -968,6 +1097,14 @@ template<> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::inse
 	_cont.push_back(V);
 	return true;
 }
+#if __cplusplus >= 201103L
+template<> inline bool VersionContainer<std::forward_list<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
+	if (V.end() == true)
+		return false;
+	_cont.push_front(V);
+	return true;
+}
+#endif
 template<> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
 	if (V.end() == true)
 		return false;
@@ -978,25 +1115,48 @@ template<> inline void VersionContainer<std::list<pkgCache::VerIterator> >::inse
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
 }
+#if __cplusplus >= 201103L
+template<> inline void VersionContainer<std::forward_list<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator v = begin; v != end; ++v)
+		_cont.push_front(*v);
+}
+#endif
 template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
 }
+#if __cplusplus < 201103L
+template<> inline VersionContainer<std::set<pkgCache::VerIterator> >::iterator VersionContainer<std::set<pkgCache::VerIterator> >::erase(iterator i) {
+	_cont.erase(i._iter);
+	return end();
+}
+template<> inline VersionContainer<std::set<pkgCache::VerIterator> >::iterator VersionContainer<std::set<pkgCache::VerIterator> >::erase(iterator first, iterator last) {
+	_cont.erase(first, last);
+	return end();
+}
+#endif
 									/*}}}*/
-
-template<> inline size_t PackageContainer<std::set<pkgCache::PkgIterator> >::erase(pkgCache::PkgIterator const &P) {
-	return _cont.erase(P);
-}
-template<> inline size_t VersionContainer<std::set<pkgCache::VerIterator> >::erase(pkgCache::VerIterator const &V) {
-	return _cont.erase(V);
-}
 
 template<> template<class Compare> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::sort(Compare Comp) {
 	std::sort(_cont.begin(), _cont.end(), Comp);
 	return true;
 }
+template<> template<class Compare> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::sort(Compare Comp) {
+	_cont.sort(Comp);
+	return true;
+}
+#if __cplusplus >= 201103L
+template<> template<class Compare> inline bool VersionContainer<std::forward_list<pkgCache::VerIterator> >::sort(Compare Comp) {
+	_cont.sort(Comp);
+	return true;
+}
+#endif
 
 typedef VersionContainer<std::set<pkgCache::VerIterator> > VersionSet;
+#if __cplusplus >= 201103L
+typedef VersionContainer<std::unordered_set<pkgCache::VerIterator> > VersionUnorderedSet;
+typedef VersionContainer<std::forward_list<pkgCache::VerIterator> > VersionForwardList;
+#endif
 typedef VersionContainer<std::list<pkgCache::VerIterator> > VersionList;
 typedef VersionContainer<std::vector<pkgCache::VerIterator> > VersionVector;
 }
