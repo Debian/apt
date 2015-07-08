@@ -148,6 +148,12 @@
 	#define APT_IGNORE_DEPRECATED(XXX) XXX
 #endif
 
+#if __cplusplus >= 201103L
+	#define APT_OVERRIDE override
+#else
+	#define APT_OVERRIDE /* no c++11 standard */
+#endif
+
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all
 // reverse-dependencies of libapt-pkg against the new SONAME.
