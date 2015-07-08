@@ -391,8 +391,8 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 {
    IndexTarget const Target;
    public:
-   virtual std::string DescURI() const {return Target.URI;};
-   virtual HashStringList GetExpectedHashes()  const {return HashStringList();};
+   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI;};
+   virtual HashStringList GetExpectedHashes()  const APT_OVERRIDE {return HashStringList();};
 
    NoActionItem(pkgAcquire * const Owner, IndexTarget const &Target) :
       pkgAcquire::Item(Owner), Target(Target)

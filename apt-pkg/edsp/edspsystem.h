@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include <apt-pkg/macros.h>
+
 class Configuration;
 class pkgDepCache;
 class pkgIndexFile;
@@ -31,15 +33,15 @@ class APT_HIDDEN edspSystem : public pkgSystem
 
    public:
 
-   virtual bool Lock() APT_CONST;
-   virtual bool UnLock(bool NoErrors = false) APT_CONST;
-   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_CONST;
-   virtual bool Initialize(Configuration &Cnf);
-   virtual bool ArchiveSupported(const char *Type) APT_CONST;
-   virtual signed Score(Configuration const &Cnf);
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List);
+   virtual bool Lock() APT_OVERRIDE APT_CONST;
+   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_CONST;
+   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_CONST;
+   virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
+   virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE APT_CONST;
+   virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
-			  pkgIndexFile *&Found) const;
+			  pkgIndexFile *&Found) const APT_OVERRIDE;
 
    edspSystem();
    virtual ~edspSystem();

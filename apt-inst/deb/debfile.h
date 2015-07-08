@@ -65,7 +65,7 @@ class debDebFile::ControlExtract : public pkgDirStream
 {
    public:
    
-   virtual bool DoItem(Item &Itm,int &Fd);
+   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
 };
 
 class debDebFile::MemControlExtract : public pkgDirStream
@@ -80,10 +80,10 @@ class debDebFile::MemControlExtract : public pkgDirStream
    std::string Member;
    
    // Members from DirStream
-   virtual bool DoItem(Item &Itm,int &Fd);
+   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
    virtual bool Process(Item &Itm,const unsigned char *Data,
 #if APT_PKG_ABI >= 413
-			unsigned long long Size,unsigned long long Pos);
+			unsigned long long Size,unsigned long long Pos) APT_OVERRIDE;
 #else
 			unsigned long Size,unsigned long Pos);
 #endif

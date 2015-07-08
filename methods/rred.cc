@@ -558,7 +558,7 @@ class RredMethod : public pkgAcqMethod {
       }
 
    protected:
-      virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) {
+      virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE {
 	 Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
 	 URI Get = Itm->Uri;
 	 std::string Path = Get.Host + Get.Path; // rred:/path - no host
@@ -671,7 +671,7 @@ class RredMethod : public pkgAcqMethod {
 	 return true;
       }
 
-      bool Configuration(std::string Message)
+      bool Configuration(std::string Message) APT_OVERRIDE
       {
 	 if (pkgAcqMethod::Configuration(Message) == false)
 	    return false;

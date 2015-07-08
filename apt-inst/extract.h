@@ -38,9 +38,9 @@ class pkgExtract : public pkgDirStream
    
    public:
    
-   virtual bool DoItem(Item &Itm,int &Fd);
-   virtual bool Fail(Item &Itm,int Fd);
-   virtual bool FinishedFile(Item &Itm,int Fd);
+   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
+   virtual bool Fail(Item &Itm,int Fd) APT_OVERRIDE;
+   virtual bool FinishedFile(Item &Itm,int Fd) APT_OVERRIDE;
 
    bool Finished();
    bool Aborted();

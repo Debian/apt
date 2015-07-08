@@ -45,7 +45,7 @@ class SHA256Summation : public SHA2SummationBase
    unsigned char Sum[32];
 
    public:
-   bool Add(const unsigned char *inbuf, unsigned long long len)
+   bool Add(const unsigned char *inbuf, unsigned long long len) APT_OVERRIDE
    {
       if (Done) 
          return false;
@@ -78,7 +78,7 @@ class SHA512Summation : public SHA2SummationBase
    unsigned char Sum[64];
 
    public:
-   bool Add(const unsigned char *inbuf, unsigned long long len)
+   bool Add(const unsigned char *inbuf, unsigned long long len) APT_OVERRIDE
    {
       if (Done) 
          return false;

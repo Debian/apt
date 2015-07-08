@@ -27,7 +27,7 @@
 
 class CopyMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(FetchItem *Itm);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    void CalculateHashes(FetchItem const * const Itm, FetchResult &Res);
    
    public:

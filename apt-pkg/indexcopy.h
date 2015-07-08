@@ -62,10 +62,10 @@ class PackageCopy : public IndexCopy					/*{{{*/
    void * const d;
    protected:
 
-   virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
-   virtual const char *GetFileName() {return "Packages";};
-   virtual const char *Type() {return "Package";};
+   virtual bool GetFile(std::string &Filename,unsigned long long &Size) APT_OVERRIDE;
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File) APT_OVERRIDE;
+   virtual const char *GetFileName() APT_OVERRIDE {return "Packages";};
+   virtual const char *Type() APT_OVERRIDE {return "Package";};
 
    public:
    PackageCopy();
@@ -77,10 +77,10 @@ class SourceCopy : public IndexCopy					/*{{{*/
    void * const d;
    protected:
    
-   virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
-   virtual const char *GetFileName() {return "Sources";};
-   virtual const char *Type() {return "Source";};
+   virtual bool GetFile(std::string &Filename,unsigned long long &Size) APT_OVERRIDE;
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File) APT_OVERRIDE;
+   virtual const char *GetFileName() APT_OVERRIDE {return "Sources";};
+   virtual const char *Type() APT_OVERRIDE {return "Source";};
 
    public:
    SourceCopy();

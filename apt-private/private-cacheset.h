@@ -81,13 +81,13 @@ class CacheSetHelperVirtuals: public APT::CacheSetHelper {
 public:
    APT::PackageSet virtualPkgs;
 
-   virtual pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+   virtual pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE {
       if (select == NEWEST || select == CANDIDATE || select == ALL)
 	 virtualPkgs.insert(Pkg);
       return CacheSetHelper::canNotGetVersion(select, Cache, Pkg);
    }
 
-   virtual void canNotFindVersion(enum CacheSetHelper::VerSelector const select, APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+   virtual void canNotFindVersion(enum CacheSetHelper::VerSelector const select, APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE {
       if (select == NEWEST || select == CANDIDATE || select == ALL)
 	 virtualPkgs.insert(Pkg);
       return CacheSetHelper::canNotFindVersion(select, vci, Cache, Pkg);
@@ -113,23 +113,23 @@ public:
 		explicitlyNamed = true;
 	}
 
-	virtual void showTaskSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
+	virtual void showTaskSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) APT_OVERRIDE {
 		ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-        virtual void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
+        virtual void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) APT_OVERRIDE {
 		ioprintf(out, _("Note, selecting '%s' for glob '%s'\n"),
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
+	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) APT_OVERRIDE {
 		ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/, pkgCache::VerIterator const Ver,
-				 std::string const &ver, bool const /*verIsRel*/) {
+				 std::string const &ver, bool const /*verIsRel*/) APT_OVERRIDE {
 		if (ver == Ver.VerStr())
 			return;
 		selectedByRelease.push_back(make_pair(Ver, ver));
@@ -191,7 +191,7 @@ public:
 		return false;
 	}
 
-	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE {
 		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::CANDIDATE);
 		if (verset.empty() == false)
 			return *(verset.begin());
@@ -202,7 +202,7 @@ public:
 		return pkgCache::VerIterator(Cache, 0);
 	}
 
-	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE {
 		if (Pkg->ProvidesList != 0)
 		{
 			APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::NEWEST);

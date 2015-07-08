@@ -572,7 +572,7 @@ static bool DoClean(CommandLine &)
 class LogCleaner : public pkgArchiveCleaner
 {
    protected:
-   virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) 
+   virtual void Erase(const char *File,string Pkg,string Ver,struct stat &St) APT_OVERRIDE 
    {
       c1out << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << endl;
       

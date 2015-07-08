@@ -81,7 +81,7 @@ class ContentsExtract : public pkgDirStream
    
    bool Read(debDebFile &Deb);
    
-   virtual bool DoItem(Item &Itm,int &Fd);      
+   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;      
    void Reset() {CurSize = 0;};
    bool TakeContents(const void *Data,unsigned long long Length);
    void Add(GenContents &Contents,std::string const &Package);

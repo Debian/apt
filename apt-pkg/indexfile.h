@@ -160,10 +160,10 @@ protected:
    std::string IndexFileName() const;
 
 public:
-   virtual std::string ArchiveURI(std::string File) const;
-   virtual std::string Describe(bool Short = false) const;
-   virtual bool Exists() const;
-   virtual unsigned long Size() const;
+   virtual std::string ArchiveURI(std::string File) const APT_OVERRIDE;
+   virtual std::string Describe(bool Short = false) const APT_OVERRIDE;
+   virtual bool Exists() const APT_OVERRIDE;
+   virtual unsigned long Size() const APT_OVERRIDE;
 
    pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted);
    virtual ~pkgIndexTargetFile();

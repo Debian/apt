@@ -13,7 +13,7 @@
 class NullStream : public pkgDirStream
 {
    public:
-   virtual bool DoItem(Item &/*Itm*/, int &/*Fd*/) {return true;};
+   virtual bool DoItem(Item &/*Itm*/, int &/*Fd*/) APT_OVERRIDE {return true;};
 };
 
 static bool Test(const char *File)

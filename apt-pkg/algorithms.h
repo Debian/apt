@@ -62,7 +62,7 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
       pkgDepCache *Cache;
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg)
+      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg) APT_OVERRIDE
       {
 	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
       }
@@ -77,9 +77,9 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache::ActionGroup group;
    
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,std::string File);
-   virtual bool Configure(PkgIterator Pkg);
-   virtual bool Remove(PkgIterator Pkg,bool Purge);
+   virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
+   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
+   virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;
 
 private:
    APT_HIDDEN void ShortBreaks();

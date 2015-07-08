@@ -27,7 +27,7 @@ class APT_HIDDEN edspIndex : public debStatusIndex
 
    virtual const Type *GetType() const APT_CONST;
 
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
 
    edspIndex(std::string File);
    virtual ~edspIndex();

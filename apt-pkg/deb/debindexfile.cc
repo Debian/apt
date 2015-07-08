@@ -482,7 +482,7 @@ class APT_HIDDEN debIFTypePkg : public pkgIndexFile::Type
 {
    public:
    
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
    {
       return new debRecordParser(File.FileName(),*File.Cache());
    };
@@ -497,7 +497,7 @@ class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 {
    public:
    
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
    {
       return new debRecordParser(File.FileName(),*File.Cache());
    };
@@ -506,7 +506,7 @@ class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
    {
       return new debDebFileRecordParser(File.FileName());
    };
@@ -515,7 +515,7 @@ class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
 class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
 {
    public:
-   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string DscFile) const
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string DscFile) const APT_OVERRIDE
    {
       return new debDscRecordParser(DscFile, NULL);
    };
@@ -524,7 +524,7 @@ class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
 class APT_HIDDEN debIFTypeDebianSourceDir : public pkgIndexFile::Type
 {
    public:
-   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string SourceDir) const
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string SourceDir) const APT_OVERRIDE
    {
       return new debDscRecordParser(SourceDir + string("/debian/control"), NULL);
    };

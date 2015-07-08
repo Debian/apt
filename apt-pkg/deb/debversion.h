@@ -27,11 +27,11 @@ class debVersioningSystem : public pkgVersioningSystem
 			  const char *B,const char *Bend) APT_PURE;
    virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) APT_PURE;
    virtual APT_PURE int DoCmpReleaseVer(const char *A,const char *Aend,
-			     const char *B,const char *Bend)
+			     const char *B,const char *Bend) APT_OVERRIDE
    {
       return DoCmpVersion(A,Aend,B,Bend);
    }
-   virtual std::string UpstreamVersion(const char *A);
+   virtual std::string UpstreamVersion(const char *A) APT_OVERRIDE;
 
    debVersioningSystem();
 };

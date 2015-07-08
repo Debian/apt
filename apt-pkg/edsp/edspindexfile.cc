@@ -67,7 +67,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 class APT_HIDDEN edspIFType: public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator) const
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator) const APT_OVERRIDE
    {
       // we don't have a record parser for this type as the file is not presistent
       return NULL;

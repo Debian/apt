@@ -24,6 +24,7 @@
 
 #include <string>
 #include <sys/time.h>
+#include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
@@ -74,12 +75,12 @@ class OpTextProgress : public OpProgress
    bool NoUpdate;
    bool NoDisplay;
    unsigned long LastLen;
-   virtual void Update();
+   virtual void Update() APT_OVERRIDE;
    void Write(const char *S);
    
    public:
 
-   virtual void Done();
+   virtual void Done() APT_OVERRIDE;
    
    OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate), 
                 NoDisplay(false), LastLen(0) {};

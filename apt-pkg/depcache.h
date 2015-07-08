@@ -204,7 +204,7 @@ class pkgDepCache : protected pkgCache::Namespace
      DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverAutoRemove") {};
      virtual ~DefaultRootSetFunc() {};
 
-     bool InRootSet(const pkgCache::PkgIterator &pkg) { return pkg.end() == false && Match(pkg.Name()); };
+     bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && Match(pkg.Name()); };
    };
 
    struct StateCache

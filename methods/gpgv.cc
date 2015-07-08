@@ -46,8 +46,8 @@ class GPGVMethod : public pkgAcqMethod
 				vector<string> &NoPubKeySigners);
    
    protected:
-   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm);
-   virtual bool Configuration(string Message);
+   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   virtual bool Configuration(string Message) APT_OVERRIDE;
    public:
    
    GPGVMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};

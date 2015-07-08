@@ -349,7 +349,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    IndexTarget const Target;
    HashStringList GetExpectedHashesFor(std::string const &MetaKey) const;
 
-   bool QueueURI(pkgAcquire::ItemDesc &Item);
+   bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
 
    public:
    /** \brief storge name until a transaction is finished */
@@ -364,10 +364,10 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    };
    virtual bool TransactionState(TransactionStates const state);
 
-   virtual std::string DescURI() const { return Target.URI; }
-   virtual HashStringList GetExpectedHashes() const;
+   virtual std::string DescURI() const APT_OVERRIDE { return Target.URI; }
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
    virtual std::string GetMetaKey() const;
-   virtual bool HashesRequired() const;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
 
    pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target);
@@ -417,7 +417,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    /** \brief Queue the downloaded Signature for verification */
    void QueueForSignatureVerify(pkgAcqTransactionItem * const I, std::string const &File, std::string const &Signature);
 
-   virtual std::string Custom600Headers() const;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
 
    /** \brief Called when authentication succeeded.
     *
@@ -440,15 +440,15 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
     */
    bool VerifyVendor(std::string const &Message);
 
-   virtual bool TransactionState(TransactionStates const state);
+   virtual bool TransactionState(TransactionStates const state) APT_OVERRIDE;
 
  public:
    // This refers more to the Transaction-Manager than the actual file
    bool IMSHit;
 
-   virtual bool QueueURI(pkgAcquire::ItemDesc &Item);
-   virtual HashStringList GetExpectedHashes() const;
-   virtual bool HashesRequired() const;
+   virtual bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
    // transaction code
    void Add(pkgAcqTransactionItem * const I);
@@ -466,7 +466,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    void TransactionStageRemoval(pkgAcqTransactionItem * const I, const std::string &FinalFile);
 
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
    pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
 		  std::vector<IndexTarget> const &IndexTargets,
@@ -494,13 +494,13 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    void Init(std::string const &URIDesc, std::string const &ShortDesc);
 
    public:
-   virtual std::string DescURI() const;
+   virtual std::string DescURI() const APT_OVERRIDE;
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual void Finished();
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual void Finished() APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
@@ -531,16 +531,16 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
    protected:
 
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
    public:
-   virtual bool HashesRequired() const { return false; }
+   virtual bool HashesRequired() const APT_OVERRIDE { return false; }
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string Custom600Headers() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
@@ -561,10 +561,10 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
    metaIndex *MetaIndexParser;
    metaIndex *LastMetaIndexParser;
 
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string Custom600Headers() const;
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqMetaClearSig. */
    pkgAcqMetaClearSig(pkgAcquire * const Owner,
@@ -583,7 +583,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
 
  public:
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                    IndexTarget const &Target);
@@ -614,19 +614,19 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    std::string Description;
 
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
-   virtual bool QueueURI(pkgAcquire::ItemDesc &Item);
+   virtual bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
 
-   virtual bool TransactionState(TransactionStates const state);
+   virtual bool TransactionState(TransactionStates const state) APT_OVERRIDE;
  public:
    // Specialized action members
-   virtual void Failed(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string DescURI() const {return Target.URI + "Index";};
-   virtual std::string Custom600Headers() const;
-   virtual std::string GetMetaKey() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "Index";};
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual std::string GetMetaKey() const APT_OVERRIDE;
 
    /** \brief Parse the Index file for a set of Packages diffs.
     *
@@ -724,13 +724,13 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  This method will fall back to downloading the whole index file
     *  outright; its arguments are ignored.
     */
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-	 pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Target.URI + "Index";};
-   virtual HashStringList GetExpectedHashes() const;
-   virtual bool HashesRequired() const;
+	 pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "Index";};
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
    /** \brief Create an index merge-diff item.
     *
@@ -836,14 +836,14 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  This method will fall back to downloading the whole index file
     *  outright; its arguments are ignored.
     */
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
 
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Target.URI + "IndexDiffs";};
-   virtual HashStringList GetExpectedHashes() const;
-   virtual bool HashesRequired() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "IndexDiffs";};
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
    /** \brief Create an index diff item.
     *
@@ -928,18 +928,18 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    void ReverifyAfterIMS();
 
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
-   virtual bool TransactionState(TransactionStates const state);
+   virtual bool TransactionState(TransactionStates const state) APT_OVERRIDE;
 
    public:
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Desc.URI;};
-   virtual std::string GetMetaKey() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
+   virtual std::string GetMetaKey() const APT_OVERRIDE;
 
    pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                IndexTarget const &Target);
@@ -1000,19 +1000,19 @@ class pkgAcqArchive : public pkgAcquire::Item
    bool QueueNext();
 
    /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const;
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
    public:
 
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string DescURI() const;
-   virtual std::string ShortDesc() const;
-   virtual void Finished();
-   virtual bool IsTrusted() const;
-   virtual HashStringList GetExpectedHashes() const;
-   virtual bool HashesRequired() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE;
+   virtual std::string ShortDesc() const APT_OVERRIDE;
+   virtual void Finished() APT_OVERRIDE;
+   virtual bool IsTrusted() const APT_OVERRIDE;
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqArchive.
     *
@@ -1053,14 +1053,14 @@ class pkgAcqChangelog : public pkgAcquire::Item
    public:
    // we will never have hashes for changelogs.
    // If you need verified ones, download the deb and extract the changelog.
-   virtual HashStringList GetExpectedHashes() const { return HashStringList(); }
-   virtual bool HashesRequired() const { return false; }
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE { return HashStringList(); }
+   virtual bool HashesRequired() const APT_OVERRIDE { return false; }
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
 
    /** returns the URI to the changelog of this version
     *
@@ -1172,15 +1172,15 @@ class pkgAcqFile : public pkgAcquire::Item
 
    HashStringList const ExpectedHashes;
    public:
-   virtual HashStringList GetExpectedHashes() const;
-   virtual bool HashesRequired() const;
+   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
+   virtual bool HashesRequired() const APT_OVERRIDE;
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
-		     pkgAcquire::MethodConfig const * const Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
-   virtual std::string Custom600Headers() const;
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqFile object.
     *

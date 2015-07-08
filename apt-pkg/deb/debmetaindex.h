@@ -39,18 +39,18 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted);
    virtual ~debReleaseIndex();
 
-   virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
-   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false);
-   virtual std::vector<IndexTarget> GetIndexTargets() const;
+   virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE {return URI + File;};
+   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) APT_OVERRIDE;
+   virtual std::vector<IndexTarget> GetIndexTargets() const APT_OVERRIDE;
 
-   virtual std::string Describe() const;
-   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
+   virtual std::string Describe() const APT_OVERRIDE;
+   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const APT_OVERRIDE;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
 
-   virtual bool Load(std::string const &Filename, std::string * const ErrorText);
-   virtual metaIndex * UnloadedClone() const;
+   virtual bool Load(std::string const &Filename, std::string * const ErrorText) APT_OVERRIDE;
+   virtual metaIndex * UnloadedClone() const APT_OVERRIDE;
 
-   virtual std::vector <pkgIndexFile *> *GetIndexFiles();
+   virtual std::vector <pkgIndexFile *> *GetIndexFiles() APT_OVERRIDE;
 
    bool SetTrusted(TriState const Trusted);
    bool SetCheckValidUntil(TriState const Trusted);
@@ -58,7 +58,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool SetValidUntilMax(time_t const Valid);
    bool SetSignedBy(std::string const &SignedBy);
 
-   virtual bool IsTrusted() const;
+   virtual bool IsTrusted() const APT_OVERRIDE;
 
    void AddComponent(bool const isSrc, std::string const &Name,
 	 std::vector<std::string> const &Targets,
@@ -73,29 +73,29 @@ private:
    std::string DebFile;
    debDebPkgFileIndex *DebIndex;
 public:
-   virtual std::string ArchiveURI(std::string const& /*File*/) const {
+   virtual std::string ArchiveURI(std::string const& /*File*/) const APT_OVERRIDE {
       return DebFile;
    }
-   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) {
+   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) APT_OVERRIDE {
       return true;
    }
-   virtual std::vector<IndexTarget> GetIndexTargets() const {
+   virtual std::vector<IndexTarget> GetIndexTargets() const APT_OVERRIDE {
       return std::vector<IndexTarget>();
    }
-   virtual std::vector<pkgIndexFile *> *GetIndexFiles() {
+   virtual std::vector<pkgIndexFile *> *GetIndexFiles() APT_OVERRIDE {
       return Indexes;
    }
-   virtual bool IsTrusted() const {
+   virtual bool IsTrusted() const APT_OVERRIDE {
       return true;
    }
-   virtual bool Load(std::string const &, std::string * const ErrorText)
+   virtual bool Load(std::string const &, std::string * const ErrorText) APT_OVERRIDE
    {
       LoadedSuccessfully = TRI_NO;
       if (ErrorText != NULL)
 	 strprintf(*ErrorText, "Unparseable metaindex as it represents the standalone deb file %s", DebFile.c_str());
       return false;
    }
-   virtual metaIndex * UnloadedClone() const
+   virtual metaIndex * UnloadedClone() const APT_OVERRIDE
    {
       return NULL;
    }

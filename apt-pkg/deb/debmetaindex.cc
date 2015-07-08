@@ -758,7 +758,7 @@ class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian			/*{{{*/
 
    bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
 		   std::string const &Dist, std::string const &Section,
-		   std::map<std::string, std::string> const &Options) const
+		   std::map<std::string, std::string> const &Options) const APT_OVERRIDE
    {
       return CreateItemInternal(List, URI, Dist, Section, false, Options);
    }
@@ -774,7 +774,7 @@ class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian		/*{{{*/
 
    bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
 		   std::string const &Dist, std::string const &Section,
-		   std::map<std::string, std::string> const &Options) const
+		   std::map<std::string, std::string> const &Options) const APT_OVERRIDE
    {
       return CreateItemInternal(List, URI, Dist, Section, true, Options);
    }
@@ -800,7 +800,7 @@ class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type		/*{{{*/
 
    bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
 		   std::string const &/*Dist*/, std::string const &/*Section*/,
-		   std::map<std::string, std::string> const &/*Options*/) const
+		   std::map<std::string, std::string> const &/*Options*/) const APT_OVERRIDE
    {
       metaIndex *mi = new debDebFileMetaIndex(URI);
       List.push_back(mi);

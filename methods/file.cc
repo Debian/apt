@@ -30,7 +30,7 @@
 
 class FileMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(FetchItem *Itm);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    
    public:
    

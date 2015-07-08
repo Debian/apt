@@ -120,14 +120,14 @@ class pkgDPkgPM : public pkgPackageManager
    void ProcessDpkgStatusLine(char *line);
 
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,std::string File);
-   virtual bool Configure(PkgIterator Pkg);
-   virtual bool Remove(PkgIterator Pkg,bool Purge = false);
+   virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
+   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
+   virtual bool Remove(PkgIterator Pkg,bool Purge = false) APT_OVERRIDE;
 
-   virtual bool Go(APT::Progress::PackageManager *progress);
-   virtual bool Go(int StatusFd=-1);
+   virtual bool Go(APT::Progress::PackageManager *progress) APT_OVERRIDE;
+   virtual bool Go(int StatusFd=-1) APT_OVERRIDE;
 
-   virtual void Reset();
+   virtual void Reset() APT_OVERRIDE;
    
    public:
 
