@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+configcompression '.' 'gz'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive --no-update
+changetowebserver -o 'aptwebserver::redirect::replace::/redirectme/=http://0.0.0.0:8080/'
+rewritesourceslist 'http://localhost:8080/redirectme'
+
+testsuccessequal "Get:1 http://0.0.0.0:8080 unstable InRelease [$(stat -c %s aptarchive/dists/unstable/InRelease) B]
+Get:2 http://0.0.0.0:8080 unstable/main Sources [$(stat -c %s aptarchive/dists/unstable/main/source/Sources.gz) B]
+Get:3 http://0.0.0.0:8080 unstable/main amd64 Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-amd64/Packages.gz) B]
+Get:4 http://0.0.0.0:8080 unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
+Reading package lists..." aptget update
+
+testsuccessequal 'Hit:1 http://0.0.0.0:8080 unstable InRelease
+Reading package lists...' aptget update

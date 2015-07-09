@@ -457,7 +457,6 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 {
    if(ErrorText.empty())
       ErrorText = LookupTag(Message,"Message");
-   UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -516,11 +515,10 @@ void pkgAcquire::Item::Start(string const &/*Message*/, unsigned long long const
 }
 									/*}}}*/
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
-void pkgAcquire::Item::Done(string const &Message, HashStringList const &Hashes,
+void pkgAcquire::Item::Done(string const &/*Message*/, HashStringList const &Hashes,
 			    pkgAcquire::MethodConfig const * const /*Cnf*/)
 {
    // We just downloaded something..
-   UsedMirror = LookupTag(Message,"UsedMirror");
    if (FileSize == 0)
    {
       unsigned long long const downloadedSize = Hashes.FileSize();
