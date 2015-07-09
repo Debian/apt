@@ -30,18 +30,18 @@ Reading package lists..." aptget update
 testempty find rootdir/var/lib/apt/lists -name '*Contents*'
 
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
-APT::Acquire::Targets::deb::Contents {
+Acquire::IndexTargets::deb::Contents {
 	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
 	ShortDescription "Contents";
-	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
+	Description "\$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
 };
 EOF
 
-testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget files --no-release-info --format '$(FILENAME)' 'Created-By: Contents'
-testempty aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget indextargets --no-release-info --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 # lets fake the existence of a compressed Contents file
 touch ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz
-testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 testequal "'http://localhost:8080/dists/unstable/InRelease' localhost:8080_dists_unstable_InRelease 0 
 'http://localhost:8080/dists/unstable/main/source/Sources.bz2' localhost:8080_dists_unstable_main_source_Sources 0 
@@ -54,32 +54,32 @@ Get:2 http://localhost:8080 unstable/main amd64 Contents [$(stat -c%s aptarchive
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' find rootdir/var/lib/apt/lists -name '*Contents*'
-testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64' 'aptarchive/dists/unstable/main/Contents-amd64'
 
 rm ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64
-testempty aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 # if we asked for keeping it compressed, keep it
-echo 'APT::Acquire::Targets::deb::Contents::KeepCompressed "true";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
+echo 'Acquire::IndexTargets::deb::Contents::KeepCompressed "true";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
 testsuccessequal "Hit:1 http://localhost:8080 unstable InRelease
 Get:2 http://localhost:8080 unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' find rootdir/var/lib/apt/lists -name '*Contents*'
-testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' 'aptarchive/dists/unstable/main/Contents-amd64.gz'
 
 rm ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz
-testempty aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 # and no automatic uncompress based on the name please,
 # only if we downloaded a compressed file, but target was uncompressed
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
-APT::Acquire::Targets::deb::Contents {
+Acquire::IndexTargets::deb::Contents {
 	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE).gz";
 	ShortDescription "Contents.gz";
-	Description "\$(SITE) \$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents.gz";
+	Description "\$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents.gz";
 };
 EOF
 
@@ -95,7 +95,7 @@ Get:2 http://localhost:8080 unstable/main amd64 Contents.gz [$(stat -c%s aptarch
 Reading package lists..." aptget update
 
 testequal 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' find rootdir/var/lib/apt/lists -name '*Contents*'
-testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget files --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readlink -f ./rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 testsuccess cmp 'rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_Contents-amd64.gz' 'aptarchive/dists/unstable/main/Contents-amd64.gz'
 
 rm -f rootdir/etc/apt/apt.conf.d/content-target.conf

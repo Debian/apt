@@ -1468,7 +1468,7 @@ static bool DoChangelog(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// DoFiles - Lists all IndexTargets					/*{{{*/
+// DoIndexTargets - Lists all IndexTargets				/*{{{*/
 static std::string format_key(std::string key)
 {
    // deb822 is case-insensitive, but the human eye prefers candy
@@ -1484,7 +1484,7 @@ static std::string format_key(std::string key)
    }
    return key;
 }
-static bool DoFiles(CommandLine &CmdL)
+static bool DoIndexTargets(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgSourceList *SrcList = CacheFile.GetSourceList();
@@ -1492,8 +1492,8 @@ static bool DoFiles(CommandLine &CmdL)
    if (SrcList == NULL)
       return false;
 
-   std::string const Format = _config->Find("APT::Get::Files::Format");
-   bool const ReleaseInfo = _config->FindB("APT::Get::Files::ReleaseInfo", true);
+   std::string const Format = _config->Find("APT::Get::IndexTargets::Format");
+   bool const ReleaseInfo = _config->FindB("APT::Get::IndexTargets::ReleaseInfo", true);
    bool Filtered = CmdL.FileSize() > 1;
    for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); ++S)
    {
@@ -1687,7 +1687,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 				   {"source",&DoSource},
                                    {"download",&DoDownload},
                                    {"changelog",&DoChangelog},
-				   {"files",&DoFiles},
+				   {"indextargets",&DoIndexTargets},
 				   {"moo",&DoMoo},
 				   {"help",&ShowHelp},
                                    {0,0}};

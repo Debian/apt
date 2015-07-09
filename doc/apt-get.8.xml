@@ -239,9 +239,9 @@
        </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>files</option></term>
+     <varlistentry><term><option>indextargets</option></term>
 	<listitem><para>Displays by default a deb822 formatted listing of
-	      information about all data files <command>apt-get
+	      information about all data files (aka index targets) <command>apt-get
 		 update</command> would download. Supports a
 	      <option>--format</option> option to modify the output format as
 	      well as accepts lines of the default output to filter the records
@@ -327,17 +327,15 @@
 		   <term><option>--dry-run</option></term>
 		   <term><option>--recon</option></term>
 		   <term><option>--no-act</option></term>
-     <listitem><para>No action; perform a simulation of events that would occur but do not
-     actually change the system. 
-     Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
-
-     <para>Simulated runs performed as a user will automatically deactivate locking
-     (<literal>Debug::NoLocking</literal>), and if the option
-     <literal>APT::Get::Show-User-Simulation-Note</literal> is set
-     (as it is by default) a notice will also be displayed indicating that
-     this is only a simulation. Runs performed as root do not trigger either
-     NoLocking or the notice - superusers should know what they are doing
-     without further warnings from <literal>apt-get</literal>.</para>
+     <listitem><para>No action; perform a simulation of events that would occur
+	   based on the current system state but do not actually change the
+	   system. Locking will be disabled (<option>Debug::NoLocking</option>)
+	   so the system state could change while <command>apt-get</command> is
+	   running. Simulations can also be executed by non-root users which might
+	   not have read access to all apt configuration distorting the simulation.
+	   A notice expressing this warning is also shown by default for non-root
+	   users (<option>APT::Get::Show-User-Simulation-Note</option>).
+	   Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
      <para>Simulated runs print out a series of lines, each representing a <command>dpkg</command>
      operation: configure (<literal>Conf</literal>), remove (<literal>Remv</literal>)

@@ -43,7 +43,7 @@ tworepos() {
 	testsuccess --nomsg aptget update -o Debug::pkgAcquire::Worker=1
 	cp rootdir/tmp/testsuccess.output download.log
 	#cat download.log
-	aptget files --format '$(FILENAME)' --no-release-info | sort > file.lst
+	aptget indextargets --format '$(FILENAME)' --no-release-info | sort > file.lst
 	testequal "$(find $(readlink -f ./rootdir/var/lib/apt/lists) -name '*_dists_*' \( ! -name '*InRelease' \) -type f | sort)" cat file.lst
 	testsuccess aptcache policy
 	testequal "foo:

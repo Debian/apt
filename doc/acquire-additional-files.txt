@@ -26,7 +26,7 @@ they would be written in a configuration file the configuration
 instructing the Acquire system to download the Packages files would look
 like this (see also apt.conf(5) manpage for configuration file syntax):
 
-	APT::Acquire::Targets::deb::Packages {
+	Acquire::IndexTargets::deb::Packages {
 		MetaKey "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages";
 		ShortDescription "Packages";
 		Description "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages";
@@ -38,7 +38,7 @@ like this (see also apt.conf(5) manpage for configuration file syntax):
 	};
 
 All files which should be downloaded (nicknamed 'Targets') are mentioned
-below the APT::Acquire::Targets scope. 'deb' is here the type of the
+below the Acquire::IndexTargets scope. 'deb' is here the type of the
 sources.list entry the file should be acquired for. The only other
 supported value is hence 'deb-src'. Beware: You can't specify multiple
 types here and you can't download the same (evaluated) MetaKey from
@@ -47,7 +47,7 @@ multiple types!
 After the type you can pick any valid and unique string which preferable
 refers to the file it downloads (In the example we picked 'Packages').
 This string is used as identifier for the target class and accessible as
-'Created-By' e.g. in the "apt-get files" output as detailed below.
+'Created-By' e.g. in the "apt-get indextargets" output as detailed below.
 
 All targets have three main properties you can define:
 * MetaKey: The identifier of the file to be downloaded as used in the
@@ -92,7 +92,7 @@ NO properties have to be set to enable this.
 The stanzas for Translation-* files as well as for Sources files would
 look like this:
 
-APT::Acquire::Targets {
+Acquire::IndexTargets {
 	deb::Translations {
 		MetaKey "$(COMPONENT)/i18n/Translation-$(LANGUAGE)";
 		ShortDescription "Translation-$(LANGUAGE)";
@@ -152,7 +152,7 @@ design so multiple applications can download and use the same file
 rather than each and every one of them potentially downloads and uses
 its own copy somewhere on disk.
 
-"apt-get files" can be used to get the location as well as other
+"apt-get indextargets" can be used to get the location as well as other
 information about all files downloaded (aka: you will see Packages,
 Sources and Translation-* files here as well). Provide a line of the
 default output format as parameter to filter out all entries which do
@@ -161,12 +161,16 @@ own output style. The variables are what you see in the output, just all
 uppercase and wrapped in $(), as in the configuration file.
 
 To get all the filenames of all Translation-en files you can e.g. call:
-	apt-get files --format '$(FILENAME)' "Created-By: Translations" "Language: en"
+	apt-get indextargets --format '$(FILENAME)' "Created-By: Translations" "Language: en"
+
+The line-based filtering and the formating is rather crude and feature-
+less by design, so it is recommend to use dedicated and more powerful
+tools like 'grep-dctrl'.
 
 Accessing this information via libapt is done by reading the
 sources.lists (pkgSourceList), iterating over the metaIndex objects this
 creates and calling GetIndexTargets() on them. See the sourcecode of
-"apt-get files" for a complete example.
+"apt-get indextargets" for a complete example.
 
 Note that by default targets are not listed if they weren't downloaded.
 If you want to see all targets, you can use the --no-release-info, which

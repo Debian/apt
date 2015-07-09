@@ -35,7 +35,7 @@ testequal 'lock
 partial' ls rootdir/var/lib/apt/lists
 
 filesize() {
-	stat -c%s "$(aptget files --no-release-info --format '$(URI)' "Created-By: $1" | cut -d'/' -f 3- ).gz"
+	stat -c%s "$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $1" | cut -d'/' -f 3- ).gz"
 }
 # allow override
 #aptget update --allow-insecure-repositories -o Debug::pkgAcquire::worker=1

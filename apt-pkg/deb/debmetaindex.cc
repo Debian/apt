@@ -128,12 +128,12 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
    {
       for (std::vector<std::string>::const_iterator T = E->Targets.begin(); T != E->Targets.end(); ++T)
       {
-#define APT_T_CONFIG(X) _config->Find(std::string("APT::Acquire::Targets::") + Type  + "::" + *T + "::" + (X))
+#define APT_T_CONFIG(X) _config->Find(std::string("Acquire::IndexTargets::") + Type  + "::" + *T + "::" + (X))
 	 std::string const tplMetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
 	 std::string const tplShortDesc = APT_T_CONFIG("ShortDescription");
-	 std::string const tplLongDesc = APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
-	 bool const IsOptional = _config->FindB(std::string("APT::Acquire::Targets::") + Type + "::" + *T + "::Optional", true);
-	 bool const KeepCompressed = _config->FindB(std::string("APT::Acquire::Targets::") + Type + "::" + *T + "::KeepCompressed", GzipIndex);
+	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
+	 bool const IsOptional = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::Optional", true);
+	 bool const KeepCompressed = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::KeepCompressed", GzipIndex);
 #undef APT_T_CONFIG
 	 if (tplMetaKey.empty())
 	    continue;
@@ -721,7 +721,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       Deb->AddComponent(
 	    IsSrc,
 	    Section,
-	    parsePlusMinusOptions("target", Options, _config->FindVector(std::string("APT::Acquire::Targets::") + Name, "", true)),
+	    parsePlusMinusOptions("target", Options, _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true)),
 	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
 	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true))
 	    );
