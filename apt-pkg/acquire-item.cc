@@ -977,6 +977,12 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 		  continue;
 	       }
 	    }
+	    else if (TransactionManager->IMSHit == true)
+	    {
+	       // we have the file already, no point in trying to acquire it again
+	       new NoActionItem(Owner, *Target);
+	       continue;
+	    }
 	 }
 	 else
 	    trypdiff = false; // no file to patch
