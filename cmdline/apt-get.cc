@@ -56,6 +56,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/upgrade.h>
+#include <apt-pkg/sptr.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cacheset.h>
