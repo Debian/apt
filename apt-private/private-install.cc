@@ -374,11 +374,10 @@ static bool DoAutomaticRemove(CacheFile &Cache)
 
    unsigned long autoRemoveCount = 0;
    APT::PackageSet tooMuch;
-   APT::PackageList autoRemoveList;
+   SortedPackageUniverse Universe(Cache);
    // look over the cache to see what can be removed
-   for (unsigned J = 0; J < Cache->Head().PackageCount; ++J)
+   for (auto const &Pkg: Universe)
    {
-      pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
       if (Cache[Pkg].Garbage)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
@@ -395,8 +394,6 @@ static bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
-	    if (hideAutoRemove == false && Cache[Pkg].Delete() == false)
-	       autoRemoveList.insert(Pkg);
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
@@ -456,18 +453,6 @@ static bool DoAutomaticRemove(CacheFile &Cache)
       } while (Changed == true);
    }
 
-   std::string autoremovelist, autoremoveversions;
-   if (smallList == false && autoRemoveCount != 0)
-   {
-      for (APT::PackageList::const_iterator Pkg = autoRemoveList.begin(); Pkg != autoRemoveList.end(); ++Pkg)
-      {
-	 if (Cache[Pkg].Garbage == false)
-	    continue;
-	 autoremovelist += Pkg.FullName(true) + " ";
-	 autoremoveversions += std::string(Cache[Pkg].CandVersion) + "\n";
-      }
-   }
-
    // Now see if we had destroyed anything (if we had done anything)
    if (Cache->BrokenCount() != 0)
    {
@@ -482,12 +467,17 @@ static bool DoAutomaticRemove(CacheFile &Cache)
    }
 
    // if we don't remove them, we should show them!
-   if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
+   if (doAutoRemove == false && autoRemoveCount != 0)
    {
       if (smallList == false)
+      {
+	 SortedPackageUniverse Universe(Cache);
 	 ShowList(c1out, P_("The following package was automatically installed and is no longer required:",
 	          "The following packages were automatically installed and are no longer required:",
-	          autoRemoveCount), autoremovelist, autoremoveversions);
+	          autoRemoveCount), Universe,
+	       [&Cache](pkgCache::PkgIterator const &Pkg) { return (*Cache)[Pkg].Garbage == true && (*Cache)[Pkg].Delete() == false; },
+	       &PrettyFullName, CandidateVersion(&Cache));
+      }
       else
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
@@ -651,6 +641,18 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
+struct PkgIsExtraInstalled {
+   pkgCacheFile * const Cache;
+   APT::VersionSet const * const verset;
+   PkgIsExtraInstalled(pkgCacheFile * const Cache, APT::VersionSet const * const Container) : Cache(Cache), verset(Container) {}
+   bool operator() (pkgCache::PkgIterator const Pkg)
+   {
+        if ((*Cache)[Pkg].Install() == false)
+           return false;
+        pkgCache::VerIterator const Cand = (*Cache)[Pkg].CandidateVerIter(*Cache);
+        return verset->find(Cand) == verset->end();
+   }
+};
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
@@ -689,35 +691,18 @@ bool DoInstall(CommandLine &CmdL)
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
+   SortedPackageUniverse Universe(Cache);
    if (Cache->InstCount() != verset[MOD_INSTALL].size())
-   {
-      std::string List;
-      std::string VersionsList;
-      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-      {
-	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
-	 if ((*Cache)[I].Install() == false)
-	    continue;
-	 pkgCache::VerIterator Cand = Cache[I].CandidateVerIter(Cache);
-
-	 if (verset[MOD_INSTALL].find(Cand) != verset[MOD_INSTALL].end())
-	    continue;
-
-	 List += I.FullName(true) + " ";
-	 VersionsList += std::string(Cache[I].CandVersion) + "\n";
-      }
-      
-      ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
-   }
+      ShowList(c1out, _("The following extra packages will be installed:"), Universe,
+	    PkgIsExtraInstalled(&Cache, &verset[MOD_INSTALL]),
+	    &PrettyFullName, CandidateVersion(&Cache));
 
    /* Print out a list of suggested and recommended packages */
    {
       std::string SuggestsList, RecommendsList;
       std::string SuggestsVersions, RecommendsVersions;
-      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
+      for (auto const &Pkg: Universe)
       {
-	 pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
-
 	 /* Just look at the ones we want to install */
 	 if ((*Cache)[Pkg].Install() == false)
 	   continue;
@@ -738,7 +723,6 @@ bool DoInstall(CommandLine &CmdL)
 	    for(;;)
 	    {
 	       /* Skip if package is  installed already, or is about to be */
-               std::string target = Start.TargetPkg().FullName(true) + " ";
 	       pkgCache::PkgIterator const TarPkg = Start.TargetPkg();
 	       if (TarPkg->SelectedState == pkgCache::State::Install ||
 		   TarPkg->SelectedState == pkgCache::State::Hold ||
@@ -749,6 +733,7 @@ bool DoInstall(CommandLine &CmdL)
 	       }
 
 	       /* Skip if we already saw it */
+               std::string target = Start.TargetPkg().FullName(true) + " ";
 	       if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
 	       {
 		  foundInstalledInOrGroup=true;

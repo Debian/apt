@@ -35,3 +35,19 @@ The following packages will be upgraded:
 1 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
 After this operation, 126 MB disk space will be freed.
 E: Trivial Only specified but this is not a trivial operation." aptget install libreoffice --trivial-only
+testequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+2 packages were automatically installed and are no longer required.
+Use 'apt-get autoremove' to remove them.
+The following extra packages will be installed:
+  libreoffice-core libreoffice-officebean openoffice.org-officebean
+The following packages will be REMOVED:
+  openoffice.org-core
+The following NEW packages will be installed:
+  libreoffice libreoffice-core libreoffice-officebean
+The following packages will be upgraded:
+  openoffice.org-officebean
+1 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+After this operation, 126 MB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation." aptget install libreoffice --trivial-only -o APT::Get::HideAutoRemove=small

@@ -7,12 +7,13 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/cacheset.h>
+
 #include <apti18n.h>
 
-// FIXME: we need to find a way to export this 
+// FIXME: we need to find a way to export this
 class APT_PUBLIC SourceList : public pkgSourceList
 {
-   
  public:
    // Add custom metaIndex (e.g. local files)
    void AddMetaIndex(metaIndex *mi) {
@@ -22,17 +23,11 @@ class APT_PUBLIC SourceList : public pkgSourceList
 };
 
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 class APT_PUBLIC CacheFile : public pkgCacheFile
 {
-   static pkgCache *SortCache;
-   APT_HIDDEN static int NameComp(const void *a,const void *b) APT_PURE;
-
    public:
-   pkgCache::Package **List;
-   
-   void Sort();
+   std::vector<map_pointer_t> UniverseList;
+
    bool CheckDeps(bool AllowBroken = false);
    bool BuildCaches(bool WithLock = true)
    {
@@ -51,14 +46,10 @@ class APT_PUBLIC CacheFile : public pkgCacheFile
          return _error->Error(_("The list of sources could not be read."));
       return true;
    }
-   bool Open(bool WithLock = true) 
+   bool Open(bool WithLock = true)
    {
       OpTextProgress Prog(*_config);
-      if (pkgCacheFile::Open(&Prog,WithLock) == false)
-	 return false;
-      Sort();
-      
-      return true;
+      return pkgCacheFile::Open(&Prog,WithLock);
    };
    bool OpenForInstall()
    {
@@ -67,11 +58,39 @@ class APT_PUBLIC CacheFile : public pkgCacheFile
       else
 	 return Open(true);
    }
-   CacheFile() : List(0) {};
-   ~CacheFile() {
-      delete[] List;
-   }
 };
 									/*}}}*/
+
+class APT_PUBLIC SortedPackageUniverse : public APT::PackageUniverse
+{
+   std::vector<map_pointer_t> &List;
+   void LazyInit() const;
+
+public:
+   SortedPackageUniverse(CacheFile &Cache);
+
+   class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>
+   {
+      pkgCache * const Cache;
+      protected:
+	 inline virtual pkgCache::PkgIterator getType(void) const APT_OVERRIDE
+	 {
+	    if (*_iter == 0) return pkgCache::PkgIterator(*Cache);
+	    return pkgCache::PkgIterator(*Cache, Cache->PkgP + *_iter);
+	 }
+      public:
+	 explicit const_iterator(pkgCache * const Owner, std::vector<map_pointer_t>::const_iterator i):
+	    Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>(i), Cache(Owner) {}
+
+   };
+   typedef const_iterator iterator;
+
+   APT_PUBLIC const_iterator begin() const { LazyInit(); return const_iterator(data(), List.begin()); }
+   APT_PUBLIC const_iterator end() const { LazyInit(); return const_iterator(data(), List.end()); }
+   APT_PUBLIC const_iterator cbegin() const { LazyInit(); return const_iterator(data(), List.begin()); }
+   APT_PUBLIC const_iterator cend() const { LazyInit(); return const_iterator(data(), List.end()); }
+   APT_PUBLIC iterator begin() { LazyInit(); return iterator(data(), List.begin()); }
+   APT_PUBLIC iterator end() { LazyInit(); return iterator(data(), List.end()); }
+};
 
 #endif

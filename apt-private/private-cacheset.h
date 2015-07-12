@@ -12,6 +12,8 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
+#include <apt-private/private-output.h>
+
 #include <algorithm>
 #include <vector>
 #include <string.h>
@@ -20,8 +22,6 @@
 #include <set>
 #include <string>
 #include <utility>
-
-#include "private-output.h"
 
 #include <apti18n.h>
 
@@ -174,17 +174,19 @@ public:
 				std::string VersionsList;
 				SPtrArray<bool> Seen = new bool[Cache.GetPkgCache()->Head().PackageCount];
 				memset(Seen,0,Cache.GetPkgCache()->Head().PackageCount*sizeof(*Seen));
+				APT::PackageList pkglist;
 				for (pkgCache::DepIterator Dep = Pkg.RevDependsList();
 				     Dep.end() == false; ++Dep) {
 					if (Dep->Type != pkgCache::Dep::Replaces)
 						continue;
-					if (Seen[Dep.ParentPkg()->ID] == true)
+					pkgCache::PkgIterator const DP = Dep.ParentPkg();
+					if (Seen[DP->ID] == true)
 						continue;
-					Seen[Dep.ParentPkg()->ID] = true;
-					List += Dep.ParentPkg().FullName(true) + " ";
-					//VersionsList += std::string(Dep.ParentPkg().CurVersion) + "\n"; ???
+					Seen[DP->ID] = true;
+					pkglist.insert(DP);
 				}
-				ShowList(c1out,_("However the following packages replace it:"),List,VersionsList);
+				ShowList(c1out, _("However the following packages replace it:"), pkglist,
+				      &AlwaysTrue, &PrettyFullName, &EmptyString);
 			}
 			c1out << std::endl;
 		}

@@ -17,6 +17,7 @@
 #include <forward_list>
 #endif
 #include <list>
+#include <deque>
 #include <vector>
 #include <string>
 #include <iterator>
@@ -210,16 +211,15 @@ private:
 	void * const d;
 };									/*}}}*/
 // Iterator templates for our Containers				/*{{{*/
-template<typename Interface, typename Container, typename Master, typename iterator_type, typename container_iterator> class Container_iterator_base :
+template<typename Interface, typename Master, typename iterator_type, typename container_iterator, typename container_value> class Container_iterator_base :
    public std::iterator<typename std::iterator_traits<container_iterator>::iterator_category, container_iterator>,
    public Interface::iterator_base
 {
 protected:
 	container_iterator _iter;
-	inline virtual typename Container::value_type getType(void) const APT_OVERRIDE { return *_iter; }
 public:
 	explicit Container_iterator_base(container_iterator i) : _iter(i) {}
-	inline typename Container::value_type operator*(void) const { return *_iter; }
+	inline container_value operator*(void) const { return this->getType(); }
 	operator container_iterator(void) const { return _iter; }
 	inline iterator_type& operator++() { ++_iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
@@ -241,48 +241,56 @@ public:
 	friend Master;
 };
 template<class Interface, class Container, class Master> class Container_const_iterator :
-   public Container_iterator_base<Interface, Container, Master, Container_const_iterator<Interface, Container, Master>, typename Container::const_iterator>
+   public Container_iterator_base<Interface, Master, Container_const_iterator<Interface, Container, Master>, typename Container::const_iterator, typename Container::value_type>
 {
 	typedef Container_const_iterator<Interface, Container, Master> iterator_type;
 	typedef typename Container::const_iterator container_iterator;
 public:
 	explicit Container_const_iterator(container_iterator i) :
-	   Container_iterator_base<Interface, Container, Master, iterator_type, container_iterator>(i) {}
+	   Container_iterator_base<Interface, Master, iterator_type, container_iterator, typename Container::value_type>(i) {}
+
+	inline virtual typename Container::value_type getType(void) const APT_OVERRIDE { return *this->_iter; }
 };
 template<class Interface, class Container, class Master> class Container_iterator :
-   public Container_iterator_base<Interface, Container, Master, Container_iterator<Interface, Container, Master>, typename Container::iterator>
+   public Container_iterator_base<Interface, Master, Container_iterator<Interface, Container, Master>, typename Container::iterator, typename Container::value_type>
 {
 	typedef Container_iterator<Interface, Container, Master> iterator_type;
 	typedef typename Container::iterator container_iterator;
 public:
 	explicit Container_iterator(container_iterator i) :
-	   Container_iterator_base<Interface, Container, Master, iterator_type, container_iterator>(i) {}
+	   Container_iterator_base<Interface, Master, iterator_type, container_iterator, typename Container::value_type>(i) {}
 
 	operator typename Master::const_iterator() { return typename Master::const_iterator(this->_iter); }
 	inline iterator_type& operator=(iterator_type const &i) { this->_iter = i._iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type& operator=(container_iterator const &i) { this->_iter = i; return static_cast<iterator_type&>(*this); }
+
+	inline virtual typename Container::value_type getType(void) const APT_OVERRIDE { return *this->_iter; }
 };
 template<class Interface, class Container, class Master> class Container_const_reverse_iterator :
-   public Container_iterator_base<Interface, Container, Master, Container_const_reverse_iterator<Interface, Container, Master>, typename Container::const_reverse_iterator>
+   public Container_iterator_base<Interface, Master, Container_const_reverse_iterator<Interface, Container, Master>, typename Container::const_reverse_iterator, typename Container::value_type>
 {
 	typedef Container_const_reverse_iterator<Interface, Container, Master> iterator_type;
 	typedef typename Container::const_reverse_iterator container_iterator;
 public:
 	explicit Container_const_reverse_iterator(container_iterator i) :
-	   Container_iterator_base<Interface, Container, Master, iterator_type, container_iterator>(i) {}
+	   Container_iterator_base<Interface, Master, iterator_type, container_iterator, typename Container::value_type>(i) {}
+
+	inline virtual typename Container::value_type getType(void) const APT_OVERRIDE { return *this->_iter; }
 };
 template<class Interface, class Container, class Master> class Container_reverse_iterator :
-   public Container_iterator_base<Interface, Container, Master, Container_reverse_iterator<Interface, Container, Master>, typename Container::reverse_iterator>
+   public Container_iterator_base<Interface, Master, Container_reverse_iterator<Interface, Container, Master>, typename Container::reverse_iterator, typename Container::value_type>
 {
 	typedef Container_reverse_iterator<Interface, Container, Master> iterator_type;
 	typedef typename Container::reverse_iterator container_iterator;
 public:
 	explicit Container_reverse_iterator(container_iterator i) :
-	   Container_iterator_base<Interface, Container, Master, iterator_type, container_iterator>(i) {}
+	   Container_iterator_base<Interface, Master, iterator_type, container_iterator, typename Container::value_type>(i) {}
 
 	operator typename Master::const_iterator() { return typename Master::const_iterator(this->_iter); }
 	inline iterator_type& operator=(iterator_type const &i) { this->_iter = i._iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type& operator=(container_iterator const &i) { this->_iter = i; return static_cast<iterator_type&>(*this); }
+
+	inline virtual typename Container::value_type getType(void) const APT_OVERRIDE { return *this->_iter; }
 };
 									/*}}}*/
 class PackageContainerInterface {					/*{{{*/
@@ -583,6 +591,10 @@ template<> template<class Cont> void PackageContainer<std::forward_list<pkgCache
 		_cont.push_front(*p);
 }
 #endif
+template<> template<class Cont> void PackageContainer<std::deque<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
+	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
+		_cont.push_back(*p);
+}
 template<> template<class Cont> void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
 	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
 		_cont.push_back(*p);
@@ -603,6 +615,12 @@ template<> inline bool PackageContainer<std::forward_list<pkgCache::PkgIterator>
 	return true;
 }
 #endif
+template<> inline bool PackageContainer<std::deque<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
+	if (P.end() == true)
+		return false;
+	_cont.push_back(P);
+	return true;
+}
 template<> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
 	if (P.end() == true)
 		return false;
@@ -619,6 +637,10 @@ template<> inline void PackageContainer<std::forward_list<pkgCache::PkgIterator>
 		_cont.push_front(*p);
 }
 #endif
+template<> inline void PackageContainer<std::deque<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator p = begin; p != end; ++p)
+		_cont.push_back(*p);
+}
 template<> inline void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
@@ -647,6 +669,10 @@ template<> template<class Compare> inline bool PackageContainer<std::forward_lis
 	return true;
 }
 #endif
+template<> template<class Compare> inline bool PackageContainer<std::deque<pkgCache::PkgIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
 									/*}}}*/
 
 // class PackageUniverse - pkgCache as PackageContainerInterface	/*{{{*/
@@ -657,22 +683,35 @@ template<> template<class Compare> inline bool PackageContainer<std::forward_lis
 
     The wrapping is read-only in practice modeled by making erase and co
     private methods. */
-class APT_HIDDEN PackageUniverse : public PackageContainerInterface {
+class APT_PUBLIC PackageUniverse : public PackageContainerInterface {
 	pkgCache * const _cont;
 	void * const d;
 public:
-	typedef pkgCache::PkgIterator iterator;
-	typedef pkgCache::PkgIterator const_iterator;
+	class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, PackageUniverse, PackageUniverse::const_iterator, pkgCache::PkgIterator, pkgCache::PkgIterator>
+	{
+	protected:
+	   inline virtual pkgCache::PkgIterator getType(void) const APT_OVERRIDE
+	   {
+	      return _iter;
+	   }
+	public:
+	   explicit const_iterator(pkgCache::PkgIterator i):
+	      Container_iterator_base<APT::PackageContainerInterface, PackageUniverse, PackageUniverse::const_iterator, pkgCache::PkgIterator, pkgCache::PkgIterator>(i) {}
+
+	};
+	typedef const_iterator iterator;
 
 	APT_PUBLIC bool empty() const APT_OVERRIDE { return false; }
 	APT_PUBLIC size_t size() const APT_OVERRIDE { return _cont->Head().PackageCount; }
 
-	APT_PUBLIC const_iterator begin() const { return _cont->PkgBegin(); }
-	APT_PUBLIC const_iterator end() const { return  _cont->PkgEnd(); }
-	APT_PUBLIC const_iterator cbegin() const { return _cont->PkgBegin(); }
-	APT_PUBLIC const_iterator cend() const { return  _cont->PkgEnd(); }
-	APT_PUBLIC iterator begin() { return _cont->PkgBegin(); }
-	APT_PUBLIC iterator end() { return _cont->PkgEnd(); }
+	APT_PUBLIC const_iterator begin() const { return const_iterator(_cont->PkgBegin()); }
+	APT_PUBLIC const_iterator end() const { return const_iterator(_cont->PkgEnd()); }
+	APT_PUBLIC const_iterator cbegin() const { return const_iterator(_cont->PkgBegin()); }
+	APT_PUBLIC const_iterator cend() const { return const_iterator(_cont->PkgEnd()); }
+	APT_PUBLIC iterator begin() { return iterator(_cont->PkgBegin()); }
+	APT_PUBLIC iterator end() { return iterator(_cont->PkgEnd()); }
+
+	APT_PUBLIC pkgCache * data() const { return _cont; }
 
 	explicit APT_PUBLIC PackageUniverse(pkgCache * const Owner);
 	APT_PUBLIC virtual ~PackageUniverse();
@@ -693,6 +732,7 @@ typedef PackageContainer<std::unordered_set<pkgCache::PkgIterator> > PackageUnor
 typedef PackageContainer<std::forward_list<pkgCache::PkgIterator> > PackageForwardList;
 #endif
 typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
+typedef PackageContainer<std::deque<pkgCache::PkgIterator> > PackageDeque;
 typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
 
 class VersionContainerInterface {					/*{{{*/
@@ -1059,6 +1099,10 @@ template<> template<class Cont> void VersionContainer<std::forward_list<pkgCache
 		_cont.push_front(*v);
 }
 #endif
+template<> template<class Cont> void VersionContainer<std::deque<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
+	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
+		_cont.push_back(*v);
+}
 template<> template<class Cont> void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
 	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
 		_cont.push_back(*v);
@@ -1079,6 +1123,12 @@ template<> inline bool VersionContainer<std::forward_list<pkgCache::VerIterator>
 	return true;
 }
 #endif
+template<> inline bool VersionContainer<std::deque<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
+	if (V.end() == true)
+		return false;
+	_cont.push_back(V);
+	return true;
+}
 template<> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
 	if (V.end() == true)
 		return false;
@@ -1095,6 +1145,10 @@ template<> inline void VersionContainer<std::forward_list<pkgCache::VerIterator>
 		_cont.push_front(*v);
 }
 #endif
+template<> inline void VersionContainer<std::deque<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator v = begin; v != end; ++v)
+		_cont.push_back(*v);
+}
 template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
@@ -1123,6 +1177,10 @@ template<> template<class Compare> inline bool VersionContainer<std::forward_lis
 	return true;
 }
 #endif
+template<> template<class Compare> inline bool VersionContainer<std::deque<pkgCache::VerIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
 									/*}}}*/
 
 typedef VersionContainer<std::set<pkgCache::VerIterator> > VersionSet;
@@ -1131,6 +1189,7 @@ typedef VersionContainer<std::unordered_set<pkgCache::VerIterator> > VersionUnor
 typedef VersionContainer<std::forward_list<pkgCache::VerIterator> > VersionForwardList;
 #endif
 typedef VersionContainer<std::list<pkgCache::VerIterator> > VersionList;
+typedef VersionContainer<std::deque<pkgCache::VerIterator> > VersionDeque;
 typedef VersionContainer<std::vector<pkgCache::VerIterator> > VersionVector;
 }
 #endif

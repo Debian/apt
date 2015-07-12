@@ -37,6 +37,15 @@ WARNING: The following packages cannot be authenticated!
 Install these packages without verification? [y/N] N
 E: Some packages could not be authenticated" aptget install cool --assume-no -d
 
+configarchitecture 'amd64' 'i386'
+testequal "$(echo "$PKGTEXT" | sed 's#cool$#cool:i386#g')
+WARNING: The following packages cannot be authenticated!
+  cool:i386
+Authentication warning overridden.
+$DOWNLOG
+Download complete and in download only mode" aptget install cool:i386 --assume-no -d --allow-unauthenticated
+configarchitecture 'i386'
+
 find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
 sed -i -e 's#\(deb\(-src\)\?\) \[trusted=no\] #\1 #' $DEBFILE
 aptgetupdate

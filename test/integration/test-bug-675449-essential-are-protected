@@ -87,3 +87,17 @@ Inst pkg-none-native [1] (2 unstable [amd64])
 Conf pkg-none-native (2 unstable [amd64])
 Inst pkg-none-new (2 unstable [amd64])
 Conf pkg-none-new (2 unstable [amd64])' aptget dist-upgrade -s
+
+insertinstalledpackage 'foo' 'amd64' '1' 'Depends: libfoo
+Essential: yes'
+insertinstalledpackage 'libfoo' 'amd64' '1'
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  foo* libfoo*
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  foo libfoo (due to foo)
+0 upgraded, 0 newly installed, 2 to remove and 4 not upgraded.
+Purg foo [1]
+Purg libfoo [1]' aptget purge libfoo -s
