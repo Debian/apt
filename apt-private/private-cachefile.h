@@ -72,13 +72,12 @@ public:
    class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>
    {
       pkgCache * const Cache;
-      protected:
-	 inline virtual pkgCache::PkgIterator getType(void) const APT_OVERRIDE
+      public:
+	 inline pkgCache::PkgIterator getType(void) const
 	 {
 	    if (*_iter == 0) return pkgCache::PkgIterator(*Cache);
 	    return pkgCache::PkgIterator(*Cache, Cache->PkgP + *_iter);
 	 }
-      public:
 	 explicit const_iterator(pkgCache * const Owner, std::vector<map_pointer_t>::const_iterator i):
 	    Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>(i), Cache(Owner) {}
 

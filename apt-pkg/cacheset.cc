@@ -935,7 +935,8 @@ PackageContainerInterface& PackageContainerInterface::operator=(PackageContainer
 }
 PackageContainerInterface::~PackageContainerInterface() {}
 
-PackageUniverse::PackageUniverse(pkgCache * const Owner) : _cont(Owner), d(NULL) { }
+PackageUniverse::PackageUniverse(pkgCache * const Owner) : _cont(Owner), d(NULL) {}
+PackageUniverse::PackageUniverse(pkgCacheFile * const Owner) : _cont(Owner->GetPkgCache()), d(NULL) {}
 PackageUniverse::~PackageUniverse() {}
 
 VersionContainerInterface::VersionContainerInterface() : d(NULL) {}

@@ -411,7 +411,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical group in the hash table. */
-void pkgCache::GrpIterator::operator ++(int)
+pkgCache::GrpIterator& pkgCache::GrpIterator::operator++()
 {
    // Follow the current links
    if (S != Owner->GrpP)
@@ -423,12 +423,13 @@ void pkgCache::GrpIterator::operator ++(int)
       HashIndex++;
       S = Owner->GrpP + Owner->HeaderP->GrpHashTableP()[HashIndex];
    }
+   return *this;
 }
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
-void pkgCache::PkgIterator::operator ++(int)
+pkgCache::PkgIterator& pkgCache::PkgIterator::operator ++()
 {
    // Follow the current links
    if (S != Owner->PkgP)
@@ -440,6 +441,7 @@ void pkgCache::PkgIterator::operator ++(int)
       HashIndex++;
       S = Owner->PkgP + Owner->HeaderP->PkgHashTableP()[HashIndex];
    }
+   return *this;
 }
 									/*}}}*/
 // PkgIterator::State - Check the State of the package			/*{{{*/
@@ -685,7 +687,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    for (bool LastOR = true; end() == false && LastOR == true;)
    {
       LastOR = (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-      (*this)++;
+      ++(*this);
       if (LastOR == true)
 	 End = (*this);
    }
