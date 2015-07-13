@@ -95,7 +95,7 @@ pkgDepCache::ActionGroup::~ActionGroup()
 // DepCache::pkgDepCache - Constructors					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDepCache::pkgDepCache(pkgCache *pCache,Policy *Plcy) :
+pkgDepCache::pkgDepCache(pkgCache * const pCache,Policy * const Plcy) :
   group_level(0), Cache(pCache), PkgState(0), DepState(0),
    iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
    iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(NULL)
@@ -121,7 +121,7 @@ pkgDepCache::~pkgDepCache()
 // DepCache::Init - Generate the initial extra structures.		/*{{{*/
 // ---------------------------------------------------------------------
 /* This allocats the extension buffers and initializes them. */
-bool pkgDepCache::Init(OpProgress *Prog)
+bool pkgDepCache::Init(OpProgress * const Prog)
 {
    // Suppress mark updates during this operation (just in case) and
    // run a mark operation when Init terminates.
@@ -132,7 +132,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
    PkgState = new StateCache[Head().PackageCount];
    DepState = new unsigned char[Head().DependsCount];
    memset(PkgState,0,sizeof(*PkgState)*Head().PackageCount);
-   memset(DepState,0,sizeof(*DepState)*Head().DependsCount); 
+   memset(DepState,0,sizeof(*DepState)*Head().DependsCount);
 
    if (Prog != 0)
    {
@@ -140,7 +140,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
 			    _("Building dependency tree"));
       Prog->SubProgress(Head().PackageCount,_("Candidate versions"));
    }
-   
+
    /* Set the current state of everything. In this state all of the
       packages are kept exactly as is. See AllUpgrade */
    int Done = 0;
@@ -148,7 +148,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
    {
       if (Prog != 0 && Done%20 == 0)
 	 Prog->Progress(Done);
-      
+
       // Find the proper cache slot
       StateCache &State = PkgState[I->ID];
       State.iFlags = 0;
@@ -157,28 +157,27 @@ bool pkgDepCache::Init(OpProgress *Prog)
       State.CandidateVer = GetCandidateVer(I);
       State.InstallVer = I.CurrentVer();
       State.Mode = ModeKeep;
-      
+
       State.Update(I,*this);
-   }   
-   
+   }
+
    if (Prog != 0)
    {
-      
       Prog->OverallProgress(Head().PackageCount,2*Head().PackageCount,
 			    Head().PackageCount,
 			    _("Building dependency tree"));
       Prog->SubProgress(Head().PackageCount,_("Dependency generation"));
    }
-   
+
    Update(Prog);
 
    if(Prog != 0)
       Prog->Done();
 
    return true;
-} 
+}
 									/*}}}*/
-bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
+bool pkgDepCache::readStateFile(OpProgress * const Prog)		/*{{{*/
 {
    FileFd state_file;
    string const state = _config->FindFile("Dir::State::extended_states");
@@ -186,7 +185,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
       state_file.Open(state, FileFd::ReadOnly);
       off_t const file_size = state_file.Size();
       if(Prog != NULL)
-	 Prog->OverallProgress(0, file_size, 1, 
+	 Prog->OverallProgress(0, file_size, 1,
 			       _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
@@ -230,7 +229,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{{*/
+bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const InstalledOnly)	/*{{{*/
 {
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
    
@@ -340,7 +339,7 @@ bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{
    then walks along the package provides list and checks if each provides 
    will be installed then checks the provides against the dep. Res will be 
    set to the package which was used to satisfy the dep. */
-bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
+bool pkgDepCache::CheckDep(DepIterator const &Dep,int const Type,PkgIterator &Res)
 {
    Res = Dep.TargetPkg();
 
@@ -351,22 +350,26 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    {
       PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package
-      if (Type == NowVersion && Pkg->CurrentVer != 0)
-	 if (Dep.IsSatisfied(Pkg.CurrentVer()) == true)
+      if (Type == NowVersion)
+      {
+	 if (Pkg->CurrentVer != 0 && Dep.IsSatisfied(Pkg.CurrentVer()) == true)
 	    return true;
-      
-      if (Type == InstallVersion && PkgState[Pkg->ID].InstallVer != 0)
-	 if (Dep.IsSatisfied(PkgState[Pkg->ID].InstVerIter(*this)) == true)
+      }
+      else if (Type == InstallVersion)
+      {
+	 if (PkgState[Pkg->ID].InstallVer != 0 &&
+	       Dep.IsSatisfied(PkgState[Pkg->ID].InstVerIter(*this)) == true)
 	    return true;
-      
-      if (Type == CandidateVersion && PkgState[Pkg->ID].CandidateVer != 0)
-	 if (Dep.IsSatisfied(PkgState[Pkg->ID].CandidateVerIter(*this)) == true)
+      }
+      else if (Type == CandidateVersion)
+	 if (PkgState[Pkg->ID].CandidateVer != 0 &&
+	       Dep.IsSatisfied(PkgState[Pkg->ID].CandidateVerIter(*this)) == true)
 	    return true;
    }
-   
+
    if (Dep->Type == Dep::Obsoletes)
       return false;
-   
+
    // Check the providing packages
    PrvIterator P = Dep.TargetPkg().ProvidesList();
    for (; P.end() != true; ++P)
@@ -380,21 +383,19 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 	 if (P.OwnerPkg().CurrentVer() != P.OwnerVer())
 	    continue;
       }
-      
-      if (Type == InstallVersion)
+      else if (Type == InstallVersion)
       {
 	 StateCache &State = PkgState[P.OwnerPkg()->ID];
 	 if (State.InstallVer != (Version *)P.OwnerVer())
 	    continue;
       }
-
-      if (Type == CandidateVersion)
+      else if (Type == CandidateVersion)
       {
 	 StateCache &State = PkgState[P.OwnerPkg()->ID];
 	 if (State.CandidateVer != (Version *)P.OwnerVer())
 	    continue;
       }
-      
+
       // Compare the versions.
       if (Dep.IsSatisfied(P) == true)
       {
@@ -402,7 +403,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 	 return true;
       }
    }
-   
+
    return false;
 }
 									/*}}}*/
@@ -484,47 +485,46 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg, bool const Invert)
 {
    signed char const Add = (Invert == false) ? 1 : -1;
    StateCache &State = PkgState[Pkg->ID];
-   
+
    // The Package is broken (either minimal dep or policy dep)
    if ((State.DepState & DepInstMin) != DepInstMin)
       iBrokenCount += Add;
    if ((State.DepState & DepInstPolicy) != DepInstPolicy)
       iPolicyBrokenCount += Add;
-   
+
    // Bad state
    if (Pkg.State() != PkgIterator::NeedsNothing)
       iBadCount += Add;
-   
+
    // Not installed
    if (Pkg->CurrentVer == 0)
    {
       if (State.Mode == ModeDelete &&
 	  (State.iFlags & Purge) == Purge && Pkg.Purge() == false)
 	 iDelCount += Add;
-      
+
       if (State.Mode == ModeInstall)
 	 iInstCount += Add;
       return;
    }
-   
+
    // Installed, no upgrade
    if (State.Status == 0)
-   {	 
+   {
       if (State.Mode == ModeDelete)
 	 iDelCount += Add;
       else
 	 if ((State.iFlags & ReInstall) == ReInstall)
 	    iInstCount += Add;
-      
       return;
    }
-   
+
    // Alll 3 are possible
    if (State.Mode == ModeDelete)
-      iDelCount += Add;   
-   if (State.Mode == ModeKeep)
+      iDelCount += Add;
+   else if (State.Mode == ModeKeep)
       iKeepCount += Add;
-   if (State.Mode == ModeInstall)
+   else if (State.Mode == ModeInstall)
       iInstCount += Add;
 }
 									/*}}}*/
@@ -535,7 +535,6 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg, bool const Invert)
 void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 {
    unsigned char Group = 0;
-   
    for (DepIterator D = V.DependsList(); D.end() != true; ++D)
    {
       // Build the dependency state.
@@ -545,18 +544,18 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
          right sense for a conflicts group */
       if (D.IsNegative() == true)
 	 State = ~State;
-      
+
       // Add to the group if we are within an or..
       State &= 0x7;
       Group |= State;
       State |= Group << 3;
       if ((D->CompareOp & Dep::Or) != Dep::Or)
 	 Group = 0;
-      
+
       // Invert for Conflicts
       if (D.IsNegative() == true)
 	 State = ~State;
-   }	 
+   }
 }
 									/*}}}*/
 // DepCache::VersionState - Perform a pass over a dependency list	/*{{{*/
@@ -565,34 +564,31 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
    state of the list, filtering it through both a Min check and a Policy
    check. The return result will have SetMin/SetPolicy low if a check
    fails. It uses the DepState cache for it's computations. */
-unsigned char pkgDepCache::VersionState(DepIterator D,unsigned char Check,
-				       unsigned char SetMin,
-				       unsigned char SetPolicy)
+unsigned char pkgDepCache::VersionState(DepIterator D, unsigned char const Check,
+				       unsigned char const SetMin,
+				       unsigned char const SetPolicy) const
 {
    unsigned char Dep = 0xFF;
-   
    while (D.end() != true)
    {
-      // Compute a single dependency element (glob or)
-      DepIterator Start = D;
-      unsigned char State = 0;
-      for (bool LastOR = true; D.end() == false && LastOR == true; ++D)
-      {
-	 State |= DepState[D->ID];
-	 LastOR = (D->CompareOp & Dep::Or) == Dep::Or;
-      }
-	
+      // the last or-dependency has the state of all previous or'ed
+      DepIterator Start, End;
+      D.GlobOr(Start, End);
+      // ignore if we are called with Dep{Install,…} or DepG{Install,…}
+      // the later would be more correct, but the first is what we get
+      unsigned char const State = DepState[End->ID] | (DepState[End->ID] >> 3);
+
       // Minimum deps that must be satisfied to have a working package
       if (Start.IsCritical() == true)
+      {
 	 if ((State & Check) != Check)
-	    Dep &= ~SetMin;
-      
+	    return Dep &= ~(SetMin | SetPolicy);
+      }
       // Policy deps that must be satisfied to install the package
-      if (IsImportantDep(Start) == true && 
+      else if (IsImportantDep(Start) == true &&
 	  (State & Check) != Check)
 	 Dep &= ~SetPolicy;
    }
-
    return Dep;
 }
 									/*}}}*/
@@ -601,17 +597,17 @@ unsigned char pkgDepCache::VersionState(DepIterator D,unsigned char Check,
 /* This is the main dependency computation bit. It computes the 3 main
    results for a dependencys, Now, Install and Candidate. Callers must
    invert the result if dealing with conflicts. */
-unsigned char pkgDepCache::DependencyState(DepIterator &D)
+unsigned char pkgDepCache::DependencyState(DepIterator const &D)
 {
    unsigned char State = 0;
-   
+
    if (CheckDep(D,NowVersion) == true)
       State |= DepNow;
    if (CheckDep(D,InstallVersion) == true)
       State |= DepInstall;
    if (CheckDep(D,CandidateVersion) == true)
       State |= DepCVer;
-   
+
    return State;
 }
 									/*}}}*/
@@ -620,7 +616,7 @@ unsigned char pkgDepCache::DependencyState(DepIterator &D)
 /* This determines the combined dependency representation of a package
    for its two states now and install. This is done by using the pre-generated
    dependency information. */
-void pkgDepCache::UpdateVerState(PkgIterator Pkg)
+void pkgDepCache::UpdateVerState(PkgIterator const &Pkg)
 {   
    // Empty deps are always true
    StateCache &State = PkgState[Pkg->ID];
@@ -654,7 +650,7 @@ void pkgDepCache::UpdateVerState(PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* This will figure out the state of all the packages and all the 
    dependencies based on the current policy. */
-void pkgDepCache::Update(OpProgress *Prog)
+void pkgDepCache::Update(OpProgress * const Prog)
 {   
    iUsrSize = 0;
    iDownloadSize = 0;
@@ -1655,10 +1651,10 @@ const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
       return 0;
 
    // Strip any epoch
-   for (const char *I = Ver; *I != 0; I++)
-      if (*I == ':')
-	 return I + 1;
-   return Ver;
+   char const * const I = strchr(Ver, ':');
+   if (I == nullptr)
+      return Ver;
+   return I + 1;
 }
 									/*}}}*/
 // Policy::GetCandidateVer - Returns the Candidate install version	/*{{{*/
@@ -1701,17 +1697,17 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
 // Policy::IsImportantDep - True if the dependency is important		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
+bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep) const
 {
    if(Dep.IsCritical())
       return true;
-   else if(Dep->Type == pkgCache::Dep::Recommends) 
+   else if(Dep->Type == pkgCache::Dep::Recommends)
    {
       if (InstallRecommends)
 	 return true;
       // we suport a special mode to only install-recommends for certain
       // sections
-      // FIXME: this is a meant as a temporarly solution until the 
+      // FIXME: this is a meant as a temporarly solution until the
       //        recommends are cleaned up
       const char *sec = Dep.ParentVer().Section();
       if (sec && ConfigValueInSubTree("APT::Install-Recommends-Sections", sec))
@@ -1757,24 +1753,22 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    if (_config->Find("APT::Solver", "internal") != "internal")
       return true;
 
-   bool follow_recommends;
-   bool follow_suggests;
-   bool debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
+   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
 
    // init the states
-   for(PkgIterator p = PkgBegin(); !p.end(); ++p)
+   map_id_t const PackagesCount = Head().PackageCount;
+   for(map_id_t i = 0; i < PackagesCount; ++i)
    {
-      PkgState[p->ID].Marked  = false;
-      PkgState[p->ID].Garbage = false;
-
-      // debug output
-      if(debug_autoremove && PkgState[p->ID].Flags & Flag::Auto)
-  	 std::clog << "AutoDep: " << p.FullName() << std::endl;
+      PkgState[i].Marked  = false;
+      PkgState[i].Garbage = false;
    }
+   if (debug_autoremove)
+      for(PkgIterator p = PkgBegin(); !p.end(); ++p)
+	 if(PkgState[p->ID].Flags & Flag::Auto)
+	    std::clog << "AutoDep: " << p.FullName() << std::endl;
 
-   // init vars
-   follow_recommends = MarkFollowsRecommends();
-   follow_suggests   = MarkFollowsSuggests();
+   bool const follow_recommends = MarkFollowsRecommends();
+   bool const follow_suggests   = MarkFollowsSuggests();
 
    // do the mark part, this is the core bit of the algorithm
    for(PkgIterator p = PkgBegin(); !p.end(); ++p)

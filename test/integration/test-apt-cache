@@ -56,21 +56,21 @@ testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive uns
 
 testsuccessequal 'foo
   Depends: bar
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>
  |Recommends: <cool>
-  Recommends: <cooler>
-  Conflicts: <foobar>
-  Conflicts: <foobar:i386>' aptcache depends foo
+  Recommends: <cooler>' aptcache depends foo
 testsuccessequal 'foo
   Depends: bar
-  Recommends: <cool>
   Conflicts: <foobar>
-  Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowOnlyFirstOr=1
+  Conflicts: <foobar:i386>
+  Recommends: <cool>' aptcache depends foo -o APT::Cache::ShowOnlyFirstOr=1
 testsuccessequal 'foo
   Depends: bar
+  Conflicts: <foobar>
+  Conflicts: <foobar:i386>
  |Recommends: <cool> (>= 2)
-  Recommends: <cooler> (<< 5)
-  Conflicts: <foobar>
-  Conflicts: <foobar:i386>' aptcache depends foo -o APT::Cache::ShowVersion=1
+  Recommends: <cooler> (<< 5)' aptcache depends foo -o APT::Cache::ShowVersion=1
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
@@ -82,20 +82,20 @@ testsuccessequal 'foo
   Conflicts: <foobar:i386>' aptcache depends foo --important --no-depends --conflicts
 testsuccessequal 'foo
   Depends: bar
- |Recommends: <cool>
-  Recommends: <cooler>
   Conflicts: <foobar>
   Conflicts: <foobar:i386>
+ |Recommends: <cool>
+  Recommends: <cooler>
 bar
   Depends: bar
   Breaks: foo
   Breaks: <foo:i386>
   Replaces: foo
   Replaces: <foo:i386>
-<cool>
-<cooler>
 <foobar>
 <foobar:i386>
+<cool>
+<cooler>
 <foo:i386>' aptcache depends foo --recurse
 testsuccessequal 'foo
   Depends: bar

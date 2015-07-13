@@ -697,29 +697,34 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ---------------------------------------------------------------------
 /* Deps like self-conflicts should be ignored as well as implicit conflicts
    on virtual packages. */
-bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &/*Pkg*/) const
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &PT) const
 {
    if (IsNegative() == false)
       return false;
 
-   pkgCache::PkgIterator PP = ParentPkg();
-   pkgCache::PkgIterator PT = TargetPkg();
+   pkgCache::PkgIterator const PP = ParentPkg();
    if (PP->Group != PT->Group)
       return false;
    // self-conflict
    if (PP == PT)
       return true;
-   pkgCache::VerIterator PV = ParentVer();
+   pkgCache::VerIterator const PV = ParentVer();
    // ignore group-conflict on a M-A:same package - but not our implicit dependencies
    // so that we can have M-A:same packages conflicting with their own real name
    if ((PV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
    {
       // Replaces: ${self}:other ( << ${binary:Version})
-      if (S->Type == pkgCache::Dep::Replaces && S->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
-	 return false;
+      if (S->Type == pkgCache::Dep::Replaces)
+      {
+	 if (S->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
+	    return false;
+      }
       // Breaks: ${self}:other (!= ${binary:Version})
-      if (S->Type == pkgCache::Dep::DpkgBreaks && S->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
-	 return false;
+      else if (S->Type == pkgCache::Dep::DpkgBreaks)
+      {
+	 if (S->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
+	    return false;
+      }
       return true;
    }
 

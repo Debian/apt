@@ -209,23 +209,22 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 Ver->Priority = pkgCache::State::Extra;
    }
 
-   if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
-      return false;
    if (ParseDepends(Ver,"Pre-Depends",pkgCache::Dep::PreDepends) == false)
       return false;
-   if (ParseDepends(Ver,"Suggests",pkgCache::Dep::Suggests) == false)
-      return false;
-   if (ParseDepends(Ver,"Recommends",pkgCache::Dep::Recommends) == false)
+   if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
       return false;
    if (ParseDepends(Ver,"Conflicts",pkgCache::Dep::Conflicts) == false)
       return false;
    if (ParseDepends(Ver,"Breaks",pkgCache::Dep::DpkgBreaks) == false)
       return false;
+   if (ParseDepends(Ver,"Recommends",pkgCache::Dep::Recommends) == false)
+      return false;
+   if (ParseDepends(Ver,"Suggests",pkgCache::Dep::Suggests) == false)
+      return false;
    if (ParseDepends(Ver,"Replaces",pkgCache::Dep::Replaces) == false)
       return false;
    if (ParseDepends(Ver,"Enhances",pkgCache::Dep::Enhances) == false)
       return false;
-
    // Obsolete.
    if (ParseDepends(Ver,"Optional",pkgCache::Dep::Suggests) == false)
       return false;

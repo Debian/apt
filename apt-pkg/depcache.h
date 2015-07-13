@@ -267,7 +267,7 @@ class pkgDepCache : protected pkgCache::Namespace
    
    // Helper functions
    void BuildGroupOrs(VerIterator const &V);
-   void UpdateVerState(PkgIterator Pkg);
+   void UpdateVerState(PkgIterator const &Pkg);
 
    // User Policy control
    class Policy
@@ -279,7 +279,7 @@ class pkgDepCache : protected pkgCache::Namespace
       }
 
       virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
-      virtual bool IsImportantDep(DepIterator const &Dep);
+      virtual bool IsImportantDep(DepIterator const &Dep) const;
       virtual signed short GetPriority(PkgIterator const &Pkg);
       virtual signed short GetPriority(PkgFileIterator const &File);
 
@@ -323,18 +323,18 @@ class pkgDepCache : protected pkgCache::Namespace
    Policy *LocalPolicy;
    
    // Check for a matching provides
-   bool CheckDep(DepIterator Dep,int Type,PkgIterator &Res);
-   inline bool CheckDep(DepIterator Dep,int Type)
+   bool CheckDep(DepIterator const &Dep,int const Type,PkgIterator &Res);
+   inline bool CheckDep(DepIterator const &Dep,int const Type)
    {
       PkgIterator Res(*this,0);
       return CheckDep(Dep,Type,Res);
    }
    
    // Computes state information for deps and versions (w/o storing)
-   unsigned char DependencyState(DepIterator &D);
-   unsigned char VersionState(DepIterator D,unsigned char Check,
-			      unsigned char SetMin,
-			      unsigned char SetPolicy);
+   unsigned char DependencyState(DepIterator const &D);
+   unsigned char VersionState(DepIterator D,unsigned char const Check,
+			      unsigned char const SetMin,
+			      unsigned char const SetPolicy) const;
 
    // Recalculates various portions of the cache, call after changing something
    void Update(DepIterator Dep);           // Mostly internal
@@ -362,7 +362,7 @@ class pkgDepCache : protected pkgCache::Namespace
    
    // Policy implementation
    inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
-   inline bool IsImportantDep(DepIterator Dep) {return LocalPolicy->IsImportantDep(Dep);};
+   inline bool IsImportantDep(DepIterator Dep) const {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};
    
    // Accessors
@@ -471,8 +471,8 @@ class pkgDepCache : protected pkgCache::Namespace
 			    unsigned long Depth = 0, bool FromUser = true);
 
    // read persistent states
-   bool readStateFile(OpProgress *prog);
-   bool writeStateFile(OpProgress *prog, bool InstalledOnly=true);
+   bool readStateFile(OpProgress * const prog);
+   bool writeStateFile(OpProgress * const prog, bool const InstalledOnly=true);
    
    // Size queries
    inline signed long long UsrSize() {return iUsrSize;};
@@ -484,11 +484,11 @@ class pkgDepCache : protected pkgCache::Namespace
    inline unsigned long PolicyBrokenCount() {return iPolicyBrokenCount;};
    inline unsigned long BadCount() {return iBadCount;};
 
-   bool Init(OpProgress *Prog);
+   bool Init(OpProgress * const Prog);
    // Generate all state information
-   void Update(OpProgress *Prog = 0);
+   void Update(OpProgress * const Prog = 0);
 
-   pkgDepCache(pkgCache *Cache,Policy *Plcy = 0);
+   pkgDepCache(pkgCache * const Cache,Policy * const Plcy = 0);
    virtual ~pkgDepCache();
 
    protected:
