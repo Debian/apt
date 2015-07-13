@@ -66,6 +66,7 @@ pkgCache::Header::Header()
    VersionSz = sizeof(pkgCache::Version);
    DescriptionSz = sizeof(pkgCache::Description);
    DependencySz = sizeof(pkgCache::Dependency);
+   DependencyDataSz = sizeof(pkgCache::DependencyData);
    ProvidesSz = sizeof(pkgCache::Provides);
    VerFileSz = sizeof(pkgCache::VerFile);
    DescFileSz = sizeof(pkgCache::DescFile);
@@ -75,6 +76,7 @@ pkgCache::Header::Header()
    VersionCount = 0;
    DescriptionCount = 0;
    DependsCount = 0;
+   DependsDataCount = 0;
    ReleaseFileCount = 0;
    PackageFileCount = 0;
    VerFileCount = 0;
@@ -110,6 +112,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
        VersionSz == Against.VersionSz &&
        DescriptionSz == Against.DescriptionSz &&
        DependencySz == Against.DependencySz &&
+       DependencyDataSz == Against.DependencyDataSz &&
        VerFileSz == Against.VerFileSz &&
        DescFileSz == Against.DescFileSz &&
        ProvidesSz == Against.ProvidesSz)
@@ -150,6 +153,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();
+   DepDataP = (DependencyData *)Map.Data();
    StrP = (char *)Map.Data();
 
    if (Errorchecks == false)
@@ -408,7 +412,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
 }
 									/*}}}*/
-// GrpIterator::operator ++ - Postfix incr				/*{{{*/
+// GrpIterator::operator++ - Prefix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical group in the hash table. */
 pkgCache::GrpIterator& pkgCache::GrpIterator::operator++()
@@ -420,16 +424,16 @@ pkgCache::GrpIterator& pkgCache::GrpIterator::operator++()
    // Follow the hash table
    while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
-      HashIndex++;
+      ++HashIndex;
       S = Owner->GrpP + Owner->HeaderP->GrpHashTableP()[HashIndex];
    }
    return *this;
 }
 									/*}}}*/
-// PkgIterator::operator ++ - Postfix incr				/*{{{*/
+// PkgIterator::operator++ - Prefix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
-pkgCache::PkgIterator& pkgCache::PkgIterator::operator ++()
+pkgCache::PkgIterator& pkgCache::PkgIterator::operator++()
 {
    // Follow the current links
    if (S != Owner->PkgP)
@@ -438,9 +442,21 @@ pkgCache::PkgIterator& pkgCache::PkgIterator::operator ++()
    // Follow the hash table
    while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
-      HashIndex++;
+      ++HashIndex;
       S = Owner->PkgP + Owner->HeaderP->PkgHashTableP()[HashIndex];
    }
+   return *this;
+}
+									/*}}}*/
+pkgCache::DepIterator& pkgCache::DepIterator::operator++()		/*{{{*/
+{
+   if (S == Owner->DepP)
+      return *this;
+   S = Owner->DepP + (Type == DepVer ? S->NextDepends : S->NextRevDepends);
+   if (S == Owner->DepP)
+      S2 = Owner->DepDataP;
+   else
+      S2 = Owner->DepDataP + S->DependencyData;
    return *this;
 }
 									/*}}}*/
@@ -543,8 +559,8 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
 bool pkgCache::DepIterator::IsCritical() const
 {
    if (IsNegative() == true ||
-       S->Type == pkgCache::Dep::Depends ||
-       S->Type == pkgCache::Dep::PreDepends)
+       S2->Type == pkgCache::Dep::Depends ||
+       S2->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
 }
@@ -555,9 +571,9 @@ bool pkgCache::DepIterator::IsCritical() const
    are negative like Conflicts which can and should be handled differently */
 bool pkgCache::DepIterator::IsNegative() const
 {
-   return S->Type == Dep::DpkgBreaks ||
-	  S->Type == Dep::Conflicts ||
-	  S->Type == Dep::Obsoletes;
+   return S2->Type == Dep::DpkgBreaks ||
+	  S2->Type == Dep::Conflicts ||
+	  S2->Type == Dep::Obsoletes;
 }
 									/*}}}*/
 // DepIterator::SmartTargetPkg - Resolve dep target pointers w/provides	/*{{{*/
@@ -686,7 +702,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    End = *this;
    for (bool LastOR = true; end() == false && LastOR == true;)
    {
-      LastOR = (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      LastOR = (S2->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
       ++(*this);
       if (LastOR == true)
 	 End = (*this);
@@ -714,15 +730,15 @@ bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &PT) const
    if ((PV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
    {
       // Replaces: ${self}:other ( << ${binary:Version})
-      if (S->Type == pkgCache::Dep::Replaces)
+      if (S2->Type == pkgCache::Dep::Replaces)
       {
-	 if (S->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
+	 if (S2->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
 	    return false;
       }
       // Breaks: ${self}:other (!= ${binary:Version})
-      else if (S->Type == pkgCache::Dep::DpkgBreaks)
+      else if (S2->Type == pkgCache::Dep::DpkgBreaks)
       {
-	 if (S->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
+	 if (S2->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
 	    return false;
       }
       return true;
@@ -755,9 +771,9 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
 bool pkgCache::DepIterator::IsMultiArchImplicit() const
 {
    if (ParentPkg()->Arch != TargetPkg()->Arch &&
-       (S->Type == pkgCache::Dep::Replaces ||
-	S->Type == pkgCache::Dep::DpkgBreaks ||
-	S->Type == pkgCache::Dep::Conflicts))
+       (S2->Type == pkgCache::Dep::Replaces ||
+	S2->Type == pkgCache::Dep::DpkgBreaks ||
+	S2->Type == pkgCache::Dep::Conflicts))
       return true;
    return false;
 }
@@ -765,11 +781,11 @@ bool pkgCache::DepIterator::IsMultiArchImplicit() const
 // DepIterator::IsSatisfied - check if a version satisfied the dependency /*{{{*/
 bool pkgCache::DepIterator::IsSatisfied(VerIterator const &Ver) const
 {
-   return Owner->VS->CheckDep(Ver.VerStr(),S->CompareOp,TargetVer());
+   return Owner->VS->CheckDep(Ver.VerStr(),S2->CompareOp,TargetVer());
 }
 bool pkgCache::DepIterator::IsSatisfied(PrvIterator const &Prv) const
 {
-   return Owner->VS->CheckDep(Prv.ProvideVersion(),S->CompareOp,TargetVer());
+   return Owner->VS->CheckDep(Prv.ProvideVersion(),S2->CompareOp,TargetVer());
 }
 									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/

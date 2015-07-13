@@ -364,14 +364,14 @@ static bool Stats(CommandLine &)
    cout << _("  Single virtual packages: ") << DVirt << endl;
    cout << _("  Mixed virtual packages: ") << NVirt << endl;
    cout << _("  Missing: ") << Missing << endl;
-   
+
    cout << _("Total distinct versions: ") << Cache->Head().VersionCount << " (" <<
       SizeToStr(Cache->Head().VersionCount*Cache->Head().VersionSz) << ')' << endl;
    cout << _("Total distinct descriptions: ") << Cache->Head().DescriptionCount << " (" <<
       SizeToStr(Cache->Head().DescriptionCount*Cache->Head().DescriptionSz) << ')' << endl;
-   cout << _("Total dependencies: ") << Cache->Head().DependsCount << " (" << 
-      SizeToStr(Cache->Head().DependsCount*Cache->Head().DependencySz) << ')' << endl;
-   
+   cout << _("Total dependencies: ") << Cache->Head().DependsCount << "/" << Cache->Head().DependsDataCount << " (" <<
+      SizeToStr((Cache->Head().DependsCount*Cache->Head().DependencySz) +
+	    (Cache->Head().DependsDataCount*Cache->Head().DependencyDataSz)) << ')' << endl;
    cout << _("Total ver/file relations: ") << Cache->Head().VerFileCount << " (" <<
       SizeToStr(Cache->Head().VerFileCount*Cache->Head().VerFileSz) << ')' << endl;
    cout << _("Total Desc/File relations: ") << Cache->Head().DescFileCount << " (" <<
@@ -450,6 +450,7 @@ static bool Stats(CommandLine &)
       APT_CACHESIZE(VersionCount, VersionSz) +
       APT_CACHESIZE(DescriptionCount, DescriptionSz) +
       APT_CACHESIZE(DependsCount, DependencySz) +
+      APT_CACHESIZE(DependsDataCount, DependencyDataSz) +
       APT_CACHESIZE(ReleaseFileCount, ReleaseFileSz) +
       APT_CACHESIZE(PackageFileCount, PackageFileSz) +
       APT_CACHESIZE(VerFileCount, VerFileSz) +

@@ -348,22 +348,21 @@ bool pkgDepCache::CheckDep(DepIterator const &Dep,int const Type,PkgIterator &Re
       bug. Conflicts may never self match */
    if (Dep.IsIgnorable(Res) == false)
    {
-      PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package
       if (Type == NowVersion)
       {
-	 if (Pkg->CurrentVer != 0 && Dep.IsSatisfied(Pkg.CurrentVer()) == true)
+	 if (Res->CurrentVer != 0 && Dep.IsSatisfied(Res.CurrentVer()) == true)
 	    return true;
       }
       else if (Type == InstallVersion)
       {
-	 if (PkgState[Pkg->ID].InstallVer != 0 &&
-	       Dep.IsSatisfied(PkgState[Pkg->ID].InstVerIter(*this)) == true)
+	 if (PkgState[Res->ID].InstallVer != 0 &&
+	       Dep.IsSatisfied(PkgState[Res->ID].InstVerIter(*this)) == true)
 	    return true;
       }
       else if (Type == CandidateVersion)
-	 if (PkgState[Pkg->ID].CandidateVer != 0 &&
-	       Dep.IsSatisfied(PkgState[Pkg->ID].CandidateVerIter(*this)) == true)
+	 if (PkgState[Res->ID].CandidateVer != 0 &&
+	       Dep.IsSatisfied(PkgState[Res->ID].CandidateVerIter(*this)) == true)
 	    return true;
    }
 

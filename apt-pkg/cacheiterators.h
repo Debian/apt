@@ -275,6 +275,7 @@ class pkgCache::DescIterator : public Iterator<Description, DescIterator> {
 // Dependency iterator							/*{{{*/
 class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	enum {DepVer, DepRev} Type;
+	DependencyData * S2;
 
 	public:
 	inline Dependency* OwnerPointer() const {
@@ -282,13 +283,12 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	}
 
 	// Iteration
-	inline DepIterator& operator++() {if (S != Owner->DepP) S = Owner->DepP +
-		(Type == DepVer ? S->NextDepends : S->NextRevDepends); return *this;}
+	DepIterator& operator++();
 	inline DepIterator operator++(int) { DepIterator const tmp(*this); operator++(); return tmp; }
 
 	// Accessors
-	inline const char *TargetVer() const {return S->Version == 0?0:Owner->StrP + S->Version;}
-	inline PkgIterator TargetPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->Package);}
+	inline const char *TargetVer() const {return S2->Version == 0?0:Owner->StrP + S2->Version;}
+	inline PkgIterator TargetPkg() const {return PkgIterator(*Owner,Owner->PkgP + S2->Package);}
 	inline PkgIterator SmartTargetPkg() const {PkgIterator R(*Owner,0);SmartTargetPkg(R);return R;}
 	inline VerIterator ParentVer() const {return VerIterator(*Owner,Owner->VerP + S->ParentVer);}
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);}
@@ -303,23 +303,48 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
-	inline const char *CompType() const {return Owner->CompType(S->CompareOp);}
-	inline const char *DepType() const {return Owner->DepType(S->Type);}
+	inline const char *CompType() const {return Owner->CompType(S2->CompareOp);}
+	inline const char *DepType() const {return Owner->DepType(S2->Type);}
+
+	// overrides because we are special
+	struct DependencyProxy
+	{
+	   map_stringitem_t &Version;
+	   map_pointer_t &Package;
+	   should_be_map_id_t &ID;
+	   unsigned char &Type;
+	   unsigned char &CompareOp;
+	   map_pointer_t &ParentVer;
+	   map_pointer_t &DependencyData;
+	   map_pointer_t &NextRevDepends;
+	   map_pointer_t &NextDepends;
+	   DependencyProxy const * operator->() const { return this; }
+	   DependencyProxy * operator->() { return this; }
+	};
+	inline DependencyProxy operator->() const {return { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends };}
+	inline DependencyProxy operator->() {return { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends };}
+	void ReMap(void const * const oldMap, void const * const newMap)
+	{
+		Iterator<Dependency, DepIterator>::ReMap(oldMap, newMap);
+		if (Owner == 0 || S == 0 || S2 == 0)
+			return;
+		S2 += (DependencyData const * const)(newMap) - (DependencyData const * const)(oldMap);
+	}
 
 	//Nice printable representation
 	friend std::ostream& operator <<(std::ostream& out, DepIterator D);
 
 	inline DepIterator(pkgCache &Owner, Dependency *Trg, Version* = 0) :
-		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepVer) {
+		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepVer), S2(Trg == 0 ? Owner.DepDataP : (Owner.DepDataP + Trg->DependencyData)) {
 		if (S == 0)
 			S = Owner.DepP;
 	}
 	inline DepIterator(pkgCache &Owner, Dependency *Trg, Package*) :
-		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepRev) {
+		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepRev), S2(Trg == 0 ? Owner.DepDataP : (Owner.DepDataP + Trg->DependencyData)) {
 		if (S == 0)
 			S = Owner.DepP;
 	}
-	inline DepIterator() : Iterator<Dependency, DepIterator>(), Type(DepVer) {}
+	inline DepIterator() : Iterator<Dependency, DepIterator>(), Type(DepVer), S2(0) {}
 };
 									/*}}}*/
 // Provides iterator							/*{{{*/

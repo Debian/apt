@@ -139,6 +139,7 @@ class pkgCache								/*{{{*/
    struct Description;
    struct Provides;
    struct Dependency;
+   struct DependencyData;
    struct StringItem;
    struct VerFile;
    struct DescFile;
@@ -226,6 +227,7 @@ class pkgCache								/*{{{*/
    Description *DescP;
    Provides *ProvideP;
    Dependency *DepP;
+   DependencyData *DepDataP;
    APT_DEPRECATED StringItem *StringItemP;
    char *StrP;
 
@@ -310,6 +312,7 @@ struct pkgCache::Header
    unsigned short VersionSz;
    unsigned short DescriptionSz;
    unsigned short DependencySz;
+   unsigned short DependencyDataSz;
    unsigned short ProvidesSz;
    unsigned short VerFileSz;
    unsigned short DescFileSz;
@@ -324,6 +327,7 @@ struct pkgCache::Header
    map_id_t VersionCount;
    map_id_t DescriptionCount;
    map_id_t DependsCount;
+   map_id_t DependsDataCount;
    map_fileid_t ReleaseFileCount;
    map_fileid_t PackageFileCount;
    map_fileid_t VerFileCount;
@@ -711,7 +715,7 @@ struct pkgCache::Description
     The base of the linked list is pkgCache::Version::DependsList.
     All forms of dependencies are recorded here including Depends,
     Recommends, Suggests, Enhances, Conflicts, Replaces and Breaks. */
-struct pkgCache::Dependency
+struct pkgCache::DependencyData
 {
    /** \brief string of the version the dependency is applied against */
    map_stringitem_t Version;
@@ -720,21 +724,26 @@ struct pkgCache::Dependency
        The generator will - if the package does not already exist -
        create a blank (no version records) package. */
    map_pointer_t Package;         // Package
-   /** \brief next dependency of this version */
-   map_pointer_t NextDepends;     // Dependency
-   /** \brief next reverse dependency of this package */
-   map_pointer_t NextRevDepends;  // Dependency
-   /** \brief version of the package which has the reverse depends */
-   map_pointer_t ParentVer;       // Version
 
-   /** \brief unique sequel ID */
-   should_be_map_id_t ID;
    /** \brief Dependency type - Depends, Recommends, Conflicts, etc */
    unsigned char Type;
    /** \brief comparison operator specified on the depends line
 
        If the high bit is set then it is a logical OR with the previous record. */
    unsigned char CompareOp;
+};
+struct pkgCache::Dependency
+{
+   map_pointer_t DependencyData;  // DependencyData
+   /** \brief version of the package which has the depends */
+   map_pointer_t ParentVer;       // Version
+   /** \brief next reverse dependency of this package */
+   map_pointer_t NextRevDepends;  // Dependency
+   /** \brief next dependency of this version */
+   map_pointer_t NextDepends;     // Dependency
+
+   /** \brief unique sequel ID */
+   should_be_map_id_t ID;
 };
 									/*}}}*/
 // Provides structure							/*{{{*/
