@@ -742,7 +742,7 @@ static bool DoSource(CommandLine &CmdL)
 
    // Load the requestd sources into the fetcher
    unsigned J = 0;
-   std::string UntrustedList;
+   std::vector<std::string> UntrustedList;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
@@ -756,8 +756,8 @@ static bool DoSource(CommandLine &CmdL)
       }
 
       if (Last->Index().IsTrusted() == false)
-         UntrustedList += Src + " ";
-      
+         UntrustedList.push_back(Src);
+
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
       while (pos != string::npos)
@@ -884,7 +884,7 @@ static bool DoSource(CommandLine &CmdL)
    CheckDropPrivsMustBeDisabled(Fetcher);
 
    // check authentication status of the source as well
-   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+   if (UntrustedList.empty() == false && AuthPrompt(UntrustedList, false) == false)
       return false;
 
    // Run it

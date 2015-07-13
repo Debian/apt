@@ -1,0 +1,158 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+# simple case
+insertinstalledpackage 'aaa' 'all' '1'
+insertinstalledpackage 'ddd' 'all' '1'
+insertpackage 'unstable' 'aaa' 'all' '1'
+insertpackage 'unstable' 'ddd' 'all' '1'
+insertpackage 'unstable' 'yyy' 'all' '1'
+insertpackage 'unstable' 'zzz' 'all' '1'
+insertpackage 'unstable' 'simple' 'all' '1' 'Recommends: aaa, bbb
+Suggests: ccc, ddd'
+insertpackage 'unstable' 'orgroup' 'all' '1' 'Recommends: aaa | bbb
+Suggests: ccc | ddd'
+insertpackage 'unstable' 'orgroup2' 'all' '1' 'Recommends: xxx | yyy
+Suggests: yyy | zzz'
+insertpackage 'unstable' 'orgroup3' 'all' '1' 'Recommends: xxx | yyy
+Suggests: yyy | zzz'
+insertpackage 'unstable' 'orgroup4' 'all' '1' 'Recommends: xxx
+Suggests: zzz'
+insertpackage 'unstable' 'versionedor' 'all' '1' 'Recommends: aaa (>> 2) | bbb
+Suggests: ccc | ddd (>> 2)'
+
+setupaptarchive
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  ccc
+Recommended packages:
+  bbb
+The following NEW packages will be installed:
+  simple
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst simple (1 unstable [all])
+Conf simple (1 unstable [all])' aptget install simple -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  ccc
+Recommended packages:
+  aaa bbb
+The following packages will be REMOVED:
+  aaa
+The following NEW packages will be installed:
+  simple
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv aaa [1]
+Inst simple (1 unstable [all])
+Conf simple (1 unstable [all])' aptget install simple aaa- -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  orgroup
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup (1 unstable [all])
+Conf orgroup (1 unstable [all])' aptget install orgroup -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Recommended packages:
+  aaa | bbb
+The following packages will be REMOVED:
+  aaa
+The following NEW packages will be installed:
+  orgroup
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv aaa [1]
+Inst orgroup (1 unstable [all])
+Conf orgroup (1 unstable [all])' aptget install orgroup aaa- -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  yyy | zzz
+Recommended packages:
+  xxx | yyy
+The following NEW packages will be installed:
+  orgroup2
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup2 (1 unstable [all])
+Conf orgroup2 (1 unstable [all])' aptget install orgroup2 -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  yyy | zzz
+Recommended packages:
+  xxx | yyy
+The following NEW packages will be installed:
+  orgroup2 orgroup3
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup2 (1 unstable [all])
+Inst orgroup3 (1 unstable [all])
+Conf orgroup2 (1 unstable [all])
+Conf orgroup3 (1 unstable [all])' aptget install orgroup2 orgroup3 -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  yyy | zzz zzz
+Recommended packages:
+  xxx | yyy xxx
+The following NEW packages will be installed:
+  orgroup2 orgroup4
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup2 (1 unstable [all])
+Inst orgroup4 (1 unstable [all])
+Conf orgroup2 (1 unstable [all])
+Conf orgroup4 (1 unstable [all])' aptget install orgroup2 orgroup4 -s --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+   yyy (1)
+   | zzz (1)
+   zzz (1)
+Recommended packages:
+   xxx
+   | yyy (1)
+   xxx
+The following NEW packages will be installed:
+   orgroup2 (1)
+   orgroup4 (1)
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup2 (1 unstable [all])
+Inst orgroup4 (1 unstable [all])
+Conf orgroup2 (1 unstable [all])
+Conf orgroup4 (1 unstable [all])' aptget install orgroup2 orgroup4 -s -V --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+   zzz (1)
+Recommended packages:
+   xxx
+The following NEW packages will be installed:
+   orgroup2 (1)
+   orgroup4 (1)
+   yyy (1)
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup2 (1 unstable [all])
+Inst orgroup4 (1 unstable [all])
+Inst yyy (1 unstable [all])
+Conf orgroup2 (1 unstable [all])
+Conf orgroup4 (1 unstable [all])
+Conf yyy (1 unstable [all])' aptget install orgroup2 orgroup4 yyy -s -V --no-install-recommends
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  ccc | ddd
+Recommended packages:
+  aaa | bbb
+The following NEW packages will be installed:
+  versionedor
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst versionedor (1 unstable [all])
+Conf versionedor (1 unstable [all])' aptget install versionedor -s --no-install-recommends

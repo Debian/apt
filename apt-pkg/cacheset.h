@@ -1068,7 +1068,7 @@ APT_IGNORE_DEPRECATED_POP
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
 					       CacheSetHelper::VerSelector const selector) {
 		CacheSetHelper helper;
-		return FromPackage(Cache, D, selector, helper);
+		return FromDependency(Cache, D, selector, helper);
 	}
 APT_IGNORE_DEPRECATED_PUSH
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
@@ -1080,11 +1080,11 @@ APT_IGNORE_DEPRECATED_PUSH
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
 					       Version const &selector) {
 		CacheSetHelper helper;
-		return FromPackage(Cache, D, (CacheSetHelper::VerSelector)selector, helper);
+		return FromDependency(Cache, D, (CacheSetHelper::VerSelector)selector, helper);
 	}
 APT_IGNORE_DEPRECATED_POP
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D) {
-		return FromPackage(Cache, D, CacheSetHelper::CANDIDATE);
+		return FromDependency(Cache, D, CacheSetHelper::CANDIDATE);
 	}
 									/*}}}*/
 };									/*}}}*/

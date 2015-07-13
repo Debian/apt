@@ -35,10 +35,13 @@
 #include <apti18n.h>
 									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
-				SrcList(NULL), Policy(NULL)
+pkgCacheFile::pkgCacheFile() : d(NULL), ExternOwner(false), Map(NULL), Cache(NULL),
+				DCache(NULL), SrcList(NULL), Policy(NULL)
+{
+}
+pkgCacheFile::pkgCacheFile(pkgDepCache * const Owner) : d(NULL), ExternOwner(true),
+   Map(&Owner->GetCache().GetMap()), Cache(&Owner->GetCache()),
+   DCache(Owner), SrcList(NULL), Policy(NULL)
 {
 }
 									/*}}}*/
@@ -47,12 +50,16 @@ pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
 /* */
 pkgCacheFile::~pkgCacheFile()
 {
-   delete DCache;
+   if (ExternOwner == false)
+   {
+      delete DCache;
+      delete Cache;
+      delete Map;
+   }
    delete Policy;
    delete SrcList;
-   delete Cache;
-   delete Map;
-   _system->UnLock(true);
+   if (ExternOwner == false)
+      _system->UnLock(true);
 }
 									/*}}}*/
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
@@ -229,11 +236,16 @@ void pkgCacheFile::RemoveCaches()
 /* */
 void pkgCacheFile::Close()
 {
-   delete DCache;
+   if (ExternOwner == false)
+   {
+      delete DCache;
+      delete Cache;
+      delete Map;
+   }
+   else
+      ExternOwner = false;
    delete Policy;
-   delete Cache;
    delete SrcList;
-   delete Map;
    _system->UnLock(true);
 
    Map = NULL;

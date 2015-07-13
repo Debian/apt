@@ -61,7 +61,7 @@ class APT_PUBLIC CacheFile : public pkgCacheFile
 };
 									/*}}}*/
 
-class APT_PUBLIC SortedPackageUniverse : public APT::PackageUniverse
+class SortedPackageUniverse : public APT::PackageUniverse
 {
    std::vector<map_pointer_t> &List;
    void LazyInit() const;
@@ -85,12 +85,12 @@ public:
    };
    typedef const_iterator iterator;
 
-   APT_PUBLIC const_iterator begin() const { LazyInit(); return const_iterator(data(), List.begin()); }
-   APT_PUBLIC const_iterator end() const { LazyInit(); return const_iterator(data(), List.end()); }
-   APT_PUBLIC const_iterator cbegin() const { LazyInit(); return const_iterator(data(), List.begin()); }
-   APT_PUBLIC const_iterator cend() const { LazyInit(); return const_iterator(data(), List.end()); }
-   APT_PUBLIC iterator begin() { LazyInit(); return iterator(data(), List.begin()); }
-   APT_PUBLIC iterator end() { LazyInit(); return iterator(data(), List.end()); }
+   const_iterator begin() const { LazyInit(); return const_iterator(data(), List.begin()); }
+   const_iterator end() const { LazyInit(); return const_iterator(data(), List.end()); }
+   const_iterator cbegin() const { LazyInit(); return const_iterator(data(), List.begin()); }
+   const_iterator cend() const { LazyInit(); return const_iterator(data(), List.end()); }
+   iterator begin() { LazyInit(); return iterator(data(), List.begin()); }
+   iterator end() { LazyInit(); return iterator(data(), List.end()); }
 };
 
 #endif

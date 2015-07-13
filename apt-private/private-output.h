@@ -34,11 +34,11 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
 APT_PUBLIC void ShowBroken(std::ostream &out, CacheFile &Cache, bool const Now);
 APT_PUBLIC void ShowBroken(std::ostream &out, pkgCacheFile &Cache, bool const Now);
 
-template<class Container> APT_PUBLIC bool ShowList(std::ostream &out, std::string const &Title,
+template<class Container, class PredicateC, class DisplayP, class DisplayV> APT_PUBLIC bool ShowList(std::ostream &out, std::string const &Title,
       Container const &cont,
-      std::function<bool(pkgCache::PkgIterator const &)> Predicate,
-      std::function<std::string(pkgCache::PkgIterator const &)> PkgDisplay,
-      std::function<std::string(pkgCache::PkgIterator const &)> VerboseDisplay)
+      PredicateC Predicate,
+      DisplayP PkgDisplay,
+      DisplayV VerboseDisplay)
 {
    size_t const ScreenWidth = (::ScreenWidth > 3) ? ::ScreenWidth - 3 : 0;
    int ScreenUsed = 0;
@@ -88,8 +88,6 @@ template<class Container> APT_PUBLIC bool ShowList(std::ostream &out, std::strin
    }
    return true;
 }
-APT_DEPRECATED APT_PUBLIC bool ShowList(std::ostream &out, std::string Title, std::string List,
-              std::string VersionsList);
 
 void ShowNew(std::ostream &out,CacheFile &Cache);
 void ShowDel(std::ostream &out,CacheFile &Cache);
@@ -106,12 +104,12 @@ void Stats(std::ostream &out, pkgDepCache &Dep);
 bool YnPrompt(bool Default=true);
 bool AnalPrompt(const char *Text);
 
-APT_PUBLIC std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
-APT_PUBLIC std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
-APT_PUBLIC std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache);
-APT_PUBLIC std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
-APT_PUBLIC std::function<std::string(pkgCache::PkgIterator const &)> CurrentToCandidateVersion(pkgCacheFile * const Cache);
-APT_PUBLIC std::string EmptyString(pkgCache::PkgIterator const &);
-APT_PUBLIC bool AlwaysTrue(pkgCache::PkgIterator const &);
+std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
+std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
+std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache);
+std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
+std::function<std::string(pkgCache::PkgIterator const &)> CurrentToCandidateVersion(pkgCacheFile * const Cache);
+std::string EmptyString(pkgCache::PkgIterator const &);
+bool AlwaysTrue(pkgCache::PkgIterator const &);
 
 #endif

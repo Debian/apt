@@ -38,9 +38,9 @@ class pkgCacheFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
+   bool ExternOwner;
 
    protected:
-   
    MMap *Map;
    pkgCache *Cache;
    pkgDepCache *DCache;
@@ -50,18 +50,18 @@ class pkgCacheFile
    pkgPolicy *Policy;
 
    // We look pretty much exactly like a pointer to a dep cache
-   inline operator pkgCache &() {return *Cache;};
-   inline operator pkgCache *() {return Cache;};
-   inline operator pkgDepCache &() {return *DCache;};
-   inline operator pkgDepCache *() {return DCache;};
-   inline operator pkgPolicy &() {return *Policy;};
-   inline operator pkgPolicy *() {return Policy;};
-   inline operator pkgSourceList &() {return *SrcList;};
-   inline operator pkgSourceList *() {return SrcList;};
-   inline pkgDepCache *operator ->() {return DCache;};
-   inline pkgDepCache &operator *() {return *DCache;};
-   inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) {return (*DCache)[I];};
-   inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*DCache)[I];};
+   inline operator pkgCache &() const {return *Cache;};
+   inline operator pkgCache *() const {return Cache;};
+   inline operator pkgDepCache &() const {return *DCache;};
+   inline operator pkgDepCache *() const {return DCache;};
+   inline operator pkgPolicy &() const {return *Policy;};
+   inline operator pkgPolicy *() const {return Policy;};
+   inline operator pkgSourceList &() const {return *SrcList;};
+   inline operator pkgSourceList *() const {return SrcList;};
+   inline pkgDepCache *operator ->() const {return DCache;};
+   inline pkgDepCache &operator *() const {return *DCache;};
+   inline pkgDepCache::StateCache &operator [](pkgCache::PkgIterator const &I) const {return (*DCache)[I];};
+   inline unsigned char &operator [](pkgCache::DepIterator const &I) const {return (*DCache)[I];};
 
    bool BuildCaches(OpProgress *Progress = NULL,bool WithLock = true);
    APT_DEPRECATED bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
@@ -85,6 +85,7 @@ class pkgCacheFile
    inline bool IsSrcListBuilt() const { return (SrcList != NULL); };
 
    pkgCacheFile();
+   explicit pkgCacheFile(pkgDepCache * const Owner);
    virtual ~pkgCacheFile();
 };
 

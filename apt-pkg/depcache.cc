@@ -23,6 +23,7 @@
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/macros.h>
 
 #include <stdio.h>
@@ -1189,18 +1190,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
          fixing the problem for "positive" dependencies */
       if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
-	 APT::VersionList verlist;
-	 pkgCache::VerIterator Cand = PkgState[Start.TargetPkg()->ID].CandidateVerIter(*this);
-	 if (Cand.end() == false && Start.IsSatisfied(Cand) == true)
-	    verlist.insert(Cand);
-	 for (PrvIterator Prv = Start.TargetPkg().ProvidesList(); Prv.end() != true; ++Prv)
-	 {
-	    pkgCache::VerIterator V = Prv.OwnerVer();
-	    pkgCache::VerIterator Cand = PkgState[Prv.OwnerPkg()->ID].CandidateVerIter(*this);
-	    if (Cand.end() == true || V != Cand || Start.IsSatisfied(Prv) == false)
-	       continue;
-	    verlist.insert(Cand);
-	 }
+	 pkgCacheFile CacheFile(this);
+	 APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
 	 CompareProviders comp(Start);
 
 	 do {
