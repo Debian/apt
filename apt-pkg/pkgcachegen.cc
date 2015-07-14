@@ -952,33 +952,30 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 
    bool isDuplicate = false;
    map_pointer_t DependencyData = 0;
-   map_pointer_t * PkgRevDepends = &Pkg->RevDepends;
-   map_pointer_t previous_id = 0;
-
-   while (*PkgRevDepends != 0)
+   map_pointer_t PreviousData = 0;
+   if (Pkg->RevDepends != 0)
    {
-      pkgCache::Dependency * const L = Cache.DepP + *PkgRevDepends;
-      PkgRevDepends = &L->NextRevDepends;
-      if (L->DependencyData == previous_id)
-	 break;
-      previous_id = L->DependencyData;
-      pkgCache::DependencyData const * const D = Cache.DepDataP + previous_id;
-      if (D->Type == Type && D->CompareOp == Op && D->Version == Version)
-      {
-	 DependencyData = previous_id;
-	 isDuplicate = true;
-	 break;
-      }
+      pkgCache::Dependency const * const L = Cache.DepP + Pkg->RevDepends;
+      DependencyData = L->DependencyData;
+      do {
+	 pkgCache::DependencyData const * const D = Cache.DepDataP + DependencyData;
+	 if (Version > D->Version)
+	    break;
+	 if (D->Version == Version && D->Type == Type && D->CompareOp == Op)
+	 {
+	    isDuplicate = true;
+	    break;
+	 }
+	 PreviousData = DependencyData;
+	 DependencyData = D->NextData;
+      } while (DependencyData != 0);
    }
 
    if (isDuplicate == false)
    {
-      void const * const oldMap2 = Map.Data();
       DependencyData = AllocateInMap(sizeof(pkgCache::DependencyData));
       if (unlikely(DependencyData == 0))
         return false;
-      if (oldMap2 != Map.Data())
-	 PkgRevDepends += (map_pointer_t const * const) Map.Data() - (map_pointer_t const * const) oldMap2;
    }
 
    pkgCache::Dependency * Link = Cache.DepP + Dependency;
@@ -987,7 +984,6 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
    Link->ID = Cache.HeaderP->DependsCount++;
 
    pkgCache::DepIterator Dep(Cache, Link);
-   Dynamic<pkgCache::DepIterator> DynDep(Dep);
    if (isDuplicate == false)
    {
       Dep->Type = Type;
@@ -995,30 +991,31 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       Dep->Version = Version;
       Dep->Package = Pkg.Index();
       ++Cache.HeaderP->DependsDataCount;
-      Link->NextRevDepends = Pkg->RevDepends;
-      Pkg->RevDepends = Dependency;
+      if (PreviousData != 0)
+      {
+	 pkgCache::DependencyData * const D = Cache.DepDataP + PreviousData;
+	 Dep->NextData = D->NextData;
+	 D->NextData = DependencyData;
+      }
+      else if (Pkg->RevDepends != 0)
+      {
+	 pkgCache::Dependency const * const D = Cache.DepP + Pkg->RevDepends;
+	 Dep->NextData = D->DependencyData;
+      }
+   }
+
+   if (isDuplicate == true || PreviousData != 0)
+   {
+      pkgCache::Dependency * const L = Cache.DepP + Pkg->RevDepends;
+      Link->NextRevDepends = L->NextRevDepends;
+      L->NextRevDepends = Dependency;
    }
    else
    {
-      // dependency data is already fine, we just set the reverse link
-      // and in such a way that the loop above can finish fast, so we keep
-      // non-duplicates at the front and for the duplicates we:
-      // a) move to the end of the list, b) insert before another own duplicate
-      // or c) find two duplicates behind each other.
-      map_pointer_t const own_id = Link->DependencyData;
-      while (*PkgRevDepends != 0)
-      {
-        pkgCache::Dependency * const L = Cache.DepP + *PkgRevDepends;
-        PkgRevDepends = &L->NextRevDepends;
-        if (L->DependencyData == own_id || L->DependencyData == previous_id)
-        {
-           Link->NextRevDepends = L->NextRevDepends;
-           break;
-        }
-        previous_id = L->DependencyData;
-      }
-      *PkgRevDepends = Dependency;
+      Link->NextRevDepends = Pkg->RevDepends;
+      Pkg->RevDepends = Dependency;
    }
+
 
    // Do we know where to link the Dependency to?
    if (OldDepLast == NULL)

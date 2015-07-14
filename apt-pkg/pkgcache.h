@@ -366,7 +366,7 @@ struct pkgCache::Header
        the same number of pools as there are structure types. The generator
        stores this information so future additions can make use of any unused pool
        blocks. */
-   DynamicMMap::Pool Pools[9];
+   DynamicMMap::Pool Pools[12];
 
    /** \brief hash tables providing rapid group/package name lookup
 
@@ -731,6 +731,8 @@ struct pkgCache::DependencyData
 
        If the high bit is set then it is a logical OR with the previous record. */
    unsigned char CompareOp;
+
+   map_pointer_t NextData;
 };
 struct pkgCache::Dependency
 {

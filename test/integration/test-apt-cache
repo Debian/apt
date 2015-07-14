@@ -113,12 +113,12 @@ Reverse Depends:
   bar' aptcache rdepends foo
 testsuccessequal 'foo
 Reverse Depends:
-  Replaces: bar
-  Breaks: bar' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1
+  Breaks: bar
+  Replaces: bar' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1
 testsuccessequal 'foo
 Reverse Depends:
-  Replaces: bar (<< 1)
-  Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1
+  Breaks: bar (<< 1)
+  Replaces: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1
 testsuccessequal 'foo
 Reverse Depends:
   Breaks: bar (<< 1)' aptcache rdepends foo -o APT::Cache::ShowDependencyType=1 -o APT::Cache::ShowVersion=1 --important --breaks
