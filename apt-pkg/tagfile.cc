@@ -305,21 +305,11 @@ APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
    : Section(0), d(new pkgTagSectionPrivate()), Stop(0)
 {
-#if APT_PKG_ABI < 413
-   TagCount = 0;
-   memset(&Indexes, 0, sizeof(Indexes));
-#endif
    memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
 }
 APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
-#if APT_PKG_ABI < 413
-bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
-{
-   return Scan(Start, MaxLength, true);
-}
-#endif
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
 {
    Section = Start;
@@ -345,11 +335,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       }
       d->Tags.reserve(0x100);
    }
-#if APT_PKG_ABI >= 413
    unsigned int TagCount = d->Tags.size();
-#else
-   APT_IGNORE_DEPRECATED(TagCount = d->Tags.size();)
-#endif
 
    if (Stop == 0)
       return false;
@@ -376,10 +362,6 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
 	    APT_IGNORE_DEPRECATED_PUSH
 	    AlphaIndexes[lastTagHash] = TagCount;
-#if APT_PKG_ABI < 413
-	    if (d->Tags.size() < sizeof(Indexes)/sizeof(Indexes[0]))
-	       Indexes[d->Tags.size()] = lastTagData.StartTag;
-#endif
 	    APT_IGNORE_DEPRECATED_POP
 	    d->Tags.push_back(lastTagData);
 	 }
@@ -423,16 +405,10 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    if (AlphaIndexes[lastTagHash] != 0)
 	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
 	    APT_IGNORE_DEPRECATED(AlphaIndexes[lastTagHash] = TagCount;)
-#if APT_PKG_ABI < 413
-	    APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = lastTagData.StartTag;)
-#endif
 	    d->Tags.push_back(lastTagData);
 	 }
 
 	 pkgTagSectionPrivate::TagData const td(Stop - Section);
-#if APT_PKG_ABI < 413
-	 APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = td.StartTag;)
-#endif
 	 d->Tags.push_back(td);
 	 TrimRecord(false,End);
 	 return true;
@@ -463,11 +439,7 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
-#if APT_PKG_ABI >= 413
 bool pkgTagSection::Exists(const char* const Tag) const
-#else
-bool pkgTagSection::Exists(const char* const Tag)
-#endif
 {
    unsigned int tmp;
    return Find(Tag, tmp);

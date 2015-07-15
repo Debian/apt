@@ -51,14 +51,7 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
 				pkgCache::VerIterator const &Ver)
 {
    fprintf(output, "Package: %s\n", Pkg.Name());
-#if APT_PKG_ABI >= 413
    fprintf(output, "Source: %s\n", Ver.SourcePkgName());
-#else
-   pkgRecords Recs(Cache);
-   pkgRecords::Parser &rec = Recs.Lookup(Ver.FileList());
-   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   fprintf(output, "Source: %s\n", srcpkg.c_str());
-#endif
    fprintf(output, "Architecture: %s\n", Ver.Arch());
    fprintf(output, "Version: %s\n", Ver.VerStr());
    if (Pkg.CurrentVer() == Ver)

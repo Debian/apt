@@ -37,14 +37,7 @@ class pkgTagSectionPrivate;
 class pkgTagSection
 {
    const char *Section;
-   // We have a limit of 256 tags per section with the old abi
-#if APT_PKG_ABI < 413
-   APT_DEPRECATED unsigned int Indexes[256];
-#endif
    unsigned int AlphaIndexes[0x100];
-#if APT_PKG_ABI < 413
-   APT_DEPRECATED unsigned int TagCount;
-#endif
 
    pkgTagSectionPrivate * const d;
 
@@ -84,12 +77,7 @@ class pkgTagSection
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!
     */
-#if APT_PKG_ABI >= 413
    APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
-#else
-   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart);
-   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength);
-#endif
 
    inline unsigned long size() const {return Stop - Section;};
    void Trim();
@@ -101,11 +89,7 @@ class pkgTagSection
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
-#if APT_PKG_ABI >= 413
    bool Exists(const char* const Tag) const;
-#else
-   bool Exists(const char* const Tag);
-#endif
 
    void Get(const char *&Start,const char *&Stop,unsigned int I) const;
 

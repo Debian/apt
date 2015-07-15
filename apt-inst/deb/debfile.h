@@ -82,19 +82,11 @@ class debDebFile::MemControlExtract : public pkgDirStream
    // Members from DirStream
    virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
    virtual bool Process(Item &Itm,const unsigned char *Data,
-#if APT_PKG_ABI >= 413
 			unsigned long long Size,unsigned long long Pos) APT_OVERRIDE;
-#else
-			unsigned long Size,unsigned long Pos);
-#endif
 
    // Helpers
    bool Read(debDebFile &Deb);
-#if APT_PKG_ABI >= 413
    bool TakeControl(const void *Data,unsigned long long Size);
-#else
-   bool TakeControl(const void *Data,unsigned long Size);
-#endif
 
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
    MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};

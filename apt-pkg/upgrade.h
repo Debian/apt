@@ -24,12 +24,7 @@ namespace APT {
          FORBID_INSTALL_NEW_PACKAGES = 2,
 	 ALLOW_EVERYTHING = 0
       };
-#if APT_PKG_ABI >= 413
       bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress = NULL);
-#else
-      bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
-      bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress);
-#endif
    }
 }
 

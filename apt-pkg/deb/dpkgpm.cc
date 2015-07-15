@@ -1846,16 +1846,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    time_t now = time(NULL);
    fprintf(report, "Date: %s" , ctime(&now));
    fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
-#if APT_PKG_ABI >= 413
    fprintf(report, "SourcePackage: %s\n", Ver.SourcePkgName());
-#else
-   pkgRecords Recs(Cache);
-   pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-   std::string srcpkgname = Parse.SourcePkg();
-   if(srcpkgname.empty())
-      srcpkgname = pkgname;
-   fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
-#endif
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
 
    // ensure that the log is flushed

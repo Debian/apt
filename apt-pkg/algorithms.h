@@ -138,20 +138,10 @@ class pkgProblemResolver						/*{{{*/
    inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
 
    // Try to intelligently resolve problems by installing and removing packages
-#if APT_PKG_ABI >= 413
    bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);
-#else
-   bool Resolve(bool BrokenFix = false);
-   bool Resolve(bool BrokenFix, OpProgress * const Progress);
-#endif
 
    // Try to resolve problems only by using keep
-#if APT_PKG_ABI >= 413
    bool ResolveByKeep(OpProgress * const Progress = NULL);
-#else
-   bool ResolveByKeep();
-   bool ResolveByKeep(OpProgress * const Progress);
-#endif
 
    APT_DEPRECATED void InstallProtect();
 

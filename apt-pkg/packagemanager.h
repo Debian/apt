@@ -95,9 +95,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
-#if APT_PKG_ABI >= 413
    virtual bool Go(APT::Progress::PackageManager * /*progress*/) {return true;};
-#endif
    virtual bool Go(int /*statusFd*/=-1) {return true;};
 
    virtual void Reset() {};
@@ -112,13 +110,9 @@ class pkgPackageManager : protected pkgCache::Namespace
 		    pkgRecords *Recs);
 
    // Do the installation
-#if APT_PKG_ABI >= 413
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
    APT_DEPRECATED OrderResult DoInstall(int statusFd=-1);
-#else
-   OrderResult DoInstall(int statusFd=-1);
-#endif
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt
@@ -126,14 +120,10 @@ class pkgPackageManager : protected pkgCache::Namespace
       Res = OrderInstall();
       return Res;
    };
-#if APT_PKG_ABI >= 413
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
    APT_DEPRECATED OrderResult DoInstallPostFork(int statusFd=-1);
-#else
-   OrderResult DoInstallPostFork(int statusFd=-1);
-#endif
 
    // ?
    bool FixMissing();

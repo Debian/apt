@@ -288,12 +288,6 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 }
 									/*}}}*/
 // APT::Upgrade::Upgrade - Upgrade using a specific strategy		/*{{{*/
-#if APT_PKG_ABI < 413
-bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode)
-{
-   return Upgrade(Cache, mode, NULL);
-}
-#endif
 bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Progress)
 {
 APT_IGNORE_DEPRECATED_PUSH

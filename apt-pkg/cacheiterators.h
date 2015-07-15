@@ -211,14 +211,12 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;}
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
-#if APT_PKG_ABI >= 413
 	/** \brief source package name this version comes from
 	   Always contains the name, even if it is the same as the binary name */
 	inline const char *SourcePkgName() const {return Owner->StrP + S->SourcePkgName;}
 	/** \brief source version this version comes from
 	   Always contains the version string, even if it is the same as the binary version */
 	inline const char *SourceVerStr() const {return Owner->StrP + S->SourceVerStr;}
-#endif
 	inline const char *Arch() const {
 		if ((S->MultiArch & pkgCache::Version::All) == pkgCache::Version::All)
 			return "all";
@@ -311,7 +309,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	{
 	   map_stringitem_t &Version;
 	   map_pointer_t &Package;
-	   should_be_map_id_t &ID;
+	   map_id_t &ID;
 	   unsigned char &Type;
 	   unsigned char &CompareOp;
 	   map_pointer_t &ParentVer;

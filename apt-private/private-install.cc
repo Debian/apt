@@ -94,14 +94,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgSimulate PM(Cache);
 
-#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
       delete progress;
-#else
-      int status_fd = _config->FindI("APT::Status-Fd",-1);
-      pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
-#endif
 
       if (Res == pkgPackageManager::Failed)
 	 return false;
@@ -307,14 +302,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 
       _system->UnLock();
 
-#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
       delete progress;
-#else
-      int status_fd = _config->FindI("APT::Status-Fd", -1);
-      pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
-#endif
 
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;

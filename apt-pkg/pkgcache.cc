@@ -87,9 +87,6 @@ pkgCache::Header::Header()
    
    FileList = 0;
    RlsFileList = 0;
-#if APT_PKG_ABI < 413
-   APT_IGNORE_DEPRECATED(StringList = 0;)
-#endif
    VerSysName = 0;
    Architecture = 0;
    SetArchitectures(0);

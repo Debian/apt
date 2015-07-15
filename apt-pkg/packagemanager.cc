@@ -1085,7 +1085,6 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - compat /*{{{*/
 // ---------------------------------------------------------------------
 									/*}}}*/
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
@@ -1107,22 +1106,10 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
    
    return Res;
 }
-#else
-pkgPackageManager::OrderResult
-pkgPackageManager::DoInstallPostFork(int statusFd)
-{
-   bool goResult = Go(statusFd);
-   if(goResult == false) 
-      return Failed;
-   
-   return Res;
-}
-#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* compat */
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(int statusFd)
 {
@@ -1132,21 +1119,11 @@ pkgPackageManager::DoInstall(int statusFd)
     delete progress;
     return res;
  }
-#else
-pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
-{
-   if(DoInstallPreFork() == Failed)
-      return Failed;
-
-   return DoInstallPostFork(statusFd);
-}
-#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {
@@ -1155,5 +1132,4 @@ pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
    
    return DoInstallPostFork(progress);
 }
-#endif
 									/*}}}*/	      

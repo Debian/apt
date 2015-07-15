@@ -392,10 +392,8 @@ static bool Stats(CommandLine &)
 	    stritems.insert(V->VerStr);
 	 if (V->Section != 0)
 	    stritems.insert(V->Section);
-#if APT_PKG_ABI >= 413
 	 stritems.insert(V->SourcePkgName);
 	 stritems.insert(V->SourceVerStr);
-#endif
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
@@ -430,10 +428,10 @@ static bool Stats(CommandLine &)
       stritems.insert(F->Component);
       stritems.insert(F->IndexType);
    }
+
    unsigned long Size = 0;
    for (std::set<map_stringitem_t>::const_iterator i = stritems.begin(); i != stritems.end(); ++i)
       Size += strlen(Cache->StrP + *i) + 1;
-
    cout << _("Total globbed strings: ") << stritems.size() << " (" << SizeToStr(Size) << ')' << endl;
    stritems.clear();
 
