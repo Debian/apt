@@ -56,6 +56,10 @@ class pkgTagSection
    signed int FindI(const char *Tag,signed long Default = 0) const;
    bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
+   bool FindFlag(const char * const Tag,uint8_t &Flags,
+		 uint8_t const Flag) const;
+   bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
+				const char* const Start, const char* const Stop);
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
    bool static FindFlag(unsigned long &Flags, unsigned long Flag,

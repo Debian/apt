@@ -97,6 +97,9 @@ typedef uint16_t map_fileid_t;
 typedef uint32_t map_pointer_t;
 // same as the previous, but documented to be to a string item
 typedef map_pointer_t map_stringitem_t;
+// we have only a small amount of flags for each item
+typedef uint8_t map_flags_t;
+typedef uint8_t map_number_t;
 
 class pkgVersioningSystem;
 class pkgCache								/*{{{*/
@@ -259,10 +262,10 @@ struct pkgCache::Header
        This must contain the hex value 0x98FE76DC which is designed to
        verify that the system loading the image has the same byte order
        and byte size as the system saving the image */
-   unsigned long Signature;
+   uint32_t Signature;
    /** These contain the version of the cache file */
-   short MajorVersion;
-   short MinorVersion;
+   map_number_t MajorVersion;
+   map_number_t MinorVersion;
    /** \brief indicates if the cache should be erased
 
        Dirty is true if the cache file was opened for reading, the client
@@ -277,18 +280,18 @@ struct pkgCache::Header
 
        If any of the size values do not exactly match what the client expects
        then the client should refuse the load the file. */
-   unsigned short HeaderSz;
-   unsigned short GroupSz;
-   unsigned short PackageSz;
-   unsigned short ReleaseFileSz;
-   unsigned short PackageFileSz;
-   unsigned short VersionSz;
-   unsigned short DescriptionSz;
-   unsigned short DependencySz;
-   unsigned short DependencyDataSz;
-   unsigned short ProvidesSz;
-   unsigned short VerFileSz;
-   unsigned short DescFileSz;
+   uint16_t HeaderSz;
+   map_number_t GroupSz;
+   map_number_t PackageSz;
+   map_number_t ReleaseFileSz;
+   map_number_t PackageFileSz;
+   map_number_t VersionSz;
+   map_number_t DescriptionSz;
+   map_number_t DependencySz;
+   map_number_t DependencyDataSz;
+   map_number_t ProvidesSz;
+   map_number_t VerFileSz;
+   map_number_t DescFileSz;
 
    /** \brief Structure counts
 
@@ -346,8 +349,8 @@ struct pkgCache::Header
        In the PkgHashTable is it possible that multiple packages have the same name -
        these packages are stored as a sequence in the list.
        The size of both tables is the same. */
-   unsigned int HashTableSize;
-   unsigned int GetHashTableSize() const { return HashTableSize; }
+   uint32_t HashTableSize;
+   uint32_t GetHashTableSize() const { return HashTableSize; }
    void SetHashTableSize(unsigned int const sz) { HashTableSize = sz; }
    map_pointer_t GetArchitectures() const { return Architectures; }
    void SetArchitectures(map_pointer_t const idx) { Architectures = idx; }
@@ -437,15 +440,15 @@ struct pkgCache::Package
 
    // Install/Remove/Purge etc
    /** \brief state that the user wishes the package to be in */
-   unsigned char SelectedState;     // What
+   map_number_t SelectedState;     // What
    /** \brief installation state of the package
 
        This should be "ok" but in case the installation failed
        it will be different.
    */
-   unsigned char InstState;         // Flags
+   map_number_t InstState;         // Flags
    /** \brief indicates if the package is installed */
-   unsigned char CurrentState;      // State
+   map_number_t CurrentState;      // State
 
    /** \brief unique sequel ID
 
@@ -455,7 +458,7 @@ struct pkgCache::Package
        this to track which packages have been emitted already. */
    map_id_t ID;
    /** \brief some useful indicators of the package's state */
-   unsigned long Flags;
+   map_flags_t Flags;
 };
 									/*}}}*/
 // Release File structure						/*{{{*/
@@ -489,7 +492,7 @@ struct pkgCache::ReleaseFile
    time_t mtime;
 
    /** @TODO document PackageFile::Flags */
-   unsigned long Flags;
+   map_flags_t Flags;
 
    // Linked list
    /** \brief Link to the next ReleaseFile in the Cache */
@@ -528,7 +531,7 @@ struct pkgCache::PackageFile
    time_t mtime;
 
    /** @TODO document PackageFile::Flags */
-   unsigned long Flags;
+   map_flags_t Flags;
 
    // Linked list
    /** \brief Link to the next PackageFile in the Cache */
@@ -599,7 +602,7 @@ struct pkgCache::Version
 
        Flags used are defined in pkgCache::Version::VerMultiArch
    */
-   unsigned char MultiArch;
+   map_number_t MultiArch;
 
    /** \brief references all the PackageFile's that this version came from
 
@@ -635,7 +638,7 @@ struct pkgCache::Version
    /** \brief unique sequel ID */
    map_id_t ID;
    /** \brief parsed priority value */
-   unsigned char Priority;
+   map_number_t Priority;
 };
 									/*}}}*/
 // Description structure						/*{{{*/
@@ -682,11 +685,11 @@ struct pkgCache::DependencyData
    map_pointer_t Package;         // Package
 
    /** \brief Dependency type - Depends, Recommends, Conflicts, etc */
-   unsigned char Type;
+   map_number_t Type;
    /** \brief comparison operator specified on the depends line
 
        If the high bit is set then it is a logical OR with the previous record. */
-   unsigned char CompareOp;
+   map_flags_t CompareOp;
 
    map_pointer_t NextData;
 };

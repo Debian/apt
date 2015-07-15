@@ -50,27 +50,29 @@ using std::string;
 /* Simply initialize the header */
 pkgCache::Header::Header()
 {
-   Signature = 0x98FE76DC;
-   
+#define APT_HEADER_SET(X,Y) X = Y; static_assert(std::numeric_limits<decltype(X)>::max() > Y, "Size violation detected in pkgCache::Header")
+   APT_HEADER_SET(Signature, 0x98FE76DC);
+
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 10;
-   MinorVersion = 0;
-   Dirty = false;
-   
-   HeaderSz = sizeof(pkgCache::Header);
-   GroupSz = sizeof(pkgCache::Group);
-   PackageSz = sizeof(pkgCache::Package);
-   ReleaseFileSz = sizeof(pkgCache::ReleaseFile);
-   PackageFileSz = sizeof(pkgCache::PackageFile);
-   VersionSz = sizeof(pkgCache::Version);
-   DescriptionSz = sizeof(pkgCache::Description);
-   DependencySz = sizeof(pkgCache::Dependency);
-   DependencyDataSz = sizeof(pkgCache::DependencyData);
-   ProvidesSz = sizeof(pkgCache::Provides);
-   VerFileSz = sizeof(pkgCache::VerFile);
-   DescFileSz = sizeof(pkgCache::DescFile);
-   
+   APT_HEADER_SET(MajorVersion, 10);
+   APT_HEADER_SET(MinorVersion, 0);
+   APT_HEADER_SET(Dirty, false);
+
+   APT_HEADER_SET(HeaderSz, sizeof(pkgCache::Header));
+   APT_HEADER_SET(GroupSz, sizeof(pkgCache::Group));
+   APT_HEADER_SET(PackageSz, sizeof(pkgCache::Package));
+   APT_HEADER_SET(ReleaseFileSz, sizeof(pkgCache::ReleaseFile));
+   APT_HEADER_SET(PackageFileSz, sizeof(pkgCache::PackageFile));
+   APT_HEADER_SET(VersionSz, sizeof(pkgCache::Version));
+   APT_HEADER_SET(DescriptionSz, sizeof(pkgCache::Description));
+   APT_HEADER_SET(DependencySz, sizeof(pkgCache::Dependency));
+   APT_HEADER_SET(DependencyDataSz, sizeof(pkgCache::DependencyData));
+   APT_HEADER_SET(ProvidesSz, sizeof(pkgCache::Provides));
+   APT_HEADER_SET(VerFileSz, sizeof(pkgCache::VerFile));
+   APT_HEADER_SET(DescFileSz, sizeof(pkgCache::DescFile));
+#undef APT_HEADER_SET
+
    GroupCount = 0;
    PackageCount = 0;
    VersionCount = 0;
@@ -84,7 +86,7 @@ pkgCache::Header::Header()
    ProvidesCount = 0;
    MaxVerFileSize = 0;
    MaxDescFileSize = 0;
-   
+
    FileList = 0;
    RlsFileList = 0;
    VerSysName = 0;

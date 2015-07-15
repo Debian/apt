@@ -579,6 +579,34 @@ bool pkgTagSection::FindB(const char *Tag, bool const &Default) const
 // TagSection::FindFlag - Locate a yes/no type flag			/*{{{*/
 // ---------------------------------------------------------------------
 /* The bits marked in Flag are masked on/off in Flags */
+bool pkgTagSection::FindFlag(const char * const Tag, uint8_t &Flags,
+			     uint8_t const Flag) const
+{
+   const char *Start;
+   const char *Stop;
+   if (Find(Tag,Start,Stop) == false)
+      return true;
+   return FindFlag(Flags, Flag, Start, Stop);
+}
+bool pkgTagSection::FindFlag(uint8_t &Flags, uint8_t const Flag,
+					char const* const Start, char const* const Stop)
+{
+   switch (StringToBool(string(Start, Stop)))
+   {
+      case 0:
+      Flags &= ~Flag;
+      return true;
+
+      case 1:
+      Flags |= Flag;
+      return true;
+
+      default:
+      _error->Warning("Unknown flag value: %s",string(Start,Stop).c_str());
+      return true;
+   }
+   return true;
+}
 bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
 			     unsigned long Flag) const
 {
