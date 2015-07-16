@@ -9,11 +9,17 @@ configarchitecture 'amd64' 'i386' 'armel'
 insertpackage 'unstable' 'cool-foo' 'amd64,i386' '1.0' 'Depends: foo'
 insertpackage 'unstable' 'cool-foo-x64' 'amd64' '1.0' 'Depends: foo:amd64'
 insertpackage 'unstable' 'cool-foo-x32' 'amd64' '1.0' 'Depends: foo:i386'
+insertpackage 'unstable' 'hates-foo' 'amd64,i386' '1.0' 'Conflicts: foo'
+insertpackage 'unstable' 'hates-foo-x64' 'amd64' '1.0' 'Conflicts: foo:amd64'
+insertpackage 'unstable' 'hates-foo-x32' 'amd64' '1.0' 'Conflicts: foo:i386'
 insertpackage 'unstable' 'foo' 'amd64,i386,armel' '1.0' 'Multi-Arch: foreign'
 
 insertpackage 'unstable' 'cool-bar' 'amd64,i386' '1.0' 'Depends: bar-provider'
 insertpackage 'unstable' 'cool-bar-x64' 'amd64' '1.0' 'Depends: bar-provider:amd64'
 insertpackage 'unstable' 'cool-bar-x32' 'amd64' '1.0' 'Depends: bar-provider:i386'
+insertpackage 'unstable' 'hates-bar' 'amd64,i386' '1.0' 'Conflicts: bar-provider'
+insertpackage 'unstable' 'hates-bar-x64' 'amd64' '1.0' 'Conflicts: bar-provider:amd64'
+insertpackage 'unstable' 'hates-bar-x32' 'amd64' '1.0' 'Conflicts: bar-provider:i386'
 insertpackage 'unstable' 'bar' 'amd64,i386,armel' '1.0' 'Provides: bar-provider
 Multi-Arch: foreign'
 
@@ -162,6 +168,33 @@ Inst cool-foo-x64 (1.0 unstable [amd64])
 Conf foo (1.0 unstable [amd64])
 Conf cool-foo-x64 (1.0 unstable [amd64])' aptget install cool-foo-x64 -s
 }
+
+hatersgonnahate() {
+	BADPREFIX='Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+'
+	testfailureequal "$BADPREFIX
+The following packages have unmet dependencies:
+ hates-foo : Conflicts: foo
+             Conflicts: foo:i386
+             Conflicts: foo:armel
+E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo -s
+	testfailureequal "$BADPREFIX
+The following packages have unmet dependencies:
+ hates-foo-x64 : Conflicts: foo
+E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo-x64 -s
+	testfailureequal "$BADPREFIX
+The following packages have unmet dependencies:
+ hates-foo-x32 : Conflicts: foo:i386
+E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo-x32 -s
+}
+hatersgonnahate 'foo'
+hatersgonnahate 'foo:i386'
 
 #FIXME: do not work in single-arch as i386 isn't known at cache generation time
 	testsuccessequal 'Reading package lists...

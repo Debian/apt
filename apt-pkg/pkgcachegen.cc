@@ -648,6 +648,16 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       return false;
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
 
+   // Set the name, arch and the ID
+   APT_IGNORE_DEPRECATED(Pkg->Name = Grp->Name;)
+   Pkg->Group = Grp.Index();
+   // all is mapped to the native architecture
+   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
+   if (unlikely(idxArch == 0))
+      return false;
+   Pkg->Arch = idxArch;
+   Pkg->ID = Cache.HeaderP->PackageCount++;
+
    // Insert the package into our package list
    if (Grp->FirstPackage == 0) // the group is new
    {
@@ -662,23 +672,36 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    }
    else // Group the Packages together
    {
+      // but first get implicit provides done
+      if (APT::Configuration::checkArchitecture(Pkg.Arch()) == true)
+      {
+	 pkgCache::PkgIterator const M = Grp.FindPreferredPkg(false); // native or any foreign pkg will do
+	 if (M.end() == false)
+	    for (pkgCache::PrvIterator Prv = M.ProvidesList(); Prv.end() == false; ++Prv)
+	    {
+	       if ((Prv->Flags & pkgCache::Flag::ArchSpecific) != 0)
+		  continue;
+	       pkgCache::VerIterator Ver = Prv.OwnerVer();
+	       if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed ||
+	           ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign &&
+			(Prv->Flags & pkgCache::Flag::MultiArchImplicit) == 0))
+		  if (NewProvides(Ver, Pkg, Prv->ProvideVersion, Prv->Flags) == false)
+		     return false;
+	    }
+
+	 for (pkgCache::PkgIterator P = Grp.PackageList(); P.end() == false;  P = Grp.NextPkg(P))
+	    for (pkgCache::VerIterator Ver = P.VersionList(); Ver.end() == false; ++Ver)
+	       if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+		  if (NewProvides(Ver, Pkg, Ver->VerStr, pkgCache::Flag::MultiArchImplicit) == false)
+		     return false;
+      }
+
       // this package is the new last package
       pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
       Pkg->NextPackage = LastPkg->NextPackage;
       LastPkg->NextPackage = Package;
    }
    Grp->LastPackage = Package;
-
-   // Set the name, arch and the ID
-   APT_IGNORE_DEPRECATED(Pkg->Name = Grp->Name;)
-   Pkg->Group = Grp.Index();
-   // all is mapped to the native architecture
-   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
-   if (unlikely(idxArch == 0))
-      return false;
-   Pkg->Arch = idxArch;
-   Pkg->ID = Cache.HeaderP->PackageCount++;
-
    return true;
 }
 									/*}}}*/
@@ -1079,44 +1102,82 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
 						const string &Version,
 						uint8_t const Flags)
 {
-   pkgCache &Cache = Owner->Cache;
+   pkgCache const &Cache = Owner->Cache;
 
    // We do not add self referencing provides
    if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
 	(PkgArch == "all" && strcmp((Cache.StrP + Cache.HeaderP->Architecture), Ver.ParentPkg().Arch()) == 0)))
       return true;
-   
-   // Get a structure
-   map_pointer_t const Provides = Owner->AllocateInMap(sizeof(pkgCache::Provides));
-   if (unlikely(Provides == 0))
-      return false;
-   Cache.HeaderP->ProvidesCount++;
-   
-   // Fill it in
-   pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
-   Dynamic<pkgCache::PrvIterator> DynPrv(Prv);
-   Prv->Version = Ver.Index();
-   Prv->Flags = Flags;
-   Prv->NextPkgProv = Ver->ProvidesList;
-   Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false) {
-      map_stringitem_t const idxProvideVersion = WriteString(Version);
-      Prv->ProvideVersion = idxProvideVersion;
-      if (unlikely(idxProvideVersion == 0))
-	 return false;
-   }
-   
+
    // Locate the target package
    pkgCache::PkgIterator Pkg;
    Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
    if (unlikely(Owner->NewPackage(Pkg,PkgName, PkgArch) == false))
       return false;
-   
+
+   map_stringitem_t idxProvideVersion = 0;
+   if (Version.empty() == false) {
+      idxProvideVersion = StoreString(VERSIONNUMBER, Version);
+      if (unlikely(idxProvideVersion == 0))
+	 return false;
+   }
+   return Owner->NewProvides(Ver, Pkg, idxProvideVersion, Flags);
+}
+bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
+				    pkgCache::PkgIterator &Pkg,
+				    map_pointer_t const ProvideVersion,
+				    uint8_t const Flags)
+{
+   // Get a structure
+   map_pointer_t const Provides = AllocateInMap(sizeof(pkgCache::Provides));
+   if (unlikely(Provides == 0))
+      return false;
+   ++Cache.HeaderP->ProvidesCount;
+
+   // Fill it in
+   pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
+   Prv->Version = Ver.Index();
+   Prv->ProvideVersion = ProvideVersion;
+   Prv->Flags = Flags;
+   Prv->NextPkgProv = Ver->ProvidesList;
+   Ver->ProvidesList = Prv.Index();
+
    // Link it to the package
    Prv->ParentPkg = Pkg.Index();
    Prv->NextProvides = Pkg->ProvidesList;
    Pkg->ProvidesList = Prv.Index();
-   
+   return true;
+}
+									/*}}}*/
+// ListParser::NewProvidesAllArch - add provides for all architectures	/*{{{*/
+bool pkgCacheGenerator::ListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
+				string const &Version, uint8_t const Flags) {
+   pkgCache &Cache = Owner->Cache;
+   pkgCache::GrpIterator const Grp = Cache.FindGrp(Package);
+   if (Grp.end() == true)
+      return NewProvides(Ver, Package, Cache.NativeArch(), Version, Flags);
+   else
+   {
+      map_stringitem_t idxProvideVersion = 0;
+      if (Version.empty() == false) {
+	 idxProvideVersion = StoreString(VERSIONNUMBER, Version);
+	 if (unlikely(idxProvideVersion == 0))
+	    return false;
+      }
+
+      bool const isImplicit = (Flags & pkgCache::Flag::MultiArchImplicit) == pkgCache::Flag::MultiArchImplicit;
+      bool const isArchSpecific = (Flags & pkgCache::Flag::ArchSpecific) == pkgCache::Flag::ArchSpecific;
+      pkgCache::PkgIterator const OwnerPkg = Ver.ParentPkg();
+      for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+      {
+	 if (isImplicit && OwnerPkg == Pkg)
+	    continue;
+	 if (isArchSpecific == false && APT::Configuration::checkArchitecture(OwnerPkg.Arch()) == false)
+	    continue;
+	 if (Owner->NewProvides(Ver, Pkg, idxProvideVersion, Flags) == false)
+	    return false;
+      }
+   }
    return true;
 }
 									/*}}}*/

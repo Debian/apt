@@ -861,7 +861,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    if (NewProvides(Ver, Package, OtherArch, Version, pkgCache::Flag::ArchSpecific) == false)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
-	    if (NewProvidesAllArch(Ver, Package, Version) == false)
+	    if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
 	       return false;
 	 } else {
 	    if (NewProvides(Ver, Package, Arch, Version, 0) == false)
@@ -876,23 +876,11 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
    {
       string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
-      return NewProvidesAllArch(Ver, Package, Ver.VerStr());
+      return NewProvidesAllArch(Ver, Package, Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
    }
    else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
-      return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr());
+      return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
 
-   return true;
-}
-									/*}}}*/
-// ListParser::NewProvides - add provides for all architectures		/*{{{*/
-bool debListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
-				string const &Version) {
-   for (std::vector<string>::const_iterator a = Architectures.begin();
-	a != Architectures.end(); ++a)
-   {
-      if (NewProvides(Ver, Package, *a, Version, pkgCache::Flag::MultiArchImplicit) == false)
-	 return false;
-   }
    return true;
 }
 									/*}}}*/
@@ -991,7 +979,7 @@ bool debDebFileParser::UsePackage(pkgCache::PkgIterator &Pkg,
    bool res = debListParser::UsePackage(Pkg, Ver);
    // we use the full file path as a provides so that the file is found
    // by its name
-   if(NewProvidesAllArch(Ver, DebFile, Ver.VerStr()) == false)
+   if(NewProvidesAllArch(Ver, DebFile, Ver.VerStr(), 0) == false)
       return false;
    return res;
 }

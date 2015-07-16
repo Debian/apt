@@ -93,6 +93,8 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 			    map_pointer_t const ParentPkg, unsigned short const Hash,
 			    map_pointer_t const Next);
    map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_stringitem_t const idxmd5str);
+   bool NewProvides(pkgCache::VerIterator &Ver, pkgCache::PkgIterator &Pkg,
+		    map_stringitem_t const ProvidesVersion, uint8_t const Flags);
 
    public:
 
@@ -167,6 +169,8 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
    bool NewProvides(pkgCache::VerIterator &Ver,const std::string &PkgName,
 		    const std::string &PkgArch, const std::string &Version,
 		    uint8_t const Flags);
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string const &Package,
+			   std::string const &Version, uint8_t const Flags);
    
    public:
    

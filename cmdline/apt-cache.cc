@@ -253,12 +253,12 @@ static bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; ++Prv)
-	    cout << Prv.ParentPkg().FullName(true) << " ";
+	    cout << Prv.ParentPkg().FullName(true) << " (= " << (Prv->ProvideVersion == 0 ? "" : Prv.ProvideVersion()) << ") ";
 	 cout << endl;
       }
       cout << "Reverse Provides: " << endl;
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; ++Prv)
-	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr() << endl;
+	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr()  << " (= " << (Prv->ProvideVersion == 0 ? "" : Prv.ProvideVersion()) << ")"<< endl;
    }
 
    return true;
