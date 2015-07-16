@@ -149,8 +149,12 @@ class pkgCache								/*{{{*/
           The lower 4 bits are used to indicate what operator is being specified and
           the upper 4 bits are flags. OR indicates that the next package is
           or'd with the current package. */
-      enum DepCompareOp {Or=0x10,NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
-	 Greater=0x4,Equals=0x5,NotEquals=0x6};
+      enum DepCompareOp {NoOp=0,LessEq=0x1,GreaterEq=0x2,Less=0x3,
+	 Greater=0x4,Equals=0x5,NotEquals=0x6,
+	 Or=0x10, /*!< or'ed with the next dependency */
+	 MultiArchImplicit=0x20, /*!< generated internally, not spelled out in the index */
+	 ArchSpecific=0x40 /*!< was decorated with an explicit architecture in index */
+      };
    };
    
    struct State
@@ -177,6 +181,10 @@ class pkgCache								/*{{{*/
       enum ReleaseFileFlags {
 	 NotAutomatic=(1<<0), /*!< archive has a default pin of 1 */
 	 ButAutomaticUpgrades=(1<<1), /*!< (together with the previous) archive has a default pin of 100 */
+      };
+      enum ProvidesFlags {
+	 MultiArchImplicit=pkgCache::Dep::MultiArchImplicit, /*!< generated internally, not spelled out in the index */
+	 ArchSpecific=pkgCache::Dep::ArchSpecific /*!< was decorated with an explicit architecture in index */
       };
    };
    
@@ -725,9 +733,9 @@ struct pkgCache::Provides
    /** \brief version in the provides line (if any)
 
        This version allows dependencies to depend on specific versions of a
-       Provides, as well as allowing Provides to override existing packages.
-       This is experimental. Note that Debian doesn't allow versioned provides */
+       Provides, as well as allowing Provides to override existing packages. */
    map_stringitem_t ProvideVersion;
+   map_flags_t Flags;
    /** \brief next provides (based of package) */
    map_pointer_t NextProvides;     // Provides
    /** \brief next provides (based of version) */

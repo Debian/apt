@@ -51,6 +51,7 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
       addArg(0, "conflicts", "APT::Cache::ShowConflicts", 0);
       addArg(0, "enhances", "APT::Cache::ShowEnhances", 0);
       addArg(0, "recurse", "APT::Cache::RecurseDepends", 0);
+      addArg(0, "implicit", "APT::Cache::ShowImplicit", 0);
    }
    else if (CmdMatches("search"))
    {

@@ -727,21 +727,7 @@ bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &PT) const
    // ignore group-conflict on a M-A:same package - but not our implicit dependencies
    // so that we can have M-A:same packages conflicting with their own real name
    if ((PV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
-   {
-      // Replaces: ${self}:other ( << ${binary:Version})
-      if (S2->Type == pkgCache::Dep::Replaces)
-      {
-	 if (S2->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
-	    return false;
-      }
-      // Breaks: ${self}:other (!= ${binary:Version})
-      else if (S2->Type == pkgCache::Dep::DpkgBreaks)
-      {
-	 if (S2->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
-	    return false;
-      }
-      return true;
-   }
+      return IsMultiArchImplicit() == false;
 
    return false;
 }
@@ -756,24 +742,9 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
    if (Prv.OwnerPkg()->Group == Pkg->Group)
       return true;
    // Implicit group-conflicts should not be applied on providers of other groups
-   if (Pkg->Group == TargetPkg()->Group && Prv.OwnerPkg()->Group != Pkg->Group)
+   if (IsMultiArchImplicit() && Prv.OwnerPkg()->Group != Pkg->Group)
       return true;
 
-   return false;
-}
-									/*}}}*/
-// DepIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
-// ---------------------------------------------------------------------
-/* MultiArch can be translated to SingleArch for an resolver and we did so,
-   by adding dependencies to help the resolver understand the problem, but
-   sometimes it is needed to identify these to ignore them… */
-bool pkgCache::DepIterator::IsMultiArchImplicit() const
-{
-   if (ParentPkg()->Arch != TargetPkg()->Arch &&
-       (S2->Type == pkgCache::Dep::Replaces ||
-	S2->Type == pkgCache::Dep::DpkgBreaks ||
-	S2->Type == pkgCache::Dep::Conflicts))
-      return true;
    return false;
 }
 									/*}}}*/
@@ -785,6 +756,20 @@ bool pkgCache::DepIterator::IsSatisfied(VerIterator const &Ver) const
 bool pkgCache::DepIterator::IsSatisfied(PrvIterator const &Prv) const
 {
    return Owner->VS->CheckDep(Prv.ProvideVersion(),S2->CompareOp,TargetVer());
+}
+									/*}}}*/
+// DepIterator::IsImplicit - added by the cache generation		/*{{{*/
+bool pkgCache::DepIterator::IsImplicit() const
+{
+   if (IsMultiArchImplicit() == true)
+      return true;
+   if (IsNegative() || S2->Type == pkgCache::Dep::Replaces)
+   {
+      if ((S2->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific &&
+	    strcmp(ParentPkg().Arch(), TargetPkg().Arch()) != 0)
+	 return true;
+   }
+   return false;
 }
 									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/
@@ -1066,20 +1051,6 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    return DescriptionList();
 }
 
-									/*}}}*/
-// PrvIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
-// ---------------------------------------------------------------------
-/* MultiArch can be translated to SingleArch for an resolver and we did so,
-   by adding provides to help the resolver understand the problem, but
-   sometimes it is needed to identify these to ignore them… */
-bool pkgCache::PrvIterator::IsMultiArchImplicit() const
-{
-   pkgCache::PkgIterator const Owner = OwnerPkg();
-   pkgCache::PkgIterator const Parent = ParentPkg();
-   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner.Group()->Name == Parent.Group()->Name)
-      return true;
-   return false;
-}
 									/*}}}*/
 
 pkgCache::~pkgCache() {}

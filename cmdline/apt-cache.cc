@@ -689,6 +689,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
    bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
    bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
    bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
+   bool const ShowImplicit = _config->FindB("APT::Cache::ShowImplicit", false);
 
    while (verset.empty() != true)
    {
@@ -709,12 +710,16 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
 	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
 	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
-	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
+	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
 	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
 	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
 	    }
+	    if (ShowImplicit == false && D.IsImplicit())
+	       continue;
 
 	    pkgCache::PkgIterator Trg = RevDepends ? D.ParentPkg() : D.TargetPkg();
+	    bool const showNoArch = RevDepends || (D->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific;
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
@@ -728,9 +733,9 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (ShowDepType == true)
 		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << "<" << Trg.FullName(true) << ">";
+		  cout << "<" << Trg.FullName(showNoArch) << ">";
 		else
-		  cout << Trg.FullName(true);
+		  cout << Trg.FullName(showNoArch);
 		if (ShowVersion == true && D->Version != 0)
 		   cout << " (" << pkgCache::CompTypeDeb(D->CompareOp) << ' ' << D.TargetVer() << ')';
 		cout << std::endl;

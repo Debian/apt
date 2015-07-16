@@ -295,7 +295,16 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	bool IsNegative() const APT_PURE;
 	bool IsIgnorable(PrvIterator const &Prv) const APT_PURE;
 	bool IsIgnorable(PkgIterator const &Pkg) const APT_PURE;
-	bool IsMultiArchImplicit() const APT_PURE;
+	/* MultiArch can be translated to SingleArch for an resolver and we did so,
+	   by adding dependencies to help the resolver understand the problem, but
+	   sometimes it is needed to identify these to ignore them… */
+	inline bool IsMultiArchImplicit() const APT_PURE {
+		return (S2->CompareOp & pkgCache::Dep::MultiArchImplicit) == pkgCache::Dep::MultiArchImplicit;
+	}
+	/* This covers additionally negative dependencies, which aren't arch-specific,
+	   but change architecture nontheless as a Conflicts: foo does applies for all archs */
+	bool IsImplicit() const APT_PURE;
+
 	bool IsSatisfied(VerIterator const &Ver) const APT_PURE;
 	bool IsSatisfied(PrvIterator const &Prv) const APT_PURE;
 	void GlobOr(DepIterator &Start,DepIterator &End);
@@ -367,7 +376,12 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);}
 	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);}
 
-	bool IsMultiArchImplicit() const APT_PURE;
+	/* MultiArch can be translated to SingleArch for an resolver and we did so,
+	   by adding provides to help the resolver understand the problem, but
+	   sometimes it is needed to identify these to ignore them… */
+	bool IsMultiArchImplicit() const APT_PURE
+	{ return (S->Flags & pkgCache::Flag::MultiArchImplicit) == pkgCache::Flag::MultiArchImplicit; }
+
 
 	inline PrvIterator() : Iterator<Provides, PrvIterator>(), Type(PrvVer) {}
 	inline PrvIterator(pkgCache &Owner, Provides *Trg, Version*) :

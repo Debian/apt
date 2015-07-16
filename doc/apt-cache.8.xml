@@ -281,12 +281,23 @@ Reverse Provides:
 		   <term><option>--no-breaks</option></term>
 		   <term><option>--no-replaces</option></term>
 		   <term><option>--no-enhances</option></term>
-		   <listitem><para>Per default the <literal>depends</literal> and
-     <literal>rdepends</literal> print all dependencies. This can be tweaked with
+		   <listitem><para>Per default the <command>depends</command> and
+     <command>rdepends</command> print all dependencies. This can be tweaked with
      these flags which will omit the specified dependency type.
      Configuration Item: <literal>APT::Cache::Show<replaceable>DependencyType</replaceable></literal>
      e.g. <literal>APT::Cache::ShowRecommends</literal>.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term><option>--implicit</option></term>
+	<listitem><para>Per default <command>depends</command> and <command>rdepends</command>
+	      print only dependencies explicitly expressed in the metadata. With this flag
+	      it will also show dependencies implicitely added based on the encountered data.
+	      A <literal>Conflicts: foo</literal> e.g. expresses implicitely that this package
+	      also conflicts with the package foo from any other architecture.
+	      Configuration Item: <literal>APT::Cache::ShowImplicit</literal>.
+	</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>-f</option></term><term><option>--full</option></term>
      <listitem><para>Print full package records when searching. 
      Configuration Item: <literal>APT::Cache::ShowFull</literal>.</para></listitem>

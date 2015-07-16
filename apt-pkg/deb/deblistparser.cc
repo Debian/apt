@@ -812,7 +812,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 // … but this is probably the best thing to do.
 	 if (Arch == "native")
 	    Arch = _config->Find("APT::Architecture");
-	 if (NewDepends(Ver,Package,Arch,Version,Op,Type) == false)
+	 if (NewDepends(Ver,Package,Arch,Version,Op | pkgCache::Dep::ArchSpecific,Type) == false)
 	    return false;
       }
       else
@@ -858,13 +858,13 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	 } else if (archfound != string::npos) {
 	    string OtherArch = Package.substr(archfound+1, string::npos);
 	    Package = Package.substr(0, archfound);
-	    if (NewProvides(Ver, Package, OtherArch, Version) == false)
+	    if (NewProvides(Ver, Package, OtherArch, Version, pkgCache::Flag::ArchSpecific) == false)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;
 	 } else {
-	    if (NewProvides(Ver, Package, Arch, Version) == false)
+	    if (NewProvides(Ver, Package, Arch, Version, 0) == false)
 	       return false;
 	 }
 
@@ -890,7 +890,7 @@ bool debListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const 
    for (std::vector<string>::const_iterator a = Architectures.begin();
 	a != Architectures.end(); ++a)
    {
-      if (NewProvides(Ver, Package, *a, Version) == false)
+      if (NewProvides(Ver, Package, *a, Version, pkgCache::Flag::MultiArchImplicit) == false)
 	 return false;
    }
    return true;

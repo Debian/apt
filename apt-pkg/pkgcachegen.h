@@ -82,11 +82,11 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   std::string const &Version, unsigned int const &Op,
-		   unsigned int const &Type, map_pointer_t* &OldDepLast);
+		   std::string const &Version, uint8_t const Op,
+		   uint8_t const Type, map_pointer_t* &OldDepLast);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   map_pointer_t const Version, unsigned int const &Op,
-		   unsigned int const &Type, map_pointer_t* &OldDepLast);
+		   map_pointer_t const Version, uint8_t const Op,
+		   uint8_t const Type, map_pointer_t* &OldDepLast);
    map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,map_pointer_t const Next) APT_DEPRECATED
    { return NewVersion(Ver, VerStr, 0, 0, Next); }
    map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
@@ -162,10 +162,11 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
    inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
    bool NewDepends(pkgCache::VerIterator &Ver,const std::string &Package, const std::string &Arch,
-		   const std::string &Version,unsigned int Op,
-		   unsigned int Type);
+		   const std::string &Version,uint8_t const Op,
+		   uint8_t const Type);
    bool NewProvides(pkgCache::VerIterator &Ver,const std::string &PkgName,
-		    const std::string &PkgArch, const std::string &Version);
+		    const std::string &PkgArch, const std::string &Version,
+		    uint8_t const Flags);
    
    public:
    

@@ -709,16 +709,16 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
       {
 	 // Replaces: ${self}:other ( << ${binary:Version})
 	 NewDepends(D, V, VerStrIdx,
-		    pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+		    pkgCache::Dep::Less | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::Replaces,
 		    OldDepLast);
 	 // Breaks: ${self}:other (!= ${binary:Version})
 	 NewDepends(D, V, VerStrIdx,
-		    pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
+		    pkgCache::Dep::NotEquals | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::DpkgBreaks,
 		    OldDepLast);
       } else {
 	 // Conflicts: ${self}:other
 	 NewDepends(D, V, 0,
-		    pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+		    pkgCache::Dep::NoOp | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::Conflicts,
 		    OldDepLast);
       }
    }
@@ -737,16 +737,16 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::VerIterator &V,
       map_stringitem_t const VerStrIdx = V->VerStr;
       // Replaces: ${self}:other ( << ${binary:Version})
       NewDepends(D, V, VerStrIdx,
-		 pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+		 pkgCache::Dep::Less | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::Replaces,
 		 OldDepLast);
       // Breaks: ${self}:other (!= ${binary:Version})
       NewDepends(D, V, VerStrIdx,
-		 pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
+		 pkgCache::Dep::NotEquals | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::DpkgBreaks,
 		 OldDepLast);
    } else {
       // Conflicts: ${self}:other
       NewDepends(D, V, 0,
-		 pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+		 pkgCache::Dep::NoOp | pkgCache::Dep::MultiArchImplicit, pkgCache::Dep::Conflicts,
 		 OldDepLast);
    }
    return true;
@@ -913,8 +913,8 @@ map_pointer_t pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   pkgCache::VerIterator &Ver,
 				   string const &Version,
-				   unsigned int const &Op,
-				   unsigned int const &Type,
+				   uint8_t const Op,
+				   uint8_t const Type,
 				   map_stringitem_t* &OldDepLast)
 {
    map_stringitem_t index = 0;
@@ -940,8 +940,8 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   pkgCache::VerIterator &Ver,
 				   map_pointer_t const Version,
-				   unsigned int const &Op,
-				   unsigned int const &Type,
+				   uint8_t const Op,
+				   uint8_t const Type,
 				   map_pointer_t* &OldDepLast)
 {
    void const * const oldMap = Map.Data();
@@ -1040,8 +1040,8 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 					       const string &PackageName,
 					       const string &Arch,
 					       const string &Version,
-					       unsigned int Op,
-					       unsigned int Type)
+					       uint8_t const Op,
+					       uint8_t const Type)
 {
    pkgCache::GrpIterator Grp;
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
@@ -1073,12 +1073,11 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 }
 									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
-					        const string &PkgName,
+						const string &PkgName,
 						const string &PkgArch,
-						const string &Version)
+						const string &Version,
+						uint8_t const Flags)
 {
    pkgCache &Cache = Owner->Cache;
 
@@ -1097,6 +1096,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
    Dynamic<pkgCache::PrvIterator> DynPrv(Prv);
    Prv->Version = Ver.Index();
+   Prv->Flags = Flags;
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
    if (Version.empty() == false) {
