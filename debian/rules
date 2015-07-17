@@ -24,7 +24,11 @@ ifneq (,$(shell which dpkg-buildflags))
   # make does not export to $(shell) so we need to workaround 
   # (http://savannah.gnu.org/bugs/?10593)
   dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags
-  export CXXFLAGS = $(shell $(dpkg_buildflags) --get CXXFLAGS)
+
+  # workaround gcc-5 compile error
+  # (see https://bugs.launchpad.net/ubuntu/+source/gcc-5/+bug/1473674)
+  export CXXFLAGS = $(subst -O3,-O2,$(shell $(dpkg_buildflags) --get CXXFLAGS))
+
   export LDFLAGS = $(shell $(dpkg_buildflags) --get LDFLAGS)
   export CPPFLAGS = $(shell $(dpkg_buildflags) --get CPPFLAGS)
 else

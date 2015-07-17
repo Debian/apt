@@ -1,3 +1,18 @@
+apt (1.0.9.10ubuntu2) wily; urgency=medium
+
+  * abi bump for gcc-5
+  * debian/control
+    - rename libapt-pkg4.12 -> libapt-pkg4.16,
+      the versions 4.13-4.15 are already taken in experimental
+    - rename libapt-inst1.5 -> libapt-inst1.7,
+      version 1.6 is already taken in experimental
+    - build-depend on gcc-5 (>= 5.2.1-10) temporarily
+  * debian/rules:
+    - build with -O2 everywhere because of
+      https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66868
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 17 Jul 2015 11:40:34 +0200
+
 apt (1.0.9.10ubuntu1) wily; urgency=low
 
   * merged from debian/sid

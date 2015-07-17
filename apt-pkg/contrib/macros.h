@@ -138,7 +138,7 @@
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
 #define APT_PKG_MAJOR 4
-#define APT_PKG_MINOR 12
+#define APT_PKG_MINOR 16
 #define APT_PKG_RELEASE 0
 
 #endif
