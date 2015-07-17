@@ -695,6 +695,23 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
 		  if (NewProvides(Ver, Pkg, Ver->VerStr, pkgCache::Flag::MultiArchImplicit) == false)
 		     return false;
       }
+      // and negative dependencies, don't forget negative dependencies
+      {
+	 pkgCache::PkgIterator const M = Grp.FindPreferredPkg(false);
+	 if (M.end() == false)
+	    for (pkgCache::DepIterator Dep = M.RevDependsList(); Dep.end() == false; ++Dep)
+	    {
+	       if ((Dep->CompareOp & (pkgCache::Dep::ArchSpecific | pkgCache::Dep::MultiArchImplicit)) != 0)
+		  continue;
+	       if (Dep->Type != pkgCache::Dep::DpkgBreaks && Dep->Type != pkgCache::Dep::Conflicts &&
+		     Dep->Type != pkgCache::Dep::Replaces)
+		  continue;
+	       pkgCache::VerIterator Ver = Dep.ParentVer();
+	       map_pointer_t * unused = NULL;
+	       if (NewDepends(Pkg, Ver, Dep->Version, Dep->CompareOp, Dep->Type, unused) == false)
+		  return false;
+	    }
+      }
 
       // this package is the new last package
       pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
@@ -935,33 +952,6 @@ map_pointer_t pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    version and to the package that it is pointing to. */
 bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   pkgCache::VerIterator &Ver,
-				   string const &Version,
-				   uint8_t const Op,
-				   uint8_t const Type,
-				   map_stringitem_t* &OldDepLast)
-{
-   map_stringitem_t index = 0;
-   if (Version.empty() == false)
-   {
-      int const CmpOp = Op & 0x0F;
-      // =-deps are used (79:1) for lockstep on same-source packages (e.g. data-packages)
-      if (CmpOp == pkgCache::Dep::Equals && strcmp(Version.c_str(), Ver.VerStr()) == 0)
-	 index = Ver->VerStr;
-
-      if (index == 0)
-      {
-	 void const * const oldMap = Map.Data();
-	 index = StoreString(VERSIONNUMBER, Version);
-	 if (unlikely(index == 0))
-	    return false;
-	 if (OldDepLast != 0 && oldMap != Map.Data())
-	    OldDepLast += (map_pointer_t const * const) Map.Data() - (map_pointer_t const * const) oldMap;
-      }
-   }
-   return NewDepends(Pkg, Ver, index, Op, Type, OldDepLast);
-}
-bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
-				   pkgCache::VerIterator &Ver,
 				   map_pointer_t const Version,
 				   uint8_t const Op,
 				   uint8_t const Type,
@@ -1071,28 +1061,64 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
    if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
 
-   // Locate the target package
-   pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
-   // we don't create 'none' packages and their dependencies if we can avoid it …
-   if (Pkg.end() == true && Arch == "none" && strcmp(Ver.ParentPkg().Arch(), "none") != 0)
-      return true;
-   Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
-   if (Pkg.end() == true) {
-      if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
-	 return false;
-   }
-
    // Is it a file dependency?
    if (unlikely(PackageName[0] == '/'))
       FoundFileDeps = true;
 
-   /* Caching the old end point speeds up generation substantially */
-   if (OldDepVer != Ver) {
-      OldDepLast = NULL;
-      OldDepVer = Ver;
+   map_stringitem_t idxVersion = 0;
+   if (Version.empty() == false)
+   {
+      int const CmpOp = Op & 0x0F;
+      // =-deps are used (79:1) for lockstep on same-source packages (e.g. data-packages)
+      if (CmpOp == pkgCache::Dep::Equals && strcmp(Version.c_str(), Ver.VerStr()) == 0)
+	 idxVersion = Ver->VerStr;
+
+      if (idxVersion == 0)
+      {
+	 idxVersion = StoreString(VERSIONNUMBER, Version);
+	 if (unlikely(idxVersion == 0))
+	    return false;
+      }
    }
 
-   return Owner->NewDepends(Pkg, Ver, Version, Op, Type, OldDepLast);
+   bool const isNegative = (Type == pkgCache::Dep::DpkgBreaks ||
+	 Type == pkgCache::Dep::Conflicts ||
+	 Type == pkgCache::Dep::Replaces);
+
+   pkgCache::PkgIterator Pkg;
+   Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
+   if (isNegative == false || (Op & pkgCache::Dep::ArchSpecific) == pkgCache::Dep::ArchSpecific || Grp->FirstPackage == 0)
+   {
+      // Locate the target package
+      Pkg = Grp.FindPkg(Arch);
+      if (Pkg.end() == true) {
+	 if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
+	    return false;
+      }
+
+      /* Caching the old end point speeds up generation substantially */
+      if (OldDepVer != Ver) {
+	 OldDepLast = NULL;
+	 OldDepVer = Ver;
+      }
+
+      return Owner->NewDepends(Pkg, Ver, idxVersion, Op, Type, OldDepLast);
+   }
+   else
+   {
+      /* Caching the old end point speeds up generation substantially */
+      if (OldDepVer != Ver) {
+	 OldDepLast = NULL;
+	 OldDepVer = Ver;
+      }
+
+      for (Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+      {
+	 if (Owner->NewDepends(Pkg, Ver, idxVersion, Op, Type, OldDepLast) == false)
+	       return false;
+      }
+   }
+   return true;
 }
 									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/

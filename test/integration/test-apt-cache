@@ -66,7 +66,6 @@ testsuccessequal 'foo
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
-  Conflicts: <foobar:i386>
  |Recommends: <cool>
   Recommends: <cooler>' aptcache depends foo --implicit
 testsuccessequal 'foo
@@ -76,7 +75,6 @@ testsuccessequal 'foo
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
-  Conflicts: <foobar:i386>
   Recommends: <cool>' aptcache depends foo -o APT::Cache::ShowOnlyFirstOr=1 --implicit
 testsuccessequal 'foo
   Depends: bar
@@ -86,7 +84,6 @@ testsuccessequal 'foo
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
-  Conflicts: <foobar:i386>
  |Recommends: <cool> (>= 2)
   Recommends: <cooler> (<< 5)' aptcache depends foo -o APT::Cache::ShowVersion=1 --implicit
 testsuccessequal 'foo
@@ -94,15 +91,13 @@ testsuccessequal 'foo
   Conflicts: <foobar>' aptcache depends foo --no-recommends
 testsuccessequal 'foo
   Depends: bar
-  Conflicts: <foobar>
-  Conflicts: <foobar:i386>' aptcache depends foo --no-recommends --implicit
+  Conflicts: <foobar>' aptcache depends foo --no-recommends --implicit
 testsuccessequal 'foo
   Depends: bar' aptcache depends foo --important --implicit
 testsuccessequal 'foo
   Conflicts: <foobar>' aptcache depends foo --important --no-depends --conflicts
 testsuccessequal 'foo
-  Conflicts: <foobar>
-  Conflicts: <foobar:i386>' aptcache depends foo --important --no-depends --conflicts --implicit
+  Conflicts: <foobar>' aptcache depends foo --important --no-depends --conflicts --implicit
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
@@ -118,17 +113,15 @@ bar
 testsuccessequal 'foo
   Depends: bar
   Conflicts: <foobar>
-  Conflicts: <foobar:i386>
  |Recommends: <cool>
   Recommends: <cooler>
 bar
   Depends: bar
   Breaks: foo
-  Breaks: <foo:i386>
   Replaces: foo
+  Breaks: <foo:i386>
   Replaces: <foo:i386>
 <foobar>
-<foobar:i386>
 <cool>
 <cooler>
 <foo:i386>' aptcache depends foo --recurse --implicit
@@ -151,8 +144,8 @@ testsuccessequal 'bar
 testsuccessequal 'bar
   Depends: bar
   Breaks: foo
-  Breaks: <foo:i386>
   Replaces: foo
+  Breaks: <foo:i386>
   Replaces: <foo:i386>' aptcache depends bar --implicit
 testsuccessequal 'specific
   Depends: <bar:i386>

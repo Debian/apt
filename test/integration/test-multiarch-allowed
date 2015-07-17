@@ -138,10 +138,8 @@ solveableinsinglearch2() {
 The following packages have unmet dependencies:
  hatesfoo : Conflicts: foo but 1 is to be installed
 E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoo -s
-	testfailureequal "$BADPREFIX
-The following packages have unmet dependencies:
- hatesfooany : Conflicts: foo:any
-E: Unable to correct problems, you have held broken packages." aptget install foo hatesfooany -s
+	# the message differs slightly between single and multiarch
+	testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install foo hatesfooany -s
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfoonative : Conflicts: foo but 1 is to be installed
@@ -155,6 +153,7 @@ E: Unable to correct problems, you have held broken packages." aptget install fo
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfooany : Conflicts: foo:any
+               Conflicts: foo:any:i386
 E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfooany -s
 testsuccessequal 'Reading package lists...
 Building dependency tree...

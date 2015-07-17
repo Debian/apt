@@ -790,43 +790,23 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
 
-      // If negative is unspecific it needs to apply on all architectures
-      if (MultiArchEnabled == true && found == string::npos &&
-	  (Type == pkgCache::Dep::Conflicts ||
-	   Type == pkgCache::Dep::DpkgBreaks ||
-	   Type == pkgCache::Dep::Replaces))
+      if (found == string::npos || strcmp(Package.c_str() + found, ":any") == 0)
       {
-	 for (std::vector<std::string>::const_iterator a = Architectures.begin();
-	      a != Architectures.end(); ++a)
-	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
-	       return false;
-	 if (NewDepends(Ver,Package,"none",Version,Op,Type) == false)
+	 if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	    return false;
       }
-      else if (found != string::npos &&
-	       strcmp(Package.c_str() + found, ":any") != 0)
+      else
       {
 	 string Arch = Package.substr(found+1, string::npos);
 	 Package = Package.substr(0, found);
 	 // Such dependencies are not supposed to be accepted …
-	 // … but this is probably the best thing to do.
+	 // … but this is probably the best thing to do anyway
 	 if (Arch == "native")
 	    Arch = _config->Find("APT::Architecture");
 	 if (NewDepends(Ver,Package,Arch,Version,Op | pkgCache::Dep::ArchSpecific,Type) == false)
 	    return false;
       }
-      else
-      {
-	 if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
-	    return false;
-	 if ((Type == pkgCache::Dep::Conflicts ||
-	      Type == pkgCache::Dep::DpkgBreaks ||
-	      Type == pkgCache::Dep::Replaces) &&
-	     NewDepends(Ver, Package,
-			(pkgArch != "none") ? "none" : _config->Find("APT::Architecture"),
-			Version,Op,Type) == false)
-	    return false;
-      }
+
       if (Start == Stop)
 	 break;
    }

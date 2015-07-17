@@ -76,14 +76,11 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    // Flag file dependencies
    bool FoundFileDeps;
-   
+
    bool NewGroup(pkgCache::GrpIterator &Grp,const std::string &Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg,const std::string &Name, const std::string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
-   bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   std::string const &Version, uint8_t const Op,
-		   uint8_t const Type, map_pointer_t* &OldDepLast);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   map_pointer_t const Version, uint8_t const Op,
 		   uint8_t const Type, map_pointer_t* &OldDepLast);
