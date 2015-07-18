@@ -91,8 +91,7 @@ signed edspSystem::Score(Configuration const &Cnf)
    return -1000;
 }
 									/*}}}*/
-// System::AddStatusFiles - Register the status files			/*{{{*/
-bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
+bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
 {
    if (StatusFile == 0)
    {

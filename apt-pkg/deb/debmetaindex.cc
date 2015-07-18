@@ -785,34 +785,5 @@ class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian		/*{{{*/
 };
 									/*}}}*/
 
-debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)	/*{{{*/
-   : metaIndex(DebFile, "local-uri", "deb-dist"), d(NULL), DebFile(DebFile)
-{
-   DebIndex = new debDebPkgFileIndex(DebFile);
-   Indexes = new std::vector<pkgIndexFile *>();
-   Indexes->push_back(DebIndex);
-}
-debDebFileMetaIndex::~debDebFileMetaIndex() {}
-									/*}}}*/
-class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type		/*{{{*/
-{
-   public:
-
-   bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
-		   std::string const &/*Dist*/, std::string const &/*Section*/,
-		   std::map<std::string, std::string> const &/*Options*/) const APT_OVERRIDE
-   {
-      metaIndex *mi = new debDebFileMetaIndex(URI);
-      List.push_back(mi);
-      return true;
-   }
-
-   debSLTypeDebFile() : Type("deb-file", "Debian local deb file")
-   {
-   }
-};
-									/*}}}*/
-
 APT_HIDDEN debSLTypeDeb _apt_DebType;
 APT_HIDDEN debSLTypeDebSrc _apt_DebSrcType;
-APT_HIDDEN debSLTypeDebFile _apt_DebFileType;

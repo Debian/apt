@@ -52,7 +52,7 @@ class Configuration;
 class pkgIndexFile;
 
 class pkgSystem
-{   
+{
    public:
 
    // Global list of supported systems
@@ -81,7 +81,8 @@ class pkgSystem
    virtual bool ArchiveSupported(const char *Type) = 0;
 
    // Return a list of system index files..
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;   
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;
+
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const = 0;
 

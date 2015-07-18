@@ -21,6 +21,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/debindexfile.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -647,24 +648,8 @@ bool DoInstall(CommandLine &CmdL)
    // first check for local pkgs and add them to the cache
    for (const char **I = CmdL.FileList; *I != 0; I++)
    {
-      if(FileExists(*I))
-      {
-         // FIXME: make this more elegant
-         std::string TypeStr = flExtension(*I) + "-file";
-         pkgSourceList::Type *Type = pkgSourceList::Type::GetType(TypeStr.c_str());
-         if(Type != 0)
-         {
-            std::vector<metaIndex *> List;
-            std::map<std::string, std::string> Options;
-            if(Type->CreateItem(List, *I, "", "", Options))
-            {
-               // we have our own CacheFile that gives us a SourceList
-               // with superpowerz
-               SourceList *sources = (SourceList*)Cache.GetSourceList();
-               sources->AddMetaIndex(List[0]);
-            }
-         }
-      }
+      if(FileExists(*I) && flExtension(*I) == "deb")
+	 Cache.GetSourceList()->AddVolatileFile(new debDebPkgFileIndex(*I));
    }
 
    // then open the cache

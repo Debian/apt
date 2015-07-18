@@ -339,18 +339,16 @@ APT_CONST bool debStatusIndex::Exists() const
 }
 									/*}}}*/
 
-// debDebPkgFile - Single .deb file					/*{{{*/
-debDebPkgFileIndex::debDebPkgFileIndex(std::string DebFile)
+// debDebPkgFileIndex - Single .deb file				/*{{{*/
+debDebPkgFileIndex::debDebPkgFileIndex(std::string const &DebFile)
    : pkgIndexFile(true), d(NULL), DebFile(DebFile)
 {
    DebFileFullPath = flAbsPath(DebFile);
 }
-
 std::string debDebPkgFileIndex::ArchiveURI(std::string /*File*/) const
 {
    return "file:" + DebFileFullPath;
 }
-
 bool debDebPkgFileIndex::Exists() const
 {
    return FileExists(DebFile);
@@ -403,6 +401,8 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
    if (GetContent(content, DebFile) == false)
       return false;
    std::string const contentstr = content.str();
+   if (contentstr.empty())
+      return true;
    DebControl->Write(contentstr.c_str(), contentstr.length());
    // rewind for the listparser
    DebControl->Seek(0);
@@ -431,7 +431,7 @@ pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
 
        return File;
    }
-   
+
    return File;
 }
 unsigned long debDebPkgFileIndex::Size() const
@@ -443,12 +443,11 @@ unsigned long debDebPkgFileIndex::Size() const
 }
 									/*}}}*/
 
-// debDscFileIndex stuff
-debDscFileIndex::debDscFileIndex(std::string &DscFile) 
+// debDscFileIndex - a .dsc file					/*{{{*/
+debDscFileIndex::debDscFileIndex(std::string const &DscFile)
    : pkgIndexFile(true), d(NULL), DscFile(DscFile)
 {
 }
-
 bool debDscFileIndex::Exists() const
 {
    return FileExists(DscFile);
@@ -461,8 +460,6 @@ unsigned long debDscFileIndex::Size() const
       return buf.st_size;
    return 0;
 }
-
-// DscFileIndex::CreateSrcParser - Get a parser for the .dsc file	/*{{{*/
 pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
 {
    if (!FileExists(DscFile))
@@ -471,18 +468,17 @@ pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
    return new debDscRecordParser(DscFile,this);
 }
 									/*}}}*/
+
 // Index File types for Debian						/*{{{*/
 class APT_HIDDEN debIFTypeSrc : public pkgIndexFile::Type
 {
    public:
-   
    debIFTypeSrc() {Label = "Debian Source Index";};
 };
 class APT_HIDDEN debIFTypePkg : public pkgIndexFile::Type
 {
    public:
-   
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE
    {
       return new debRecordParser(File.FileName(),*File.Cache());
    };
@@ -496,8 +492,7 @@ class APT_HIDDEN debIFTypeTrans : public debIFTypePkg
 class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 {
    public:
-   
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE
    {
       return new debRecordParser(File.FileName(),*File.Cache());
    };
@@ -506,7 +501,7 @@ class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE 
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const APT_OVERRIDE
    {
       return new debDebFileRecordParser(File.FileName());
    };

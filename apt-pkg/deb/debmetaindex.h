@@ -17,7 +17,6 @@
 
 class pkgAcquire;
 class pkgIndexFile;
-class debDebPkgFileIndex;
 class IndexTarget;
 class pkgCacheGenerator;
 class OpProgress;
@@ -64,44 +63,6 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
 	 std::vector<std::string> Languages);
-};
-
-class APT_HIDDEN debDebFileMetaIndex : public metaIndex
-{
-private:
-   void * const d;
-   std::string DebFile;
-   debDebPkgFileIndex *DebIndex;
-public:
-   virtual std::string ArchiveURI(std::string const& /*File*/) const APT_OVERRIDE {
-      return DebFile;
-   }
-   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) APT_OVERRIDE {
-      return true;
-   }
-   virtual std::vector<IndexTarget> GetIndexTargets() const APT_OVERRIDE {
-      return std::vector<IndexTarget>();
-   }
-   virtual std::vector<pkgIndexFile *> *GetIndexFiles() APT_OVERRIDE {
-      return Indexes;
-   }
-   virtual bool IsTrusted() const APT_OVERRIDE {
-      return true;
-   }
-   virtual bool Load(std::string const &, std::string * const ErrorText) APT_OVERRIDE
-   {
-      LoadedSuccessfully = TRI_NO;
-      if (ErrorText != NULL)
-	 strprintf(*ErrorText, "Unparseable metaindex as it represents the standalone deb file %s", DebFile.c_str());
-      return false;
-   }
-   virtual metaIndex * UnloadedClone() const APT_OVERRIDE
-   {
-      return NULL;
-   }
-   debDebFileMetaIndex(std::string const &DebFile);
-   virtual ~debDebFileMetaIndex();
-
 };
 
 #endif

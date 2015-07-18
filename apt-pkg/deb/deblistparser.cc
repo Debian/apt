@@ -959,7 +959,7 @@ bool debDebFileParser::UsePackage(pkgCache::PkgIterator &Pkg,
    bool res = debListParser::UsePackage(Pkg, Ver);
    // we use the full file path as a provides so that the file is found
    // by its name
-   if(NewProvidesAllArch(Ver, DebFile, Ver.VerStr(), 0) == false)
+   if(NewProvides(Ver, DebFile, Pkg.Cache()->NativeArch(), Ver.VerStr(), 0) == false)
       return false;
    return res;
 }

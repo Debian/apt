@@ -274,6 +274,10 @@ pkgSourceList::~pkgSourceList()
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
+   SrcList.clear();
+   for (pkgIndexFile * const File : VolatileFiles)
+      delete File;
+   VolatileFiles.clear();
 }
 									/*}}}*/
 // SourceList::ReadMainList - Read the main source list from etc	/*{{{*/
@@ -339,7 +343,7 @@ bool pkgSourceList::ReadAppend(string const &File)
    else
       return ParseFileOldStyle(File);
 }
-
+									/*}}}*/
 // SourceList::ReadFileOldStyle - Read Traditional style sources.list 	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -454,7 +458,15 @@ bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
          }
       }
    }
-
+   for (vector<pkgIndexFile *>::const_iterator J = VolatileFiles.begin();
+	 J != VolatileFiles.end(); ++J)
+   {
+      if ((*J)->FindInCache(*File.Cache()) == File)
+      {
+	 Found = (*J);
+	 return true;
+      }
+   }
    return false;
 }
 									/*}}}*/
@@ -511,4 +523,14 @@ time_t pkgSourceList::GetLastModifiedTime()
    return mtime_sources;
 }
 									/*}}}*/
-
+std::vector<pkgIndexFile*> pkgSourceList::GetVolatileFiles() const	/*{{{*/
+{
+   return VolatileFiles;
+}
+									/*}}}*/
+void pkgSourceList::AddVolatileFile(pkgIndexFile * const File)		/*{{{*/
+{
+   if (File != NULL)
+      VolatileFiles.push_back(File);
+}
+									/*}}}*/

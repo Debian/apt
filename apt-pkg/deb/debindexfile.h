@@ -27,7 +27,7 @@ class pkgAcquire;
 class pkgCacheGenerator;
 
 
-class APT_HIDDEN debStatusIndex : public pkgIndexFile
+class debStatusIndex : public pkgIndexFile
 {
    void * const d;
    protected:
@@ -51,7 +51,7 @@ class APT_HIDDEN debStatusIndex : public pkgIndexFile
    virtual ~debStatusIndex();
 };
 
-class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
+class debPackagesIndex : public pkgIndexTargetFile
 {
    void * const d;
    public:
@@ -70,7 +70,7 @@ class APT_HIDDEN debPackagesIndex : public pkgIndexTargetFile
    virtual ~debPackagesIndex();
 };
 
-class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
+class debTranslationsIndex : public pkgIndexTargetFile
 {
    void * const d;
    public:
@@ -86,7 +86,7 @@ class APT_HIDDEN debTranslationsIndex : public pkgIndexTargetFile
    virtual ~debTranslationsIndex();
 };
 
-class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
+class debSourcesIndex : public pkgIndexTargetFile
 {
    void * const d;
    public:
@@ -107,7 +107,7 @@ class APT_HIDDEN debSourcesIndex : public pkgIndexTargetFile
    virtual ~debSourcesIndex();
 };
 
-class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
+class debDebPkgFileIndex : public pkgIndexFile
 {
  private:
    void * const d;
@@ -141,11 +141,11 @@ class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
    // Interface for acquire
    virtual std::string ArchiveURI(std::string /*File*/) const APT_OVERRIDE;
 
-   debDebPkgFileIndex(std::string DebFile);
+   debDebPkgFileIndex(std::string const &DebFile);
    virtual ~debDebPkgFileIndex();
 };
 
-class APT_HIDDEN debDscFileIndex : public pkgIndexFile
+class debDscFileIndex : public pkgIndexFile
 {
  private:
    void * const d;
@@ -160,11 +160,11 @@ class APT_HIDDEN debDscFileIndex : public pkgIndexFile
       return DscFile;
    };
 
-   debDscFileIndex(std::string &DscFile);
+   debDscFileIndex(std::string const &DscFile);
    virtual ~debDscFileIndex();
 };
 
-class APT_HIDDEN debDebianSourceDirIndex : public debDscFileIndex
+class debDebianSourceDirIndex : public debDscFileIndex
 {
  public:
    virtual const Type *GetType() const APT_CONST;

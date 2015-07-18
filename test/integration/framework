@@ -99,10 +99,14 @@ msgdone() {
 }
 getaptconfig() {
 	if [ -f ./aptconfig.conf ]; then
-            echo "./aptconfig.conf"
+		echo "$(readlink -f ./aptconfig.conf)"
 	elif [ -f ../aptconfig.conf ]; then
-            echo "../aptconfig.conf"
-        fi
+		echo "$(readlink -f ../aptconfig.conf)"
+	elif [ -f ../../aptconfig.conf ]; then
+		echo "$(readlink -f ../../aptconfig.conf)"
+	elif [ -f "${TMPWORKINGDIRECTORY}/aptconfig.conf" ]; then
+		echo "$(readlink -f "${TMPWORKINGDIRECTORY}/aptconfig.conf")"
+	fi
 }
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
@@ -141,6 +145,8 @@ gdb() {
 	case "$1" in
 	aptget) CMD="apt-get";;
 	aptcache) CMD="apt-cache";;
+	aptcdrom) CMD="apt-cdrom";;
+	aptconfig) CMD="apt-config";;
 	aptmark) CMD="apt-mark";;
 	apthelper) CMD="apt-helper";;
 	aptftparchive) CMD="apt-ftparchive";;

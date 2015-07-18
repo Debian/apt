@@ -116,7 +116,6 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_PUBLIC static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
    APT_PUBLIC static bool MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap);
-   APT_PUBLIC static DynamicMMap* CreateDynamicMMap(FileFd *CacheF, unsigned long Flags = 0);
 
    void ReMap(void const * const oldMap, void const * const newMap);
 

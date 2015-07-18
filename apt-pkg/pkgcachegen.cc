@@ -36,6 +36,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
+#include <algorithm>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -1332,10 +1334,10 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
 /* This just verifies that each file in the list of index files exists,
    has matching attributes with the cache and the cache does not have
    any extra files. */
-static bool CheckValidity(const string &CacheFile, 
+static bool CheckValidity(const string &CacheFile,
                           pkgSourceList &List,
-                          FileIterator Start, 
-                          FileIterator End,
+                          FileIterator const Start,
+                          FileIterator const End,
                           MMap **OutMap = 0)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
@@ -1343,7 +1345,7 @@ static bool CheckValidity(const string &CacheFile,
    if (CacheFile.empty() == true || FileExists(CacheFile) == false)
    {
       if (Debug == true)
-	 std::clog << "CacheFile doesn't exist" << std::endl;
+	 std::clog << "CacheFile " << CacheFile << " doesn't exist" << std::endl;
       return false;
    }
 
@@ -1361,7 +1363,7 @@ static bool CheckValidity(const string &CacheFile,
    if (_error->PendingError() == true || Map->Size() == 0)
    {
       if (Debug == true)
-	 std::clog << "Errors are pending or Map is empty()" << std::endl;
+	 std::clog << "Errors are pending or Map is empty() for " << CacheFile << std::endl;
       _error->Discard();
       return false;
    }
@@ -1385,10 +1387,9 @@ static bool CheckValidity(const string &CacheFile,
       if (Debug == true)
 	 std::clog << "with ID " << RlsFile->ID << " is valid" << std::endl;
 
-      std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
-      for (std::vector<pkgIndexFile *>::const_iterator j = Indexes->begin(); j != Indexes->end(); ++j)
-	 if ((*j)->HasPackages())
-	    Files.push_back (*j);
+      std::vector <pkgIndexFile *> const * const Indexes = (*i)->GetIndexFiles();
+      std::copy_if(Indexes->begin(), Indexes->end(), std::back_inserter(Files),
+	    [](pkgIndexFile const * const I) { return I->HasPackages(); });
    }
    for (unsigned I = 0; I != Cache.HeaderP->ReleaseFileCount; ++I)
       if (RlsVisited[I] == false)
@@ -1398,8 +1399,7 @@ static bool CheckValidity(const string &CacheFile,
 	 return false;
       }
 
-   for (; Start != End; ++Start)
-      Files.push_back(*Start);
+   std::copy(Start, End, std::back_inserter(Files));
 
    /* Now we check every index file, see if it is in the cache,
       verify the IMS data and check that it is on the disk too.. */
@@ -1482,16 +1482,41 @@ static map_filesize_t ComputeSize(pkgSourceList const * const List, FileIterator
 }
 									/*}}}*/
 // BuildCache - Merge the list of index files into the cache		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 static bool BuildCache(pkgCacheGenerator &Gen,
-		       OpProgress *Progress,
+		       OpProgress * const Progress,
 		       map_filesize_t &CurrentSize,map_filesize_t TotalSize,
 		       pkgSourceList const * const List,
-		       FileIterator Start, FileIterator End)
+		       FileIterator const Start, FileIterator const End)
 {
    std::vector<pkgIndexFile *> Files;
    bool const HasFileDeps = Gen.HasFileDeps();
+   bool mergeFailure = false;
+
+   auto const indexFileMerge = [&](pkgIndexFile * const I) {
+      if (HasFileDeps)
+	 Files.push_back(I);
+
+      if (I->HasPackages() == false || mergeFailure)
+	 return;
+
+      if (I->Exists() == false)
+	 return;
+
+      if (I->FindInCache(Gen.GetCache()).end() == false)
+      {
+	 _error->Warning("Duplicate sources.list entry %s",
+	       I->Describe().c_str());
+	 return;
+      }
+
+      map_filesize_t const Size = I->Size();
+      if (Progress != NULL)
+	 Progress->OverallProgress(CurrentSize, TotalSize, Size, _("Reading package lists"));
+      CurrentSize += Size;
+
+      if (I->Merge(Gen,Progress) == false)
+	 mergeFailure = true;
+   };
 
    if (List !=  NULL)
    {
@@ -1508,63 +1533,20 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 	    return false;
 
 	 std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
-	 for (std::vector<pkgIndexFile *>::const_iterator I = Indexes->begin(); I != Indexes->end(); ++I)
-	 {
-	    if (HasFileDeps)
-	       Files.push_back(*I);
-
-	    if ((*I)->HasPackages() == false)
-	       continue;
-
-	    if ((*I)->Exists() == false)
-	       continue;
-
-	    if ((*I)->FindInCache(Gen.GetCache()).end() == false)
-	    {
-	       _error->Warning("Duplicate sources.list entry %s",
-		     (*I)->Describe().c_str());
-	       continue;
-	    }
-
-	    map_filesize_t Size = (*I)->Size();
-	    if (Progress != NULL)
-	       Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
-	    CurrentSize += Size;
-
-	    if ((*I)->Merge(Gen,Progress) == false)
-	       return false;
-	 }
+	 if (Indexes != NULL)
+	    std::for_each(Indexes->begin(), Indexes->end(), indexFileMerge);
+	 if (mergeFailure)
+	    return false;
       }
    }
 
-   Gen.SelectReleaseFile("", "");
-   FileIterator I;
-   for (I = Start; I != End; ++I)
+   if (Start != End)
    {
-      if (HasFileDeps)
-	 Files.push_back(*I);
-
-      if ((*I)->HasPackages() == false)
-	 continue;
-      
-      if ((*I)->Exists() == false)
-	 continue;
-
-      if ((*I)->FindInCache(Gen.GetCache()).end() == false)
-      {
-	 _error->Warning("Duplicate sources.list entry %s",
-			 (*I)->Describe().c_str());
-	 continue;
-      }
-      
-      map_filesize_t Size = (*I)->Size();
-      if (Progress != NULL)
-	 Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Reading package lists"));
-      CurrentSize += Size;
-      
-      if ((*I)->Merge(Gen,Progress) == false)
+      Gen.SelectReleaseFile("", "");
+      std::for_each(Start, End, indexFileMerge);
+      if (mergeFailure)
 	 return false;
-   }   
+   }
 
    if (HasFileDeps == true)
    {
@@ -1582,12 +1564,20 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 	    return false;
       }
    }
-   
+
    return true;
 }
 									/*}}}*/
-// CacheGenerator::CreateDynamicMMap - load an mmap with configuration options	/*{{{*/
-DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long Flags) {
+// CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
+// ---------------------------------------------------------------------
+/* This makes sure that the status cache (the cache that has all 
+   index files from the sources list and all local ones) is ready
+   to be mmaped. If OutMap is not zero then a MMap object representing
+   the cache will be stored there. This is pretty much mandetory if you
+   are using AllowMem. AllowMem lets the function be run as non-root
+   where it builds the cache 'fast' into a memory buffer. */
+static DynamicMMap* CreateDynamicMMap(FileFd * const CacheF, unsigned long Flags)
+{
    map_filesize_t const MapStart = _config->FindI("APT::Cache-Start", 24*1024*1024);
    map_filesize_t const MapGrow = _config->FindI("APT::Cache-Grow", 1*1024*1024);
    map_filesize_t const MapLimit = _config->FindI("APT::Cache-Limit", 0);
@@ -1599,15 +1589,42 @@ DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long 
    else
       return new DynamicMMap(Flags, MapStart, MapGrow, MapLimit);
 }
-									/*}}}*/
-// CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
-// ---------------------------------------------------------------------
-/* This makes sure that the status cache (the cache that has all 
-   index files from the sources list and all local ones) is ready
-   to be mmaped. If OutMap is not zero then a MMap object representing
-   the cache will be stored there. This is pretty much mandetory if you
-   are using AllowMem. AllowMem lets the function be run as non-root
-   where it builds the cache 'fast' into a memory buffer. */
+static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * const Map,
+      std::string const &FileName)
+{
+   FileFd SCacheF(FileName, FileFd::WriteAtomic);
+   if (_error->PendingError() == true)
+      return false;
+
+   fchmod(SCacheF.Fd(),0644);
+
+   // Write out the main data
+   if (SCacheF.Write(Map->Data(),Map->Size()) == false)
+      return _error->Error(_("IO Error saving source cache"));
+   SCacheF.Sync();
+
+   // Write out the proper header
+   Gen->GetCache().HeaderP->Dirty = false;
+   if (SCacheF.Seek(0) == false ||
+	 SCacheF.Write(Map->Data(),sizeof(*Gen->GetCache().HeaderP)) == false)
+      return _error->Error(_("IO Error saving source cache"));
+   Gen->GetCache().HeaderP->Dirty = true;
+   SCacheF.Sync();
+   return true;
+}
+static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
+      SPtr<DynamicMMap> &Map, OpProgress * const Progress, std::string const &FileName)
+{
+   Map = CreateDynamicMMap(NULL, 0);
+   FileFd CacheF(FileName, FileFd::ReadOnly);
+   map_pointer_t const alloc = Map->RawAllocate(CacheF.Size());
+   if ((alloc == 0 && _error->PendingError())
+	 || CacheF.Read((unsigned char *)Map->Data() + alloc,
+	    CacheF.Size()) == false)
+      return false;
+   Gen.reset(new pkgCacheGenerator(Map.Get(),Progress));
+   return true;
+}
 APT_DEPRECATED bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap, bool AllowMem)
    { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
@@ -1617,18 +1634,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
 
    std::vector<pkgIndexFile *> Files;
-   /*
-   for (std::vector<metaIndex *>::const_iterator i = List.begin();
-        i != List.end();
-        ++i)
-   {
-      std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
-      for (std::vector<pkgIndexFile *>::const_iterator j = Indexes->begin();
-	   j != Indexes->end();
-	   ++j)
-         Files.push_back (*j);
-   }
-*/
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
@@ -1649,160 +1654,130 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 CreateDirectory(dir, flNotFile(SrcCacheFile));
    }
 
-   // Decide if we can write to the cache
-   bool Writeable = false;
-   if (CacheFile.empty() == false)
-      Writeable = access(flNotFile(CacheFile).c_str(),W_OK) == 0;
-   else
-      if (SrcCacheFile.empty() == false)
-	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
-   if (Debug == true)
-      std::clog << "Do we have write-access to the cache files? " << (Writeable ? "YES" : "NO") << std::endl;
-
-   if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
-      return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
-
    if (Progress != NULL)
       Progress->OverallProgress(0,1,1,_("Reading package lists"));
 
-   // Cache is OK, Fin.
-   if (CheckValidity(CacheFile, List, Files.begin(),Files.end(),OutMap) == true)
+   bool pkgcache_fine = false;
+   bool srcpkgcache_fine = false;
+   bool volatile_fine = List.GetVolatileFiles().empty();
+
+   if (CheckValidity(CacheFile, List, Files.begin(), Files.end(), volatile_fine ? OutMap : NULL) == true)
+   {
+      if (Debug == true)
+	 std::clog << "pkgcache.bin is valid - no need to build any cache" << std::endl;
+      pkgcache_fine = true;
+      srcpkgcache_fine = true;
+   }
+   if (pkgcache_fine == false)
+   {
+      if (CheckValidity(SrcCacheFile, List, Files.end(), Files.end()) == true)
+      {
+	 if (Debug == true)
+	    std::clog << "srcpkgcache.bin is valid - it can be reused" << std::endl;
+	 srcpkgcache_fine = true;
+      }
+   }
+
+   if (volatile_fine == true && srcpkgcache_fine == true && pkgcache_fine == true)
    {
       if (Progress != NULL)
 	 Progress->OverallProgress(1,1,1,_("Reading package lists"));
-      if (Debug == true)
-	 std::clog << "pkgcache.bin is valid - no need to build anything" << std::endl;
       return true;
    }
-   else if (Debug == true)
-	 std::clog << "pkgcache.bin is NOT valid" << std::endl;
-   
-   /* At this point we know we need to reconstruct the package cache,
-      begin. */
-   SPtr<FileFd> CacheF;
-   SPtr<DynamicMMap> Map;
-   if (Writeable == true && CacheFile.empty() == false)
+
+   bool Writeable = false;
+   if (srcpkgcache_fine == false || pkgcache_fine == false)
    {
-      _error->PushToStack();
-      unlink(CacheFile.c_str());
-      CacheF = new FileFd(CacheFile,FileFd::WriteAtomic);
-      fchmod(CacheF->Fd(),0644);
-      Map = CreateDynamicMMap(CacheF, MMap::Public);
-      if (_error->PendingError() == true)
-      {
-	 delete CacheF.UnGuard();
-	 delete Map.UnGuard();
-	 if (Debug == true)
-	    std::clog << "Open filebased MMap FAILED" << std::endl;
-	 Writeable = false;
-	 if (AllowMem == false)
-	 {
-	    _error->MergeWithStack();
-	    return false;
-	 }
-	 _error->RevertToStack();
-      }
-      else
-      {
-	 _error->MergeWithStack();
-	 if (Debug == true)
-	    std::clog << "Open filebased MMap" << std::endl;
-      }
-   }
-   if (Writeable == false || CacheFile.empty() == true)
-   {
-      // Just build it in memory..
-      Map = CreateDynamicMMap(NULL);
+      if (CacheFile.empty() == false)
+	 Writeable = access(flNotFile(CacheFile).c_str(),W_OK) == 0;
+      else if (SrcCacheFile.empty() == false)
+	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
+
       if (Debug == true)
-	 std::clog << "Open memory Map (not filebased)" << std::endl;
+	 std::clog << "Do we have write-access to the cache files? " << (Writeable ? "YES" : "NO") << std::endl;
+
+      if (Writeable == false && AllowMem == false)
+      {
+	 if (CacheFile.empty() == false)
+	    return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
+	 else if (SrcCacheFile.empty() == false)
+	    return _error->Error(_("Unable to write to %s"),flNotFile(SrcCacheFile).c_str());
+	 else
+	    return _error->Error("Unable to create caches as file usage is disabled, but memory not allowed either!");
+      }
    }
-   
-   // Lets try the source cache.
+
+   // At this point we know we need to construct something, so get storage ready
+   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL, 0);
+   if (Debug == true)
+      std::clog << "Open memory Map (not filebased)" << std::endl;
+
+   std::unique_ptr<pkgCacheGenerator> Gen{nullptr};
    map_filesize_t CurrentSize = 0;
-   map_filesize_t TotalSize = 0;
-   if (CheckValidity(SrcCacheFile, List, Files.end(),
-		     Files.end()) == true)
+   std::vector<pkgIndexFile*> VolatileFiles = List.GetVolatileFiles();
+   map_filesize_t TotalSize = ComputeSize(NULL, VolatileFiles.begin(), VolatileFiles.end());
+   if (srcpkgcache_fine == true && pkgcache_fine == false)
    {
       if (Debug == true)
-	 std::clog << "srcpkgcache.bin is valid - populate MMap with it." << std::endl;
-      // Preload the map with the source cache
-      FileFd SCacheF(SrcCacheFile,FileFd::ReadOnly);
-      map_pointer_t const alloc = Map->RawAllocate(SCacheF.Size());
-      if ((alloc == 0 && _error->PendingError())
-		|| SCacheF.Read((unsigned char *)Map->Data() + alloc,
-				SCacheF.Size()) == false)
+	 std::clog << "srcpkgcache.bin was valid - populate MMap with it" << std::endl;
+      if (loadBackMMapFromFile(Gen, Map, Progress, SrcCacheFile) == false)
 	 return false;
-
-      TotalSize = ComputeSize(NULL, Files.begin(), Files.end());
-
-      // Build the status cache
-      pkgCacheGenerator Gen(Map.Get(),Progress);
-      if (_error->PendingError() == true)
-	 return false;
-      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, NULL,
-		     Files.begin(),Files.end()) == false)
-	 return false;
+      srcpkgcache_fine = true;
+      TotalSize += ComputeSize(NULL, Files.begin(), Files.end());
    }
-   else
+   else if (srcpkgcache_fine == false)
    {
       if (Debug == true)
 	 std::clog << "srcpkgcache.bin is NOT valid - rebuild" << std::endl;
-      TotalSize = ComputeSize(&List, Files.begin(),Files.end());
-      
-      // Build the source cache
-      pkgCacheGenerator Gen(Map.Get(),Progress);
-      if (_error->PendingError() == true)
-	 return false;
-      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, &List,
-		     Files.end(),Files.end()) == false)
-	 return false;
-      
-      // Write it back
-      if (Writeable == true && SrcCacheFile.empty() == false)
-      {
-	 FileFd SCacheF(SrcCacheFile,FileFd::WriteAtomic);
-	 if (_error->PendingError() == true)
-	    return false;
-	 
-	 fchmod(SCacheF.Fd(),0644);
-	 
-	 // Write out the main data
-	 if (SCacheF.Write(Map->Data(),Map->Size()) == false)
-	    return _error->Error(_("IO Error saving source cache"));
-	 SCacheF.Sync();
-	 
-	 // Write out the proper header
-	 Gen.GetCache().HeaderP->Dirty = false;
-	 if (SCacheF.Seek(0) == false ||
-	     SCacheF.Write(Map->Data(),sizeof(*Gen.GetCache().HeaderP)) == false)
-	    return _error->Error(_("IO Error saving source cache"));
-	 Gen.GetCache().HeaderP->Dirty = true;
-	 SCacheF.Sync();
-      }
-      
-      // Build the status cache
-      if (BuildCache(Gen, Progress, CurrentSize, TotalSize, NULL,
-		     Files.begin(), Files.end()) == false)
-	 return false;
-   }
-   if (Debug == true)
-      std::clog << "Caches are ready for shipping" << std::endl;
+      Gen.reset(new pkgCacheGenerator(Map.Get(),Progress));
 
-   if (_error->PendingError() == true)
-      return false;
-   if (OutMap != 0)
-   {
-      if (CacheF != 0)
-      {
-	 delete Map.UnGuard();
-	 *OutMap = new MMap(*CacheF,0);
-      }
-      else
-      {
-	 *OutMap = Map.UnGuard();
-      }      
+      TotalSize += ComputeSize(&List, Files.begin(),Files.end());
+      if (BuildCache(*Gen, Progress, CurrentSize, TotalSize, &List,
+	       Files.end(),Files.end()) == false)
+	 return false;
+
+      if (Writeable == true && SrcCacheFile.empty() == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.Get(), SrcCacheFile) == false)
+	    return false;
    }
-   
+
+   if (pkgcache_fine == false)
+   {
+      if (Debug == true)
+	 std::clog << "Building status cache in pkgcache.bin now" << std::endl;
+      if (BuildCache(*Gen, Progress, CurrentSize, TotalSize, NULL,
+	       Files.begin(), Files.end()) == false)
+	 return false;
+
+      if (Writeable == true && CacheFile.empty() == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.Get(), CacheFile) == false)
+	    return false;
+   }
+
+   if (Debug == true)
+      std::clog << "Caches done. Now bring in the volatile files (if any)" << std::endl;
+
+   if (volatile_fine == false)
+   {
+      if (Gen == nullptr)
+      {
+	 if (Debug == true)
+	    std::clog << "Populate new MMap with cachefile contents" << std::endl;
+	 if (loadBackMMapFromFile(Gen, Map, Progress, CacheFile) == false)
+	    return false;
+      }
+
+      Files = List.GetVolatileFiles();
+      if (BuildCache(*Gen, Progress, CurrentSize, TotalSize, NULL,
+	       Files.begin(), Files.end()) == false)
+	 return false;
+   }
+
+   if (OutMap != nullptr)
+      *OutMap = Map.UnGuard();
+
+   if (Debug == true)
+      std::clog << "Everything is ready for shipping" << std::endl;
    return true;
 }
 									/*}}}*/
@@ -1817,7 +1792,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
-   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL);
+   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL, 0);
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
    

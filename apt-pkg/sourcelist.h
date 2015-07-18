@@ -50,6 +50,7 @@ class metaIndex;
 class pkgSourceList
 {
    void * const d;
+   std::vector<pkgIndexFile*> VolatileFiles;
    public:
 
    // List of supported source list types
@@ -112,6 +113,24 @@ class pkgSourceList
    
    // query last-modified time
    time_t GetLastModifiedTime();
+
+   /** \brief add file for parsing, but not to the cache
+    *
+    *  pkgIndexFiles origining from pkgSourcesList are included in
+    *  srcpkgcache, the status files added via #AddStatusFiles are
+    *  included in pkgcache, but these files here are not included in
+    *  any cache to have the possibility of having a file included just
+    *  for a single run like a local .deb/.dsc file.
+    *
+    *  The volatile files do not count as "normal" sourceslist entries,
+    *  can't be iterated over with #begin and #end and can't be
+    *  downloaded, but they can be found via #FindIndex.
+    *
+    *  @param File is an index file; pointer-ownership is transferred
+    */
+   void AddVolatileFile(pkgIndexFile * const File);
+   /** @return list of files registered with #AddVolatileFile */
+   std::vector<pkgIndexFile*> GetVolatileFiles() const;
 
    pkgSourceList();
    virtual ~pkgSourceList();
