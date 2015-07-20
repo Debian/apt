@@ -10,6 +10,7 @@
 #include <apt-pkg/update.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/install-progress.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>

@@ -45,6 +45,12 @@ class pkgSourceList;
 class pkgOrderList;
 class pkgRecords;
 
+namespace APT {
+   namespace Progress {
+      class PackageManager;
+      class PackageManagerProgressFd;
+   }
+}
 
 class pkgPackageManager : protected pkgCache::Namespace
 {

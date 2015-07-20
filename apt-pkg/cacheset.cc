@@ -321,7 +321,7 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-		 FromFnmatch(pci, Cache, str, helper) == false)
+		 FromFnmatch(pci, Cache, str, helper) == false &&
 #endif
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
