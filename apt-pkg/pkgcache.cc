@@ -35,6 +35,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <ostream>
+#include <sstream>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <sys/stat.h>
@@ -866,10 +868,32 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
 // ---------------------------------------------------------------------
 /* This describes the version from a release-centric manner. The output is a 
    list of Label:Version/Archive */
+static std::string PkgFileIteratorToRelString(pkgCache::PkgFileIterator const &File)
+{
+   std::string Res;
+   if (File.Label() != 0)
+      Res = Res + File.Label() + ':';
+
+   if (File.Archive() != 0)
+   {
+      if (File.Version() == 0)
+	 Res += File.Archive();
+      else
+	 Res = Res + File.Version() + '/' +  File.Archive();
+   }
+   else
+   {
+      // No release file, print the host name that this came from
+      if (File.Site() == 0 || File.Site()[0] == 0)
+	 Res += "localhost";
+      else
+	 Res += File.Site();
+   }
+   return Res;
+}
 string pkgCache::VerIterator::RelStr() const
 {
-   bool First = true;
-   string Res;
+   std::vector<std::string> RelStrs;
    for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
@@ -877,58 +901,21 @@ string pkgCache::VerIterator::RelStr() const
       if (File.Flagged(pkgCache::Flag::NotSource))
 	 continue;
 
-      // See if we have already printed this out..
-      bool Seen = false;
-      for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
-      {
-	 pkgCache::PkgFileIterator const File2 = J.File();
-	 if (File2.Label() == 0 || File.Label() == 0)
-	    continue;
-
-	 if (strcmp(File.Label(),File2.Label()) != 0)
-	    continue;
-	 
-	 if (File2.Version() == File.Version())
-	 {
-	    Seen = true;
-	    break;
-	 }
-	 if (File2.Version() == 0 || File.Version() == 0)
-	    break;
-	 if (strcmp(File.Version(),File2.Version()) == 0)
-	    Seen = true;
-      }
-      
-      if (Seen == true)
+      std::string const RS = PkgFileIteratorToRelString(File);
+      if (std::find(RelStrs.begin(), RelStrs.end(), RS) != RelStrs.end())
 	 continue;
-      
-      if (First == false)
-	 Res += ", ";
-      else
-	 First = false;
-      
-      if (File.Label() != 0)
-	 Res = Res + File.Label() + ':';
 
-      if (File.Archive() != 0)
-      {
-	 if (File.Version() == 0)
-	    Res += File.Archive();
-	 else
-	    Res = Res + File.Version() + '/' +  File.Archive();
-      }
-      else
-      {
-	 // No release file, print the host name that this came from
-	 if (File.Site() == 0 || File.Site()[0] == 0)
-	    Res += "localhost";
-	 else
-	    Res += File.Site();
-      }      
+      RelStrs.push_back(RS);
+   }
+   std::ostringstream os;
+   if (likely(RelStrs.empty() == false))
+   {
+      std::copy(RelStrs.begin(), RelStrs.end()-1, std::ostream_iterator<std::string>(os, ", "));
+      os << *RelStrs.rbegin();
    }
    if (S->ParentPkg != 0)
-      Res.append(" [").append(Arch()).append("]");
-   return Res;
+      os << " [" << Arch() << "]";
+   return os.str();
 }
 									/*}}}*/
 // VerIterator::MultiArchType - string representing MultiArch flag	/*{{{*/

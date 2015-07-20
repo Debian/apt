@@ -50,13 +50,9 @@ static debListParser::WordList PrioList[] = {
 /* Provide an architecture and only this one and "all" will be accepted
    in Step(), if no Architecture is given we will accept every arch
    we would accept in general with checkArchitecture() */
-debListParser::debListParser(FileFd *File, string const &Arch) :
-   pkgCacheListParser(), d(NULL), Tags(File), Arch(Arch)
+debListParser::debListParser(FileFd *File) :
+   pkgCacheListParser(), d(NULL), Tags(File)
 {
-   if (Arch == "native")
-      this->Arch = _config->Find("APT::Architecture");
-   Architectures = APT::Configuration::getArchitectures();
-   MultiArchEnabled = Architectures.size() > 1;
 }
 									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
@@ -887,34 +883,7 @@ bool debListParser::GrabWord(string Word,WordList *List,unsigned char &Out)
 bool debListParser::Step()
 {
    iOffset = Tags.Offset();
-   while (Tags.Step(Section) == true)
-   {      
-      /* See if this is the correct Architecture, if it isn't then we
-         drop the whole section. A missing arch tag only happens (in theory)
-         inside the Status file, so that is a positive return */
-      string const Architecture = Section.FindS("Architecture");
-
-      if (Arch.empty() == true || Arch == "any" || MultiArchEnabled == false)
-      {
-	 if (APT::Configuration::checkArchitecture(Architecture) == true)
-	    return true;
-	 /* parse version stanzas without an architecture only in the status file
-	    (and as misfortune bycatch flat-archives) */
-	 if ((Arch.empty() == true || Arch == "any") && Architecture.empty() == true)
-	    return true;
-      }
-      else
-      {
-	 if (Architecture == Arch)
-	    return true;
-
-	 if (Architecture == "all" && Arch == _config->Find("APT::Architecture"))
-	    return true;
-      }
-
-      iOffset = Tags.Offset();
-   }   
-   return false;
+   return Tags.Step(Section);
 }
 									/*}}}*/
 // ListParser::GetPrio - Convert the priority from a string		/*{{{*/
@@ -950,7 +919,7 @@ bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
 									/*}}}*/
 
 debDebFileParser::debDebFileParser(FileFd *File, std::string const &DebFile)
-   : debListParser(File, ""), DebFile(DebFile)
+   : debListParser(File), DebFile(DebFile)
 {
 }
 

@@ -11,7 +11,6 @@ insertinstalledpackage 'pkgd' 'none' '1'
 insertpackage 'unstable' 'pkga' 'amd64' '2' 'Depends: pkgb'
 insertpackage 'unstable' 'pkgb' 'amd64' '2'
 insertpackage 'unstable' 'pkgc' 'amd64' '1' 'Conflicts: pkgb'
-insertpackage 'unstable' 'pkge' 'none' '1'
 
 setupaptarchive
 
@@ -40,13 +39,6 @@ Inst pkgb (2 unstable [amd64])
 Inst pkga (2 unstable [amd64])
 Conf pkgb (2 unstable [amd64])
 Conf pkga (2 unstable [amd64])' aptget install pkga -s
-
-# ensure that arch-less stanzas from Packages files are ignored
-msgtest 'Package is distributed in the Packages files' 'pkge'
-grep -q 'Package: pkge' $(find aptarchive -name 'Packages') && msgpass || msgfail
-testnopackage pkge
-testnopackage pkge:none
-testnopackage pkge:*
 
 # do not automatically change from none-arch to whatever-arch as
 # this breaks other none packages and dpkg has this ruleset as

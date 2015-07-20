@@ -289,12 +289,14 @@ The following NEW packages will be installed:
 Inst foo-native-depender (1 unstable [amd64])
 Conf foo-native-depender (1 unstable [amd64])' aptget install foo-native-depender -s
 
-# libold:i386 is installed, but we don't see it as i386 isn't configured
 testequal 'Reading package lists...
 Building dependency tree...
+The following packages will be REMOVED:
+  libold:i386
 The following NEW packages will be installed:
   breaker-x32
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold:i386 [1]
 Inst breaker-x32 (1 unstable [amd64])
 Conf breaker-x32 (1 unstable [amd64])' aptget install breaker-x32:amd64 -s
 

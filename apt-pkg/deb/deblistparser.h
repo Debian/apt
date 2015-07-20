@@ -45,9 +45,6 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    pkgTagFile Tags;
    pkgTagSection Section;
    map_filesize_t iOffset;
-   std::string Arch;
-   std::vector<std::string> Architectures;
-   bool MultiArchEnabled;
 
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
@@ -96,7 +93,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File, std::string const &Arch = "");
+   debListParser(FileFd *File);
    virtual ~debListParser();
 };
 
@@ -118,8 +115,8 @@ class APT_HIDDEN debTranslationsParser : public debListParser
    virtual std::string Architecture() APT_OVERRIDE { return ""; }
    virtual std::string Version() APT_OVERRIDE { return ""; }
 
-   debTranslationsParser(FileFd *File, std::string const &Arch = "")
-      : debListParser(File, Arch) {};
+   debTranslationsParser(FileFd *File)
+      : debListParser(File) {};
 };
 
 #endif

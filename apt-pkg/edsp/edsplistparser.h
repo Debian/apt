@@ -38,7 +38,7 @@ class APT_HIDDEN edspListParser : public debListParser
    bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
 			std::string const &section);
 
-   edspListParser(FileFd *File, std::string const &Arch = "");
+   edspListParser(FileFd *File);
    virtual ~edspListParser();
 
    protected:

@@ -1,0 +1,91 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'bar' 'i386' '1' 'Depends: foo'
+insertpackage 'unstable' 'foo' 'i386' '1' 'Multi-Arch: foreign
+Depends: libfoo1'
+insertpackage 'unstable' 'libfoo1' 'i386' '1' 'Multi-Arch: same'
+insertpackage 'experimental' 'foo' 'i386' '2' 'Multi-Arch: foreign
+Depends: libfoo1 (>= 2)'
+insertpackage 'experimental' 'libfoo1' 'i386' '2' 'Multi-Arch: same'
+
+# note: the system has amd64 not configured!
+insertinstalledpackage 'foo' 'amd64' '1' 'Multi-Arch: foreign
+Depends: libfoo1'
+
+setupaptarchive
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+You might want to run 'apt-get -f install' to correct these.
+The following packages have unmet dependencies:
+ foo:amd64 : Depends: libfoo1:amd64 but it is not installable
+E: Unmet dependencies. Try using -f." aptget check -s
+
+insertinstalledpackage 'libfoo1' 'amd64' '1' 'Multi-Arch: same'
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...' aptget check -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libfoo1
+The following packages will be REMOVED:
+  foo:amd64
+The following NEW packages will be installed:
+  foo libfoo1
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:amd64 [1]
+Inst libfoo1 (1 unstable [i386])
+Inst foo (1 unstable [i386])
+Conf libfoo1 (1 unstable [i386])
+Conf foo (1 unstable [i386])' aptget install foo -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libfoo1
+The following packages will be REMOVED:
+  foo:amd64 libfoo1:amd64
+The following NEW packages will be installed:
+  foo libfoo1
+0 upgraded, 2 newly installed, 2 to remove and 0 not upgraded.
+Remv foo:amd64 [1]
+Remv libfoo1:amd64 [1]
+Inst libfoo1 (2 experimental [i386])
+Inst foo (2 experimental [i386])
+Conf libfoo1 (2 experimental [i386])
+Conf foo (2 experimental [i386])' aptget install foo/experimental -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo libfoo1
+The following packages will be REMOVED:
+  foo:amd64
+The following NEW packages will be installed:
+  bar foo libfoo1
+0 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:amd64 [1]
+Inst libfoo1 (1 unstable [i386])
+Inst foo (1 unstable [i386])
+Inst bar (1 unstable [i386])
+Conf libfoo1 (1 unstable [i386])
+Conf foo (1 unstable [i386])
+Conf bar (1 unstable [i386])' aptget install bar -s
+
+configarchitecture 'i386' 'amd64'
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1 unstable [i386])
+Conf bar (1 unstable [i386])' aptget install bar -s

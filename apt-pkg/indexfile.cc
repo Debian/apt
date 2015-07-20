@@ -316,7 +316,7 @@ pkgCacheListParser * pkgDebianIndexFile::CreateListParser(FileFd &Pkg)
    if (Pkg.IsOpen() == false)
       return NULL;
    _error->PushToStack();
-   pkgCacheListParser * const Parser = new debListParser(&Pkg, GetArchitecture());
+   pkgCacheListParser * const Parser = new debListParser(&Pkg);
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
    return newError ? NULL : Parser;
