@@ -16,14 +16,23 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/srcrecords.h>
+#include <apt-pkg/progress.h>
 #include <apt-pkg/macros.h>
+
+#include <apt-pkg/deblistparser.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <string>
 #include <vector>
 #include <clocale>
 #include <cstring>
+#include <memory>
 									/*}}}*/
 
 // Global list of Item supported
@@ -52,13 +61,13 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
    return 0;
 }
 									/*}}}*/
-pkgIndexFile::pkgIndexFile(bool Trusted) :				/*{{{*/
+pkgIndexFile::pkgIndexFile(bool const Trusted) :			/*{{{*/
    d(NULL), Trusted(Trusted)
 {
 }
 									/*}}}*/
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
-std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator /*Ver*/) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator const &/*Ver*/) const
 {
    return std::string();
 }
@@ -89,7 +98,7 @@ bool pkgIndexFile::TranslationsAvailable() {
    is already done in getLanguages(). Note also that this check is
    rather bad (doesn't take three character like ast into account).
    TODO: Remove method with next API break */
-APT_DEPRECATED bool pkgIndexFile::CheckLanguageCode(const char *Lang)
+APT_DEPRECATED bool pkgIndexFile::CheckLanguageCode(const char * const Lang)
 {
   if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
     return true;
@@ -172,24 +181,24 @@ std::string IndexTarget::Format(std::string format) const		/*{{{*/
 }
 									/*}}}*/
 
-pkgIndexTargetFile::pkgIndexTargetFile(IndexTarget const &Target, bool const Trusted) :/*{{{*/
-   pkgIndexFile(Trusted), d(NULL), Target(Target)
+pkgDebianIndexTargetFile::pkgDebianIndexTargetFile(IndexTarget const &Target, bool const Trusted) :/*{{{*/
+   pkgDebianIndexFile(Trusted), d(NULL), Target(Target)
 {
 }
 									/*}}}*/
-std::string pkgIndexTargetFile::ArchiveURI(std::string File) const/*{{{*/
+std::string pkgDebianIndexTargetFile::ArchiveURI(std::string const &File) const/*{{{*/
 {
    return Target.Option(IndexTarget::REPO_URI) + File;
 }
 									/*}}}*/
-std::string pkgIndexTargetFile::Describe(bool Short) const		/*{{{*/
+std::string pkgDebianIndexTargetFile::Describe(bool const Short) const	/*{{{*/
 {
    if (Short)
       return Target.Description;
    return Target.Description + " (" + IndexFileName() + ")";
 }
 									/*}}}*/
-std::string pkgIndexTargetFile::IndexFileName() const			/*{{{*/
+std::string pkgDebianIndexTargetFile::IndexFileName() const			/*{{{*/
 {
    std::string const s = Target.Option(IndexTarget::FILENAME);
    if (FileExists(s))
@@ -205,7 +214,7 @@ std::string pkgIndexTargetFile::IndexFileName() const			/*{{{*/
    return s;
 }
 									/*}}}*/
-unsigned long pkgIndexTargetFile::Size() const				/*{{{*/
+unsigned long pkgDebianIndexTargetFile::Size() const				/*{{{*/
 {
    unsigned long size = 0;
 
@@ -223,11 +232,155 @@ unsigned long pkgIndexTargetFile::Size() const				/*{{{*/
    return size;
 }
 									/*}}}*/
-bool pkgIndexTargetFile::Exists() const					/*{{{*/
+bool pkgDebianIndexTargetFile::Exists() const					/*{{{*/
 {
    return FileExists(IndexFileName());
 }
 									/*}}}*/
+std::string pkgDebianIndexTargetFile::GetArchitecture() const			/*{{{*/
+{
+   return Target.Option(IndexTarget::ARCHITECTURE);
+}
+									/*}}}*/
+std::string pkgDebianIndexTargetFile::GetComponent() const			/*{{{*/
+{
+   return Target.Option(IndexTarget::COMPONENT);
+}
+									/*}}}*/
+bool pkgDebianIndexTargetFile::OpenListFile(FileFd &Pkg, std::string const &FileName)/*{{{*/
+{
+   if (Pkg.Open(FileName, FileFd::ReadOnly, FileFd::Extension) == false)
+      return _error->Error("Problem opening %s",FileName.c_str());
+   return true;
+}
+									/*}}}*/
+std::string pkgDebianIndexTargetFile::GetProgressDescription() const
+{
+   return Target.Description;
+}
+
+pkgDebianIndexRealFile::pkgDebianIndexRealFile(std::string const &File, bool const Trusted) :/*{{{*/
+   pkgDebianIndexFile(Trusted), d(NULL), File(flAbsPath(File))
+{
+}
+									/*}}}*/
+// IndexRealFile::Size - Return the size of the index			/*{{{*/
+unsigned long pkgDebianIndexRealFile::Size() const
+{
+   struct stat S;
+   if (stat(File.c_str(),&S) != 0)
+      return 0;
+   return S.st_size;
+}
+									/*}}}*/
+bool pkgDebianIndexRealFile::Exists() const					/*{{{*/
+{
+   return FileExists(File);
+}
+									/*}}}*/
+std::string pkgDebianIndexRealFile::Describe(bool const /*Short*/) const/*{{{*/
+{
+   return File;
+}
+									/*}}}*/
+std::string pkgDebianIndexRealFile::ArchiveURI(std::string const &/*File*/) const/*{{{*/
+{
+   return "file:" + File;
+}
+									/*}}}*/
+std::string pkgDebianIndexRealFile::IndexFileName() const			/*{{{*/
+{
+   return File;
+}
+									/*}}}*/
+std::string pkgDebianIndexRealFile::GetProgressDescription() const
+{
+   return File;
+}
+bool pkgDebianIndexRealFile::OpenListFile(FileFd &Pkg, std::string const &FileName)/*{{{*/
+{
+   if (Pkg.Open(FileName, FileFd::ReadOnly, FileFd::None) == false)
+      return _error->Error("Problem opening %s",FileName.c_str());
+   return true;
+}
+									/*}}}*/
+
+pkgDebianIndexFile::pkgDebianIndexFile(bool const Trusted) : pkgIndexFile(Trusted)
+{
+}
+pkgDebianIndexFile::~pkgDebianIndexFile()
+{
+}
+pkgCacheListParser * pkgDebianIndexFile::CreateListParser(FileFd &Pkg)
+{
+   if (Pkg.IsOpen() == false)
+      return NULL;
+   _error->PushToStack();
+   pkgCacheListParser * const Parser = new debListParser(&Pkg, GetArchitecture());
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
+   return newError ? NULL : Parser;
+}
+bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
+{
+   std::string const PackageFile = IndexFileName();
+   FileFd Pkg;
+   if (OpenListFile(Pkg, PackageFile) == false)
+      return false;
+   _error->PushToStack();
+   std::unique_ptr<pkgCacheListParser> Parser(CreateListParser(Pkg));
+   bool const newError = _error->PendingError();
+   if (newError == false && Parser == nullptr)
+      return true;
+   if (Parser == NULL)
+      return false;
+
+   if (Prog != NULL)
+      Prog->SubProgress(0, GetProgressDescription());
+
+   if (Gen.SelectFile(PackageFile, *this, GetArchitecture(), GetComponent(), GetIndexFlags()) == false)
+      return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
+
+   // Store the IMS information
+   pkgCache::PkgFileIterator File = Gen.GetCurFile();
+   pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
+   File->Size = Pkg.FileSize();
+   File->mtime = Pkg.ModificationTime();
+
+   if (Gen.MergeList(*Parser) == false)
+      return _error->Error("Problem with MergeList %s",PackageFile.c_str());
+   return true;
+}
+pkgCache::PkgFileIterator pkgDebianIndexFile::FindInCache(pkgCache &Cache) const
+{
+   std::string const FileName = IndexFileName();
+   pkgCache::PkgFileIterator File = Cache.FileBegin();
+   for (; File.end() == false; ++File)
+   {
+       if (File.FileName() == NULL || FileName != File.FileName())
+	 continue;
+
+      struct stat St;
+      if (stat(File.FileName(),&St) != 0)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "DebianIndexFile::FindInCache - stat failed on " << File.FileName() << std::endl;
+	 return pkgCache::PkgFileIterator(Cache);
+      }
+      if ((map_filesize_t)St.st_size != File->Size || St.st_mtime != File->mtime)
+      {
+         if (_config->FindB("Debug::pkgCacheGen", false))
+	    std::clog << "DebianIndexFile::FindInCache - size (" << St.st_size << " <> " << File->Size
+			<< ") or mtime (" << St.st_mtime << " <> " << File->mtime
+			<< ") doesn't match for " << File.FileName() << std::endl;
+	 return pkgCache::PkgFileIterator(Cache);
+      }
+      return File;
+   }
+
+   return File;
+}
 
 APT_CONST pkgIndexFile::~pkgIndexFile() {}
-APT_CONST pkgIndexTargetFile::~pkgIndexTargetFile() {}
+APT_CONST pkgDebianIndexTargetFile::~pkgDebianIndexTargetFile() {}
+APT_CONST pkgDebianIndexRealFile::~pkgDebianIndexRealFile() {}

@@ -1296,7 +1296,7 @@ testdpkgstatus() {
 	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep "^${STATE}" | wc -l)"
 	if [ "$PKGS" != $NR ]; then
 		echo >&2 $PKGS
-		dpkg -l "$@" | grep '^[a-z]' >&2
+		dpkg -l "$@" | grep '^[a-z]' >&2 || true
 		msgfail
 	else
 		msgpass

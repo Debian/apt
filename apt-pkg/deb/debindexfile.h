@@ -26,69 +26,73 @@ class OpProgress;
 class pkgAcquire;
 class pkgCacheGenerator;
 
-
-class debStatusIndex : public pkgIndexFile
+class debStatusIndex : public pkgDebianIndexRealFile
 {
    void * const d;
-   protected:
-   std::string File;
+protected:
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   virtual std::string GetComponent() const APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
 
-   public:
+public:
 
    virtual const Type *GetType() const APT_CONST;
 
-   // Interface for acquire
-   virtual std::string Describe(bool /*Short*/) const APT_OVERRIDE {return File;};
-
    // Interface for the Cache Generator
-   virtual bool Exists() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE {return true;};
-   virtual unsigned long Size() const APT_OVERRIDE;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
-   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
+   // Abort if the file does not exist.
+   virtual bool Exists() const APT_OVERRIDE {return true;};
 
-   debStatusIndex(std::string File);
+   debStatusIndex(std::string const &File);
    virtual ~debStatusIndex();
 };
 
-class debPackagesIndex : public pkgIndexTargetFile
+class debPackagesIndex : public pkgDebianIndexTargetFile
 {
    void * const d;
-   public:
+protected:
+   virtual uint8_t GetIndexFlags() const;
 
+public:
    virtual const Type *GetType() const APT_CONST;
 
    // Stuff for accessing files on remote items
-   virtual std::string ArchiveInfo(pkgCache::VerIterator Ver) const APT_OVERRIDE;
+   virtual std::string ArchiveInfo(pkgCache::VerIterator const &Ver) const APT_OVERRIDE;
 
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE {return true;};
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
-   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
 
    debPackagesIndex(IndexTarget const &Target, bool const Trusted);
    virtual ~debPackagesIndex();
 };
 
-class debTranslationsIndex : public pkgIndexTargetFile
+class debTranslationsIndex : public pkgDebianIndexTargetFile
 {
    void * const d;
-   public:
+protected:
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
+   virtual bool OpenListFile(FileFd &Pkg, std::string const &FileName) APT_OVERRIDE;
+   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+
+public:
 
    virtual const Type *GetType() const APT_CONST;
 
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
-   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
 
    debTranslationsIndex(IndexTarget const &Target);
    virtual ~debTranslationsIndex();
 };
 
-class debSourcesIndex : public pkgIndexTargetFile
+class debSourcesIndex : public pkgDebianIndexTargetFile
 {
    void * const d;
+   virtual uint8_t GetIndexFlags() const;
+   virtual bool OpenListFile(FileFd &Pkg, std::string const &FileName) APT_OVERRIDE;
+   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -107,19 +111,20 @@ class debSourcesIndex : public pkgIndexTargetFile
    virtual ~debSourcesIndex();
 };
 
-class debDebPkgFileIndex : public pkgIndexFile
+class debDebPkgFileIndex : public pkgDebianIndexRealFile
 {
- private:
    void * const d;
    std::string DebFile;
-   std::string DebFileFullPath;
 
- public:
+protected:
+   virtual std::string GetComponent() const APT_OVERRIDE;
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
+   virtual bool OpenListFile(FileFd &Pkg, std::string const &FileName) APT_OVERRIDE;
+   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+
+public:
    virtual const Type *GetType() const APT_CONST;
-
-   virtual std::string Describe(bool /*Short*/) const APT_OVERRIDE {
-      return DebFile;
-   }
 
    /** get the control (file) content of the deb file
     *
@@ -130,35 +135,22 @@ class debDebPkgFileIndex : public pkgIndexFile
    static bool GetContent(std::ostream &content, std::string const &debfile);
 
    // Interface for the Cache Generator
-   virtual bool Exists() const APT_OVERRIDE;
-   virtual bool HasPackages() const APT_OVERRIDE {
-      return true;
-   };
-   virtual unsigned long Size() const APT_OVERRIDE;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
+   virtual bool HasPackages() const APT_OVERRIDE {return true;}
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
 
    // Interface for acquire
-   virtual std::string ArchiveURI(std::string /*File*/) const APT_OVERRIDE;
 
    debDebPkgFileIndex(std::string const &DebFile);
    virtual ~debDebPkgFileIndex();
 };
 
-class debDscFileIndex : public pkgIndexFile
+class debDscFileIndex : public pkgDebianIndexRealFile
 {
- private:
    void * const d;
-   std::string DscFile;
  public:
    virtual const Type *GetType() const APT_CONST;
    virtual pkgSrcRecords::Parser *CreateSrcParser() const APT_OVERRIDE;
-   virtual bool Exists() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE {return false;};
-   virtual unsigned long Size() const APT_OVERRIDE;
-   virtual std::string Describe(bool /*Short*/) const APT_OVERRIDE {
-      return DscFile;
-   };
 
    debDscFileIndex(std::string const &DscFile);
    virtual ~debDscFileIndex();

@@ -1051,7 +1051,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 // ---------------------------------------------------------------------
 /* This creates a Group and the Package to link this dependency to if
    needed and handles also the caching of the old endpoint */
-bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
+bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
 					       const string &PackageName,
 					       const string &Arch,
 					       const string &Version,
@@ -1077,7 +1077,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 
       if (idxVersion == 0)
       {
-	 idxVersion = StoreString(VERSIONNUMBER, Version);
+	 idxVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
 	 if (unlikely(idxVersion == 0))
 	    return false;
       }
@@ -1124,7 +1124,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 }
 									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
-bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
+bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
 						const string &PkgName,
 						const string &PkgArch,
 						const string &Version,
@@ -1145,7 +1145,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
 
    map_stringitem_t idxProvideVersion = 0;
    if (Version.empty() == false) {
-      idxProvideVersion = StoreString(VERSIONNUMBER, Version);
+      idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
       if (unlikely(idxProvideVersion == 0))
 	 return false;
    }
@@ -1178,7 +1178,7 @@ bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
 }
 									/*}}}*/
 // ListParser::NewProvidesAllArch - add provides for all architectures	/*{{{*/
-bool pkgCacheGenerator::ListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
+bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
 				string const &Version, uint8_t const Flags) {
    pkgCache &Cache = Owner->Cache;
    pkgCache::GrpIterator const Grp = Cache.FindGrp(Package);
@@ -1188,7 +1188,7 @@ bool pkgCacheGenerator::ListParser::NewProvidesAllArch(pkgCache::VerIterator &Ve
    {
       map_stringitem_t idxProvideVersion = 0;
       if (Version.empty() == false) {
-	 idxProvideVersion = StoreString(VERSIONNUMBER, Version);
+	 idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
 	 if (unlikely(idxProvideVersion == 0))
 	    return false;
       }
@@ -1209,7 +1209,7 @@ bool pkgCacheGenerator::ListParser::NewProvidesAllArch(pkgCache::VerIterator &Ve
    return true;
 }
 									/*}}}*/
-bool pkgCacheGenerator::ListParser::SameVersion(unsigned short const Hash,/*{{{*/
+bool pkgCacheListParser::SameVersion(unsigned short const Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {
    return Hash == Ver->Hash;
@@ -1835,5 +1835,5 @@ bool pkgCacheGenerator::FinishCache(OpProgress * /*Progress*/)
 }
 									/*}}}*/
 
-pkgCacheGenerator::ListParser::ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false), d(NULL) {}
-pkgCacheGenerator::ListParser::~ListParser() {}
+pkgCacheListParser::pkgCacheListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false), d(NULL) {}
+pkgCacheListParser::~pkgCacheListParser() {}

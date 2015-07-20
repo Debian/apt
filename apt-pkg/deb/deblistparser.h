@@ -26,7 +26,7 @@
 
 class FileFd;
 
-class APT_HIDDEN debListParser : public pkgCacheGenerator::ListParser
+class APT_HIDDEN debListParser : public pkgCacheListParser
 {
    public:
 

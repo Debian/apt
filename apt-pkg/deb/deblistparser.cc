@@ -50,8 +50,9 @@ static debListParser::WordList PrioList[] = {
 /* Provide an architecture and only this one and "all" will be accepted
    in Step(), if no Architecture is given we will accept every arch
    we would accept in general with checkArchitecture() */
-debListParser::debListParser(FileFd *File, string const &Arch) :  d(NULL), Tags(File),
-				Arch(Arch) {
+debListParser::debListParser(FileFd *File, string const &Arch) :
+   pkgCacheListParser(), d(NULL), Tags(File), Arch(Arch)
+{
    if (Arch == "native")
       this->Arch = _config->Find("APT::Architecture");
    Architectures = APT::Configuration::getArchitectures();
@@ -931,7 +932,7 @@ unsigned char debListParser::GetPrio(string Str)
 bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {
-   if (pkgCacheGenerator::ListParser::SameVersion(Hash, Ver) == false)
+   if (pkgCacheListParser::SameVersion(Hash, Ver) == false)
       return false;
    // status file has no (Download)Size, but all others are fair game
    // status file is parsed last, so the first version we encounter is

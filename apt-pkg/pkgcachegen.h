@@ -32,10 +32,10 @@ class FileFd;
 class pkgSourceList;
 class OpProgress;
 class pkgIndexFile;
+class pkgCacheListParser;
 
 class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 {
-   private:
    APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
@@ -46,10 +46,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    std::map<std::string,map_stringitem_t> strPkgNames;
    std::map<std::string,map_stringitem_t> strVersions;
 
+   friend class pkgCacheListParser;
+   typedef pkgCacheListParser ListParser;
+
    public:
-   
-   class ListParser;
-   friend class ListParser;
 
    template<typename Iter> class Dynamic {
       public:
@@ -138,11 +138,12 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
-class APT_HIDDEN pkgCacheGenerator::ListParser
+class APT_HIDDEN pkgCacheListParser
 {
    pkgCacheGenerator *Owner;
    friend class pkgCacheGenerator;
-   
+   template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
+
    // Some cache items
    pkgCache::VerIterator OldDepVer;
    map_pointer_t *OldDepLast;
@@ -197,8 +198,8 @@ class APT_HIDDEN pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser();
-   virtual ~ListParser();
+   pkgCacheListParser();
+   virtual ~pkgCacheListParser();
 };
 									/*}}}*/
 

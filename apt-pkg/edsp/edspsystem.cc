@@ -81,13 +81,9 @@ bool edspSystem::ArchiveSupported(const char * /*Type*/)
    return false;
 }
 									/*}}}*/
-// System::Score - Determine if we should use the edsp system		/*{{{*/
-signed edspSystem::Score(Configuration const &Cnf)
+// System::Score - Never use the EDSP system automatically		/*{{{*/
+signed edspSystem::Score(Configuration const &)
 {
-   if (Cnf.Find("edsp::scenario", "") == "stdin")
-      return 1000;
-   if (RealFileExists(Cnf.FindFile("edsp::scenario","")) == true)
-      return 1000;
    return -1000;
 }
 									/*}}}*/

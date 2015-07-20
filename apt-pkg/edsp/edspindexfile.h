@@ -18,18 +18,24 @@
 class OpProgress;
 class pkgCacheGenerator;
 
-class APT_HIDDEN edspIndex : public debStatusIndex
+class APT_HIDDEN edspIndex : public pkgDebianIndexRealFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
 
-   public:
+protected:
+   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+   virtual bool OpenListFile(FileFd &Pkg, std::string const &File) APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
+   virtual std::string GetComponent() const APT_OVERRIDE;
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+public:
 
    virtual const Type *GetType() const APT_CONST;
+   virtual bool Exists() const APT_OVERRIDE;
+   virtual bool HasPackages() const APT_OVERRIDE;
 
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
-
-   edspIndex(std::string File);
+   edspIndex(std::string const &File);
    virtual ~edspIndex();
 };
 
