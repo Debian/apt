@@ -74,9 +74,6 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
 
-   // Flag file dependencies
-   bool FoundFileDeps;
-
    bool NewGroup(pkgCache::GrpIterator &Grp,const std::string &Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg,const std::string &Name, const std::string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
@@ -104,14 +101,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    bool SelectReleaseFile(const std::string &File, const std::string &Site, unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};
-   inline pkgCache::PkgFileIterator GetCurFile() 
+   inline pkgCache::PkgFileIterator GetCurFile()
          {return pkgCache::PkgFileIterator(Cache,CurrentFile);};
-   inline pkgCache::RlsFileIterator GetCurRlsFile() 
+   inline pkgCache::RlsFileIterator GetCurRlsFile()
          {return pkgCache::RlsFileIterator(Cache,CurrentRlsFile);};
-
-   bool HasFileDeps() {return FoundFileDeps;};
-   bool MergeFileProvides(ListParser &List);
-   bool FinishCache(OpProgress *Progress) APT_DEPRECATED APT_CONST;
 
    APT_PUBLIC static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
@@ -147,9 +140,6 @@ class APT_HIDDEN pkgCacheListParser
    // Some cache items
    pkgCache::VerIterator OldDepVer;
    map_pointer_t *OldDepLast;
-
-   // Flag file dependencies
-   bool FoundFileDeps;
 
    void * const d;
 
@@ -194,7 +184,6 @@ class APT_HIDDEN pkgCacheListParser
    
    virtual bool Step() = 0;
    
-   inline bool HasFileDeps() {return FoundFileDeps;};
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 

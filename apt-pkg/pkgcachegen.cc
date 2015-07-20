@@ -56,7 +56,7 @@ using std::string;
 /* We set the dirty flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
-		     CurrentRlsFile(NULL), CurrentFile(NULL), FoundFileDeps(0), d(NULL)
+		     CurrentRlsFile(NULL), CurrentFile(NULL), d(NULL)
 {
    if (_error->PendingError() == true)
       return;
@@ -267,10 +267,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       }
 
       if (OutVer != 0)
-      {
-	 FoundFileDeps |= List.HasFileDeps();
 	 return true;
-      }
    }
 
    if (Cache.HeaderP->PackageCount >= std::numeric_limits<map_id_t>::max())
@@ -286,7 +283,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       return _error->Error(_("Wow, you exceeded the number of dependencies "
 			     "this APT is capable of."));
 
-   FoundFileDeps |= List.HasFileDeps();
    return true;
 }
 // CacheGenerator::MergeListGroup					/*{{{*/
@@ -546,57 +542,6 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
    return true;
 }
 									/*}}}*/
-									/*}}}*/
-// CacheGenerator::MergeFileProvides - Merge file provides   		/*{{{*/
-// ---------------------------------------------------------------------
-/* If we found any file depends while parsing the main list we need to 
-   resolve them. Since it is undesired to load the entire list of files
-   into the cache as virtual packages we do a two stage effort. MergeList
-   identifies the file depends and this creates Provdies for them by
-   re-parsing all the indexs. */
-bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
-{
-   List.Owner = this;
-   
-   unsigned int Counter = 0;
-   while (List.Step() == true)
-   {
-      string PackageName = List.Package();
-      if (PackageName.empty() == true)
-	 return false;
-      string Version = List.Version();
-      if (Version.empty() == true)
-	 continue;
-      
-      pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
-      Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
-      if (Pkg.end() == true)
-	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
-				PackageName.c_str(), "FindPkg", 1);
-      Counter++;
-      if (Counter % 100 == 0 && Progress != 0)
-	 Progress->Progress(List.Offset());
-
-      unsigned short Hash = List.VersionHash();
-      pkgCache::VerIterator Ver = Pkg.VersionList();
-      Dynamic<pkgCache::VerIterator> DynVer(Ver);
-      for (; Ver.end() == false; ++Ver)
-      {
-	 if (List.SameVersion(Hash, Ver) == true && Version == Ver.VerStr())
-	 {
-	    if (List.CollectFileProvides(Cache,Ver) == false)
-	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
-				    PackageName.c_str(), "CollectFileProvides", 1);
-	    break;
-	 }
-      }
-      
-      if (Ver.end() == true)
-	 _error->Warning(_("Package %s %s was not found while processing file dependencies"),PackageName.c_str(),Version.c_str());
-   }
-
-   return true;
-}
 									/*}}}*/
 // CacheGenerator::NewGroup - Add a new group				/*{{{*/
 // ---------------------------------------------------------------------
@@ -1063,10 +1008,6 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
    if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
 
-   // Is it a file dependency?
-   if (unlikely(PackageName[0] == '/'))
-      FoundFileDeps = true;
-
    map_stringitem_t idxVersion = 0;
    if (Version.empty() == false)
    {
@@ -1489,13 +1430,9 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 		       FileIterator const Start, FileIterator const End)
 {
    std::vector<pkgIndexFile *> Files;
-   bool const HasFileDeps = Gen.HasFileDeps();
    bool mergeFailure = false;
 
    auto const indexFileMerge = [&](pkgIndexFile * const I) {
-      if (HasFileDeps)
-	 Files.push_back(I);
-
       if (I->HasPackages() == false || mergeFailure)
 	 return;
 
@@ -1547,24 +1484,6 @@ static bool BuildCache(pkgCacheGenerator &Gen,
       if (mergeFailure)
 	 return false;
    }
-
-   if (HasFileDeps == true)
-   {
-      if (Progress != NULL)
-	 Progress->Done();
-      TotalSize = ComputeSize(List, Start, End);
-      CurrentSize = 0;
-      for (std::vector<pkgIndexFile *>::const_iterator I = Files.begin(); I != Files.end(); ++I)
-      {
-	 map_filesize_t Size = (*I)->Size();
-	 if (Progress != NULL)
-	    Progress->OverallProgress(CurrentSize,TotalSize,Size,_("Collecting File Provides"));
-	 CurrentSize += Size;
-	 if ((*I)->MergeFileProvides(Gen,Progress) == false)
-	    return false;
-      }
-   }
-
    return true;
 }
 									/*}}}*/
@@ -1828,12 +1747,6 @@ static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
    return false;
 }
 									/*}}}*/
-// CacheGenerator::FinishCache						/*{{{*/
-bool pkgCacheGenerator::FinishCache(OpProgress * /*Progress*/)
-{
-   return true;
-}
-									/*}}}*/
 
-pkgCacheListParser::pkgCacheListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false), d(NULL) {}
+pkgCacheListParser::pkgCacheListParser() : Owner(NULL), OldDepLast(NULL), d(NULL) {}
 pkgCacheListParser::~pkgCacheListParser() {}

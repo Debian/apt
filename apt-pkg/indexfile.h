@@ -135,7 +135,6 @@ class pkgIndexFile
    virtual bool HasPackages() const = 0;
    virtual unsigned long Size() const = 0;
    virtual bool Merge(pkgCacheGenerator &/*Gen*/, OpProgress* const /*Prog*/) { return true; };
-   virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress* /*Prog*/) {return true;};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    static bool TranslationsAvailable();
