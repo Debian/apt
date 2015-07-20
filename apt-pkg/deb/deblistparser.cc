@@ -69,7 +69,8 @@ string debListParser::Package() {
 // ---------------------------------------------------------------------
 /* This will return the Architecture of the package this section describes */
 string debListParser::Architecture() {
-   return Section.FindS("Architecture");
+   std::string const Arch = Section.FindS("Architecture");
+   return Arch.empty() ? "none" : Arch;
 }
 									/*}}}*/
 // ListParser::ArchitectureAll						/*{{{*/

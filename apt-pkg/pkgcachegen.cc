@@ -229,22 +229,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	 continue;
       }
 
-      if (Arch.empty() == true)
-      {
-	 // use the pseudo arch 'none' for arch-less packages
-	 Arch = "none";
-	 /* We might built a SingleArchCache here, which we don't want to blow up
-	    just for these :none packages to a proper MultiArchCache, so just ensure
-	    that we have always a native package structure first for SingleArch */
-	 pkgCache::PkgIterator NP;
-	 Dynamic<pkgCache::PkgIterator> DynPkg(NP);
-	 if (NewPackage(NP, PackageName, _config->Find("APT::Architecture")) == false)
-	 // TRANSLATOR: The first placeholder is a package name,
-	 // the other two should be copied verbatim as they include debug info
-	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
-			      PackageName.c_str(), "NewPackage", 0);
-      }
-
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
       Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
@@ -439,40 +423,6 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	    if (unlikely(AddImplicitDepends(V, Pkg) == false))
 	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 				    Pkg.Name(), "AddImplicitDepends", 1);
-      }
-      /* :none packages are packages without an architecture. They are forbidden by
-	 debian-policy, so usually they will only be in (old) dpkg status files -
-	 and dpkg will complain about them - and are pretty rare. We therefore do
-	 usually not create conflicts while the parent is created, but only if a :none
-	 package (= the target) appears. This creates incorrect dependencies on :none
-	 for architecture-specific dependencies on the package we copy from, but we
-	 will ignore this bug as architecture-specific dependencies are only allowed
-	 in jessie and until then the :none packages should be extinct (hopefully).
-	 In other words: This should work long enough to allow graceful removal of
-	 these packages, it is not supposed to allow users to keep using them … */
-      if (strcmp(Pkg.Arch(), "none") == 0)
-      {
-	 pkgCache::PkgIterator M = Grp.FindPreferredPkg();
-	 if (M.end() == false && Pkg != M)
-	 {
-	    pkgCache::DepIterator D = M.RevDependsList();
-	    Dynamic<pkgCache::DepIterator> DynD(D);
-	    for (; D.end() == false; ++D)
-	    {
-	       if ((D->Type != pkgCache::Dep::Conflicts &&
-		    D->Type != pkgCache::Dep::DpkgBreaks &&
-		    D->Type != pkgCache::Dep::Replaces) ||
-		   D.ParentPkg().Group() == Grp)
-		  continue;
-
-	       map_pointer_t *OldDepLast = NULL;
-	       pkgCache::VerIterator ConVersion = D.ParentVer();
-	       Dynamic<pkgCache::VerIterator> DynV(ConVersion);
-	       // duplicate the Conflicts/Breaks/Replaces for :none arch
-	       NewDepends(Pkg, ConVersion, D->Version,
-		     D->CompareOp, D->Type, OldDepLast);
-	    }
-	 }
       }
    }
    if (unlikely(AddImplicitDepends(Grp, Pkg, Ver) == false))
