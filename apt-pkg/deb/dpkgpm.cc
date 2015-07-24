@@ -1057,7 +1057,8 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    ++PackagesTotal;
 }
                                                                         /*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+
+// compat
 bool pkgDPkgPM::Go(int StatusFd)
 {
    APT::Progress::PackageManager *progress = NULL;
@@ -1066,9 +1067,8 @@ bool pkgDPkgPM::Go(int StatusFd)
    else
       progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
    
-   return GoNoABIBreak(progress);
+   return Go(progress);
 }
-#endif
 
 void pkgDPkgPM::StartPtyMagic()
 {
