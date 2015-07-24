@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;

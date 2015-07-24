@@ -1068,6 +1068,17 @@ bool pkgDPkgPM::Go(int StatusFd)
    
    return GoNoABIBreak(progress);
 }
+#else
+bool pkgDPkgPM::Go(int StatusFd)
+{
+   APT::Progress::PackageManager *progress = NULL;
+   if (StatusFd == -1)
+      progress = APT::Progress::PackageManagerProgressFactory();
+   else
+      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
+   
+   return Go(progress);
+}
 #endif
 
 void pkgDPkgPM::StartPtyMagic()

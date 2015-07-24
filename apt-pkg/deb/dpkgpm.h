@@ -135,6 +135,8 @@ class pkgDPkgPM : public pkgPackageManager
 
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual bool Go(APT::Progress::PackageManager *progress);
+   // compat
+   virtual bool Go(int StatusFd=-1);
 #else
    virtual bool Go(int StatusFd=-1);
    bool GoNoABIBreak(APT::Progress::PackageManager *progress);
