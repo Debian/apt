@@ -964,7 +964,7 @@ unsigned char debListParser::GetPrio(string Str)
    return Out;
 }
 									/*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {

@@ -85,7 +85,7 @@ class Configuration
     * \param Default list of values separated by commas */
    std::vector<std::string> FindVector(const char *Name, std::string const &Default) const;
    std::vector<std::string> FindVector(std::string const &Name, std::string const &Default) const { return FindVector(Name.c_str(), Default); };
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    std::vector<std::string> FindVector(const char *Name) const { return FindVector(Name, ""); };
 #else
    std::vector<std::string> FindVector(const char *Name) const;

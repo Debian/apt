@@ -78,7 +78,7 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    return Res;
 }
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 std::string debReleaseIndex::LocalFileName() const
 {
    // see if we have a InRelease file

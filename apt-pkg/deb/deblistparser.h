@@ -71,7 +71,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual std::string DescriptionLanguage();
    virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    virtual bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
 #endif
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,

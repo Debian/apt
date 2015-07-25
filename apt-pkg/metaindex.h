@@ -40,7 +40,7 @@ class metaIndex
    virtual const char* GetType() const {return Type;}
 
    // interface to to query it
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    // returns the path of the local file (or "" if its not available)
    virtual std::string LocalFileName() const {return "";};
 #endif

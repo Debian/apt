@@ -138,7 +138,7 @@ static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 
 
 // helper that can go wit hthe next ABI break
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 17)
 static std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 {
    // FIXME: this cast is the horror, the horror
@@ -175,7 +175,7 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
       {
          if (&CurrentIndexFile == (*IF))
          {
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 17)
             std::string path = MetaIndexFileNameOnDisk(*S);
 #else
             std::string path = (*S)->LocalFileName();
