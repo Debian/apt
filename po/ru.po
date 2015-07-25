@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-05-22 17:45+0200\n"
+"POT-Creation-Date: 2015-07-25 13:29+0200\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -336,7 +336,7 @@ msgid "Couldn't find package %s"
 msgstr "Не удалось найти пакет %s"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:865
+#: apt-private/private-install.cc:866
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s установлен вручную.\n"
@@ -398,7 +398,7 @@ msgid "Skipping already downloaded file '%s'\n"
 msgstr "Пропускаем уже скачанный файл «%s»\n"
 
 #: cmdline/apt-get.cc:873 cmdline/apt-get.cc:876
-#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
+#: apt-private/private-install.cc:188 apt-private/private-install.cc:191
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Не удалось определить количество свободного места в %s"
@@ -431,7 +431,7 @@ msgstr "Получение исходного кода %s\n"
 msgid "Failed to fetch some archives."
 msgstr "Некоторые архивы не удалось получить."
 
-#: cmdline/apt-get.cc:929 apt-private/private-install.cc:314
+#: cmdline/apt-get.cc:929 apt-private/private-install.cc:315
 msgid "Download complete and in download only mode"
 msgstr "Указан режим «только скачивание», и скачивание завершено"
 
@@ -703,8 +703,9 @@ msgstr "%s уже помечен как зафиксированный.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s уже помечен как не зафиксированный.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1317
-#: apt-pkg/contrib/fileutl.cc:813 apt-pkg/contrib/gpgv.cc:219
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
+#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Ожидалось завершение процесса %s, но он не был запущен"
@@ -915,9 +916,9 @@ msgstr "Допустимое время ожидания для соединен
 msgid "Server closed the connection"
 msgstr "Сервер прервал соединение"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1477
-#: apt-pkg/contrib/fileutl.cc:1486 apt-pkg/contrib/fileutl.cc:1491
-#: apt-pkg/contrib/fileutl.cc:1493
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1491
+#: apt-pkg/contrib/fileutl.cc:1500 apt-pkg/contrib/fileutl.cc:1505
+#: apt-pkg/contrib/fileutl.cc:1507
 msgid "Read error"
 msgstr "Ошибка чтения"
 
@@ -929,10 +930,10 @@ msgstr "Ответ переполнил буфер."
 msgid "Protocol corruption"
 msgstr "Искажение протокола"
 
-#: methods/ftp.cc:462 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:873
-#: apt-pkg/contrib/fileutl.cc:1599 apt-pkg/contrib/fileutl.cc:1608
-#: apt-pkg/contrib/fileutl.cc:1613 apt-pkg/contrib/fileutl.cc:1615
-#: apt-pkg/contrib/fileutl.cc:1640
+#: methods/ftp.cc:462 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:887
+#: apt-pkg/contrib/fileutl.cc:1613 apt-pkg/contrib/fileutl.cc:1622
+#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1629
+#: apt-pkg/contrib/fileutl.cc:1654
 msgid "Write error"
 msgstr "Ошибка записи"
 
@@ -1103,8 +1104,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"Некорректный подписанный файл, получено «%s» (возможно в сети "
-"требуется аутентификация?)"
+"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
+"аутентификация?)"
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1198,41 +1199,41 @@ msgstr "Внутренняя ошибка"
 msgid "Sorting"
 msgstr "Сортировка"
 
-#: apt-private/private-install.cc:82
+#: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "Внутренняя ошибка, InstallPackages была вызвана с неработоспособными "
 "пакетами!"
 
-#: apt-private/private-install.cc:91
+#: apt-private/private-install.cc:92
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Пакеты необходимо удалить, но удаление запрещено."
 
-#: apt-private/private-install.cc:110
+#: apt-private/private-install.cc:111
 msgid "Internal error, Ordering didn't finish"
 msgstr "Внутренняя ошибка, Ordering не завершилась"
 
-#: apt-private/private-install.cc:148
+#: apt-private/private-install.cc:149
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:155
+#: apt-private/private-install.cc:156
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо скачать %sB/%sB архивов.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:160
+#: apt-private/private-install.cc:161
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Необходимо скачать %sБ архивов.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:167
+#: apt-private/private-install.cc:168
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
@@ -1241,23 +1242,23 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:172
+#: apt-private/private-install.cc:173
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr ""
 "После данной операции, объём занятого дискового пространства уменьшится на "
 "%sB.\n"
 
-#: apt-private/private-install.cc:200
+#: apt-private/private-install.cc:201
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Недостаточно свободного места в %s."
 
-#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:211 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Существуют проблемы, а параметр -y указан без --force-yes"
 
-#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
+#: apt-private/private-install.cc:217 apt-private/private-install.cc:239
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr ""
 "Запрошено выполнение только тривиальных операций, но это не тривиальная "
@@ -1265,11 +1266,11 @@ msgstr ""
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:220
+#: apt-private/private-install.cc:221
 msgid "Yes, do as I say!"
 msgstr "Да, делать, как я скажу!"
 
-#: apt-private/private-install.cc:222
+#: apt-private/private-install.cc:223
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1280,19 +1281,19 @@ msgstr ""
 "Чтобы продолжить, введите фразу: «%s»\n"
 " ?] "
 
-#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
+#: apt-private/private-install.cc:229 apt-private/private-install.cc:247
 msgid "Abort."
 msgstr "Аварийное завершение."
 
-#: apt-private/private-install.cc:243
+#: apt-private/private-install.cc:244
 msgid "Do you want to continue?"
 msgstr "Хотите продолжить?"
 
-#: apt-private/private-install.cc:313
+#: apt-private/private-install.cc:314
 msgid "Some files failed to download"
 msgstr "Некоторые файлы скачать не удалось"
 
-#: apt-private/private-install.cc:320
+#: apt-private/private-install.cc:321
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1300,19 +1301,19 @@ msgstr ""
 "Невозможно получить некоторые архивы, вероятно надо запустить apt-get update "
 "или попытаться повторить запуск с ключом --fix-missing"
 
-#: apt-private/private-install.cc:324
+#: apt-private/private-install.cc:325
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing и смена носителя в данный момент не поддерживаются"
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:330
 msgid "Unable to correct missing packages."
 msgstr "Невозможно исправить ситуацию с пропущенными пакетами."
 
-#: apt-private/private-install.cc:330
+#: apt-private/private-install.cc:331
 msgid "Aborting install."
 msgstr "Аварийное завершение установки."
 
-#: apt-private/private-install.cc:366
+#: apt-private/private-install.cc:367
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1329,15 +1330,15 @@ msgstr[2] ""
 "Следующие пакеты исчез из системы, так как все их файлы\n"
 "теперь берутся из других пакетов:"
 
-#: apt-private/private-install.cc:370
+#: apt-private/private-install.cc:371
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Замечание: это сделано автоматически и специально программой dpkg."
 
-#: apt-private/private-install.cc:391
+#: apt-private/private-install.cc:392
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "Не предполагалось удалять stuff, невозможно запустить AutoRemover"
 
-#: apt-private/private-install.cc:499
+#: apt-private/private-install.cc:500
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1355,15 +1356,15 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
+#: apt-private/private-install.cc:503 apt-private/private-install.cc:654
 msgid "The following information may help to resolve the situation:"
 msgstr "Следующая информация, возможно, поможет вам:"
 
-#: apt-private/private-install.cc:506
+#: apt-private/private-install.cc:507
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Внутренняя ошибка, AutoRemover всё поломал"
 
-#: apt-private/private-install.cc:513
+#: apt-private/private-install.cc:514
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -1375,7 +1376,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Следующие пакеты устанавливались автоматически и больше не требуются:"
 
-#: apt-private/private-install.cc:517
+#: apt-private/private-install.cc:518
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1384,20 +1385,20 @@ msgstr[0] "%lu пакет был установлен автоматически
 msgstr[1] "%lu пакета было установлено автоматически и больше не требуется.\n"
 msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
 
-#: apt-private/private-install.cc:519
+#: apt-private/private-install.cc:520
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "Для его удаления используйте «apt-get autoremove»."
 msgstr[1] "Для их удаления используйте «apt-get autoremove»."
 msgstr[2] "Для их удаления используйте «apt-get autoremove»."
 
-#: apt-private/private-install.cc:612
+#: apt-private/private-install.cc:613
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr ""
 "Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
 "f install»:"
 
-#: apt-private/private-install.cc:614
+#: apt-private/private-install.cc:615
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1405,7 +1406,7 @@ msgstr ""
 "Неудовлетворённые зависимости. Попытайтесь выполнить «apt-get -f install», "
 "не указывая имени пакета, (или найдите другое решение)."
 
-#: apt-private/private-install.cc:638
+#: apt-private/private-install.cc:639
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1416,62 +1417,62 @@ msgstr ""
 "или же используете нестабильную версию дистрибутива, где запрошенные вами\n"
 "пакеты ещё не созданы или были удалены из Incoming."
 
-#: apt-private/private-install.cc:659
+#: apt-private/private-install.cc:660
 msgid "Broken packages"
 msgstr "Сломанные пакеты"
 
-#: apt-private/private-install.cc:712
+#: apt-private/private-install.cc:713
 msgid "The following extra packages will be installed:"
 msgstr "Будут установлены следующие дополнительные пакеты:"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:803
 msgid "Suggested packages:"
 msgstr "Предлагаемые пакеты:"
 
-#: apt-private/private-install.cc:803
+#: apt-private/private-install.cc:804
 msgid "Recommended packages:"
 msgstr "Рекомендуемые пакеты:"
 
-#: apt-private/private-install.cc:825
+#: apt-private/private-install.cc:826
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Пропускается %s — пакет уже установлен и нет команды upgrade.\n"
 
-#: apt-private/private-install.cc:829
+#: apt-private/private-install.cc:830
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "Пропускается %s — пакет не установлен, а запрошено только обновление.\n"
 
-#: apt-private/private-install.cc:841
+#: apt-private/private-install.cc:842
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Переустановка %s невозможна, он не скачивается.\n"
 
-#: apt-private/private-install.cc:846
+#: apt-private/private-install.cc:847
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Уже установлена самая новая версия %s.\n"
 
-#: apt-private/private-install.cc:894
+#: apt-private/private-install.cc:895
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Выбрана версия «%s» (%s) для «%s»\n"
 
-#: apt-private/private-install.cc:899
+#: apt-private/private-install.cc:900
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Выбрана версия «%s» (%s) для «%s» из-за «%s»\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:941
+#: apt-private/private-install.cc:942
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr ""
 "Пакет «%s» не установлен, поэтому не может быть удалён. Возможно имелся в "
 "виду «%s»?\n"
 
-#: apt-private/private-install.cc:947
+#: apt-private/private-install.cc:948
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Пакет «%s» не установлен, поэтому не может быть удалён\n"
@@ -1488,36 +1489,6 @@ msgid_plural ""
 msgstr[0] "Есть %i дополнительная версия. Используйте «-a» для просмотра"
 msgstr[1] "Есть %i дополнительные версии. Используйте «-a» для их просмотра"
 msgstr[2] "Есть %i дополнительных версий. Используйте «-a» для их просмотра"
-
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "Исправление зависимостей…"
-
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " не удалось."
-
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "Невозможно скорректировать зависимости"
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "Невозможно минимизировать набор обновлений"
-
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Готово"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
-"f install»."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
 
 #: apt-private/private-output.cc:103 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
@@ -1682,11 +1653,11 @@ msgstr "Н"
 msgid "Regex compilation error - %s"
 msgstr "Ошибка компиляции регулярного выражения — %s"
 
-#: apt-private/private-update.cc:31
+#: apt-private/private-update.cc:32
 msgid "The update command takes no arguments"
 msgstr "Команде update не нужны аргументы"
 
-#: apt-private/private-update.cc:97
+#: apt-private/private-update.cc:98
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -1700,7 +1671,7 @@ msgstr[2] ""
 "Может быть обновлено %i пакетов. Запустите «apt list --upgradable» для их "
 "показа.\n"
 
-#: apt-private/private-update.cc:101
+#: apt-private/private-update.cc:102
 msgid "All packages are up to date."
 msgstr "Все пакеты имеют последние версии."
 
@@ -1749,6 +1720,36 @@ msgstr "Установить эти пакеты без проверки?"
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Не удалось получить %s  %s\n"
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "Исправление зависимостей…"
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " не удалось."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "Невозможно скорректировать зависимости"
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "Невозможно минимизировать набор обновлений"
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Готово"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr ""
+"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
+"f install»."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
 
 #: apt-private/private-sources.cc:58
 #, c-format
@@ -1811,18 +1812,18 @@ msgstr ""
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:471 apt-pkg/init.cc:103
-#: apt-pkg/init.cc:111 apt-pkg/acquire.cc:494 apt-pkg/clean.cc:43
-#: apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
+#: apt-pkg/clean.cc:43 apt-pkg/policy.cc:381 apt-pkg/acquire.cc:494
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
 #: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Невозможно прочитать %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
-#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
+#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1898,171 +1899,6 @@ msgstr ""
 msgid "Merging available information"
 msgstr "Слияние доступной информации"
 
-#: apt-inst/filelist.cc:380
-msgid "DropNode called on still linked node"
-msgstr "DropNode вызван для узла, который ещё используется"
-
-#: apt-inst/filelist.cc:412
-msgid "Failed to locate the hash element!"
-msgstr "Не удалось найти элемент хеша!"
-
-#: apt-inst/filelist.cc:459
-msgid "Failed to allocate diversion"
-msgstr "Не удалось создать diversion"
-
-#: apt-inst/filelist.cc:464
-msgid "Internal error in AddDiversion"
-msgstr "Внутренняя ошибка в AddDiversion"
-
-#: apt-inst/filelist.cc:477
-#, c-format
-msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr "Попытка изменения diversion, %s -> %s и %s/%s"
-
-#: apt-inst/filelist.cc:506
-#, c-format
-msgid "Double add of diversion %s -> %s"
-msgstr "Двойное добавление diversion %s -> %s"
-
-#: apt-inst/filelist.cc:549
-#, c-format
-msgid "Duplicate conf file %s/%s"
-msgstr "Повторно указан файл настройки %s/%s"
-
-#: apt-inst/extract.cc:101 apt-inst/extract.cc:172
-#, c-format
-msgid "The path %s is too long"
-msgstr "Слишком длинный путь %s"
-
-#: apt-inst/extract.cc:132
-#, c-format
-msgid "Unpacking %s more than once"
-msgstr "Повторная распаковка %s"
-
-#: apt-inst/extract.cc:142
-#, c-format
-msgid "The directory %s is diverted"
-msgstr "Каталог %s входит в список diverted"
-
-#: apt-inst/extract.cc:152
-#, c-format
-msgid "The package is trying to write to the diversion target %s/%s"
-msgstr "Пакет пытается писать в diversion %s/%s"
-
-#: apt-inst/extract.cc:162 apt-inst/extract.cc:306
-msgid "The diversion path is too long"
-msgstr "Путь diversion слишком длинен"
-
-#: apt-inst/extract.cc:186 apt-inst/extract.cc:199 apt-inst/extract.cc:216
-#: ftparchive/cachedb.cc:182
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Не удалось получить атрибуты %s"
-
-#: apt-inst/extract.cc:194 ftparchive/multicompress.cc:374
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Не удалось переименовать %s в %s"
-
-#: apt-inst/extract.cc:249
-#, c-format
-msgid "The directory %s is being replaced by a non-directory"
-msgstr "Каталог %s был заменён не-каталогом"
-
-#: apt-inst/extract.cc:289
-msgid "Failed to locate node in its hash bucket"
-msgstr "Не удалось разместить узел в хеше"
-
-#: apt-inst/extract.cc:293
-msgid "The path is too long"
-msgstr "Путь слишком длинен"
-
-#: apt-inst/extract.cc:421
-#, c-format
-msgid "Overwrite package match with no version for %s"
-msgstr "Файлы заменяются содержимым пакета %s без версии"
-
-#: apt-inst/extract.cc:438
-#, c-format
-msgid "File %s/%s overwrites the one in the package %s"
-msgstr "Файл %s/%s переписывает файл в пакете %s"
-
-#: apt-inst/extract.cc:498
-#, c-format
-msgid "Unable to stat %s"
-msgstr "Невозможно получить атрибуты %s"
-
-#: apt-inst/dirstream.cc:42 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:54
-#, c-format
-msgid "Failed to write file %s"
-msgstr "Не удалось записать в файл %s"
-
-#: apt-inst/dirstream.cc:105
-#, c-format
-msgid "Failed to close file %s"
-msgstr "Не удалось закрыть файл %s"
-
-#: apt-inst/deb/debfile.cc:47 apt-inst/deb/debfile.cc:54
-#: apt-inst/deb/debfile.cc:63
-#, c-format
-msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Это неправильный DEB-архив — отсутствует составная часть «%s»"
-
-#: apt-inst/deb/debfile.cc:132
-#, c-format
-msgid "Internal error, could not locate member %s"
-msgstr "Внутренняя ошибка, не удалось найти составную часть %s"
-
-#: apt-inst/deb/debfile.cc:227
-msgid "Unparsable control file"
-msgstr "Не удалось прочесть содержимое control-файла"
-
-#: apt-inst/contrib/arfile.cc:76
-msgid "Invalid archive signature"
-msgstr "Неверная сигнатура архива"
-
-#: apt-inst/contrib/arfile.cc:84
-msgid "Error reading archive member header"
-msgstr "Ошибка чтения заголовка элемента архива"
-
-#: apt-inst/contrib/arfile.cc:96
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Неправильный заголовок элемента архива %s"
-
-#: apt-inst/contrib/arfile.cc:108
-msgid "Invalid archive member header"
-msgstr "Неправильный заголовок элемента архива"
-
-#: apt-inst/contrib/arfile.cc:137
-msgid "Archive is too short"
-msgstr "Слишком короткий архив"
-
-#: apt-inst/contrib/arfile.cc:141
-msgid "Failed to read the archive headers"
-msgstr "Не удалось прочитать заголовки архива"
-
-#: apt-inst/contrib/extracttar.cc:124
-msgid "Failed to create pipes"
-msgstr "Не удалось создать каналы"
-
-#: apt-inst/contrib/extracttar.cc:151
-msgid "Failed to exec gzip "
-msgstr "Не удалось выполнить gzip "
-
-#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
-msgid "Corrupted archive"
-msgstr "Повреждённый архив"
-
-#: apt-inst/contrib/extracttar.cc:203
-msgid "Tar checksum failed, archive corrupted"
-msgstr "Неправильная контрольная сумма Tar, архив повреждён"
-
-#: apt-inst/contrib/extracttar.cc:308
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
-msgstr "Неизвестный заголовок в архиве TAR. Тип %u, элемент %s"
-
 #: apt-pkg/install-progress.cc:57
 #, c-format
 msgid "Progress: [%3i%%]"
@@ -2112,6 +1948,26 @@ msgstr "Не удалось найти аутентификационную за
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Не совпадает хеш сумма для: %s"
+
+#: apt-pkg/acquire-worker.cc:116
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Драйвер для метода %s не найден."
+
+#: apt-pkg/acquire-worker.cc:118
+#, c-format
+msgid "Is the package %s installed?"
+msgstr "Проверьте, установлен ли пакет %s?"
+
+#: apt-pkg/acquire-worker.cc:169
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Метод %s запустился не корректно"
+
+#: apt-pkg/acquire-worker.cc:455
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
 
 #: apt-pkg/cachefile.cc:94
 msgid "The package lists or status file could not be parsed or opened."
@@ -2206,58 +2062,7 @@ msgstr "необязательный"
 msgid "extra"
 msgstr "дополнительный"
 
-#: apt-pkg/acquire-worker.cc:116
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "Драйвер для метода %s не найден."
-
-#: apt-pkg/acquire-worker.cc:118
-#, c-format
-msgid "Is the package %s installed?"
-msgstr "Проверьте, установлен ли пакет %s?"
-
-#: apt-pkg/acquire-worker.cc:169
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Метод %s запустился не корректно"
-
-#: apt-pkg/acquire-worker.cc:455
-#, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
-
-#: apt-pkg/pkgrecords.cc:38
-#, c-format
-msgid "Index file type '%s' is not supported"
-msgstr "Не поддерживается индексный файл типа «%s»"
-
-#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "Построение дерева зависимостей"
-
-#: apt-pkg/depcache.cc:139
-msgid "Candidate versions"
-msgstr "Версии-кандидаты"
-
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "Генерирование зависимостей"
-
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "Чтение информации о состоянии"
-
-#: apt-pkg/depcache.cc:250
-#, c-format
-msgid "Failed to open StateFile %s"
-msgstr "Не удалось открыть StateFile %s"
-
-#: apt-pkg/depcache.cc:256
-#, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "Не удалось записать временный StateFile %s"
-
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2048
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "переименовать не удалось, %s (%s -> %s)."
@@ -2341,6 +2146,21 @@ msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Некорректный перечень пакетов. Нет поля Filename: для пакета %s."
 
+#: apt-pkg/pkgrecords.cc:38
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "Не поддерживается индексный файл типа «%s»"
+
+#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Очистка «%s» не поддерживается"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Невозможно получить атрибуты %s."
+
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
 msgstr "Кэш имеет несовместимую систему версий"
@@ -2415,38 +2235,6 @@ msgstr "Ошибка ввода/вывода при попытке сохран�
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Блок поставщика %s не содержит отпечатка (fingerprint)"
 
-#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Каталог списка %spartial отсутствует."
-
-#: apt-pkg/acquire.cc:91
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Архивный каталог %spartial отсутствует."
-
-#: apt-pkg/acquire.cc:99
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Невозможно заблокировать каталог %s"
-
-#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Очистка «%s» не поддерживается"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:902
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Скачивается файл %li из %li (осталось %s)"
-
-#: apt-pkg/acquire.cc:904
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Скачивается файл %li из %li"
-
 #: apt-pkg/update.cc:103 apt-pkg/update.cc:105
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -2458,11 +2246,6 @@ msgstr ""
 #: apt-pkg/srcrecords.cc:53
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Вы должны заполнить sources.list, поместив туда URI источников пакетов"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Невозможно получить атрибуты %s."
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2486,33 +2269,6 @@ msgstr "Неизвестный тип фиксации %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Для фиксации не указан приоритет (или указан нулевой)"
-
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:957
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-"Не удалось выполнить оперативную настройку «%s». Подробней, смотрите в man 5 "
-"apt.conf о APT::Immediate-Configure. (%d)"
-
-#: apt-pkg/packagemanager.cc:550 apt-pkg/packagemanager.cc:580
-#, c-format
-msgid "Could not configure '%s'. "
-msgstr "Не удалось настроить «%s»."
-
-#: apt-pkg/packagemanager.cc:630
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Вследствие возникновения циклических зависимостей типа Конфликтует/"
-"ПредЗависит, для продолжения установки необходимо временно удалить "
-"существенно важный пакет %s. Это может привести к фатальным последствиям. "
-"Если вы действительно хотите продолжить, установите параметр APT::Force-"
-"LoopBreak."
 
 #: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
 #, c-format
@@ -2588,6 +2344,11 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "Копирование списков пакетов…"
 
+#: apt-pkg/cdrom.cc:829 apt-pkg/acquire.cc:87
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Каталог списка %spartial отсутствует."
+
 #: apt-pkg/cdrom.cc:863
 msgid "Writing new source list\n"
 msgstr "Запись нового списка источников\n"
@@ -2595,6 +2356,28 @@ msgstr "Запись нового списка источников\n"
 #: apt-pkg/cdrom.cc:874
 msgid "Source list entries for this disc are:\n"
 msgstr "Записи в списке источников для этого диска:\n"
+
+#: apt-pkg/acquire.cc:91
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Архивный каталог %spartial отсутствует."
+
+#: apt-pkg/acquire.cc:99
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Невозможно заблокировать каталог %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:902
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Скачивается файл %li из %li (осталось %s)"
+
+#: apt-pkg/acquire.cc:904
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Скачивается файл %li из %li"
 
 #: apt-pkg/algorithms.cc:265
 #, c-format
@@ -2614,6 +2397,32 @@ msgstr ""
 #: apt-pkg/algorithms.cc:1088
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Невозможно исправить ошибки, у вас отложены (held) битые пакеты."
+
+#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "Построение дерева зависимостей"
+
+#: apt-pkg/depcache.cc:139
+msgid "Candidate versions"
+msgstr "Версии-кандидаты"
+
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "Генерирование зависимостей"
+
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "Чтение информации о состоянии"
+
+#: apt-pkg/depcache.cc:250
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Не удалось открыть StateFile %s"
+
+#: apt-pkg/depcache.cc:256
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Не удалось записать временный StateFile %s"
 
 #: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
 msgid "Send scenario to solver"
@@ -2645,6 +2454,67 @@ msgstr "Невозможно разобрать содержимое пакет�
 msgid "Unable to parse package file %s (2)"
 msgstr "Невозможно разобрать содержимое пакета %s (2)"
 
+#: apt-pkg/cacheset.cc:489
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "Выпуск «%s» для «%s» не найден"
+
+#: apt-pkg/cacheset.cc:492
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Версия «%s» для «%s» не найдена"
+
+#: apt-pkg/cacheset.cc:603
+#, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Не удалось найти задачу «%s»"
+
+#: apt-pkg/cacheset.cc:609
+#, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Не удалось найти пакет с помощью regex «%s»"
+
+#: apt-pkg/cacheset.cc:615
+#, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "Не удалось найти пакет с помощью glob «%s»"
+
+#: apt-pkg/cacheset.cc:626
+#, c-format
+msgid "Can't select versions from package '%s' as it is purely virtual"
+msgstr ""
+"Не удалось выбрать версии из пакета «%s», так как он полностью виртуальный"
+
+#: apt-pkg/cacheset.cc:633 apt-pkg/cacheset.cc:640
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+"Не удалось выбрать ни установленную, ни версию кандидата из пакета «%s», так "
+"как в нём нет ни той, ни другой"
+
+#: apt-pkg/cacheset.cc:647
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+"Не удалось выбрать самую новую версию из пакета «%s», так как он полностью "
+"виртуальный"
+
+#: apt-pkg/cacheset.cc:655
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+"Не удалось выбрать самую версию кандидата из пакета %s, так как у него нет "
+"кандидатов"
+
+#: apt-pkg/cacheset.cc:663
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+"Не удалось выбрать установленную версию из пакета %s, так как он не "
+"установлен"
+
 #: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "Unable to parse Release file %s"
@@ -2669,6 +2539,33 @@ msgstr "Неправильный элемент «Valid-Until» в файле Re
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Неправильный элемент «Date» в файле Release %s"
+
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
+#, c-format
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+"Не удалось выполнить оперативную настройку «%s». Подробней, смотрите в man 5 "
+"apt.conf о APT::Immediate-Configure. (%d)"
+
+#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
+#, c-format
+msgid "Could not configure '%s'. "
+msgstr "Не удалось настроить «%s»."
+
+#: apt-pkg/packagemanager.cc:631
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Вследствие возникновения циклических зависимостей типа Конфликтует/"
+"ПредЗависит, для продолжения установки необходимо временно удалить "
+"существенно важный пакет %s. Это может привести к фатальным последствиям. "
+"Если вы действительно хотите продолжить, установите параметр APT::Force-"
+"LoopBreak."
 
 #: apt-pkg/sourcelist.cc:127
 #, c-format
@@ -2749,238 +2646,34 @@ msgstr "Неизвестный тип «%s» в строке %u в списке 
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Неизвестный тип «%s» в строфе %u в списке источников %s"
 
-#: apt-pkg/cacheset.cc:489
+#. d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:418
 #, c-format
-msgid "Release '%s' for '%s' was not found"
-msgstr "Выпуск «%s» для «%s» не найден"
+msgid "%lid %lih %limin %lis"
+msgstr "%liд %liч %liмин %liс"
 
-#: apt-pkg/cacheset.cc:492
+#. h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
 #, c-format
-msgid "Version '%s' for '%s' was not found"
-msgstr "Версия «%s» для «%s» не найдена"
+msgid "%lih %limin %lis"
+msgstr "%liч %liмин %liс"
 
-#: apt-pkg/cacheset.cc:603
+#. min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:432
 #, c-format
-msgid "Couldn't find task '%s'"
-msgstr "Не удалось найти задачу «%s»"
+msgid "%limin %lis"
+msgstr "%liмин %liс"
 
-#: apt-pkg/cacheset.cc:609
+#. s means seconds
+#: apt-pkg/contrib/strutl.cc:437
 #, c-format
-msgid "Couldn't find any package by regex '%s'"
-msgstr "Не удалось найти пакет с помощью regex «%s»"
+msgid "%lis"
+msgstr "%liс"
 
-#: apt-pkg/cacheset.cc:615
+#: apt-pkg/contrib/strutl.cc:1258
 #, c-format
-msgid "Couldn't find any package by glob '%s'"
-msgstr "Не удалось найти пакет с помощью glob «%s»"
-
-#: apt-pkg/cacheset.cc:626
-#, c-format
-msgid "Can't select versions from package '%s' as it is purely virtual"
-msgstr ""
-"Не удалось выбрать версии из пакета «%s», так как он полностью виртуальный"
-
-#: apt-pkg/cacheset.cc:633 apt-pkg/cacheset.cc:640
-#, c-format
-msgid ""
-"Can't select installed nor candidate version from package '%s' as it has "
-"neither of them"
-msgstr ""
-"Не удалось выбрать ни установленную, ни версию кандидата из пакета «%s», так "
-"как в нём нет ни той, ни другой"
-
-#: apt-pkg/cacheset.cc:647
-#, c-format
-msgid "Can't select newest version from package '%s' as it is purely virtual"
-msgstr ""
-"Не удалось выбрать самую новую версию из пакета «%s», так как он полностью "
-"виртуальный"
-
-#: apt-pkg/cacheset.cc:655
-#, c-format
-msgid "Can't select candidate version from package %s as it has no candidate"
-msgstr ""
-"Не удалось выбрать самую версию кандидата из пакета %s, так как у него нет "
-"кандидатов"
-
-#: apt-pkg/cacheset.cc:663
-#, c-format
-msgid "Can't select installed version from package %s as it is not installed"
-msgstr ""
-"Не удалось выбрать установленную версию из пакета %s, так как он не "
-"установлен"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "Устанавливается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "Настраивается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "Удаляется %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "Выполняется полное удаление %s"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "Уведомление об исчезновении %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Выполняется послеустановочный триггер %s"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Отсутствует каталог «%s»"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Не удалось открыть файл «%s»"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "Подготавливается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "Распаковывается %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Подготавливается для настройки %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "Установлен %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Подготавливается для удаления %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "Удалён %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Подготовка к полному удалению %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s полностью удалён"
-
-#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
-#, c-format
-msgid "Can not write log (%s)"
-msgstr "Невозможно записать журнал (%s)"
-
-#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
-msgid "Is /dev/pts mounted?"
-msgstr "Смонтирован ли /dev/pts?"
-
-#: apt-pkg/deb/dpkgpm.cc:1670
-msgid "Operation was interrupted before it could finish"
-msgstr "Действие прервано до его завершения"
-
-#: apt-pkg/deb/dpkgpm.cc:1732
-msgid "No apport report written because MaxReports is reached already"
-msgstr "Отчёты apport не записаны, так достигнут MaxReports"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1737
-msgid "dependency problems - leaving unconfigured"
-msgstr "проблемы с зависимостями — оставляем ненастроенным"
-
-#: apt-pkg/deb/dpkgpm.cc:1739
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Отчёты apport не записаны, так как сообщение об ошибке указывает на "
-"повторную ошибку от предыдущего отказа."
-
-#: apt-pkg/deb/dpkgpm.cc:1745
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
-"места на диске"
-
-#: apt-pkg/deb/dpkgpm.cc:1752
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
-"памяти"
-
-#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Отчёты apport не записаны, так как получено сообщение о проблеме в локальной "
-"системе"
-
-#: apt-pkg/deb/dpkgpm.cc:1787
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Отчёты apport не записаны, так как получено сообщение об ошибке об ошибке "
-"ввода-выводы dpkg"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Не удалось выполнить блокировку управляющего каталога (%s); он уже "
-"используется другим процессом?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr ""
-"Не удалось выполнить блокировку управляющего каталога (%s); у вас есть права "
-"суперпользователя?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"Работа dpkg прервана, вы должны вручную запустить «%s» для устранения "
-"проблемы. "
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Не заблокирован"
+msgid "Selection %s not found"
+msgstr "Не найдено: %s"
 
 #: apt-pkg/contrib/fileutl.cc:190
 #, c-format
@@ -3029,77 +2722,77 @@ msgstr ""
 "Файл «%s» в каталоге «%s» игнорируется, так как он не имеет неправильное "
 "расширение"
 
-#: apt-pkg/contrib/fileutl.cc:825
+#: apt-pkg/contrib/fileutl.cc:839
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr ""
 "Нарушение защиты памяти (segmentation fault) в порождённом процессе %s."
 
-#: apt-pkg/contrib/fileutl.cc:827
+#: apt-pkg/contrib/fileutl.cc:841
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Порождённый процесс %s получил сигнал %u."
 
-#: apt-pkg/contrib/fileutl.cc:831 apt-pkg/contrib/gpgv.cc:239
+#: apt-pkg/contrib/fileutl.cc:845 apt-pkg/contrib/gpgv.cc:239
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Порождённый процесс %s вернул код ошибки (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:833 apt-pkg/contrib/gpgv.cc:232
+#: apt-pkg/contrib/fileutl.cc:847 apt-pkg/contrib/gpgv.cc:232
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Порождённый процесс %s неожиданно завершился"
 
-#: apt-pkg/contrib/fileutl.cc:914
+#: apt-pkg/contrib/fileutl.cc:928
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Проблема закрытия gzip-файла %s"
 
-#: apt-pkg/contrib/fileutl.cc:1102
+#: apt-pkg/contrib/fileutl.cc:1116
 #, c-format
 msgid "Could not open file %s"
 msgstr "Не удалось открыть файл %s"
 
-#: apt-pkg/contrib/fileutl.cc:1161 apt-pkg/contrib/fileutl.cc:1208
+#: apt-pkg/contrib/fileutl.cc:1175 apt-pkg/contrib/fileutl.cc:1222
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Не удалось открыть файловый дескриптор %d"
 
-#: apt-pkg/contrib/fileutl.cc:1316
+#: apt-pkg/contrib/fileutl.cc:1330
 msgid "Failed to create subprocess IPC"
 msgstr "Не удалось создать IPC с порождённым процессом"
 
-#: apt-pkg/contrib/fileutl.cc:1374
+#: apt-pkg/contrib/fileutl.cc:1388
 msgid "Failed to exec compressor "
 msgstr "Не удалось выполнить компрессор "
 
-#: apt-pkg/contrib/fileutl.cc:1515
+#: apt-pkg/contrib/fileutl.cc:1529
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr ""
 "ошибка при чтении; собирались прочесть ещё %llu байт, но ничего больше нет"
 
-#: apt-pkg/contrib/fileutl.cc:1628 apt-pkg/contrib/fileutl.cc:1650
+#: apt-pkg/contrib/fileutl.cc:1642 apt-pkg/contrib/fileutl.cc:1664
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "ошибка при записи; собирались записать ещё %llu байт, но не смогли"
 
-#: apt-pkg/contrib/fileutl.cc:1916
+#: apt-pkg/contrib/fileutl.cc:1930
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Проблема закрытия файла %s"
 
-#: apt-pkg/contrib/fileutl.cc:1928
+#: apt-pkg/contrib/fileutl.cc:1942
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Проблема при переименовании файла %s в %s"
 
-#: apt-pkg/contrib/fileutl.cc:1939
+#: apt-pkg/contrib/fileutl.cc:1953
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Проблема при удалении файла %s"
 
-#: apt-pkg/contrib/fileutl.cc:1952
+#: apt-pkg/contrib/fileutl.cc:1966
 msgid "Problem syncing the file"
 msgstr "Проблема при синхронизации файла"
 
@@ -3122,35 +2815,6 @@ msgstr "…"
 #, c-format
 msgid "%c%s... %u%%"
 msgstr "%c%s… %u%%"
-
-#. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:418
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr "%liд %liч %liмин %liс"
-
-#. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lih %limin %lis"
-msgstr "%liч %liмин %liс"
-
-#. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:432
-#, c-format
-msgid "%limin %lis"
-msgstr "%liмин %liс"
-
-#. s means seconds
-#: apt-pkg/contrib/strutl.cc:437
-#, c-format
-msgid "%lis"
-msgstr "%liс"
-
-#: apt-pkg/contrib/strutl.cc:1258
-#, c-format
-msgid "Selection %s not found"
-msgstr "Не найдено: %s"
 
 #: apt-pkg/contrib/mmap.cc:79
 msgid "Can't mmap an empty file"
@@ -3327,6 +2991,178 @@ msgstr "Смысл %s не ясен, используйте true или false."
 msgid "Invalid operation %s"
 msgstr "Неверная операция %s"
 
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "Устанавливается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "Настраивается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "Удаляется %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "Выполняется полное удаление %s"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "Уведомление об исчезновении %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Выполняется послеустановочный триггер %s"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Отсутствует каталог «%s»"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Не удалось открыть файл «%s»"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "Подготавливается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "Распаковывается %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Подготавливается для настройки %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "Установлен %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Подготавливается для удаления %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "Удалён %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Подготовка к полному удалению %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s полностью удалён"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, c-format
+msgid "Can not write log (%s)"
+msgstr "Невозможно записать журнал (%s)"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr "Смонтирован ли /dev/pts?"
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "Действие прервано до его завершения"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr "Отчёты apport не записаны, так достигнут MaxReports"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "проблемы с зависимостями — оставляем ненастроенным"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Отчёты apport не записаны, так как сообщение об ошибке указывает на "
+"повторную ошибку от предыдущего отказа."
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
+"места на диске"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке о нехватке "
+"памяти"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Отчёты apport не записаны, так как получено сообщение о проблеме в локальной "
+"системе"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Отчёты apport не записаны, так как получено сообщение об ошибке об ошибке "
+"ввода-выводы dpkg"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Не удалось выполнить блокировку управляющего каталога (%s); он уже "
+"используется другим процессом?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr ""
+"Не удалось выполнить блокировку управляющего каталога (%s); у вас есть права "
+"суперпользователя?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"Работа dpkg прервана, вы должны вручную запустить «%s» для устранения "
+"проблемы. "
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Не заблокирован"
+
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -3502,6 +3338,12 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Не удалось открыть DB файл %s: %s"
 
+#: ftparchive/cachedb.cc:182 apt-inst/extract.cc:186 apt-inst/extract.cc:199
+#: apt-inst/extract.cc:216
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Не удалось получить атрибуты %s"
+
 #: ftparchive/cachedb.cc:332
 msgid "Failed to read .dsc"
 msgstr "Не удалось прочесть .dsc"
@@ -3676,6 +3518,11 @@ msgstr "Ошибка чтения во время вычисления MD5"
 msgid "Problem unlinking %s"
 msgstr "Не удалось удалить %s"
 
+#: ftparchive/multicompress.cc:374 apt-inst/extract.cc:194
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Не удалось переименовать %s в %s"
+
 #: cmdline/apt-internal-solver.cc:49
 msgid ""
 "Usage: apt-internal-solver\n"
@@ -3728,6 +3575,160 @@ msgstr ""
 "  -s   сортировать список файлов пакетов исходного кода\n"
 "  -c=? читать указанный файл настройки\n"
 "  -o=? Задать значение произвольной настройке, например, -o dir::cache=/tmp\n"
+
+#: apt-inst/filelist.cc:380
+msgid "DropNode called on still linked node"
+msgstr "DropNode вызван для узла, который ещё используется"
+
+#: apt-inst/filelist.cc:412
+msgid "Failed to locate the hash element!"
+msgstr "Не удалось найти элемент хеша!"
+
+#: apt-inst/filelist.cc:459
+msgid "Failed to allocate diversion"
+msgstr "Не удалось создать diversion"
+
+#: apt-inst/filelist.cc:464
+msgid "Internal error in AddDiversion"
+msgstr "Внутренняя ошибка в AddDiversion"
+
+#: apt-inst/filelist.cc:477
+#, c-format
+msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
+msgstr "Попытка изменения diversion, %s -> %s и %s/%s"
+
+#: apt-inst/filelist.cc:506
+#, c-format
+msgid "Double add of diversion %s -> %s"
+msgstr "Двойное добавление diversion %s -> %s"
+
+#: apt-inst/filelist.cc:549
+#, c-format
+msgid "Duplicate conf file %s/%s"
+msgstr "Повторно указан файл настройки %s/%s"
+
+#: apt-inst/extract.cc:101 apt-inst/extract.cc:172
+#, c-format
+msgid "The path %s is too long"
+msgstr "Слишком длинный путь %s"
+
+#: apt-inst/extract.cc:132
+#, c-format
+msgid "Unpacking %s more than once"
+msgstr "Повторная распаковка %s"
+
+#: apt-inst/extract.cc:142
+#, c-format
+msgid "The directory %s is diverted"
+msgstr "Каталог %s входит в список diverted"
+
+#: apt-inst/extract.cc:152
+#, c-format
+msgid "The package is trying to write to the diversion target %s/%s"
+msgstr "Пакет пытается писать в diversion %s/%s"
+
+#: apt-inst/extract.cc:162 apt-inst/extract.cc:306
+msgid "The diversion path is too long"
+msgstr "Путь diversion слишком длинен"
+
+#: apt-inst/extract.cc:249
+#, c-format
+msgid "The directory %s is being replaced by a non-directory"
+msgstr "Каталог %s был заменён не-каталогом"
+
+#: apt-inst/extract.cc:289
+msgid "Failed to locate node in its hash bucket"
+msgstr "Не удалось разместить узел в хеше"
+
+#: apt-inst/extract.cc:293
+msgid "The path is too long"
+msgstr "Путь слишком длинен"
+
+#: apt-inst/extract.cc:421
+#, c-format
+msgid "Overwrite package match with no version for %s"
+msgstr "Файлы заменяются содержимым пакета %s без версии"
+
+#: apt-inst/extract.cc:438
+#, c-format
+msgid "File %s/%s overwrites the one in the package %s"
+msgstr "Файл %s/%s переписывает файл в пакете %s"
+
+#: apt-inst/extract.cc:498
+#, c-format
+msgid "Unable to stat %s"
+msgstr "Невозможно получить атрибуты %s"
+
+#: apt-inst/dirstream.cc:42 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:54
+#, c-format
+msgid "Failed to write file %s"
+msgstr "Не удалось записать в файл %s"
+
+#: apt-inst/dirstream.cc:105
+#, c-format
+msgid "Failed to close file %s"
+msgstr "Не удалось закрыть файл %s"
+
+#: apt-inst/deb/debfile.cc:47 apt-inst/deb/debfile.cc:54
+#: apt-inst/deb/debfile.cc:63
+#, c-format
+msgid "This is not a valid DEB archive, missing '%s' member"
+msgstr "Это неправильный DEB-архив — отсутствует составная часть «%s»"
+
+#: apt-inst/deb/debfile.cc:132
+#, c-format
+msgid "Internal error, could not locate member %s"
+msgstr "Внутренняя ошибка, не удалось найти составную часть %s"
+
+#: apt-inst/deb/debfile.cc:227
+msgid "Unparsable control file"
+msgstr "Не удалось прочесть содержимое control-файла"
+
+#: apt-inst/contrib/arfile.cc:76
+msgid "Invalid archive signature"
+msgstr "Неверная сигнатура архива"
+
+#: apt-inst/contrib/arfile.cc:84
+msgid "Error reading archive member header"
+msgstr "Ошибка чтения заголовка элемента архива"
+
+#: apt-inst/contrib/arfile.cc:96
+#, c-format
+msgid "Invalid archive member header %s"
+msgstr "Неправильный заголовок элемента архива %s"
+
+#: apt-inst/contrib/arfile.cc:108
+msgid "Invalid archive member header"
+msgstr "Неправильный заголовок элемента архива"
+
+#: apt-inst/contrib/arfile.cc:137
+msgid "Archive is too short"
+msgstr "Слишком короткий архив"
+
+#: apt-inst/contrib/arfile.cc:141
+msgid "Failed to read the archive headers"
+msgstr "Не удалось прочитать заголовки архива"
+
+#: apt-inst/contrib/extracttar.cc:124
+msgid "Failed to create pipes"
+msgstr "Не удалось создать каналы"
+
+#: apt-inst/contrib/extracttar.cc:151
+msgid "Failed to exec gzip "
+msgstr "Не удалось выполнить gzip "
+
+#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
+msgid "Corrupted archive"
+msgstr "Повреждённый архив"
+
+#: apt-inst/contrib/extracttar.cc:203
+msgid "Tar checksum failed, archive corrupted"
+msgstr "Неправильная контрольная сумма Tar, архив повреждён"
+
+#: apt-inst/contrib/extracttar.cc:308
+#, c-format
+msgid "Unknown TAR header type %u, member %s"
+msgstr "Неизвестный заголовок в архиве TAR. Тип %u, элемент %s"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
