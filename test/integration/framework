@@ -508,10 +508,12 @@ echo '$NAME says \"Hello!\"'" > ${BUILDDIR}/${NAME}
 
  -- Joe Sixpack <joe@example.org>  $(date -R)" > ${BUILDDIR}/debian/changelog
 	echo "Source: $NAME
-Section: $SECTION
 Priority: $PRIORITY
 Maintainer: Joe Sixpack <joe@example.org>
 Standards-Version: 3.9.3" > ${BUILDDIR}/debian/control
+	if [ "$SECTION" != '<none>' ]; then
+		echo "Section: $SECTION" >> ${BUILDDIR}/debian/control
+	fi
 	local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
 	test -z "$BUILDDEPS" || echo "$BUILDDEPS" >> ${BUILDDIR}/debian/control
 	echo "

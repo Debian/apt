@@ -1103,7 +1103,12 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    if (DebugMarker == true)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << " FU=" << FromUser << std::endl;
 
-   DepIterator Dep = P.InstVerIter(*this).DependsList();
+   VerIterator const PV = P.InstVerIter(*this);
+   if (unlikely(PV.end() == true))
+      return false;
+   bool const PinNeverMarkAutoSection = (PV->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", PV.Section()));
+
+   DepIterator Dep = PV.DependsList();
    for (; Dep.end() != true;)
    {
       // Grok or groups
@@ -1226,7 +1231,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       continue;
 	    }
 	    // now check if we should consider it a automatic dependency or not
-	    if(InstPkg->CurrentVer == 0 && InstVer->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", InstVer.Section()))
+	    if(InstPkg->CurrentVer == 0 && PinNeverMarkAutoSection)
 	    {
 	       if(DebugAutoInstall == true)
 		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
