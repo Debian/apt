@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-07-25 13:29+0200\n"
+"POT-Creation-Date: 2015-08-03 07:15+0200\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1136,9 +1136,254 @@ msgstr "Ha fallat la connexió"
 msgid "Internal error"
 msgstr "Error intern"
 
+#: apt-private/private-list.cc:129
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc:159
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "S'estan corregint les dependències…"
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " ha fallat."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "No es poden corregir les dependències"
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "No es pot minimitzar el joc de versions revisades"
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Fet"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Potser voldreu executar «apt-get -f install» per a corregir-ho."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Dependències sense satisfer. Proveu-ho emprant -f."
+
+#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc:265
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Instaŀlat]"
+
+#: apt-private/private-output.cc:268
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Instaŀlat]"
+
+#: apt-private/private-output.cc:270
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc:272
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Instaŀlat]"
+
+#: apt-private/private-output.cc:274
+#, fuzzy
+msgid "[installed]"
+msgstr " [Instaŀlat]"
+
+#: apt-private/private-output.cc:277
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc:281
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc:455
+#, c-format
+msgid "but %s is installed"
+msgstr "però està instaŀlat %s"
+
+#: apt-private/private-output.cc:457
+#, c-format
+msgid "but %s is to be installed"
+msgstr "però s'instaŀlarà %s"
+
+#: apt-private/private-output.cc:464
+msgid "but it is not installable"
+msgstr "però no és instaŀlable"
+
+#: apt-private/private-output.cc:466
+msgid "but it is a virtual package"
+msgstr "però és un paquet virtual"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not installed"
+msgstr "però no està instaŀlat"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not going to be installed"
+msgstr "però no serà instaŀlat"
+
+#: apt-private/private-output.cc:474
+msgid " or"
+msgstr " o"
+
+#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
+msgid "The following packages have unmet dependencies:"
+msgstr "Els següents paquets tenen dependències sense satisfer:"
+
+#: apt-private/private-output.cc:523
+msgid "The following NEW packages will be installed:"
+msgstr "S'instaŀlaran els paquets NOUS següents:"
+
+#: apt-private/private-output.cc:549
+msgid "The following packages will be REMOVED:"
+msgstr "Es SUPRIMIRAN els paquets següents:"
+
+#: apt-private/private-output.cc:571
+msgid "The following packages have been kept back:"
+msgstr "S'han mantingut els paquets següents:"
+
+#: apt-private/private-output.cc:592
+msgid "The following packages will be upgraded:"
+msgstr "S'actualitzaran els paquets següents:"
+
+#: apt-private/private-output.cc:613
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Es DESACTUALITZARAN els paquets següents:"
+
+#: apt-private/private-output.cc:633
+msgid "The following held packages will be changed:"
+msgstr "Es canviaran els paquets retinguts següents:"
+
+#: apt-private/private-output.cc:688
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (per %s) "
+
+#: apt-private/private-output.cc:696
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"AVÍS: Es suprimiran els paquets essencials següents.\n"
+"Això NO s'ha de fer a menys que sapigueu exactament el que esteu fent!"
+
+#: apt-private/private-output.cc:727
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu actualitzats, %lu nous a instaŀlar, "
+
+#: apt-private/private-output.cc:731
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu reinstaŀlats, "
+
+#: apt-private/private-output.cc:733
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu desactualitzats, "
+
+#: apt-private/private-output.cc:735
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu a suprimir i %lu no actualitzats.\n"
+
+#: apt-private/private-output.cc:739
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu no instaŀlats o suprimits completament.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:761
+msgid "[Y/n]"
+msgstr "[S/n]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:767
+msgid "[y/N]"
+msgstr "[s/N]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:778
+msgid "Y"
+msgstr "S"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:784
+msgid "N"
+msgstr "N"
+
+#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "S'ha produït un error de compilació de l'expressió regular - %s"
+
+#: apt-private/private-update.cc:32
+msgid "The update command takes no arguments"
+msgstr "L'ordre update no pren arguments"
+
+#: apt-private/private-update.cc:98
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc:102
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr ""
+
+#: apt-private/private-show.cc:156
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:163
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"Nota: Això només és una simulació!\n"
+"      L'apt-get necessita privilegis de root per a l'execució real.\n"
+"      Tingueu en ment que el bloqueig està desactivat,\n"
+"      per tant, no es depèn de la situació actual real."
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1413,223 +1658,6 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "El paquet «%s» no està instaŀlat, així doncs no es suprimirà\n"
 
-#: apt-private/private-list.cc:129
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc:159
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc:265
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Instaŀlat]"
-
-#: apt-private/private-output.cc:268
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Instaŀlat]"
-
-#: apt-private/private-output.cc:270
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc:272
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Instaŀlat]"
-
-#: apt-private/private-output.cc:274
-#, fuzzy
-msgid "[installed]"
-msgstr " [Instaŀlat]"
-
-#: apt-private/private-output.cc:277
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc:281
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc:455
-#, c-format
-msgid "but %s is installed"
-msgstr "però està instaŀlat %s"
-
-#: apt-private/private-output.cc:457
-#, c-format
-msgid "but %s is to be installed"
-msgstr "però s'instaŀlarà %s"
-
-#: apt-private/private-output.cc:464
-msgid "but it is not installable"
-msgstr "però no és instaŀlable"
-
-#: apt-private/private-output.cc:466
-msgid "but it is a virtual package"
-msgstr "però és un paquet virtual"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not installed"
-msgstr "però no està instaŀlat"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not going to be installed"
-msgstr "però no serà instaŀlat"
-
-#: apt-private/private-output.cc:474
-msgid " or"
-msgstr " o"
-
-#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
-msgid "The following packages have unmet dependencies:"
-msgstr "Els següents paquets tenen dependències sense satisfer:"
-
-#: apt-private/private-output.cc:523
-msgid "The following NEW packages will be installed:"
-msgstr "S'instaŀlaran els paquets NOUS següents:"
-
-#: apt-private/private-output.cc:549
-msgid "The following packages will be REMOVED:"
-msgstr "Es SUPRIMIRAN els paquets següents:"
-
-#: apt-private/private-output.cc:571
-msgid "The following packages have been kept back:"
-msgstr "S'han mantingut els paquets següents:"
-
-#: apt-private/private-output.cc:592
-msgid "The following packages will be upgraded:"
-msgstr "S'actualitzaran els paquets següents:"
-
-#: apt-private/private-output.cc:613
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Es DESACTUALITZARAN els paquets següents:"
-
-#: apt-private/private-output.cc:633
-msgid "The following held packages will be changed:"
-msgstr "Es canviaran els paquets retinguts següents:"
-
-#: apt-private/private-output.cc:688
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (per %s) "
-
-#: apt-private/private-output.cc:696
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"AVÍS: Es suprimiran els paquets essencials següents.\n"
-"Això NO s'ha de fer a menys que sapigueu exactament el que esteu fent!"
-
-#: apt-private/private-output.cc:727
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu actualitzats, %lu nous a instaŀlar, "
-
-#: apt-private/private-output.cc:731
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu reinstaŀlats, "
-
-#: apt-private/private-output.cc:733
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu desactualitzats, "
-
-#: apt-private/private-output.cc:735
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu a suprimir i %lu no actualitzats.\n"
-
-#: apt-private/private-output.cc:739
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu no instaŀlats o suprimits completament.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:761
-msgid "[Y/n]"
-msgstr "[S/n]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:767
-msgid "[y/N]"
-msgstr "[s/N]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:778
-msgid "Y"
-msgstr "S"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:784
-msgid "N"
-msgstr "N"
-
-#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "S'ha produït un error de compilació de l'expressió regular - %s"
-
-#: apt-private/private-update.cc:32
-msgid "The update command takes no arguments"
-msgstr "L'ordre update no pren arguments"
-
-#: apt-private/private-update.cc:98
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc:102
-msgid "All packages are up to date."
-msgstr ""
-
-#: apt-private/private-show.cc:156
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc:163
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"Nota: Això només és una simulació!\n"
-"      L'apt-get necessita privilegis de root per a l'execució real.\n"
-"      Tingueu en ment que el bloqueig està desactivat,\n"
-"      per tant, no es depèn de la situació actual real."
-
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "AVÍS: No es poden autenticar els següents paquets!"
@@ -1650,34 +1678,6 @@ msgstr "Voleu instaŀlar aquests paquets sense verificar-los?"
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "No s'ha pogut obtenir %s  %s\n"
-
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "S'estan corregint les dependències…"
-
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " ha fallat."
-
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "No es poden corregir les dependències"
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "No es pot minimitzar el joc de versions revisades"
-
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Fet"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Potser voldreu executar «apt-get -f install» per a corregir-ho."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Dependències sense satisfer. Proveu-ho emprant -f."
 
 #: apt-private/private-sources.cc:58
 #, fuzzy, c-format
@@ -1741,10 +1741,10 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/clean.cc:43 apt-pkg/policy.cc:381 apt-pkg/acquire.cc:494
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
-#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
+#: apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "No es pot llegir %s"
@@ -1993,99 +1993,93 @@ msgstr "opcional"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "no s'ha pogut canviar el nom, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc:163
-msgid "Hash Sum mismatch"
-msgstr "La suma resum no concorda"
-
-#: apt-pkg/acquire-item.cc:168
-msgid "Size mismatch"
-msgstr "La mida no concorda"
-
-#: apt-pkg/acquire-item.cc:173
-#, fuzzy
-msgid "Invalid file format"
-msgstr "Operació no vàlida %s"
-
-#: apt-pkg/acquire-item.cc:1650
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
-msgstr ""
-"No s'ha trobat l'entrada «%s» esperada, al fitxer Release (entrada errònia "
-"al sources.list o fitxer malformat)"
-
-#: apt-pkg/acquire-item.cc:1666
-#, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "No s'ha trobat la suma de comprovació per a «%s» al fitxer Release"
-
-#: apt-pkg/acquire-item.cc:1708
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "No hi ha cap clau pública disponible per als següents ID de clau:\n"
-
-#: apt-pkg/acquire-item.cc:1746
-#, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
-msgstr ""
-"El fitxer Release per a %s ha caducat (invàlid des de %s). Les "
-"actualitzacions per a aquest dipòsit no s'aplicaran."
-
-#: apt-pkg/acquire-item.cc:1768
-#, c-format
-msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr "Distribució en conflicte: %s (s'esperava %s però s'ha obtingut %s)"
-
-#: apt-pkg/acquire-item.cc:1798
-#, c-format
-msgid ""
-"An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s\n"
-msgstr ""
-"S'ha produït un error durant la verificació de la signatura. El dipòsit no "
-"està actualitzat i s'emprarà el fitxer d'índex anterior. Error del GPG: %s: "
-"%s\n"
-
-#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1808 apt-pkg/acquire-item.cc:1813
-#, c-format
-msgid "GPG error: %s: %s"
-msgstr "S'ha produït un error amb el GPG: %s: %s"
-
-#: apt-pkg/acquire-item.cc:1936
-#, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"No ha estat possible localitzar un fitxer pel paquet %s. Això podria "
-"significar que haureu d'arreglar aquest paquet manualment (segons "
-"arquitectura)."
-
-#: apt-pkg/acquire-item.cc:2002
-#, c-format
-msgid "Can't find a source to download version '%s' of '%s'"
-msgstr "No es troba una font per baixar la versió «%s» de «%s»"
-
-#: apt-pkg/acquire-item.cc:2060
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"L'índex dels fitxers en el paquet està corromput. Fitxer no existent: camp "
-"per al paquet %s."
-
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "El tipus de fitxer índex «%s» no està suportat"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Línia %lu malformada en la llista de fonts %s (analitzant URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr ""
+"Línia %lu malformada en la llista de fonts %s ([opció] no reconeixible)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Línia %lu malformada en la llista de fonts %s ([opció] massa curta)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"Línia %lu malformada en la llista de fonts %s ([%s] no és una assignació)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Línia %lu malformada en la llista de fonts %s ([%s] no té clau)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Línia %lu malformada en la llista de fonts %s ([%s] la clau %s no té valor)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Línia %lu malformada en la llista de fonts %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Línia %lu malformada en la llista de fonts %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Línia %lu malformada en la llista de fonts %s (analitzant URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Línia %lu malformada en la llista de fonts %s (dist absoluta)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Línia %lu malformada en la llista de fonts %s (analitzant dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "S'està obrint %s"
+
+#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "La línia %u és massa llarga en la llista de fonts %s."
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "La línia %u és malformada en la llista de fonts %s (tipus)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
 #, fuzzy, c-format
@@ -2167,18 +2161,146 @@ msgstr "No es pot escriure en %s"
 msgid "IO Error saving source cache"
 msgstr "Error d'E/S en desar la memòria cau de la font"
 
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
+msgid "Send scenario to solver"
+msgstr "Envia l'escenari al resoledor"
+
+#: apt-pkg/edsp.cc:241
+msgid "Send request to solver"
+msgstr "Envia la petició al resoledor"
+
+#: apt-pkg/edsp.cc:320
+msgid "Prepare for receiving solution"
+msgstr "Prepara per a rebre una solució"
+
+#: apt-pkg/edsp.cc:327
+msgid "External solver failed without a proper error message"
+msgstr "El resoledor extern ha fallat sense un missatge d'error adient"
+
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
+msgid "Execute external solver"
+msgstr "Executa un resoledor extern"
+
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "no s'ha pogut canviar el nom, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:163
+msgid "Hash Sum mismatch"
+msgstr "La suma resum no concorda"
+
+#: apt-pkg/acquire-item.cc:168
+msgid "Size mismatch"
+msgstr "La mida no concorda"
+
+#: apt-pkg/acquire-item.cc:173
+#, fuzzy
+msgid "Invalid file format"
+msgstr "Operació no vàlida %s"
+
+#: apt-pkg/acquire-item.cc:1651
+#, c-format
+msgid ""
+"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
+"or malformed file)"
+msgstr ""
+"No s'ha trobat l'entrada «%s» esperada, al fitxer Release (entrada errònia "
+"al sources.list o fitxer malformat)"
+
+#: apt-pkg/acquire-item.cc:1667
+#, c-format
+msgid "Unable to find hash sum for '%s' in Release file"
+msgstr "No s'ha trobat la suma de comprovació per a «%s» al fitxer Release"
+
+#: apt-pkg/acquire-item.cc:1709
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "No hi ha cap clau pública disponible per als següents ID de clau:\n"
+
+#: apt-pkg/acquire-item.cc:1747
+#, c-format
+msgid ""
+"Release file for %s is expired (invalid since %s). Updates for this "
+"repository will not be applied."
+msgstr ""
+"El fitxer Release per a %s ha caducat (invàlid des de %s). Les "
+"actualitzacions per a aquest dipòsit no s'aplicaran."
+
+#: apt-pkg/acquire-item.cc:1769
+#, c-format
+msgid "Conflicting distribution: %s (expected %s but got %s)"
+msgstr "Distribució en conflicte: %s (s'esperava %s però s'ha obtingut %s)"
+
+#: apt-pkg/acquire-item.cc:1799
+#, c-format
+msgid ""
+"An error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgstr ""
+"S'ha produït un error durant la verificació de la signatura. El dipòsit no "
+"està actualitzat i s'emprarà el fitxer d'índex anterior. Error del GPG: %s: "
+"%s\n"
+
+#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
+#: apt-pkg/acquire-item.cc:1809 apt-pkg/acquire-item.cc:1814
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr "S'ha produït un error amb el GPG: %s: %s"
+
+#: apt-pkg/acquire-item.cc:1937
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"No ha estat possible localitzar un fitxer pel paquet %s. Això podria "
+"significar que haureu d'arreglar aquest paquet manualment (segons "
+"arquitectura)."
+
+#: apt-pkg/acquire-item.cc:2003
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr "No es troba una font per baixar la versió «%s» de «%s»"
+
+#: apt-pkg/acquire-item.cc:2061
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"L'índex dels fitxers en el paquet està corromput. Fitxer no existent: camp "
+"per al paquet %s."
+
 #: apt-pkg/vendorlist.cc:85
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "El camp del proveïdor %s no té una empremta digital"
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Alguns índex no s'han pogut baixar. S'han descartat, o en el seu lloc s'han "
-"emprat els antics."
+#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Falta el directori de llistes %spartial."
+
+#: apt-pkg/acquire.cc:91
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Falta el directori d'arxius %spartial."
+
+#: apt-pkg/acquire.cc:99
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "No es pot blocar el directori %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:902
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "S'està obtenint el fitxer %li de %li (falten %s)"
+
+#: apt-pkg/acquire.cc:904
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "S'està obtenint el fitxer %li de %li"
 
 #: apt-pkg/srcrecords.cc:53
 msgid "You must put some 'source' URIs in your sources.list"
@@ -2207,10 +2329,39 @@ msgstr "No s'ha entès el pin de tipus %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "No hi ha prioritat especificada per al pin (o és zero)"
 
-#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
-msgid "Line %u too long in source list %s."
-msgstr "La línia %u és massa llarga en la llista de fonts %s."
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+"No s'ha pogut realitzar la configuració immediata de «%s». Vegeu man 5 apt."
+"conf, sota APT::Immediate-Configure per a més detalls. (%d)"
+
+#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
+#, c-format
+msgid "Could not configure '%s'. "
+msgstr "No s'ha pogut configurar «%s»."
+
+#: apt-pkg/packagemanager.cc:631
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Aquesta instaŀlació requereix suprimir temporalment el paquet essencial %s "
+"per qüestió d'un bucle de Conflictes/Pre-dependències. Això sol ser una cosa "
+"dolenta, però si realment desitgeu fer-la, activeu l'opció APT::Force-"
+"LoopBreak."
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Alguns índex no s'han pogut baixar. S'han descartat, o en el seu lloc s'han "
+"emprat els antics."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2281,11 +2432,6 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "S'estan copiant les llistes de paquets…"
 
-#: apt-pkg/cdrom.cc:829 apt-pkg/acquire.cc:87
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Falta el directori de llistes %spartial."
-
 #: apt-pkg/cdrom.cc:863
 msgid "Writing new source list\n"
 msgstr "S'està escrivint una nova llista de fonts\n"
@@ -2293,28 +2439,6 @@ msgstr "S'està escrivint una nova llista de fonts\n"
 #: apt-pkg/cdrom.cc:874
 msgid "Source list entries for this disc are:\n"
 msgstr "Les entrades de la llista de fonts per a aquest disc són:\n"
-
-#: apt-pkg/acquire.cc:91
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Falta el directori d'arxius %spartial."
-
-#: apt-pkg/acquire.cc:99
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "No es pot blocar el directori %s"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:902
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "S'està obtenint el fitxer %li de %li (falten %s)"
-
-#: apt-pkg/acquire.cc:904
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "S'està obtenint el fitxer %li de %li"
 
 #: apt-pkg/algorithms.cc:265
 #, c-format
@@ -2362,26 +2486,6 @@ msgstr "No s'ha pogut obrir el fitxer d'estat %s"
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "No s'ha pogut escriure el fitxer d'estat temporal %s"
-
-#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
-msgid "Send scenario to solver"
-msgstr "Envia l'escenari al resoledor"
-
-#: apt-pkg/edsp.cc:241
-msgid "Send request to solver"
-msgstr "Envia la petició al resoledor"
-
-#: apt-pkg/edsp.cc:320
-msgid "Prepare for receiving solution"
-msgstr "Prepara per a rebre una solució"
-
-#: apt-pkg/edsp.cc:327
-msgid "External solver failed without a proper error message"
-msgstr "El resoledor extern ha fallat sense un missatge d'error adient"
-
-#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
-msgid "Execute external solver"
-msgstr "Executa un resoledor extern"
 
 #: apt-pkg/tagfile.cc:140
 #, c-format
@@ -2479,110 +2583,6 @@ msgstr "El camp «Valid-Until» al fitxer Release %s és invàlid"
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "El camp «Date» al fitxer Release %s és invàlid"
-
-#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-"No s'ha pogut realitzar la configuració immediata de «%s». Vegeu man 5 apt."
-"conf, sota APT::Immediate-Configure per a més detalls. (%d)"
-
-#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
-#, c-format
-msgid "Could not configure '%s'. "
-msgstr "No s'ha pogut configurar «%s»."
-
-#: apt-pkg/packagemanager.cc:631
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Aquesta instaŀlació requereix suprimir temporalment el paquet essencial %s "
-"per qüestió d'un bucle de Conflictes/Pre-dependències. Això sol ser una cosa "
-"dolenta, però si realment desitgeu fer-la, activeu l'opció APT::Force-"
-"LoopBreak."
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Línia %lu malformada en la llista de fonts %s (analitzant URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
-"Línia %lu malformada en la llista de fonts %s ([opció] no reconeixible)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Línia %lu malformada en la llista de fonts %s ([opció] massa curta)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"Línia %lu malformada en la llista de fonts %s ([%s] no és una assignació)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Línia %lu malformada en la llista de fonts %s ([%s] no té clau)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Línia %lu malformada en la llista de fonts %s ([%s] la clau %s no té valor)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Línia %lu malformada en la llista de fonts %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Línia %lu malformada en la llista de fonts %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Línia %lu malformada en la llista de fonts %s (analitzant URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Línia %lu malformada en la llista de fonts %s (dist absoluta)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Línia %lu malformada en la llista de fonts %s (analitzant dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "S'està obrint %s"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "La línia %u és malformada en la llista de fonts %s (tipus)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418

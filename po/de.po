@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-07-25 13:29+0200\n"
+"POT-Creation-Date: 2015-08-03 07:15+0200\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -1222,9 +1222,265 @@ msgstr "Verbindung fehlgeschlagen"
 msgid "Internal error"
 msgstr "Interner Fehler"
 
+#: apt-private/private-list.cc:129
+msgid "Listing"
+msgstr "Auflistung"
+
+#: apt-private/private-list.cc:159
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+"Es gibt %i zusätzliche Version. Bitte verwenden Sie die Option »-a«, um sie "
+"anzuzeigen."
+msgstr[1] ""
+"Es gibt %i zusätzliche Versionen. Bitte verwenden Sie die Option »-a«, um "
+"sie anzuzeigen."
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "Abhängigkeiten werden korrigiert ..."
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " fehlgeschlagen."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "Abhängigkeiten konnten nicht korrigiert werden."
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "Menge der zu aktualisierenden Pakete konnte nicht minimiert werden."
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Fertig"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Probieren Sie »apt-get -f install«, um dies zu korrigieren."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Unerfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
+
+#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr "unbekannt"
+
+#: apt-private/private-output.cc:265
+#, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Installiert,aktualisierbar auf: %s]"
+
+#: apt-private/private-output.cc:268
+msgid "[installed,local]"
+msgstr " [Installiert,lokal]"
+
+#: apt-private/private-output.cc:270
+msgid "[installed,auto-removable]"
+msgstr "[installiert,automatisch-entfernbar]"
+
+#: apt-private/private-output.cc:272
+msgid "[installed,automatic]"
+msgstr " [Installiert,automatisch]"
+
+#: apt-private/private-output.cc:274
+msgid "[installed]"
+msgstr " [installiert]"
+
+#: apt-private/private-output.cc:277
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr "[aktualisierbar von: %s]"
+
+#: apt-private/private-output.cc:281
+msgid "[residual-config]"
+msgstr "[Konfiguration-verbleibend]"
+
+#: apt-private/private-output.cc:455
+#, c-format
+msgid "but %s is installed"
+msgstr "aber %s ist installiert"
+
+#: apt-private/private-output.cc:457
+#, c-format
+msgid "but %s is to be installed"
+msgstr "aber %s soll installiert werden"
+
+#: apt-private/private-output.cc:464
+msgid "but it is not installable"
+msgstr "ist aber nicht installierbar"
+
+#: apt-private/private-output.cc:466
+msgid "but it is a virtual package"
+msgstr "ist aber ein virtuelles Paket"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not installed"
+msgstr "ist aber nicht installiert"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not going to be installed"
+msgstr "soll aber nicht installiert werden"
+
+#: apt-private/private-output.cc:474
+msgid " or"
+msgstr " oder"
+
+#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
+msgid "The following packages have unmet dependencies:"
+msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
+
+#: apt-private/private-output.cc:523
+msgid "The following NEW packages will be installed:"
+msgstr "Die folgenden NEUEN Pakete werden installiert:"
+
+#: apt-private/private-output.cc:549
+msgid "The following packages will be REMOVED:"
+msgstr "Die folgenden Pakete werden ENTFERNT:"
+
+#: apt-private/private-output.cc:571
+msgid "The following packages have been kept back:"
+msgstr "Die folgenden Pakete sind zurückgehalten worden:"
+
+#: apt-private/private-output.cc:592
+msgid "The following packages will be upgraded:"
+msgstr "Die folgenden Pakete werden aktualisiert (Upgrade):"
+
+#: apt-private/private-output.cc:613
+msgid "The following packages will be DOWNGRADED:"
+msgstr ""
+"Die folgenden Pakete werden durch eine ÄLTERE VERSION ERSETZT (Downgrade):"
+
+#: apt-private/private-output.cc:633
+msgid "The following held packages will be changed:"
+msgstr "Die folgenden zurückgehaltenen Pakete werden verändert:"
+
+#: apt-private/private-output.cc:688
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (wegen %s) "
+
+#: apt-private/private-output.cc:696
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"WARNUNG: Die folgenden essentiellen Pakete werden entfernt.\n"
+"Dies sollte NICHT geschehen, außer Sie wissen genau, was Sie tun!"
+
+#: apt-private/private-output.cc:727
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu aktualisiert, %lu neu installiert, "
+
+#: apt-private/private-output.cc:731
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu erneut installiert, "
+
+#: apt-private/private-output.cc:733
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu durch eine ältere Version ersetzt, "
+
+#: apt-private/private-output.cc:735
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu zu entfernen und %lu nicht aktualisiert.\n"
+
+#: apt-private/private-output.cc:739
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu nicht vollständig installiert oder entfernt.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:761
+msgid "[Y/n]"
+msgstr "[J/n]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:767
+msgid "[y/N]"
+msgstr "[j/N]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:778
+msgid "Y"
+msgstr "J"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:784
+msgid "N"
+msgstr "N"
+
+#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Fehler beim Kompilieren eines regulären Ausdrucks - %s"
+
+#: apt-private/private-update.cc:32
+msgid "The update command takes no arguments"
+msgstr "Der Befehl »update« akzeptiert keine Argumente."
+
+#: apt-private/private-update.cc:98
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+"Aktualisierung für %i Paket verfügbar. Führen Sie »apt list --upgradable« "
+"aus, um es anzuzeigen.\n"
+msgstr[1] ""
+"Aktualisierung für %i Pakete verfügbar. Führen Sie »apt list --upgradable« "
+"aus, um sie anzuzeigen.\n"
+
+#: apt-private/private-update.cc:102
+msgid "All packages are up to date."
+msgstr "Alle Pakete sind aktuell."
+
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr "Sortierung"
+
+#: apt-private/private-show.cc:156
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+"Es gibt %i zusätzlichen Eintrag. Bitte verwenden Sie die Option »-a«, um ihn "
+"anzuzeigen."
+msgstr[1] ""
+"Es gibt %i zusätzliche Einträge. Bitte verwenden Sie die Option »-a«, um sie "
+"anzuzeigen."
+
+#: apt-private/private-show.cc:163
+msgid "not a real package (virtual)"
+msgstr "kein reales Paket (virtuell)"
+
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"HINWEIS: Dies ist nur eine Simulation!\n"
+"         apt-get benötigt root-Privilegien für die reale Ausführung.\n"
+"         Behalten Sie ebenfalls in Hinterkopf, dass die Sperren deaktiviert\n"
+"         sind, verlassen Sie sich also bezüglich des reellen aktuellen\n"
+"         Status der Sperre nicht darauf!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1503,234 +1759,6 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Paket »%s« ist nicht installiert, wird also auch nicht entfernt.\n"
 
-#: apt-private/private-list.cc:129
-msgid "Listing"
-msgstr "Auflistung"
-
-#: apt-private/private-list.cc:159
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-"Es gibt %i zusätzliche Version. Bitte verwenden Sie die Option »-a«, um sie "
-"anzuzeigen."
-msgstr[1] ""
-"Es gibt %i zusätzliche Versionen. Bitte verwenden Sie die Option »-a«, um "
-"sie anzuzeigen."
-
-#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr "unbekannt"
-
-#: apt-private/private-output.cc:265
-#, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Installiert,aktualisierbar auf: %s]"
-
-#: apt-private/private-output.cc:268
-msgid "[installed,local]"
-msgstr " [Installiert,lokal]"
-
-#: apt-private/private-output.cc:270
-msgid "[installed,auto-removable]"
-msgstr "[installiert,automatisch-entfernbar]"
-
-#: apt-private/private-output.cc:272
-msgid "[installed,automatic]"
-msgstr " [Installiert,automatisch]"
-
-#: apt-private/private-output.cc:274
-msgid "[installed]"
-msgstr " [installiert]"
-
-#: apt-private/private-output.cc:277
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr "[aktualisierbar von: %s]"
-
-#: apt-private/private-output.cc:281
-msgid "[residual-config]"
-msgstr "[Konfiguration-verbleibend]"
-
-#: apt-private/private-output.cc:455
-#, c-format
-msgid "but %s is installed"
-msgstr "aber %s ist installiert"
-
-#: apt-private/private-output.cc:457
-#, c-format
-msgid "but %s is to be installed"
-msgstr "aber %s soll installiert werden"
-
-#: apt-private/private-output.cc:464
-msgid "but it is not installable"
-msgstr "ist aber nicht installierbar"
-
-#: apt-private/private-output.cc:466
-msgid "but it is a virtual package"
-msgstr "ist aber ein virtuelles Paket"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not installed"
-msgstr "ist aber nicht installiert"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not going to be installed"
-msgstr "soll aber nicht installiert werden"
-
-#: apt-private/private-output.cc:474
-msgid " or"
-msgstr " oder"
-
-#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
-msgid "The following packages have unmet dependencies:"
-msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
-
-#: apt-private/private-output.cc:523
-msgid "The following NEW packages will be installed:"
-msgstr "Die folgenden NEUEN Pakete werden installiert:"
-
-#: apt-private/private-output.cc:549
-msgid "The following packages will be REMOVED:"
-msgstr "Die folgenden Pakete werden ENTFERNT:"
-
-#: apt-private/private-output.cc:571
-msgid "The following packages have been kept back:"
-msgstr "Die folgenden Pakete sind zurückgehalten worden:"
-
-#: apt-private/private-output.cc:592
-msgid "The following packages will be upgraded:"
-msgstr "Die folgenden Pakete werden aktualisiert (Upgrade):"
-
-#: apt-private/private-output.cc:613
-msgid "The following packages will be DOWNGRADED:"
-msgstr ""
-"Die folgenden Pakete werden durch eine ÄLTERE VERSION ERSETZT (Downgrade):"
-
-#: apt-private/private-output.cc:633
-msgid "The following held packages will be changed:"
-msgstr "Die folgenden zurückgehaltenen Pakete werden verändert:"
-
-#: apt-private/private-output.cc:688
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (wegen %s) "
-
-#: apt-private/private-output.cc:696
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"WARNUNG: Die folgenden essentiellen Pakete werden entfernt.\n"
-"Dies sollte NICHT geschehen, außer Sie wissen genau, was Sie tun!"
-
-#: apt-private/private-output.cc:727
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu aktualisiert, %lu neu installiert, "
-
-#: apt-private/private-output.cc:731
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu erneut installiert, "
-
-#: apt-private/private-output.cc:733
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu durch eine ältere Version ersetzt, "
-
-#: apt-private/private-output.cc:735
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu zu entfernen und %lu nicht aktualisiert.\n"
-
-#: apt-private/private-output.cc:739
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu nicht vollständig installiert oder entfernt.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:761
-msgid "[Y/n]"
-msgstr "[J/n]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:767
-msgid "[y/N]"
-msgstr "[j/N]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:778
-msgid "Y"
-msgstr "J"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:784
-msgid "N"
-msgstr "N"
-
-#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Fehler beim Kompilieren eines regulären Ausdrucks - %s"
-
-#: apt-private/private-update.cc:32
-msgid "The update command takes no arguments"
-msgstr "Der Befehl »update« akzeptiert keine Argumente."
-
-#: apt-private/private-update.cc:98
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-"Aktualisierung für %i Paket verfügbar. Führen Sie »apt list --upgradable« "
-"aus, um es anzuzeigen.\n"
-msgstr[1] ""
-"Aktualisierung für %i Pakete verfügbar. Führen Sie »apt list --upgradable« "
-"aus, um sie anzuzeigen.\n"
-
-#: apt-private/private-update.cc:102
-msgid "All packages are up to date."
-msgstr "Alle Pakete sind aktuell."
-
-#: apt-private/private-show.cc:156
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-"Es gibt %i zusätzlichen Eintrag. Bitte verwenden Sie die Option »-a«, um ihn "
-"anzuzeigen."
-msgstr[1] ""
-"Es gibt %i zusätzliche Einträge. Bitte verwenden Sie die Option »-a«, um sie "
-"anzuzeigen."
-
-#: apt-private/private-show.cc:163
-msgid "not a real package (virtual)"
-msgstr "kein reales Paket (virtuell)"
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"HINWEIS: Dies ist nur eine Simulation!\n"
-"         apt-get benötigt root-Privilegien für die reale Ausführung.\n"
-"         Behalten Sie ebenfalls in Hinterkopf, dass die Sperren deaktiviert\n"
-"         sind, verlassen Sie sich also bezüglich des reellen aktuellen\n"
-"         Status der Sperre nicht darauf!"
-
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "WARNUNG: Die folgenden Pakete können nicht authentifiziert werden!"
@@ -1751,34 +1779,6 @@ msgstr "Diese Pakete ohne Überprüfung installieren?"
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Fehlschlag beim Holen von %s  %s\n"
-
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "Abhängigkeiten werden korrigiert ..."
-
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " fehlgeschlagen."
-
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "Abhängigkeiten konnten nicht korrigiert werden."
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "Menge der zu aktualisierenden Pakete konnte nicht minimiert werden."
-
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Fertig"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Probieren Sie »apt-get -f install«, um dies zu korrigieren."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Unerfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
 
 #: apt-private/private-sources.cc:58
 #, c-format
@@ -1843,10 +1843,10 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/clean.cc:43 apt-pkg/policy.cc:381 apt-pkg/acquire.cc:494
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
-#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
+#: apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s kann nicht gelesen werden."
@@ -2098,100 +2098,91 @@ msgstr "optional"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "Umbenennen fehlgeschlagen, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc:163
-msgid "Hash Sum mismatch"
-msgstr "Hash-Summe stimmt nicht überein"
-
-#: apt-pkg/acquire-item.cc:168
-msgid "Size mismatch"
-msgstr "Größe stimmt nicht überein"
-
-#: apt-pkg/acquire-item.cc:173
-msgid "Invalid file format"
-msgstr "Ungültiges Dateiformat"
-
-#: apt-pkg/acquire-item.cc:1650
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
-msgstr ""
-"Erwarteter Eintrag »%s« konnte in Release-Datei nicht gefunden werden "
-"(falscher Eintrag in sources.list oder missgebildete Datei)."
-
-#: apt-pkg/acquire-item.cc:1666
-#, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "Hash-Summe für »%s« kann in Release-Datei nicht gefunden werden."
-
-#: apt-pkg/acquire-item.cc:1708
-msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
-
-#: apt-pkg/acquire-item.cc:1746
-#, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
-msgstr ""
-"Release-Datei für %s ist abgelaufen (ungültig seit %s). Aktualisierungen für "
-"dieses Depot werden nicht angewendet."
-
-#: apt-pkg/acquire-item.cc:1768
-#, c-format
-msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr "Konflikt bei Distribution: %s (%s erwartet, aber %s bekommen)"
-
-#: apt-pkg/acquire-item.cc:1798
-#, c-format
-msgid ""
-"An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s\n"
-msgstr ""
-"Während der Überprüfung der Signatur trat ein Fehler auf. Das Repository "
-"wurde nicht aktualisiert und die vorherigen Indexdateien werden verwendet. "
-"GPG-Fehler: %s: %s\n"
-
-#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1808 apt-pkg/acquire-item.cc:1813
-#, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG-Fehler: %s: %s"
-
-#: apt-pkg/acquire-item.cc:1936
-#, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"Es konnte keine Datei für Paket %s gefunden werden. Das könnte heißen, dass "
-"Sie dieses Paket von Hand korrigieren müssen (aufgrund fehlender "
-"Architektur)."
-
-#: apt-pkg/acquire-item.cc:2002
-#, c-format
-msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
-"Es konnte keine Quelle gefunden werden, um Version »%s« von »%s« "
-"herunterzuladen."
-
-#: apt-pkg/acquire-item.cc:2060
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Die Paketindexdateien sind beschädigt: Kein Filename:-Feld für Paket %s."
-
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Indexdateityp »%s« wird nicht unterstützt."
+
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Missgestalteter Absatz %u in Quellliste %s (»URI parse«)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] nicht auswertbar)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] zu kurz)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] ist keine Zuweisung)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] hat keinen Schlüssel)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Missgestaltete Zeile %lu in Quellliste %s ([%s] Schlüssel %s hat keinen Wert)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s (»URI«)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist«)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s (»URI parse«)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s (»absolute dist«)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s wird geöffnet."
+
+#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Zeile %u in Quellliste %s zu lang."
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Missgestaltete Zeile %u in Quellliste %s (»type«)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Typ »%s« in Zeile %u der Quellliste %s ist unbekannt."
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typ »%s« ist in Absatz %u der Quellliste %s ist unbekannt."
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
 #, c-format
@@ -2275,18 +2266,148 @@ msgstr "Schreiben nach %s nicht möglich"
 msgid "IO Error saving source cache"
 msgstr "E/A-Fehler beim Speichern des Quell-Zwischenspeichers"
 
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
+msgid "Send scenario to solver"
+msgstr "Szenario an Problemlöser senden"
+
+#: apt-pkg/edsp.cc:241
+msgid "Send request to solver"
+msgstr "Anfrage an Problemlöser senden"
+
+#: apt-pkg/edsp.cc:320
+msgid "Prepare for receiving solution"
+msgstr "Vorbereiten, eine Lösung zu erhalten"
+
+#: apt-pkg/edsp.cc:327
+msgid "External solver failed without a proper error message"
+msgstr ""
+"Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
+
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
+msgid "Execute external solver"
+msgstr "Externen Problemlöser ausführen"
+
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "Umbenennen fehlgeschlagen, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:163
+msgid "Hash Sum mismatch"
+msgstr "Hash-Summe stimmt nicht überein"
+
+#: apt-pkg/acquire-item.cc:168
+msgid "Size mismatch"
+msgstr "Größe stimmt nicht überein"
+
+#: apt-pkg/acquire-item.cc:173
+msgid "Invalid file format"
+msgstr "Ungültiges Dateiformat"
+
+#: apt-pkg/acquire-item.cc:1651
+#, c-format
+msgid ""
+"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
+"or malformed file)"
+msgstr ""
+"Erwarteter Eintrag »%s« konnte in Release-Datei nicht gefunden werden "
+"(falscher Eintrag in sources.list oder missgebildete Datei)."
+
+#: apt-pkg/acquire-item.cc:1667
+#, c-format
+msgid "Unable to find hash sum for '%s' in Release file"
+msgstr "Hash-Summe für »%s« kann in Release-Datei nicht gefunden werden."
+
+#: apt-pkg/acquire-item.cc:1709
+msgid "There is no public key available for the following key IDs:\n"
+msgstr ""
+"Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
+
+#: apt-pkg/acquire-item.cc:1747
+#, c-format
+msgid ""
+"Release file for %s is expired (invalid since %s). Updates for this "
+"repository will not be applied."
+msgstr ""
+"Release-Datei für %s ist abgelaufen (ungültig seit %s). Aktualisierungen für "
+"dieses Depot werden nicht angewendet."
+
+#: apt-pkg/acquire-item.cc:1769
+#, c-format
+msgid "Conflicting distribution: %s (expected %s but got %s)"
+msgstr "Konflikt bei Distribution: %s (%s erwartet, aber %s bekommen)"
+
+#: apt-pkg/acquire-item.cc:1799
+#, c-format
+msgid ""
+"An error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgstr ""
+"Während der Überprüfung der Signatur trat ein Fehler auf. Das Repository "
+"wurde nicht aktualisiert und die vorherigen Indexdateien werden verwendet. "
+"GPG-Fehler: %s: %s\n"
+
+#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
+#: apt-pkg/acquire-item.cc:1809 apt-pkg/acquire-item.cc:1814
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr "GPG-Fehler: %s: %s"
+
+#: apt-pkg/acquire-item.cc:1937
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"Es konnte keine Datei für Paket %s gefunden werden. Das könnte heißen, dass "
+"Sie dieses Paket von Hand korrigieren müssen (aufgrund fehlender "
+"Architektur)."
+
+#: apt-pkg/acquire-item.cc:2003
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+"Es konnte keine Quelle gefunden werden, um Version »%s« von »%s« "
+"herunterzuladen."
+
+#: apt-pkg/acquire-item.cc:2061
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Die Paketindexdateien sind beschädigt: Kein Filename:-Feld für Paket %s."
+
 #: apt-pkg/vendorlist.cc:85
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Herstellerblock %s enthält keinen Fingerabdruck."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Einige Indexdateien konnten nicht heruntergeladen werden. Sie wurden "
-"ignoriert oder alte an ihrer Stelle benutzt."
+#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Listenverzeichnis %spartial fehlt."
+
+#: apt-pkg/acquire.cc:91
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archivverzeichnis %spartial fehlt."
+
+#: apt-pkg/acquire.cc:99
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Das Verzeichnis %s kann nicht gesperrt werden."
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:902
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Holen der Datei %li von %li (noch %s)"
+
+#: apt-pkg/acquire.cc:904
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Holen der Datei %li von %li"
 
 #: apt-pkg/srcrecords.cc:53
 msgid "You must put some 'source' URIs in your sources.list"
@@ -2318,10 +2439,39 @@ msgstr "Pinning-Typ %s kann nicht interpretiert werden."
 msgid "No priority (or zero) specified for pin"
 msgstr "Keine Priorität (oder Null) für Pin angegeben"
 
-#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Zeile %u in Quellliste %s zu lang."
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+"»%s« konnte nicht unmittelbar konfiguriert werden. Lesen Sie »man 5 apt."
+"conf« unter APT::Immediate-Configure bezüglich weiterer Details. (%d)"
+
+#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
+#, c-format
+msgid "Could not configure '%s'. "
+msgstr "»%s« konnte nicht konfiguriert werden. "
+
+#: apt-pkg/packagemanager.cc:631
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Dieser Installationslauf erfordert, dass vorübergehend das essentielle Paket "
+"%s aufgrund einer Konflikt-/Vor-Abhängigkeits-Schleife entfernt wird. Das "
+"ist oft schlimm, aber wenn Sie es wirklich tun wollen, aktivieren Sie bitte "
+"die Option APT::Force-LoopBreak."
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Einige Indexdateien konnten nicht heruntergeladen werden. Sie wurden "
+"ignoriert oder alte an ihrer Stelle benutzt."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2392,11 +2542,6 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "Kopieren der Paketlisten ..."
 
-#: apt-pkg/cdrom.cc:829 apt-pkg/acquire.cc:87
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Listenverzeichnis %spartial fehlt."
-
 #: apt-pkg/cdrom.cc:863
 msgid "Writing new source list\n"
 msgstr "Schreiben der neuen Quellliste\n"
@@ -2404,28 +2549,6 @@ msgstr "Schreiben der neuen Quellliste\n"
 #: apt-pkg/cdrom.cc:874
 msgid "Source list entries for this disc are:\n"
 msgstr "Quelllisteneinträge für dieses Medium sind:\n"
-
-#: apt-pkg/acquire.cc:91
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archivverzeichnis %spartial fehlt."
-
-#: apt-pkg/acquire.cc:99
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Das Verzeichnis %s kann nicht gesperrt werden."
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:902
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Holen der Datei %li von %li (noch %s)"
-
-#: apt-pkg/acquire.cc:904
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Holen der Datei %li von %li"
 
 #: apt-pkg/algorithms.cc:265
 #, c-format
@@ -2474,27 +2597,6 @@ msgstr "StateFile %s konnte nicht geöffnet werden."
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "Temporäres StateFile %s konnte nicht geschrieben werden."
-
-#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
-msgid "Send scenario to solver"
-msgstr "Szenario an Problemlöser senden"
-
-#: apt-pkg/edsp.cc:241
-msgid "Send request to solver"
-msgstr "Anfrage an Problemlöser senden"
-
-#: apt-pkg/edsp.cc:320
-msgid "Prepare for receiving solution"
-msgstr "Vorbereiten, eine Lösung zu erhalten"
-
-#: apt-pkg/edsp.cc:327
-msgid "External solver failed without a proper error message"
-msgstr ""
-"Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
-
-#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
-msgid "Execute external solver"
-msgstr "Externen Problemlöser ausführen"
 
 #: apt-pkg/tagfile.cc:140
 #, c-format
@@ -2592,108 +2694,6 @@ msgstr "Ungültiger »Valid-Until«-Eintrag in Release-Datei %s"
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ungültiger »Date«-Eintrag in Release-Datei %s"
-
-#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-"»%s« konnte nicht unmittelbar konfiguriert werden. Lesen Sie »man 5 apt."
-"conf« unter APT::Immediate-Configure bezüglich weiterer Details. (%d)"
-
-#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
-#, c-format
-msgid "Could not configure '%s'. "
-msgstr "»%s« konnte nicht konfiguriert werden. "
-
-#: apt-pkg/packagemanager.cc:631
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Dieser Installationslauf erfordert, dass vorübergehend das essentielle Paket "
-"%s aufgrund einer Konflikt-/Vor-Abhängigkeits-Schleife entfernt wird. Das "
-"ist oft schlimm, aber wenn Sie es wirklich tun wollen, aktivieren Sie bitte "
-"die Option APT::Force-LoopBreak."
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Missgestalteter Absatz %u in Quellliste %s (»URI parse«)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] nicht auswertbar)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s ([Option] zu kurz)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] ist keine Zuweisung)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s ([%s] hat keinen Schlüssel)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Missgestaltete Zeile %lu in Quellliste %s ([%s] Schlüssel %s hat keinen Wert)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»URI«)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist«)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»URI parse«)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»absolute dist«)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s wird geöffnet."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Missgestaltete Zeile %u in Quellliste %s (»type«)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Typ »%s« in Zeile %u der Quellliste %s ist unbekannt."
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Typ »%s« ist in Absatz %u der Quellliste %s ist unbekannt."
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418

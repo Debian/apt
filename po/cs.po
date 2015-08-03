@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-07-25 13:29+0200\n"
+"POT-Creation-Date: 2015-08-03 07:15+0200\n"
 "PO-Revision-Date: 2014-10-05 06:09+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -1163,9 +1163,257 @@ msgstr "Spojení selhalo"
 msgid "Internal error"
 msgstr "Vnitřní chyba"
 
+#: apt-private/private-list.cc:129
+msgid "Listing"
+msgstr "Vypisuje se"
+
+#: apt-private/private-list.cc:159
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] "Existuje %i další verze. Zobrazíte ji přepínačem „-a“."
+msgstr[1] "Existují %i další verze. Zobrazíte je přepínačem „-a“."
+msgstr[2] "Existuje %i dalších verzí. Zobrazíte je přepínačem „-a“."
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "Opravují se závislosti…"
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " selhalo."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "Nelze opravit závislosti"
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "Nelze minimalizovat sadu pro aktualizaci"
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Hotovo"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Pro opravení můžete spustit „apt-get -f install“."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Nesplněné závislosti. Zkuste použít -f."
+
+#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr "neznámá"
+
+#: apt-private/private-output.cc:265
+#, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr "[instalovaný,aktualizovatelný na: %s]"
+
+#: apt-private/private-output.cc:268
+msgid "[installed,local]"
+msgstr "[instalovaný,lokální]"
+
+#: apt-private/private-output.cc:270
+msgid "[installed,auto-removable]"
+msgstr "[instalovaný,automaticky-odstranitelný]"
+
+#: apt-private/private-output.cc:272
+msgid "[installed,automatic]"
+msgstr "[instalovaný,automaticky]"
+
+#: apt-private/private-output.cc:274
+msgid "[installed]"
+msgstr "[instalovaný]"
+
+#: apt-private/private-output.cc:277
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr "[aktualizovatelný z: %s]"
+
+#: apt-private/private-output.cc:281
+msgid "[residual-config]"
+msgstr "[zbytkové-konfigurační-coubory]"
+
+#: apt-private/private-output.cc:455
+#, c-format
+msgid "but %s is installed"
+msgstr "ale %s je nainstalován"
+
+#: apt-private/private-output.cc:457
+#, c-format
+msgid "but %s is to be installed"
+msgstr "ale %s se bude instalovat"
+
+#: apt-private/private-output.cc:464
+msgid "but it is not installable"
+msgstr "ale nedá se nainstalovat"
+
+#: apt-private/private-output.cc:466
+msgid "but it is a virtual package"
+msgstr "ale je to virtuální balík"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not installed"
+msgstr "ale není nainstalovaný"
+
+#: apt-private/private-output.cc:469
+msgid "but it is not going to be installed"
+msgstr "ale nebude se instalovat"
+
+#: apt-private/private-output.cc:474
+msgid " or"
+msgstr " nebo"
+
+#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
+msgid "The following packages have unmet dependencies:"
+msgstr "Následující balíky mají nesplněné závislosti:"
+
+#: apt-private/private-output.cc:523
+msgid "The following NEW packages will be installed:"
+msgstr "Následující NOVÉ balíky budou nainstalovány:"
+
+#: apt-private/private-output.cc:549
+msgid "The following packages will be REMOVED:"
+msgstr "Následující balíky budou ODSTRANĚNY:"
+
+#: apt-private/private-output.cc:571
+msgid "The following packages have been kept back:"
+msgstr "Následující balíky jsou podrženy v aktuální verzi:"
+
+#: apt-private/private-output.cc:592
+msgid "The following packages will be upgraded:"
+msgstr "Následující balíky budou aktualizovány:"
+
+#: apt-private/private-output.cc:613
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Následující balíky budou DEGRADOVÁNY:"
+
+#: apt-private/private-output.cc:633
+msgid "The following held packages will be changed:"
+msgstr "Následující podržené balíky budou změněny:"
+
+#: apt-private/private-output.cc:688
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (kvůli %s) "
+
+#: apt-private/private-output.cc:696
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"VAROVÁNÍ: Následující nezbytné balíky budou odstraněny.\n"
+"Pokud přesně nevíte, co děláte, NEDĚLEJTE to!"
+
+#: apt-private/private-output.cc:727
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu aktualizováno, %lu nově instalováno, "
+
+#: apt-private/private-output.cc:731
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu přeinstalováno, "
+
+#: apt-private/private-output.cc:733
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu degradováno, "
+
+#: apt-private/private-output.cc:735
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu k odstranění a %lu neaktualizováno.\n"
+
+#: apt-private/private-output.cc:739
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu instalováno nebo odstraněno pouze částečně.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:761
+msgid "[Y/n]"
+msgstr "[Y/n]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:767
+msgid "[y/N]"
+msgstr "[y/N]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:778
+msgid "Y"
+msgstr "Y"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:784
+msgid "N"
+msgstr "N"
+
+#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Chyba při kompilaci regulárního výrazu - %s"
+
+#: apt-private/private-update.cc:32
+msgid "The update command takes no arguments"
+msgstr "Příkaz update neakceptuje žádné argumenty"
+
+#: apt-private/private-update.cc:98
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+"%i balík může být aktualizován. Zobrazíte jej „apt list --upgradable“.\n"
+msgstr[1] ""
+"%i balíky mohou být aktualizovány. Zobrazíte je „apt list --upgradable“.\n"
+msgstr[2] ""
+"%i balíků může být aktualizováno. Zobrazíte je „apt list --upgradable“.\n"
+
+#: apt-private/private-update.cc:102
+msgid "All packages are up to date."
+msgstr "Všechny balíky jsou aktuální."
+
 #: apt-private/private-cacheset.cc:37 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr "Řadí se"
+
+#: apt-private/private-show.cc:156
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] "Existuje %i další záznam. Zobrazíte jej přepínačem „-a“."
+msgstr[1] "Existují %i další záznamy. Zobrazíte je přepínačem „-a“."
+msgstr[2] "Existuje %i dalších záznamů. Zobrazíte je přepínačem „-a“."
+
+#: apt-private/private-show.cc:163
+msgid "not a real package (virtual)"
+msgstr "není skutečný balík (virtuální)"
+
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"INFO: Toto je pouze simulace!\n"
+"      apt-get vyžaduje pro skutečný běh rootovská oprávnění.\n"
+"      Mějte také na paměti, že je vypnuto zamykání, tudíž\n"
+"      tyto výsledky nemusí mít s realitou nic společného!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1436,226 +1684,6 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Balík „%s“ není nainstalován, nelze tedy odstranit\n"
 
-#: apt-private/private-list.cc:129
-msgid "Listing"
-msgstr "Vypisuje se"
-
-#: apt-private/private-list.cc:159
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] "Existuje %i další verze. Zobrazíte ji přepínačem „-a“."
-msgstr[1] "Existují %i další verze. Zobrazíte je přepínačem „-a“."
-msgstr[2] "Existuje %i dalších verzí. Zobrazíte je přepínačem „-a“."
-
-#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr "neznámá"
-
-#: apt-private/private-output.cc:265
-#, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr "[instalovaný,aktualizovatelný na: %s]"
-
-#: apt-private/private-output.cc:268
-msgid "[installed,local]"
-msgstr "[instalovaný,lokální]"
-
-#: apt-private/private-output.cc:270
-msgid "[installed,auto-removable]"
-msgstr "[instalovaný,automaticky-odstranitelný]"
-
-#: apt-private/private-output.cc:272
-msgid "[installed,automatic]"
-msgstr "[instalovaný,automaticky]"
-
-#: apt-private/private-output.cc:274
-msgid "[installed]"
-msgstr "[instalovaný]"
-
-#: apt-private/private-output.cc:277
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr "[aktualizovatelný z: %s]"
-
-#: apt-private/private-output.cc:281
-msgid "[residual-config]"
-msgstr "[zbytkové-konfigurační-coubory]"
-
-#: apt-private/private-output.cc:455
-#, c-format
-msgid "but %s is installed"
-msgstr "ale %s je nainstalován"
-
-#: apt-private/private-output.cc:457
-#, c-format
-msgid "but %s is to be installed"
-msgstr "ale %s se bude instalovat"
-
-#: apt-private/private-output.cc:464
-msgid "but it is not installable"
-msgstr "ale nedá se nainstalovat"
-
-#: apt-private/private-output.cc:466
-msgid "but it is a virtual package"
-msgstr "ale je to virtuální balík"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not installed"
-msgstr "ale není nainstalovaný"
-
-#: apt-private/private-output.cc:469
-msgid "but it is not going to be installed"
-msgstr "ale nebude se instalovat"
-
-#: apt-private/private-output.cc:474
-msgid " or"
-msgstr " nebo"
-
-#: apt-private/private-output.cc:488 apt-private/private-output.cc:500
-msgid "The following packages have unmet dependencies:"
-msgstr "Následující balíky mají nesplněné závislosti:"
-
-#: apt-private/private-output.cc:523
-msgid "The following NEW packages will be installed:"
-msgstr "Následující NOVÉ balíky budou nainstalovány:"
-
-#: apt-private/private-output.cc:549
-msgid "The following packages will be REMOVED:"
-msgstr "Následující balíky budou ODSTRANĚNY:"
-
-#: apt-private/private-output.cc:571
-msgid "The following packages have been kept back:"
-msgstr "Následující balíky jsou podrženy v aktuální verzi:"
-
-#: apt-private/private-output.cc:592
-msgid "The following packages will be upgraded:"
-msgstr "Následující balíky budou aktualizovány:"
-
-#: apt-private/private-output.cc:613
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Následující balíky budou DEGRADOVÁNY:"
-
-#: apt-private/private-output.cc:633
-msgid "The following held packages will be changed:"
-msgstr "Následující podržené balíky budou změněny:"
-
-#: apt-private/private-output.cc:688
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (kvůli %s) "
-
-#: apt-private/private-output.cc:696
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"VAROVÁNÍ: Následující nezbytné balíky budou odstraněny.\n"
-"Pokud přesně nevíte, co děláte, NEDĚLEJTE to!"
-
-#: apt-private/private-output.cc:727
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu aktualizováno, %lu nově instalováno, "
-
-#: apt-private/private-output.cc:731
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu přeinstalováno, "
-
-#: apt-private/private-output.cc:733
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu degradováno, "
-
-#: apt-private/private-output.cc:735
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu k odstranění a %lu neaktualizováno.\n"
-
-#: apt-private/private-output.cc:739
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu instalováno nebo odstraněno pouze částečně.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:761
-msgid "[Y/n]"
-msgstr "[Y/n]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:767
-msgid "[y/N]"
-msgstr "[y/N]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:778
-msgid "Y"
-msgstr "Y"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:784
-msgid "N"
-msgstr "N"
-
-#: apt-private/private-output.cc:806 apt-pkg/cachefilter.cc:35
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Chyba při kompilaci regulárního výrazu - %s"
-
-#: apt-private/private-update.cc:32
-msgid "The update command takes no arguments"
-msgstr "Příkaz update neakceptuje žádné argumenty"
-
-#: apt-private/private-update.cc:98
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-"%i balík může být aktualizován. Zobrazíte jej „apt list --upgradable“.\n"
-msgstr[1] ""
-"%i balíky mohou být aktualizovány. Zobrazíte je „apt list --upgradable“.\n"
-msgstr[2] ""
-"%i balíků může být aktualizováno. Zobrazíte je „apt list --upgradable“.\n"
-
-#: apt-private/private-update.cc:102
-msgid "All packages are up to date."
-msgstr "Všechny balíky jsou aktuální."
-
-#: apt-private/private-show.cc:156
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] "Existuje %i další záznam. Zobrazíte jej přepínačem „-a“."
-msgstr[1] "Existují %i další záznamy. Zobrazíte je přepínačem „-a“."
-msgstr[2] "Existuje %i dalších záznamů. Zobrazíte je přepínačem „-a“."
-
-#: apt-private/private-show.cc:163
-msgid "not a real package (virtual)"
-msgstr "není skutečný balík (virtuální)"
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"INFO: Toto je pouze simulace!\n"
-"      apt-get vyžaduje pro skutečný běh rootovská oprávnění.\n"
-"      Mějte také na paměti, že je vypnuto zamykání, tudíž\n"
-"      tyto výsledky nemusí mít s realitou nic společného!"
-
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
@@ -1676,34 +1704,6 @@ msgstr "Instalovat tyto balíky bez ověření?"
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Selhalo stažení %s  %s\n"
-
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "Opravují se závislosti…"
-
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " selhalo."
-
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "Nelze opravit závislosti"
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "Nelze minimalizovat sadu pro aktualizaci"
-
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Hotovo"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Pro opravení můžete spustit „apt-get -f install“."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nesplněné závislosti. Zkuste použít -f."
 
 #: apt-private/private-sources.cc:58
 #, c-format
@@ -1767,10 +1767,10 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/clean.cc:43 apt-pkg/policy.cc:381 apt-pkg/acquire.cc:494
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
-#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
+#: apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nelze číst %s"
@@ -2011,95 +2011,90 @@ msgstr "volitelný"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "přejmenování selhalo, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc:163
-msgid "Hash Sum mismatch"
-msgstr "Neshoda kontrolních součtů"
-
-#: apt-pkg/acquire-item.cc:168
-msgid "Size mismatch"
-msgstr "Velikosti nesouhlasí"
-
-#: apt-pkg/acquire-item.cc:173
-msgid "Invalid file format"
-msgstr "Neplatná formát souboru"
-
-#: apt-pkg/acquire-item.cc:1650
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
-msgstr ""
-"V souboru Release nelze najít očekávanou položku „%s“ (chybný sources.list "
-"nebo porušený soubor)"
-
-#: apt-pkg/acquire-item.cc:1666
-#, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "V souboru Release nelze najít kontrolní součet „%s“"
-
-#: apt-pkg/acquire-item.cc:1708
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "K následujícím ID klíčů není dostupný veřejný klíč:\n"
-
-#: apt-pkg/acquire-item.cc:1746
-#, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
-msgstr ""
-"Soubor Release pro %s již expiroval (neplatný od %s). Aktualizace z tohoto "
-"repositáře se nepoužijí."
-
-#: apt-pkg/acquire-item.cc:1768
-#, c-format
-msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr "Konfliktní distribuce: %s (očekáváno %s, obdrženo %s)"
-
-#: apt-pkg/acquire-item.cc:1798
-#, c-format
-msgid ""
-"An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s\n"
-msgstr ""
-"Při ověřování podpisů se objevila chyba. Repositář není aktualizovaný, tudíž "
-"se použijí předchozí indexové soubory. Chyba GPG: %s: %s\n"
-
-#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1808 apt-pkg/acquire-item.cc:1813
-#, c-format
-msgid "GPG error: %s: %s"
-msgstr "Chyba GPG: %s: %s"
-
-#: apt-pkg/acquire-item.cc:1936
-#, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-"Nebylo možné nalézt soubor s balíkem %s. To by mohlo znamenat, že tento "
-"balík je třeba opravit ručně (kvůli chybějící architektuře)"
-
-#: apt-pkg/acquire-item.cc:2002
-#, c-format
-msgid "Can't find a source to download version '%s' of '%s'"
-msgstr "Nelze najít zdroj pro stažení verze „%s“ balíku „%s“"
-
-#: apt-pkg/acquire-item.cc:2060
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Indexové soubory balíku jsou narušeny. Chybí pole Filename: u balíku %s."
-
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Indexový typ souboru „%s“ není podporován"
+
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Zkomolená část %u v seznamu zdrojů %s (zpracování URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (nezpracovatelná [volba])"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (příliš krátká [volba])"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] není přiřazení)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] nemá klíč)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] klíč %s nemá hodnotu)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (absolutní dist)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Otevírá se %s"
+
+#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typ „%s“ v části %u v seznamu zdrojů %s není známý"
 
 #: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
 #, c-format
@@ -2174,18 +2169,142 @@ msgstr "Nelze zapsat do %s"
 msgid "IO Error saving source cache"
 msgstr "Chyba IO při ukládání zdrojové cache"
 
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
+msgid "Send scenario to solver"
+msgstr "Scénář odeslán řešiteli"
+
+#: apt-pkg/edsp.cc:241
+msgid "Send request to solver"
+msgstr "Požadavek odeslán řešiteli"
+
+#: apt-pkg/edsp.cc:320
+msgid "Prepare for receiving solution"
+msgstr "Příprava na obdržení řešení"
+
+#: apt-pkg/edsp.cc:327
+msgid "External solver failed without a proper error message"
+msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
+
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
+msgid "Execute external solver"
+msgstr "Spuštění externího řešitele"
+
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "přejmenování selhalo, %s (%s -> %s)."
+
+#: apt-pkg/acquire-item.cc:163
+msgid "Hash Sum mismatch"
+msgstr "Neshoda kontrolních součtů"
+
+#: apt-pkg/acquire-item.cc:168
+msgid "Size mismatch"
+msgstr "Velikosti nesouhlasí"
+
+#: apt-pkg/acquire-item.cc:173
+msgid "Invalid file format"
+msgstr "Neplatná formát souboru"
+
+#: apt-pkg/acquire-item.cc:1651
+#, c-format
+msgid ""
+"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
+"or malformed file)"
+msgstr ""
+"V souboru Release nelze najít očekávanou položku „%s“ (chybný sources.list "
+"nebo porušený soubor)"
+
+#: apt-pkg/acquire-item.cc:1667
+#, c-format
+msgid "Unable to find hash sum for '%s' in Release file"
+msgstr "V souboru Release nelze najít kontrolní součet „%s“"
+
+#: apt-pkg/acquire-item.cc:1709
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "K následujícím ID klíčů není dostupný veřejný klíč:\n"
+
+#: apt-pkg/acquire-item.cc:1747
+#, c-format
+msgid ""
+"Release file for %s is expired (invalid since %s). Updates for this "
+"repository will not be applied."
+msgstr ""
+"Soubor Release pro %s již expiroval (neplatný od %s). Aktualizace z tohoto "
+"repositáře se nepoužijí."
+
+#: apt-pkg/acquire-item.cc:1769
+#, c-format
+msgid "Conflicting distribution: %s (expected %s but got %s)"
+msgstr "Konfliktní distribuce: %s (očekáváno %s, obdrženo %s)"
+
+#: apt-pkg/acquire-item.cc:1799
+#, c-format
+msgid ""
+"An error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgstr ""
+"Při ověřování podpisů se objevila chyba. Repositář není aktualizovaný, tudíž "
+"se použijí předchozí indexové soubory. Chyba GPG: %s: %s\n"
+
+#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
+#: apt-pkg/acquire-item.cc:1809 apt-pkg/acquire-item.cc:1814
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr "Chyba GPG: %s: %s"
+
+#: apt-pkg/acquire-item.cc:1937
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+"Nebylo možné nalézt soubor s balíkem %s. To by mohlo znamenat, že tento "
+"balík je třeba opravit ručně (kvůli chybějící architektuře)"
+
+#: apt-pkg/acquire-item.cc:2003
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr "Nelze najít zdroj pro stažení verze „%s“ balíku „%s“"
+
+#: apt-pkg/acquire-item.cc:2061
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"Indexové soubory balíku jsou narušeny. Chybí pole Filename: u balíku %s."
+
 #: apt-pkg/vendorlist.cc:85
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blok výrobce %s neobsahuje otisk klíče"
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Některé indexové soubory se nepodařilo stáhnout. Jsou ignorovány, nebo jsou "
-"použity starší verze."
+#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Adresář seznamů %spartial chybí."
+
+#: apt-pkg/acquire.cc:91
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archivní adresář %spartial chybí."
+
+#: apt-pkg/acquire.cc:99
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nelze uzamknout adresář %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:902
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Stahuje se soubor %li z %li (zbývá %s)"
+
+#: apt-pkg/acquire.cc:904
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Stahuje se soubor %li z %li"
 
 #: apt-pkg/srcrecords.cc:53
 msgid "You must put some 'source' URIs in your sources.list"
@@ -2214,10 +2333,38 @@ msgstr "Nerozumím vypíchnutí typu %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "Pro vypíchnutí nebyla zadána žádná (nebo nulová) priorita"
 
-#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+"Nelze spustit okamžitou konfiguraci balíku „%s“. Podrobnosti naleznete v man "
+"5 apt.conf v části APT::Immediate-Configure. (%d)"
+
+#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
+#, c-format
+msgid "Could not configure '%s'. "
+msgstr "Nelze nastavit „%s“."
+
+#: apt-pkg/packagemanager.cc:631
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Tento běh instalace si vyžádá dočasné odstranění klíčového balíku %s kvůli "
+"smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to skutečně "
+"chcete udělat, aktivujte možnost APT::Force-LoopBreak."
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Některé indexové soubory se nepodařilo stáhnout. Jsou ignorovány, nebo jsou "
+"použity starší verze."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2288,11 +2435,6 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "Kopírují se seznamy balíků…"
 
-#: apt-pkg/cdrom.cc:829 apt-pkg/acquire.cc:87
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Adresář seznamů %spartial chybí."
-
 #: apt-pkg/cdrom.cc:863
 msgid "Writing new source list\n"
 msgstr "Zapisuje se nový seznam balíků\n"
@@ -2300,28 +2442,6 @@ msgstr "Zapisuje se nový seznam balíků\n"
 #: apt-pkg/cdrom.cc:874
 msgid "Source list entries for this disc are:\n"
 msgstr "Seznamy zdrojů na tomto disku jsou:\n"
-
-#: apt-pkg/acquire.cc:91
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archivní adresář %spartial chybí."
-
-#: apt-pkg/acquire.cc:99
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nelze uzamknout adresář %s"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:902
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Stahuje se soubor %li z %li (zbývá %s)"
-
-#: apt-pkg/acquire.cc:904
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Stahuje se soubor %li z %li"
 
 #: apt-pkg/algorithms.cc:265
 #, c-format
@@ -2366,26 +2486,6 @@ msgstr "Nelze otevřít stavový soubor %s"
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "Nelze zapsat dočasný stavový soubor %s"
-
-#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
-msgid "Send scenario to solver"
-msgstr "Scénář odeslán řešiteli"
-
-#: apt-pkg/edsp.cc:241
-msgid "Send request to solver"
-msgstr "Požadavek odeslán řešiteli"
-
-#: apt-pkg/edsp.cc:320
-msgid "Prepare for receiving solution"
-msgstr "Příprava na obdržení řešení"
-
-#: apt-pkg/edsp.cc:327
-msgid "External solver failed without a proper error message"
-msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
-
-#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
-msgid "Execute external solver"
-msgstr "Spuštění externího řešitele"
 
 #: apt-pkg/tagfile.cc:140
 #, c-format
@@ -2475,106 +2575,6 @@ msgstr "Neplatná položka „Valid-Until“ v Release souboru %s"
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Neplatná položka „Date“ v Release souboru %s"
-
-#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-"Nelze spustit okamžitou konfiguraci balíku „%s“. Podrobnosti naleznete v man "
-"5 apt.conf v části APT::Immediate-Configure. (%d)"
-
-#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
-#, c-format
-msgid "Could not configure '%s'. "
-msgstr "Nelze nastavit „%s“."
-
-#: apt-pkg/packagemanager.cc:631
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Tento běh instalace si vyžádá dočasné odstranění klíčového balíku %s kvůli "
-"smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to skutečně "
-"chcete udělat, aktivujte možnost APT::Force-LoopBreak."
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Zkomolená část %u v seznamu zdrojů %s (zpracování URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (nezpracovatelná [volba])"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (příliš krátká [volba])"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] není přiřazení)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] nemá klíč)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] klíč %s nemá hodnotu)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (absolutní dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Otevírá se %s"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Typ „%s“ v části %u v seznamu zdrojů %s není známý"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
