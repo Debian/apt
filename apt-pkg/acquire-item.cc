@@ -51,7 +51,7 @@
 
 using namespace std;
 
-static void printHashSumComparision(std::string const &URI, HashStringList const &Expected, HashStringList const &Actual) /*{{{*/
+static void printHashSumComparison(std::string const &URI, HashStringList const &Expected, HashStringList const &Actual) /*{{{*/
 {
    if (_config->FindB("Debug::Acquire::HashSumMismatch", false) == false)
       return;
@@ -1193,7 +1193,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 
       // No Release file was present, or verification failed, so fall
       // back to queueing Packages files without verification
-      // only allow going further if the users explicitely wants it
+      // only allow going further if the users explicitly wants it
       if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
       {
 	 Status = StatDone;
@@ -1293,7 +1293,7 @@ void pkgAcqMetaIndex::Failed(string const &Message,
 
    // No Release file was present so fall
    // back to queueing Packages files without verification
-   // only allow going further if the users explicitely wants it
+   // only allow going further if the users explicitly wants it
    if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
       // ensure old Release files are removed
@@ -1440,7 +1440,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
    // ensures that a Release.gpg file in the lists/ is removed by the transaction
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
-   // only allow going further if the users explicitely wants it
+   // only allow going further if the users explicitly wants it
    if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
       if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
@@ -1600,7 +1600,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       if (Debug == true)
       {
 	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": Index has different hashes than parser, probably older, so fail pdiffing" << std::endl;
-         printHashSumComparision(CurrentPackagesFile, ServerHashes, TargetFileHashes);
+         printHashSumComparison(CurrentPackagesFile, ServerHashes, TargetFileHashes);
       }
       return false;
    }
@@ -2310,7 +2310,7 @@ void pkgAcqIndex::AutoSelectCompression()
       CompressionExtensions.erase(CompressionExtensions.end()-1);
 }
 									/*}}}*/
-// AcqIndex::Init - defered Constructor					/*{{{*/
+// AcqIndex::Init - deferred Constructor					/*{{{*/
 void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
                        string const &ShortDesc)
 {

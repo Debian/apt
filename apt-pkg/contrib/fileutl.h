@@ -95,7 +95,7 @@ class FileFd
       to be able to support large files (>2 or >4 GB) properly.
       This shouldn't happen all to often for the indexes, but deb's might be…
       And as the auto-conversation converts a 'unsigned long *' to a 'bool'
-      instead of 'unsigned long long *' we need to provide this explicitely -
+      instead of 'unsigned long long *' we need to provide this explicitly -
       otherwise applications magically start to fail… */
    bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED
    {

@@ -76,7 +76,7 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache Sim;
    pkgDepCache::ActionGroup group;
    
-   // The Actuall installation implementation
+   // The Actual installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge);

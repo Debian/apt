@@ -80,7 +80,7 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 }
 									/*}}}*/
 
-// PackagesIndex::debPackagesIndex - Contructor				/*{{{*/
+// PackagesIndex::debPackagesIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 debPackagesIndex::debPackagesIndex(IndexTarget const &Target, bool const Trusted) :
@@ -177,7 +177,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 }
 									/*}}}*/
 
-// TranslationsIndex::debTranslationsIndex - Contructor			/*{{{*/
+// TranslationsIndex::debTranslationsIndex - Constructor			/*{{{*/
 debTranslationsIndex::debTranslationsIndex(IndexTarget const &Target) :
 			pkgIndexTargetFile(Target, true)
 {}
