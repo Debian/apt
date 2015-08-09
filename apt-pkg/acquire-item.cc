@@ -790,7 +790,7 @@ bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const s
       _error->Warning(_("An error occurred during the signature "
                         "verification. The repository is not updated "
                         "and the previous index files will be used. "
-                        "GPG error: %s: %s\n"),
+                        "GPG error: %s: %s"),
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());
       RunScripts("APT::Update::Auth-Failure");

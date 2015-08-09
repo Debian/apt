@@ -61,7 +61,6 @@ test_inrelease_to_broken_hash_reverts_all() {
 
     # test the error condition
     testfailureequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
-
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -128,7 +127,6 @@ E: There are problems and -y was used without --force-yes" aptget install -qq -y
     break_repository_sources_index '+1hour'
 
     testfailureequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
-
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -145,9 +143,7 @@ test_inrelease_to_unauth_inrelease() {
     signreleasefiles 'Marvin Paranoid'
 
     testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
-
 W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
-
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"

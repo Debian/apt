@@ -47,7 +47,6 @@ Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable
 Err:2 $1 unstable/main amd64 Packages
   Hash Sum mismatch
 W: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
-
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
 	rm -rf aptarchive/dists
@@ -107,7 +106,6 @@ Get:4 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable
 Err:4 $1 unstable/main amd64 Packages
   Hash Sum mismatch
 W: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
-
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
 	rm -rf aptarchive/dists
