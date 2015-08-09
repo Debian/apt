@@ -176,6 +176,28 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     */
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
 
+   /** \brief Invoked by the acquire worker to check if the successfully
+    * fetched object is also the objected we wanted to have.
+    *
+    *  Note that the object might \e not have been written to
+    *  DestFile; check for the presence of an Alt-Filename entry in
+    *  Message to find the file to which it was really written.
+    *
+    *  This is called before Done is called and can prevent it by returning
+    *  \b false which will result in Failed being called instead.
+    *
+    *  You should prefer to use this method over calling Failed() from Done()
+    *  as this has e.g. the wrong progress reporting.
+    *
+    *  \param Message Data from the acquire method.  Use LookupTag()
+    *  to parse it.
+    *  \param Cnf The method via which the object was fetched.
+    *
+    *  \sa pkgAcqMethod
+    */
+   virtual bool VerifyDone(std::string const &Message,
+	 pkgAcquire::MethodConfig const * const Cnf);
+
    /** \brief Invoked by the acquire worker when the object was
     *  fetched successfully.
     *
@@ -563,6 +585,7 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual bool VerifyDone(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
 

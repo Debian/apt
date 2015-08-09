@@ -514,6 +514,23 @@ void pkgAcquire::Item::Start(string const &/*Message*/, unsigned long long const
       FileSize = Size;
 }
 									/*}}}*/
+// Acquire::Item::VerifyDone - check if Item was downloaded OK		/*{{{*/
+/* Note that hash-verification is 'hardcoded' in acquire-worker and has
+ * already passed if this method is called. */
+bool pkgAcquire::Item::VerifyDone(std::string const &Message,
+	 pkgAcquire::MethodConfig const * const /*Cnf*/)
+{
+   std::string const FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return false;
+   }
+
+   return true;
+}
+									/*}}}*/
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 void pkgAcquire::Item::Done(string const &/*Message*/, HashStringList const &Hashes,
 			    pkgAcquire::MethodConfig const * const /*Cnf*/)
@@ -585,8 +602,8 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 	 Status = StatError;
 	 break;
       case NotClearsigned:
-	 errtext = _("Does not start with a cleartext signature");
-	 Status = StatError;
+	 strprintf(errtext, _("Clearsigned file isn't valid, got '%s' (does the network require authentication?)"), "NOSPLIT");
+	 Status = StatAuthError;
 	 break;
       case MaximumSizeExceeded:
 	 // the method is expected to report a good error for this
@@ -783,7 +800,7 @@ bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const s
       _error->Error(_("GPG error: %s: %s"),
                     Desc.Description.c_str(),
                     LookupTag(Message,"Message").c_str());
-      I->Status = StatError;
+      I->Status = StatAuthError;
       return true;
    } else {
       _error->Warning(_("GPG error: %s: %s"),
@@ -829,14 +846,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    // We have just finished downloading a Release file (it is not
    // verified yet)
 
-   string const FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      I->Status = StatError;
-      I->ErrorText = "Method gave a blank filename";
-      return false;
-   }
-
+   std::string const FileName = LookupTag(Message,"Filename");
    if (FileName != I->DestFile && RealFileExists(I->DestFile) == false)
    {
       I->Local = true;
@@ -1142,23 +1152,22 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    return Header;
 }
 									/*}}}*/
+bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,
+	 pkgAcquire::MethodConfig const * const Cnf)
+{
+   Item::VerifyDone(Message, Cnf);
+
+   if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
+      return RenameOnError(NotClearsigned);
+
+   return true;
+}
 // pkgAcqMetaClearSig::Done - We got a file				/*{{{*/
 void pkgAcqMetaClearSig::Done(std::string const &Message,
                               HashStringList const &Hashes,
                               pkgAcquire::MethodConfig const * const Cnf)
 {
    Item::Done(Message, Hashes, Cnf);
-
-   // if we expect a ClearTextSignature (InRelease), ensure that
-   // this is what we get and if not fail to queue a 
-   // Release/Release.gpg, see #346386
-   if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
-   {
-      pkgAcquire::Item::Failed(Message, Cnf);
-      RenameOnError(NotClearsigned);
-      TransactionManager->AbortTransaction();
-      return;
-   }
 
    if(AuthPass == false)
    {
@@ -1190,6 +1199,16 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 
    if (AuthPass == false)
    {
+      if (Status == StatAuthError)
+      {
+	 // if we expected a ClearTextSignature (InRelease) and got a file,
+	 // but it wasn't valid we end up here (see VerifyDone).
+	 // As these is usually called by web-portals we do not try Release/Release.gpg
+	 // as this is gonna fail anyway and instead abort our try (LP#346386)
+	 TransactionManager->AbortTransaction();
+	 return;
+      }
+
       // Queue the 'old' InRelease file for removal if we try Release.gpg
       // as otherwise the file will stay around and gives a false-auth
       // impression (CVE-2012-0214)
@@ -2500,7 +2519,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
    Complete = true;
 
    // Handle the unzipd case
-   string FileName = LookupTag(Message,"Alt-Filename");
+   std::string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
    {
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
@@ -2511,13 +2530,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
       SetActiveSubprocess("copy");
       return;
    }
-
    FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-   }
 
    // Methods like e.g. "file:" will give us a (compressed) FileName that is
    // not the "DestFile" we set, in this case we uncompress from the local file
@@ -2791,15 +2804,7 @@ void pkgAcqArchive::Done(string const &Message, HashStringList const &Hashes,
    Item::Done(Message, Hashes, Cfg);
 
    // Grab the output filename
-   string FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-      return;
-   }
-
-   // Reference filename
+   std::string const FileName = LookupTag(Message,"Filename");
    if (DestFile !=  FileName && RealFileExists(DestFile) == false)
    {
       StoreFilename = DestFile = FileName;
@@ -3121,14 +3126,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 {
    Item::Done(Message,CalcHashes,Cnf);
 
-   string FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-      return;
-   }
-
+   std::string const FileName = LookupTag(Message,"Filename");
    Complete = true;
 
    // The files timestamp matches

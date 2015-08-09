@@ -412,10 +412,13 @@ bool pkgAcquire::Worker::RunMessages()
 		  consideredOkay = true;
 
 	       if (consideredOkay == true)
+		  consideredOkay = Owner->VerifyDone(Message, Config);
+	       else // hashsum mismatch
+		  Owner->Status = pkgAcquire::Item::StatAuthError;
+
+	       if (consideredOkay == true)
 	       {
 		  Owner->Done(Message, ReceivedHashes, Config);
-
-		  // Log that we are done
 		  if (Log != 0)
 		  {
 		     if (isIMSHit)
@@ -426,9 +429,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       }
 	       else
 	       {
-		  Owner->Status = pkgAcquire::Item::StatAuthError;
 		  Owner->Failed(Message,Config);
-
 		  if (Log != 0)
 		     Log->Fail(Owner->GetItemDesc());
 	       }
