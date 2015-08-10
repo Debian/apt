@@ -284,6 +284,17 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	 P->Priority = Priority;
 	 P->Data = Data;
 	 matched = true;
+
+	 // Find matching version(s) and copy the pin into it
+	 pkgVersionMatch Match(P->Data,P->Type);
+	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; Ver++)
+	 {
+	    if (Match.VersionMatches(Ver)) {
+	       Pin *VP = VerPins + Ver->ID;
+	       if (VP->Type == pkgVersionMatch::None)
+		  *VP = *P;
+	    }
+	 }
       }
    }
 
