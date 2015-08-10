@@ -95,14 +95,14 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
    unsigned char MA;
    string const MultiArch = Section.FindS("Multi-Arch");
    if (MultiArch.empty() == true || MultiArch == "no")
-      MA = pkgCache::Version::None;
+      MA = pkgCache::Version::No;
    else if (MultiArch == "same") {
       if (ArchitectureAll() == true)
       {
 	 if (showErrors == true)
 	    _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
 		  Section.FindS("Package").c_str());
-	 MA = pkgCache::Version::None;
+	 MA = pkgCache::Version::No;
       }
       else
 	 MA = pkgCache::Version::Same;
@@ -116,7 +116,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
       if (showErrors == true)
 	 _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
 	       MultiArch.c_str(), Section.FindS("Package").c_str());
-      MA = pkgCache::Version::None;
+      MA = pkgCache::Version::No;
    }
 
    if (ArchitectureAll() == true)

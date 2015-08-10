@@ -1172,12 +1172,12 @@ static bool DoBuildDep(CommandLine &CmdL)
 	       for (; Ver != verlist.end(); ++Ver)
 	       {
 		  forbidden.clear();
-		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
+		  if (Ver->MultiArch == pkgCache::Version::No || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
-			forbidden = "Multi-Arch: none";
+			forbidden = "Multi-Arch: no";
 		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
 			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }

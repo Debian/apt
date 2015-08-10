@@ -599,7 +599,7 @@ struct pkgCache::Version
    map_stringitem_t SourceVerStr;
 
    /** \brief Multi-Arch capabilities of a package version */
-   enum VerMultiArch { None = 0, /*!< is the default and doesn't trigger special behaviour */
+   enum VerMultiArch { No = 0, /*!< is the default and doesn't trigger special behaviour */
 		       All = (1<<0), /*!< will cause that Ver.Arch() will report "all" */
 		       Foreign = (1<<1), /*!< can satisfy dependencies in another architecture */
 		       Same = (1<<2), /*!< can be co-installed with itself from other architectures */
