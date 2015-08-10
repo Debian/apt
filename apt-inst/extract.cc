@@ -279,7 +279,7 @@ bool pkgExtract::Aborted()
    map_ptrloc *Last = &FLPkg->Files;
    
    /* Loop over all files, restore those that have been unpacked from their
-      dpkg-tmp entires */
+      dpkg-tmp entries */
    while (Files.end() == false)
    {
       // Locate the hash bucket for the node and locate its group head

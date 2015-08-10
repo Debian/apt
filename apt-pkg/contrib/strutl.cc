@@ -1201,7 +1201,7 @@ vector<string> StringSplit(std::string const &s, std::string const &sep,
    vector<string> split;
    size_t start, pos;
 
-   // no seperator given, this is bogus
+   // no separator given, this is bogus
    if(sep.size() == 0)
       return split;
 

@@ -17,7 +17,7 @@ testfileexists() {
 }
 
 testfilemissing() {
-	msgtest 'Test for non-existance of file' "$1"
+	msgtest 'Test for non-existence of file' "$1"
 	test -e "$1" && msgfail || msgpass
 	rm -f "$1"
 }

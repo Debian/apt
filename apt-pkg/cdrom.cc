@@ -369,7 +369,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 									/*}}}*/
 // ReduceSourceList - Takes the path list and reduces it		/*{{{*/
 // ---------------------------------------------------------------------
-/* This takes the list of source list expressed entires and collects
+/* This takes the list of source list expressed entries and collects
    similar ones to form a single entry for each dist */
 void pkgCdrom::ReduceSourcelist(string /*CD*/,vector<string> &List)
 {
@@ -453,7 +453,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
 // WriteSourceList - Write an updated sourcelist			/*{{{*/
 // ---------------------------------------------------------------------
 /* This reads the old source list and copies it into the new one. It 
-   appends the new CDROM entires just after the first block of comments.
+   appends the new CDROM entries just after the first block of comments.
    This places them first in the file. It also removes any old entries
    that were the same. */
 bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
