@@ -1324,6 +1324,17 @@ testmarkedauto() {
 	fi
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
+testmarkedmanual() {
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
+	if [ -n "$1" ]; then
+		msgtest 'Test for correctly marked as manually installed' "$*"
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+	else
+		msgtest 'Test for correctly marked as manually installed' 'no package'
+		echo -n > $COMPAREFILE
+	fi
+	aptmark showmanual 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+}
 
 msgfailoutput() {
 	local MSG="$1"

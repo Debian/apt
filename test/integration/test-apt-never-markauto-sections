@@ -9,22 +9,6 @@ configarchitecture 'amd64' 'i386'
 aptconfig dump --no-empty --format '%v%n' APT::Never-MarkAuto-Sections > nevermarkauto.sections
 testsuccess grep '^metapackages$' nevermarkauto.sections
 
-# this is a very crude regression test, not a "this is how it should be" test:
-# In theory mydesktop-core and texteditor should be marked as manual, but
-# texteditor is installed as a dependency of bad-texteditor, not of
-# mydesktop-core and mydesktop-core is removed while bad-texteditor is
-# installed losing the manual bit as the problem resolver will later decide to
-# drop bad-texteditor and re-instate mydesktop-core which is considered an
-# auto-install at that point (in theory the never-auto handling should be
-# copied to this place – as to the many other places dependencies are resolved
-# 'by hand' instead of via MarkInstall AutoInst…
-#
-# Both could be fixed if apt would figure out early that installing
-# bad-texteditor is a bad idea and eventually it should (as mydesktop-core is
-# a direct descendant of mydesktop which was a user-request mydesktop-core should
-# be as protected from removal as mydesktop is), but this is hard in the general case
-# as with more or-groups and provides you can produce 'legal' examples for this.
-
 buildsimplenativepackage 'mydesktop' 'all' '1' 'unstable' 'Depends: mydesktop-core, foreignpkg
 Recommends: notavailable' '' 'metapackages'
 buildsimplenativepackage 'mydesktop-core' 'amd64' '1' 'unstable' 'Depends: bad-texteditor | texteditor, browser (>= 42), nosection, foreignpkg
@@ -45,21 +29,21 @@ testequal 'dpkg' aptmark showmanual
 
 testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
 
-testequal 'browser
-dpkg
-foreignpkg:i386
-mydesktop
-nosection' aptmark showmanual
-testmarkedauto 'mydesktop-core' 'texteditor'
+testmarkedmanual 'dpkg' 'mydesktop'
+testmarkedauto 'mydesktop-core' 'foreignpkg:i386' 'texteditor' 'browser' 'nosection'
 
+# if the remove is from a user, don't do manual-bit passing
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
-  mydesktop mydesktop-core texteditor
-0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+  browser foreignpkg:i386 mydesktop mydesktop-core nosection texteditor
+0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
 Remv mydesktop [1]
 Remv mydesktop-core [1]
+Remv browser [42]
+Remv foreignpkg:i386 [1]
+Remv nosection [1]
 Remv texteditor [1]' aptget autoremove mydesktop -s
 
 testequal 'Reading package lists...
@@ -70,37 +54,33 @@ The following packages will be REMOVED:
 0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
 Remv mydesktop [1]
 Remv mydesktop-core [1]
-Remv texteditor [1]' aptget autoremove texteditor -s
+Remv texteditor [1]' aptget autoremove texteditor -s #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
 testsuccess aptget autoremove texteditor -y
 
 testdpkgnotinstalled mydesktop mydesktop-core texteditor
 testdpkginstalled browser
 
-testequal 'browser
-dpkg
-foreignpkg:i386
-nosection' aptmark showmanual
+testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
 testmarkedauto
 
 # test that installed/upgraded auto-pkgs are not set to manual
 
 testsuccess aptget install browser=41 -y --force-yes
 
-testequal 'browser
-dpkg
-foreignpkg:i386
-nosection' aptmark showmanual
+testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
 testmarkedauto
 testsuccess aptmark auto browser
 testmarkedauto 'browser'
 testsuccess aptmark auto nosection
 testmarkedauto 'browser' 'nosection'
-testequal 'dpkg
-foreignpkg:i386' aptmark showmanual
+testmarkedmanual 'dpkg' 'foreignpkg:i386'
 
-testsuccess aptget install mydesktop -y
+# nosection should be auto, not manual, but is marked as such by the resolver
+# removing mydesktop-core temporally… the resolver should be figuring out here
+# that there is no point of removing mydesktop-core as its an unavoidable
+# dependency of the user-requested mydesktop
 
-testequal 'dpkg
-foreignpkg:i386
-mydesktop' aptmark showmanual
-testmarkedauto 'browser' 'nosection' 'mydesktop-core' 'texteditor'
+testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+
+testmarkedmanual 'dpkg' 'foreignpkg:i386' 'mydesktop' 'nosection'
+testmarkedauto 'browser' 'mydesktop-core' 'texteditor'
