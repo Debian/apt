@@ -1728,7 +1728,7 @@ static bool Policy(CommandLine &CmdL)
 	    cout << " *** " << V.VerStr();
 	 else
 	    cout << "     " << V.VerStr();
-	 cout << " " << Plcy->GetPriority(Pkg) << endl;
+	 cout << " " << Plcy->GetPriority(V) << endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description
