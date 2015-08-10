@@ -74,6 +74,7 @@ class pkgVersionMatch
    static bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
+   bool VersionMatches(pkgCache::VerIterator Ver);
 
    pkgVersionMatch(std::string Data,MatchType Type);
 };

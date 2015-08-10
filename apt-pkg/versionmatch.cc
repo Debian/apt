@@ -164,22 +164,34 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
    pkgCache::VerIterator Ver = Pkg.VersionList();
    for (; Ver.end() == false; ++Ver)
    {
-      if (Type == Version)
-      {
-	 if (MatchVer(Ver.VerStr(),VerStr,VerPrefixMatch) == true)
-	    return Ver;
-	 if (ExpressionMatches(VerStr, Ver.VerStr()) == true)
-	    return Ver;
-	 continue;
-      }
-      
-      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
-	 if (FileMatch(VF.File()) == true)
-	    return Ver;
+      if (VersionMatches(Ver))
+	 return Ver;
    }
-      
+
    // This will be Ended by now.
    return Ver;
+}
+									/*}}}*/
+
+// VersionMatch::Find - Locate the best match for the select type	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgVersionMatch::VersionMatches(pkgCache::VerIterator Ver)
+{
+   if (Type == Version)
+   {
+      if (MatchVer(Ver.VerStr(),VerStr,VerPrefixMatch) == true)
+	 return true;
+      if (ExpressionMatches(VerStr, Ver.VerStr()) == true)
+	 return true;
+      return false;
+   }
+
+   for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
+      if (FileMatch(VF.File()) == true)
+	 return true;
+
+   return false;
 }
 									/*}}}*/
 
