@@ -15,13 +15,14 @@ LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
 
 librarysymbolsfromfile() {
 	local MISSING="$(grep '^+#MISSING' "$1")"
+	local SYMVER="$2"
 	echo '=== Missing optional symbols:'
 	echo -n "$MISSING" | grep '|optional=' || true
 	echo '=== Missing required symbols:'
 	echo -n "$MISSING" | grep -v '|optional=' || true
 	echo '=== New symbols:'
 	grep '^+ ' "$1" | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
-		echo " (c++)\"${line}@Base\" $VERSION"
+		echo " (c++)\"${line}@${SYMVER}\" $VERSION"
 	done | sort -u
 }
 
@@ -109,7 +110,7 @@ elif [ "$1" = 'library' ]; then
 		echo "Checking $1 in version $2"
 		local tmpfile=$(mktemp)
 		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile || true
-		librarysymbolsfromfile "$tmpfile"
+		librarysymbolsfromfile "$tmpfile" "$(echo "${1}" | cut -c 4- | tr -d '-' | tr 'a-z' 'A-Z')_${2}"
 		rm -f $tmpfile
 	}
 	librarysymbols 'libapt-pkg' "${LIBAPTPKGVERSION}"
@@ -117,7 +118,7 @@ elif [ "$1" = 'library' ]; then
 	librarysymbols 'libapt-inst' "${LIBAPTINSTVERSION}"
 elif [ "$1" = 'buildlog' ]; then
 	while [ -n "$2" ]; do
-		librarysymbolsfromfile "$2"
+		librarysymbolsfromfile "$2" 'UNKNOWN'
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
