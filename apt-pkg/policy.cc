@@ -231,23 +231,22 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const 
 {
    // TODO: Replace GetCandidateVer()
    pkgCache::VerIterator cand;
+   pkgCache::VerIterator cur = Pkg.CurrentVer();
    int candPriority = -1;
-   bool candInstalled = false;
    pkgVersioningSystem *vs = Cache->VS;
 
    for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
       int priority = GetPriority(ver);
-      bool installed = ver->ID == Pkg.CurrentVer()->ID;
 
-      if (priority < candPriority)
-	 continue;
-      if (priority < 1000
-	  && (priority == candPriority || installed < candInstalled)
-	  && (cand.IsGood() && vs->CmpVersion(ver.VerStr(), cand.VerStr()) < 0))
-	  continue;
+	 if (priority <= candPriority)
+	    continue;
+
+	 // TODO: Maybe optimize to not compare versions
+	 if (!cur.end() && priority < 1000
+	    && (vs->CmpVersion(ver.VerStr(), cur.VerStr()) < 0))
+	    continue;
 
       candPriority = priority;
-      candInstalled = installed;
       cand = ver;
    }
 
