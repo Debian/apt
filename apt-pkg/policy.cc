@@ -238,7 +238,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const 
    for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
       int priority = GetPriority(ver);
 
-	 if (priority <= candPriority)
+	 if (priority == 0 || priority <= candPriority)
 	    continue;
 
 	 // TODO: Maybe optimize to not compare versions
@@ -376,8 +376,17 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver)
    int priority = INT_MIN;
    for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
    {
-	 if (GetPriority(file.File()) > priority)
-	    priority = GetPriority(file.File());
+      /* If this is the status file, and the current version is not the
+         version in the status file (ie it is not installed, or somesuch)
+         then it is not a candidate for installation, ever. This weeds
+         out bogus entries that may be due to config-file states, or
+         other. */
+      if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver) {
+	 if (priority < 0)
+	       priority = 0;
+      } else if (GetPriority(file.File()) > priority) {
+	 priority = GetPriority(file.File());
+      }
    }
 
    return priority == INT_MIN ? 0 : priority;
