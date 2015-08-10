@@ -105,10 +105,11 @@ testequalpolicycoolstuff() {
 	local BPO1ARCHIVE=""
 	local BPO2ARCHIVE=""
 	if [ ! "$7" = "2.0~bpo2" ]; then
+		BPO1PIN="$AB"
 		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 	else
 		BPO2ARCHIVE="
-     2.0~bpo2 $PB
+     2.0~bpo2 $AB
         $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
 		SB="$(echo "$SB" | tail -n 1)"
 		shift
@@ -120,25 +121,25 @@ testequalpolicycoolstuff() {
   ${PINVERSION}Version table:${BPO2ARCHIVE}
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
- $IS 1.0 $PB
+ $IS 1.0 $AS
         $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main i386 Packages$SS" \
 		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
 }
 
-testequalpolicycoolstuff "" "2.0~bpo1" 500 500 0 ""
-testequalpolicycoolstuff "" "1.0" 500 990 0 "" -t stable
-testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -t backports
+testequalpolicycoolstuff "" "2.0~bpo1" 500 500 500 ""
+testequalpolicycoolstuff "" "1.0" 500 990 500 "" -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 990 "" -t backports
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=GlobalPin
-testequalpolicycoolstuff "" "1.0" 200 990 0 "" -o Test=GlobalPin -t stable
-testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=GlobalPin -t backports
+testequalpolicycoolstuff "" "1.0" 200 500 200 "" -o Test=GlobalPin
+testequalpolicycoolstuff "" "1.0" 200 990 200 "" -o Test=GlobalPin -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 990 "" -o Test=GlobalPin -t backports
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 600" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=GlobalPin
-testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=GlobalPin -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 600 "" -o Test=GlobalPin
+testequalpolicycoolstuff "" "1.0" 600 990 600 "" -o Test=GlobalPin -t stable
 echo "Package: coolstuff
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
@@ -165,18 +166,18 @@ sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
 signreleasefiles
 aptgetupdate
 
-testequalpolicycoolstuff "" "1.0" 1 500 0 "" -o Test=NotAutomatic
-testequalpolicycoolstuff "" "1.0" 1 990 0 "" -o Test=NotAutomatic -t stable
-testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=NotAutomatic -t backports
+testequalpolicycoolstuff "" "1.0" 1 500 1 "" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "1.0" 1 990 1 "" -o Test=NotAutomatic -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 990 "" -o Test=NotAutomatic -t backports
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "1.0" 200 500 200 "" -o Test=NotAutomatic
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 600" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=NotAutomatic
-testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=NotAutomatic -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 600 "" -o Test=NotAutomatic
+testequalpolicycoolstuff "" "1.0" 600 990 600 "" -o Test=NotAutomatic -t stable
 echo "Package: coolstuff
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
@@ -193,18 +194,18 @@ sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
 signreleasefiles
 aptgetupdate
 
-testequalpolicycoolstuff "" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
-testequalpolicycoolstuff "" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
-testequalpolicycoolstuff "" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+testequalpolicycoolstuff "" "1.0" 100 500 100 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "1.0" 100 990 100 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 990 500 990 "" -o Test=ButAutomaticUpgrades -t backports
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "1.0" 200 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "1.0" 200 500 200 "" -o Test=ButAutomaticUpgrades
 echo "Package: *
 Pin: release n=backports
 Pin-Priority: 600" > rootdir/etc/apt/preferences
-testequalpolicycoolstuff "" "2.0~bpo1" 600 500 0 "" -o Test=ButAutomaticUpgrades
-testequalpolicycoolstuff "" "1.0" 600 990 0 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "" "2.0~bpo1" 600 500 600 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "" "1.0" 600 990 600 "" -o Test=ButAutomaticUpgrades -t stable
 echo "Package: coolstuff
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
@@ -218,18 +219,18 @@ testequalpolicycoolstuff "" "1.0" 100 990 600 "2.0~bpo1" -o Test=ButAutomaticUpg
 
 rm rootdir/etc/apt/preferences
 testsuccess aptget install coolstuff -y
-testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "1.0" "1.0" 100 500 100 "" -o Test=ButAutomaticUpgrades
 testsuccess aptget dist-upgrade -y
-testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
-testequalpolicycoolstuff "1.0" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
-testequalpolicycoolstuff "1.0" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+testequalpolicycoolstuff "1.0" "1.0" 100 500 100 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "1.0" "1.0" 100 990 100 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "1.0" "2.0~bpo1" 990 500 990 "" -o Test=ButAutomaticUpgrades -t backports
 
 testsuccess aptget install coolstuff -t backports -y
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 100 "" -o Test=ButAutomaticUpgrades
 testsuccess aptget dist-upgrade -y
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 100 "" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 990 100 "" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 990 "" -o Test=ButAutomaticUpgrades -t backports
 
 rm incoming/backports.main.pkglist incoming/backports.main.srclist
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo2" "backports"
@@ -239,14 +240,14 @@ sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
 signreleasefiles
 aptgetupdate
 
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 500 0 "" "2.0~bpo2" -o Test=NotAutomatic
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 990 0 "" "2.0~bpo2" -o Test=NotAutomatic -t stable
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=NotAutomatic -t backports
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 500 100 "" "2.0~bpo2" -o Test=NotAutomatic
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 990 100 "" "2.0~bpo2" -o Test=NotAutomatic -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 100 "" "2.0~bpo2" -o Test=NotAutomatic -t backports
 
 sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
 signreleasefiles
 aptgetupdate
 
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable
-testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable
+testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports
