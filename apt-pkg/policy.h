@@ -88,6 +88,7 @@ class pkgPolicy : public pkgDepCache::Policy
    pkgPolicy(pkgCache *Owner);
    virtual ~pkgPolicy();
    private:
+   pkgCache::VerIterator GetCandidateVerNew(pkgCache::PkgIterator const &Pkg);
    void *d;
 };
 

@@ -26,6 +26,7 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/versionmatch.h>
+#include <apt-pkg/version.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -131,6 +132,10 @@ bool pkgPolicy::InitDefaults()
    best package is. */
 pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pkg)
 {
+   if (_config->FindI("APT::Policy", 1) >= 1) {
+      return GetCandidateVerNew(Pkg);
+   }
+
    // Look for a package pin and evaluate it.
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
@@ -216,6 +221,37 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
        Pref = PrefAlt;
 
    return Pref;
+}
+
+// Policy::GetCandidateVer - Get the candidate install version		/*{{{*/
+// ---------------------------------------------------------------------
+/* Evaluate the package pins and the default list to deteremine what the
+   best package is. */
+pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const &Pkg)
+{
+   // TODO: Replace GetCandidateVer()
+   pkgCache::VerIterator cand;
+   int candPriority = -1;
+   bool candInstalled = false;
+   pkgVersioningSystem *vs = Cache->VS;
+
+   for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
+      int priority = GetPriority(ver);
+      bool installed = ver->ID == Pkg.CurrentVer()->ID;
+
+      if (priority < candPriority)
+	 continue;
+      if (priority < 1000
+	  && (priority == candPriority || installed < candInstalled)
+	  && (cand.IsGood() && vs->CmpVersion(ver.VerStr(), cand.VerStr()) < 0))
+	  continue;
+
+      candPriority = priority;
+      candInstalled = installed;
+      cand = ver;
+   }
+
+   return cand;
 }
 									/*}}}*/
 // Policy::CreatePin - Create an entry in the pin table..		/*{{{*/
