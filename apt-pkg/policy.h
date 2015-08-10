@@ -63,6 +63,7 @@ class pkgPolicy : public pkgDepCache::Policy
    };
    
    Pin *Pins;
+   Pin *VerPins;
    signed short *PFPriority;
    std::vector<Pin> Defaults;
    std::vector<PkgPin> Unmatched;
@@ -79,6 +80,7 @@ class pkgPolicy : public pkgDepCache::Policy
    // Things for the cache interface.
    virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg);
    virtual signed short GetPriority(pkgCache::PkgIterator const &Pkg);
+   virtual signed short GetPriority(pkgCache::VerIterator const &Pkg);
    virtual signed short GetPriority(pkgCache::PkgFileIterator const &File);
 
    bool InitDefaults();

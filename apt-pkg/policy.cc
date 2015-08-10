@@ -50,9 +50,12 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
    Pins = new Pin[Owner->Head().PackageCount];
+   VerPins = new Pin[Owner->Head().VersionCount];
 
    for (unsigned long I = 0; I != Owner->Head().PackageCount; I++)
       Pins[I].Type = pkgVersionMatch::None;
+   for (unsigned long I = 0; I != Owner->Head().VersionCount; I++)
+      VerPins[I].Type = pkgVersionMatch::None;
 
    // The config file has a master override.
    string DefRel = _config->Find("APT::Default-Release");
@@ -318,6 +321,12 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
       return Pins[Pkg->ID].Priority;
    return 0;
 }
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver)
+{
+   if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
+      return VerPins[Ver->ID].Priority;
+   return 0;
+}
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
    return PFPriority[File->ID];
@@ -440,4 +449,4 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 }
 									/*}}}*/
 
-pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins;}
+pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins; delete [] VerPins; }
