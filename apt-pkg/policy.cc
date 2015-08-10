@@ -336,7 +336,16 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
       return VerPins[Ver->ID].Priority;
-   return 0;
+
+
+   int priority = INT_MIN;
+   for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
+   {
+	 if (GetPriority(file.File()) > priority)
+	    priority = GetPriority(file.File());
+   }
+
+   return priority == INT_MIN ? 0 : priority;
 }
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
