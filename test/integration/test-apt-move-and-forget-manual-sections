@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+aptconfig dump --no-empty --format '%v%n' APT::Move-Autobit-Sections > move-autobit.sections
+testsuccess grep '^oldlibs$' move-autobit.sections
+
+buildsimplenativepackage 'libabc' 'amd64' '1' 'stable' '' '' 'libs'
+buildsimplenativepackage 'libabc' 'amd64' '2' 'unstable' 'Depends: libdef' '' 'oldlibs'
+buildsimplenativepackage 'libdef' 'amd64' '1' 'unstable' '' '' 'libs'
+setupaptarchive
+
+testmarkedauto
+testmarkedmanual
+
+testsuccess aptget install libabc/stable -y
+testdpkginstalled 'libabc'
+testdpkgnotinstalled 'libdef'
+
+testmarkedmanual 'libabc'
+testmarkedauto
+
+testsuccess aptget dist-upgrade -y
+testdpkginstalled 'libabc' 'libdef'
+
+testmarkedauto 'libabc'
+testmarkedmanual 'libdef'

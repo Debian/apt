@@ -1128,9 +1128,26 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    if (DebugMarker == true)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << " FU=" << FromUser << std::endl;
 
+   bool MoveAutoBitToDependencies = false;
    VerIterator const PV = P.InstVerIter(*this);
    if (unlikely(PV.end() == true))
       return false;
+   else if (PV->Section != 0 && (P.Flags & Flag::Auto) != Flag::Auto)
+   {
+      VerIterator const CurVer = Pkg.CurrentVer();
+      if (CurVer.end() == false && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
+      {
+	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
+	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
+	 MoveAutoBitToDependencies = (CurVerInMoveSection == false && InstVerInMoveSection == true);
+	 if (MoveAutoBitToDependencies == true)
+	 {
+	    if(DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "Setting " << Pkg.FullName(false) << " as auto-installed, moving manual to its dependencies" << std::endl;
+	    MarkAuto(Pkg, true);
+	 }
+      }
+   }
 
    DepIterator Dep = PV.DependsList();
    for (; Dep.end() != true;)
@@ -1244,6 +1261,17 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       verlist.erase(InstVer);
 	       continue;
 	    }
+
+	    // now check if we should consider it a automatic dependency or not
+	    if(InstPkg->CurrentVer == 0 && MoveAutoBitToDependencies)
+	    {
+	       if(DebugAutoInstall == true)
+		  std::clog << OutputInDepth(Depth) << "Setting " << InstPkg.FullName(false) << " NOT as auto-installed (direct "
+		     << Start.DepType() << " of " << Pkg.FullName(false) << " which is manual and in APT::Move-Autobit-Sections)" << std::endl;
+	       MarkAuto(InstPkg, false);
+	    }
+
+
 	    break;
 	 } while(true);
 	 continue;
