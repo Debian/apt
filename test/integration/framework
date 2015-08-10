@@ -1377,8 +1377,17 @@ testsuccess() {
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-			elif grep -q -E '^[WE]: ' "$OUTPUT"; then
-				msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+			elif grep -E '^[WE]: ' "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
+				if [ "$IGNORE_PTY_NOT_MOUNTED" = '1' ]; then
+					if echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)' \
+						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
+						msgpass
+					else
+						msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+					fi
+				else
+					msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+				fi
 			else
 				msgpass
 			fi
