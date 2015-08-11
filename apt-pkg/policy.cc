@@ -383,8 +383,7 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver)
          out bogus entries that may be due to config-file states, or
          other. */
       if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver) {
-	 if (priority < 0)
-	       priority = 0;
+	 // Ignore
       } else if (GetPriority(file.File()) > priority) {
 	 priority = GetPriority(file.File());
       }
