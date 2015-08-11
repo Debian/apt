@@ -690,7 +690,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
    <para>
      The configuration item <literal>RootDir</literal> has a special
-     meaning.  If set, all paths in <literal>Dir::</literal> will be
+     meaning.  If set, all paths will be
      relative to <literal>RootDir</literal>, <emphasis>even paths that
      are specified absolutely</emphasis>.  So, for instance, if
      <literal>RootDir</literal> is set to
@@ -699,6 +699,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <filename>/var/lib/dpkg/status</filename>, then the status file
      will be looked up in
      <filename>/tmp/staging/var/lib/dpkg/status</filename>.
+     If you want to prefix only relative paths, set <literal>Dir</literal> instead.
    </para>
 
    <para>
