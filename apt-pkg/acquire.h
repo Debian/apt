@@ -419,23 +419,15 @@ class pkgAcquire::Queue
    protected:
 
    /** \brief A single item placed in this queue. */
-   struct QItem : public WeakPointable
+   struct QItem : public ItemDesc
    {
       /** \brief The next item in the queue. */
       QItem *Next;
       /** \brief The worker associated with this item, if any. */
       pkgAcquire::Worker *Worker;
 
-      /** \brief The URI from which to download this item. */
-      std::string URI;
-      /** \brief A description of this item. */
-      std::string Description;
-      /** \brief A shorter description of this item. */
-      std::string ShortDesc;
       /** \brief The underlying items interested in the download */
       std::vector<Item*> Owners;
-      // both, backward compatibility and easy access as syncing is interal
-      Item * Owner;
 
       typedef std::vector<Item*>::const_iterator owner_iterator;
 
