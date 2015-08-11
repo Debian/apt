@@ -42,7 +42,8 @@
 #include <unistd.h>
 
 #include <apti18n.h>
-									/*}}}*/
+
+template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;							/*}}}*/
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 

@@ -135,7 +135,6 @@ class APT_HIDDEN pkgCacheListParser
 {
    pkgCacheGenerator *Owner;
    friend class pkgCacheGenerator;
-   template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
 
    // Some cache items
    pkgCache::VerIterator OldDepVer;

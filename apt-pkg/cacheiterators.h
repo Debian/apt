@@ -329,8 +329,8 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	   DependencyProxy const * operator->() const { return this; }
 	   DependencyProxy * operator->() { return this; }
 	};
-	inline DependencyProxy operator->() const {return { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
-	inline DependencyProxy operator->() {return { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
+	inline DependencyProxy operator->() const {return (DependencyProxy) { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
+	inline DependencyProxy operator->() {return (DependencyProxy) { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
 	void ReMap(void const * const oldMap, void const * const newMap)
 	{
 		Iterator<Dependency, DepIterator>::ReMap(oldMap, newMap);
