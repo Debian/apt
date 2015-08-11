@@ -39,7 +39,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/indexrecords.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/metaindex.h>
