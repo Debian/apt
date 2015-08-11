@@ -34,7 +34,7 @@ class SHA2SummationBase : public SummationImplementation
  protected:
    bool Done;
  public:
-   bool Add(const unsigned char *inbuf, unsigned long long len) = 0;
+   bool Add(const unsigned char *inbuf, unsigned long long len) APT_OVERRIDE = 0;
 
    void Result();
 };

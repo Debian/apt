@@ -24,8 +24,8 @@ class debVersioningSystem : public pkgVersioningSystem
 
    // Compare versions..
    virtual int DoCmpVersion(const char *A,const char *Aend,
-			  const char *B,const char *Bend) APT_PURE;
-   virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) APT_PURE;
+			  const char *B,const char *Bend) APT_OVERRIDE APT_PURE;
+   virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) APT_OVERRIDE APT_PURE;
    virtual APT_PURE int DoCmpReleaseVer(const char *A,const char *Aend,
 			     const char *B,const char *Bend) APT_OVERRIDE
    {

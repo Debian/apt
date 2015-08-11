@@ -29,7 +29,7 @@ public:
 
 class PackageMatcher : public Matcher {
 public:
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) = 0;
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE = 0;
    virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE { return (*this)(Ver.ParentPkg()); }
    virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) APT_OVERRIDE { return false; }
    virtual ~PackageMatcher();

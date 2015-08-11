@@ -31,7 +31,7 @@ protected:
    virtual std::string GetArchitecture() const APT_OVERRIDE;
 public:
 
-   virtual const Type *GetType() const APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
    virtual bool Exists() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE;
 
