@@ -606,6 +606,10 @@ struct pkgCache::Version
 		       Allowed = (1<<3), /*!< other packages are allowed to depend on thispkg:any */
 		       AllForeign = All | Foreign,
 		       AllAllowed = All | Allowed };
+
+   /** \brief deprecated variant of No */
+   static const APT_DEPRECATED VerMultiArch None = No;
+
    /** \brief stores the MultiArch capabilities of this version
 
        Flags used are defined in pkgCache::Version::VerMultiArch
