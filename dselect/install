@@ -65,7 +65,7 @@ fi
 # Finished OK
 if [ $RES -eq 0 ]; then
 
-   if [ $(ls $ARCHIVES $ARCHIVES/partial | egrep -v "^lock$|^partial$" | wc -l) \
+   if [ $(ls $ARCHIVES $ARCHIVES/partial | grep -E -v "^lock$|^partial$" | wc -l) \
         -eq 0 ]; then
       exit 0
    fi
