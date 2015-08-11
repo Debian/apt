@@ -89,7 +89,7 @@ void pkgCdromTextStatus::Update(string text, int /*current*/)
 
 bool pkgCdromTextStatus::ChangeCdrom()
 {
-   Prompt(_("Please insert a Disc in the drive and press enter"));
+   Prompt(_("Please insert a Disc in the drive and press [Enter]"));
    return true;
 }
 
