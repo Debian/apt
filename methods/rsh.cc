@@ -84,7 +84,7 @@ bool RSHConn::Open()
    if (Process != -1)
       return true;
 
-   if (Connect(ServerName.Host,ServerName.User) == false)
+   if (Connect(ServerName.Host,ServerName.Port,ServerName.User) == false)
       return false;
 
    return true;
@@ -93,8 +93,15 @@ bool RSHConn::Open()
 // RSHConn::Connect - Fire up rsh and connect				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::Connect(std::string Host, std::string User)
+bool RSHConn::Connect(std::string Host, unsigned int Port, std::string User)
 {
+   char *PortStr = NULL;
+   if (Port != 0)
+   {
+      if (asprintf (&PortStr, "%d", Port) == -1 || PortStr == NULL)
+         return _error->Errno("asprintf", _("Failed"));
+   }
+
    // Create the pipes
    int Pipes[4] = {-1,-1,-1,-1};
    if (pipe(Pipes) != 0 || pipe(Pipes+2) != 0)
@@ -140,6 +147,10 @@ bool RSHConn::Connect(std::string Host, std::string User)
          Args[i++] = "-l";
 	 Args[i++] = User.c_str();
       }
+      if (PortStr != NULL) {
+         Args[i++] = "-p";
+         Args[i++] = PortStr;
+      }
       if (Host.empty() == false) {
          Args[i++] = Host.c_str();
       }
@@ -149,6 +160,9 @@ bool RSHConn::Connect(std::string Host, std::string User)
       exit(100);
    }
 
+   if (PortStr != NULL)
+      free(PortStr);
+
    ReadFd = Pipes[0];
    WriteFd = Pipes[3];
    SetNonBlock(Pipes[0],true);
@@ -157,6 +171,10 @@ bool RSHConn::Connect(std::string Host, std::string User)
    close(Pipes[2]);
    
    return true;
+}
+bool RSHConn::Connect(std::string Host, std::string User)
+{
+   return Connect(Host, 0, User);
 }
 									/*}}}*/
 // RSHConn::ReadLine - Very simple buffered read with timeout		/*{{{*/
