@@ -275,8 +275,8 @@ pkgSourceList::~pkgSourceList()
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
    SrcList.clear();
-   for (pkgIndexFile * const File : VolatileFiles)
-      delete File;
+   for (auto  F = VolatileFiles.begin(); F != VolatileFiles.end(); ++F)
+      delete (*F);
    VolatileFiles.clear();
 }
 									/*}}}*/
