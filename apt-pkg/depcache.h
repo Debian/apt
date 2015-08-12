@@ -250,7 +250,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool Keep() const {return Mode == ModeKeep;};
       inline bool Protect() const {return (iFlags & Protected) == Protected;};
       inline bool Upgrade() const {return Status > 0 && Mode == ModeInstall;};
-      inline bool Upgradable() const {return Status >= 1;};
+      inline bool Upgradable() const {return Status >= 1 && CandidateVer != NULL;};
       inline bool Downgrade() const {return Status < 0 && Mode == ModeInstall;};
       inline bool Held() const {return Status != 0 && Keep();};
       inline bool NowBroken() const {return (DepState & DepNowMin) != DepNowMin;};
