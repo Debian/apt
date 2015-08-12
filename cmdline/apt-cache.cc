@@ -1689,9 +1689,9 @@ static bool Policy(CommandLine &CmdL)
 	    if (Prio == 0)
 	       continue;
 
+	    cout << "     ";
 	    // Print the package name and the version we are forcing to
-	    cout << "     " << I.FullName(true) << " -> ";
-	    cout << V.VerStr() << _(" with priority ") << Prio << endl;
+	    ioprintf(cout, _("%s -> %s with priority %d\n"), I.FullName(true).c_str(), V.VerStr(), Prio);
 	 }
       }
       return true;
