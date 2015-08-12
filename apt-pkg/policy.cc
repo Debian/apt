@@ -478,11 +478,18 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       }
       for (; Word != End && isspace(*Word) != 0; Word++);
 
-      short int priority = Tags.FindI("Pin-Priority", 0);
+      int priority = Tags.FindI("Pin-Priority", 0);
+      if (priority < std::numeric_limits<short>::min() ||
+          priority > std::numeric_limits<short>::max() ||
+	  _error->PendingError()) {
+	 return _error->Error(_("%s: Value %s is outside the range of valid pin priorities (%d to %d)"),
+			      File.c_str(), Tags.FindS("Pin-Priority").c_str(),
+			      std::numeric_limits<short>::min(),
+			      std::numeric_limits<short>::max());
+      }
       if (priority == 0)
       {
-         _error->Warning(_("No priority (or zero) specified for pin"));
-         continue;
+         return _error->Error(_("No priority (or zero) specified for pin"));
       }
 
       istringstream s(Name);
