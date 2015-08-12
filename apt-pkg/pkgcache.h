@@ -429,12 +429,6 @@ struct pkgCache::Package
    map_pointer_t VersionList;       // Version
    /** \brief index to the installed version */
    map_pointer_t CurrentVer;        // Version
-   /** \brief indicates nothing (consistently)
-       This field used to contain ONE section the package belongs to,
-       if those differs between versions it is a RANDOM one.
-       The Section() method tries to reproduce it, but the only sane
-       thing to do is use the Section field from the version! */
-   APT_DEPRECATED map_ptrloc Section; // StringItem
    /** \brief index of the group this package belongs to */
    map_pointer_t Group;             // Group the Package belongs to
 
