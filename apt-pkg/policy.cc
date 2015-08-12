@@ -368,11 +368,12 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
       return Pins[Pkg->ID].Priority;
    return 0;
 }
-APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver)
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool considerFiles)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
       return VerPins[Ver->ID].Priority;
-
+   if (!considerFiles)
+      return 0;
 
    int priority = std::numeric_limits<int>::min();
    for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
