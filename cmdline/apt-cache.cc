@@ -1667,19 +1667,33 @@ static bool Policy(CommandLine &CmdL)
       pkgCache::PkgIterator I = Cache->PkgBegin();
       for (;I.end() != true; ++I)
       {
-	 if (Plcy->GetPriority(I) == 0)
-	    continue;
+	 // Old code for debugging
+	 if (_config->FindI("APT::Policy", 1) < 1) {
+	    if (Plcy->GetPriority(I) == 0)
+	       continue;
 
-	 // Print the package name and the version we are forcing to
-	 cout << "     " << I.FullName(true) << " -> ";
-	 
-	 pkgCache::VerIterator V = Plcy->GetMatch(I);
-	 if (V.end() == true)
-	    cout << _("(not found)") << endl;
-	 else
-	    cout << V.VerStr() << endl;
-      }     
-      
+	    // Print the package name and the version we are forcing to
+	    cout << "     " << I.FullName(true) << " -> ";
+
+	    pkgCache::VerIterator V = Plcy->GetMatch(I);
+	    if (V.end() == true)
+	       cout << _("(not found)") << endl;
+	    else
+	       cout << V.VerStr() << endl;
+
+	    continue;
+	 }
+	 // New code
+	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); V++) {
+	    auto Prio = Plcy->GetPriority(V, false);
+	    if (Prio == 0)
+	       continue;
+
+	    // Print the package name and the version we are forcing to
+	    cout << "     " << I.FullName(true) << " -> ";
+	    cout << V.VerStr() << _(" with priority ") << Prio << endl;
+	 }
+      }
       return true;
    }
 
@@ -1715,7 +1729,7 @@ static bool Policy(CommandLine &CmdL)
 	 cout << V.VerStr() << endl;
 
       // Pinned version
-      if (Plcy->GetPriority(Pkg) != 0)
+      if (_config->FindI("APT::Policy", 1) < 1 && Plcy->GetPriority(Pkg) != 0)
       {
 	 cout << _("  Package pin: ");
 	 V = Plcy->GetMatch(Pkg);
@@ -1733,7 +1747,10 @@ static bool Policy(CommandLine &CmdL)
 	    cout << " *** " << V.VerStr();
 	 else
 	    cout << "     " << V.VerStr();
-	 cout << " " << Plcy->GetPriority(V) << endl;
+	 if (_config->FindI("APT::Policy", 1) < 1)
+	    cout << " " << Plcy->GetPriority(Pkg) << endl;
+	 else
+	    cout << " " << Plcy->GetPriority(V) << endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description
