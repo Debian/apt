@@ -346,11 +346,14 @@ only if there is no installed version of the package</simpara></listitem>
 </variablelist>
 </para>
 
-<para>If any specific-form records match an available package version then the
-first such record determines the priority of the package version.  
-Failing that,
-if any general-form records match an available package version then the
-first such record determines the priority of the package version.</para>
+<para>
+The first specific-form record matching an available package version determines
+the priority of the package version.
+Failing that, the priority of the package is defined as the maximum of all
+priorities defined by generic-form records matching the version.
+Records defined using patterns in the Pin field other than "*" are treated like
+specific-form records.
+</para>
 
 <para>For example, suppose the APT preferences file contains the three
 records presented earlier:</para>
