@@ -33,20 +33,17 @@ Pin-Priority: $2" > rootdir/etc/apt/preferences
 
 
 testpinning() {
-	local PKGPIN=''
 	local PKGPINPRIO=''
 	local REPPINPRIO=''
 	if [ "$1" != '*' ]; then
 		PKGPINPRIO=''
 		REPPINPRIO=' 500'
-		PKGPIN='Package pin: 5.0.0
-  '
 	fi
 	writepin "$1" '99'
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
+  Version table:
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-99}
@@ -56,7 +53,7 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
+  Version table:
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-100}
@@ -66,7 +63,7 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
+  Version table:
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-999}
@@ -76,7 +73,7 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0
-  ${PKGPIN}Version table:
+  Version table:
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-1000}

@@ -89,10 +89,6 @@ testequalpolicycoolstuff() {
 	local AB="$3"
 	local AS="$4"
 	local PB="$5"
-	local PINVERSION="$6"
-	if [ -n "$PINVERSION" ]; then
-		PINVERSION="Package pin: $PINVERSION
-  "
 	fi
 	local IS=""
 	local IB=""
@@ -118,7 +114,7 @@ testequalpolicycoolstuff() {
 	testsuccessequal "coolstuff:
   Installed: $INSTALLED
   Candidate: $CANDIDATE
-  ${PINVERSION}Version table:${BPO2ARCHIVE}
+  Version table:${BPO2ARCHIVE}
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
  $IS 1.0 $AS
