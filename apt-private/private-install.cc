@@ -128,7 +128,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the package manager and prepare to download
-   SPtr<pkgPackageManager> PM= _system->CreatePM(Cache);
+   std::unique_ptr<pkgPackageManager> PM(_system->CreatePM(Cache));
    if (PM->GetArchives(&Fetcher,List,&Recs) == false || 
        _error->PendingError() == true)
       return false;
@@ -492,9 +492,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
 
-   SPtr<pkgProblemResolver> Fix;
+   std::unique_ptr<pkgProblemResolver> Fix(nullptr);
    if (_config->FindB("APT::Get::CallResolver", true) == true)
-      Fix = new pkgProblemResolver(Cache);
+      Fix.reset(new pkgProblemResolver(Cache));
 
    unsigned short fallback = MOD_INSTALL;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
@@ -526,8 +526,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
    }
 
 
-  TryToInstall InstallAction(Cache, Fix, BrokenFix);
-  TryToRemove RemoveAction(Cache, Fix);
+  TryToInstall InstallAction(Cache, Fix.get(), BrokenFix);
+  TryToRemove RemoveAction(Cache, Fix.get());
 
    // new scope for the ActionGroup
    {

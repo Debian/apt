@@ -1250,8 +1250,8 @@ static bool CheckValidity(const string &CacheFile,
 
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   SPtr<MMap> Map = new MMap(CacheF,0);
-   pkgCache Cache(Map);
+   std::unique_ptr<MMap> Map(new MMap(CacheF,0));
+   pkgCache Cache(Map.get());
    if (_error->PendingError() == true || Map->Size() == 0)
    {
       if (Debug == true)
@@ -1342,7 +1342,7 @@ static bool CheckValidity(const string &CacheFile,
    }
    
    if (OutMap != 0)
-      *OutMap = Map.UnGuard();
+      *OutMap = Map.release();
    return true;
 }
 									/*}}}*/
@@ -1483,16 +1483,16 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
    return true;
 }
 static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
-      SPtr<DynamicMMap> &Map, OpProgress * const Progress, std::string const &FileName)
+      std::unique_ptr<DynamicMMap> &Map, OpProgress * const Progress, std::string const &FileName)
 {
-   Map = CreateDynamicMMap(NULL, 0);
+   Map.reset(CreateDynamicMMap(NULL, 0));
    FileFd CacheF(FileName, FileFd::ReadOnly);
    map_pointer_t const alloc = Map->RawAllocate(CacheF.Size());
    if ((alloc == 0 && _error->PendingError())
 	 || CacheF.Read((unsigned char *)Map->Data() + alloc,
 	    CacheF.Size()) == false)
       return false;
-   Gen.reset(new pkgCacheGenerator(Map.Get(),Progress));
+   Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
    return true;
 }
 APT_DEPRECATED bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
@@ -1578,7 +1578,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    }
 
    // At this point we know we need to construct something, so get storage ready
-   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL, 0);
+   std::unique_ptr<DynamicMMap> Map(CreateDynamicMMap(NULL, 0));
    if (Debug == true)
       std::clog << "Open memory Map (not filebased)" << std::endl;
 
@@ -1599,7 +1599,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    {
       if (Debug == true)
 	 std::clog << "srcpkgcache.bin is NOT valid - rebuild" << std::endl;
-      Gen.reset(new pkgCacheGenerator(Map.Get(),Progress));
+      Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
 
       TotalSize += ComputeSize(&List, Files.begin(),Files.end());
       if (BuildCache(*Gen, Progress, CurrentSize, TotalSize, &List,
@@ -1607,7 +1607,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 return false;
 
       if (Writeable == true && SrcCacheFile.empty() == false)
-	 if (writeBackMMapToFile(Gen.get(), Map.Get(), SrcCacheFile) == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.get(), SrcCacheFile) == false)
 	    return false;
    }
 
@@ -1620,7 +1620,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 return false;
 
       if (Writeable == true && CacheFile.empty() == false)
-	 if (writeBackMMapToFile(Gen.get(), Map.Get(), CacheFile) == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.get(), CacheFile) == false)
 	    return false;
    }
 
@@ -1644,7 +1644,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    }
 
    if (OutMap != nullptr)
-      *OutMap = Map.UnGuard();
+      *OutMap = Map.release();
 
    if (Debug == true)
       std::clog << "Everything is ready for shipping" << std::endl;
@@ -1662,7 +1662,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
-   SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL, 0);
+   std::unique_ptr<DynamicMMap> Map(CreateDynamicMMap(NULL, 0));
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
    
@@ -1671,7 +1671,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    // Build the status cache
    if (Progress != NULL)
       Progress->OverallProgress(0,1,1,_("Reading package lists"));
-   pkgCacheGenerator Gen(Map.Get(),Progress);
+   pkgCacheGenerator Gen(Map.get(),Progress);
    if (_error->PendingError() == true)
       return false;
    if (BuildCache(Gen,Progress,CurrentSize,TotalSize, NULL,
@@ -1680,7 +1680,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 
    if (_error->PendingError() == true)
       return false;
-   *OutMap = Map.UnGuard();
+   *OutMap = Map.release();
    
    return true;
 }

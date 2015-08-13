@@ -22,7 +22,7 @@
 #define SMART_POINTER_H
 
 template <class T>
-class SPtr
+class APT_DEPRECATED SPtr
 {
    public:
    T *Ptr;

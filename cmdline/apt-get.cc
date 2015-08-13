@@ -1000,7 +1000,7 @@ static bool DoBuildDep(CommandLine &CmdL)
    {
       string Src;
       pkgSrcRecords::Parser *Last = 0;
-      SPtr<pkgSrcRecords::Parser> LastOwner;
+      std::unique_ptr<pkgSrcRecords::Parser> LastOwner;
 
       // an unpacked debian source tree
       using APT::String::Startswith;
@@ -1012,7 +1012,7 @@ static bool DoBuildDep(CommandLine &CmdL)
          std::string TypeName = "Debian control file";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
-            LastOwner = Last = Type->CreateSrcPkgParser(*I);
+            LastOwner.reset(Last = Type->CreateSrcPkgParser(*I));
       }
       // if its a local file (e.g. .dsc) use this
       else if (FileExists(*I))
@@ -1023,7 +1023,7 @@ static bool DoBuildDep(CommandLine &CmdL)
          string TypeName = "Debian " + flExtension(*I) + " file";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
          if(Type != NULL)
-            LastOwner = Last = Type->CreateSrcPkgParser(*I);
+            LastOwner.reset(Last = Type->CreateSrcPkgParser(*I));
       } else {
          // normal case, search the cache for the source file
 	 Last = FindSrc(*I,SrcRecs,Src,Cache);
