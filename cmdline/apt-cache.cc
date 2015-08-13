@@ -749,9 +749,9 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	      }
 	    
 	    // Display all solutions
-	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
-	    pkgPrioSortList(*Cache,List);
-	    for (pkgCache::Version **I = List; *I != 0; I++)
+	    std::unique_ptr<pkgCache::Version *[]> List(D.AllTargets());
+	    pkgPrioSortList(*Cache,List.get());
+	    for (pkgCache::Version **I = List.get(); *I != 0; I++)
 	    {
 	       pkgCache::VerIterator V(*Cache,*I);
 	       if (V != Cache->VerP + V.ParentPkg()->VersionList ||

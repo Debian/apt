@@ -476,8 +476,8 @@ void pkgProblemResolver::MakeScores()
    }
 
    // Copy the scores to advoid additive looping
-   SPtrArray<int> OldScores = new int[Size];
-   memcpy(OldScores,Scores,sizeof(*Scores)*Size);
+   std::unique_ptr<int[]> OldScores(new int[Size]);
+   memcpy(OldScores.get(),Scores,sizeof(*Scores)*Size);
       
    /* Now we cause 1 level of dependency inheritance, that is we add the 
       score of the packages that depend on the target Package. This 
@@ -702,17 +702,17 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
       operates from highest score to lowest. This prevents problems when
       high score packages cause the removal of lower score packages that
       would cause the removal of even lower score packages. */
-   SPtrArray<pkgCache::Package *> PList = new pkgCache::Package *[Size];
-   pkgCache::Package **PEnd = PList;
+   std::unique_ptr<pkgCache::Package *[]> PList(new pkgCache::Package *[Size]);
+   pkgCache::Package **PEnd = PList.get();
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       *PEnd++ = I;
    This = this;
-   qsort(PList,PEnd - PList,sizeof(*PList),&ScoreSort);
+   qsort(PList.get(),PEnd - PList.get(),sizeof(PList[0]),&ScoreSort);
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
    {
       clog << "Show Scores" << endl;
-      for (pkgCache::Package **K = PList; K != PEnd; K++)
+      for (pkgCache::Package **K = PList.get(); K != PEnd; K++)
          if (Scores[(*K)->ID] != 0)
          {
            pkgCache::PkgIterator Pkg(Cache,*K);
@@ -734,7 +734,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    for (int Counter = 0; Counter != 10 && Change == true; Counter++)
    {
       Change = false;
-      for (pkgCache::Package **K = PList; K != PEnd; K++)
+      for (pkgCache::Package **K = PList.get(); K != PEnd; K++)
       {
 	 pkgCache::PkgIterator I(Cache,*K);
 
@@ -845,8 +845,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    /* Look across the version list. If there are no possible
 	       targets then we keep the package and bail. This is necessary
 	       if a package has a dep on another package that can't be found */
-	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
-	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
+	    std::unique_ptr<pkgCache::Version *[]> VList(Start.AllTargets());
+	    if (VList[0] == 0 && (Flags[I->ID] & Protected) != Protected &&
 		Start.IsNegative() == false &&
 		Cache[I].NowBroken() == false)
 	    {	       
@@ -863,7 +863,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    }
 	    
 	    bool Done = false;
-	    for (pkgCache::Version **V = VList; *V != 0; V++)
+	    for (pkgCache::Version **V = VList.get(); *V != 0; V++)
 	    {
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
@@ -1233,8 +1233,8 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	       clog << "Package " << I.FullName(false) << " " << Start << endl;
 
 	    // Look at all the possible provides on this package
-	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
-	    for (pkgCache::Version **V = VList; *V != 0; V++)
+	    std::unique_ptr<pkgCache::Version *[]> VList(Start.AllTargets());
+	    for (pkgCache::Version **V = VList.get(); *V != 0; V++)
 	    {
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();

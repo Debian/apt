@@ -1281,9 +1281,9 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 Otherwise we remove the offender if needed */
       else if (Start.IsNegative() == true && Start->Type != pkgCache::Dep::Obsoletes)
       {
-	 SPtrArray<Version *> List = Start.AllTargets();
+	 std::unique_ptr<Version *[]> List(Start.AllTargets());
 	 pkgCache::PkgIterator TrgPkg = Start.TargetPkg();
-	 for (Version **I = List; *I != 0; I++)
+	 for (Version **I = List.get(); *I != 0; I++)
 	 {
 	    VerIterator Ver(*this,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();

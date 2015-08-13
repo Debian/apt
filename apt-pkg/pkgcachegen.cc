@@ -1260,8 +1260,8 @@ static bool CheckValidity(const string &CacheFile,
       return false;
    }
 
-   SPtrArray<bool> RlsVisited = new bool[Cache.HeaderP->ReleaseFileCount];
-   memset(RlsVisited,0,sizeof(*RlsVisited)*Cache.HeaderP->ReleaseFileCount);
+   std::unique_ptr<bool[]> RlsVisited(new bool[Cache.HeaderP->ReleaseFileCount]);
+   memset(RlsVisited.get(),0,sizeof(RlsVisited[0])*Cache.HeaderP->ReleaseFileCount);
    std::vector<pkgIndexFile *> Files;
    for (pkgSourceList::const_iterator i = List.begin(); i != List.end(); ++i)
    {
@@ -1295,8 +1295,8 @@ static bool CheckValidity(const string &CacheFile,
 
    /* Now we check every index file, see if it is in the cache,
       verify the IMS data and check that it is on the disk too.. */
-   SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
-   memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
+   std::unique_ptr<bool[]> Visited(new bool[Cache.HeaderP->PackageFileCount]);
+   memset(Visited.get(),0,sizeof(Visited[0])*Cache.HeaderP->PackageFileCount);
    for (std::vector<pkgIndexFile *>::const_reverse_iterator PkgFile = Files.rbegin(); PkgFile != Files.rend(); ++PkgFile)
    {
       if (Debug == true)

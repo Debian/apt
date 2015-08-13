@@ -142,9 +142,9 @@ bool pkgOrderList::DoRun()
 {   
    // Temp list
    unsigned long Size = Cache.Head().PackageCount;
-   SPtrArray<Package *> NList = new Package *[Size];
-   SPtrArray<Package *> AfterList = new Package *[Size];
-   AfterEnd = AfterList;
+   std::unique_ptr<Package *[]> NList(new Package *[Size]);
+   std::unique_ptr<Package *[]> AfterList(new Package *[Size]);
+   AfterEnd = AfterList.get();
    
    Depth = 0;
    WipeFlags(Added | AddPending | Loop | InList);
@@ -154,7 +154,7 @@ bool pkgOrderList::DoRun()
 
    // Rebuild the main list into the temp list.
    iterator OldEnd = End;
-   End = NList;
+   End = NList.get();
    for (iterator I = List; I != OldEnd; ++I)
       if (VisitNode(PkgIterator(Cache,*I), "DoRun") == false)
       {
@@ -163,12 +163,12 @@ bool pkgOrderList::DoRun()
       }
    
    // Copy the after list to the end of the main list
-   for (Package **I = AfterList; I != AfterEnd; I++)
+   for (Package **I = AfterList.get(); I != AfterEnd; I++)
       *End++ = *I;
    
    // Swap the main list to the new list
    delete [] List;
-   List = NList.UnGuard();
+   List = NList.release();
    return true;
 }
 									/*}}}*/
@@ -512,8 +512,8 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
    against it! */
 bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 {
-   SPtrArray<Version *> List = D.AllTargets();
-   for (Version **I = List; *I != 0; ++I)
+   std::unique_ptr<Version *[]> List(D.AllTargets());
+   for (Version **I = List.get(); *I != 0; ++I)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();
@@ -541,7 +541,7 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
    }
    if (D.IsNegative() == false)
       return true;
-   for (Version **I = List; *I != 0; ++I)
+   for (Version **I = List.get(); *I != 0; ++I)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();
@@ -1075,9 +1075,9 @@ void pkgOrderList::WipeFlags(unsigned long F)
    this fails to produce a suitable result. */
 bool pkgOrderList::CheckDep(DepIterator D)
 {
-   SPtrArray<Version *> List = D.AllTargets();
+   std::unique_ptr<Version *[]> List(D.AllTargets());
    bool Hit = false;
-   for (Version **I = List; *I != 0; I++)
+   for (Version **I = List.get(); *I != 0; I++)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();

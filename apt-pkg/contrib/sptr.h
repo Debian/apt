@@ -43,7 +43,7 @@ class APT_DEPRECATED SPtr
 };
 
 template <class T>
-class SPtrArray
+class APT_DEPRECATED SPtrArray
 {
    public:
    T *Ptr;

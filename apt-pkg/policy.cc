@@ -100,8 +100,8 @@ bool pkgPolicy::InitDefaults()
    }
 
    // Apply the defaults..
-   SPtrArray<bool> Fixed = new bool[Cache->HeaderP->PackageFileCount];
-   memset(Fixed,0,sizeof(*Fixed)*Cache->HeaderP->PackageFileCount);
+   std::unique_ptr<bool[]> Fixed(new bool[Cache->HeaderP->PackageFileCount]);
+   memset(Fixed.get(),0,sizeof(Fixed[0])*Cache->HeaderP->PackageFileCount);
    StatusOverride = false;
    for (vector<Pin>::const_iterator I = Defaults.begin(); I != Defaults.end(); ++I)
    {

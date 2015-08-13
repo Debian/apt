@@ -701,7 +701,7 @@ static bool DoSource(CommandLine &CmdL)
    AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
    pkgAcquire Fetcher(&Stat);
 
-   SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
+   std::unique_ptr<DscFile[]> Dsc(new DscFile[CmdL.FileSize()]);
    
    // insert all downloaded uris into this set to avoid downloading them
    // twice
