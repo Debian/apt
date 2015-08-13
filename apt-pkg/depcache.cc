@@ -2010,7 +2010,7 @@ bool pkgDepCache::MarkAndSweep(InRootSetFunc &rootFunc)
 }
 bool pkgDepCache::MarkAndSweep()
 {
-   std::auto_ptr<InRootSetFunc> f(GetRootSetFunc());
+   std::unique_ptr<InRootSetFunc> f(GetRootSetFunc());
    if(f.get() != NULL)
       return MarkAndSweep(*f.get());
    else
