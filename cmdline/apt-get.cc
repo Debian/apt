@@ -966,8 +966,10 @@ static bool DoBuildDep(CommandLine &CmdL)
    CacheFile Cache;
 
    _config->Set("APT::Install-Recommends", false);
+
+   bool WantLock = _config->FindB("APT::Get::Print-URIs", false) == false;
    
-   if (Cache.Open(true) == false)
+   if (Cache.Open(WantLock) == false)
       return false;
 
    if (CmdL.FileSize() <= 1)
