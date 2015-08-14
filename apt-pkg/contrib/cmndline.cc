@@ -124,7 +124,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	    Args *A;
 	    for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
 	    if (A->end() == true)
-	       return _error->Error(_("Command line option '%c' [from %s] is not known."),*Opt,argv[I]);
+	       return _error->Error(_("Command line option '%c' [from %s] is not understood in combination with the other options."),*Opt,argv[I]);
 
 	    if (HandleOpt(I,argc,argv,Opt,A) == false)
 	       return false;
