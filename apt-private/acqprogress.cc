@@ -296,7 +296,7 @@ bool AcqTextStatus::MediaChange(std::string Media, std::string Drive)
    clearLastLine();
    ioprintf(out,_("Media change: please insert the disc labeled\n"
 		   " '%s'\n"
-		   "in the drive '%s' and press enter\n"),
+		   "in the drive '%s' and press [Enter]\n"),
 	    Media.c_str(),Drive.c_str());
 
    char C = 0;

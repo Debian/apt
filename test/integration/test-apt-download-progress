@@ -13,7 +13,7 @@ changetohttpswebserver
 assertprogress() {
     T="$1"
     testsuccess grep "dlstatus:1:0:Retrieving file 1 of 1" "$T"
-    if ! egrep -q "dlstatus:1:[1-9][0-9](\..*)?:Retrieving file 1 of 1" "$T"; then
+    if ! grep -E -q "dlstatus:1:[1-9][0-9](\..*)?:Retrieving file 1 of 1" "$T"; then
         cat "$T"
         msgfail "Failed to detect download progress"
     fi

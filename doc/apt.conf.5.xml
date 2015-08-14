@@ -690,7 +690,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
    <para>
      The configuration item <literal>RootDir</literal> has a special
-     meaning.  If set, all paths in <literal>Dir::</literal> will be
+     meaning.  If set, all paths will be
      relative to <literal>RootDir</literal>, <emphasis>even paths that
      are specified absolutely</emphasis>.  So, for instance, if
      <literal>RootDir</literal> is set to
@@ -699,6 +699,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <filename>/var/lib/dpkg/status</filename>, then the status file
      will be looked up in
      <filename>/tmp/staging/var/lib/dpkg/status</filename>.
+     If you want to prefix only relative paths, set <literal>Dir</literal> instead.
    </para>
 
    <para>
@@ -774,10 +775,34 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      install to the commands, one per line on the requested file descriptor, defaulting
      to standard input.</para>
 
-     <para>Version 2 of this protocol dumps more information, including the
-     protocol version, the APT configuration space and the packages, files
-     and versions being changed. Version 3 adds the architecture and <literal>MultiArch</literal>
-     flag to each version being dumped.</para>
+     <para>Version 2 of this protocol sends more information through the requested
+     file descriptor: a line with the text <literal>VERSION 2</literal>,
+     the APT configuration space, and a list of package actions with filename
+     and version information.</para>
+
+     <para>Each configuration directive line has the form
+     <literal>key=value</literal>.  Special characters (equal signs, newlines,
+     nonprintable characters, quotation marks, and percent signs in
+     <literal>key</literal> and newlines, nonprintable characters, and percent
+     signs in <literal>value</literal>) are %-encoded. Lists are represented
+     by multiple <literal>key::=value</literal> lines with the same key. The
+     configuration section ends with a blank line.</para>
+
+     <para>Package action lines consist of five fields in Version 2: old version, direction
+     of version change (&lt; for upgrades, &gt; for downgrades, = for no
+     change), new version, action. The version fields are "-" for no version
+     at all (for example when installing a package for the first time; no
+     version is treated as earlier than any real version, so that is an
+     upgrade, indicated as <literal>- &lt; 1.23.4</literal>). The action field
+     is "**CONFIGURE**" if the package is being configured, "**REMOVE**" if it
+     is being removed, or the filename of a .deb file if it is being
+     unpacked.</para>
+
+     <para>In Version 3 after each version field follows the architecture
+     of this version, which is "-" if there is no version, and a field showing
+     the MultiArch type "same", foreign", "allowed" or "none". Note that "none"
+     is an incorrect typename which is just kept to remain compatible, it
+     should be read as "no" and users are encouraged to support both.</para>
 
      <para>The version of the protocol to be used for the command
      <literal><replaceable>cmd</replaceable></literal> can be chosen by setting

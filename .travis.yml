@@ -1,5 +1,9 @@
 language: cpp
 before_install:
+ - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
  - sudo apt-get update -q
+install:
  - sudo ./prepare-release travis-ci
-script: make && make test && test/integration/run-tests
+ - export CC=gcc-5
+ - export CXX=g++-5
+script: make -j1 && make test && test/integration/run-tests

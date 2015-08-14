@@ -538,7 +538,7 @@ bool pkgAcquire::Worker::MediaChange(string Message)
       ostringstream msg,status;
       ioprintf(msg,_("Please insert the disc labeled: "
 		     "'%s' "
-		     "in the drive '%s' and press enter."),
+		     "in the drive '%s' and press [Enter]."),
 	       Media.c_str(),Drive.c_str());
       status << "media-change: "  // message
 	     << Media  << ":"     // media
