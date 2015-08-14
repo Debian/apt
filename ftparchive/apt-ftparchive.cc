@@ -135,7 +135,7 @@ void PackageMap::GetGeneral(Configuration &Setup,Configuration &Block)
    PathPrefix = Block.Find("PathPrefix");
    
    if (Block.FindB("External-Links",true) == false)
-      DeLinkLimit = Setup.FindI("Default::DeLinkLimit",UINT_MAX);
+      DeLinkLimit = Setup.FindI("Default::DeLinkLimit", std::numeric_limits<unsigned int>::max());
    else
       DeLinkLimit = 0;
    
@@ -871,7 +871,8 @@ static bool DoGenerateContents(Configuration &Setup,
       that describe the debs it indexes. Since the package files contain 
       hashes of the .debs this means they have not changed either so the 
       contents must be up to date. */
-   unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
+   unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",
+                                                 std::numeric_limits<unsigned int>::max())*1024;
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
       // This record is not relevant
