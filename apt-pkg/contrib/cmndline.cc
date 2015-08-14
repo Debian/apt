@@ -149,7 +149,7 @@ bool CommandLine::Parse(int argc,const char **argv)
       {
          Opt = (const char*) memchr(Opt, '-', OptEnd - Opt);
 	 if (Opt == NULL)
-	    return _error->Error(_("Command line option %s is not understood"),argv[I]);
+	    return _error->Error(_("Command line option %s is not understood in combination with the other options"),argv[I]);
 	 Opt++;
 	 
 	 for (A = ArgList; A->end() == false &&
@@ -158,7 +158,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 
 	 // Failed again..
 	 if (A->end() == true && OptEnd - Opt != 1)
-	    return _error->Error(_("Command line option %s is not understood"),argv[I]);
+	    return _error->Error(_("Command line option %s is not understood in combination with the other options"),argv[I]);
 
 	 // The option could be a single letter option prefixed by a no-..
 	 if (A->end() == true)
@@ -166,7 +166,7 @@ bool CommandLine::Parse(int argc,const char **argv)
 	    for (A = ArgList; A->end() == false && A->ShortOpt != *Opt; A++);
 	    
 	    if (A->end() == true)
-	       return _error->Error(_("Command line option %s is not understood"),argv[I]);
+	       return _error->Error(_("Command line option %s is not understood in combination with the other options"),argv[I]);
 	 }
 	 
 	 // The option is not boolean
