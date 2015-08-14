@@ -114,10 +114,12 @@ bool AuthPrompt(std::vector<std::string> const &UntrustedList, bool const Prompt
 
       return true;
    }
-   else if (_config->FindB("APT::Get::Force-Yes",false) == true)
+   else if (_config->FindB("APT::Get::Force-Yes",false) == true) {
+      _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
       return true;
+   }
 
-   return _error->Error(_("There are problems and -y was used without --force-yes"));
+   return _error->Error(_("There were unauthenticated packages and -y was used without --allow-unauthenticated"));
 }
 									/*}}}*/
 bool AcquireRun(pkgAcquire &Fetcher, int const PulseInterval, bool * const Failure, bool * const TransientNetworkFailure)/*{{{*/

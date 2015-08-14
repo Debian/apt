@@ -429,12 +429,36 @@
      Configuration Item: <literal>APT::Get::Only-Upgrade</literal>.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>--allow-downgrades</option></term>
+     <listitem><para>This is a dangerous option that will cause apt to continue
+     without prompting if it is doing downgrades. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-downgrades</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--allow-remove-essential</option></term>
+     <listitem><para>Force yes; this is a dangerous option that will cause apt to continue
+     without prompting if it is removing essentials. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-remove-essential</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--allow-change-held-packages</option></term>
+     <listitem><para>Force yes; this is a dangerous option that will cause apt to continue
+     without prompting if it is changing held packages. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-change-held-packages</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>--force-yes</option></term>
      <listitem><para>Force yes; this is a dangerous option that will cause apt to continue 
      without prompting if it is doing something potentially harmful. It 
      should not be used except in very special situations. Using 
      <literal>force-yes</literal> can potentially destroy your system! 
-     Configuration Item: <literal>APT::Get::force-yes</literal>.</para></listitem>
+     Configuration Item: <literal>APT::Get::force-yes</literal>. This is deprecated and replaced by <option>--allow-downgrades</option>, <option>--allow-remove-essential</option>, <option>--allow-change-held-packages</option> in 1.1. </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--print-uris</option></term>

@@ -81,4 +81,4 @@ W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release fi
 # ensure we can not install the package
 testfailureequal "WARNING: The following packages cannot be authenticated!
   foo
-E: There are problems and -y was used without --force-yes" aptget install -qq -y foo
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y foo

@@ -65,7 +65,7 @@ testmarkedauto
 
 # test that installed/upgraded auto-pkgs are not set to manual
 
-testsuccess aptget install browser=41 -y --force-yes
+testsuccess aptget install browser=41 -y --allow-downgrades
 
 testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
 testmarkedauto

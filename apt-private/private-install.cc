@@ -58,7 +58,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
    }
    
-   bool Fail = false;
+   bool Hold = false;
+   bool Downgrade = false;
    bool Essential = false;
    
    // Show all the various warning indicators
@@ -66,13 +67,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    ShowNew(c1out,Cache);
    if (ShwKept == true)
       ShowKept(c1out,Cache);
-   Fail |= !ShowHold(c1out,Cache);
+   Hold = !ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
       ShowUpgraded(c1out,Cache);
-   Fail |= !ShowDowngraded(c1out,Cache);
+   Downgrade = !ShowDowngraded(c1out,Cache);
+
    if (_config->FindB("APT::Get::Download-Only",false) == false)
         Essential = !ShowEssential(c1out,Cache);
-   Fail |= Essential;
+
+   // All kinds of failures
+   bool Fail = (Essential || Downgrade || Hold);
+
    Stats(c1out,Cache);
 
    // Sanity check
@@ -89,7 +94,25 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    // No remove flag
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("Packages need to be removed but remove is disabled."));
-       
+
+   // Fail safe check
+   if (_config->FindI("quiet",0) >= 2 ||
+       _config->FindB("APT::Get::Assume-Yes",false) == true)
+   {
+      if (_config->FindB("APT::Get::Force-Yes",false) == true) {
+	 _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
+      }
+
+      if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false) {
+	 if (Essential == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
+	    return _error->Error(_("Essential packages were removed and -y was used without --allow-remove-essential."));
+	 if (Downgrade == true && _config->FindB("APT::Get::allow-downgrades", false) == false)
+	    return _error->Error(_("Packages were downgraded and -y was used without --allow-downgrades."));
+	 if (Hold == true && _config->FindB("APT::Get::allow-change-held-packages", false) == false)
+	    return _error->Error(_("Held packages were changed and -y was used without --allow-change-held-packages."));
+      }
+   }
+
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
    {
@@ -173,15 +196,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (CheckFreeSpaceBeforeDownload(_config->FindDir("Dir::Cache::Archives"), (FetchBytes - FetchPBytes)) == false)
       return false;
 
-   // Fail safe check
-   if (_config->FindI("quiet",0) >= 2 ||
-       _config->FindB("APT::Get::Assume-Yes",false) == true)
-   {
-      if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false)
-	 return _error->Error(_("There are problems and -y was used without --force-yes"));
-   }         
-
-   if (Essential == true && Safety == true)
+   if (Essential == true && Safety == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));

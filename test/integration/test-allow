@@ -1,0 +1,98 @@
+#!/bin/sh
+#
+# Test for --allow-remove-essential and friends replacing --force-yes
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'downgrade' 'all' '1'
+insertinstalledpackage 'downgrade' 'all' '2'
+
+insertpackage 'unstable' 'hold' 'all' '2'
+insertinstalledpackage 'hold' 'all' '1'
+
+insertinstalledpackage 'essential' 'all' '1' 'Essential: yes'
+
+setupaptarchive
+
+testsuccess aptmark hold hold
+
+# Test --allow-remove--essential
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  essential
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  essential
+0 upgraded, 0 newly installed, 1 to remove and 1 not upgraded.
+E: Essential packages were removed and -y was used without --allow-remove-essential.' aptget remove essential -y -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  essential
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  essential
+0 upgraded, 0 newly installed, 1 to remove and 1 not upgraded.
+Remv essential [1]' aptget remove essential -y --allow-remove-essential -s
+
+# Test --allow-change-held-packages (should not influence dist-upgrade, but an install)
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  hold
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.' aptget dist-upgrade --allow-change-held-packages -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+The following held packages will be changed:
+  hold
+The following packages will be upgraded:
+  hold
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+E: Held packages were changed and -y was used without --allow-change-held-packages.' aptget install hold -y -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+The following held packages will be changed:
+  hold
+The following packages will be upgraded:
+  hold
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+E: Held packages were changed and -y was used without --allow-change-held-packages.' aptget install hold -y  -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following held packages will be changed:
+  hold
+The following packages will be upgraded:
+  hold
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst hold [1] (2 unstable [all])
+Conf hold (2 unstable [all])' aptget install hold -y  -s --allow-change-held-packages
+
+# Test --allow-downgrades
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+The following packages will be DOWNGRADED:
+  downgrade
+0 upgraded, 0 newly installed, 1 downgraded, 0 to remove and 1 not upgraded.
+E: Packages were downgraded and -y was used without --allow-downgrades.' aptget install downgrade=1 -y -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be DOWNGRADED:
+  downgrade
+0 upgraded, 0 newly installed, 1 downgraded, 0 to remove and 1 not upgraded.
+Inst downgrade [2] (1 unstable [all])
+Conf downgrade (1 unstable [all])' aptget install downgrade=1 --allow-downgrades -y -s

@@ -101,7 +101,7 @@ test_from_inrelease_to_unsigned_with_override()
     # but that the individual packages are still considered untrusted
     testfailureequal "WARNING: The following packages cannot be authenticated!
   evil
-E: There are problems and -y was used without --force-yes" aptget install -qq -y evil
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y evil
 }
 
 test_cve_2012_0214()

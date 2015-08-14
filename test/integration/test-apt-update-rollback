@@ -120,7 +120,7 @@ test_unauthenticated_to_invalid_inrelease() {
     listcurrentlistsdirectory > lists.before
     testfailureequal "WARNING: The following packages cannot be authenticated!
   old
-E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y old
 
     # go to authenticated but not correct
     add_new_package '+1hour'
@@ -133,7 +133,7 @@ E: Some index files failed to download. They have been ignored, or old ones used
     testfailure ls rootdir/var/lib/apt/lists/*_InRelease
     testfailureequal "WARNING: The following packages cannot be authenticated!
   old
-E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y old
 }
 
 test_inrelease_to_unauth_inrelease() {
