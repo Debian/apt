@@ -310,10 +310,15 @@ static void ShowHashTableStats(std::string Type,
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool Stats(CommandLine &)
+static bool Stats(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
+
+   if (CmdL.FileSize() > 1) {
+      _error->Error(_("apt-cache stats does not take any arguments"));
+      return false;
+   }
    if (unlikely(Cache == NULL))
       return false;
 
