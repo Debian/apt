@@ -198,11 +198,11 @@ installation
 <section id="s2.4"><title>Binary Package Cache (srcpkgcache.bin and pkgcache.bin)</title>
 <para>
 Please see cache.sgml for a complete description of what this file
-is. The cache file is updated whenever the contents of the lists
-directory changes. If the cache is erased, corrupted or of a non-matching
+is. The cache file is updated whenever the Packages or Release files of the lists
+directory or the dpkg status file changes. If the cache is erased, corrupted or of a non-matching
 version it will be automatically rebuilt by all of the tools that need
 it. <emphasis>srcpkgcache.bin</emphasis> contains a cache of all of the
-package files in the source list. This allows regeneration of the cache
+package, release files in the source list. In comparison to <emphasis>pkgcache.bin</emphasis>, it does not include the /var/lib/dpkg/status file. This allows regeneration of the cache
 when the status files change to use a prebuilt version for greater speed.
 </para>
 </section>
