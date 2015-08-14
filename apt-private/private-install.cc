@@ -519,7 +519,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       _config->Set("APT::Get::Purge", true);
       fallback = MOD_REMOVE;
    }
-   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
+   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0 ||
+	    strcasecmp(CmdL.FileList[0], "auto-remove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
       fallback = MOD_REMOVE;

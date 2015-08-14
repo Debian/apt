@@ -169,14 +169,14 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0,"format","APT::Get::IndexTargets::Format", CommandLine::HasArg);
       addArg(0,"release-info","APT::Get::IndexTargets::ReleaseInfo", 0);
    }
-   else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
+   else if (CmdMatches("clean", "autoclean", "auto-clean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
       ;
    else if (CmdMatches("moo"))
       addArg(0, "color", "APT::Moo::Color", 0);
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "dselect-upgrade", "autoremove", "clean", "autoclean", "check",
+	    "dselect-upgrade", "autoremove", "auto-remove", "clean", "autoclean", "auto-clean", "check",
 	    "build-dep", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
