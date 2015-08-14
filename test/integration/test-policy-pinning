@@ -246,3 +246,63 @@ aptgetupdate
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports
+
+
+tmppath=$(readlink -f .)
+
+# Check 16-bit integers
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 32767
+" > rootdir/etc/apt/preferences
+
+testsuccess aptget install -s coolstuff -o PinPriority=32767
+
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: -32768
+" > rootdir/etc/apt/preferences
+testsuccess aptget install -s coolstuff -o PinPriority=-32768
+
+
+# Check for 32-bit integers
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 32768
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: ${tmppath}/rootdir/etc/apt/preferences: Value 32768 is outside the range of valid pin priorities (-32768 to 32767)" \
+ aptget install -s coolstuff -o PinPriority=32768
+
+
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: -32769
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: ${tmppath}/rootdir/etc/apt/preferences: Value -32769 is outside the range of valid pin priorities (-32768 to 32767)" \
+ aptget install -s coolstuff -o PinPriority=-32769
+
+# Check for 64-bit integers
+
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 2147483648
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: Cannot convert 2147483648 to integer -  (34: Numerical result out of range)
+E: ${tmppath}/rootdir/etc/apt/preferences: Value 2147483648 is outside the range of valid pin priorities (-32768 to 32767)" \
+ aptget install -s coolstuff -o PinPriority=2147483648
+
+# Check for 0
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 0
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: No priority (or zero) specified for pin" \
+ aptget install -s coolstuff -o PinPriority=0
