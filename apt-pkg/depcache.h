@@ -281,6 +281,7 @@ class pkgDepCache : protected pkgCache::Namespace
       virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
       virtual bool IsImportantDep(DepIterator const &Dep) const;
       virtual signed short GetPriority(PkgIterator const &Pkg);
+      virtual signed short GetPriority(VerIterator const &Ver, bool ConsiderFiles=true);
       virtual signed short GetPriority(PkgFileIterator const &File);
 
       virtual ~Policy() {};

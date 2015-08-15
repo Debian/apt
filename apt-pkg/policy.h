@@ -80,7 +80,7 @@ class pkgPolicy : public pkgDepCache::Policy
    // Things for the cache interface.
    virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
    virtual signed short GetPriority(pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual signed short GetPriority(pkgCache::VerIterator const &Pkg, bool ConsiderFiles = true);
+   virtual signed short GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles = true) APT_OVERRIDE;
    virtual signed short GetPriority(pkgCache::PkgFileIterator const &File) APT_OVERRIDE;
 
    bool InitDefaults();

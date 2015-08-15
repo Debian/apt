@@ -1780,6 +1780,8 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep) const
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &/*Pkg*/)
 { return 0; }
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::VerIterator const &/*Ver*/, bool /*ConsiderFiles*/)
+{ return 0; }
 APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &/*File*/)
 { return 0; }
 									/*}}}*/
