@@ -157,8 +157,7 @@ bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
    if (_error->PendingError() == true)
       return false;
 
-   DCache->Init(Progress);
-   return true;
+   return DCache->Init(Progress);
 }
 									/*}}}*/
 // CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
