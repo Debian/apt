@@ -1332,6 +1332,7 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
+   pkgCache::VerIterator V;
    map_id_t ID;
 };
 
@@ -1417,6 +1418,7 @@ static bool Search(CommandLine &CmdL)
 	 if (D.end() == true)
 	    continue;
 	 DFList[G->ID].Df = D.FileList();
+	 DFList[G->ID].V = V;
 	 DFList[G->ID].ID = G->ID;
       }
 
@@ -1436,6 +1438,7 @@ static bool Search(CommandLine &CmdL)
 	 if (D.end() == true)
 	    continue;
 	 DFList[id].Df = D.FileList();
+	 DFList[id].V = V;
 	 DFList[id].ID = id;
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
@@ -1477,13 +1480,7 @@ static bool Search(CommandLine &CmdL)
       if (matchedAll == true)
       {
 	 if (ShowFull == true)
-	 {
-	    const char *Start;
-	    const char *End;
-	    P.GetRec(Start,End);
-	    fwrite(Start,End-Start,1,stdout);
-	    putc('\n',stdout);
-	 }	 
+	    DisplayRecord(CacheFile, J->V);
 	 else
 	    printf("%s - %s\n",P.Name().c_str(),P.ShortDesc().c_str());
       }
