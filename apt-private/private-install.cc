@@ -682,7 +682,7 @@ bool DoInstall(CommandLine &CmdL)
       to what the user asked */
    SortedPackageUniverse Universe(Cache);
    if (Cache->InstCount() != verset[MOD_INSTALL].size())
-      ShowList(c1out, _("The following extra packages will be installed:"), Universe,
+      ShowList(c1out, _("The following additional packages will be installed:"), Universe,
 	    PkgIsExtraInstalled(&Cache, &verset[MOD_INSTALL]),
 	    &PrettyFullName, CandidateVersion(&Cache));
 
