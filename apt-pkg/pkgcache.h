@@ -225,7 +225,7 @@ class pkgCache								/*{{{*/
    inline map_id_t Hash(const char *S) const {return sHash(S);}
 
    // Useful transformation things
-   const char *Priority(unsigned char Priority);
+   static const char *Priority(unsigned char Priority);
    
    // Accessors
    GrpIterator FindGrp(const std::string &Name);
