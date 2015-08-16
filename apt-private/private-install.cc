@@ -816,8 +816,9 @@ void TryToInstall::operator() (pkgCache::VerIterator const &Ver) {
 	    else
 	       Cache->GetDepCache()->SetReInstall(Pkg, true);
 	 } else
-	    ioprintf(c1out,_("%s is already the newest version.\n"),
-		  Pkg.FullName(true).c_str());
+	    // TRANSLATORS: First string is package name, second is version
+	    ioprintf(c1out,_("%s is already the newest version (%s).\n"),
+		  Pkg.FullName(true).c_str(), Pkg.CurrentVer().VerStr());
       }
 
       // Install it with autoinstalling enabled (if we not respect the minial
