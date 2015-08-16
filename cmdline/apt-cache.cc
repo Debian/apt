@@ -1440,7 +1440,7 @@ static bool Search(CommandLine &CmdL)
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
 	 for (unsigned I = 0; I < NumPatterns; ++I)
-	    PatternMatch[PrvPatternOffset + I] = PatternMatch[PatternOffset + I];
+	    PatternMatch[PrvPatternOffset + I] |= PatternMatch[PatternOffset + I];
       }
    }
 
