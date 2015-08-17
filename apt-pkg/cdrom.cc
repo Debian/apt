@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <algorithm>
 #include <dlfcn.h>
+#include <iostream>
+#include <sstream>
 
 #include<apti18n.h>
 

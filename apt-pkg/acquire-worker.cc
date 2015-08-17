@@ -33,6 +33,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+#include <sstream>
 
 #include <apti18n.h>
 									/*}}}*/

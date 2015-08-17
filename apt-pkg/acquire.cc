@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include <stdio.h>
 #include <stdlib.h>

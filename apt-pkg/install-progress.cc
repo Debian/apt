@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <algorithm>
 #include <stdio.h>
+#include <sstream>
 
 #include <apti18n.h>
 

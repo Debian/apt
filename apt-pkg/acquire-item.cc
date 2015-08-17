@@ -43,6 +43,7 @@
 #include <string>
 #include <stdio.h>
 #include <ctime>
+#include <sstream>
 
 #include <apti18n.h>
 									/*}}}*/

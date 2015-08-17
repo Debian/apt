@@ -8,6 +8,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/update.h>
 
 #include <string>
 

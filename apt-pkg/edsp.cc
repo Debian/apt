@@ -12,6 +12,11 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/strutl.h>
 
 #include <ctype.h>
 #include <stddef.h>
