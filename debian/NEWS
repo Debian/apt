@@ -1,3 +1,15 @@
+apt (2.0~exp1) experimental; urgency=medium
+
+  A new algorithm for pinning has been implemented, it now assigns a
+  pin priority to a version instead of assigning a pin to a package.
+
+  This might break existing corner cases of pinning, if they use multiple
+  pins involving the same package name or patterns matching the same
+  package name, but should overall lead to pinning that actually works
+  as intended and documented.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 17 Aug 2015 14:45:17 +0200
+
 apt (0.8.11) unstable; urgency=low
 
   * apt-get install pkg/experimental will now not only switch the
