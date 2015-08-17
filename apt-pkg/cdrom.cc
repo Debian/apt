@@ -24,6 +24,7 @@
 #include <dlfcn.h>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include<apti18n.h>
 
