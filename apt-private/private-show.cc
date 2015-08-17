@@ -94,7 +94,7 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    if (is_installed)
       manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
    else
-      manual_installed = 0;
+      manual_installed = "";
 
    // FIXME: add verbose that does not do the removal of the tags?
    std::vector<pkgTagSection::Tag> RW;
