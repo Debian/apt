@@ -4,6 +4,8 @@ before_install:
  - sudo apt-get update -q
 install:
  - sudo ./prepare-release travis-ci
- - export CC=gcc-5
- - export CXX=g++-5
-script: make -j1 && make test && test/integration/run-tests
+ - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+ - sudo apt-get -qq update
+ - sudo apt-get -qq install g++-4.8
+ - export CXX=g++-4.8
+script: make && make test && test/integration/run-tests

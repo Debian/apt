@@ -118,7 +118,7 @@ CacheSetHelperVirtuals::CacheSetHelperVirtuals(bool const ShowErrors, GlobalErro
 
 // CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
 CacheSetHelperAPTGet::CacheSetHelperAPTGet(std::ostream &out) :
-   APT::CacheSetHelper{true}, out{out}
+   APT::CacheSetHelper{true}, out(out)
 {
    explicitlyNamed = true;
 }

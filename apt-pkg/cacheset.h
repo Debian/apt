@@ -407,7 +407,7 @@ public:									/*{{{*/
 	bool empty() const APT_OVERRIDE { return _cont.empty(); }
 	void clear() APT_OVERRIDE { return _cont.clear(); }
 	size_t size() const APT_OVERRIDE { return _cont.size(); }
-#if __cplusplus >= 201103L
+#if __GNUC__ >= 5 || (__GNUC_MINOR__ >= 9 && __GNUC__ >= 4)
 	iterator erase( const_iterator pos ) { return iterator(_cont.erase(pos._iter)); }
 	iterator erase( const_iterator first, const_iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
 #else
@@ -897,7 +897,7 @@ public:									/*{{{*/
 	bool empty() const APT_OVERRIDE { return _cont.empty(); }
 	void clear() APT_OVERRIDE { return _cont.clear(); }
 	size_t size() const APT_OVERRIDE { return _cont.size(); }
-#if __cplusplus >= 201103L
+#if __GNUC__ >= 5 || (__GNUC_MINOR__ >= 9 && __GNUC__ >= 4)
 	iterator erase( const_iterator pos ) { return iterator(_cont.erase(pos._iter)); }
 	iterator erase( const_iterator first, const_iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
 #else

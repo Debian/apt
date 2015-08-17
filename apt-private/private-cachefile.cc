@@ -33,7 +33,7 @@ static bool SortPackagesByName(pkgCache * const Owner,
    return strcmp(Owner->StrP + GA->Name, Owner->StrP + GB->Name) <= 0;
 }
 SortedPackageUniverse::SortedPackageUniverse(CacheFile &Cache) :
-      PackageUniverse{Cache}, List{Cache.UniverseList}
+      PackageUniverse{Cache}, List(Cache.UniverseList)
 {
 }
 void SortedPackageUniverse::LazyInit() const
