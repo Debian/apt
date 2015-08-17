@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // setDefaultConfigurationForCompressors				/*{{{*/

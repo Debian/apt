@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <sstream>
 
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -34,9 +33,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -26,7 +26,6 @@
 #include <apt-pkg/debmetaindex.h>
 
 #include <iostream>
-#include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>

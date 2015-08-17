@@ -15,7 +15,6 @@
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/edspindexfile.h>
 #include <apt-pkg/edspsystem.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 
@@ -23,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include <apti18n.h>
 									/*}}}*/
 
 // System::edspSystem - Constructor					/*{{{*/

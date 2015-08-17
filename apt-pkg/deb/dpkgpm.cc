@@ -18,7 +18,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/install-progress.h>
 #include <apt-pkg/packagemanager.h>
-#include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
@@ -27,7 +26,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <grp.h>
-#include <pty.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stddef.h>

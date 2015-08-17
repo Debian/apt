@@ -18,7 +18,6 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/tagfile.h>
 
-#include <string>
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/

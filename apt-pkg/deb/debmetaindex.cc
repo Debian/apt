@@ -20,12 +20,9 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <set>
 #include <algorithm>
 
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <string.h>
 
 #include <apti18n.h>

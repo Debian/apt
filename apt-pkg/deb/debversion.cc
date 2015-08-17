@@ -16,7 +16,6 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <string.h>
-#include <string>
 #include <stdlib.h>
 #include <ctype.h>
 									/*}}}*/

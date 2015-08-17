@@ -12,13 +12,8 @@
 #include <apt-pkg/edsplistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/debindexfile.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/pkgrecords.h>
 
 #include <stddef.h>

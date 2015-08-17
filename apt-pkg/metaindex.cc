@@ -3,8 +3,6 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 
-#include <stddef.h>
-
 #include <string>
 #include <vector>
                                                                        /*}}}*/

@@ -8,10 +8,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <iostream>
-#include <string>
 #include <vector>
 #include <sys/ioctl.h>
-#include <sstream>
 #include <fcntl.h>
 #include <algorithm>
 #include <stdio.h>

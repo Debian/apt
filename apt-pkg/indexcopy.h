@@ -10,8 +10,10 @@
 #define INDEXCOPY_H
 
 #include <vector>
+#ifndef APT_11_CLEAN_HEADERS
 #include <string>
 #include <stdio.h>
+#endif
 
 #include <apt-pkg/macros.h>
 

@@ -27,8 +27,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <sstream>
-#include <iomanip>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +39,6 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include <apti18n.h>
 									/*}}}*/

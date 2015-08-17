@@ -7,31 +7,20 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/progress.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/pkgrecords.h>
 
 #include <ctype.h>
 #include <stddef.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <algorithm>
 #include <iostream>
-#include <vector>
 #include <limits>
 #include <string>
-#include <list>
 
 #include <apti18n.h>
 									/*}}}*/

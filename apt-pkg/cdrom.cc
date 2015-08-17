@@ -16,8 +16,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <fstream>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>

@@ -18,7 +18,6 @@
 #include <apt-pkg/macros.h>
 
 #include <string.h>
-#include <string>
 #include <cstdlib>
 
 #include <apti18n.h>
