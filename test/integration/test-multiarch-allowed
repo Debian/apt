@@ -40,7 +40,7 @@ The following information may help to resolve the situation:
 solveableinsinglearch0() {
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   foo needsfoo
@@ -53,7 +53,7 @@ Conf needsfoo (1 unstable [amd64])' aptget install needsfoo -s
 solveableinsinglearch0
 testsuccessequal 'Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo:i386
 The following NEW packages will be installed:
   foo:i386 needsfoo:i386
@@ -74,7 +74,7 @@ E: Unable to correct problems, you have held broken packages." aptget install ne
 solveableinsinglearch1() {
 	testsuccessequal "Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   foo $1
@@ -89,7 +89,7 @@ testneedsfooallgood() {
 	solveableinsinglearch1 $1
 	testsuccessequal "Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   foo $1:i386
@@ -168,7 +168,7 @@ Conf hatesfoonative (1 unstable [amd64])' aptget install foo:i386 hatesfoonative
 solveableinsinglearch3() {
 	testsuccessequal "Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   coolfoo
 The following NEW packages will be installed:
   coolfoo needscoolfoo
@@ -179,7 +179,7 @@ Conf coolfoo (1 unstable [amd64])
 Conf needscoolfoo (1 unstable [amd64])" aptget install needscoolfoo -s
 	testsuccessequal "Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   coolfoo
 The following NEW packages will be installed:
   coolfoo coolfoover needscoolfoo
@@ -196,7 +196,7 @@ The following packages have unmet dependencies:
 E: Unable to correct problems, you have held broken packages." aptget install needscoolfooany -s
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   coolfoo
 The following NEW packages will be installed:
   coolfoo needscoolfoover0
@@ -207,7 +207,7 @@ Conf coolfoo (1 unstable [amd64])
 Conf needscoolfoover0 (1 unstable [amd64])' aptget install needscoolfoover0 -s
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   coolfoo coolfoover
 The following NEW packages will be installed:
   coolfoo coolfoover needscoolfoover1
