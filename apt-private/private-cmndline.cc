@@ -57,6 +57,9 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
    {
       addArg('n', "names-only", "APT::Cache::NamesOnly", 0);
       addArg('f', "full", "APT::Cache::ShowFull", 0);
+      addArg(0, "reverse", "APT::Cache::OrderByReverseAlphabetic", 0);
+      addArg(0, "status", "APT::Cache::OrderByStatus", 0);
+      addArg(0, "package-version", "APT::Cache::OrderByVersion", 0);
    }
    else if (CmdMatches("show"))
    {

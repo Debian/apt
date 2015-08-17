@@ -105,6 +105,7 @@ bool YnPrompt(bool Default=true);
 bool AnalPrompt(const char *Text);
 
 std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
+std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P);
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
 std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache);
 std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
