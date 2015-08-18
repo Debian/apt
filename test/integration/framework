@@ -794,6 +794,7 @@ insertsource() {
 	local ARCH="$3"
 	local VERSION="$4"
 	local DEPENDENCIES="$5"
+        local BINARY="${6:-$NAME}"
 	local ARCHS=""
 	local SPATH="aptarchive/dists/${RELEASE}/main/source"
 	mkdir -p $SPATH
@@ -801,7 +802,7 @@ insertsource() {
 	local DSCFILE="${NAME}_${VERSION}.dsc"
 	local TARFILE="${NAME}_${VERSION}.tar.gz"
 	echo "Package: $NAME
-Binary: $NAME
+Binary: $BINARY
 Version: $VERSION
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE

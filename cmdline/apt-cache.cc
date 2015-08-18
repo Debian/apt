@@ -1607,6 +1607,10 @@ static bool ShowSrcPackage(CommandLine &CmdL)
       pkgSrcRecords::Parser *Parse;
       unsigned found_this = 0;
       while ((Parse = SrcRecs.Find(*I,false)) != 0) {
+         // SrcRecs.Find() will find both binary and source names
+         if (_config->FindB("APT::Cache::Only-Source", false) == true)
+            if (Parse->Package() != *I)
+               continue;
         cout << Parse->AsStr() << endl;;
         found++;
         found_this++;

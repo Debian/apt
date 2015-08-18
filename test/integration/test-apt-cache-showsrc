@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# we have a foo source package
+insertsource 'unstable' 'foo' 'all' '1.0' '' 'foo-binary'
+
+# and a similar one that builds a foo binary package
+insertsource 'unstable' 'unreleated' 'all' '1.0' '' 'foo'
+
+# just here to workaround the need for a authenticated package
+insertpackage 'unstable' 'workaround' 'all' '1.0'
+
+setupaptarchive
+
+# by default apt-cache showsrc will look into "binary" and "source" names
+# and show all matches
+aptcache showsrc foo > output.txt
+testsuccess grep "Package: foo" output.txt
+testsuccess grep "Package: unreleated" output.txt
+
+# by default apt-cache showsrc will look into "binary" and "source" names
+# and show all matches
+aptcache showsrc --only-source foo > output.txt
+testsuccess grep "Package: foo" output.txt
+testfailure grep "Package: unreleated" output.txt
