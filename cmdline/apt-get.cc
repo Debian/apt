@@ -1649,6 +1649,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 				   {"markauto",&DoMarkAuto},
 				   {"unmarkauto",&DoMarkAuto},
                                    {"dist-upgrade",&DoDistUpgrade},
+                                   {"full-upgrade",&DoDistUpgrade},
                                    {"dselect-upgrade",&DoDSelectUpgrade},
 				   {"build-dep",&DoBuildDep},
                                    {"clean",&DoClean},
