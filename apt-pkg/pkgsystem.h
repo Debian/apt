@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.h,v 1.6 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.
@@ -53,7 +52,7 @@ class Configuration;
 class pkgIndexFile;
 
 class pkgSystem
-{   
+{
    public:
 
    // Global list of supported systems
@@ -61,8 +60,8 @@ class pkgSystem
    static unsigned long GlobalListLen;
    static pkgSystem *GetSystem(const char *Label);
    
-   const char *Label;
-   pkgVersioningSystem *VS;
+   const char * const Label;
+   pkgVersioningSystem * const VS;
    
    /* Prevent other programs from touching shared data not covered by
       other locks (cache or state locks) */
@@ -82,7 +81,8 @@ class pkgSystem
    virtual bool ArchiveSupported(const char *Type) = 0;
 
    // Return a list of system index files..
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;   
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;
+
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const = 0;
 
@@ -91,9 +91,11 @@ class pkgSystem
    virtual signed Score(Configuration const &/*Cnf*/) {
       return 0;
    };
-   
-   pkgSystem();
-   virtual ~pkgSystem() {};
+
+   pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
+   virtual ~pkgSystem();
+   private:
+   void * const d;
 };
 
 // The environment we are operating in.

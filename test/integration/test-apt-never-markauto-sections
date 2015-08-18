@@ -1,0 +1,86 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+aptconfig dump --no-empty --format '%v%n' APT::Never-MarkAuto-Sections > nevermarkauto.sections
+testsuccess grep '^metapackages$' nevermarkauto.sections
+
+buildsimplenativepackage 'mydesktop' 'all' '1' 'unstable' 'Depends: mydesktop-core, foreignpkg
+Recommends: notavailable' '' 'metapackages'
+buildsimplenativepackage 'mydesktop-core' 'amd64' '1' 'unstable' 'Depends: bad-texteditor | texteditor, browser (>= 42), nosection, foreignpkg
+Recommends: notavailable
+Multi-Arch: foreign' '' 'metapackages'
+buildsimplenativepackage 'browser' 'amd64' '41' 'stable'
+buildsimplenativepackage 'browser' 'amd64' '42' 'unstable'
+buildsimplenativepackage 'texteditor' 'amd64' '1' 'stable'
+buildsimplenativepackage 'bad-texteditor' 'amd64' '1' 'stable' 'Depends: texteditor
+Conflicts: mydesktop-core'
+buildsimplenativepackage 'nosection' 'amd64' '1' 'stable' '' '' '<none>'
+buildsimplenativepackage 'foreignpkg' 'i386' '1' 'stable' 'Multi-Arch: foreign'
+setupaptarchive
+
+testsuccess aptcache show nosection
+testfailure grep 'Section' rootdir/tmp/testsuccess.output
+testequal 'dpkg' aptmark showmanual
+
+testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+
+testmarkedmanual 'dpkg' 'mydesktop'
+testmarkedauto 'mydesktop-core' 'foreignpkg:i386' 'texteditor' 'browser' 'nosection'
+
+# if the remove is from a user, don't do manual-bit passing
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  browser foreignpkg:i386 mydesktop mydesktop-core nosection texteditor
+0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
+Remv mydesktop [1]
+Remv mydesktop-core [1]
+Remv browser [42]
+Remv foreignpkg:i386 [1]
+Remv nosection [1]
+Remv texteditor [1]' aptget autoremove mydesktop -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  mydesktop mydesktop-core texteditor
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+Remv mydesktop [1]
+Remv mydesktop-core [1]
+Remv texteditor [1]' aptget autoremove texteditor -s #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+testsuccess aptget autoremove texteditor -y
+
+testdpkgnotinstalled mydesktop mydesktop-core texteditor
+testdpkginstalled browser
+
+testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
+testmarkedauto
+
+# test that installed/upgraded auto-pkgs are not set to manual
+
+testsuccess aptget install browser=41 -y --allow-downgrades
+
+testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
+testmarkedauto
+testsuccess aptmark auto browser
+testmarkedauto 'browser'
+testsuccess aptmark auto nosection
+testmarkedauto 'browser' 'nosection'
+testmarkedmanual 'dpkg' 'foreignpkg:i386'
+
+# nosection should be auto, not manual, but is marked as such by the resolver
+# removing mydesktop-core temporally… the resolver should be figuring out here
+# that there is no point of removing mydesktop-core as its an unavoidable
+# dependency of the user-requested mydesktop
+
+testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+
+testmarkedmanual 'dpkg' 'foreignpkg:i386' 'mydesktop' 'nosection'
+testmarkedauto 'browser' 'mydesktop-core' 'texteditor'

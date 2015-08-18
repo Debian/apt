@@ -64,6 +64,7 @@ class FTWScanner
 
    public:
    FileFd *Output;
+   bool OwnsOutput;
    unsigned int DoHashes;
 
    unsigned long DeLinkLimit;
@@ -79,7 +80,7 @@ class FTWScanner
    bool SetExts(string const &Vals);
 
    FTWScanner(FileFd * const Output, string const &Arch = string());
-   virtual ~FTWScanner() {};
+   virtual ~FTWScanner();
 };
 
 class MultiCompress;
@@ -88,17 +89,12 @@ class TranslationWriter
 {
    MultiCompress *Comp;
    std::set<string> Included;
-   unsigned short RefCounter;
    FileFd *Output;
 
    public:
-   void IncreaseRefCounter() { ++RefCounter; };
-   unsigned short DecreaseRefCounter() { return (RefCounter == 0) ? 0 : --RefCounter; };
-   unsigned short GetRefCounter() const { return RefCounter; };
    bool DoPackage(string const &Pkg, string const &Desc, string const &MD5);
 
    TranslationWriter(string const &File, string const &TransCompress, mode_t const &Permissions);
-   TranslationWriter() : Comp(NULL), RefCounter(0) {};
    ~TranslationWriter();
 };
 
@@ -119,18 +115,18 @@ class PackagesWriter : public FTWScanner
    string PathPrefix;
    string DirStrip;
    struct CacheDB::Stats &Stats;
-   TranslationWriter *TransWriter;
+   TranslationWriter * const TransWriter;
 
    inline bool ReadOverride(string const &File) {return Over.ReadOverride(File);};
    inline bool ReadExtraOverride(string const &File) 
       {return Over.ReadExtraOverride(File);};
-   virtual bool DoPackage(string FileName);
+   virtual bool DoPackage(string FileName) APT_OVERRIDE;
 
-   PackagesWriter(FileFd * const Output, string const &DB,
+   PackagesWriter(FileFd * const Output, TranslationWriter * const TransWriter, string const &DB,
                   string const &Overrides,
                   string const &ExtOverrides = "",
 		  string const &Arch = "");
-   virtual ~PackagesWriter() {};
+   virtual ~PackagesWriter();
 };
 
 class ContentsWriter : public FTWScanner
@@ -146,7 +142,7 @@ class ContentsWriter : public FTWScanner
    string Prefix;
 
    bool DoPackage(string FileName,string Package);
-   virtual bool DoPackage(string FileName) 
+   virtual bool DoPackage(string FileName) APT_OVERRIDE 
              {return DoPackage(FileName,string());};
    bool ReadFromPkgs(string const &PkgFile,string const &PkgCompress);
 
@@ -175,7 +171,7 @@ class SourcesWriter : public FTWScanner
    string DirStrip;
    struct CacheDB::Stats &Stats;
 
-   virtual bool DoPackage(string FileName);
+   virtual bool DoPackage(string FileName) APT_OVERRIDE;
 
    SourcesWriter(FileFd * const Output, string const &DB,string const &BOverrides,string const &SOverrides,
 		 string const &ExtOverrides=string());
@@ -186,7 +182,7 @@ class ReleaseWriter : public FTWScanner
 {
 public:
    ReleaseWriter(FileFd * const Output, string const &DB);
-   virtual bool DoPackage(string FileName);
+   virtual bool DoPackage(string FileName) APT_OVERRIDE;
    void Finish();
 
    // General options

@@ -18,11 +18,10 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/tagfile.h>
 
-#include <string>
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/
-edspListParser::edspListParser(FileFd *File, std::string const &Arch) : debListParser(File, Arch)
+edspListParser::edspListParser(FileFd *File) : debListParser(File), d(NULL)
 {}
 									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
@@ -86,9 +85,11 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 }
 									/*}}}*/
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::PkgFileIterator & /*FileI*/,
-				    FileFd & /*File*/, std::string /*component*/)
+APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
+				    FileFd & /*File*/, std::string const &/*component*/)
 {
    return true;
 }
 									/*}}}*/
+
+edspListParser::~edspListParser() {}

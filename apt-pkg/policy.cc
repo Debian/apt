@@ -22,10 +22,10 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/versionmatch.h>
+#include <apt-pkg/version.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -44,15 +44,19 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
    file matches the V0 policy engine. */
-pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
+pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
+   PFPriority(nullptr), Cache(Owner), d(NULL)
 {
    if (Owner == 0)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
    Pins = new Pin[Owner->Head().PackageCount];
+   VerPins = new Pin[Owner->Head().VersionCount];
 
    for (unsigned long I = 0; I != Owner->Head().PackageCount; I++)
       Pins[I].Type = pkgVersionMatch::None;
+   for (unsigned long I = 0; I != Owner->Head().VersionCount; I++)
+      VerPins[I].Type = pkgVersionMatch::None;
 
    // The config file has a master override.
    string DefRel = _config->Find("APT::Default-Release");
@@ -63,9 +67,9 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
       pkgVersionMatch vm("", pkgVersionMatch::None);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if ((F->Archive != 0 && vm.ExpressionMatches(DefRel, F.Archive()) == true) ||
-	     (F->Codename != 0 && vm.ExpressionMatches(DefRel, F.Codename()) == true) ||
-	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true) ||
+	 if (vm.ExpressionMatches(DefRel, F.Archive()) ||
+	     vm.ExpressionMatches(DefRel, F.Codename()) ||
+	     vm.ExpressionMatches(DefRel, F.Version()) ||
 	     (DefRel.length() > 2 && DefRel[1] == '='))
 	    found = true;
       }
@@ -86,17 +90,17 @@ bool pkgPolicy::InitDefaults()
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
       PFPriority[I->ID] = 500;
-      if ((I->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+      if (I.Flagged(pkgCache::Flag::NotSource))
 	 PFPriority[I->ID] = 100;
-      else if ((I->Flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
+      else if (I.Flagged(pkgCache::Flag::ButAutomaticUpgrades))
 	 PFPriority[I->ID] = 100;
-      else if ((I->Flags & pkgCache::Flag::NotAutomatic) == pkgCache::Flag::NotAutomatic)
+      else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
    }
 
    // Apply the defaults..
-   SPtrArray<bool> Fixed = new bool[Cache->HeaderP->PackageFileCount];
-   memset(Fixed,0,sizeof(*Fixed)*Cache->HeaderP->PackageFileCount);
+   std::unique_ptr<bool[]> Fixed(new bool[Cache->HeaderP->PackageFileCount]);
+   memset(Fixed.get(),0,sizeof(Fixed[0])*Cache->HeaderP->PackageFileCount);
    StatusOverride = false;
    for (vector<Pin>::const_iterator I = Defaults.begin(); I != Defaults.end(); ++I)
    {
@@ -128,6 +132,10 @@ bool pkgPolicy::InitDefaults()
    best package is. */
 pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pkg)
 {
+   if (_config->FindI("APT::Policy", 1) >= 1) {
+      return GetCandidateVerNew(Pkg);
+   }
+
    // Look for a package pin and evaluate it.
    signed Max = GetPriority(Pkg);
    pkgCache::VerIterator Pref = GetMatch(Pkg);
@@ -170,8 +178,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 	    then it is not a candidate for installation, ever. This weeds
 	    out bogus entries that may be due to config-file states, or
 	    other. */
-	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource &&
-	     instVer == false)
+	 if (VF.File().Flagged(pkgCache::Flag::NotSource) && instVer == false)
 	    continue;
 
 	 signed Prio = PFPriority[VF.File()->ID];
@@ -214,6 +221,36 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
        Pref = PrefAlt;
 
    return Pref;
+}
+
+// Policy::GetCandidateVer - Get the candidate install version		/*{{{*/
+// ---------------------------------------------------------------------
+/* Evaluate the package pins and the default list to deteremine what the
+   best package is. */
+pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const &Pkg)
+{
+   // TODO: Replace GetCandidateVer()
+   pkgCache::VerIterator cand;
+   pkgCache::VerIterator cur = Pkg.CurrentVer();
+   int candPriority = -1;
+   pkgVersioningSystem *vs = Cache->VS;
+
+   for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
+      int priority = GetPriority(ver);
+
+	 if (priority == 0 || priority <= candPriority)
+	    continue;
+
+	 // TODO: Maybe optimize to not compare versions
+	 if (!cur.end() && priority < 1000
+	    && (vs->CmpVersion(ver.VerStr(), cur.VerStr()) < 0))
+	    continue;
+
+      candPriority = priority;
+      cand = ver;
+   }
+
+   return cand;
 }
 									/*}}}*/
 // Policy::CreatePin - Create an entry in the pin table..		/*{{{*/
@@ -282,6 +319,17 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	 P->Priority = Priority;
 	 P->Data = Data;
 	 matched = true;
+
+	 // Find matching version(s) and copy the pin into it
+	 pkgVersionMatch Match(P->Data,P->Type);
+	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; Ver++)
+	 {
+	    if (Match.VersionMatches(Ver)) {
+	       Pin *VP = VerPins + Ver->ID;
+	       if (VP->Type == pkgVersionMatch::None)
+		  *VP = *P;
+	    }
+	 }
       }
    }
 
@@ -319,25 +367,34 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
       return Pins[Pkg->ID].Priority;
    return 0;
 }
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
+{
+   if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
+      return VerPins[Ver->ID].Priority;
+   if (!ConsiderFiles)
+      return 0;
+
+   int priority = std::numeric_limits<int>::min();
+   for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
+   {
+      /* If this is the status file, and the current version is not the
+         version in the status file (ie it is not installed, or somesuch)
+         then it is not a candidate for installation, ever. This weeds
+         out bogus entries that may be due to config-file states, or
+         other. */
+      if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver) {
+	 // Ignore
+      } else if (GetPriority(file.File()) > priority) {
+	 priority = GetPriority(file.File());
+      }
+   }
+
+   return priority == std::numeric_limits<int>::min() ? 0 : priority;
+}
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
    return PFPriority[File->ID];
 }
-									/*}}}*/
-// PreferenceSection class - Overriding the default TrimRecord method	/*{{{*/
-// ---------------------------------------------------------------------
-/* The preference file is a user generated file so the parser should
-   therefore be a bit more friendly by allowing comments and new lines
-   all over the place rather than forcing a special format */
-class PreferenceSection : public pkgTagSection
-{
-   void TrimRecord(bool /*BeforeRecord*/, const char* &End)
-   {
-      for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
-	 if (Stop[0] == '#')
-	    Stop = (const char*) memchr(Stop,'\n',End-Stop);
-   }
-};
 									/*}}}*/
 // ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
 // ---------------------------------------------------------------------
@@ -383,8 +440,8 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    pkgTagFile TF(&Fd);
    if (_error->PendingError() == true)
       return false;
-   
-   PreferenceSection Tags;
+
+   pkgUserTagSection Tags;
    while (TF.Step(Tags) == true)
    {
       // can happen when there are only comments in a record
@@ -420,11 +477,18 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       }
       for (; Word != End && isspace(*Word) != 0; Word++);
 
-      short int priority = Tags.FindI("Pin-Priority", 0);
+      int priority = Tags.FindI("Pin-Priority", 0);
+      if (priority < std::numeric_limits<short>::min() ||
+          priority > std::numeric_limits<short>::max() ||
+	  _error->PendingError()) {
+	 return _error->Error(_("%s: Value %s is outside the range of valid pin priorities (%d to %d)"),
+			      File.c_str(), Tags.FindS("Pin-Priority").c_str(),
+			      std::numeric_limits<short>::min(),
+			      std::numeric_limits<short>::max());
+      }
       if (priority == 0)
       {
-         _error->Warning(_("No priority (or zero) specified for pin"));
-         continue;
+         return _error->Error(_("No priority (or zero) specified for pin"));
       }
 
       istringstream s(Name);
@@ -440,3 +504,5 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    return true;
 }
 									/*}}}*/
+
+pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins; delete [] VerPins; }

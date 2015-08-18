@@ -10,8 +10,10 @@
 #ifndef APT_FTP_H
 #define APT_FTP_H
 
+#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
 #include <string>
@@ -71,8 +73,8 @@ class FTPConn
 
 class FtpMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(FetchItem *Itm);
-   virtual bool Configuration(std::string Message);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    
    FTPConn *Server;
    

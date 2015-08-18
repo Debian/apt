@@ -5,23 +5,58 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'amd64' 'i386'
 
 # regression test for #754904
 testfailureequal 'E: Unable to locate package /dev/null' aptget install -qq /dev/null
 
-# and ensure we fail for invalid debs
-cat > foo.deb <<EOF
+# only consider .deb files
+cat > foo.rpm <<EOF
 I'm not a deb, I'm a teapot.
 EOF
+testfailureequal "E: Unable to locate package ./foo.rpm
+E: Couldn't find any package by glob './foo.rpm'
+E: Couldn't find any package by regex './foo.rpm'" aptget install -qq ./foo.rpm
+
+# and ensure we fail for invalid debs
+mv foo.rpm foo.deb
 testfailure aptget install ./foo.deb
 testsuccess grep '^E: Sub-process Popen returned an error code' rootdir/tmp/testfailure.output
-testequal 'E: Encountered a section with no Package: header
-E: Problem with MergeLister for ./foo.deb
-E: The package lists or status file could not be parsed or opened.' tail -n 3 rootdir/tmp/testfailure.output
+testequal "E: Encountered a section with no Package: header
+E: Problem with MergeList ${TMPWORKINGDIRECTORY}/foo.deb
+E: The package lists or status file could not be parsed or opened." tail -n 3 rootdir/tmp/testfailure.output
 
 # fakeroot is currently not found, framwork needs updating
-buildsimplenativepackage 'foo' 'all' '1.0'
+buildsimplenativepackage 'foo' 'i386,amd64' '1.0'
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foo:i386' instead of './incoming/foo_1.0_i386.deb'
+Note, selecting 'foo' instead of './incoming/foo_1.0_amd64.deb'
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo:i386 : Conflicts: foo but 1.0 is to be installed
+ foo : Conflicts: foo:i386 but 1.0 is to be installed
+E: Unable to correct problems, you have held broken packages." aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s -q=0
+
 testdpkgnotinstalled 'foo'
-testsuccess aptget install ./incoming/foo_1.0_all.deb
+testsuccess aptget install ./incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
 testdpkginstalled 'foo'
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Note, selecting 'foo' instead of './incoming/foo_1.0_amd64.deb'
+The following packages will be REMOVED:
+  foo:i386
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:i386 [1.0]
+Inst foo (1.0 local-deb [amd64])
+Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0

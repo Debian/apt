@@ -135,7 +135,7 @@ void PackageMap::GetGeneral(Configuration &Setup,Configuration &Block)
    PathPrefix = Block.Find("PathPrefix");
    
    if (Block.FindB("External-Links",true) == false)
-      DeLinkLimit = Setup.FindI("Default::DeLinkLimit",UINT_MAX);
+      DeLinkLimit = Setup.FindI("Default::DeLinkLimit", std::numeric_limits<unsigned int>::max());
    else
       DeLinkLimit = 0;
    
@@ -180,7 +180,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    // Create a package writer object.
    MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
 		      PkgCompress,Permissions);
-   PackagesWriter Packages(&Comp.Input, flCombine(CacheDir,BinCacheDB),
+   PackagesWriter Packages(&Comp.Input, TransWriter, flCombine(CacheDir,BinCacheDB),
 			   flCombine(OverrideDir,BinOverride),
 			   flCombine(OverrideDir,ExtraOverride),
 			   Arch);
@@ -193,7 +193,6 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.DirStrip = ArchiveDir;
    Packages.InternalPrefix = flCombine(ArchiveDir,InternalPrefix);
 
-   Packages.TransWriter = TransWriter;
    Packages.LongDescription = LongDesc;
 
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
@@ -457,7 +456,7 @@ bool PackageMap::GenContents(Configuration &Setup,
 // ---------------------------------------------------------------------
 /* This populates the PkgList with all the possible permutations of the
    section/arch lists. */
-static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
+static void LoadTree(vector<PackageMap> &PkgList, std::vector<TranslationWriter*> &TransList, Configuration &Setup)
 {   
    // Load the defaults
    string DDir = Setup.Find("TreeDefault::Directory",
@@ -508,16 +507,7 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 					 {NULL, NULL}};
 	 mode_t const Perms = Block.FindI("FileMode", Permissions);
 	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
-	 TranslationWriter *TransWriter;
-	 if (DTrans.empty() == false && LongDesc == false)
-	 {
-	    string const TranslationFile = flCombine(Setup.FindDir("Dir::ArchiveDir"),
-			SubstVar(Block.Find("Translation", DTrans.c_str()), Vars));
-	    string const TransCompress = Block.Find("Translation::Compress", TranslationCompress);
-	    TransWriter = new TranslationWriter(TranslationFile, TransCompress, Perms);
-	 }
-	 else
-	    TransWriter = NULL;
+	 TranslationWriter *TransWriter = NULL;
 
 	 string const Tmp2 = Block.Find("Architectures");
 	 const char *Archs = Tmp2.c_str();
@@ -546,27 +536,34 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/$(ARCH)",Vars);
 	       Itm.Arch = Arch;
 	       Itm.LongDesc = LongDesc;
-	       if (TransWriter != NULL)
+	       if (TransWriter == NULL && DTrans.empty() == false && LongDesc == false && DTrans != "/dev/null")
 	       {
-		  TransWriter->IncreaseRefCounter();
-		  Itm.TransWriter = TransWriter;
+		  string const TranslationFile = flCombine(Setup.FindDir("Dir::ArchiveDir"),
+			SubstVar(Block.Find("Translation", DTrans.c_str()), Vars));
+		  string const TransCompress = Block.Find("Translation::Compress", TranslationCompress);
+		  TransWriter = new TranslationWriter(TranslationFile, TransCompress, Perms);
+		  TransList.push_back(TransWriter);
 	       }
+	       Itm.TransWriter = TransWriter;
 	       Itm.Contents = SubstVar(Block.Find("Contents",DContents.c_str()),Vars);
 	       Itm.ContentsHead = SubstVar(Block.Find("Contents::Header",DContentsH.c_str()),Vars);
 	       Itm.FLFile = SubstVar(Block.Find("FileList",DFLFile.c_str()),Vars);
 	       Itm.ExtraOverride = SubstVar(Block.Find("ExtraOverride"),Vars);
 	    }
 
- 	    Itm.GetGeneral(Setup,Block);
+	    Itm.GetGeneral(Setup,Block);
 	    PkgList.push_back(Itm);
 	 }
-	 // we didn't use this TransWriter, so we can release it
-	 if (TransWriter != NULL && TransWriter->GetRefCounter() == 0)
-	    delete TransWriter;
       }
-      
+
       Top = Top->Next;
-   }      
+   }
+}
+									/*}}}*/
+static void UnloadTree(std::vector<TranslationWriter*> const &Trans)		/*{{{*/
+{
+   for (std::vector<TranslationWriter*>::const_reverse_iterator T = Trans.rbegin(); T != Trans.rend(); ++T)
+      delete *T;
 }
 									/*}}}*/
 // LoadBinDir - Load a 'bindirectory' section from the Generate Config	/*{{{*/
@@ -671,7 +668,7 @@ static bool SimpleGenPackages(CommandLine &CmdL)
       Override = CmdL.FileList[2];
    
    // Create a package writer object.
-   PackagesWriter Packages(NULL, _config->Find("APT::FTPArchive::DB"),
+   PackagesWriter Packages(NULL, NULL, _config->Find("APT::FTPArchive::DB"),
 			   Override, "", _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
@@ -844,12 +841,6 @@ static bool DoGeneratePackagesAndSources(Configuration &Setup,
       
       delete [] List;
    }
-
-   // close the Translation master files
-   for (vector<PackageMap>::reverse_iterator I = PkgList.rbegin(); I != PkgList.rend(); ++I)
-      if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
-	 delete I->TransWriter;
-
    return true;
 }
 
@@ -880,7 +871,8 @@ static bool DoGenerateContents(Configuration &Setup,
       that describe the debs it indexes. Since the package files contain 
       hashes of the .debs this means they have not changed either so the 
       contents must be up to date. */
-   unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
+   unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",
+                                                 std::numeric_limits<unsigned int>::max())*1024;
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
       // This record is not relevant
@@ -940,7 +932,8 @@ static bool Generate(CommandLine &CmdL)
       return false;
 
    vector<PackageMap> PkgList;
-   LoadTree(PkgList,Setup);
+   std::vector<TranslationWriter*> TransList;
+   LoadTree(PkgList, TransList, Setup);
    LoadBinDir(PkgList,Setup);
 
    // Sort by cache DB to improve IO locality.
@@ -951,7 +944,10 @@ static bool Generate(CommandLine &CmdL)
    if (_config->FindB("APT::FTPArchive::ContentsOnly", false) == false)
    {
       if(DoGeneratePackagesAndSources(Setup, PkgList, SrcStats, Stats, CmdL) == false)
+      {
+	 UnloadTree(TransList);
          return false;
+      }
    } else {
       c1out << "Skipping Packages/Sources generation" << endl;
    }
@@ -959,7 +955,10 @@ static bool Generate(CommandLine &CmdL)
    // do Contents if needed
    if (_config->FindB("APT::FTPArchive::Contents", true) == true)
       if (DoGenerateContents(Setup, PkgList, CmdL) == false)
-         return false;
+      {
+	 UnloadTree(TransList);
+	 return false;
+      }
 
    struct timeval NewTime;
    gettimeofday(&NewTime,0);
@@ -968,6 +967,7 @@ static bool Generate(CommandLine &CmdL)
    c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages
          << " archives. Took " << TimeToStr((long)Delta) << endl;
 
+   UnloadTree(TransList);
    return true;
 }
 
@@ -984,9 +984,12 @@ static bool Clean(CommandLine &CmdL)
    Configuration Setup;
    if (ReadConfigFile(Setup,CmdL.FileList[1],true) == false)
       return false;
+   // we don't need translation creation here
+   Setup.Set("TreeDefault::Translation", "/dev/null");
 
    vector<PackageMap> PkgList;
-   LoadTree(PkgList,Setup);
+   std::vector<TranslationWriter*> TransList;
+   LoadTree(PkgList, TransList, Setup);
    LoadBinDir(PkgList,Setup);
 
    // Sort by cache DB to improve IO locality.
@@ -1007,14 +1010,13 @@ static bool Clean(CommandLine &CmdL)
 	 _error->DumpErrors();
       if (DB_SRC.Clean() == false)
 	 _error->DumpErrors();
-      
+
       string CacheDB = I->BinCacheDB;
       string SrcCacheDB = I->SrcCacheDB;
       while(I != PkgList.end() && 
             I->BinCacheDB == CacheDB && 
             I->SrcCacheDB == SrcCacheDB)
          ++I;
-
    }
 
   

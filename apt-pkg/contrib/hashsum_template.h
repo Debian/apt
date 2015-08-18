@@ -87,7 +87,7 @@ class HashSumValue
          Sum[I] = S[I];
    }
 
-   HashSumValue(std::string Str)
+   explicit HashSumValue(std::string const &Str)
    {
          memset(Sum,0,sizeof(Sum));
          Set(Str);

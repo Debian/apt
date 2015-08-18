@@ -21,7 +21,7 @@ testrun() {
 	testsuccess --nomsg aptget update
 
 	# check that I-M-S header is kept in redirections
-	testsuccessequal "Hit $1 unstable InRelease
+	testsuccessequal "Hit:1 $1 unstable InRelease
 Reading package lists..." aptget update
 
 	msgtest 'Test redirection works in' 'package download'

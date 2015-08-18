@@ -174,9 +174,11 @@ AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
 
 
 dnl check for setuid checking function
-AC_CHECK_FUNCS(getresuid getresgid)
+AC_CHECK_FUNCS(getresuid getresgid setresuid setresgid)
 AC_SUBST(HAVE_GETRESUID)
 AC_SUBST(HAVE_GETRESGID)
+AC_SUBST(HAVE_SETRESUID)
+AC_SUBST(HAVE_SETRESGID)
 
 dnl Check for doxygen
 AC_PATH_PROG(DOXYGEN, doxygen)

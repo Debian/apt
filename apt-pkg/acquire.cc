@@ -23,6 +23,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -40,7 +41,6 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -50,13 +50,13 @@ using namespace std;
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
-pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
+pkgAcquire::pkgAcquire() : LockFD(-1), d(NULL), Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
    Initialize();
 }
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), Queues(0), Workers(0),
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), d(NULL), Queues(0), Workers(0),
 			   Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
@@ -652,8 +652,8 @@ pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(fals
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : d(NULL), Next(0),
-   Name(Name), Items(0), Workers(0), Owner(Owner), PipeDepth(0), MaxPipeDepth(1)
+pkgAcquire::Queue::Queue(string const &name,pkgAcquire * const owner) : d(NULL), Next(0),
+   Name(name), Items(0), Workers(0), Owner(owner), PipeDepth(0), MaxPipeDepth(1)
 {
 }
 									/*}}}*/
@@ -679,10 +679,14 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
    QItem **I = &Items;
    // move to the end of the queue and check for duplicates here
+   HashStringList const hsl = Item.Owner->GetExpectedHashes();
    for (; *I != 0; I = &(*I)->Next)
-      if (Item.URI == (*I)->URI) 
+      if (Item.URI == (*I)->URI || hsl == (*I)->Owner->GetExpectedHashes())
       {
-	 Item.Owner->Status = Item::StatDone;
+	 if (_config->FindB("Debug::pkgAcquire::Worker",false) == true)
+	    std::cerr << " @ Queue: Action combined for " << Item.URI << " and " << (*I)->URI << std::endl;
+	 (*I)->Owners.push_back(Item.Owner);
+	 Item.Owner->Status = (*I)->Owner->Status;
 	 return false;
       }
 
@@ -705,13 +709,13 @@ bool pkgAcquire::Queue::Dequeue(Item *Owner)
 {
    if (Owner->Status == pkgAcquire::Item::StatFetching)
       return _error->Error("Tried to dequeue a fetching object");
-       
+
    bool Res = false;
-   
+
    QItem **I = &Items;
    for (; *I != 0;)
    {
-      if ((*I)->Owner == Owner)
+      if (Owner == (*I)->Owner)
       {
 	 QItem *Jnk= *I;
 	 *I = (*I)->Next;
@@ -722,7 +726,7 @@ bool pkgAcquire::Queue::Dequeue(Item *Owner)
       else
 	 I = &(*I)->Next;
    }
-   
+
    return Res;
 }
 									/*}}}*/
@@ -799,9 +803,12 @@ pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Wor
 bool pkgAcquire::Queue::ItemDone(QItem *Itm)
 {
    PipeDepth--;
-   if (Itm->Owner->Status == pkgAcquire::Item::StatFetching)
-      Itm->Owner->Status = pkgAcquire::Item::StatDone;
-   
+   for (QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
+   {
+      if ((*O)->Status == pkgAcquire::Item::StatFetching)
+	 (*O)->Status = pkgAcquire::Item::StatDone;
+   }
+
    if (Itm->Owner->QueueCounter <= 1)
       Owner->Dequeue(Itm->Owner);
    else
@@ -809,7 +816,7 @@ bool pkgAcquire::Queue::ItemDone(QItem *Itm)
       Dequeue(Itm->Owner);
       Owner->Bump();
    }
-   
+
    return Cycle();
 }
 									/*}}}*/
@@ -824,7 +831,7 @@ bool pkgAcquire::Queue::Cycle()
 
    if (PipeDepth < 0)
       return _error->Error("Pipedepth failure");
-			   
+
    // Look for a queable item
    QItem *I = Items;
    while (PipeDepth < (signed)MaxPipeDepth)
@@ -832,18 +839,19 @@ bool pkgAcquire::Queue::Cycle()
       for (; I != 0; I = I->Next)
 	 if (I->Owner->Status == pkgAcquire::Item::StatIdle)
 	    break;
-      
+
       // Nothing to do, queue is idle.
       if (I == 0)
 	 return true;
-      
+
       I->Worker = Workers;
-      I->Owner->Status = pkgAcquire::Item::StatFetching;
+      for (QItem::owner_iterator O = I->Owners.begin(); O != I->Owners.end(); ++O)
+	 (*O)->Status = pkgAcquire::Item::StatFetching;
       PipeDepth++;
       if (Workers->QueueItem(I) == false)
 	 return false;
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -855,10 +863,98 @@ void pkgAcquire::Queue::Bump()
    Cycle();
 }
 									/*}}}*/
+HashStringList pkgAcquire::Queue::QItem::GetExpectedHashes() const	/*{{{*/
+{
+   /* each Item can have multiple owners and each owner might have different
+      hashes, even if that is unlikely in practice and if so at least some
+      owners will later fail. There is one situation through which is not a
+      failure and still needs this handling: Two owners who expect the same
+      file, but one owner only knows the SHA1 while the other only knows SHA256. */
+   HashStringList superhsl;
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      HashStringList const hsl = (*O)->GetExpectedHashes();
+      if (hsl.usable() == false)
+	 continue;
+      if (superhsl.usable() == false)
+	 superhsl = hsl;
+      else
+      {
+	 // we merge both lists - if we find disagreement send no hashes
+	 HashStringList::const_iterator hs = hsl.begin();
+	 for (; hs != hsl.end(); ++hs)
+	    if (superhsl.push_back(*hs) == false)
+	       break;
+	 if (hs != hsl.end())
+	 {
+	    superhsl.clear();
+	    break;
+	 }
+      }
+   }
+   return superhsl;
+}
+									/*}}}*/
+APT_PURE unsigned long long pkgAcquire::Queue::QItem::GetMaximumSize() const	/*{{{*/
+{
+   unsigned long long Maximum = std::numeric_limits<unsigned long long>::max();
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      if ((*O)->FileSize == 0)
+	 continue;
+      Maximum = std::min(Maximum, (*O)->FileSize);
+   }
+   if (Maximum == std::numeric_limits<unsigned long long>::max())
+      return 0;
+   return Maximum;
+}
+									/*}}}*/
+void pkgAcquire::Queue::QItem::SyncDestinationFiles() const		/*{{{*/
+{
+   /* ensure that the first owner has the best partial file of all and
+      the rest have (potentially dangling) symlinks to it so that
+      everything (like progress reporting) finds it easily */
+   std::string superfile = Owner->DestFile;
+   off_t supersize = 0;
+   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   {
+      if ((*O)->DestFile == superfile)
+	 continue;
+      struct stat file;
+      if (lstat((*O)->DestFile.c_str(),&file) == 0)
+      {
+	 if ((file.st_mode & S_IFREG) == 0)
+	    unlink((*O)->DestFile.c_str());
+	 else if (supersize < file.st_size)
+	 {
+	    supersize = file.st_size;
+	    unlink(superfile.c_str());
+	    rename((*O)->DestFile.c_str(), superfile.c_str());
+	 }
+	 else
+	    unlink((*O)->DestFile.c_str());
+	 if (symlink(superfile.c_str(), (*O)->DestFile.c_str()) != 0)
+	 {
+	    ; // not a problem per-se and no real alternative
+	 }
+      }
+   }
+}
+									/*}}}*/
+std::string pkgAcquire::Queue::QItem::Custom600Headers() const		/*{{{*/
+{
+   /* The others are relatively easy to merge, but this one?
+      Lets not merge and see how far we can run with it…
+      Likely, nobody will ever notice as all the items will
+      be of the same class and hence generate the same headers. */
+   return Owner->Custom600Headers();
+}
+									/*}}}*/
+
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(0), Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(-1), Update(true), MorePulses(false)
 {
    Start();
 }
@@ -914,9 +1010,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       {
 	 CurrentBytes += I->CurrentSize;
 	 ResumeSize += I->ResumePoint;
-	 
+
 	 // Files with unknown size always have 100% completion
-	 if (I->CurrentItem->Owner->FileSize == 0 && 
+	 if (I->CurrentItem->Owner->FileSize == 0 &&
 	     I->CurrentItem->Owner->Complete == false)
 	    TotalBytes += I->CurrentSize;
       }
@@ -957,13 +1053,17 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Time = NewTime;
    }
 
+   double const OldPercent = Percent;
    // calculate the percentage, if we have too little data assume 1%
    if (TotalBytes > 0 && UnfetchedReleaseFiles)
       Percent = 0;
-   else 
+   else
       // use both files and bytes because bytes can be unreliable
-      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) + 
+      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) +
                  0.2 * (CurrentItems/float(TotalItems)*100.0));
+   double const DiffPercent = Percent - OldPercent;
+   if (DiffPercent < 0.001 && _config->FindB("Acquire::Progress::Diffpercent", false) == true)
+      return true;
 
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0) 
@@ -981,11 +1081,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
       else
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
-	 
+
       // build the status str
       status << "dlstatus:" << i
              << ":"  << std::setprecision(3) << Percent
-             << ":" << msg 
+             << ":" << msg
              << endl;
 
       std::string const dlstatus = status.str();
@@ -1041,6 +1141,15 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
    FetchedBytes += Size - Resume;
 }
 									/*}}}*/
+
+pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
+{
+   while (CurItem == 0 && CurQ != 0)
+   {
+      CurItem = CurQ->Items;
+      CurQ = CurQ->Next;
+   }
+}
 
 APT_CONST pkgAcquire::UriIterator::~UriIterator() {}
 APT_CONST pkgAcquire::MethodConfig::~MethodConfig() {}

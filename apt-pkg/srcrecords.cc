@@ -31,7 +31,7 @@
 // SrcRecords::pkgSrcRecords - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Open all the source index files */
-pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : d(NULL), Files(0), Current(0)
+pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : d(NULL), Files(0)
 {
    for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); ++I)
    {
@@ -178,3 +178,7 @@ bool pkgSrcRecords::Parser::Files2(std::vector<pkgSrcRecords::File2> &F2)/*{{{*/
    return true;
 }
 									/*}}}*/
+
+
+pkgSrcRecords::Parser::Parser(const pkgIndexFile *Index) : d(NULL), iIndex(Index) {}
+pkgSrcRecords::Parser::~Parser() {}

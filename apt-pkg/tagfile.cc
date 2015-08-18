@@ -32,19 +32,36 @@ using std::string;
 class pkgTagFilePrivate
 {
 public:
-   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Buffer(NULL),
-							     Start(NULL), End(NULL),
-							     Done(false), iOffset(0),
-							     Size(Size)
+   void Reset(FileFd * const pFd, unsigned long long const pSize)
    {
+      if (Buffer != NULL)
+	 free(Buffer);
+      Buffer = NULL;
+      Fd = pFd;
+      Start = NULL;
+      End = NULL;
+      Done = false;
+      iOffset = 0;
+      Size = pSize;
    }
-   FileFd &Fd;
+
+   pkgTagFilePrivate(FileFd * const pFd, unsigned long long const Size) : Buffer(NULL)
+   {
+      Reset(pFd, Size);
+   }
+   FileFd * Fd;
    char *Buffer;
    char *Start;
    char *End;
    bool Done;
    unsigned long long iOffset;
    unsigned long long Size;
+
+   ~pkgTagFilePrivate()
+   {
+      if (Buffer != NULL)
+	 free(Buffer);
+   }
 };
 
 class pkgTagSectionPrivate
@@ -59,7 +76,7 @@ public:
       unsigned int StartValue;
       unsigned int NextInBucket;
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
+      explicit TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
    };
    std::vector<TagData> Tags;
 };
@@ -83,27 +100,21 @@ static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
-   : d(NULL)
+pkgTagFile::pkgTagFile(FileFd * const pFd,unsigned long long const Size)
+   : d(new pkgTagFilePrivate(pFd, Size + 4))
 {
    Init(pFd, Size);
 }
-
-void pkgTagFile::Init(FileFd *pFd,unsigned long long Size)
+void pkgTagFile::Init(FileFd * const pFd,unsigned long long Size)
 {
    /* The size is increased by 4 because if we start with the Size of the
       filename we need to try to read 1 char more to see an EOF faster, 1
       char the end-pointer can be on and maybe 2 newlines need to be added
       to the end of the file -> 4 extra chars */
    Size += 4;
-   if(d != NULL)
-   {
-      free(d->Buffer);
-      delete d;
-   }
-   d = new pkgTagFilePrivate(pFd, Size);
+   d->Reset(pFd, Size);
 
-   if (d->Fd.IsOpen() == false)
+   if (d->Fd->IsOpen() == false)
       d->Start = d->End = d->Buffer = 0;
    else
       d->Buffer = (char*)malloc(sizeof(char) * Size);
@@ -124,7 +135,6 @@ void pkgTagFile::Init(FileFd *pFd,unsigned long long Size)
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   free(d->Buffer);
    delete d;
 }
 									/*}}}*/
@@ -184,7 +194,7 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 
 	 if (Resize() == false)
 	    return _error->Error(_("Unable to parse package file %s (%d)"),
-		  d->Fd.Name().c_str(), 1);
+		  d->Fd->Name().c_str(), 1);
 
       } while (Tag.Scan(d->Start,d->End - d->Start, false) == false);
    }
@@ -213,7 +223,7 @@ bool pkgTagFile::Fill()
    {
       // See if only a bit of the file is left
       unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
-      if (d->Fd.Read(d->End, dataSize, &Actual) == false)
+      if (d->Fd->Read(d->End, dataSize, &Actual) == false)
 	 return false;
       if (Actual != dataSize)
 	 d->Done = true;
@@ -268,7 +278,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
    // Reposition and reload..
    d->iOffset = Offset;
    d->Done = false;
-   if (d->Fd.Seek(Offset) == false)
+   if (d->Fd->Seek(Offset) == false)
       return false;
    d->End = d->Start = d->Buffer;
    
@@ -283,7 +293,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       return false;
    
    if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
-      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd.Name().c_str(), 2);
+      return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd->Name().c_str(), 2);
    
    return true;
 }
@@ -293,24 +303,13 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 /* */
 APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
-   : Section(0), d(NULL), Stop(0)
+   : Section(0), d(new pkgTagSectionPrivate()), Stop(0)
 {
-   d = new pkgTagSectionPrivate();
-#if APT_PKG_ABI < 413
-   TagCount = 0;
-   memset(&Indexes, 0, sizeof(Indexes));
-#endif
    memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
 }
 APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
-#if APT_PKG_ABI < 413
-bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
-{
-   return Scan(Start, MaxLength, true);
-}
-#endif
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
 {
    Section = Start;
@@ -336,11 +335,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       }
       d->Tags.reserve(0x100);
    }
-#if APT_PKG_ABI >= 413
    unsigned int TagCount = d->Tags.size();
-#else
-   APT_IGNORE_DEPRECATED(TagCount = d->Tags.size();)
-#endif
 
    if (Stop == 0)
       return false;
@@ -367,10 +362,6 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
 	    APT_IGNORE_DEPRECATED_PUSH
 	    AlphaIndexes[lastTagHash] = TagCount;
-#if APT_PKG_ABI < 413
-	    if (d->Tags.size() < sizeof(Indexes)/sizeof(Indexes[0]))
-	       Indexes[d->Tags.size()] = lastTagData.StartTag;
-#endif
 	    APT_IGNORE_DEPRECATED_POP
 	    d->Tags.push_back(lastTagData);
 	 }
@@ -414,16 +405,10 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    if (AlphaIndexes[lastTagHash] != 0)
 	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
 	    APT_IGNORE_DEPRECATED(AlphaIndexes[lastTagHash] = TagCount;)
-#if APT_PKG_ABI < 413
-	    APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = lastTagData.StartTag;)
-#endif
 	    d->Tags.push_back(lastTagData);
 	 }
 
 	 pkgTagSectionPrivate::TagData const td(Stop - Section);
-#if APT_PKG_ABI < 413
-	 APT_IGNORE_DEPRECATED(Indexes[d->Tags.size()] = td.StartTag;)
-#endif
 	 d->Tags.push_back(td);
 	 TrimRecord(false,End);
 	 return true;
@@ -454,11 +439,7 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
-#if APT_PKG_ABI >= 413
 bool pkgTagSection::Exists(const char* const Tag) const
-#else
-bool pkgTagSection::Exists(const char* const Tag)
-#endif
 {
    unsigned int tmp;
    return Find(Tag, tmp);
@@ -552,9 +533,16 @@ signed int pkgTagSection::FindI(const char *Tag,signed long Default) const
       return Default;
    strncpy(S,Start,Stop-Start);
    S[Stop - Start] = 0;
-   
+
+   errno = 0;
    char *End;
    signed long Result = strtol(S,&End,10);
+   if (errno == ERANGE)
+      _error->Errno("strtol", _("Cannot convert %s to integer"), S);
+   if (Result < std::numeric_limits<int>::min() || Result > std::numeric_limits<int>::max()) {
+      errno = ERANGE;
+      _error->Errno("", _("Cannot convert %s to integer"), S);
+   }
    if (S == End)
       return Default;
    return Result;
@@ -598,6 +586,34 @@ bool pkgTagSection::FindB(const char *Tag, bool const &Default) const
 // TagSection::FindFlag - Locate a yes/no type flag			/*{{{*/
 // ---------------------------------------------------------------------
 /* The bits marked in Flag are masked on/off in Flags */
+bool pkgTagSection::FindFlag(const char * const Tag, uint8_t &Flags,
+			     uint8_t const Flag) const
+{
+   const char *Start;
+   const char *Stop;
+   if (Find(Tag,Start,Stop) == false)
+      return true;
+   return FindFlag(Flags, Flag, Start, Stop);
+}
+bool pkgTagSection::FindFlag(uint8_t &Flags, uint8_t const Flag,
+					char const* const Start, char const* const Stop)
+{
+   switch (StringToBool(string(Start, Stop)))
+   {
+      case 0:
+      Flags &= ~Flag;
+      return true;
+
+      case 1:
+      Flags |= Flag;
+      return true;
+
+      default:
+      _error->Warning("Unknown flag value: %s",string(Start,Stop).c_str());
+      return true;
+   }
+   return true;
+}
 bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
 			     unsigned long Flag) const
 {
@@ -763,6 +779,14 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	 return false;
    }
    return true;
+}
+									/*}}}*/
+
+void pkgUserTagSection::TrimRecord(bool /*BeforeRecord*/, const char* &End)/*{{{*/
+{
+   for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
+      if (Stop[0] == '#')
+	 Stop = (const char*) memchr(Stop,'\n',End-Stop);
 }
 									/*}}}*/
 

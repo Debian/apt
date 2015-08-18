@@ -106,7 +106,7 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 		 J.end() == false; ++J)
 	    {
 	       if (CleanInstalled == true &&
-		   (J.File()->Flags & pkgCache::Flag::NotSource) != 0)
+		   J.File().Flagged(pkgCache::Flag::NotSource))
 		  continue;
 	       IsFetchable = true;
 	       break;
@@ -132,4 +132,5 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 }
 									/*}}}*/
 
+pkgArchiveCleaner::pkgArchiveCleaner() : d(NULL) {}
 APT_CONST pkgArchiveCleaner::~pkgArchiveCleaner() {}

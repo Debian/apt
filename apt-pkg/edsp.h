@@ -27,24 +27,8 @@
 class pkgDepCache;
 class OpProgress;
 
-class EDSP								/*{{{*/
+namespace EDSP								/*{{{*/
 {
-	// we could use pkgCache::DepType and ::Priority, but these would be localized strings…
-	static const char * const PrioMap[];
-	static const char * const DepMap[];
-
-	APT_HIDDEN bool static ReadLine(int const input, std::string &line);
-	APT_HIDDEN bool static StringToBool(char const *answer, bool const defValue);
-
-	APT_HIDDEN void static WriteScenarioVersion(pkgDepCache &Cache, FILE* output,
-					 pkgCache::PkgIterator const &Pkg,
-					 pkgCache::VerIterator const &Ver);
-	APT_HIDDEN void static WriteScenarioDependency(FILE* output,
-					    pkgCache::VerIterator const &Ver);
-	APT_HIDDEN void static WriteScenarioLimitedDependency(FILE* output,
-						   pkgCache::VerIterator const &Ver,
-						   APT::PackageSet const &pkgset);
-public:
 	/** \brief creates the EDSP request stanza
 	 *
 	 *  In the EDSP protocol the first thing send to the resolver is a stanza
@@ -61,7 +45,7 @@ public:
 	 *
 	 *  \return true if request was composed successfully, otherwise false
 	 */
-	bool static WriteRequest(pkgDepCache &Cache, FILE* output,
+	bool WriteRequest(pkgDepCache &Cache, FILE* output,
 				 bool const upgrade = false,
 				 bool const distUpgrade = false,
 				 bool const autoRemove = false,
@@ -84,7 +68,7 @@ public:
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool static WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL);
+	bool WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL);
 
 	/** \brief creates a limited scenario representing the package universe
 	 *
@@ -101,7 +85,7 @@ public:
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool static WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
+	bool WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
 					 APT::PackageSet const &pkgset,
 					 OpProgress *Progress = NULL);
 
@@ -118,7 +102,7 @@ public:
 	 *
 	 *  \return true if a solution is found and applied correctly, otherwise false
 	 */
-	bool static ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress = NULL);
+	bool ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress = NULL);
 
 	/** \brief search and read the request stanza for action later
 	 *
@@ -136,7 +120,7 @@ public:
 	 *
 	 *  \return true if the request could be found and worked on, otherwise false
 	 */
-	bool static ReadRequest(int const input, std::list<std::string> &install,
+	bool ReadRequest(int const input, std::list<std::string> &install,
 			std::list<std::string> &remove, bool &upgrade,
 			bool &distUpgrade, bool &autoRemove);
 
@@ -152,7 +136,7 @@ public:
 	 *
 	 *  \return false if the request couldn't be applied, true otherwise
 	 */
-	bool static ApplyRequest(std::list<std::string> const &install,
+	bool ApplyRequest(std::list<std::string> const &install,
 				 std::list<std::string> const &remove,
 				 pkgDepCache &Cache);
 
@@ -168,7 +152,7 @@ public:
 	 *
 	 *  \return true if solution could be written, otherwise false
 	 */
-	bool static WriteSolution(pkgDepCache &Cache, FILE* output);
+	bool WriteSolution(pkgDepCache &Cache, FILE* output);
 
 	/** \brief sends a progress report
 	 *
@@ -176,7 +160,7 @@ public:
 	 *  \param message the solver wants the user to see
 	 *  \param output the front-end listens for progress report
 	 */
-	bool static WriteProgress(unsigned short const percent, const char* const message, FILE* output);
+	bool WriteProgress(unsigned short const percent, const char* const message, FILE* output);
 
 	/** \brief sends an error report
 	 *
@@ -193,7 +177,7 @@ public:
 	 *  \param message is free form text to describe the error
 	 *  \param output the front-end listens for error messages
 	 */
-	bool static WriteError(char const * const uuid, std::string const &message, FILE* output);
+	bool WriteError(char const * const uuid, std::string const &message, FILE* output);
 
 
 	/** \brief executes the given solver and returns the pipe ends
@@ -207,8 +191,8 @@ public:
 	 *
 	 *  \return PID of the started solver or 0 if failure occurred
 	 */
-	pid_t static ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
-	APT_DEPRECATED bool static ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
+	pid_t ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
+	APT_DEPRECATED bool ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
 
 	/** \brief call an external resolver to handle the request
 	 *
@@ -224,9 +208,9 @@ public:
 	 *  \return true if the solver has successfully solved the problem,
 	 *  otherwise false
 	 */
-	bool static ResolveExternal(const char* const solver, pkgDepCache &Cache,
+	bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
 				    bool const upgrade, bool const distUpgrade,
 				    bool const autoRemove, OpProgress *Progress = NULL);
-};
+}
 									/*}}}*/
 #endif

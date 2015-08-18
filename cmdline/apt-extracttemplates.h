@@ -24,11 +24,11 @@ class DebFile : public pkgDirStream
 	unsigned long ControlLen;
 	
 public:
-	DebFile(const char *FileName);
+	explicit DebFile(const char *FileName);
 	~DebFile();
-	bool DoItem(Item &I, int &fd);
+	bool DoItem(Item &I, int &fd) APT_OVERRIDE;
 	bool Process(pkgDirStream::Item &I, const unsigned char *data, 
-		unsigned long long size, unsigned long long pos);
+		unsigned long long size, unsigned long long pos) APT_OVERRIDE;
 
 	bool Go();
 	bool ParseInfo();

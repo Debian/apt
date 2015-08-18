@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.h,v 1.4 2001/05/07 04:24:08 jgg Exp $
 /* ######################################################################
 
    Package Version Policy implementation
@@ -60,10 +59,11 @@ class pkgPolicy : public pkgDepCache::Policy
    struct PkgPin : Pin
    {
       std::string Pkg;
-      PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
+      explicit PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
    
    Pin *Pins;
+   Pin *VerPins;
    signed short *PFPriority;
    std::vector<Pin> Defaults;
    std::vector<PkgPin> Unmatched;
@@ -78,14 +78,18 @@ class pkgPolicy : public pkgDepCache::Policy
    pkgCache::VerIterator GetMatch(pkgCache::PkgIterator const &Pkg);
 
    // Things for the cache interface.
-   virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg);
-   virtual signed short GetPriority(pkgCache::PkgIterator const &Pkg);
-   virtual signed short GetPriority(pkgCache::PkgFileIterator const &File);
+   virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   virtual signed short GetPriority(pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   virtual signed short GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles = true) APT_OVERRIDE;
+   virtual signed short GetPriority(pkgCache::PkgFileIterator const &File) APT_OVERRIDE;
 
    bool InitDefaults();
    
-   pkgPolicy(pkgCache *Owner);
-   virtual ~pkgPolicy() {delete [] PFPriority; delete [] Pins;};
+   explicit pkgPolicy(pkgCache *Owner);
+   virtual ~pkgPolicy();
+   private:
+   APT_HIDDEN pkgCache::VerIterator GetCandidateVerNew(pkgCache::PkgIterator const &Pkg);
+   void * const d;
 };
 
 bool ReadPinFile(pkgPolicy &Plcy, std::string File = "");

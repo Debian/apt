@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: srcrecords.h,v 1.8.2.1 2003/12/26 16:27:34 mdz Exp $
 /* ######################################################################
    
    Source Package Records - Allows access to source package records
@@ -49,6 +48,7 @@ APT_IGNORE_DEPRECATED_POP
    // Abstract parser for each source record
    class Parser
    {
+      void * const d;
       protected:
       
       const pkgIndexFile *iIndex;
@@ -86,14 +86,14 @@ APT_IGNORE_DEPRECATED_POP
 
       virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
       bool Files2(std::vector<pkgSrcRecords::File2> &F);
-      
-      Parser(const pkgIndexFile *Index) : iIndex(Index) {};
-      virtual ~Parser() {};
+
+      explicit Parser(const pkgIndexFile *Index);
+      virtual ~Parser();
    };
    
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    
    // The list of files and the current parser pointer
    std::vector<Parser*> Files;
@@ -111,8 +111,8 @@ APT_IGNORE_DEPRECATED_POP
    // Locate a package by name and return pointer to the Parser.
    // The pointer is owned by libapt.
    Parser* Find(const char *Package,bool const &SrcOnly = false);
-   
-   pkgSrcRecords(pkgSourceList &List);
+
+   explicit pkgSrcRecords(pkgSourceList &List);
    virtual ~pkgSrcRecords();
 };
 

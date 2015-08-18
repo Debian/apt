@@ -106,7 +106,7 @@ struct ServerState
 class ServerMethod : public pkgAcqMethod
 {
    protected:
-   virtual bool Fetch(FetchItem *);
+   virtual bool Fetch(FetchItem *) APT_OVERRIDE;
 
    ServerState *Server;
    std::string NextURI;
@@ -146,7 +146,7 @@ class ServerMethod : public pkgAcqMethod
    static time_t FailTime;
    static APT_NORETURN void SigTerm(int);
 
-   virtual bool Configuration(std::string Message);
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    virtual bool Flush() { return Server->Flush(File); };
 
    int Loop();

@@ -34,7 +34,8 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <ostream>
+#include <sstream>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <sys/stat.h>
@@ -50,41 +51,45 @@ using std::string;
 /* Simply initialize the header */
 pkgCache::Header::Header()
 {
-   Signature = 0x98FE76DC;
-   
+#define APT_HEADER_SET(X,Y) X = Y; static_assert(std::numeric_limits<decltype(X)>::max() > Y, "Size violation detected in pkgCache::Header")
+   APT_HEADER_SET(Signature, 0x98FE76DC);
+
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 10;
-   MinorVersion = 0;
-   Dirty = false;
-   
-   HeaderSz = sizeof(pkgCache::Header);
-   GroupSz = sizeof(pkgCache::Group);
-   PackageSz = sizeof(pkgCache::Package);
-   PackageFileSz = sizeof(pkgCache::PackageFile);
-   VersionSz = sizeof(pkgCache::Version);
-   DescriptionSz = sizeof(pkgCache::Description);
-   DependencySz = sizeof(pkgCache::Dependency);
-   ProvidesSz = sizeof(pkgCache::Provides);
-   VerFileSz = sizeof(pkgCache::VerFile);
-   DescFileSz = sizeof(pkgCache::DescFile);
-   
+   APT_HEADER_SET(MajorVersion, 10);
+   APT_HEADER_SET(MinorVersion, 0);
+   APT_HEADER_SET(Dirty, false);
+
+   APT_HEADER_SET(HeaderSz, sizeof(pkgCache::Header));
+   APT_HEADER_SET(GroupSz, sizeof(pkgCache::Group));
+   APT_HEADER_SET(PackageSz, sizeof(pkgCache::Package));
+   APT_HEADER_SET(ReleaseFileSz, sizeof(pkgCache::ReleaseFile));
+   APT_HEADER_SET(PackageFileSz, sizeof(pkgCache::PackageFile));
+   APT_HEADER_SET(VersionSz, sizeof(pkgCache::Version));
+   APT_HEADER_SET(DescriptionSz, sizeof(pkgCache::Description));
+   APT_HEADER_SET(DependencySz, sizeof(pkgCache::Dependency));
+   APT_HEADER_SET(DependencyDataSz, sizeof(pkgCache::DependencyData));
+   APT_HEADER_SET(ProvidesSz, sizeof(pkgCache::Provides));
+   APT_HEADER_SET(VerFileSz, sizeof(pkgCache::VerFile));
+   APT_HEADER_SET(DescFileSz, sizeof(pkgCache::DescFile));
+#undef APT_HEADER_SET
+
    GroupCount = 0;
    PackageCount = 0;
    VersionCount = 0;
    DescriptionCount = 0;
    DependsCount = 0;
+   DependsDataCount = 0;
+   ReleaseFileCount = 0;
    PackageFileCount = 0;
    VerFileCount = 0;
    DescFileCount = 0;
    ProvidesCount = 0;
    MaxVerFileSize = 0;
    MaxDescFileSize = 0;
-   
+
    FileList = 0;
-#if APT_PKG_ABI < 413
-   APT_IGNORE_DEPRECATED(StringList = 0;)
-#endif
+   RlsFileList = 0;
    VerSysName = 0;
    Architecture = 0;
    SetArchitectures(0);
@@ -102,10 +107,12 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
    if (HeaderSz == Against.HeaderSz &&
        GroupSz == Against.GroupSz &&
        PackageSz == Against.PackageSz &&
+       ReleaseFileSz == Against.ReleaseFileSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
        DescriptionSz == Against.DescriptionSz &&
        DependencySz == Against.DependencySz &&
+       DependencyDataSz == Against.DependencyDataSz &&
        VerFileSz == Against.VerFileSz &&
        DescFileSz == Against.DescFileSz &&
        ProvidesSz == Against.ProvidesSz)
@@ -118,7 +125,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 // ---------------------------------------------------------------------
 /* */
 APT_IGNORE_DEPRECATED_PUSH
-pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map)
+pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map), d(NULL)
 {
    // call getArchitectures() with cached=false to ensure that the 
    // architectures cache is re-evaulated. this is needed in cases
@@ -140,11 +147,13 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    PkgP = (Package *)Map.Data();
    VerFileP = (VerFile *)Map.Data();
    DescFileP = (DescFile *)Map.Data();
+   RlsFileP = (ReleaseFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
    DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();
+   DepDataP = (DependencyData *)Map.Data();
    StrP = (char *)Map.Data();
 
    if (Errorchecks == false)
@@ -403,10 +412,10 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
 }
 									/*}}}*/
-// GrpIterator::operator ++ - Postfix incr				/*{{{*/
+// GrpIterator::operator++ - Prefix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical group in the hash table. */
-void pkgCache::GrpIterator::operator ++(int)
+pkgCache::GrpIterator& pkgCache::GrpIterator::operator++()
 {
    // Follow the current links
    if (S != Owner->GrpP)
@@ -415,15 +424,16 @@ void pkgCache::GrpIterator::operator ++(int)
    // Follow the hash table
    while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
-      HashIndex++;
+      ++HashIndex;
       S = Owner->GrpP + Owner->HeaderP->GrpHashTableP()[HashIndex];
    }
+   return *this;
 }
 									/*}}}*/
-// PkgIterator::operator ++ - Postfix incr				/*{{{*/
+// PkgIterator::operator++ - Prefix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
-void pkgCache::PkgIterator::operator ++(int)
+pkgCache::PkgIterator& pkgCache::PkgIterator::operator++()
 {
    // Follow the current links
    if (S != Owner->PkgP)
@@ -432,9 +442,22 @@ void pkgCache::PkgIterator::operator ++(int)
    // Follow the hash table
    while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->GetHashTableSize())
    {
-      HashIndex++;
+      ++HashIndex;
       S = Owner->PkgP + Owner->HeaderP->PkgHashTableP()[HashIndex];
    }
+   return *this;
+}
+									/*}}}*/
+pkgCache::DepIterator& pkgCache::DepIterator::operator++()		/*{{{*/
+{
+   if (S == Owner->DepP)
+      return *this;
+   S = Owner->DepP + (Type == DepVer ? S->NextDepends : S->NextRevDepends);
+   if (S == Owner->DepP)
+      S2 = Owner->DepDataP;
+   else
+      S2 = Owner->DepDataP + S->DependencyData;
+   return *this;
 }
 									/*}}}*/
 // PkgIterator::State - Check the State of the package			/*{{{*/
@@ -536,8 +559,8 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
 bool pkgCache::DepIterator::IsCritical() const
 {
    if (IsNegative() == true ||
-       S->Type == pkgCache::Dep::Depends ||
-       S->Type == pkgCache::Dep::PreDepends)
+       S2->Type == pkgCache::Dep::Depends ||
+       S2->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
 }
@@ -548,9 +571,9 @@ bool pkgCache::DepIterator::IsCritical() const
    are negative like Conflicts which can and should be handled differently */
 bool pkgCache::DepIterator::IsNegative() const
 {
-   return S->Type == Dep::DpkgBreaks ||
-	  S->Type == Dep::Conflicts ||
-	  S->Type == Dep::Obsoletes;
+   return S2->Type == Dep::DpkgBreaks ||
+	  S2->Type == Dep::Conflicts ||
+	  S2->Type == Dep::Obsoletes;
 }
 									/*}}}*/
 // DepIterator::SmartTargetPkg - Resolve dep target pointers w/provides	/*{{{*/
@@ -679,8 +702,8 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    End = *this;
    for (bool LastOR = true; end() == false && LastOR == true;)
    {
-      LastOR = (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-      (*this)++;
+      LastOR = (S2->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      ++(*this);
       if (LastOR == true)
 	 End = (*this);
    }
@@ -690,31 +713,22 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ---------------------------------------------------------------------
 /* Deps like self-conflicts should be ignored as well as implicit conflicts
    on virtual packages. */
-bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &/*Pkg*/) const
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &PT) const
 {
    if (IsNegative() == false)
       return false;
 
-   pkgCache::PkgIterator PP = ParentPkg();
-   pkgCache::PkgIterator PT = TargetPkg();
+   pkgCache::PkgIterator const PP = ParentPkg();
    if (PP->Group != PT->Group)
       return false;
    // self-conflict
    if (PP == PT)
       return true;
-   pkgCache::VerIterator PV = ParentVer();
+   pkgCache::VerIterator const PV = ParentVer();
    // ignore group-conflict on a M-A:same package - but not our implicit dependencies
    // so that we can have M-A:same packages conflicting with their own real name
    if ((PV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
-   {
-      // Replaces: ${self}:other ( << ${binary:Version})
-      if (S->Type == pkgCache::Dep::Replaces && S->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
-	 return false;
-      // Breaks: ${self}:other (!= ${binary:Version})
-      if (S->Type == pkgCache::Dep::DpkgBreaks && S->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
-	 return false;
-      return true;
-   }
+      return IsMultiArchImplicit() == false;
 
    return false;
 }
@@ -729,35 +743,34 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
    if (Prv.OwnerPkg()->Group == Pkg->Group)
       return true;
    // Implicit group-conflicts should not be applied on providers of other groups
-   if (Pkg->Group == TargetPkg()->Group && Prv.OwnerPkg()->Group != Pkg->Group)
+   if (IsMultiArchImplicit() && Prv.OwnerPkg()->Group != Pkg->Group)
       return true;
 
-   return false;
-}
-									/*}}}*/
-// DepIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
-// ---------------------------------------------------------------------
-/* MultiArch can be translated to SingleArch for an resolver and we did so,
-   by adding dependencies to help the resolver understand the problem, but
-   sometimes it is needed to identify these to ignore them… */
-bool pkgCache::DepIterator::IsMultiArchImplicit() const
-{
-   if (ParentPkg()->Arch != TargetPkg()->Arch &&
-       (S->Type == pkgCache::Dep::Replaces ||
-	S->Type == pkgCache::Dep::DpkgBreaks ||
-	S->Type == pkgCache::Dep::Conflicts))
-      return true;
    return false;
 }
 									/*}}}*/
 // DepIterator::IsSatisfied - check if a version satisfied the dependency /*{{{*/
 bool pkgCache::DepIterator::IsSatisfied(VerIterator const &Ver) const
 {
-   return Owner->VS->CheckDep(Ver.VerStr(),S->CompareOp,TargetVer());
+   return Owner->VS->CheckDep(Ver.VerStr(),S2->CompareOp,TargetVer());
 }
 bool pkgCache::DepIterator::IsSatisfied(PrvIterator const &Prv) const
 {
-   return Owner->VS->CheckDep(Prv.ProvideVersion(),S->CompareOp,TargetVer());
+   return Owner->VS->CheckDep(Prv.ProvideVersion(),S2->CompareOp,TargetVer());
+}
+									/*}}}*/
+// DepIterator::IsImplicit - added by the cache generation		/*{{{*/
+bool pkgCache::DepIterator::IsImplicit() const
+{
+   if (IsMultiArchImplicit() == true)
+      return true;
+   if (IsNegative() || S2->Type == pkgCache::Dep::Replaces)
+   {
+      if ((S2->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific &&
+	    strcmp(ParentPkg().Arch(), TargetPkg().Arch()) != 0)
+	 return true;
+   }
+   return false;
 }
 									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/
@@ -814,7 +827,7 @@ APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
-      if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
+      if (Files.File().Flagged(pkgCache::Flag::NotSource) == false)
 	 return true;
    return false;
 }
@@ -828,7 +841,7 @@ APT_PURE bool pkgCache::VerIterator::Automatic() const
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
       // Do not check ButAutomaticUpgrades here as it is kind of automatic…
-      if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
+      if (Files.File().Flagged(pkgCache::Flag::NotAutomatic) == false)
 	 return true;
    return false;
 }
@@ -854,69 +867,54 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
 // ---------------------------------------------------------------------
 /* This describes the version from a release-centric manner. The output is a 
    list of Label:Version/Archive */
+static std::string PkgFileIteratorToRelString(pkgCache::PkgFileIterator const &File)
+{
+   std::string Res;
+   if (File.Label() != 0)
+      Res = Res + File.Label() + ':';
+
+   if (File.Archive() != 0)
+   {
+      if (File.Version() == 0)
+	 Res += File.Archive();
+      else
+	 Res = Res + File.Version() + '/' +  File.Archive();
+   }
+   else
+   {
+      // No release file, print the host name that this came from
+      if (File.Site() == 0 || File.Site()[0] == 0)
+	 Res += "localhost";
+      else
+	 Res += File.Site();
+   }
+   return Res;
+}
 string pkgCache::VerIterator::RelStr() const
 {
-   bool First = true;
-   string Res;
+   std::vector<std::string> RelStrs;
    for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
-      pkgCache::PkgFileIterator File = I.File();
-      if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+      pkgCache::PkgFileIterator const File = I.File();
+      if (File.Flagged(pkgCache::Flag::NotSource))
 	 continue;
 
-      // See if we have already printed this out..
-      bool Seen = false;
-      for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
-      {
-	 pkgCache::PkgFileIterator File2 = J.File();
-	 if (File2->Label == 0 || File->Label == 0)
-	    continue;
-
-	 if (strcmp(File.Label(),File2.Label()) != 0)
-	    continue;
-	 
-	 if (File2->Version == File->Version)
-	 {
-	    Seen = true;
-	    break;
-	 }
-	 if (File2->Version == 0 || File->Version == 0)
-	    break;
-	 if (strcmp(File.Version(),File2.Version()) == 0)
-	    Seen = true;
-      }
-      
-      if (Seen == true)
+      std::string const RS = PkgFileIteratorToRelString(File);
+      if (std::find(RelStrs.begin(), RelStrs.end(), RS) != RelStrs.end())
 	 continue;
-      
-      if (First == false)
-	 Res += ", ";
-      else
-	 First = false;
-      
-      if (File->Label != 0)
-	 Res = Res + File.Label() + ':';
 
-      if (File->Archive != 0)
-      {
-	 if (File->Version == 0)
-	    Res += File.Archive();
-	 else
-	    Res = Res + File.Version() + '/' +  File.Archive();
-      }
-      else
-      {
-	 // No release file, print the host name that this came from
-	 if (File->Site == 0 || File.Site()[0] == 0)
-	    Res += "localhost";
-	 else
-	    Res += File.Site();
-      }      
+      RelStrs.push_back(RS);
+   }
+   std::ostringstream os;
+   if (likely(RelStrs.empty() == false))
+   {
+      std::copy(RelStrs.begin(), RelStrs.end()-1, std::ostream_iterator<std::string>(os, ", "));
+      os << *RelStrs.rbegin();
    }
    if (S->ParentPkg != 0)
-      Res.append(" [").append(Arch()).append("]");
-   return Res;
+      os << " [" << Arch() << "]";
+   return os.str();
 }
 									/*}}}*/
 // VerIterator::MultiArchType - string representing MultiArch flag	/*{{{*/
@@ -931,10 +929,44 @@ const char * pkgCache::VerIterator::MultiArchType() const
    return "none";
 }
 									/*}}}*/
+// RlsFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
+// ---------------------------------------------------------------------
+/* This stats the file and compares its stats with the ones that were
+   stored during generation. Date checks should probably also be
+   included here. */
+bool pkgCache::RlsFileIterator::IsOk()
+{
+   struct stat Buf;
+   if (stat(FileName(),&Buf) != 0)
+      return false;
+
+   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
+      return false;
+
+   return true;
+}
+									/*}}}*/
+// RlsFileIterator::RelStr - Return the release string			/*{{{*/
+string pkgCache::RlsFileIterator::RelStr()
+{
+   string Res;
+   if (Version() != 0)
+      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
+   if (Origin() != 0)
+      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
+   if (Archive() != 0)
+      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
+   if (Codename() != 0)
+      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
+   if (Label() != 0)
+      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
+   return Res;
+}
+									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
 // ---------------------------------------------------------------------
 /* This stats the file and compares its stats with the ones that were
-   stored during generation. Date checks should probably also be 
+   stored during generation. Date checks should probably also be
    included here. */
 bool pkgCache::PkgFileIterator::IsOk()
 {
@@ -948,24 +980,20 @@ bool pkgCache::PkgFileIterator::IsOk()
    return true;
 }
 									/*}}}*/
-// PkgFileIterator::RelStr - Return the release string			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string pkgCache::PkgFileIterator::RelStr()
+string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
 {
-   string Res;
-   if (Version() != 0)
-      Res = Res + (Res.empty() == true?"v=":",v=") + Version();
-   if (Origin() != 0)
-      Res = Res + (Res.empty() == true?"o=":",o=")  + Origin();
-   if (Archive() != 0)
-      Res = Res + (Res.empty() == true?"a=":",a=")  + Archive();
-   if (Codename() != 0)
-      Res = Res + (Res.empty() == true?"n=":",n=")  + Codename();
-   if (Label() != 0)
-      Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
-   if (Component() != 0)
-      Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   std::string Res;
+   if (ReleaseFile() == 0)
+   {
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"a=":",a=")  + Component();
+   }
+   else
+   {
+      Res = ReleaseFile().RelStr();
+      if (Component() != 0)
+	 Res = Res + (Res.empty() == true?"c=":",c=")  + Component();
+   }
    if (Architecture() != 0)
       Res = Res + (Res.empty() == true?"b=":",b=")  + Architecture();
    return Res;
@@ -1010,17 +1038,5 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
 }
 
 									/*}}}*/
-// PrvIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
-// ---------------------------------------------------------------------
-/* MultiArch can be translated to SingleArch for an resolver and we did so,
-   by adding provides to help the resolver understand the problem, but
-   sometimes it is needed to identify these to ignore them… */
-bool pkgCache::PrvIterator::IsMultiArchImplicit() const
-{
-   pkgCache::PkgIterator const Owner = OwnerPkg();
-   pkgCache::PkgIterator const Parent = ParentPkg();
-   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner.Group()->Name == Parent.Group()->Name)
-      return true;
-   return false;
-}
-									/*}}}*/
+
+pkgCache::~pkgCache() {}

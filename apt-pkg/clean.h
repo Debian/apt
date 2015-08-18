@@ -21,7 +21,7 @@ class pkgCache;
 class pkgArchiveCleaner
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    protected:
 
@@ -30,6 +30,8 @@ class pkgArchiveCleaner
    public:
 
    bool Go(std::string Dir,pkgCache &Cache);
+
+   pkgArchiveCleaner();
    virtual ~pkgArchiveCleaner();
 };
 

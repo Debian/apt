@@ -60,8 +60,7 @@ test_inrelease_to_broken_hash_reverts_all() {
     break_repository_sources_index '+1hour'
 
     # test the error condition
-    testfailureequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources  Hash Sum mismatch
-
+    testfailureequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -78,7 +77,7 @@ test_inrelease_to_valid_release() {
     rm $APTARCHIVE/dists/unstable/Release.gpg
 
     # update fails
-    testfailureequal "E: The repository 'file: unstable Release' is no longer signed." aptget update -qq
+    testfailureequal "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed." aptget update -qq
 
     # test that security downgrade was not successful
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -101,7 +100,7 @@ test_inrelease_to_release_reverts_all() {
     break_repository_sources_index '+1hour'
 
     # ensure error
-    testfailureequal "E: The repository 'file: unstable Release' is no longer signed." aptget update -qq # -o Debug::acquire::transaction=1
+    testfailureequal "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed." aptget update -qq # -o Debug::acquire::transaction=1
 
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -121,21 +120,20 @@ test_unauthenticated_to_invalid_inrelease() {
     listcurrentlistsdirectory > lists.before
     testfailureequal "WARNING: The following packages cannot be authenticated!
   old
-E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y old
 
     # go to authenticated but not correct
     add_new_package '+1hour'
     break_repository_sources_index '+1hour'
 
-    testfailureequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
-
+    testfailureequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
     testfailure ls rootdir/var/lib/apt/lists/*_InRelease
     testfailureequal "WARNING: The following packages cannot be authenticated!
   old
-E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y old
 }
 
 test_inrelease_to_unauth_inrelease() {
@@ -144,10 +142,8 @@ test_inrelease_to_unauth_inrelease() {
 
     signreleasefiles 'Marvin Paranoid'
 
-    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
-
+    testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
 W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
-
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -158,7 +154,10 @@ test_inrelease_to_broken_gzip() {
     msgmsg "Test InRelease to broken gzip"
     start_with_good_inrelease
 
-    redatereleasefiles '+2hours'
+    break_repository_sources_index '+1hour'
+    generatereleasefiles '+2hours'
+    signreleasefiles
+
     # append junk at the end of the compressed file
     echo "lala" >> $APTARCHIVE/dists/unstable/main/source/Sources.gz
     touch -d '+2min' $APTARCHIVE/dists/unstable/main/source/Sources.gz
@@ -166,6 +165,7 @@ test_inrelease_to_broken_gzip() {
     rm $APTARCHIVE/dists/unstable/main/source/Sources
 
     testfailure aptget update
+    testsuccess grep 'Hash Sum mismatch' rootdir/tmp/testfailure.output
     testfileequal lists.before "$(listcurrentlistsdirectory)"
 }
 

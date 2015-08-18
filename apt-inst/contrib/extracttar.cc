@@ -60,13 +60,8 @@ struct ExtractTar::TarHeader
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-#if APT_PKG_ABI >= 413
 ExtractTar::ExtractTar(FileFd &Fd,unsigned long long Max,string DecompressionProgram)
 	: File(Fd), MaxInSize(Max), DecompressProg(DecompressionProgram)
-#else
-ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram)
-	: File(Fd), MaxInSize(Max), DecompressProg(DecompressionProgram)
-#endif
 {
    GZPid = -1;
    Eof = false;

@@ -31,37 +31,99 @@
  
  <refsect1><title>Description</title>
    <para>
-   The source list <filename>/etc/apt/sources.list</filename> is designed to support
-   any number of active sources and a variety of source media. The file lists one
-   source per line, with the most preferred source listed first. The information available
-   from the configured sources is acquired by <command>apt-get update</command>
-   (or by an equivalent command from another APT front-end).
-   </para>
-   <para>
-   Each line specifying a source starts with type (e.g. <literal>deb-src</literal>)
-   followed by options and arguments for this type.
-   Individual entries cannot be continued onto a following line. Empty lines
-   are ignored, and a <literal>#</literal> character anywhere on a line marks
-   the remainder of that line as a comment.
+      The source list <filename>/etc/apt/sources.list</filename> and the the
+      files contained in <filename>/etc/apt/sources.list.d/</filename> are
+      designed to support any number of active sources and a variety of source
+      media. The files list one source per line (one line style) or contain multiline
+      stanzas defining one or more sources per stanza (deb822 style), with the
+      most preferred source listed first (in case a single version is available from more than one source). The information available from the
+      configured sources is acquired by <command>apt-get update</command> (or
+      by an equivalent command from another APT front-end).
    </para>
  </refsect1>
  
  <refsect1><title>sources.list.d</title>
-   <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
-   a way to add sources.list entries in separate files.
-   The format is the same as for the regular <filename>sources.list</filename> file.
-   File names need to end with
-   <filename>.list</filename> and may only contain letters (a-z and A-Z),
-   digits (0-9), underscore (_), hyphen (-) and period (.) characters.
-   Otherwise APT will print a notice that it has ignored a file, unless that
-   file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
-   configuration list - in which case it will be silently ignored.</para>
+    <para>The <filename>/etc/apt/sources.list.d</filename> directory provides
+       a way to add sources.list entries in separate files.
+       Two different file formats are allowed as described in the next two sections.
+       Filenames need to have either the extension <filename>.list</filename> or
+       <filename>.sources</filename> depending on the contained format.
+       The filenames may only contain letters (a-z and A-Z),
+       digits (0-9), underscore (_), hyphen (-) and period (.) characters.
+       Otherwise APT will print a notice that it has ignored a file, unless that
+       file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+       configuration list - in which case it will be silently ignored.</para>
  </refsect1>
 
- <refsect1><title>The deb and deb-src types</title>
+ <refsect1><title>one line style format</title>
+    <para>
+       Files in this format have the extension <filename>.list</filename>.
+       Each line specifying a source starts with a type (e.g. <literal>deb-src</literal>)
+       followed by options and arguments for this type.
+
+       Individual entries cannot be continued onto a following line. Empty lines
+       are ignored, and a <literal>#</literal> character anywhere on a line marks
+       the remainder of that line as a comment. Consequently an entry can be
+       disabled by commenting out the entire line.
+
+       If options should be provided they are separated by spaces and all of
+       them together are enclosed by square brackets (<literal>[]</literal>)
+       included in the line after the type separated from it with a space.
+       If an option allows multiple values these are separated from each other
+       with a comma (<literal>,</literal>). An option name is separated from its
+       value(s) by a equal sign (<literal>=</literal>). Multivalue options have
+       also <literal>-=</literal> and <literal>+=</literal> as separator which
+       instead of replacing the default with the given value(s) modify the default
+       value(s) to remove or include the given values.
+   </para><para>
+       This is the traditional format and supported by all apt versions.
+       Note that not all options as described below are supported by all apt versions.
+       Note also that some older applications parsing this format on its own might not
+       expect to encounter options as they were uncommon before the introduction of
+       multi-architecture support.
+    </para>
+ </refsect1>
+
+ <refsect1><title>deb822 style format</title>
+    <para>
+       Files in this format have the extension <filename>.sources</filename>.
+       The format is similar in syntax to other files used by Debian and its
+       derivatives, like the metadata itself apt will download from the configured
+       sources or the <filename>debian/control</filename> file in a Debian source package.
+
+       Individual entries are separated by an empty line, additional empty
+       lines are ignored, and a <literal>#</literal> character at the start of
+       the line marks the entire line as a comment. An entry can hence be
+       disabled by commenting out each line belonging to the stanza, but it is
+       usually easier to add the field "Enabled: no" to the stanza to disable
+       the entry. Removing the field or setting it to yes reenables it.
+
+       Options have the same syntax as every other field: A fieldname separated by
+       a colon (<literal>:</literal>) and optionally spaces from its value(s).
+       Note especially that multiple values are separated by spaces, not by
+       commas as in the one line format. Multivalue fields like <literal>Architectures</literal>
+       also have <literal>Architectures-Add</literal> and <literal>Architectures-Remove</literal>
+       to modify the default value rather than replacing it.
+   </para><para>
+       This is a new format supported by apt itself since version 1.1. Previous
+       versions ignore such files with a notice message as described earlier.
+       It is intended to make this format gradually the default format and
+       deprecating the previously described one line style format as it is
+       easier to create, extend and modify by humans and machines alike
+       especially if a lot of sources and/or options are involved.
+
+       Developers who are working with and/or parsing apt sources are highly
+       encouraged to add support for this format and to contact the APT team
+       to coordinate and share this work. Users can freely adopt this format
+       already, but could encounter problems with software not supporting
+       the format yet.
+    </para>
+ </refsect1>
+
+ <refsect1><title>The deb and deb-src types: General Format</title>
    <para>The <literal>deb</literal> type references a typical two-level Debian
    archive, <filename>distribution/component</filename>. The
-   <literal>distribution</literal> is generally an archive name like
+   <literal>distribution</literal> is generally a suite name like
    <literal>stable</literal> or <literal>testing</literal> or a codename like
    <literal>&stable-codename;</literal> or <literal>&testing-codename;</literal>
    while component is one of <literal>main</literal>, <literal>contrib</literal> or
@@ -70,42 +132,33 @@
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
 
-   <para>The format for a <filename>sources.list</filename> entry using the
+   <para>The format for two one line style entries using the
    <literal>deb</literal> and <literal>deb-src</literal> types is:</para>
 
-   <literallayout>deb [ options ] uri suite [component1] [component2] [...]</literallayout>
+   <literallayout>deb [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]
+deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]</literallayout>
 
-   <para>Alternatively a rfc822 style format is also supported:
+   <para>Alternatively the equivalent entry in deb822 style looks like this:
    <literallayout>
      Types: deb deb-src
-     URIs: http://example.com
-     Suites: stable testing
-     Sections: component1 component2
-     Description: short
-      long long long
-     [option1]: [option1-value]
-
-     Types: deb
-     URIs: http://another.example.com
-     Suites: experimental
-     Sections: component1 component2
-     Enabled: no
-     Description: short
-      long long long
-     [option1]: [option1-value]
+     URIs: uri
+     Suites: suite
+     Components: [component1] [component2] [...]
+     option1: value1
+     option2: value2
    </literallayout>
    </para>
 
    <para>The URI for the <literal>deb</literal> type must specify the base of the
-   Debian distribution, from which APT will find the information it needs. 
-   <literal>suite</literal> can specify an exact path, in which case the 
+   Debian distribution, from which APT will find the information it needs.
+   <literal>suite</literal> can specify an exact path, in which case the
    components must be omitted and <literal>suite</literal> must end with
    a slash (<literal>/</literal>). This is useful for the case when only a
-   particular sub-section of the archive denoted by the URI is of interest.
+   particular sub-directory of the archive denoted by the URI is of interest.
    If <literal>suite</literal> does not specify an exact path, at least
    one <literal>component</literal> must be present.</para>
 
-   <para><literal>suite</literal> may also contain a variable, 
+   <para><literal>suite</literal> may also contain a variable,
    <literal>$(ARCH)</literal>
    which expands to the Debian architecture (such as <literal>amd64</literal> or
    <literal>armel</literal>) used on the system. This permits architecture-independent
@@ -113,51 +166,123 @@
    of interest when specifying an exact path, <literal>APT</literal> will
    automatically generate a URI with the current architecture otherwise.</para>
 
-   <para>In the traditional style sources.list format since only one
-   distribution can be specified per line it may be necessary to have
-   multiple lines for the same URI, if a subset of all available
-   distributions or components at that location is desired.  APT will
-   sort the URI list after it has generated a complete set internally,
-   and will collapse multiple references to the same Internet host,
-   for instance, into a single connection, so that it does not
-   inefficiently establish an FTP connection, close it, do something
-   else, and then re-establish a connection to that same host. This
-   feature is useful for accessing busy FTP sites with limits on the
-   number of simultaneous anonymous users. APT also parallelizes
-   connections to different hosts to more effectively deal with sites
-   with low bandwidth.</para>
-
-   <para><literal>options</literal> is always optional and needs to be surrounded by
-   square brackets. It can consist of multiple settings in the form
-   <literal><replaceable>setting</replaceable>=<replaceable>value</replaceable></literal>.
-   Multiple settings are separated by spaces. The following settings are supported by APT
-   (note however that unsupported settings will be ignored silently):
-   <itemizedlist>
-   <listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
-   can be used to specify for which architectures information should
-   be downloaded. If this option is not set all architectures defined by the
-   <literal>APT::Architectures</literal> option will be downloaded.</para></listitem>
-   <listitem><para><literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
-   and <literal>arch-=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
-   which can be used to add/remove architectures from the set which will be downloaded.</para></listitem>
-   <listitem><para><literal>trusted=yes</literal> can be set to indicate that packages
-   from this source are always authenticated even if the <filename>Release</filename> file
-   is not signed or the signature can't be checked. This disables parts of &apt-secure;
-   and should therefore only be used in a local and trusted context. <literal>trusted=no</literal>
-   is the opposite which handles even correctly authenticated sources as not authenticated.</para></listitem>
-   </itemizedlist></para>
+   <para>Especially in the one line style format since only one distribution
+      can be specified per line it may be necessary to have multiple lines for
+      the same URI, if a subset of all available distributions or components at
+      that location is desired.  APT will sort the URI list after it has
+      generated a complete set internally, and will collapse multiple
+      references to the same Internet host, for instance, into a single
+      connection, so that it does not inefficiently establish a
+      connection, close it, do something else, and then re-establish a
+      connection to that same host. APT also parallelizes connections to
+      different hosts to more effectively deal with sites with low
+      bandwidth.</para>
 
    <para>It is important to list sources in order of preference, with the most
    preferred source listed first. Typically this will result in sorting
    by speed from fastest to slowest (CD-ROM followed by hosts on a local
    network, followed by distant Internet hosts, for example).</para>
 
-   <para>Some examples:</para>
-   <literallayout>
-deb http://ftp.debian.org/debian &stable-codename; main contrib non-free
-deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
-   </literallayout>
+   <para>As an example, the sources for your distribution could look like this
+      in one line style format:
+      <literallayout>&sourceslist-list-format;</literallayout> or like this in
+      deb822 style format:
+      <literallayout>&sourceslist-sources-format;</literallayout></para>
+ </refsect1>
 
+ <refsect1><title>The deb and deb-src types: Options</title>
+    <para>Each source entry can have options specified modifying which and how
+       the source is accessed and data acquired from it. Format, syntax and names
+       of the options varies between the two formats one line and deb822 style
+       as described, but they have both the same options available. For simplicity
+       we list the deb822 fieldname and provide the one line name in brackets.
+       Remember that beside setting multivalue options explicitly, there is also
+       the option to modify them based on the default, but we aren't listing those
+       names explicitly here. Unsupported options are silently ignored by all
+       APT versions.
+
+       <itemizedlist>
+	  <listitem><para><option>Architectures</option>
+		(<option>arch</option>) is a multivalue option defining for
+		which architectures information should be downloaded. If this
+		option isn't set the default is all architectures as defined by
+		the <option>APT::Architectures</option> config option.
+	  </para></listitem>
+
+	  <listitem><para><option>Languages</option>
+		(<option>lang</option>) is a multivalue option defining for
+		which languages information like translated package
+		descriptions should be downloaded.  If this option isn't set
+		the default is all languages as defined by the
+		<option>Acquire::Languages</option> config option.
+	  </para></listitem>
+
+	  <listitem><para><option>Targets</option>
+		(<option>target</option>) is a multivalue option defining
+		which download targets apt will try to acquire from this
+		source. If not specified, the default set is defined by the
+		<option>Acquire::IndexTargets</option> configuration scope.
+	  </para></listitem>
+       </itemizedlist>
+
+       Further more, there are options which if set effect
+       <emphasis>all</emphasis> sources with the same URI and Suite, so they
+       have to be set on all such entries and can not be varied between
+       different components. APT will try to detect and error out on such
+       anomalies.
+
+       <itemizedlist>
+	  <listitem><para><option>Signed-By</option> (<option>signed-by</option>)
+		is either an absolute path to a keyring file (has to be
+		accessible and readable for the <literal>_apt</literal> user,
+		so ensure everyone has read-permissions on the file) or a
+		fingerprint of a key in either the
+		<filename>trusted.gpg</filename> keyring or in one of the
+		keyrings in the <filename>trusted.gpg.d/</filename> directory
+		(see <command>apt-key fingerprint</command>). If the option is
+		set only the key(s) in this keyring or only the key with this
+		fingerprint is used for the &apt-secure; verification of this
+		repository. Otherwise all keys in the trusted keyrings are
+		considered valid signers for this repository.
+	  </para></listitem>
+
+	  <listitem><para><option>Check-Valid-Until</option> (<option>check-valid-until</option>)
+		is a yes/no value which controls if APT should try to detect
+		replay attacks. A repository creator can declare until then the
+		data provided in the repository should be considered valid and
+		if this time is reached, but no new data is provided the data
+		is considered expired and an error is raised.  Beside
+		increasing security as a malicious attacker can't sent old data
+		forever denying a user to be able to upgrade to a new version,
+		this also helps users identify mirrors which are no longer
+		updated. Some repositories like historic archives aren't
+		updated anymore by design through, so this check can be
+		disabled by setting this option to <literal>no</literal>.
+		Defaults to the value of configuration option
+		<option>Acquire::Check-Valid-Until</option> which itself
+		defaults to <literal>yes</literal>.
+	  </para></listitem>
+
+	  <listitem><para><option>Valid-Until-Min</option>
+		(<option>check-valid-min</option>) and
+		<option>Valid-Until-Max</option>
+		(<option>valid-until-max</option>) can be used to raise or
+		lower the time period in seconds in which the data from this
+		repository is considered valid. -Max can be especially useful
+		if the repository provides no Valid-Until field on its Release
+		file to set your own value, while -Min can be used to increase
+		the valid time on seldomly updated (local) mirrors of a more
+		frequently updated but less accessible archive (which is in the
+		sources.list as well) instead of disabling the check entirely.
+		Default to the value of the configuration options
+		<option>Acquire::Min-ValidTime</option> and
+		<option>Acquire::Max-ValidTime</option> which are both unset by
+		default.
+	  </para></listitem>
+
+       </itemizedlist>
+
+    </para>
  </refsect1>
 
  <refsect1><title>URI specification</title>
@@ -231,34 +356,70 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
  </refsect1>
  
  <refsect1><title>Examples</title>
-   <para>Uses the archive stored locally (or NFS mounted) at /home/jason/debian
+   <para>Uses the archive stored locally (or NFS mounted) at /home/apt/debian
    for stable/main, stable/contrib, and stable/non-free.</para>
-   <literallayout>deb file:/home/jason/debian stable main contrib non-free</literallayout>
+   <literallayout>deb file:/home/apt/debian stable main contrib non-free</literallayout>
+   <literallayout>Types: deb
+URIs: file:/home/apt/debian
+Suites: stable
+Components: main contrib non-free</literallayout>
 
    <para>As above, except this uses the unstable (development) distribution.</para>
-   <literallayout>deb file:/home/jason/debian unstable main contrib non-free</literallayout>
+   <literallayout>deb file:/home/apt/debian unstable main contrib non-free</literallayout>
+   <literallayout>Types: deb
+URIs: file:/home/apt/debian
+Suites: unstable
+Components: main contrib non-free</literallayout>
 
    <para>Source line for the above</para>
-   <literallayout>deb-src file:/home/jason/debian unstable main contrib non-free</literallayout>
+   <literallayout>deb-src file:/home/apt/debian unstable main contrib non-free</literallayout>
+   <literallayout>Types: deb-src
+URIs: file:/home/apt/debian
+Suites: unstable
+Components: main contrib non-free</literallayout>
+
 
    <para>The first line gets package information for the architectures in <literal>APT::Architectures</literal>
    while the second always retrieves <literal>amd64</literal> and <literal>armel</literal>.</para>
-   <literallayout>deb http://ftp.debian.org/debian &stable-codename; main
-deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main</literallayout>
+   <literallayout>deb http://httpredir.debian.org/debian &stable-codename; main
+deb [ arch=amd64,armel ] http://httpredir.debian.org/debian &stable-codename; main</literallayout>
+   <literallayout>Types: deb
+URIs: http://httpredir.debian.org/debian
+Suites: &stable-codename;
+Components: main
+
+Types: deb
+URIs: http://httpredir.debian.org/debian
+Suites: &stable-codename;
+Components: main
+Architectures: amd64 armel
+</literallayout>
 
    <para>Uses HTTP to access the archive at archive.debian.org, and uses only
    the hamm/main area.</para>
    <literallayout>deb http://archive.debian.org/debian-archive hamm main</literallayout>
+   <literallayout>Types: deb
+URIs: http://archive.debian.org/debian-archive
+Suites: hamm
+Components: main</literallayout>
 
    <para>Uses FTP to access the archive at ftp.debian.org, under the debian
    directory, and uses only the &stable-codename;/contrib area.</para>
    <literallayout>deb ftp://ftp.debian.org/debian &stable-codename; contrib</literallayout>
+   <literallayout>Types: deb
+URIs: ftp://ftp.debian.org/debian
+Suites: &stable-codename;
+Components: contrib</literallayout>
 
    <para>Uses FTP to access the archive at ftp.debian.org, under the debian
    directory, and uses only the unstable/contrib area. If this line appears as
    well as the one in the previous example in <filename>sources.list</filename>
    a single FTP session will be used for both resource lines.</para>
    <literallayout>deb ftp://ftp.debian.org/debian unstable contrib</literallayout>
+   <literallayout>Types: deb
+URIs: ftp://ftp.debian.org/debian
+Suites: unstable
+Components: contrib</literallayout>
 
    <para>Uses HTTP to access the archive at ftp.tlh.debian.org, under the
    universe directory, and uses only files found under
@@ -268,15 +429,32 @@ deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main</li
    illustrates how to use the substitution variable; official debian
    archives are not structured like this]
    <literallayout>deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/</literallayout>
+   <literallayout>Types: deb
+URIs: http://ftp.tlh.debian.org/universe
+Suites: unstable/binary-$(ARCH)/</literallayout>
    </para>
+
+   <para>Uses HTTP to get binary packages as well as sources from the stable, testing and unstable
+      suites and the components main and contrib.</para>
+   <literallayout>deb http://httpredir.debian.org/debian stable main contrib
+deb-src http://httpredir.debian.org/debian stable main contrib
+deb http://httpredir.debian.org/debian testing main contrib
+deb-src http://httpredir.debian.org/debian testing main contrib
+deb http://httpredir.debian.org/debian unstable main contrib
+deb-src http://httpredir.debian.org/debian unstable main contrib</literallayout>
+   <literallayout>Types: deb deb-src
+URIs: http://httpredir.debian.org/debian
+Suites: stable testing unstable
+Components: main contrib
+</literallayout>
+
  </refsect1>
- 
+
  <refsect1><title>See Also</title>
-   <para>&apt-cache; &apt-conf;
+   <para>&apt-get;, &apt-conf;
    </para>
  </refsect1>
 
  &manbugs;
- 
-</refentry>
 
+</refentry>

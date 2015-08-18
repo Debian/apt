@@ -55,6 +55,7 @@ static bool ShowHelp(CommandLine &)
       "\n"
       " install - install packages\n"
       " remove  - remove packages\n"
+      " autoremove - Remove automatically all unused packages\n"
       "\n"
       " upgrade - upgrade the system by installing/upgrading packages\n"
       " full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
@@ -76,6 +77,8 @@ int main(int argc, const char *argv[])					/*{{{*/
                                    // package stuff
                                    {"install",&DoInstall},
                                    {"remove", &DoInstall},
+                                   {"autoremove", &DoInstall},
+                                   {"auto-remove", &DoInstall},
                                    {"purge", &DoInstall},
 
                                    // system wide stuff

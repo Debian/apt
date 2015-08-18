@@ -59,7 +59,7 @@ class PackageNameMatcher : public Matcher
       for(J=filters.begin(); J != filters.end(); ++J)
          delete *J;
    }
-   virtual bool operator () (const pkgCache::PkgIterator &P) 
+   virtual bool operator () (const pkgCache::PkgIterator &P) APT_OVERRIDE
    {
       for(J=filters.begin(); J != filters.end(); ++J)
       {

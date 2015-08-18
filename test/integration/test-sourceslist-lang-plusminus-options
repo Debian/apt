@@ -1,0 +1,87 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+testlangs() {
+	msgtest 'Test acquired languages for' "$1"
+	local LANGS="$2"
+	shift 2
+	rm -f gotlangs.list
+	aptget indextargets --no-release-info 'Created-By: Translations' "$@" --format '$(LANGUAGE)' | sort -u > gotlangs.list
+	if [ -z "$LANGS" ]; then
+		echo -n | tr ',' '\n' | sort | checkdiff - gotlangs.list && msgpass || msgfail
+	else
+		echo -n "$LANGS" | tr ',' '\n' | sort | checkdiff - gotlangs.list && msgpass || msgfail
+	fi
+}
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'default' 'en'
+
+echo 'Acquire::Languages "environment,en";' > rootdir/etc/apt/apt.conf.d/langs.conf
+testlangs 'default config' 'en'
+
+echo 'Acquire::Languages "en,en,en";' > rootdir/etc/apt/apt.conf.d/langs.conf
+testlangs 'duplicated config' 'en'
+
+echo 'Acquire::Languages "none";' > rootdir/etc/apt/apt.conf.d/langs.conf
+testlangs 'none config' ''
+
+echo 'Acquire::Languages "en,none,de,de_DE";' > rootdir/etc/apt/apt.conf.d/langs.conf
+testlangs 'english + german config' 'en,de,de_DE'
+
+echo 'deb [lang=pt] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang=pt' 'pt'
+
+echo 'deb [lang=en] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang=en' 'en'
+
+echo 'deb [lang=de_DE] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang=de_DE' 'de_DE'
+
+echo 'deb [lang=none] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang=none' ''
+testequal 'amd64' aptget indextargets --no-release-info 'Created-By: Packages' --format '$(ARCHITECTURE)'
+
+echo 'deb [lang+=pt] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang+=pt' 'en,de,de_DE,pt'
+
+echo 'deb [lang+=en] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang+=en' 'en,de,de_DE'
+
+echo 'deb [lang+=de_DE] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang+=de_DE' 'en,de,de_DE'
+
+echo 'deb [lang-=pt] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang-=pt' 'en,de,de_DE'
+
+echo 'deb [lang-=en] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang-=en' 'de,de_DE'
+
+echo 'deb [lang-=de_DE] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testlangs 'lang-=de_DE' 'en,de'
+
+echo 'deb http://example.org/debian stable rocks
+deb http://example.org/debian stable solid' > rootdir/etc/apt/sources.list
+testlangs 'english + german config multicomponent' 'en,de,de_DE'
+
+echo 'deb http://example.org/debian stable rocks
+deb [lang=pt] http://example.org/debian stable solid' > rootdir/etc/apt/sources.list
+testlangs 'multicomponent one lang= combined' 'en,de,de_DE,pt'
+testlangs 'multicomponent one lang= rocks' 'en,de,de_DE' 'Component: rocks'
+testlangs 'multicomponent one lang= solid' 'pt' 'Component: solid'
+
+echo 'deb [lang=pt] http://example.org/debian stable rocks
+deb [lang=de] http://example.org/debian stable solid' > rootdir/etc/apt/sources.list
+testlangs 'multicomponent different lang= combined' 'de,pt'
+testlangs 'multicomponent different lang= rocks' 'pt' 'Component: rocks'
+testlangs 'multicomponent different lang= solid' 'de' 'Component: solid'
+
+echo 'deb [lang+=pt] http://example.org/debian stable rocks
+deb [lang-=de] http://example.org/debian stable solid' > rootdir/etc/apt/sources.list
+testlangs 'multicomponent different lang+-= combined' 'en,de,de_DE,pt'
+testlangs 'multicomponent different lang+-= rocks' 'en,de,de_DE,pt' 'Component: rocks'
+testlangs 'multicomponent different lang+-= solid' 'en,de_DE' 'Component: solid'

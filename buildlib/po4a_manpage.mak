@@ -57,7 +57,6 @@ HAVE_PO4A=yes
 endif
 
 # take care of the rest
-SOURCE := $(SOURCE) $(wildcard apt.$(LC).8)
 INCLUDES :=
 
 ifndef HAVE_PO4A

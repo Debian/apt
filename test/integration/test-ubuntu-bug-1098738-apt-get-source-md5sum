@@ -148,8 +148,8 @@ testok() {
 	testsuccessequal "Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
-Get:1 http://localhost:8080/  $1 1.0 (dsc) [3 B]
-Get:2 http://localhost:8080/  $1 1.0 (tar) [3 B]
+Get:1 http://localhost:8080  $1 1.0 (dsc) [3 B]
+Get:2 http://localhost:8080  $1 1.0 (tar) [3 B]
 Download complete and in download only mode" aptget source -d "$@"
 	msgtest 'Files were successfully downloaded for' "$1"
 	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
@@ -175,8 +175,12 @@ testmismatch() {
 	testfailureequal "Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
-Get:1 http://localhost:8080/  $1 1.0 (dsc) [3 B]
-Get:2 http://localhost:8080/  $1 1.0 (tar) [3 B]
+Get:1 http://localhost:8080  $1 1.0 (dsc) [3 B]
+Err:1 http://localhost:8080  $1 1.0 (dsc)
+  Hash Sum mismatch
+Get:2 http://localhost:8080  $1 1.0 (tar) [3 B]
+Err:2 http://localhost:8080  $1 1.0 (tar)
+  Hash Sum mismatch
 E: Failed to fetch http://localhost:8080/${1}_1.0.dsc  Hash Sum mismatch
 
 E: Failed to fetch http://localhost:8080/${1}_1.0.tar.gz  Hash Sum mismatch
@@ -199,8 +203,8 @@ Download complete and in download only mode" aptget source -d "$@" -o Acquire::F
 	testsuccessequal "Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
-Get:1 http://localhost:8080/  $1 1.0 (dsc) [3 B]
-Get:2 http://localhost:8080/  $1 1.0 (tar) [3 B]
+Get:1 http://localhost:8080  $1 1.0 (dsc) [3 B]
+Get:2 http://localhost:8080  $1 1.0 (tar) [3 B]
 Download complete and in download only mode" aptget source --allow-unauthenticated -d "$@" -o Acquire::ForceHash=ROT26
 	msgtest 'Files were downloaded unauthenticated as user allowed it' "$1"
 	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
@@ -236,8 +240,10 @@ testok pkg-mixed-ok
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
-Get:1 http://localhost:8080/  pkg-mixed-sha1-bad 1.0 (tar) [3 B]
-Get:2 http://localhost:8080/  pkg-mixed-sha1-bad 1.0 (dsc) [3 B]
+Get:1 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (tar) [3 B]
+Get:2 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (dsc) [3 B]
+Err:2 http://localhost:8080  pkg-mixed-sha1-bad 1.0 (dsc)
+  Hash Sum mismatch
 E: Failed to fetch http://localhost:8080/pkg-mixed-sha1-bad_1.0.dsc  Hash Sum mismatch
 
 E: Failed to fetch some archives.' aptget source -d pkg-mixed-sha1-bad
@@ -246,8 +252,10 @@ testsuccess --nomsg test ! -e pkg-mixed-sha1-bad_1.0.dsc -a -e pkg-mixed-sha1-ba
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Need to get 6 B of source archives.
-Get:1 http://localhost:8080/  pkg-mixed-sha2-bad 1.0 (tar) [3 B]
-Get:2 http://localhost:8080/  pkg-mixed-sha2-bad 1.0 (dsc) [3 B]
+Get:1 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (tar) [3 B]
+Err:1 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (tar)
+  Hash Sum mismatch
+Get:2 http://localhost:8080  pkg-mixed-sha2-bad 1.0 (dsc) [3 B]
 E: Failed to fetch http://localhost:8080/pkg-mixed-sha2-bad_1.0.tar.gz  Hash Sum mismatch
 
 E: Failed to fetch some archives.' aptget source -d pkg-mixed-sha2-bad

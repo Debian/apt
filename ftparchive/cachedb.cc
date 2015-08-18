@@ -45,6 +45,7 @@ CacheDB::~CacheDB()
 {
    ReadyDB();
    delete DebFile;
+   CloseFile();
 }
 
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/

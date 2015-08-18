@@ -70,10 +70,11 @@ class pkgVersionMatch
    enum MatchType {None = 0,Version,Release,Origin} Type;
 
    bool MatchVer(const char *A,std::string B,bool Prefix) APT_PURE;
-   bool ExpressionMatches(const char *pattern, const char *string);
-   bool ExpressionMatches(const std::string& pattern, const char *string);
+   static bool ExpressionMatches(const char *pattern, const char *string);
+   static bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
+   bool VersionMatches(pkgCache::VerIterator Ver);
 
    pkgVersionMatch(std::string Data,MatchType Type);
 };

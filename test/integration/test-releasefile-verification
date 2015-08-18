@@ -36,12 +36,12 @@ installaptold() {
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
-  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+  aptitude | synaptic | wajig dpkg-dev apt-doc bzip2 lzma python-apt
 The following NEW packages will be installed:
   apt
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 After this operation, 5370 kB of additional disk space will be used.
-Get:1 http://localhost:8080/  apt 0.7.25.3
+Get:1 http://localhost:8080  apt 0.7.25.3
 Download complete and in download only mode' aptget install apt -dy
 }
 
@@ -49,12 +49,12 @@ installaptnew() {
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
-  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+  aptitude | synaptic | wajig dpkg-dev apt-doc bzip2 lzma python-apt
 The following NEW packages will be installed:
   apt
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 After this operation, 5808 kB of additional disk space will be used.
-Get:1 http://localhost:8080/  apt 0.8.0~pre1
+Get:1 http://localhost:8080  apt 0.8.0~pre1
 Download complete and in download only mode' aptget install apt -dy
 }
 
@@ -62,28 +62,28 @@ failaptold() {
 	testfailureequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
-  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+  aptitude | synaptic | wajig dpkg-dev apt-doc bzip2 lzma python-apt
 The following NEW packages will be installed:
   apt
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 After this operation, 5370 kB of additional disk space will be used.
 WARNING: The following packages cannot be authenticated!
   apt
-E: There are problems and -y was used without --force-yes' aptget install apt -dy
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated' aptget install apt -dy
 }
 
 failaptnew() {
 	testfailureequal 'Reading package lists...
 Building dependency tree...
 Suggested packages:
-  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+  aptitude | synaptic | wajig dpkg-dev apt-doc bzip2 lzma python-apt
 The following NEW packages will be installed:
   apt
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 After this operation, 5808 kB of additional disk space will be used.
 WARNING: The following packages cannot be authenticated!
   apt
-E: There are problems and -y was used without --force-yes' aptget install apt -dy
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated' aptget install apt -dy
 }
 
 # fake our downloadable file
@@ -92,7 +92,7 @@ touch aptarchive/apt.deb
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 updatewithwarnings() {
-	testwarning aptget update
+	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 	testsuccess grep -E "$1" rootdir/tmp/testwarning.output
 }
 
@@ -139,11 +139,6 @@ runtest() {
 	failaptold
 
 	prepare ${PKGFILE}-new
-	# weborf doesn't support If-Range
-	for release in $(find rootdir/var/lib/apt/lists/partial/ -name '*Release'); do
-		rm $release
-		touch $release
-	done
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgmsg 'Bad warm archive signed by' 'Joe Sixpack'
@@ -191,6 +186,48 @@ runtest() {
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
+
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Marvin Paranoid'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgmsg 'Cold archive signed by good keyring' 'Marvin Paranoid'
+	local MARVIN="$(readlink -f keys/marvinparanoid.pub)"
+	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
+	testsuccess aptget update -o Debug::pkgAcquire::Worker=1
+	testsuccessequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgmsg 'Cold archive signed by bad keyring' 'Joe Sixpack'
+	updatewithwarnings '^W: .* NO_PUBKEY'
+
+	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
+	local MARVIN="$(aptkey --keyring $MARVIN finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Marvin Paranoid'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid'
+	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
+	cp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	testsuccessequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+	rm -f rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
+	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
+
+	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
 }
 
 runtest2() {

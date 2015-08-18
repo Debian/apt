@@ -39,7 +39,6 @@
 
 // Internet stuff
 #include <netinet/in.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
@@ -746,7 +745,7 @@ bool FTPConn::CreateDataFd()
    }
    
    // Bind and listen
-   if (bind(DataListenFd,BindAddr->ai_addr,BindAddr->ai_addrlen) < 0)
+   if (::bind(DataListenFd,BindAddr->ai_addr,BindAddr->ai_addrlen) < 0)
    {
       freeaddrinfo(BindAddr);
       return _error->Errno("bind",_("Could not bind a socket"));

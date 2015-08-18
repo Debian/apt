@@ -37,7 +37,7 @@ class SHA1Summation : public SummationImplementation
    bool Done;
    
    public:
-   bool Add(const unsigned char *inbuf, unsigned long long inlen);
+   bool Add(const unsigned char *inbuf, unsigned long long inlen) APT_OVERRIDE;
    using SummationImplementation::Add;
 
    SHA1SumValue Result();

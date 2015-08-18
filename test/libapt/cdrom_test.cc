@@ -91,7 +91,7 @@ TEST(CDROMTest,ReduceSourcelist)
 }
 TEST(CDROMTest, FindMountPointForDevice)
 {
-   char * tempfile = NULL;
+   std::string tempfile;
    FileFd fd;
    createTemporaryFile("mountpoints", fd, &tempfile,
 	 "rootfs / rootfs rw 0 0\n"
@@ -109,7 +109,6 @@ TEST(CDROMTest, FindMountPointForDevice)
    EXPECT_EQ("/boot/efi", FindMountPointForDevice("/dev/sda1"));
    EXPECT_EQ("/tmp", FindMountPointForDevice("tmpfs"));
 
-   if (tempfile !=  NULL)
-      unlink(tempfile);
-   free(tempfile);
+   if (tempfile.empty() == false)
+      unlink(tempfile.c_str());
 }

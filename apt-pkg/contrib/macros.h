@@ -148,13 +148,19 @@
 	#define APT_IGNORE_DEPRECATED(XXX) XXX
 #endif
 
+#if __cplusplus >= 201103L
+	#define APT_OVERRIDE override
+#else
+	#define APT_OVERRIDE /* no c++11 standard */
+#endif
+
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all
 // reverse-dependencies of libapt-pkg against the new SONAME.
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
-#define APT_PKG_MAJOR 4
-#define APT_PKG_MINOR 15
+#define APT_PKG_MAJOR 5
+#define APT_PKG_MINOR 0
 #define APT_PKG_RELEASE 0
 #define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 

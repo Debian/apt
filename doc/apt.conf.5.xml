@@ -301,6 +301,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <literal>Valid-Until</literal> header, but if they don't or a
      stricter value is desired the <literal>Max-ValidTime</literal>
      option below can be used.
+     The <option>Check-Valid-Until</option> option of &sources-list; entries should be
+     preferred to disable the check selectively instead of using this global override.
      </para></listitem>
      </varlistentry>
 
@@ -312,7 +314,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 the earlier date of the two is used as the expiration date.
 	 The default value is <literal>0</literal> which stands for "valid forever".
 	 Archive specific settings can be made by appending the label of the archive
-	 to the option name.
+	 to the option name. Preferably, the same can be achieved for specific
+	 &sources-list; entries by using the <option>Valid-Until-Max</option> option there.
 	 </para></listitem>
      </varlistentry>
 
@@ -324,7 +327,8 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 frequently updated archive with a <literal>Valid-Until</literal> header
 	 instead of completely disabling the expiration date checking.
 	 Archive specific settings can and should be used by appending the label of
-	 the archive to the option name.
+	 the archive to the option name. Preferably, the same can be achieved for specific
+	 &sources-list; entries by using the <option>Valid-Until-Min</option> option there.
 	 </para></listitem>
      </varlistentry>
 
@@ -618,6 +622,33 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
          </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>Changelogs::URI</option> scope</term>
+	<listitem><para>
+	  Acquiring changelogs can only be done if an URI is known from where to get them.
+	  Preferable the Release file indicates this in a 'Changelogs' field. If this isn't
+	  available the Label/Origin field of the Release file is used to check if a
+	  <literal>Acquire::Changelogs::URI::Label::<replaceable>LABEL</replaceable></literal> or
+	  <literal>Acquire::Changelogs::URI::Origin::<replaceable>ORIGIN</replaceable></literal> option
+	  exists and if so this value is taken. The value in the Release file can be overridden
+	  with <literal>Acquire::Changelogs::URI::Override::Label::<replaceable>LABEL</replaceable></literal>
+	  or <literal>Acquire::Changelogs::URI::Override::Origin::<replaceable>ORIGIN</replaceable></literal>.
+
+	  The value should be a normal URI to a text file, expect that package specific data is
+	  replaced with the placeholder <literal>CHANGEPATH</literal>. The
+	  value for it is: 1. if the package is from a component (e.g. <literal>main</literal>)
+	  this is the first part otherwise it is omitted, 2. the first letter of source package name,
+	  expect if the source package name starts with '<literal>lib</literal>' in which case it will
+	  be the first four letters. 3. The complete source package name. 4. the complete name again and
+	  5. the source version.
+	  The first (if present), second, third and fourth part are separated by a slash ('<literal>/</literal>')
+	  and between the fourth and fifth part is an underscore ('<literal>_</literal>').
+
+	  The special value '<literal>no</literal>' is available for this option indicating that
+	  this source can't be used to acquire changelog files from. Another source will be tried
+	  if available in this case.
+	</para></listitem>
+    </varlistentry>
+
    </variablelist>
  </refsect1>
 
@@ -659,7 +690,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
    <para>
      The configuration item <literal>RootDir</literal> has a special
-     meaning.  If set, all paths in <literal>Dir::</literal> will be
+     meaning.  If set, all paths will be
      relative to <literal>RootDir</literal>, <emphasis>even paths that
      are specified absolutely</emphasis>.  So, for instance, if
      <literal>RootDir</literal> is set to
@@ -668,6 +699,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <filename>/var/lib/dpkg/status</filename>, then the status file
      will be looked up in
      <filename>/tmp/staging/var/lib/dpkg/status</filename>.
+     If you want to prefix only relative paths, set <literal>Dir</literal> instead.
    </para>
 
    <para>
@@ -743,10 +775,34 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      install to the commands, one per line on the requested file descriptor, defaulting
      to standard input.</para>
 
-     <para>Version 2 of this protocol dumps more information, including the
-     protocol version, the APT configuration space and the packages, files
-     and versions being changed. Version 3 adds the architecture and <literal>MultiArch</literal>
-     flag to each version being dumped.</para>
+     <para>Version 2 of this protocol sends more information through the requested
+     file descriptor: a line with the text <literal>VERSION 2</literal>,
+     the APT configuration space, and a list of package actions with filename
+     and version information.</para>
+
+     <para>Each configuration directive line has the form
+     <literal>key=value</literal>.  Special characters (equal signs, newlines,
+     nonprintable characters, quotation marks, and percent signs in
+     <literal>key</literal> and newlines, nonprintable characters, and percent
+     signs in <literal>value</literal>) are %-encoded. Lists are represented
+     by multiple <literal>key::=value</literal> lines with the same key. The
+     configuration section ends with a blank line.</para>
+
+     <para>Package action lines consist of five fields in Version 2: old version, direction
+     of version change (&lt; for upgrades, &gt; for downgrades, = for no
+     change), new version, action. The version fields are "-" for no version
+     at all (for example when installing a package for the first time; no
+     version is treated as earlier than any real version, so that is an
+     upgrade, indicated as <literal>- &lt; 1.23.4</literal>). The action field
+     is "**CONFIGURE**" if the package is being configured, "**REMOVE**" if it
+     is being removed, or the filename of a .deb file if it is being
+     unpacked.</para>
+
+     <para>In Version 3 after each version field follows the architecture
+     of this version, which is "-" if there is no version, and a field showing
+     the MultiArch type "same", foreign", "allowed" or "none". Note that "none"
+     is an incorrect typename which is just kept to remain compatible, it
+     should be read as "no" and users are encouraged to support both.</para>
 
      <para>The version of the protocol to be used for the command
      <literal><replaceable>cmd</replaceable></literal> can be chosen by setting

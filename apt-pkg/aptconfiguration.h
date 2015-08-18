@@ -16,8 +16,7 @@
 #include <limits>
 									/*}}}*/
 namespace APT {
-class Configuration {							/*{{{*/
-public:									/*{{{*/
+namespace Configuration {							/*{{{*/
 	/** \brief Returns a vector of usable Compression Types
 	 *
 	 *  Files can be compressed in various ways to decrease the size of the
@@ -39,7 +38,7 @@ public:									/*{{{*/
 	 *
 	 *  \return a vector of the compression types in the preferred usage order
 	 */
-	std::vector<std::string> static const getCompressionTypes(bool const &Cached = true);
+	std::vector<std::string> const getCompressionTypes(bool const &Cached = true);
 
 	/** \brief Returns a vector of Language Codes
 	 *
@@ -64,7 +63,7 @@ public:									/*{{{*/
 	 *
 	 *  \return a vector of (all) Language Codes in the preferred usage order
 	 */
-	std::vector<std::string> static const getLanguages(bool const &All = false,
+	std::vector<std::string> const getLanguages(bool const &All = false,
 			bool const &Cached = true, char const ** const Locale = 0);
 
 	/** \brief Are we interested in the given Language?
@@ -73,7 +72,7 @@ public:									/*{{{*/
 	 *  \param All defines if we check against all codes or only against used codes
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool static checkLanguage(std::string Lang, bool const All = false);
+	bool checkLanguage(std::string Lang, bool const All = false);
 
 	/** \brief Returns a vector of Architectures we support
 	 *
@@ -82,14 +81,14 @@ public:									/*{{{*/
 	 *
 	 *  \return a vector of Architectures in preferred order
 	 */
-	std::vector<std::string> static const getArchitectures(bool const &Cached = true);
+	std::vector<std::string> const getArchitectures(bool const &Cached = true);
 
 	/** \brief Are we interested in the given Architecture?
 	 *
 	 *  \param Arch we want to check
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool static checkArchitecture(std::string const &Arch);
+	bool checkArchitecture(std::string const &Arch);
 
 	/** \brief Representation of supported compressors */
 	struct Compressor {
@@ -113,17 +112,17 @@ public:									/*{{{*/
 	 *
 	 *  \return a vector of Compressors
 	 */
-	std::vector<Compressor> static const getCompressors(bool const Cached = true);
+	std::vector<Compressor> const getCompressors(bool const Cached = true);
 
 	/** \brief Return a vector of extensions supported for data.tar's */
-	std::vector<std::string> static const getCompressorExtensions();
+	std::vector<std::string> const getCompressorExtensions();
 
 	/** \return Return a vector of enabled build profile specifications */
-	std::vector<std::string> static const getBuildProfiles();
+	std::vector<std::string> const getBuildProfiles();
 	/** \return Return a comma-separated list of enabled build profile specifications */
-	std::string static const getBuildProfilesString();
+	std::string const getBuildProfilesString();
 									/*}}}*/
-};
+}
 									/*}}}*/
 }
 #endif

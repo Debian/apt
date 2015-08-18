@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire-method.h,v 1.15.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    Acquire Method - Method helper class + functions
@@ -53,6 +52,11 @@ class pkgAcqMethod
       // for when we know it or a arbitrary limit when we don't know the
       // filesize (like a InRelease file)
       unsigned long long MaximumSize;
+
+      FetchItem();
+      virtual ~FetchItem();
+      private:
+      void * const d;
    };
    
    struct FetchResult
@@ -67,6 +71,9 @@ class pkgAcqMethod
       
       void TakeHashes(class Hashes &Hash);
       FetchResult();
+      virtual ~FetchResult();
+      private:
+      void * const d;
    };
 
    // State
@@ -76,11 +83,12 @@ class pkgAcqMethod
    std::string FailReason;
    std::string UsedMirror;
    std::string IP;
-   
+
    // Handlers for messages
    virtual bool Configuration(std::string Message);
    virtual bool Fetch(FetchItem * /*Item*/) {return true;};
-   
+   virtual bool URIAcquire(std::string const &/*Message*/, FetchItem *Itm) { return Fetch(Itm); };
+
    // Outgoing messages
    void Fail(bool Transient = false);
    inline void Fail(const char *Why, bool Transient = false) {Fail(std::string(Why),Transient);};

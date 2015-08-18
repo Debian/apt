@@ -287,9 +287,11 @@ string FindMountPointForDevice(const char *devnode)
 	    fclose(f);
 	    // unescape the \0XXX chars in the path
 	    string mount_point = out[1];
+	    free(line);
 	    return DeEscapeString(mount_point);
 	 }
 	 fclose(f);
+	 free(line);
       }
 
    return string();

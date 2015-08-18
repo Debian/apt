@@ -84,7 +84,8 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
    {
       int upgradable = 0;
-      Cache.Open();
+      if (Cache.Open() == false)
+         return false;
       for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
       {
          pkgDepCache::StateCache &state = Cache[I];

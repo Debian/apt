@@ -115,14 +115,17 @@ from archives which in their <filename>Release</filename> files are marked as "N
 
 <varlistentry>
 <term>priority 500</term>
-<listitem><simpara>to the versions that are not installed and do not belong to the target release.</simpara></listitem>
+<listitem><simpara>to the versions that do not belong to the target release.</simpara></listitem>
 </varlistentry>
 
 <varlistentry>
 <term>priority 990</term>
-<listitem><simpara>to the versions that are not installed and belong to the target release.</simpara></listitem>
+<listitem><simpara>to the versions that belong to the target release.</simpara></listitem>
 </varlistentry>
 </variablelist>
+
+The highest of those priorities whose description matches the version is assigned to the
+version.
 </para>
 
 <para>If the target release has not been specified then APT simply assigns
@@ -251,6 +254,11 @@ Pin-Priority: 500
 </programlisting>
 </listitem>
 </itemizedlist>
+
+The effect of the comma operator is similar to an "and" in logic: All
+conditions must be satisfied for the pin to match. There is one exception:
+For any type of condition (such as two "a" conditions), only the last such
+condition is checked.
 </para>
 
 </refsect2>
@@ -267,7 +275,7 @@ expression surrounded by slashes).
 
 <programlisting>
 Package: gnome* /kde/
-Pin: release n=experimental
+Pin: release a=experimental
 Pin-Priority: 500
 </programlisting>
 
@@ -339,14 +347,21 @@ only if there is no installed version of the package</simpara></listitem>
 <term>P &lt; 0</term>
 <listitem><simpara>prevents the version from being installed</simpara></listitem>
 </varlistentry>
+<varlistentry>
+<term>P = 0</term>
+<listitem><simpara>has undefined behaviour, do not use it.</simpara></listitem>
+</varlistentry>
 </variablelist>
 </para>
 
-<para>If any specific-form records match an available package version then the
-first such record determines the priority of the package version.  
-Failing that,
-if any general-form records match an available package version then the
-first such record determines the priority of the package version.</para>
+<para>
+The first specific-form record matching an available package version determines
+the priority of the package version.
+Failing that, the priority of the package is defined as the maximum of all
+priorities defined by generic-form records matching the version.
+Records defined using patterns in the Pin field other than "*" are treated like
+specific-form records.
+</para>
 
 <para>For example, suppose the APT preferences file contains the three
 records presented earlier:</para>

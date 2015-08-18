@@ -25,6 +25,8 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 
+#include <sstream>
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -199,10 +201,12 @@ static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &reco
    std::string ShortDescription = "(none)";
    if(ver)
    {
-      pkgCache::DescIterator Desc = ver.TranslatedDescription();
-      pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
-
-      ShortDescription = parser.ShortDesc();
+      pkgCache::DescIterator const Desc = ver.TranslatedDescription();
+      if (Desc.end() == false)
+      {
+	 pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+	 ShortDescription = parser.ShortDesc();
+      }
    }
    return ShortDescription;
 }
@@ -222,11 +226,14 @@ static std::string GetLongDescription(pkgCacheFile &CacheFile, pkgRecords &recor
       return EmptyDescription;
 
    pkgCache::DescIterator const Desc = ver.TranslatedDescription();
-   pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
-   std::string const longdesc = parser.LongDesc();
-   if (longdesc.empty() == true)
-      return EmptyDescription;
-   return SubstVar(longdesc, "\n ", "\n  ");
+   if (Desc.end() == false)
+   {
+      pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+      std::string const longdesc = parser.LongDesc();
+      if (longdesc.empty() == false)
+	 return SubstVar(longdesc, "\n ", "\n  ");
+   }
+   return EmptyDescription;
 }
 									/*}}}*/
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
@@ -291,66 +298,6 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       output.erase(output.length() - 1);
 
    out << output;
-}
-									/*}}}*/
-// ShowList - Show a list						/*{{{*/
-// ---------------------------------------------------------------------
-/* This prints out a string of space separated words with a title and 
-   a two space indent line wraped to the current screen width. */
-bool ShowList(ostream &out,string Title,string List,string VersionsList)
-{
-   if (List.empty() == true)
-      return true;
-   // trim trailing space
-   int NonSpace = List.find_last_not_of(' ');
-   if (NonSpace != -1)
-   {
-      List = List.erase(NonSpace + 1);
-      if (List.empty() == true)
-	 return true;
-   }
-
-   // Acount for the leading space
-   int ScreenWidth = ::ScreenWidth - 3;
-      
-   out << Title << endl;
-   string::size_type Start = 0;
-   string::size_type VersionsStart = 0;
-   while (Start < List.size())
-   {
-      if(_config->FindB("APT::Get::Show-Versions",false) == true &&
-         VersionsList.size() > 0) {
-         string::size_type End;
-         string::size_type VersionsEnd;
-         
-         End = List.find(' ',Start);
-         VersionsEnd = VersionsList.find('\n', VersionsStart);
-
-         out << "   " << string(List,Start,End - Start) << " (" << 
-            string(VersionsList,VersionsStart,VersionsEnd - VersionsStart) << 
-            ")" << endl;
-
-	 if (End == string::npos || End < Start)
-	    End = Start + ScreenWidth;
-
-         Start = End + 1;
-         VersionsStart = VersionsEnd + 1;
-      } else {
-         string::size_type End;
-
-         if (Start + ScreenWidth >= List.size())
-            End = List.size();
-         else
-            End = List.rfind(' ',Start+ScreenWidth);
-
-         if (End == string::npos || End < Start)
-            End = Start + ScreenWidth;
-         out << "  " << string(List,Start,End - Start) << endl;
-         Start = End + 1;
-      }
-   }   
-
-   return false;
 }
 									/*}}}*/
 // ShowBroken - Debugging aide						/*{{{*/
@@ -486,11 +433,9 @@ void ShowBroken(ostream &out, CacheFile &Cache, bool const Now)
       return;
 
    out << _("The following packages have unmet dependencies:") << endl;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator const I(Cache,Cache.List[J]);
-      ShowBrokenPackage(out, &Cache, I, Now);
-   }
+   SortedPackageUniverse Universe(Cache);
+   for (auto const &Pkg: Universe)
+      ShowBrokenPackage(out, &Cache, Pkg, Now);
 }
 void ShowBroken(ostream &out, pkgCacheFile &Cache, bool const Now)
 {
@@ -498,98 +443,64 @@ void ShowBroken(ostream &out, pkgCacheFile &Cache, bool const Now)
       return;
 
    out << _("The following packages have unmet dependencies:") << endl;
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
+   APT::PackageUniverse Universe(Cache);
+   for (auto const &Pkg: Universe)
       ShowBrokenPackage(out, &Cache, Pkg, Now);
 }
 									/*}}}*/
 // ShowNew - Show packages to newly install				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void ShowNew(ostream &out,CacheFile &Cache)
 {
-   /* Print out a list of packages that are going to be installed extra
-      to what the user asked */
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      if (Cache[I].NewInstall() == true) {
-         List += I.FullName(true) + " ";
-         VersionsList += string(Cache[I].CandVersion) + "\n";
-      }
-   }
-   
-   ShowList(out,_("The following NEW packages will be installed:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   ShowList(out,_("The following NEW packages will be installed:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall(); },
+	 &PrettyFullName,
+	 CandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowDel - Show packages to delete					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void ShowDel(ostream &out,CacheFile &Cache)
 {
-   /* Print out a list of packages that are going to be removed extra
-      to what the user asked */
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      if (Cache[I].Delete() == true)
-      {
-	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	    List += I.FullName(true) + "* ";
-	 else
-	    List += I.FullName(true) + " ";
-     
-     VersionsList += string(Cache[I].CandVersion)+ "\n";
-      }
-   }
-   
-   ShowList(out,_("The following packages will be REMOVED:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   ShowList(out,_("The following packages will be REMOVED:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].Delete(); },
+	 [&Cache](pkgCache::PkgIterator const &Pkg)
+	 {
+	    std::string str = PrettyFullName(Pkg);
+	    if (((*Cache)[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
+	       str.append("*");
+	    return str;
+	 },
+	 CandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowKept - Show kept packages					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void ShowKept(ostream &out,CacheFile &Cache)
 {
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {	 
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      
-      // Not interesting
-      if (Cache[I].Upgrade() == true || Cache[I].Upgradable() == false ||
-	  I->CurrentVer == 0 || Cache[I].Delete() == true)
-	 continue;
-      
-      List += I.FullName(true) + " ";
-      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
-   }
-   ShowList(out,_("The following packages have been kept back:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   ShowList(out,_("The following packages have been kept back:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg)
+	 {
+	    return Cache[Pkg].Upgrade() == false &&
+		   Cache[Pkg].Upgradable() == true &&
+		   Pkg->CurrentVer != 0 &&
+		   Cache[Pkg].Delete() == false;
+	 },
+	 &PrettyFullName,
+	 CurrentToCandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowUpgraded - Show upgraded packages				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void ShowUpgraded(ostream &out,CacheFile &Cache)
 {
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      
-      // Not interesting
-      if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
-	 continue;
-
-      List += I.FullName(true) + " ";
-      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
-   }
-   ShowList(out,_("The following packages will be upgraded:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   ShowList(out,_("The following packages will be upgraded:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg)
+	 {
+	    return Cache[Pkg].Upgrade() == true && Cache[Pkg].NewInstall() == false;
+	 },
+	 &PrettyFullName,
+	 CurrentToCandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowDowngraded - Show downgraded packages				/*{{{*/
@@ -597,74 +508,73 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
 /* */
 bool ShowDowngraded(ostream &out,CacheFile &Cache)
 {
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      
-      // Not interesting
-      if (Cache[I].Downgrade() == false || Cache[I].NewInstall() == true)
-	 continue;
-
-      List += I.FullName(true) + " ";
-      VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
-   }
-   return ShowList(out,_("The following packages will be DOWNGRADED:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   return ShowList(out,_("The following packages will be DOWNGRADED:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg)
+	 {
+	    return Cache[Pkg].Downgrade() == true && Cache[Pkg].NewInstall() == false;
+	 },
+	 &PrettyFullName,
+	 CurrentToCandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool ShowHold(ostream &out,CacheFile &Cache)
 {
-   string List;
-   string VersionsList;
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-   {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      if (Cache[I].InstallVer != (pkgCache::Version *)I.CurrentVer() &&
-          I->SelectedState == pkgCache::State::Hold) {
-         List += I.FullName(true) + " ";
-		 VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
-      }
-   }
-
-   return ShowList(out,_("The following held packages will be changed:"),List,VersionsList);
+   SortedPackageUniverse Universe(Cache);
+   return ShowList(out,_("The following held packages will be changed:"), Universe,
+	 [&Cache](pkgCache::PkgIterator const &Pkg)
+	 {
+	    return Pkg->SelectedState == pkgCache::State::Hold &&
+		   Cache[Pkg].InstallVer != (pkgCache::Version *)Pkg.CurrentVer();
+	 },
+	 &PrettyFullName,
+	 CurrentToCandidateVersion(&Cache));
 }
 									/*}}}*/
 // ShowEssential - Show an essential package warning			/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out a warning message that is not to be ignored. It shows
-   all essential packages and their dependents that are to be removed. 
+   all essential packages and their dependents that are to be removed.
    It is insanely risky to remove the dependents of an essential package! */
+struct APT_HIDDEN PrettyFullNameWithDue {
+   std::map<unsigned long long, pkgCache::PkgIterator> due;
+   PrettyFullNameWithDue() {}
+   std::string operator() (pkgCache::PkgIterator const &Pkg)
+   {
+      std::string const A = PrettyFullName(Pkg);
+      std::map<unsigned long long, pkgCache::PkgIterator>::const_iterator d = due.find(Pkg->ID);
+      if (d == due.end())
+        return A;
+
+      std::string const B = PrettyFullName(d->second);
+      std::ostringstream outstr;
+      ioprintf(outstr, _("%s (due to %s)"), A.c_str(), B.c_str());
+      return outstr.str();
+   }
+};
 bool ShowEssential(ostream &out,CacheFile &Cache)
 {
-   string List;
-   string VersionsList;
-   bool *Added = new bool[Cache->Head().PackageCount];
-   for (unsigned int I = 0; I != Cache->Head().PackageCount; I++)
-      Added[I] = false;
-   
-   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
+   std::vector<bool> Added(Cache->Head().PackageCount, false);
+   APT::PackageDeque pkglist;
+   PrettyFullNameWithDue withdue;
+
+   SortedPackageUniverse Universe(Cache);
+   for (pkgCache::PkgIterator const &I: Universe)
    {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if ((I->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
 	  (I->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
 	 continue;
-      
+
       // The essential package is being removed
-      if (Cache[I].Delete() == true)
-      {
-	 if (Added[I->ID] == false)
-	 {
-	    Added[I->ID] = true;
-	    List += I.FullName(true) + " ";
-        //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
-	 }
-      }
-      else
+      if (Cache[I].Delete() == false)
 	 continue;
+
+      if (Added[I->ID] == false)
+      {
+	 Added[I->ID] = true;
+	 pkglist.insert(I);
+      }
 
       if (I->CurrentVer == 0)
 	 continue;
@@ -676,27 +586,23 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	 if (D->Type != pkgCache::Dep::PreDepends &&
 	     D->Type != pkgCache::Dep::Depends)
 	    continue;
-	 
+
 	 pkgCache::PkgIterator P = D.SmartTargetPkg();
 	 if (Cache[P].Delete() == true)
 	 {
 	    if (Added[P->ID] == true)
 	       continue;
 	    Added[P->ID] = true;
-	    
-	    char S[300];
-	    snprintf(S,sizeof(S),_("%s (due to %s) "),P.FullName(true).c_str(),I.FullName(true).c_str());
-	    List += S;
-        //VersionsList += "\n"; ???
-	 }	 
-      }      
-   }
-   
-   delete [] Added;
-   return ShowList(out,_("WARNING: The following essential packages will be removed.\n"
-			 "This should NOT be done unless you know exactly what you are doing!"),List,VersionsList);
-}
 
+	    pkglist.insert(P);
+	    withdue.due[P->ID] = I;
+	 }
+      }
+   }
+   return ShowList(out,_("WARNING: The following essential packages will be removed.\n"
+			 "This should NOT be done unless you know exactly what you are doing!"),
+	 pkglist, &AlwaysTrue, withdue, &EmptyString);
+}
 									/*}}}*/
 // Stats - Show some statistics						/*{{{*/
 // ---------------------------------------------------------------------
@@ -824,3 +730,33 @@ bool AnalPrompt(const char *Text)
    return false;
 }
 									/*}}}*/
+
+std::string PrettyFullName(pkgCache::PkgIterator const &Pkg)
+{
+   return Pkg.FullName(true);
+}
+std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
+{
+   return (*Cache)[Pkg].CandVersion;
+}
+std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache)
+{
+   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CandidateVersion), Cache, std::placeholders::_1);
+}
+std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
+{
+   return std::string((*Cache)[Pkg].CurVersion) + " => " + (*Cache)[Pkg].CandVersion;
+}
+std::function<std::string(pkgCache::PkgIterator const &)> CurrentToCandidateVersion(pkgCacheFile * const Cache)
+{
+   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CurrentToCandidateVersion), Cache, std::placeholders::_1);
+}
+bool AlwaysTrue(pkgCache::PkgIterator const &)
+{
+      return true;
+}
+std::string EmptyString(pkgCache::PkgIterator const &)
+{
+   return std::string();
+}
+

@@ -38,15 +38,10 @@ class pkgDirStream
 	           Directory, FIFO} Type;
       char *Name;
       char *LinkTarget;
-#if APT_PKG_ABI >= 413
-      unsigned long long Size;
-#endif
       unsigned long Mode;
       unsigned long UID;
       unsigned long GID;
-#if APT_PKG_ABI < 413
-      unsigned long Size;
-#endif
+      unsigned long long Size;
       unsigned long MTime;
       unsigned long Major;
       unsigned long Minor;
@@ -55,13 +50,8 @@ class pkgDirStream
    virtual bool DoItem(Item &Itm,int &Fd);
    virtual bool Fail(Item &Itm,int Fd);
    virtual bool FinishedFile(Item &Itm,int Fd);
-#if APT_PKG_ABI >= 413
    virtual bool Process(Item &/*Itm*/,const unsigned char * /*Data*/,
 			unsigned long long /*Size*/,unsigned long long /*Pos*/) {return true;};
-#else
-   virtual bool Process(Item &/*Itm*/,const unsigned char * /*Data*/,
-			unsigned long /*Size*/,unsigned long /*Pos*/) {return true;};
-#endif
    virtual ~pkgDirStream() {};   
 };
 

@@ -15,7 +15,6 @@
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/edspindexfile.h>
 #include <apt-pkg/edspsystem.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 
@@ -23,16 +22,11 @@
 #include <string>
 #include <vector>
 
-#include <apti18n.h>
 									/*}}}*/
 
-// System::debSystem - Constructor					/*{{{*/
-edspSystem::edspSystem()
+// System::edspSystem - Constructor					/*{{{*/
+edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(NULL), StatusFile(NULL)
 {
-   StatusFile = 0;
-
-   Label = "Debian APT solver interface";
-   VS = &debVS;
 }
 									/*}}}*/
 // System::~debSystem - Destructor					/*{{{*/
@@ -85,18 +79,13 @@ bool edspSystem::ArchiveSupported(const char * /*Type*/)
    return false;
 }
 									/*}}}*/
-// System::Score - Determine if we should use the edsp system		/*{{{*/
-signed edspSystem::Score(Configuration const &Cnf)
+// System::Score - Never use the EDSP system automatically		/*{{{*/
+signed edspSystem::Score(Configuration const &)
 {
-   if (Cnf.Find("edsp::scenario", "") == "stdin")
-      return 1000;
-   if (RealFileExists(Cnf.FindFile("edsp::scenario","")) == true)
-      return 1000;
    return -1000;
 }
 									/*}}}*/
-// System::AddStatusFiles - Register the status files			/*{{{*/
-bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
+bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
 {
    if (StatusFile == 0)
    {

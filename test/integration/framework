@@ -99,10 +99,14 @@ msgdone() {
 }
 getaptconfig() {
 	if [ -f ./aptconfig.conf ]; then
-            echo "./aptconfig.conf"
+		echo "$(readlink -f ./aptconfig.conf)"
 	elif [ -f ../aptconfig.conf ]; then
-            echo "../aptconfig.conf"
-        fi
+		echo "$(readlink -f ../aptconfig.conf)"
+	elif [ -f ../../aptconfig.conf ]; then
+		echo "$(readlink -f ../../aptconfig.conf)"
+	elif [ -f "${TMPWORKINGDIRECTORY}/aptconfig.conf" ]; then
+		echo "$(readlink -f "${TMPWORKINGDIRECTORY}/aptconfig.conf")"
+	fi
 }
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
@@ -137,7 +141,17 @@ dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
 }
 gdb() {
-	local CMD="$1"
+	local CMD
+	case "$1" in
+	aptget) CMD="apt-get";;
+	aptcache) CMD="apt-cache";;
+	aptcdrom) CMD="apt-cdrom";;
+	aptconfig) CMD="apt-config";;
+	aptmark) CMD="apt-mark";;
+	apthelper) CMD="apt-helper";;
+	aptftparchive) CMD="apt-ftparchive";;
+	*) CMD="$1";;
+	esac
 	shift
 	runapt command gdb --quiet -ex run "${BUILDDIRECTORY}/$CMD" --args "${BUILDDIRECTORY}/$CMD" "$@"
 }
@@ -238,7 +252,7 @@ setupenvironment() {
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
+	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# store apt-key were we can access it, even if we run it as a different user
 	# destroys coverage reporting though, so just do it for root for now
 	if [ "$(id -u)" = '0' ]; then
@@ -266,16 +280,19 @@ EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
 
-	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
-		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
-	fi
-	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
-	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
-	# too distracting for users, but helpful to detect changes
-	echo 'Acquire::Progress::Ignore::ShowErrorText "true";' >> aptconfig.conf
-	# in testcases, it can appear as if localhost has a rotation setup,
-	# hide this as we can't really deal with it properly
-	echo 'Acquire::Failure::ShowIP "false";' >> aptconfig.conf
+	{
+		if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
+			echo "DPKG::options:: \"--force-architecture\";" # Added to test multiarch before dpkg is ready for it…
+		fi
+		echo 'quiet::NoUpdate "true";'
+		echo 'quiet::NoStatistic "true";'
+		# too distracting for users, but helpful to detect changes
+		echo 'Acquire::Progress::Ignore::ShowErrorText "true";'
+		echo 'Acquire::Progress::Diffpercent "true";'
+		# in testcases, it can appear as if localhost has a rotation setup,
+		# hide this as we can't really deal with it properly
+		echo 'Acquire::Failure::ShowIP "false";'
+	} >> aptconfig.conf
 
 	cp "${TESTDIRECTORY}/apt.pem" "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	if [ "$(id -u)" = '0' ]; then
@@ -513,6 +530,12 @@ Package: $NAME" > debian/control
 
 buildsimplenativepackage() {
 	local NAME="$1"
+	local NM
+	if [ "$(echo "$NAME" | cut -c 1-3)" = 'lib' ]; then
+		NM="$(echo "$NAME" | cut -c 1-4)"
+	else
+		NM="$(echo "$NAME" | cut -c 1)"
+	fi
 	local ARCH="$2"
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
@@ -547,10 +570,12 @@ echo '$NAME says \"Hello!\"'" > ${BUILDDIR}/${NAME}
 
  -- Joe Sixpack <joe@example.org>  $(date -R)" > ${BUILDDIR}/debian/changelog
 	echo "Source: $NAME
-Section: $SECTION
 Priority: $PRIORITY
 Maintainer: Joe Sixpack <joe@example.org>
 Standards-Version: 3.9.3" > ${BUILDDIR}/debian/control
+	if [ "$SECTION" != '<none>' ]; then
+		echo "Section: $SECTION" >> ${BUILDDIR}/debian/control
+	fi
 	local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
 	test -z "$BUILDDEPS" || echo "$BUILDDEPS" >> ${BUILDDIR}/debian/control
 	echo "
@@ -593,15 +618,15 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
-		# ensure the right permissions as dpkg-deb ensists
+		# ensure the right permissions as dpkg-deb insists
 		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
 		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/..
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
-	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
-	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
+	local CHANGEPATH="${BUILDDIR}/../${DISTSECTION}/${NM}/${NAME}/${NAME}_${VERSION}"
+	mkdir -p $CHANGEPATH
+	cp ${BUILDDIR}/debian/changelog $CHANGEPATH
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -773,6 +798,8 @@ insertsource() {
 	local SPATH="aptarchive/dists/${RELEASE}/main/source"
 	mkdir -p $SPATH
 	local FILE="${SPATH}/Sources"
+	local DSCFILE="${NAME}_${VERSION}.dsc"
+	local TARFILE="${NAME}_${VERSION}.tar.gz"
 	echo "Package: $NAME
 Binary: $NAME
 Version: $VERSION
@@ -780,8 +807,8 @@ Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
 	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
 	echo "Files:
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.dsc
- d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.tar.gz
+ $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
+ $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
 " >> $FILE
 }
 
@@ -835,7 +862,9 @@ buildaptarchivefromincoming() {
 
 buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
-	find aptarchive -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
+	local DIR='aptarchive'
+	if [ -d "${DIR}/dists" ]; then DIR="${DIR}/dists"; fi
+	find "$DIR" -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
 		msgninfo "\t${line} file… "
 		compressfile "$line" "$1"
 		msgdone "info"
@@ -867,6 +896,7 @@ getcodenamefromsuite() {
 }
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
+getoriginfromsuite() { true; }
 
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
@@ -878,16 +908,21 @@ generatereleasefiles() {
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
 			local LABEL="$(getlabelfromsuite $SUITE)"
+			local ORIGIN="$(getoriginfromsuite $SUITE)"
 			if [ -n "$VERSION" ]; then
 				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
 			fi
 			if [ -n "$LABEL" ]; then
 				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
 			fi
+			if [ -n "$ORIGIN" ]; then
+				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
+			fi
 			aptftparchive -qq release $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
 				${LABEL} \
+				${ORIGIN} \
 				${VERSION} \
 					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
@@ -1263,7 +1298,7 @@ testdpkgstatus() {
 	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep "^${STATE}" | wc -l)"
 	if [ "$PKGS" != $NR ]; then
 		echo >&2 $PKGS
-		dpkg -l "$@" | grep '^[a-z]' >&2
+		dpkg -l "$@" | grep '^[a-z]' >&2 || true
 		msgfail
 	else
 		msgpass
@@ -1288,6 +1323,17 @@ testmarkedauto() {
 		echo -n > $COMPAREFILE
 	fi
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+}
+testmarkedmanual() {
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
+	if [ -n "$1" ]; then
+		msgtest 'Test for correctly marked as manually installed' "$*"
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+	else
+		msgtest 'Test for correctly marked as manually installed' 'no package'
+		echo -n > $COMPAREFILE
+	fi
+	aptmark showmanual 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 
 msgfailoutput() {
@@ -1331,8 +1377,17 @@ testsuccess() {
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-			elif grep -q -E '^[WE]: ' "$OUTPUT"; then
-				msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+			elif grep -E '^[WE]: ' "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
+				if [ "$IGNORE_PTY_NOT_MOUNTED" = '1' ]; then
+					if echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)' \
+						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
+						msgpass
+					else
+						msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+					fi
+				else
+					msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+				fi
 			else
 				msgpass
 			fi
@@ -1387,12 +1442,23 @@ testfailure() {
 	else
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if grep -q -E ' runtime error: ' "$OUTPUT"; then
-				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-			elif ! grep -q -E '^E: ' "$OUTPUT"; then
-				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
+			if [ "$1" = 'aptkey' ]; then
+				if grep -q -E " Can't check signature: " "$OUTPUT" || \
+					grep -q -E " BAD signature from " "$OUTPUT"; then
+					msgpass
+				else
+					msgfailoutput "run failed with exitcode ${EXITCODE}, but no signature error" "$OUTPUT" "$@"
+				fi
 			else
-				msgpass
+				if grep -q -E ' runtime error: ' "$OUTPUT"; then
+					msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+				elif grep -q -E '==ERROR' "$OUTPUT"; then
+					msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
+				elif ! grep -q -E '^E: ' "$OUTPUT"; then
+					msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
+				else
+					msgpass
+				fi
 			fi
 		else
 			msgpass
@@ -1441,9 +1507,9 @@ testfilestats() {
 		msgpass
 	else
 		echo >&2
-		ls -ld >&2 "$1"
+		ls -ld >&2 "$1" || true
 		echo -n >&2 "stat(1) reports for $2: "
-		stat --format "$2" "$1"
+		stat --format "$2" "$1" || true
 		msgfail
 	fi
 }
@@ -1529,6 +1595,11 @@ aptautotest() {
 }
 
 aptautotest_aptget_update() {
+	local TESTCALL="$1"
+	while [ -n "$2" ]; do
+		if [ "$2" = '--print-uris' ]; then return; fi # simulation mode
+		shift
+	done
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
@@ -1536,7 +1607,7 @@ aptautotest_aptget_update() {
 	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
-	if [ "$1" = 'testsuccess' ]; then
+	if [ "$TESTCALL" = 'testsuccess' ]; then
 		# failure cases can retain partial files and such
 		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)
 	fi

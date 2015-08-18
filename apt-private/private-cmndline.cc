@@ -51,6 +51,7 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
       addArg(0, "conflicts", "APT::Cache::ShowConflicts", 0);
       addArg(0, "enhances", "APT::Cache::ShowEnhances", 0);
       addArg(0, "recurse", "APT::Cache::RecurseDepends", 0);
+      addArg(0, "implicit", "APT::Cache::ShowImplicit", 0);
    }
    else if (CmdMatches("search"))
    {
@@ -163,14 +164,19 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       // once sbuild is fixed, this option can be removed
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
    }
-   else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
+   else if (CmdMatches("indextargets"))
+   {
+      addArg(0,"format","APT::Get::IndexTargets::Format", CommandLine::HasArg);
+      addArg(0,"release-info","APT::Get::IndexTargets::ReleaseInfo", 0);
+   }
+   else if (CmdMatches("clean", "autoclean", "auto-clean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
       ;
    else if (CmdMatches("moo"))
       addArg(0, "color", "APT::Moo::Color", 0);
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "dselect-upgrade", "autoremove", "clean", "autoclean", "check",
+	    "dselect-upgrade", "autoremove", "auto-remove", "clean", "autoclean", "auto-clean", "check",
 	    "build-dep", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
@@ -196,6 +202,9 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg(0,"ignore-hold","APT::Ignore-Hold",0);
    addArg(0,"upgrade","APT::Get::upgrade",0);
    addArg(0,"only-upgrade","APT::Get::Only-Upgrade",0);
+   addArg(0,"allow-change-held-packages","APT::Get::allow-change-held-packages",CommandLine::Boolean);
+   addArg(0,"allow-remove-essential","APT::Get::allow-remove-essential",CommandLine::Boolean);
+   addArg(0,"allow-downgrades","APT::Get::allow-downgrades",CommandLine::Boolean);
    addArg(0,"force-yes","APT::Get::force-yes",0);
    addArg(0,"print-uris","APT::Get::Print-URIs",0);
    addArg(0,"trivial-only","APT::Get::Trivial-Only",0);
@@ -236,6 +245,7 @@ static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * c
    if (CmdMatches("list"))
    {
       addArg(0,"installed","APT::Cmd::Installed",0);
+      addArg(0,"upgradeable","APT::Cmd::Upgradable",0);
       addArg(0,"upgradable","APT::Cmd::Upgradable",0);
       addArg(0,"manual-installed","APT::Cmd::Manual-Installed",0);
       addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);

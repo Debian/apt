@@ -23,7 +23,6 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
@@ -45,7 +44,7 @@ bool pkgPackageManager::SigINTStop = false;
 // ---------------------------------------------------------------------
 /* */
 pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
-							    List(NULL), Res(Incomplete)
+							    List(NULL), Res(Incomplete), d(NULL)
 {
    FileNames = new string[Cache.Head().PackageCount];
    Debug = _config->FindB("Debug::pkgPackageManager",false);
@@ -390,9 +389,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          // to do anything at all
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    SPtrArray<Version *> VList = Cur.AllTargets();
+	    std::unique_ptr<Version *> VList(Cur.AllTargets());
 
-	    for (Version **I = VList; *I != 0; ++I)
+	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
 	       VerIterator Ver(Cache,*I);
 	       PkgIterator DepPkg = Ver.ParentPkg();
@@ -440,9 +439,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          // probably due to loops.
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    SPtrArray<Version *> VList = Cur.AllTargets();
+	    std::unique_ptr<Version *> VList(Cur.AllTargets());
 
-	    for (Version **I = VList; *I != 0; ++I)
+	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
 	       VerIterator Ver(Cache,*I);
 	       PkgIterator DepPkg = Ver.ParentPkg();
@@ -515,9 +514,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 // Search for dependencies which are unpacked but aren't configured yet (maybe loops)
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    SPtrArray<Version *> VList = Cur.AllTargets();
+	    std::unique_ptr<Version *> VList(Cur.AllTargets());
 
-	    for (Version **I = VList; *I != 0; ++I)
+	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
 	       VerIterator Ver(Cache,*I);
 	       PkgIterator DepPkg = Ver.ParentPkg();
@@ -726,8 +725,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for easy targets: packages that are already okay
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Cur.AllTargets();
-	       for (Version **I = VList; *I != 0; ++I)
+	       std::unique_ptr<Version *> VList(Cur.AllTargets());
+	       for (Version **I = VList.get(); *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
 		  PkgIterator Pkg = Ver.ParentPkg();
@@ -750,8 +749,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for something that could be configured.
 	    for (DepIterator Cur = Start; Bad == true && Cur.end() == false; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Cur.AllTargets();
-	       for (Version **I = VList; *I != 0; ++I)
+	       std::unique_ptr<Version *[]> VList(Cur.AllTargets());
+	       for (Version **I = VList.get(); *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
 		  PkgIterator DepPkg = Ver.ParentPkg();
@@ -806,8 +805,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  End->Type == pkgCache::Dep::Obsoletes ||
 		  End->Type == pkgCache::Dep::DpkgBreaks)
 	 {
-	    SPtrArray<Version *> VList = End.AllTargets();
-	    for (Version **I = VList; *I != 0; ++I)
+	    std::unique_ptr<Version *[]> VList(End.AllTargets());
+	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
 	       VerIterator Ver(Cache,*I);
 	       PkgIterator ConflictPkg = Ver.ParentPkg();
@@ -1085,7 +1084,6 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - compat /*{{{*/
 // ---------------------------------------------------------------------
 									/*}}}*/
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
@@ -1107,22 +1105,10 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
    
    return Res;
 }
-#else
-pkgPackageManager::OrderResult
-pkgPackageManager::DoInstallPostFork(int statusFd)
-{
-   bool goResult = Go(statusFd);
-   if(goResult == false) 
-      return Failed;
-   
-   return Res;
-}
-#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* compat */
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(int statusFd)
 {
@@ -1132,21 +1118,11 @@ pkgPackageManager::DoInstall(int statusFd)
     delete progress;
     return res;
  }
-#else
-pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
-{
-   if(DoInstallPreFork() == Failed)
-      return Failed;
-
-   return DoInstallPostFork(statusFd);
-}
-#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-#if APT_PKG_ABI >= 413
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {
@@ -1155,5 +1131,4 @@ pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
    
    return DoInstallPostFork(progress);
 }
-#endif
 									/*}}}*/	      

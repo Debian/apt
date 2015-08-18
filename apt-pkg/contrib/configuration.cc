@@ -253,13 +253,7 @@ string Configuration::FindDir(const char *Name,const char *Default) const
 // Configuration::FindVector - Find a vector of values			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns a vector of config values under the given item */
-#if APT_PKG_ABI < 413
-vector<string> Configuration::FindVector(const char *Name) const
-{
-   return FindVector(Name, "");
-}
-#endif
-vector<string> Configuration::FindVector(const char *Name, std::string const &Default) const
+vector<string> Configuration::FindVector(const char *Name, std::string const &Default, bool const Keys) const
 {
    vector<string> Vec;
    const Item *Top = Lookup(Name);
@@ -272,7 +266,7 @@ vector<string> Configuration::FindVector(const char *Name, std::string const &De
    Item *I = Top->Child;
    while(I != NULL)
    {
-      Vec.push_back(I->Value);
+      Vec.push_back(Keys ? I->Tag : I->Value);
       I = I->Next;
    }
    if (Vec.empty() == true)

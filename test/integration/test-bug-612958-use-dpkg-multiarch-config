@@ -5,22 +5,19 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
 configarchitecture 'i386'
-setupaptarchive
-
-insertinstalledpackage 'libapt' 'i386' '1.0'
-insertinstalledpackage 'libapt' 'amd64' '1.0'
-insertinstalledpackage 'libapt' 'armel' '1.0'
 
 testpass() {
-	rm rootdir/var/cache/apt/*.bin
-	msgtest 'Test architecture handling' "$1 with $2"
-	testsuccess --nomsg aptcache show libapt:$2
+	msgtest 'Test architecture handling success' "$1 with $2"
+	rm -f archs.conf
+	aptconfig dump --no-empty --format='%V%n' APT::Architectures > archs.conf
+	testsuccess --nomsg grep "^$2\$" archs.conf
 }
 
 testfail() {
-	rm rootdir/var/cache/apt/*.bin
-	msgtest 'Test architecture handling' "$1 with $2"
-	testfailure --nomsg aptcache show libapt:$2
+	msgtest 'Test architecture handling failure' "$1 with $2"
+	rm -f archs.conf
+	aptconfig dump --no-empty --format='%V%n' APT::Architectures > archs.conf
+	testfailure --nomsg grep "^$2\$" archs.conf
 }
 
 testpass 'no config' 'i386'

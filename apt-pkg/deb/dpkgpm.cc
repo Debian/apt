@@ -18,7 +18,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/install-progress.h>
 #include <apt-pkg/packagemanager.h>
-#include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
@@ -27,7 +26,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <grp.h>
-#include <pty.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stddef.h>
@@ -205,8 +203,10 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       for (pkgCache::VerFileIterator Vf = Ver.FileList(); Vf.end() == false; ++Vf)
 	 for (pkgCache::PkgFileIterator F = Vf.File(); F.end() == false; ++F)
-	    if (F->Archive != 0 && strcmp(F.Archive(), "now") == 0)
+	 {
+	    if (F.Archive() != 0 && strcmp(F.Archive(), "now") == 0)
 	       return Ver;
+	 }
    return Ver;
 }
 									/*}}}*/
@@ -214,10 +214,9 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
+pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache)
+   : pkgPackageManager(Cache),d(new pkgDPkgPMPrivate()), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
 {
-   d = new pkgDPkgPMPrivate();
 }
 									/*}}}*/
 // DPkgPM::pkgDPkgPM - Destructor					/*{{{*/
@@ -1483,6 +1482,10 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	      a != Args.end(); ++a)
 	    clog << *a << ' ';
 	 clog << endl;
+	 for (std::vector<char *>::const_iterator p = Packages.begin();
+	       p != Packages.end(); ++p)
+	    free(*p);
+	 Packages.clear();
 	 continue;
       }
       Args.push_back(NULL);
@@ -1540,9 +1543,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       _exit(100);
 	 }
 
-	 /* No Job Control Stop Env is a magic dpkg var that prevents it
-	    from using sigstop */
-	 putenv((char *)"DPKG_NO_TSTP=yes");
 	 execvp(Args[0], (char**) &Args[0]);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
@@ -1841,16 +1841,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    time_t now = time(NULL);
    fprintf(report, "Date: %s" , ctime(&now));
    fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
-#if APT_PKG_ABI >= 413
    fprintf(report, "SourcePackage: %s\n", Ver.SourcePkgName());
-#else
-   pkgRecords Recs(Cache);
-   pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-   std::string srcpkgname = Parse.SourcePkg();
-   if(srcpkgname.empty())
-      srcpkgname = pkgname;
-   fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
-#endif
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
 
    // ensure that the log is flushed

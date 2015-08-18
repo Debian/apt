@@ -27,20 +27,22 @@ class FileFd;
 
 class APT_HIDDEN edspListParser : public debListParser
 {
+   void * const d;
    public:
-   virtual bool NewVersion(pkgCache::VerIterator &Ver);
+   virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::string Description();
    virtual std::string DescriptionLanguage();
-   virtual MD5SumValue Description_md5();
-   virtual unsigned short VersionHash();
+   virtual MD5SumValue Description_md5() APT_OVERRIDE;
+   virtual unsigned short VersionHash() APT_OVERRIDE;
 
-   bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
-			std::string section);
+   bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
+			std::string const &section);
 
-   edspListParser(FileFd *File, std::string const &Arch = "");
+   edspListParser(FileFd *File);
+   virtual ~edspListParser();
 
    protected:
-   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
 
 };
 

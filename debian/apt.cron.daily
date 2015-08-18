@@ -3,7 +3,7 @@
 #
 # This file understands the following apt configuration variables:
 # Values here are the default.
-# Create /etc/apt/apt.conf.d/02periodic file to set your preference.
+# Create /etc/apt/apt.conf.d/10periodic file to set your preference.
 #
 #  Dir "/";
 #  - RootDir for all configuration files
@@ -68,6 +68,19 @@
 #      1:  progress report       (actually any string)
 #      2:  + command outputs     (remove -qq, remove 2>/dev/null, add -d)
 #      3:  + trace on            
+#
+#  APT::Periodic::RandomSleep "1800";
+#  - The apt cron job will delay its execution by a random
+#    time span between zero and 'APT::Periodic::RandomSleep'
+#    seconds.
+#    This is done because otherwise everyone would access the
+#    mirror servers at the same time and put them collectively
+#    under very high strain.
+#    You can set this to '0' if you are using a local mirror and
+#    do not care about the load spikes.
+#    Note that sleeping in the apt job will be delaying the
+#    execution of all subsequent cron.daily jobs.
+#
 
 check_stamp()
 {

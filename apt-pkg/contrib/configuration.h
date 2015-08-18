@@ -84,15 +84,8 @@ class Configuration
     *
     * \param Name of the parent node
     * \param Default list of values separated by commas */
-#if APT_PKG_ABI >= 413
-   std::vector<std::string> FindVector(const char *Name, std::string const &Default = "") const;
-   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default = "") const { return FindVector(Name.c_str(), Default); };
-#else
-   std::vector<std::string> FindVector(const char *Name, std::string const &Default) const;
-   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default) const { return FindVector(Name.c_str(), Default); };
-   std::vector<std::string> FindVector(const char *Name) const;
-   std::vector<std::string> FindVector(std::string const &Name) const { return FindVector(Name.c_str(), ""); };
-#endif
+   std::vector<std::string> FindVector(const char *Name, std::string const &Default = "", bool const Keys = false) const;
+   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default = "", bool const Keys = false) const { return FindVector(Name.c_str(), Default, Keys); };
 
    int FindI(const char *Name,int const &Default = 0) const;
    int FindI(std::string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};

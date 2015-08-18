@@ -42,9 +42,9 @@ class CDROMMethod : public pkgAcqMethod
  
    bool IsCorrectCD(URI want, string MountPath, string& NewID);
    bool AutoDetectAndMount(const URI, string &NewID);
-   virtual bool Fetch(FetchItem *Itm);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    string GetID(string Name);
-   virtual void Exit();
+   virtual void Exit() APT_OVERRIDE;
       
    public:
    
@@ -260,7 +260,8 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(Res.Filename.c_str(),&Buf) != 0)
       return _error->Error(_("File not found"));
-   
+
+   URIStart(Res);
    if (NewID.empty() == false)
       CurrentID = NewID;
    Res.LastModified = Buf.st_mtime;

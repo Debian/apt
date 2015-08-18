@@ -306,6 +306,7 @@ TEST(HashSumsTest, HashStringList)
    EXPECT_EQ(NULL, list.find(NULL));
    EXPECT_EQ(NULL, list.find(""));
    EXPECT_EQ(NULL, list.find("MD5Sum"));
+   EXPECT_EQ(0, list.FileSize());
 
    // empty lists aren't equal
    HashStringList list2;
@@ -316,6 +317,8 @@ TEST(HashSumsTest, HashStringList)
    list.push_back(HashString("Checksum-FileSize", "29"));
    EXPECT_FALSE(list.empty());
    EXPECT_FALSE(list.usable());
+   EXPECT_EQ(1, list.size());
+   EXPECT_EQ(29, list.FileSize());
 
    Hashes hashes;
    hashes.Add("The quick brown fox jumps over the lazy dog");

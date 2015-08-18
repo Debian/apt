@@ -40,3 +40,6 @@ pkgVersioningSystem *pkgVersioningSystem::GetVS(const char *Label)
    return 0;
 }
 									/*}}}*/
+
+
+pkgVersioningSystem::~pkgVersioningSystem() {}

@@ -13,15 +13,15 @@ insertinstalledpackage 'base-files' 'all' '5.0.0-1'
 setupaptarchive
 
 STATUS=$(readlink -f rootdir/var/lib/dpkg/status)
-APTARCHIVE="$(readlink -f aptarchive)/"
+APTARCHIVE="$(readlink -f aptarchive)"
 
 testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
   Version table:
- *** 5.0.0-1 0
+ *** 5.0.0-1 100
         100 $STATUS
-     5.0.0 0
+     5.0.0 500
         500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=0
 
 writepin() {
@@ -33,21 +33,18 @@ Pin-Priority: $2" > rootdir/etc/apt/preferences
 
 
 testpinning() {
-	local PKGPIN=''
-	local PKGPINPRIO='0'
+	local PKGPINPRIO=''
 	local REPPINPRIO=''
 	if [ "$1" != '*' ]; then
 		PKGPINPRIO=''
 		REPPINPRIO=' 500'
-		PKGPIN='Package pin: 5.0.0
-  '
 	fi
 	writepin "$1" '99'
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
- *** 5.0.0-1 ${PKGPINPRIO:-99}
+  Version table:
+ *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-99}
        ${REPPINPRIO:-  99} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=99
@@ -56,8 +53,8 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
- *** 5.0.0-1 ${PKGPINPRIO:-100}
+  Version table:
+ *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-100}
        ${REPPINPRIO:- 100} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=100
@@ -66,8 +63,8 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0-1
-  ${PKGPIN}Version table:
- *** 5.0.0-1 ${PKGPINPRIO:-999}
+  Version table:
+ *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-999}
        ${REPPINPRIO:- 999} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=999
@@ -76,8 +73,8 @@ testpinning() {
 	testsuccessequal "base-files:
   Installed: 5.0.0-1
   Candidate: 5.0.0
-  ${PKGPIN}Version table:
- *** 5.0.0-1 ${PKGPINPRIO:-1000}
+  Version table:
+ *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-1000}
        ${REPPINPRIO:-1000} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=1000

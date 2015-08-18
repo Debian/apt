@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // setDefaultConfigurationForCompressors				/*{{{*/
@@ -222,7 +221,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
 	// we extract both, a long and a short code and then we will
 	// check if we actually need both (rare) or if the short is enough
-	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : *Locale);
+	string const envMsg = string(Locale == 0 ? ::setlocale(LC_MESSAGES, NULL) : *Locale);
 	size_t const lenShort = (envMsg.find('_') != string::npos) ? envMsg.find('_') : 2;
 	size_t const lenLong = (envMsg.find_first_of(".@") != string::npos) ? envMsg.find_first_of(".@") : (lenShort + 3);
 

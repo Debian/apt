@@ -117,14 +117,6 @@ APT
   // does a ExecFork)
   Keep-Fds {};
 
-  Changelogs
-  {
-    // server the provides the changelogs, the code will assume
-    // the changlogs are in the pool/ under a srcpkg_ver directory 
-    // with the name "changelog"
-    Server "http://packages.debian.org/changelogs";
-  }:
-
   // control parameters for cron jobs by /etc/cron.daily/apt
   Periodic
   {
@@ -305,6 +297,9 @@ Acquire
      "none";
      "fr";
   };
+
+  // Location of the changelogs with the placeholder CHANGEPATH (e.g. "main/a/apt/apt_1.1")
+  Changelogs::URI::Origin::Debian "http://metadata.ftp-master.debian.org/changelogs/CHANGEPATH_changelog";
 };
 
 // Directory layout

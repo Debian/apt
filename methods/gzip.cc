@@ -32,8 +32,8 @@ const char *Prog;
 
 class GzipMethod : public pkgAcqMethod
 {
-   virtual bool Fetch(FetchItem *Itm);
-   virtual bool Configuration(std::string Message);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    
    public:
    

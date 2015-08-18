@@ -253,12 +253,12 @@ static bool DumpPackage(CommandLine &CmdL)
       {
 	 cout << Cur.VerStr() << " - ";
 	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; ++Prv)
-	    cout << Prv.ParentPkg().FullName(true) << " ";
+	    cout << Prv.ParentPkg().FullName(true) << " (= " << (Prv->ProvideVersion == 0 ? "" : Prv.ProvideVersion()) << ") ";
 	 cout << endl;
       }
       cout << "Reverse Provides: " << endl;
       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; ++Prv)
-	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr() << endl;
+	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr()  << " (= " << (Prv->ProvideVersion == 0 ? "" : Prv.ProvideVersion()) << ")"<< endl;
    }
 
    return true;
@@ -310,10 +310,15 @@ static void ShowHashTableStats(std::string Type,
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool Stats(CommandLine &)
+static bool Stats(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
+
+   if (CmdL.FileSize() > 1) {
+      _error->Error(_("apt-cache stats does not take any arguments"));
+      return false;
+   }
    if (unlikely(Cache == NULL))
       return false;
 
@@ -364,14 +369,14 @@ static bool Stats(CommandLine &)
    cout << _("  Single virtual packages: ") << DVirt << endl;
    cout << _("  Mixed virtual packages: ") << NVirt << endl;
    cout << _("  Missing: ") << Missing << endl;
-   
+
    cout << _("Total distinct versions: ") << Cache->Head().VersionCount << " (" <<
       SizeToStr(Cache->Head().VersionCount*Cache->Head().VersionSz) << ')' << endl;
    cout << _("Total distinct descriptions: ") << Cache->Head().DescriptionCount << " (" <<
       SizeToStr(Cache->Head().DescriptionCount*Cache->Head().DescriptionSz) << ')' << endl;
-   cout << _("Total dependencies: ") << Cache->Head().DependsCount << " (" << 
-      SizeToStr(Cache->Head().DependsCount*Cache->Head().DependencySz) << ')' << endl;
-   
+   cout << _("Total dependencies: ") << Cache->Head().DependsCount << "/" << Cache->Head().DependsDataCount << " (" <<
+      SizeToStr((Cache->Head().DependsCount*Cache->Head().DependencySz) +
+	    (Cache->Head().DependsDataCount*Cache->Head().DependencyDataSz)) << ')' << endl;
    cout << _("Total ver/file relations: ") << Cache->Head().VerFileCount << " (" <<
       SizeToStr(Cache->Head().VerFileCount*Cache->Head().VerFileSz) << ')' << endl;
    cout << _("Total Desc/File relations: ") << Cache->Head().DescFileCount << " (" <<
@@ -392,10 +397,8 @@ static bool Stats(CommandLine &)
 	    stritems.insert(V->VerStr);
 	 if (V->Section != 0)
 	    stritems.insert(V->Section);
-#if APT_PKG_ABI >= 413
 	 stritems.insert(V->SourcePkgName);
 	 stritems.insert(V->SourceVerStr);
-#endif
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
@@ -413,23 +416,27 @@ static bool Stats(CommandLine &)
 	    stritems.insert(Prv->ProvideVersion);
       }
    }
-   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+   for (pkgCache::RlsFileIterator F = Cache->RlsFileBegin(); F != Cache->RlsFileEnd(); ++F)
    {
       stritems.insert(F->FileName);
       stritems.insert(F->Archive);
       stritems.insert(F->Codename);
-      stritems.insert(F->Component);
       stritems.insert(F->Version);
       stritems.insert(F->Origin);
       stritems.insert(F->Label);
-      stritems.insert(F->Architecture);
       stritems.insert(F->Site);
+   }
+   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+   {
+      stritems.insert(F->FileName);
+      stritems.insert(F->Architecture);
+      stritems.insert(F->Component);
       stritems.insert(F->IndexType);
    }
+
    unsigned long Size = 0;
    for (std::set<map_stringitem_t>::const_iterator i = stritems.begin(); i != stritems.end(); ++i)
       Size += strlen(Cache->StrP + *i) + 1;
-
    cout << _("Total globbed strings: ") << stritems.size() << " (" << SizeToStr(Size) << ')' << endl;
    stritems.clear();
 
@@ -446,6 +453,8 @@ static bool Stats(CommandLine &)
       APT_CACHESIZE(VersionCount, VersionSz) +
       APT_CACHESIZE(DescriptionCount, DescriptionSz) +
       APT_CACHESIZE(DependsCount, DependencySz) +
+      APT_CACHESIZE(DependsDataCount, DependencyDataSz) +
+      APT_CACHESIZE(ReleaseFileCount, ReleaseFileSz) +
       APT_CACHESIZE(PackageFileCount, PackageFileSz) +
       APT_CACHESIZE(VerFileCount, VerFileSz) +
       APT_CACHESIZE(DescFileCount, DescFileSz) +
@@ -685,6 +694,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
    bool const ShowBreaks = _config->FindB("APT::Cache::ShowBreaks", Important == false);
    bool const ShowEnhances = _config->FindB("APT::Cache::ShowEnhances", Important == false);
    bool const ShowOnlyFirstOr = _config->FindB("APT::Cache::ShowOnlyFirstOr", false);
+   bool const ShowImplicit = _config->FindB("APT::Cache::ShowImplicit", false);
 
    while (verset.empty() != true)
    {
@@ -705,12 +715,16 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
 	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
 	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
-	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
+	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
 	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
 	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
 	    }
+	    if (ShowImplicit == false && D.IsImplicit())
+	       continue;
 
 	    pkgCache::PkgIterator Trg = RevDepends ? D.ParentPkg() : D.TargetPkg();
+	    bool const showNoArch = RevDepends || (D->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific;
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
@@ -724,9 +738,9 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (ShowDepType == true)
 		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << "<" << Trg.FullName(true) << ">";
+		  cout << "<" << Trg.FullName(showNoArch) << ">";
 		else
-		  cout << Trg.FullName(true);
+		  cout << Trg.FullName(showNoArch);
 		if (ShowVersion == true && D->Version != 0)
 		   cout << " (" << pkgCache::CompTypeDeb(D->CompareOp) << ' ' << D.TargetVer() << ')';
 		cout << std::endl;
@@ -740,9 +754,9 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	      }
 	    
 	    // Display all solutions
-	    SPtrArray<pkgCache::Version *> List = D.AllTargets();
-	    pkgPrioSortList(*Cache,List);
-	    for (pkgCache::Version **I = List; *I != 0; I++)
+	    std::unique_ptr<pkgCache::Version *[]> List(D.AllTargets());
+	    pkgPrioSortList(*Cache,List.get());
+	    for (pkgCache::Version **I = List.get(); *I != 0; I++)
 	    {
 	       pkgCache::VerIterator V(*Cache,*I);
 	       if (V != Cache->VerP + V.ParentPkg()->VersionList ||
@@ -1318,6 +1332,7 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
+   pkgCache::VerIterator V;
    map_id_t ID;
 };
 
@@ -1403,6 +1418,7 @@ static bool Search(CommandLine &CmdL)
 	 if (D.end() == true)
 	    continue;
 	 DFList[G->ID].Df = D.FileList();
+	 DFList[G->ID].V = V;
 	 DFList[G->ID].ID = G->ID;
       }
 
@@ -1422,11 +1438,12 @@ static bool Search(CommandLine &CmdL)
 	 if (D.end() == true)
 	    continue;
 	 DFList[id].Df = D.FileList();
+	 DFList[id].V = V;
 	 DFList[id].ID = id;
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
 	 for (unsigned I = 0; I < NumPatterns; ++I)
-	    PatternMatch[PrvPatternOffset + I] = PatternMatch[PatternOffset + I];
+	    PatternMatch[PrvPatternOffset + I] |= PatternMatch[PatternOffset + I];
       }
    }
 
@@ -1463,13 +1480,7 @@ static bool Search(CommandLine &CmdL)
       if (matchedAll == true)
       {
 	 if (ShowFull == true)
-	 {
-	    const char *Start;
-	    const char *End;
-	    P.GetRec(Start,End);
-	    fwrite(Start,End-Start,1,stdout);
-	    putc('\n',stdout);
-	 }	 
+	    DisplayRecord(CacheFile, J->V);
 	 else
 	    printf("%s - %s\n",P.Name().c_str(),P.ShortDesc().c_str());
       }
@@ -1479,6 +1490,7 @@ static bool Search(CommandLine &CmdL)
    delete [] PatternMatch;
    for (unsigned I = 0; I != NumPatterns; I++)
       regfree(&Patterns[I]);
+   delete [] Patterns;
    if (ferror(stdout))
        return _error->Error("Write to stdout failed");
    return true;
@@ -1633,6 +1645,8 @@ static bool Policy(CommandLine &CmdL)
       cout << _("Package files:") << endl;   
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
       {
+	 if (F.Flagged(pkgCache::Flag::NoPackages))
+	    continue;
 	 // Locate the associated index files so we can derive a description
 	 pkgIndexFile *Indx;
 	 if (SrcList->FindIndex(F,Indx) == false &&
@@ -1655,19 +1669,33 @@ static bool Policy(CommandLine &CmdL)
       pkgCache::PkgIterator I = Cache->PkgBegin();
       for (;I.end() != true; ++I)
       {
-	 if (Plcy->GetPriority(I) == 0)
-	    continue;
+	 // Old code for debugging
+	 if (_config->FindI("APT::Policy", 1) < 1) {
+	    if (Plcy->GetPriority(I) == 0)
+	       continue;
 
-	 // Print the package name and the version we are forcing to
-	 cout << "     " << I.FullName(true) << " -> ";
-	 
-	 pkgCache::VerIterator V = Plcy->GetMatch(I);
-	 if (V.end() == true)
-	    cout << _("(not found)") << endl;
-	 else
-	    cout << V.VerStr() << endl;
-      }     
-      
+	    // Print the package name and the version we are forcing to
+	    cout << "     " << I.FullName(true) << " -> ";
+
+	    pkgCache::VerIterator V = Plcy->GetMatch(I);
+	    if (V.end() == true)
+	       cout << _("(not found)") << endl;
+	    else
+	       cout << V.VerStr() << endl;
+
+	    continue;
+	 }
+	 // New code
+	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); V++) {
+	    auto Prio = Plcy->GetPriority(V, false);
+	    if (Prio == 0)
+	       continue;
+
+	    cout << "     ";
+	    // Print the package name and the version we are forcing to
+	    ioprintf(cout, _("%s -> %s with priority %d\n"), I.FullName(true).c_str(), V.VerStr(), Prio);
+	 }
+      }
       return true;
    }
 
@@ -1703,7 +1731,7 @@ static bool Policy(CommandLine &CmdL)
 	 cout << V.VerStr() << endl;
 
       // Pinned version
-      if (Plcy->GetPriority(Pkg) != 0)
+      if (_config->FindI("APT::Policy", 1) < 1 && Plcy->GetPriority(Pkg) != 0)
       {
 	 cout << _("  Package pin: ");
 	 V = Plcy->GetMatch(Pkg);
@@ -1721,7 +1749,10 @@ static bool Policy(CommandLine &CmdL)
 	    cout << " *** " << V.VerStr();
 	 else
 	    cout << "     " << V.VerStr();
-	 cout << " " << Plcy->GetPriority(Pkg) << endl;
+	 if (_config->FindI("APT::Policy", 1) < 1)
+	    cout << " " << Plcy->GetPriority(Pkg) << endl;
+	 else
+	    cout << " " << Plcy->GetPriority(V) << endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description

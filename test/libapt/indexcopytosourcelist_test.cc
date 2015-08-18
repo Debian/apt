@@ -15,10 +15,10 @@ class NoCopy : public IndexCopy {
 	 IndexCopy::ConvertToSourceList(CD, Path);
 	 return Path;
       }
-      bool GetFile(std::string &/*Filename*/, unsigned long long &/*Size*/) { return false; }
-      bool RewriteEntry(FileFd & /*Target*/, std::string const &/*File*/) { return false; }
-      const char *GetFileName() { return NULL; }
-      const char *Type() { return NULL; }
+      bool GetFile(std::string &/*Filename*/, unsigned long long &/*Size*/) APT_OVERRIDE { return false; }
+      bool RewriteEntry(FileFd & /*Target*/, std::string const &/*File*/) APT_OVERRIDE { return false; }
+      const char *GetFileName() APT_OVERRIDE { return NULL; }
+      const char *Type() APT_OVERRIDE { return NULL; }
 
 };
 

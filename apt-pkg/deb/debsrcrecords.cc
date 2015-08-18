@@ -32,6 +32,10 @@
 using std::max;
 using std::string;
 
+debSrcRecordParser::debSrcRecordParser(std::string const &File,pkgIndexFile const *Index)
+   : Parser(Index), d(NULL), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),
+   iOffset(0), Buffer(NULL) {}
+
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
 // ---------------------------------------------------------------------
 /* This member parses the binaries field into a pair of class arrays and

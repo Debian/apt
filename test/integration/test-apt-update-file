@@ -22,14 +22,33 @@ addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-amd64;'
 chmod 550 aptarchive/dists/unstable/main/binary-amd64
 
 testsuccess aptget update
-testsuccess aptget update -o Debug::pkgAcquire::Auth=1
-cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
 
-# ensure that the hash of the uncompressed file was verified even on a local ims hit
+# the release files aren't an IMS-hit, but the indexes are
+redatereleasefiles '+1 hour'
+
+# we don't download the index if it isn't updated
+testsuccess aptget update -o Debug::pkgAcquire::Auth=1
+# file:/ isn't shown in the log, so see if it was downloaded anyhow
+cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
+canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
+testfailure grep -- "$canary" rootdir/tmp/update.output
+
+testfoo() {
+	# foo is still available
+	testsuccess aptget install -s foo
+	testsuccess aptcache showsrc foo
+	testsuccess aptget source foo --print-uris
+}
+testfoo
+
+# the release file is new again, the index still isn't, but it is somehow gone now from disk
+redatereleasefiles '+2 hour'
+find rootdir/var/lib/apt/lists -name '*_Packages*' -delete
+
+testsuccess aptget update -o Debug::pkgAcquire::Auth=1
+# file:/ isn't shown in the log, so see if it was downloaded anyhow
+cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
 canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
 testsuccess grep -- "$canary" rootdir/tmp/update.output
 
-# foo is still available
-testsuccess aptget install -s foo
-testsuccess aptcache showsrc foo
-testsuccess aptget source foo --print-uris
+testfoo

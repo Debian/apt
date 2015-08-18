@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.h,v 1.10 2001/05/22 04:17:41 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms
@@ -55,6 +54,7 @@ using std::ostream;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
+   void * const d;
    protected:
 
    class Policy : public pkgDepCache::Policy
@@ -62,12 +62,12 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
       pkgDepCache *Cache;
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg)
+      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg) APT_OVERRIDE
       {
 	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
       }
       
-      Policy(pkgDepCache *Cache) : Cache(Cache) {};
+      explicit Policy(pkgDepCache *Cache) : Cache(Cache) {};
    };
    
    unsigned char *Flags;
@@ -77,9 +77,9 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache::ActionGroup group;
    
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,std::string File);
-   virtual bool Configure(PkgIterator Pkg);
-   virtual bool Remove(PkgIterator Pkg,bool Purge);
+   virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
+   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
+   virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;
 
 private:
    APT_HIDDEN void ShortBreaks();
@@ -87,15 +87,15 @@ private:
 
    public:
 
-   pkgSimulate(pkgDepCache *Cache);
-   ~pkgSimulate();
+   explicit pkgSimulate(pkgDepCache *Cache);
+   virtual ~pkgSimulate();
 };
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
  private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
 
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;
@@ -138,25 +138,15 @@ class pkgProblemResolver						/*{{{*/
    inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
 
    // Try to intelligently resolve problems by installing and removing packages
-#if APT_PKG_ABI >= 413
    bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);
-#else
-   bool Resolve(bool BrokenFix = false);
-   bool Resolve(bool BrokenFix, OpProgress * const Progress);
-#endif
 
    // Try to resolve problems only by using keep
-#if APT_PKG_ABI >= 413
    bool ResolveByKeep(OpProgress * const Progress = NULL);
-#else
-   bool ResolveByKeep();
-   bool ResolveByKeep(OpProgress * const Progress);
-#endif
 
    APT_DEPRECATED void InstallProtect();
 
-   pkgProblemResolver(pkgDepCache *Cache);
-   ~pkgProblemResolver();
+   explicit pkgProblemResolver(pkgDepCache *Cache);
+   virtual ~pkgProblemResolver();
 };
 									/*}}}*/
 bool pkgApplyStatus(pkgDepCache &Cache);

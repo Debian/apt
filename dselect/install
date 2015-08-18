@@ -49,7 +49,7 @@ yesno() {
 
 if [ "$WAIT" = "true" ]; then
    $APTGET $DSELECT_UPGRADE_OPTS $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
-   echo $"Press enter to continue." && read RES
+   echo $"Press [Enter] to continue." && read RES
    $APTGET $DSELECT_UPGRADE_OPTS $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 else
@@ -65,7 +65,7 @@ fi
 # Finished OK
 if [ $RES -eq 0 ]; then
 
-   if [ $(ls $ARCHIVES $ARCHIVES/partial | egrep -v "^lock$|^partial$" | wc -l) \
+   if [ $(ls $ARCHIVES $ARCHIVES/partial | grep -E -v "^lock$|^partial$" | wc -l) \
         -eq 0 ]; then
       exit 0
    fi
@@ -81,18 +81,18 @@ if [ $RES -eq 0 ]; then
    case $(echo $CLEAN | tr '[:upper:]' '[:lower:]') in
      auto)
        $APTGET "$APT_OPT0" "$APT_OPT1" autoclean &&
-	   echo $"Press enter to continue." && read RES && exit 0;
+	   echo $"Press [Enter] to continue." && read RES && exit 0;
        ;;
      always)
        $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
-	   echo $"Press enter to continue." && read RES && exit 0;
+	   echo $"Press [Enter] to continue." && read RES && exit 0;
        ;;
      prompt)
        exec 3>&1
        echo -n $"Do you want to erase any previously downloaded .deb files?"
        if [ $(yesno "" y) = y ]; then
           $APTGET "$APT_OPT0" "$APT_OPT1" clean &&
-	    echo $"Press enter to continue." && read RES && exit 0;
+	    echo $"Press [Enter] to continue." && read RES && exit 0;
        fi
        ;;
      *) 
@@ -103,7 +103,7 @@ else
    echo $"will be configured. This may result in duplicate errors"
    echo $"or errors caused by missing dependencies. This is OK, only the errors"
    echo $"above this message are important. Please fix them and run [I]nstall again"
-   echo $"Press enter to continue."
+   echo $"Press [Enter] to continue."
    read RES && $DPKG "$DPKG_OPTS" --configure -a
    exit 100
 fi

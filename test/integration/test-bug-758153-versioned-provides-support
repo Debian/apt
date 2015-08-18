@@ -30,6 +30,18 @@ insertpackage 'unstable' 'baz' 'i386,amd64' '1' 'Depends: bar'
 insertpackage 'experimental' 'baz' 'i386,amd64' '2' 'Depends: bar:i386'
 insertpackage 'experimental' 'baz-broken' 'i386' '2' 'Depends: bar:amd64'
 
+insertpackage 'unstable' 'next' 'amd64' '1' 'Multi-Arch: foreign
+Provides: next (= 2)'
+insertpackage 'unstable' 'needsrealnext' 'amd64,i386' '2' 'Depends: next (>= 2)'
+
+insertpackage 'unstable' 'virtualnext2' 'amd64' '1' 'Multi-Arch: foreign
+Provides: next2 (= 2)'
+insertpackage 'unstable' 'needsnext2' 'amd64,i386' '2' 'Depends: next2 (>= 2)'
+
+insertpackage 'unstable' 'virtualnext3' 'amd64' '1' 'Multi-Arch: no
+Provides: next3 (= 2)'
+insertpackage 'unstable' 'needsnext3' 'amd64,i386' '2' 'Depends: next3 (>= 2)'
+
 setupaptarchive
 
 testsuccessequal 'Reading package lists...
@@ -145,7 +157,7 @@ Conf cool-webapp (4 experimental [all])' aptget install cool-webapp foreign-webs
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   baz:i386 foo
@@ -170,7 +182,7 @@ E: Unable to correct problems, you have held broken packages.' aptget install ba
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Selected version '2' (experimental [amd64]) for 'baz'
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   baz foo
@@ -183,7 +195,7 @@ Conf baz (2 experimental [amd64])" aptget install baz/experimental -s -q=0
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Selected version '2' (experimental [i386]) for 'baz:i386'
-The following extra packages will be installed:
+The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
   baz:i386 foo
@@ -204,3 +216,75 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  baz-broken:i386 : Depends: bar but it is not installable
 E: Unable to correct problems, you have held broken packages.' aptget install baz-broken -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  next
+The following NEW packages will be installed:
+  needsrealnext next
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst next (1 unstable [amd64])
+Inst needsrealnext (2 unstable [amd64])
+Conf next (1 unstable [amd64])
+Conf needsrealnext (2 unstable [amd64])' aptget install needsrealnext -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  next
+The following NEW packages will be installed:
+  needsrealnext:i386 next
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst next (1 unstable [amd64])
+Inst needsrealnext:i386 (2 unstable [i386])
+Conf next (1 unstable [amd64])
+Conf needsrealnext:i386 (2 unstable [i386])' aptget install needsrealnext:i386 -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  virtualnext2
+The following NEW packages will be installed:
+  needsnext2 virtualnext2
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst virtualnext2 (1 unstable [amd64])
+Inst needsnext2 (2 unstable [amd64])
+Conf virtualnext2 (1 unstable [amd64])
+Conf needsnext2 (2 unstable [amd64])' aptget install needsnext2 -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  virtualnext2
+The following NEW packages will be installed:
+  needsnext2:i386 virtualnext2
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst virtualnext2 (1 unstable [amd64])
+Inst needsnext2:i386 (2 unstable [i386])
+Conf virtualnext2 (1 unstable [amd64])
+Conf needsnext2:i386 (2 unstable [i386])' aptget install needsnext2:i386 -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  virtualnext3
+The following NEW packages will be installed:
+  needsnext3 virtualnext3
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst virtualnext3 (1 unstable [amd64])
+Inst needsnext3 (2 unstable [amd64])
+Conf virtualnext3 (1 unstable [amd64])
+Conf needsnext3 (2 unstable [amd64])' aptget install needsnext3 -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ needsnext3:i386 : Depends: next3:i386 (>= 2) but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget install needsnext3:i386 -s

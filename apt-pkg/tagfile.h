@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: tagfile.h,v 1.20 2003/05/19 17:13:57 doogie Exp $
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
@@ -38,17 +37,9 @@ class pkgTagSectionPrivate;
 class pkgTagSection
 {
    const char *Section;
-   // We have a limit of 256 tags per section with the old abi
-#if APT_PKG_ABI < 413
-   APT_DEPRECATED unsigned int Indexes[256];
-#endif
    unsigned int AlphaIndexes[0x100];
-#if APT_PKG_ABI < 413
-   APT_DEPRECATED unsigned int TagCount;
-#endif
 
-   // dpointer placeholder (for later in case we need it)
-   pkgTagSectionPrivate *d;
+   pkgTagSectionPrivate * const d;
 
    protected:
    const char *Stop;
@@ -65,6 +56,10 @@ class pkgTagSection
    signed int FindI(const char *Tag,signed long Default = 0) const;
    bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
+   bool FindFlag(const char * const Tag,uint8_t &Flags,
+		 uint8_t const Flag) const;
+   bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
+				const char* const Start, const char* const Stop);
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
    bool static FindFlag(unsigned long &Flags, unsigned long Flag,
@@ -86,12 +81,7 @@ class pkgTagSection
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!
     */
-#if APT_PKG_ABI >= 413
    APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
-#else
-   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart);
-   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength);
-#endif
 
    inline unsigned long size() const {return Stop - Section;};
    void Trim();
@@ -103,11 +93,7 @@ class pkgTagSection
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
-#if APT_PKG_ABI >= 413
    bool Exists(const char* const Tag) const;
-#else
-   bool Exists(const char* const Tag);
-#endif
 
    void Get(const char *&Start,const char *&Stop,unsigned int I) const;
 
@@ -138,16 +124,24 @@ class pkgTagSection
     *
     * @param File to write the section to
     * @param Order in which tags should appear in the file
-    * @param Rewrite is a set of tags to be renamed, rewitten and/or removed
+    * @param Rewrite is a set of tags to be renamed, rewritten and/or removed
     * @return \b true if successful, otherwise \b false
     */
    bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
 };
 
+
+/* For user generated file the parser should be a bit more relaxed in exchange
+   for being a bit slower to allow comments and new lines all over the place */
+class pkgUserTagSection : public pkgTagSection
+{
+   virtual void TrimRecord(bool BeforeRecord, const char* &End) APT_OVERRIDE;
+};
+
 class pkgTagFilePrivate;
 class pkgTagFile
 {
-   pkgTagFilePrivate *d;
+   pkgTagFilePrivate * const d;
 
    APT_HIDDEN bool Fill();
    APT_HIDDEN bool Resize();
@@ -159,9 +153,9 @@ class pkgTagFile
    unsigned long Offset();
    bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
-   void Init(FileFd *F,unsigned long long Size = 32*1024);
+   void Init(FileFd * const F,unsigned long long const Size = 32*1024);
 
-   pkgTagFile(FileFd *F,unsigned long long Size = 32*1024);
+   pkgTagFile(FileFd * const F,unsigned long long Size = 32*1024);
    virtual ~pkgTagFile();
 };
 

@@ -76,3 +76,6 @@ pkgRecords::Parser &pkgRecords::Lookup(pkgCache::DescFileIterator const &Desc)
    return *Files[Desc.File()->ID];
 }
 									/*}}}*/
+
+pkgRecords::Parser::Parser() : d(NULL) {}
+pkgRecords::Parser::~Parser() {}

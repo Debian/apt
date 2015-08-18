@@ -53,11 +53,8 @@ public:
 // System::debSystem - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debSystem::debSystem()
+debSystem::debSystem() : pkgSystem("Debian dpkg interface", &debVS), d(new debSystemPrivate())
 {
-   d = new debSystemPrivate();
-   Label = "Debian dpkg interface";
-   VS = &debVS;
 }
 									/*}}}*/
 // System::~debSystem - Destructor					/*{{{*/

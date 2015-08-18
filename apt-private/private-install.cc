@@ -21,6 +21,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/debindexfile.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -57,7 +58,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
    }
    
-   bool Fail = false;
+   bool Hold = false;
+   bool Downgrade = false;
    bool Essential = false;
    
    // Show all the various warning indicators
@@ -65,13 +67,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    ShowNew(c1out,Cache);
    if (ShwKept == true)
       ShowKept(c1out,Cache);
-   Fail |= !ShowHold(c1out,Cache);
+   Hold = !ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
       ShowUpgraded(c1out,Cache);
-   Fail |= !ShowDowngraded(c1out,Cache);
+   Downgrade = !ShowDowngraded(c1out,Cache);
+
    if (_config->FindB("APT::Get::Download-Only",false) == false)
         Essential = !ShowEssential(c1out,Cache);
-   Fail |= Essential;
+
+   // All kinds of failures
+   bool Fail = (Essential || Downgrade || Hold);
+
    Stats(c1out,Cache);
 
    // Sanity check
@@ -88,20 +94,33 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    // No remove flag
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("Packages need to be removed but remove is disabled."));
-       
+
+   // Fail safe check
+   if (_config->FindI("quiet",0) >= 2 ||
+       _config->FindB("APT::Get::Assume-Yes",false) == true)
+   {
+      if (_config->FindB("APT::Get::Force-Yes",false) == true) {
+	 _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
+      }
+
+      if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false) {
+	 if (Essential == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
+	    return _error->Error(_("Essential packages were removed and -y was used without --allow-remove-essential."));
+	 if (Downgrade == true && _config->FindB("APT::Get::allow-downgrades", false) == false)
+	    return _error->Error(_("Packages were downgraded and -y was used without --allow-downgrades."));
+	 if (Hold == true && _config->FindB("APT::Get::allow-change-held-packages", false) == false)
+	    return _error->Error(_("Held packages were changed and -y was used without --allow-change-held-packages."));
+      }
+   }
+
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
    {
       pkgSimulate PM(Cache);
 
-#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
       delete progress;
-#else
-      int status_fd = _config->FindI("APT::Status-Fd",-1);
-      pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
-#endif
 
       if (Res == pkgPackageManager::Failed)
 	 return false;
@@ -132,7 +151,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the package manager and prepare to download
-   SPtr<pkgPackageManager> PM= _system->CreatePM(Cache);
+   std::unique_ptr<pkgPackageManager> PM(_system->CreatePM(Cache));
    if (PM->GetArchives(&Fetcher,List,&Recs) == false || 
        _error->PendingError() == true)
       return false;
@@ -177,15 +196,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (CheckFreeSpaceBeforeDownload(_config->FindDir("Dir::Cache::Archives"), (FetchBytes - FetchPBytes)) == false)
       return false;
 
-   // Fail safe check
-   if (_config->FindI("quiet",0) >= 2 ||
-       _config->FindB("APT::Get::Assume-Yes",false) == true)
-   {
-      if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false)
-	 return _error->Error(_("There are problems and -y was used without --force-yes"));
-   }         
-
-   if (Essential == true && Safety == true)
+   if (Essential == true && Safety == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
@@ -307,14 +318,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 
       _system->UnLock();
 
-#if APT_PKG_ABI >= 413
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
       delete progress;
-#else
-      int status_fd = _config->FindI("APT::Status-Fd", -1);
-      pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
-#endif
 
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
@@ -330,19 +336,17 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    }
 
    std::set<std::string> const disappearedPkgs = PM->GetDisappearedPackages();
-   if (disappearedPkgs.empty() == true)
-      return true;
-
-   std::string disappear;
-   for (std::set<std::string>::const_iterator d = disappearedPkgs.begin();
-	d != disappearedPkgs.end(); ++d)
-      disappear.append(*d).append(" ");
-
-   ShowList(c1out, P_("The following package disappeared from your system as\n"
-	"all files have been overwritten by other packages:",
-	"The following packages disappeared from your system as\n"
-	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
-   c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
+   if (disappearedPkgs.empty() == false)
+   {
+      ShowList(c1out, P_("The following package disappeared from your system as\n"
+	       "all files have been overwritten by other packages:",
+	       "The following packages disappeared from your system as\n"
+	       "all files have been overwritten by other packages:", disappearedPkgs.size()), disappearedPkgs,
+	    [](std::string const &Pkg) { return Pkg.empty() == false; },
+	    [](std::string const &Pkg) { return Pkg; },
+	    [](std::string const &) { return std::string(); });
+      c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
+   }
 
    return true;
 }
@@ -374,11 +378,10 @@ static bool DoAutomaticRemove(CacheFile &Cache)
 
    unsigned long autoRemoveCount = 0;
    APT::PackageSet tooMuch;
-   APT::PackageList autoRemoveList;
+   SortedPackageUniverse Universe(Cache);
    // look over the cache to see what can be removed
-   for (unsigned J = 0; J < Cache->Head().PackageCount; ++J)
+   for (auto const &Pkg: Universe)
    {
-      pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
       if (Cache[Pkg].Garbage)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
@@ -395,8 +398,6 @@ static bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
-	    if (hideAutoRemove == false && Cache[Pkg].Delete() == false)
-	       autoRemoveList.insert(Pkg);
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
@@ -419,7 +420,7 @@ static bool DoAutomaticRemove(CacheFile &Cache)
       bool Changed;
       do {
 	 Changed = false;
-	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
+	 for (APT::PackageSet::iterator Pkg = tooMuch.begin();
 	      Pkg != tooMuch.end(); ++Pkg)
 	 {
 	    APT::PackageSet too;
@@ -456,18 +457,6 @@ static bool DoAutomaticRemove(CacheFile &Cache)
       } while (Changed == true);
    }
 
-   std::string autoremovelist, autoremoveversions;
-   if (smallList == false && autoRemoveCount != 0)
-   {
-      for (APT::PackageList::const_iterator Pkg = autoRemoveList.begin(); Pkg != autoRemoveList.end(); ++Pkg)
-      {
-	 if (Cache[Pkg].Garbage == false)
-	    continue;
-	 autoremovelist += Pkg.FullName(true) + " ";
-	 autoremoveversions += std::string(Cache[Pkg].CandVersion) + "\n";
-      }
-   }
-
    // Now see if we had destroyed anything (if we had done anything)
    if (Cache->BrokenCount() != 0)
    {
@@ -482,12 +471,17 @@ static bool DoAutomaticRemove(CacheFile &Cache)
    }
 
    // if we don't remove them, we should show them!
-   if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
+   if (doAutoRemove == false && autoRemoveCount != 0)
    {
       if (smallList == false)
+      {
+	 SortedPackageUniverse Universe(Cache);
 	 ShowList(c1out, P_("The following package was automatically installed and is no longer required:",
 	          "The following packages were automatically installed and are no longer required:",
-	          autoRemoveCount), autoremovelist, autoremoveversions);
+	          autoRemoveCount), Universe,
+	       [&Cache](pkgCache::PkgIterator const &Pkg) { return (*Cache)[Pkg].Garbage == true && (*Cache)[Pkg].Delete() == false; },
+	       &PrettyFullName, CandidateVersion(&Cache));
+      }
       else
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
@@ -513,9 +507,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
 
-   SPtr<pkgProblemResolver> Fix;
+   std::unique_ptr<pkgProblemResolver> Fix(nullptr);
    if (_config->FindB("APT::Get::CallResolver", true) == true)
-      Fix = new pkgProblemResolver(Cache);
+      Fix.reset(new pkgProblemResolver(Cache));
 
    unsigned short fallback = MOD_INSTALL;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
@@ -525,7 +519,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       _config->Set("APT::Get::Purge", true);
       fallback = MOD_REMOVE;
    }
-   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0)
+   else if (strcasecmp(CmdL.FileList[0], "autoremove") == 0 ||
+	    strcasecmp(CmdL.FileList[0], "auto-remove") == 0)
    {
       _config->Set("APT::Get::AutomaticRemove", "true");
       fallback = MOD_REMOVE;
@@ -547,8 +542,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
    }
 
 
-  TryToInstall InstallAction(Cache, Fix, BrokenFix);
-  TryToRemove RemoveAction(Cache, Fix);
+  TryToInstall InstallAction(Cache, Fix.get(), BrokenFix);
+  TryToRemove RemoveAction(Cache, Fix.get());
 
    // new scope for the ActionGroup
    {
@@ -651,30 +646,26 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
+struct PkgIsExtraInstalled {
+   pkgCacheFile * const Cache;
+   APT::VersionSet const * const verset;
+   PkgIsExtraInstalled(pkgCacheFile * const Cache, APT::VersionSet const * const Container) : Cache(Cache), verset(Container) {}
+   bool operator() (pkgCache::PkgIterator const Pkg)
+   {
+        if ((*Cache)[Pkg].Install() == false)
+           return false;
+        pkgCache::VerIterator const Cand = (*Cache)[Pkg].CandidateVerIter(*Cache);
+        return verset->find(Cand) == verset->end();
+   }
+};
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
    // first check for local pkgs and add them to the cache
    for (const char **I = CmdL.FileList; *I != 0; I++)
    {
-      if(FileExists(*I))
-      {
-         // FIXME: make this more elegant
-         std::string TypeStr = flExtension(*I) + "-file";
-         pkgSourceList::Type *Type = pkgSourceList::Type::GetType(TypeStr.c_str());
-         if(Type != 0)
-         {
-            std::vector<metaIndex *> List;
-            std::map<std::string, std::string> Options;
-            if(Type->CreateItem(List, *I, "", "", Options))
-            {
-               // we have our own CacheFile that gives us a SourceList
-               // with superpowerz
-               SourceList *sources = (SourceList*)Cache.GetSourceList();
-               sources->AddMetaIndex(List[0]);
-            }
-         }
-      }
+      if(FileExists(*I) && flExtension(*I) == "deb")
+	 Cache.GetSourceList()->AddVolatileFile(new debDebPkgFileIndex(*I));
    }
 
    // then open the cache
@@ -689,35 +680,17 @@ bool DoInstall(CommandLine &CmdL)
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
+   SortedPackageUniverse Universe(Cache);
    if (Cache->InstCount() != verset[MOD_INSTALL].size())
-   {
-      std::string List;
-      std::string VersionsList;
-      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-      {
-	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
-	 if ((*Cache)[I].Install() == false)
-	    continue;
-	 pkgCache::VerIterator Cand = Cache[I].CandidateVerIter(Cache);
-
-	 if (verset[MOD_INSTALL].find(Cand) != verset[MOD_INSTALL].end())
-	    continue;
-
-	 List += I.FullName(true) + " ";
-	 VersionsList += std::string(Cache[I].CandVersion) + "\n";
-      }
-      
-      ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
-   }
+      ShowList(c1out, _("The following additional packages will be installed:"), Universe,
+	    PkgIsExtraInstalled(&Cache, &verset[MOD_INSTALL]),
+	    &PrettyFullName, CandidateVersion(&Cache));
 
    /* Print out a list of suggested and recommended packages */
    {
-      std::string SuggestsList, RecommendsList;
-      std::string SuggestsVersions, RecommendsVersions;
-      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
+      std::list<std::string> Recommends, Suggests, SingleRecommends, SingleSuggests;
+      for (auto const &Pkg: Universe)
       {
-	 pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
-
 	 /* Just look at the ones we want to install */
 	 if ((*Cache)[Pkg].Install() == false)
 	   continue;
@@ -729,77 +702,79 @@ bool DoInstall(CommandLine &CmdL)
 	    pkgCache::DepIterator Start;
 	    pkgCache::DepIterator End;
 	    D.GlobOr(Start,End); // advances D
+	    if (Start->Type != pkgCache::Dep::Recommends && Start->Type != pkgCache::Dep::Suggests)
+	       continue;
 
-	    // FIXME: we really should display a or-group as a or-group to the user
-	    //        the problem is that ShowList is incapable of doing this
-            std::string RecommendsOrList,RecommendsOrVersions;
-            std::string SuggestsOrList,SuggestsOrVersions;
-	    bool foundInstalledInOrGroup = false;
-	    for(;;)
 	    {
-	       /* Skip if package is  installed already, or is about to be */
-               std::string target = Start.TargetPkg().FullName(true) + " ";
-	       pkgCache::PkgIterator const TarPkg = Start.TargetPkg();
-	       if (TarPkg->SelectedState == pkgCache::State::Install ||
-		   TarPkg->SelectedState == pkgCache::State::Hold ||
-		   Cache[Start.TargetPkg()].Install())
+	       // Skip if we already saw this
+	       std::string target;
+	       for (pkgCache::DepIterator I = Start; I != D; ++I)
 	       {
-		  foundInstalledInOrGroup=true;
-		  break;
+		  if (target.empty() == false)
+		     target.append(" | ");
+		  target.append(I.TargetPkg().FullName(true));
 	       }
+	       std::list<std::string> &Type = Start->Type == pkgCache::Dep::Recommends ? SingleRecommends : SingleSuggests;
+	       if (std::find(Type.begin(), Type.end(), target) != Type.end())
+		  continue;
+	       Type.push_back(target);
+	    }
 
-	       /* Skip if we already saw it */
-	       if (int(SuggestsList.find(target)) != -1 || int(RecommendsList.find(target)) != -1)
+	    std::list<std::string> OrList;
+	    bool foundInstalledInOrGroup = false;
+	    for (pkgCache::DepIterator I = Start; I != D; ++I)
+	    {
 	       {
-		  foundInstalledInOrGroup=true;
-		  break; 
-	       }
-
-	       // this is a dep on a virtual pkg, check if any package that provides it
-	       // should be installed
-	       if(Start.TargetPkg().ProvidesList() != 0)
-	       {
-		  pkgCache::PrvIterator I = Start.TargetPkg().ProvidesList();
-		  for (; I.end() == false; ++I)
+		  // satisfying package is installed and not marked for deletion
+		  APT::VersionList installed = APT::VersionList::FromDependency(Cache, I, APT::CacheSetHelper::INSTALLED);
+		  if (std::find_if(installed.begin(), installed.end(),
+			   [&Cache](pkgCache::VerIterator const &Ver) { return Cache[Ver.ParentPkg()].Delete() == false; }) != installed.end())
 		  {
-		     pkgCache::PkgIterator Pkg = I.OwnerPkg();
-		     if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer() && 
-			 Pkg.CurrentVer() != 0)
-			foundInstalledInOrGroup=true;
+		     foundInstalledInOrGroup = true;
+		     break;
 		  }
 	       }
 
-	       if (Start->Type == pkgCache::Dep::Suggests) 
 	       {
-		  SuggestsOrList += target;
-		  SuggestsOrVersions += std::string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-	       }
-	       
-	       if (Start->Type == pkgCache::Dep::Recommends) 
-	       {
-		  RecommendsOrList += target;
-		  RecommendsOrVersions += std::string(Cache[Start.TargetPkg()].CandVersion) + "\n";
+		  // satisfying package is upgraded to/new install
+		  APT::VersionList upgrades = APT::VersionList::FromDependency(Cache, I, APT::CacheSetHelper::CANDIDATE);
+		  if (std::find_if(upgrades.begin(), upgrades.end(),
+			   [&Cache](pkgCache::VerIterator const &Ver) { return Cache[Ver.ParentPkg()].Upgrade(); }) != upgrades.end())
+		  {
+		     foundInstalledInOrGroup = true;
+		     break;
+		  }
 	       }
 
-	       if (Start >= End)
-		  break;
-	       ++Start;
+	       if (OrList.empty())
+		  OrList.push_back(I.TargetPkg().FullName(true));
+	       else
+		  OrList.push_back("| " + I.TargetPkg().FullName(true));
 	    }
-	    
+
 	    if(foundInstalledInOrGroup == false)
 	    {
-	       RecommendsList += RecommendsOrList;
-	       RecommendsVersions += RecommendsOrVersions;
-	       SuggestsList += SuggestsOrList;
-	       SuggestsVersions += SuggestsOrVersions;
+	       std::list<std::string> &Type = Start->Type == pkgCache::Dep::Recommends ? Recommends : Suggests;
+	       std::move(OrList.begin(), OrList.end(), std::back_inserter(Type));
 	    }
-	       
 	 }
       }
-
-      ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
-      ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
-
+      auto always_true = [](std::string const&) { return true; };
+      auto string_ident = [](std::string const&str) { return str; };
+      auto verbose_show_candidate =
+	 [&Cache](std::string str)
+	 {
+	    if (APT::String::Startswith(str, "| "))
+	       str.erase(0, 2);
+	    pkgCache::PkgIterator const Pkg = Cache->FindPkg(str);
+	    if (Pkg.end() == true)
+	       return "";
+	    return (*Cache)[Pkg].CandVersion;
+	 };
+      ShowList(c1out,_("Suggested packages:"), Suggests,
+	    always_true, string_ident, verbose_show_candidate);
+      ShowList(c1out,_("Recommended packages:"), Recommends,
+	    always_true, string_ident, verbose_show_candidate);
    }
 
    // See if we need to prompt
@@ -807,7 +782,7 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->InstCount() == verset[MOD_INSTALL].size() && Cache->DelCount() == 0)
       return InstallPackages(Cache,false,false);
 
-   return InstallPackages(Cache,false);   
+   return InstallPackages(Cache,false);
 }
 									/*}}}*/
 
@@ -841,8 +816,9 @@ void TryToInstall::operator() (pkgCache::VerIterator const &Ver) {
 	    else
 	       Cache->GetDepCache()->SetReInstall(Pkg, true);
 	 } else
-	    ioprintf(c1out,_("%s is already the newest version.\n"),
-		  Pkg.FullName(true).c_str());
+	    // TRANSLATORS: First string is package name, second is version
+	    ioprintf(c1out,_("%s is already the newest version (%s).\n"),
+		  Pkg.FullName(true).c_str(), Pkg.CurrentVer().VerStr());
       }
 
       // Install it with autoinstalling enabled (if we not respect the minial

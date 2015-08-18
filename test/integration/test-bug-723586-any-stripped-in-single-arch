@@ -17,7 +17,7 @@ setupaptarchive
 
 INSTALLLOG='Reading package lists...
 Building dependency tree...
-The following extra packages will be installed:
+The following additional packages will be installed:
   python3
 The following NEW packages will be installed:
   python3-gnupg
@@ -50,5 +50,5 @@ configarchitecture 'amd64' 'armhf'
 rm rootdir/var/cache/apt/*.bin
 
 testsuccessequal "$INSTALLLOG" aptget install python3-gnupg -s
-testsuccessequal "$(sed 's#3.3.2-16 - python3#3.3.2-16 - python3:any:armhf python3#' showpkg.log)" aptcache showpkg python3
+testsuccessequal  "$(cat showpkg.log)" aptcache showpkg python3
 testfailureequal "$FAILLOG" aptget install python-mips -s

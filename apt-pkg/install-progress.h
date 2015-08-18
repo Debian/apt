@@ -18,7 +18,7 @@ namespace Progress {
  {
  private:
     /** \brief dpointer placeholder */
-    void *d;
+    void * const d;
 
  protected:
     std::string progress_str;
@@ -61,6 +61,7 @@ namespace Progress {
 
  class PackageManagerProgressFd : public PackageManager
  {
+    void * const d;
  protected:
     int OutStatusFd;
     int StepsDone;
@@ -68,28 +69,30 @@ namespace Progress {
     void WriteToStatusFd(std::string msg);
 
  public:
-    PackageManagerProgressFd(int progress_fd);
+    explicit PackageManagerProgressFd(int progress_fd);
+    virtual ~PackageManagerProgressFd();
 
-    virtual void StartDpkg();
-    virtual void Stop();
+    virtual void StartDpkg() APT_OVERRIDE;
+    virtual void Stop() APT_OVERRIDE;
 
     virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
-                               std::string HumanReadableAction);
+                               std::string HumanReadableAction) APT_OVERRIDE;
     virtual void Error(std::string PackageName,
                        unsigned int StepsDone,
                        unsigned int TotalSteps,
-                          std::string ErrorMessage);
+                          std::string ErrorMessage) APT_OVERRIDE;
     virtual void ConffilePrompt(std::string PackageName,
                                 unsigned int StepsDone,
                                 unsigned int TotalSteps,
-                                   std::string ConfMessage);
+                                   std::string ConfMessage) APT_OVERRIDE;
 
  };
 
  class PackageManagerProgressDeb822Fd : public PackageManager
  {
+    void * const d;
  protected:
     int OutStatusFd;
     int StepsDone;
@@ -97,27 +100,29 @@ namespace Progress {
     void WriteToStatusFd(std::string msg);
 
  public:
-    PackageManagerProgressDeb822Fd(int progress_fd);
+    explicit PackageManagerProgressDeb822Fd(int progress_fd);
+    virtual ~PackageManagerProgressDeb822Fd();
 
-    virtual void StartDpkg();
-    virtual void Stop();
+    virtual void StartDpkg() APT_OVERRIDE;
+    virtual void Stop() APT_OVERRIDE;
 
     virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
-                               std::string HumanReadableAction);
+                               std::string HumanReadableAction) APT_OVERRIDE;
     virtual void Error(std::string PackageName,
                        unsigned int StepsDone,
                        unsigned int TotalSteps,
-                          std::string ErrorMessage);
+                          std::string ErrorMessage) APT_OVERRIDE;
     virtual void ConffilePrompt(std::string PackageName,
                                 unsigned int StepsDone,
                                 unsigned int TotalSteps,
-                                   std::string ConfMessage);
+                                   std::string ConfMessage) APT_OVERRIDE;
  };
 
  class PackageManagerFancy : public PackageManager
  {
+    void * const d;
  private:
     APT_HIDDEN static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
@@ -138,13 +143,13 @@ namespace Progress {
 
  public:
     PackageManagerFancy();
-    ~PackageManagerFancy();
-    virtual void Start(int child_pty=-1);
-    virtual void Stop();
+    virtual ~PackageManagerFancy();
+    virtual void Start(int child_pty=-1) APT_OVERRIDE;
+    virtual void Stop() APT_OVERRIDE;
     virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
-                               std::string HumanReadableAction);
+                               std::string HumanReadableAction) APT_OVERRIDE;
 
     // return a progress bar of the given size for the given progress 
     // percent between 0.0 and 1.0 in the form "[####...]"
@@ -153,11 +158,15 @@ namespace Progress {
 
  class PackageManagerText : public PackageManager
  {
+    void * const d;
  public:
     virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
-                               std::string HumanReadableAction);
+                               std::string HumanReadableAction) APT_OVERRIDE;
+
+    PackageManagerText();
+    virtual ~PackageManagerText();
  };
 
 

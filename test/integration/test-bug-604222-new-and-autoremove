@@ -23,13 +23,24 @@ The following NEW packages will be installed:
 Inst libavcodec52 (4:0.5.2-6 localhost [i386])
 Conf libavcodec52 (4:0.5.2-6 localhost [i386])" aptget install libavcodec52 -s
 
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+1 package was automatically installed and is no longer required.
+Use 'apt-get autoremove' to remove it.
+The following NEW packages will be installed:
+  libavcodec52
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst libavcodec52 (4:0.5.2-6 localhost [i386])
+Conf libavcodec52 (4:0.5.2-6 localhost [i386])" aptget install libavcodec52 -s -o APT::Get::HideAutoRemove=small
+
 testfailureequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
   libvtk5.4
 Use 'apt-get autoremove' to remove it.
-The following extra packages will be installed:
+The following additional packages will be installed:
   libavcodec52 libopenal-dev libvtk5.4
 The following NEW packages will be installed:
   dummy-archive libavcodec52 libopenal-dev
@@ -39,6 +50,21 @@ The following packages will be upgraded:
 Need to get 0 B/19.4 MB of archives.
 After this operation, 17.3 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only
+testequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+1 package was automatically installed and is no longer required.
+Use 'apt-get autoremove' to remove it.
+The following additional packages will be installed:
+  libavcodec52 libopenal-dev libvtk5.4
+The following NEW packages will be installed:
+  dummy-archive libavcodec52 libopenal-dev
+The following packages will be upgraded:
+  libvtk5.4
+1 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/19.4 MB of archives.
+After this operation, 17.3 MB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only -o APT::Get::HideAutoRemove=small
 
 echo -n > rootdir/var/lib/dpkg/status
 rm rootdir/var/lib/apt/extended_states
@@ -52,7 +78,7 @@ Building dependency tree...
   MarkKeep libvtk5-dev [ i386 ] < none -> 5.4.2-8 > ( libdevel ) FU=0
   MarkKeep libvtk5-dev [ i386 ] < none -> 5.4.2-8 > ( libdevel ) FU=0
   MarkDelete libvtk5.4 [ i386 ] < none -> 5.4.2-8 > ( libs ) FU=0
-The following extra packages will be installed:
+The following additional packages will be installed:
   libavcodec52 libopenal-dev
 The following NEW packages will be installed:
   dummy-archive libavcodec52 libopenal-dev

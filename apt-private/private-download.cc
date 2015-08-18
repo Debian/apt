@@ -78,20 +78,23 @@ bool CheckDropPrivsMustBeDisabled(pkgAcquire &Fetcher)			/*{{{*/
 // CheckAuth - check if each download comes form a trusted source	/*{{{*/
 bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
 {
-   std::string UntrustedList;
+   std::vector<std::string> UntrustedList;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
       if (!(*I)->IsTrusted())
-          UntrustedList += std::string((*I)->ShortDesc()) + " ";
+	 UntrustedList.push_back((*I)->ShortDesc());
 
-   if (UntrustedList == "")
+   if (UntrustedList.empty())
       return true;
 
    return AuthPrompt(UntrustedList, PromptUser);
 }
 
-bool AuthPrompt(std::string const &UntrustedList, bool const PromptUser)
+bool AuthPrompt(std::vector<std::string> const &UntrustedList, bool const PromptUser)
 {
-   ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
+   ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"), UntrustedList,
+	 [](std::string const&) { return true; },
+	 [](std::string const&str) { return str; },
+	 [](std::string const&) { return ""; });
 
    if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
    {
@@ -111,10 +114,12 @@ bool AuthPrompt(std::string const &UntrustedList, bool const PromptUser)
 
       return true;
    }
-   else if (_config->FindB("APT::Get::Force-Yes",false) == true)
+   else if (_config->FindB("APT::Get::Force-Yes",false) == true) {
+      _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
       return true;
+   }
 
-   return _error->Error(_("There are problems and -y was used without --force-yes"));
+   return _error->Error(_("There were unauthenticated packages and -y was used without --allow-unauthenticated"));
 }
 									/*}}}*/
 bool AcquireRun(pkgAcquire &Fetcher, int const PulseInterval, bool * const Failure, bool * const TransientNetworkFailure)/*{{{*/

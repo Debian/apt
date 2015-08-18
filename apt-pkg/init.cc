@@ -18,7 +18,6 @@
 #include <apt-pkg/macros.h>
 
 #include <string.h>
-#include <string>
 #include <cstdlib>
 
 #include <apti18n.h>
@@ -62,8 +61,6 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc","etc/apt/");
    Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
-   Cnf.CndSet("Dir::Etc::vendorlist","vendors.list");
-   Cnf.CndSet("Dir::Etc::vendorparts","vendors.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");
    Cnf.CndSet("Dir::Etc::netrc", "auth.conf");
    Cnf.CndSet("Dir::Etc::parts","apt.conf.d");
@@ -101,8 +98,31 @@ bool pkgInitConfig(Configuration &Cnf)
    // The default user we drop to in the methods
    Cnf.CndSet("APT::Sandbox::User", "_apt");
 
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::MetaKey", "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::flatMetaKey", "Packages");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::ShortDescription", "Packages");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::Description", "$(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::flatDescription", "$(RELEASE) Packages");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Packages::Optional", false);
+   Cnf.CndSet("Acquire::IndexTargets::deb::Translations::MetaKey", "$(COMPONENT)/i18n/Translation-$(LANGUAGE)");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Translations::flatMetaKey", "$(LANGUAGE)");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Translations::ShortDescription", "Translation-$(LANGUAGE)");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Translations::Description", "$(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)");
+   Cnf.CndSet("Acquire::IndexTargets::deb::Translations::flatDescription", "$(RELEASE) Translation-$(LANGUAGE)");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::MetaKey", "$(COMPONENT)/source/Sources");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::flatMetaKey", "Sources");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::ShortDescription", "Sources");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::Description", "$(RELEASE)/$(COMPONENT) Sources");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::flatDescription", "$(RELEASE) Sources");
+   Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::Optional", false);
+
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "http://metadata.ftp-master.debian.org/changelogs/CHANGEPATH_changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Tanglu", "http://metadata.tanglu.org/changelogs/CHANGEPATH_changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "http://changelogs.ubuntu.com/changelogs/pool/CHANGEPATH/changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/CHANGEPATH/changelog.txt");
+
    bool Res = true;
-   
+
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
    if (Cfg != 0 && strlen(Cfg) != 0)

@@ -290,10 +290,10 @@ TEST(FileUtlTest, Popen)
 TEST(FileUtlTest, flAbsPath)
 {
    std::string cwd = SafeGetCWD();
-   int res = chdir("/bin/");
+   int res = chdir("/etc/");
    EXPECT_EQ(res, 0);
-   std::string p = flAbsPath("ls");
-   EXPECT_EQ(p, "/bin/ls");
+   std::string p = flAbsPath("passwd");
+   EXPECT_EQ(p, "/etc/passwd");
 
    res = chdir(cwd.c_str());
    EXPECT_EQ(res, 0);

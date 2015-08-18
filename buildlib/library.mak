@@ -21,6 +21,7 @@ $(LOCAL)-OBJS := $(addprefix $(OBJ)/,$(addsuffix .opic,$(notdir $(basename $(SOU
 $(LOCAL)-DEP := $(addprefix $(DEP)/,$(addsuffix .opic.d,$(notdir $(basename $(SOURCE)))))
 $(LOCAL)-HEADERS := $(addprefix $(INCLUDE)/,$(HEADERS))
 $(LOCAL)-SONAME := lib$(LIBRARY).so.$(MAJOR)
+$(LOCAL)-VERSIONSCRIPT := $(LIB)/lib$(LIBRARY)-$(MAJOR)-$(MINOR).symver
 $(LOCAL)-SLIBS := $(SLIBS)
 $(LOCAL)-LIBRARY := $(LIBRARY)
 
@@ -39,7 +40,7 @@ MKDIRS += $(OBJ) $(DEP) $(LIB) $(dir $($(LOCAL)-HEADERS))
 # The clean rules
 .PHONY: clean/$(LOCAL) veryclean/$(LOCAL)
 clean/$(LOCAL):
-	-rm -f $($(@F)-OBJS) $($(@F)-DEP)
+	-rm -f $($(@F)-OBJS) $($(@F)-DEP) $($(@F)-VERSIONSCRIPT)
 veryclean/$(LOCAL): clean/$(LOCAL)
 	-rm -f $($(@F)-HEADERS) $(LIB)/lib$($(@F)-LIBRARY)*.so*
 
@@ -50,11 +51,14 @@ $(LIB)/lib$(LIBRARY).so.$(MAJOR): $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	ln -sf $(<F) $@
 
+$($(LOCAL)-VERSIONSCRIPT):
+	echo '$(shell echo '$(LIBRARY)' | tr -d '-' | tr 'a-z' 'A-Z')_$(MAJOR) { global: *; };' > $@
+
 # The binary build rule
-$(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) $(LIBRARYDEPENDS)
+$(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) $(LIBRARYDEPENDS) $($(LOCAL)-VERSIONSCRIPT)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY)*.so* 2> /dev/null
 	echo Building shared library $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Wl,--version-script=$($(@F)-VERSIONSCRIPT) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
 	   -o $@ $(SONAME_MAGIC)$($(@F)-SONAME) -shared \
 	   $(filter %.opic,$^) \
 	   $($(@F)-SLIBS) 

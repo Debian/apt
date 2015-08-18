@@ -11,7 +11,6 @@
 #include <apt-pkg/update.h>
 
 #include <string>
-#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -74,7 +73,7 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
       uri.User.clear();
       uri.Password.clear();
       string descUri = string(uri);
-      _error->Warning(_("Failed to fetch %s  %s\n"), descUri.c_str(),
+      _error->Warning(_("Failed to fetch %s  %s"), descUri.c_str(),
 	      (*I)->ErrorText.c_str());
 
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 

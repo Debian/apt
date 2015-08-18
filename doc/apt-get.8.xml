@@ -214,7 +214,7 @@
      <filename>&cachedir;/archives/partial/</filename>.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>autoclean</option></term>
+     <varlistentry><term><option>autoclean</option> (and the <option>auto-clean</option> alias since 1.1)</term>
      <listitem><para>Like <literal>clean</literal>, <literal>autoclean</literal> clears out the local 
      repository of retrieved package files. The difference is that it only 
      removes package files that can no longer be downloaded, and are largely 
@@ -224,25 +224,36 @@
      erased if it is set to off.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>autoremove</option></term>
+     <varlistentry><term><option>autoremove</option> (and the <option>auto-remove</option> alias since 1.1)</term>
      <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
      installed to satisfy dependencies for other packages and are now no longer needed.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>changelog</option></term>
-       <listitem><para><literal>changelog</literal> downloads a package changelog and displays
-           it through <command>sensible-pager</command>. The server name and base
-           directory is defined in the <literal>APT::Changelogs::Server</literal>
-	   variable (e.g. <ulink url="http://packages.debian.org/changelogs">packages.debian.org/changelogs</ulink> for
-	   Debian or <ulink url="http://changelogs.ubuntu.com/changelogs">changelogs.ubuntu.com/changelogs</ulink> for
-           Ubuntu).
-           By default it displays the changelog for the version that is
-           installed.  However, you can specify the same options as for
-           the <option>install</option> command.
-         </para>
+	<listitem><para><literal>changelog</literal> tries to download the
+	      changelog of a package and displays it through
+	      <command>sensible-pager</command>.  By default it
+	      displays the changelog for the version that is installed.
+	      However, you can specify the same options as for the
+	      <option>install</option> command.</para>
        </listitem>
      </varlistentry>
 
+     <varlistentry><term><option>indextargets</option></term>
+	<listitem><para>Displays by default a deb822 formatted listing of
+	      information about all data files (aka index targets) <command>apt-get
+		 update</command> would download. Supports a
+	      <option>--format</option> option to modify the output format as
+	      well as accepts lines of the default output to filter the records
+	      by. The command is mainly used as an interface for external tools
+	      working with APT to get information as well as filenames for
+	      downloaded files so they can use them as well instead of
+	      downloading them again on their own. Detailed documentation is
+	      omitted here and can instead be found in the source tree in
+	      <literal><filename>doc/acquire-additional-files.txt</filename></literal>.
+	   </para>
+	</listitem>
+     </varlistentry>
 
 
    </variablelist>
@@ -316,17 +327,15 @@
 		   <term><option>--dry-run</option></term>
 		   <term><option>--recon</option></term>
 		   <term><option>--no-act</option></term>
-     <listitem><para>No action; perform a simulation of events that would occur but do not
-     actually change the system. 
-     Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
-
-     <para>Simulated runs performed as a user will automatically deactivate locking
-     (<literal>Debug::NoLocking</literal>), and if the option
-     <literal>APT::Get::Show-User-Simulation-Note</literal> is set
-     (as it is by default) a notice will also be displayed indicating that
-     this is only a simulation. Runs performed as root do not trigger either
-     NoLocking or the notice - superusers should know what they are doing
-     without further warnings from <literal>apt-get</literal>.</para>
+     <listitem><para>No action; perform a simulation of events that would occur
+	   based on the current system state but do not actually change the
+	   system. Locking will be disabled (<option>Debug::NoLocking</option>)
+	   so the system state could change while <command>apt-get</command> is
+	   running. Simulations can also be executed by non-root users which might
+	   not have read access to all apt configuration distorting the simulation.
+	   A notice expressing this warning is also shown by default for non-root
+	   users (<option>APT::Get::Show-User-Simulation-Note</option>).
+	   Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
      <para>Simulated runs print out a series of lines, each representing a <command>dpkg</command>
      operation: configure (<literal>Conf</literal>), remove (<literal>Remv</literal>)
@@ -420,12 +429,36 @@
      Configuration Item: <literal>APT::Get::Only-Upgrade</literal>.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>--allow-downgrades</option></term>
+     <listitem><para>This is a dangerous option that will cause apt to continue
+     without prompting if it is doing downgrades. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-downgrades</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--allow-remove-essential</option></term>
+     <listitem><para>Force yes; this is a dangerous option that will cause apt to continue
+     without prompting if it is removing essentials. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-remove-essential</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--allow-change-held-packages</option></term>
+     <listitem><para>Force yes; this is a dangerous option that will cause apt to continue
+     without prompting if it is changing held packages. It
+     should not be used except in very special situations. Using
+     it can potentially destroy your system!
+     Configuration Item: <literal>APT::Get::allow-change-held-packages</literal>. Introduced in APT 1.1.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>--force-yes</option></term>
      <listitem><para>Force yes; this is a dangerous option that will cause apt to continue 
      without prompting if it is doing something potentially harmful. It 
      should not be used except in very special situations. Using 
      <literal>force-yes</literal> can potentially destroy your system! 
-     Configuration Item: <literal>APT::Get::force-yes</literal>.</para></listitem>
+     Configuration Item: <literal>APT::Get::force-yes</literal>. This is deprecated and replaced by <option>--allow-downgrades</option>, <option>--allow-remove-essential</option>, <option>--allow-change-held-packages</option> in 1.1. </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--print-uris</option></term>
@@ -520,9 +553,13 @@
      </varlistentry>
 
      <varlistentry><term><option>--allow-unauthenticated</option></term>
-     <listitem><para>Ignore if packages can't be authenticated and don't prompt about it.
-     This is useful for tools like pbuilder.
-     Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
+     <listitem><para>Ignore if packages can't be authenticated and don't prompt
+	   about it.  This can be useful while working with local repositories,
+	   but is a huge security risk if data authenticity isn't ensured in
+	   another way by the user itself.  The usage of the
+	   <option>Trusted</option> option for &sources-list; entries should
+	   usually be preferred over this global override.  Configuration Item:
+	   <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--no-allow-insecure-repositories</option></term>

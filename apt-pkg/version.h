@@ -55,7 +55,7 @@ class pkgVersioningSystem
    APT_MKSTRCMP(CmpReleaseVer,DoCmpReleaseVer);
    
    pkgVersioningSystem();
-   virtual ~pkgVersioningSystem() {};
+   virtual ~pkgVersioningSystem();
 };
 
 #endif

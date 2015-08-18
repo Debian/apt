@@ -52,6 +52,7 @@
 
 #include <set>
 #include <algorithm>
+#include <memory>
 
 #ifdef HAVE_ZLIB
 	#include <zlib.h>
@@ -159,7 +160,7 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
    
    // Buffered copy between fds
-   SPtrArray<unsigned char> Buf = new unsigned char[64000];
+   std::unique_ptr<unsigned char[]> Buf(new unsigned char[64000]);
    unsigned long long Size = From.Size();
    while (Size != 0)
    {
@@ -167,8 +168,8 @@ bool CopyFile(FileFd &From,FileFd &To)
       if (Size > 64000)
 	 ToRead = 64000;
       
-      if (From.Read(Buf,ToRead) == false || 
-	  To.Write(Buf,ToRead) == false)
+      if (From.Read(Buf.get(),ToRead) == false ||
+	  To.Write(Buf.get(),ToRead) == false)
 	 return false;
       
       Size -= ToRead;
@@ -800,12 +801,26 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
-      long ScOpenMax = sysconf(_SC_OPEN_MAX);
-      // Close all of our FDs - just in case
-      for (int K = 3; K != ScOpenMax; K++)
+      DIR *dir = opendir("/proc/self/fd");
+      if (dir != NULL)
       {
-	 if(KeepFDs.find(K) == KeepFDs.end())
-	    fcntl(K,F_SETFD,FD_CLOEXEC);
+	 struct dirent *ent;
+	 while ((ent = readdir(dir)))
+	 {
+	    int fd = atoi(ent->d_name);
+	    // If fd > 0, it was a fd number and not . or ..
+	    if (fd >= 3 && KeepFDs.find(fd) == KeepFDs.end())
+	       fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 }
+	 closedir(dir);
+      } else {
+	 long ScOpenMax = sysconf(_SC_OPEN_MAX);
+	 // Close all of our FDs - just in case
+	 for (int K = 3; K != ScOpenMax; K++)
+	 {
+	    if(KeepFDs.find(K) == KeepFDs.end())
+	       fcntl(K,F_SETFD,FD_CLOEXEC);
+	 }
       }
    }
    
@@ -1010,6 +1025,25 @@ class FileFdPrivate {							/*{{{*/
 
 	~FileFdPrivate() { CloseDown(""); }
 };
+									/*}}}*/
+// FileFd Constructors							/*{{{*/
+FileFd::FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+{
+   Open(FileName,Mode, None, AccessMode);
+}
+FileFd::FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+{
+   Open(FileName,Mode, Compress, AccessMode);
+}
+FileFd::FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {}
+FileFd::FileFd(int const Fd, unsigned int const Mode, CompressMode Compress) : iFd(-1), Flags(0), d(NULL)
+{
+   OpenDescriptor(Fd, Mode, Compress);
+}
+FileFd::FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(NULL)
+{
+   OpenDescriptor(Fd, ReadWrite, None, AutoClose);
+}
 									/*}}}*/
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
@@ -2096,28 +2130,27 @@ std::string GetTempDir()						/*{{{*/
    return string(tmpdir);
 }
 									/*}}}*/
-FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)	/*{{{*/
+FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * const TmpFd)	/*{{{*/
 {
    char fn[512];
-   FileFd *Fd = new FileFd();
+   FileFd * const Fd = TmpFd == NULL ? new FileFd() : TmpFd;
 
-   std::string tempdir = GetTempDir();
-   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", 
+   std::string const tempdir = GetTempDir();
+   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX",
             tempdir.c_str(), Prefix.c_str());
-   int fd = mkstemp(fn);
+   int const fd = mkstemp(fn);
    if(ImmediateUnlink)
       unlink(fn);
-   if (fd < 0) 
+   if (fd < 0)
    {
       _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
       return NULL;
    }
-   if (!Fd->OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
+   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite, FileFd::None, true))
    {
       _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
       return NULL;
    }
-
    return Fd;
 }
 									/*}}}*/
@@ -2219,22 +2252,32 @@ bool DropPrivileges()							/*{{{*/
       return _error->Error("No user %s, can not drop rights", toUser.c_str());
 
    // Do not change the order here, it might break things
+   // Get rid of all our supplementary groups first
    if (setgroups(1, &pw->pw_gid))
       return _error->Errno("setgroups", "Failed to setgroups");
 
+   // Now change the group ids to the new user
+#ifdef HAVE_SETRESGID
+   if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) != 0)
+      return _error->Errno("setresgid", "Failed to set new group ids");
+#else
    if (setegid(pw->pw_gid) != 0)
       return _error->Errno("setegid", "Failed to setegid");
 
    if (setgid(pw->pw_gid) != 0)
       return _error->Errno("setgid", "Failed to setgid");
+#endif
 
+   // Change the user ids to the new user
+#ifdef HAVE_SETRESUID
+   if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) != 0)
+      return _error->Errno("setresuid", "Failed to set new user ids");
+#else
    if (setuid(pw->pw_uid) != 0)
       return _error->Errno("setuid", "Failed to setuid");
-
-   // the seteuid() is probably uneeded (at least thats what the linux
-   // man-page says about setuid(2)) but we cargo culted it anyway
    if (seteuid(pw->pw_uid) != 0)
       return _error->Errno("seteuid", "Failed to seteuid");
+#endif
 
    // Verify that the user has only a single group, and the correct one
    gid_t groups[1];

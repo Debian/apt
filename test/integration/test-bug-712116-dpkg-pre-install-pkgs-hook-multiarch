@@ -48,7 +48,7 @@ DPkg::Tools::options::\"./${hook}-v${1}.sh\"::Version \"$1\";" > rootdir/etc/apt
 observehook() {
 	rm -f ${hook}-v2.list ${hook}-v3.list
 	msgtest 'Observe hooks while' "$*"
-	testsuccess --nomsg aptget "$@" -y --force-yes
+	testsuccess --nomsg aptget "$@" -y --allow-downgrades
 }
 
 testrun() {

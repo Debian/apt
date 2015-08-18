@@ -46,14 +46,14 @@ class MirrorMethod : public HttpMethod
    bool Clean(std::string dir);
    
    // we need to overwrite those to transform the url back
-   virtual void Fail(std::string Why, bool Transient = false);
-   virtual void URIStart(FetchResult &Res);
-   virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
-   virtual bool Configuration(std::string Message);
+   virtual void Fail(std::string Why, bool Transient = false) APT_OVERRIDE;
+   virtual void URIStart(FetchResult &Res) APT_OVERRIDE;
+   virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0) APT_OVERRIDE;
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
  public:
    MirrorMethod();
-   virtual bool Fetch(FetchItem *Itm);
+   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 };
 
 

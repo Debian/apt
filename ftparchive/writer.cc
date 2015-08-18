@@ -69,22 +69,29 @@ static void ConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf)
 									/*}}}*/
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 FTWScanner::FTWScanner(FileFd * const GivenOutput, string const &Arch): Arch(Arch), DoHashes(~0)
 {
    if (GivenOutput == NULL)
    {
       Output = new FileFd;
+      OwnsOutput = true;
       Output->OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
    }
    else
+   {
       Output = GivenOutput;
+      OwnsOutput = false;
+   }
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
    ConfigToDoHashes(DoHashes, "APT::FTPArchive");
 }
 									/*}}}*/
+FTWScanner::~FTWScanner()
+{
+   if (Output != NULL && OwnsOutput)
+      delete Output;
+}
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the FTW scanner, it processes each directory element in the
@@ -324,9 +331,10 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-PackagesWriter::PackagesWriter(FileFd * const GivenOutput, string const &DB,string const &Overrides,string const &ExtOverrides,
-			       string const &Arch) :
-   FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats), TransWriter(NULL)
+PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * const transWriter,
+      string const &DB,string const &Overrides,string const &ExtOverrides,
+      string const &Arch) :
+   FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats), TransWriter(transWriter)
 {
    SetExts(".deb .udeb");
    DeLinkLimit = 0;
@@ -377,7 +385,6 @@ bool FTWScanner::SetExts(string const &Vals)
 
    return true;
 }
-
 									/*}}}*/
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
@@ -413,7 +420,7 @@ bool PackagesWriter::DoPackage(string FileName)
       Architecture = Arch;
    else
       Architecture = Tags.FindS("Architecture");
-   auto_ptr<Override::Item> OverItem(Over.GetItem(Package,Architecture));
+   unique_ptr<Override::Item> OverItem(Over.GetItem(Package,Architecture));
    
    if (Package.empty() == true)
       return _error->Error(_("Archive had no package field"));
@@ -427,7 +434,7 @@ bool PackagesWriter::DoPackage(string FileName)
 	 ioprintf(c1out, _("  %s has no override entry\n"), Package.c_str());
       }
       
-      OverItem = auto_ptr<Override::Item>(new Override::Item);
+      OverItem = unique_ptr<Override::Item>(new Override::Item);
       OverItem->FieldOverride["Section"] = Tags.FindS("Section");
       OverItem->Priority = Tags.FindS("Priority");
    }
@@ -524,12 +531,16 @@ bool PackagesWriter::DoPackage(string FileName)
    return Db.Finish();
 }
 									/*}}}*/
+PackagesWriter::~PackagesWriter()					/*{{{*/
+{
+}
+									/*}}}*/
 
 // TranslationWriter::TranslationWriter - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* Create a Translation-Master file for this Packages file */
 TranslationWriter::TranslationWriter(string const &File, string const &TransCompress,
-					mode_t const &Permissions) : RefCounter(0)
+					mode_t const &Permissions) : Comp(NULL), Output(NULL)
 {
    if (File.empty() == true)
       return;
@@ -568,10 +579,8 @@ bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
 /* */
 TranslationWriter::~TranslationWriter()
 {
-   if (Comp == NULL)
-      return;
-
-   delete Comp;
+   if (Comp != NULL)
+      delete Comp;
 }
 									/*}}}*/
 
@@ -651,7 +660,7 @@ bool SourcesWriter::DoPackage(string FileName)
    string BestPrio;
    string Bins = Tags.FindS("Binary");
    char Buffer[Bins.length() + 1];
-   auto_ptr<Override::Item> OverItem(0);
+   unique_ptr<Override::Item> OverItem(nullptr);
    if (Bins.empty() == false)
    {
       strcpy(Buffer,Bins.c_str());
@@ -664,7 +673,7 @@ bool SourcesWriter::DoPackage(string FileName)
       unsigned char BestPrioV = pkgCache::State::Extra;
       for (unsigned I = 0; BinList[I] != 0; I++)
       {
-	 auto_ptr<Override::Item> Itm(BOver.GetItem(BinList[I]));
+	 unique_ptr<Override::Item> Itm(BOver.GetItem(BinList[I]));
 	 if (Itm.get() == 0)
 	    continue;
 
@@ -676,7 +685,7 @@ bool SourcesWriter::DoPackage(string FileName)
 	 }	 
 
 	 if (OverItem.get() == 0)
-	    OverItem = Itm;
+	    OverItem = std::move(Itm);
       }
    }
    
@@ -689,23 +698,23 @@ bool SourcesWriter::DoPackage(string FileName)
 	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.FindS("Source").c_str());
       }
       
-      OverItem = auto_ptr<Override::Item>(new Override::Item);
+      OverItem.reset(new Override::Item);
    }
    
    struct stat St;
    if (stat(FileName.c_str(), &St) != 0)
       return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
 
-   auto_ptr<Override::Item> SOverItem(SOver.GetItem(Tags.FindS("Source")));
-   // const auto_ptr<Override::Item> autoSOverItem(SOverItem);
+   unique_ptr<Override::Item> SOverItem(SOver.GetItem(Tags.FindS("Source")));
+   // const unique_ptr<Override::Item> autoSOverItem(SOverItem);
    if (SOverItem.get() == 0)
    {
       ioprintf(c1out, _("  %s has no source override entry\n"), Tags.FindS("Source").c_str());
-      SOverItem = auto_ptr<Override::Item>(BOver.GetItem(Tags.FindS("Source")));
+      SOverItem = unique_ptr<Override::Item>(BOver.GetItem(Tags.FindS("Source")));
       if (SOverItem.get() == 0)
       {
         ioprintf(c1out, _("  %s has no binary override entry either\n"), Tags.FindS("Source").c_str());
-	 SOverItem = auto_ptr<Override::Item>(new Override::Item);
+	 SOverItem = unique_ptr<Override::Item>(new Override::Item);
 	 *SOverItem = *OverItem;
       }
    }

@@ -19,18 +19,19 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
-#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/cdrom.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/debmetaindex.h>
 
 #include <iostream>
-#include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 
 #include "indexcopy.h"
 #include <apti18n.h>
@@ -424,7 +425,6 @@ bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 // PackageCopy::RewriteEntry - Rewrite the entry with a new filename	/*{{{*/
 bool PackageCopy::RewriteEntry(FileFd &Target,string const &File)
 {
-   string const Dir(File,0,File.rfind('/'));
    std::vector<pkgTagSection::Tag> Changes;
    Changes.push_back(pkgTagSection::Tag::Rewrite("Filename", File));
 
@@ -477,9 +477,9 @@ bool SourceCopy::RewriteEntry(FileFd &Target, std::string const &File)
 }
 									/*}}}*/
 // SigVerify::Verify - Verify a files md5sum against its metaindex	/*{{{*/
-bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
+bool SigVerify::Verify(string prefix, string file, metaIndex *MetaIndex)
 {
-   const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
+   const metaIndex::checkSum *Record = MetaIndex->Lookup(file);
    bool const Debug = _config->FindB("Debug::aptcdrom",false);
 
    // we skip non-existing files in the verifcation of the Release file
@@ -546,11 +546,11 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 
    // Read all Release files
    for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); ++I)
-   { 
+   {
       if(Debug)
 	 cout << "Signature verify for: " << *I << endl;
 
-      indexRecords *MetaIndex = new indexRecords;
+      metaIndex *MetaIndex = new debReleaseIndex("","");
       string prefix = *I; 
 
       string const releasegpg = *I+"Release.gpg";
@@ -592,12 +592,13 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       }
 
       // Open the Release file and add it to the MetaIndex
-      if(!MetaIndex->Load(release))
+      std::string ErrorText;
+      if(MetaIndex->Load(release, &ErrorText) == false)
       {
-	 _error->Error("%s",MetaIndex->ErrorText.c_str());
+	 _error->Error("%s", ErrorText.c_str());
 	 return false;
       }
-      
+
       // go over the Indexfiles and see if they verify
       // if so, remove them from our copy of the lists
       vector<string> keys = MetaIndex->MetaKeys();
@@ -770,4 +771,14 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 }
 									/*}}}*/
 
+IndexCopy::IndexCopy() : d(NULL) {}
 APT_CONST IndexCopy::~IndexCopy() {}
+
+PackageCopy::PackageCopy() : IndexCopy(), d(NULL) {}
+APT_CONST PackageCopy::~PackageCopy() {}
+SourceCopy::SourceCopy() : IndexCopy(), d(NULL) {}
+APT_CONST SourceCopy::~SourceCopy() {}
+TranslationsCopy::TranslationsCopy() : d(NULL) {}
+APT_CONST TranslationsCopy::~TranslationsCopy() {}
+SigVerify::SigVerify() : d(NULL) {}
+APT_CONST SigVerify::~SigVerify() {}

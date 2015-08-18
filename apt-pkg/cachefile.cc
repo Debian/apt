@@ -35,10 +35,13 @@
 #include <apti18n.h>
 									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
-				SrcList(NULL), Policy(NULL)
+pkgCacheFile::pkgCacheFile() : d(NULL), ExternOwner(false), Map(NULL), Cache(NULL),
+				DCache(NULL), SrcList(NULL), Policy(NULL)
+{
+}
+pkgCacheFile::pkgCacheFile(pkgDepCache * const Owner) : d(NULL), ExternOwner(true),
+   Map(&Owner->GetCache().GetMap()), Cache(&Owner->GetCache()),
+   DCache(Owner), SrcList(NULL), Policy(NULL)
 {
 }
 									/*}}}*/
@@ -47,12 +50,16 @@ pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
 /* */
 pkgCacheFile::~pkgCacheFile()
 {
-   delete DCache;
+   if (ExternOwner == false)
+   {
+      delete DCache;
+      delete Cache;
+      delete Map;
+   }
    delete Policy;
    delete SrcList;
-   delete Cache;
-   delete Map;
-   _system->UnLock(true);
+   if (ExternOwner == false)
+      _system->UnLock(true);
 }
 									/*}}}*/
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
@@ -65,8 +72,8 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 
    if (_config->FindB("pkgCacheFile::Generate", true) == false)
    {
-      Map = new MMap(*new FileFd(_config->FindFile("Dir::Cache::pkgcache"),
-		     FileFd::ReadOnly),MMap::Public|MMap::ReadOnly);
+      FileFd file(_config->FindFile("Dir::Cache::pkgcache"), FileFd::ReadOnly);
+      Map = new MMap(file, MMap::Public|MMap::ReadOnly);
       Cache = new pkgCache(Map);
       if (_error->PendingError() == true)
          return false;
@@ -150,8 +157,7 @@ bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
    if (_error->PendingError() == true)
       return false;
 
-   DCache->Init(Progress);
-   return true;
+   return DCache->Init(Progress);
 }
 									/*}}}*/
 // CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
@@ -229,11 +235,16 @@ void pkgCacheFile::RemoveCaches()
 /* */
 void pkgCacheFile::Close()
 {
-   delete DCache;
+   if (ExternOwner == false)
+   {
+      delete DCache;
+      delete Cache;
+      delete Map;
+   }
+   else
+      ExternOwner = false;
    delete Policy;
-   delete Cache;
    delete SrcList;
-   delete Map;
    _system->UnLock(true);
 
    Map = NULL;

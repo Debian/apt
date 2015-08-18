@@ -42,6 +42,8 @@ wasmergeused() {
 
 testrun() {
 	msgmsg "Testcase: setup the base with: $*"
+	local DOWNLOADHASH=true
+	if [ "$1" = 'nohash' ]; then DOWNLOADHASH=false; shift; fi
 	find aptarchive -name 'Packages*' -type f -delete
 	cp ${PKGFILE} aptarchive/Packages
 	compressfile 'aptarchive/Packages'
@@ -76,6 +78,15 @@ SHA256-History:
 SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
+	if $DOWNLOADHASH; then
+		echo "SHA1-Download:
+ 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
+ $(sha1sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)
+SHA256-Download:
+ d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
+ $(sha256sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)" >> $PATCHINDEX
+	fi
+
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	find aptarchive -name 'Packages*' -type f -delete
@@ -87,7 +98,7 @@ SHA256-Patches:
 	msgmsg "Testcase: index is already up-to-date: $*"
 	find rootdir/var/lib/apt/lists -name '*diff_Index' -type f -delete
 	testsuccess aptget update "$@"
-	testequal 'Hit http://localhost:8080  InRelease
+	testequal 'Hit:1 http://localhost:8080  InRelease
 Reading package lists...' aptget update "$@" -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Diffs=0
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
@@ -131,6 +142,17 @@ SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
  $(sha256sum ${PATCHFILE2} | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}) $(basename ${PATCHFILE2})" > $PATCHINDEX
+	if $DOWNLOADHASH; then
+		echo "SHA1-Download:
+ 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
+ $(sha1sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)
+ $(sha1sum ${PATCHFILE2}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}.gz) $(basename ${PATCHFILE2}.gz)
+SHA256-Download:
+ d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
+ $(sha256sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)
+ $(sha256sum ${PATCHFILE2}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}.gz) $(basename ${PATCHFILE2}.gz)" >> $PATCHINDEX
+	fi
+
 	generatereleasefiles '+2hour'
 	signreleasefiles
 	cp -a aptarchive/Packages Packages-future
@@ -150,6 +172,7 @@ SHA256-Patches:
 	mkdir -p aptarchive/Packages.diff
 	PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
 	diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
+	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
 	PATCHINDEX='aptarchive/Packages.diff/Index'
 	echo "SHA1-Current: $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
 SHA1-History:
@@ -165,11 +188,22 @@ SHA256-History:
 SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
-	echo 'I am Mallory and I change files' >> $PATCHFILE
+	if $DOWNLOADHASH; then
+		echo "SHA1-Download:
+ 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
+ $(sha1sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)
+SHA256-Download:
+ d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
+ $(sha256sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz) $(basename ${PATCHFILE}.gz)" >> $PATCHINDEX
+	fi
+	# needs to look like a valid command, otherwise the parser will fail before hashes are checked
+	echo '1d' > $PATCHFILE
 	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	testsuccess aptget update "$@"
+	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptgetupdate.output
+	testsuccess grep 'Hash Sum mismatch' rootdir/tmp/aptgetupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
@@ -198,6 +232,14 @@ SHA256-History:
 SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE)000 $(basename $PATCHFILE)" > $PATCHINDEX
+	if $DOWNLOADHASH; then
+		echo "SHA1-Download:
+ 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
+ $(sha1sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz)000 $(basename ${PATCHFILE}.gz)
+SHA256-Download:
+ d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
+ $(sha256sum ${PATCHFILE}.gz | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE}.gz)000 $(basename ${PATCHFILE}.gz)" >> $PATCHINDEX
+	fi
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	#find aptarchive -name 'Packages*' -type f -delete
@@ -211,6 +253,9 @@ SHA256-Patches:
 echo 'Debug::pkgAcquire::Diffs "true";
 Debug::Acquire::Transaction "true";
 Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
+
+testrun nohash -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
+testrun nohash -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
 
 testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
 testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1

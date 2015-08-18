@@ -31,7 +31,7 @@ class pkgRecords							/*{{{*/
    
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
+   void * const d;
    
    pkgCache &Cache;
    std::vector<Parser *>Files;
@@ -42,8 +42,8 @@ class pkgRecords							/*{{{*/
    Parser &Lookup(pkgCache::DescFileIterator const &Desc);
 
    // Construct destruct
-   pkgRecords(pkgCache &Cache);
-   ~pkgRecords();
+   explicit pkgRecords(pkgCache &Cache);
+   virtual ~pkgRecords();
 };
 									/*}}}*/
 class pkgRecords::Parser						/*{{{*/
@@ -68,17 +68,10 @@ class pkgRecords::Parser						/*{{{*/
     * choose the hash to be used.
     */
    virtual HashStringList Hashes() const { return HashStringList(); };
-#if APT_PKG_ABI >= 413
    APT_DEPRECATED std::string MD5Hash() const { return GetHashFromHashes("MD5Sum"); };
    APT_DEPRECATED std::string SHA1Hash() const { return GetHashFromHashes("SHA1"); };
    APT_DEPRECATED std::string SHA256Hash() const { return GetHashFromHashes("SHA256"); };
    APT_DEPRECATED std::string SHA512Hash() const { return GetHashFromHashes("SHA512"); };
-#else
-   APT_DEPRECATED std::string MD5Hash() { return GetHashFromHashes("MD5Sum"); };
-   APT_DEPRECATED std::string SHA1Hash() { return GetHashFromHashes("SHA1"); };
-   APT_DEPRECATED std::string SHA256Hash() { return GetHashFromHashes("SHA256"); };
-   APT_DEPRECATED std::string SHA512Hash() { return GetHashFromHashes("SHA512"); };
-#endif
 
    // These are some general stats about the package
    virtual std::string Maintainer() {return std::string();};
@@ -106,10 +99,12 @@ class pkgRecords::Parser						/*{{{*/
 
    // The record in binary form
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};
-   
-   virtual ~Parser() {};
+
+   Parser();
+   virtual ~Parser();
 
    private:
+   void * const d;
    APT_HIDDEN std::string GetHashFromHashes(char const * const type) const
    {
       HashStringList const hashes = Hashes();

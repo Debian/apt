@@ -62,11 +62,7 @@ struct ARArchive::Member
    unsigned long long Size;
    
    // Location of the data.
-#if APT_PKG_ABI >= 413
    unsigned long long Start;
-#else
-   unsigned long Start;
-#endif
    Member *Next;
    
    Member() : Start(0), Next(0) {};

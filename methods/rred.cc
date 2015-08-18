@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +36,7 @@ class MemBlock {
    char *start;
    size_t size;
    char *free;
-   struct MemBlock *next;
+   MemBlock *next;
 
    MemBlock(size_t size) : size(size), next(NULL)
    {
@@ -116,7 +117,7 @@ struct Change {
    size_t add_len; /* bytes */
    char *add;
 
-   Change(int off)
+   Change(size_t off)
    {
       offset = off;
       del_cnt = add_cnt = add_len = 0;
@@ -388,28 +389,37 @@ class Patch {
 
    public:
 
-   void read_diff(FileFd &f)
+   bool read_diff(FileFd &f, Hashes * const h)
    {
       char buffer[BLOCK_SIZE];
       bool cmdwanted = true;
 
-      Change ch(0);
-      while(f.ReadLine(buffer, sizeof(buffer)))
-      {
+      Change ch(std::numeric_limits<size_t>::max());
+      if (f.ReadLine(buffer, sizeof(buffer)) == NULL)
+	 return _error->Error("Reading first line of patchfile %s failed", f.Name().c_str());
+      do {
+	 if (h != NULL)
+	    h->Add(buffer);
 	 if (cmdwanted) {
 	    char *m, *c;
 	    size_t s, e;
-	    s = strtol(buffer, &m, 10);
-	    if (m == buffer) {
-	       s = e = ch.offset + ch.add_cnt;
-	       c = buffer;
-	    } else if (*m == ',') {
-	       m++;
+	    errno = 0;
+	    s = strtoul(buffer, &m, 10);
+	    if (unlikely(m == buffer || s == std::numeric_limits<unsigned long>::max() || errno != 0))
+	       return _error->Error("Parsing patchfile %s failed: Expected an effected line start", f.Name().c_str());
+	    else if (*m == ',') {
+	       ++m;
 	       e = strtol(m, &c, 10);
+	       if (unlikely(m == c || e == std::numeric_limits<unsigned long>::max() || errno != 0))
+		  return _error->Error("Parsing patchfile %s failed: Expected an effected line end", f.Name().c_str());
+	       if (unlikely(e < s))
+		  return _error->Error("Parsing patchfile %s failed: Effected lines end %lu is before start %lu", f.Name().c_str(), e, s);
 	    } else {
 	       e = s;
 	       c = m;
 	    }
+	    if (s > ch.offset)
+	       return _error->Error("Parsing patchfile %s failed: Effected line is after previous effected line", f.Name().c_str());
 	    switch(*c) {
 	       case 'a':
 		  cmdwanted = false;
@@ -420,6 +430,8 @@ class Patch {
 		  ch.del_cnt = 0;
 		  break;
 	       case 'c':
+		  if (unlikely(s == 0))
+		     return _error->Error("Parsing patchfile %s failed: Change command can't effect line zero", f.Name().c_str());
 		  cmdwanted = false;
 		  ch.add = NULL;
 		  ch.add_cnt = 0;
@@ -428,6 +440,8 @@ class Patch {
 		  ch.del_cnt = e - s + 1;
 		  break;
 	       case 'd':
+		  if (unlikely(s == 0))
+		     return _error->Error("Parsing patchfile %s failed: Delete command can't effect line zero", f.Name().c_str());
 		  ch.offset = s - 1;
 		  ch.del_cnt = e - s + 1;
 		  ch.add = NULL;
@@ -435,9 +449,11 @@ class Patch {
 		  ch.add_len = 0;
 		  filechanges.add_change(ch);
 		  break;
+	       default:
+		  return _error->Error("Parsing patchfile %s failed: Unknown command", f.Name().c_str());
 	    }
 	 } else { /* !cmdwanted */
-	    if (buffer[0] == '.' && buffer[1] == '\n') {
+	    if (strcmp(buffer, ".\n") == 0) {
 	       cmdwanted = true;
 	       filechanges.add_change(ch);
 	    } else {
@@ -463,7 +479,8 @@ class Patch {
 	       }
 	    }
 	 }
-      }
+      } while(f.ReadLine(buffer, sizeof(buffer)));
+      return true;
    }
 
    void write_diff(FILE *f)
@@ -519,8 +536,29 @@ class RredMethod : public pkgAcqMethod {
    private:
       bool Debug;
 
+      struct PDiffFile {
+	 std::string FileName;
+	 HashStringList ExpectedHashes;
+	 PDiffFile(std::string const &FileName, HashStringList const &ExpectedHashes) :
+	    FileName(FileName), ExpectedHashes(ExpectedHashes) {}
+      };
+
+      HashStringList ReadExpectedHashesForPatch(unsigned int const patch, std::string const &Message)
+      {
+	 HashStringList ExpectedHashes;
+	 for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+	 {
+	    std::string tagname;
+	    strprintf(tagname, "Patch-%d-%s-Hash", patch, *type);
+	    std::string const hashsum = LookupTag(Message, tagname.c_str());
+	    if (hashsum.empty() == false)
+	       ExpectedHashes.push_back(HashString(*type, hashsum));
+	 }
+	 return ExpectedHashes;
+      }
+
    protected:
-      virtual bool Fetch(FetchItem *Itm) {
+      virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE {
 	 Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
 	 URI Get = Itm->Uri;
 	 std::string Path = Get.Host + Get.Path; // rred:/path - no host
@@ -534,11 +572,17 @@ class RredMethod : public pkgAcqMethod {
 	 } else
 	    URIStart(Res);
 
-	 std::vector<std::string> patchpaths;
+	 std::vector<PDiffFile> patchfiles;
 	 Patch patch;
 
 	 if (FileExists(Path + ".ed") == true)
-	    patchpaths.push_back(Path + ".ed");
+	 {
+	    HashStringList const ExpectedHashes = ReadExpectedHashesForPatch(0, Message);
+	    std::string const FileName = Path + ".ed";
+	    if (ExpectedHashes.usable() == false)
+	       return _error->Error("No hashes found for uncompressed patch: %s", FileName.c_str());
+	    patchfiles.push_back(PDiffFile(FileName, ExpectedHashes));
+	 }
 	 else
 	 {
 	    _error->PushToStack();
@@ -546,31 +590,44 @@ class RredMethod : public pkgAcqMethod {
 	    _error->RevertToStack();
 
 	    std::string const baseName = Path + ".ed.";
+	    unsigned int seen_patches = 0;
 	    for (std::vector<std::string>::const_iterator p = patches.begin();
 		  p != patches.end(); ++p)
+	    {
 	       if (p->compare(0, baseName.length(), baseName) == 0)
-		  patchpaths.push_back(*p);
+	       {
+		  HashStringList const ExpectedHashes = ReadExpectedHashesForPatch(seen_patches, Message);
+		  if (ExpectedHashes.usable() == false)
+		     return _error->Error("No hashes found for uncompressed patch %d: %s", seen_patches, p->c_str());
+		  patchfiles.push_back(PDiffFile(*p, ExpectedHashes));
+		  ++seen_patches;
+	       }
+	    }
 	 }
 
 	 std::string patch_name;
-	 for (std::vector<std::string>::iterator I = patchpaths.begin();
-	       I != patchpaths.end();
+	 for (std::vector<PDiffFile>::iterator I = patchfiles.begin();
+	       I != patchfiles.end();
 	       ++I)
 	 {
-	    patch_name = *I;
+	    patch_name = I->FileName;
 	    if (Debug == true)
 	       std::clog << "Patching " << Path << " with " << patch_name
 		  << std::endl;
 
 	    FileFd p;
+	    Hashes patch_hash(I->ExpectedHashes);
 	    // all patches are compressed, even if the name doesn't reflect it
-	    if (p.Open(patch_name, FileFd::ReadOnly, FileFd::Gzip) == false) {
-	       std::cerr << "Could not open patch file " << patch_name << std::endl;
+	    if (p.Open(patch_name, FileFd::ReadOnly, FileFd::Gzip) == false ||
+		  patch.read_diff(p, &patch_hash) == false)
+	    {
 	       _error->DumpErrors(std::cerr);
-	       abort();
+	       return false;
 	    }
-	    patch.read_diff(p);
 	    p.Close();
+	    HashStringList const hsl = patch_hash.GetHashStringList();
+	    if (hsl != I->ExpectedHashes)
+	       return _error->Error("Hash Sum mismatch for uncompressed patch %s", patch_name.c_str());
 	 }
 
 	 if (Debug == true)
@@ -582,7 +639,6 @@ class RredMethod : public pkgAcqMethod {
 	 FILE *out = fopen(Itm->DestFile.c_str(), "w");
 
 	 Hashes hash(Itm->ExpectedHashes);
-
 	 patch.apply_against_file(out, inp, &hash);
 
 	 fclose(out);
@@ -615,6 +671,16 @@ class RredMethod : public pkgAcqMethod {
 	 return true;
       }
 
+      bool Configuration(std::string Message) APT_OVERRIDE
+      {
+	 if (pkgAcqMethod::Configuration(Message) == false)
+	    return false;
+
+	 DropPrivsOrDie();
+
+	 return true;
+      }
+
    public:
       RredMethod() : pkgAcqMethod("2.0",SingleInstance | SendConfig), Debug(false) {}
 };
@@ -643,7 +709,11 @@ int main(int argc, char **argv)
 	 _error->DumpErrors(std::cerr);
 	 exit(1);
       }
-      patch.read_diff(p);
+      if (patch.read_diff(p, NULL) == false)
+      {
+	 _error->DumpErrors(std::cerr);
+	 exit(2);
+      }
    }
 
    if (just_diff) {

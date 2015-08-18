@@ -35,7 +35,7 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 
 	testfailure aptget update
 	cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
-	testsuccess grep -E "$(basename -s '.gz' "$get").*Hash Sum mismatch" rootdir/tmp/update.output
+	testsuccess grep -E "$(basename "$get" '.gz').*Hash Sum mismatch" rootdir/tmp/update.output
 	testfailure aptcache show foo
 	testfailure aptget install foo -s
 

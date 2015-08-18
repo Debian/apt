@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sourcelist.h,v 1.12.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
    SourceList - Manage a list of sources
@@ -17,10 +16,6 @@
    the actual construction of the back end type. After loading a source 
    list all you have is a list of package index files that have the ability
    to be Acquired.
-   
-   The vendor machanism is similar, except the vendor types are hard 
-   wired. Before loading the source list the vendor list is loaded.
-   This doesn't load key data, just the checks to perform.
    
    ##################################################################### */
 									/*}}}*/
@@ -54,6 +49,8 @@ class metaIndex;
 
 class pkgSourceList
 {
+   void * const d;
+   std::vector<pkgIndexFile*> VolatileFiles;
    public:
 
    // List of supported source list types
@@ -66,22 +63,22 @@ class pkgSourceList
       static unsigned long GlobalListLen;
       static Type *GetType(const char *Type) APT_PURE;
 
-      const char *Name;
-      const char *Label;
+      char const * const Name;
+      char const * const Label;
 
       bool FixupURI(std::string &URI) const;
       virtual bool ParseStanza(std::vector<metaIndex *> &List,
                                pkgTagSection &Tags,
-                               int stanza_n,
+                               unsigned int const stanza_n,
                                FileFd &Fd);
       virtual bool ParseLine(std::vector<metaIndex *> &List,
 			     const char *Buffer,
-			     unsigned long const &CurLine,std::string const &File) const;
+			     unsigned int const CurLine,std::string const &File) const;
       virtual bool CreateItem(std::vector<metaIndex *> &List,std::string const &URI,
 			      std::string const &Dist,std::string const &Section,
 			      std::map<std::string, std::string> const &Options) const = 0;
-      Type();
-      virtual ~Type() {};
+      Type(char const * const Name, char const * const Label);
+      virtual ~Type();
    };
 
    typedef std::vector<metaIndex *>::const_iterator const_iterator;
@@ -90,18 +87,19 @@ class pkgSourceList
 
    std::vector<metaIndex *> SrcList;
 
-   int ParseFileDeb822(std::string File);
-   bool ParseFileOldStyle(std::string File);
+   private:
+   APT_HIDDEN bool ParseFileDeb822(std::string const &File);
+   APT_HIDDEN bool ParseFileOldStyle(std::string const &File);
 
    public:
 
    bool ReadMainList();
-   bool Read(std::string File);
+   bool Read(std::string const &File);
 
    // CNC:2003-03-03
    void Reset();
-   bool ReadAppend(std::string File);
-   bool ReadSourceDir(std::string Dir);
+   bool ReadAppend(std::string const &File);
+   bool ReadSourceDir(std::string const &Dir);
    
    // List accessors
    inline const_iterator begin() const {return SrcList.begin();};
@@ -116,9 +114,26 @@ class pkgSourceList
    // query last-modified time
    time_t GetLastModifiedTime();
 
+   /** \brief add file for parsing, but not to the cache
+    *
+    *  pkgIndexFiles origining from pkgSourcesList are included in
+    *  srcpkgcache, the status files added via #AddStatusFiles are
+    *  included in pkgcache, but these files here are not included in
+    *  any cache to have the possibility of having a file included just
+    *  for a single run like a local .deb/.dsc file.
+    *
+    *  The volatile files do not count as "normal" sourceslist entries,
+    *  can't be iterated over with #begin and #end and can't be
+    *  downloaded, but they can be found via #FindIndex.
+    *
+    *  @param File is an index file; pointer-ownership is transferred
+    */
+   void AddVolatileFile(pkgIndexFile * const File);
+   /** @return list of files registered with #AddVolatileFile */
+   std::vector<pkgIndexFile*> GetVolatileFiles() const;
+
    pkgSourceList();
-   pkgSourceList(std::string File);
-   ~pkgSourceList();      
+   virtual ~pkgSourceList();
 };
 
 #endif

@@ -23,19 +23,20 @@ class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
    unsigned long ID;
    unsigned long Quiet;
 
-   void clearLastLine();
+   APT_HIDDEN void clearLastLine();
+   APT_HIDDEN void AssignItemID(pkgAcquire::ItemDesc &Itm);
 
    public:
 
-   virtual bool MediaChange(std::string Media,std::string Drive);
-   virtual void IMSHit(pkgAcquire::ItemDesc &Itm);
-   virtual void Fetch(pkgAcquire::ItemDesc &Itm);
-   virtual void Done(pkgAcquire::ItemDesc &Itm);
-   virtual void Fail(pkgAcquire::ItemDesc &Itm);
-   virtual void Start();
-   virtual void Stop();
+   virtual bool MediaChange(std::string Media,std::string Drive) APT_OVERRIDE;
+   virtual void IMSHit(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;
+   virtual void Fetch(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;
+   virtual void Done(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;
+   virtual void Fail(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;
+   virtual void Start() APT_OVERRIDE;
+   virtual void Stop() APT_OVERRIDE;
 
-   bool Pulse(pkgAcquire *Owner);
+   bool Pulse(pkgAcquire *Owner) APT_OVERRIDE;
 
    AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet);
 };

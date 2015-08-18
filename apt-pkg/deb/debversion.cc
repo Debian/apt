@@ -16,7 +16,6 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <string.h>
-#include <string>
 #include <stdlib.h>
 #include <ctype.h>
 									/*}}}*/
@@ -34,29 +33,26 @@ debVersioningSystem::debVersioningSystem()
 
 // debVS::CmpFragment - Compare versions			        /*{{{*/
 // ---------------------------------------------------------------------
-/* This compares a fragment of the version. This is a slightly adapted 
-   version of what dpkg uses. */
-#define order(x) ((x) == '~' ? -1    \
-		: isdigit((x)) ? 0   \
-		: !(x) ? 0           \
-		: isalpha((x)) ? (x) \
-		: (x) + 256)
+/* This compares a fragment of the version. This is a slightly adapted
+   version of what dpkg uses in dpkg/lib/dpkg/version.c.
+   In particular, the a | b = NULL check is removed as we check this in the
+   caller, we use an explicit end for a | b strings and we check ~ explicit. */
+static int order(char c)
+{
+   if (isdigit(c))
+      return 0;
+   else if (isalpha(c))
+      return c;
+   else if (c == '~')
+      return -1;
+   else if (c)
+      return c + 256;
+   else
+      return 0;
+}
 int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
 				     const char *B,const char *BEnd)
 {
-   if (A >= AEnd && B >= BEnd)
-      return 0;
-   if (A >= AEnd)
-   {
-      if (*B == '~') return 1;
-      return -1;
-   }
-   if (B >= BEnd)
-   {
-      if (*A == '~') return -1;
-      return 1;
-   }
-
    /* Iterate over the whole string
       What this does is to split the whole string into groups of
       numeric and non numeric portions. For instance:
@@ -77,19 +73,19 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
 	 int rc = order(*rhs);
 	 if (vc != rc)
 	    return vc - rc;
-	 lhs++; rhs++;
+	 ++lhs; ++rhs;
       }
 
       while (*lhs == '0')
-	 lhs++;
+	 ++lhs;
       while (*rhs == '0')
-	 rhs++;
+	 ++rhs;
       while (isdigit(*lhs) && isdigit(*rhs))
       {
 	 if (!first_diff)
 	    first_diff = *lhs - *rhs;
-	 lhs++;
-	 rhs++;
+	 ++lhs;
+	 ++rhs;
       }
 
       if (isdigit(*lhs))

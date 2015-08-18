@@ -13,11 +13,33 @@ cleanplate() {
 	mkdir rootdir/etc/apt/trusted.gpg.d/
 }
 
+createlistofkeys() {
+	while [ -n "$1" ]; do
+		# gpg 2.1 has a slightly different output format
+		if grep -q ' rsa2048/' aptkey.list; then
+			case "$1" in
+				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
+				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
+				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16';;
+				*) echo 'UNKNOWN KEY';;
+			esac
+		else
+			case "$1" in
+				*Joe*|*Sixpack*) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
+				*Rex*|*Expired*) echo 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
+				*Marvin*|*Paranoid*) echo 'pub   2048R/528144E2 2011-01-16';;
+				*) echo 'UNKNOWN KEY';;
+			esac
+		fi
+		shift
+	done
+}
+
 testaptkeys() {
 	if ! aptkey list | grep '^pub' > aptkey.list; then
 		echo -n > aptkey.list
 	fi
-	testfileequal './aptkey.list' "$1"
+	testfileequal './aptkey.list' "$(createlistofkeys "$@")"
 }
 
 echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
@@ -32,16 +54,15 @@ testrun() {
 
 	msgtest 'Check that paths in finger output are not' 'double-slashed'
 	aptkey finger 2>&1 | grep -q '//' && msgfail || msgpass
-
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'Joe Sixpack'
 
 	testsuccessequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1' aptkey --fakeroot update
 
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
-
+	testaptkeys 'Joe Sixpack'
 	testfailure test -e rootdir/etc/apt/trusted.gpg
+
 	testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
 	msgtest 'Check if trusted.gpg is created with permissions set to' '0644'
 	if [ "$(stat -c '%a' rootdir/etc/apt/trusted.gpg )" = '644' ]; then
@@ -50,8 +71,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		msgfail
 	fi
 
-	testaptkeys 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
-pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'Rex Expired' 'Joe Sixpack'
 
 	msgtest 'Check that Sixpack key can be' 'exported'
 	aptkey export 'Sixpack' > aptkey.export
@@ -63,17 +83,17 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	msgtest 'Execute update again to trigger removal of' 'Rex Expired key'
 	testsuccess --nomsg aptkey --fakeroot update
 
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'Joe Sixpack'
 
 	msgtest "Try to remove a key which exists, but isn't in the" 'forced keyring'
 	testsuccess --nomsg aptkey --fakeroot --keyring rootdir/etc/apt/trusted.gpg del DBAC8DAE
 
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'Joe Sixpack'
 
 	testsuccess aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
 
-	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewher between 8byte and short
+	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewhere between 8byte and short
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
@@ -114,22 +134,21 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	cleanplate
 	testsuccess aptkey --fakeroot add ./keys/joesixpack.pub
 	testsuccess aptkey --fakeroot add ./keys/marvinparanoid.pub
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Joe Sixpack' 'Marvin Paranoid'
 	cp -a rootdir/etc/apt/trusted.gpg keys/testcase-multikey.pub # store for reuse
 
 	msgtest 'Test key removal with' 'multi key in real file'
 	cleanplate
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	testaptkeys 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Marvin Paranoid'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 
 	msgtest 'Test key removal with' 'multi key in softlink'
 	cleanplate
 	ln -s $(readlink -f ./keys/testcase-multikey.pub) rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	testaptkeys 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Marvin Paranoid'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 	testfailure test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
@@ -139,7 +158,7 @@ pub   2048R/528144E2 2011-01-16'
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	testaptkeys 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Marvin Paranoid'
 	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
@@ -147,37 +166,66 @@ pub   2048R/528144E2 2011-01-16'
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Joe Sixpack' 'Joe Sixpack' 'Marvin Paranoid'
 	msgtest 'Test merge-back of' 'added keys'
 	testsuccess --nomsg aptkey adv --batch --yes --import keys/rexexpired.pub
-	testaptkeys 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
-pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Rex Expired' 'Joe Sixpack' 'Joe Sixpack' 'Marvin Paranoid'
 
 	msgtest 'Test merge-back of' 'removed keys'
 	testsuccess --nomsg aptkey adv --batch --yes --delete-keys 27CE74F9
-	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/DBAC8DAE 2010-08-18
-pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Joe Sixpack' 'Joe Sixpack' 'Marvin Paranoid'
 
 	msgtest 'Test merge-back of' 'removed duplicate keys'
 	testsuccess --nomsg aptkey adv --batch --yes --delete-keys DBAC8DAE
-	testaptkeys 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'Marvin Paranoid'
+
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	msgtest 'Test signing a file' 'with a key'
+	echo 'Verify me. This is my signature.' > signature
+	testsuccess --nomsg aptkey --quiet --keyring keys/marvinparanoid.pub --secret-keyring keys/marvinparanoid.sec --readonly \
+		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
+
+
+	for GPGV in '' 'gpgv' 'gpgv2'; do
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
+
+		msgtest 'Test verify a file' 'with all keys'
+		testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+
+		msgtest 'Test verify a file' 'with good keyring'
+		testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature
+
+		msgtest 'Test fail verify a file' 'with bad keyring'
+		testfailure --nomsg aptkey --quiet --readonly --keyring keys/joesixpack.pub verify signature.gpg signature
+
+		msgtest 'Test fail verify a file' 'with non-existing keyring'
+		testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
+		testfailure test -e keys/does-not-exist.pub
+
+		# note: this isn't how apts gpgv method implements keyid for verify
+		msgtest 'Test verify a file' 'with good keyid'
+		testsuccess --nomsg aptkey --quiet --readonly --keyid 'Paranoid' verify signature.gpg signature
+
+		msgtest 'Test fail verify a file' 'with bad keyid'
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Sixpack' verify signature.gpg signature
+
+		msgtest 'Test fail verify a file' 'with non-existing keyid'
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
+
+		msgtest 'Test verify fails on' 'bad file'
+		echo 'lalalalala' > signature2
+		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
+	done
 }
 
 setupgpgcommand() {
 	echo "APT::Key::GPGCommand \"$1\";" > rootdir/etc/apt/apt.conf.d/00gpgcmd
-	msgtest 'Test that apt-key uses for the following tests command' "$1"
-	aptkey adv --version >aptkey.version 2>&1
-	if grep -q "^Executing: $1 --" aptkey.version; then
-		msgpass
-	else
-		cat aptkey.version
-		msgfail
-	fi
+	msgmsg 'Force tests to be run with' "$1"
+	testsuccess aptkey --readonly adv --version
+	cp rootdir/tmp/testsuccess.output aptkey.version
+	testsuccess grep "^Executing: $1 --" aptkey.version
 }
 
 # run with default (whatever this is)
@@ -187,4 +235,3 @@ setupgpgcommand 'gpg'
 testrun
 setupgpgcommand 'gpg2'
 testrun
-

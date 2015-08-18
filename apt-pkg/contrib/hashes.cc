@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <algorithm>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string>
 #include <iostream>
 									/*}}}*/
@@ -178,6 +179,22 @@ HashString const * HashStringList::find(char const * const type) const /*{{{*/
    return NULL;
 }
 									/*}}}*/
+unsigned long long HashStringList::FileSize() const			/*{{{*/
+{
+   HashString const * const hsf = find("Checksum-FileSize");
+   if (hsf == NULL)
+      return 0;
+   std::string const hv = hsf->HashValue();
+   return strtoull(hv.c_str(), NULL, 10);
+}
+									/*}}}*/
+bool HashStringList::FileSize(unsigned long long const Size)		/*{{{*/
+{
+   std::string size;
+   strprintf(size, "%llu", Size);
+   return push_back(HashString("Checksum-FileSize", size));
+}
+									/*}}}*/
 bool HashStringList::supported(char const * const type)			/*{{{*/
 {
    for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
@@ -259,7 +276,19 @@ public:
    unsigned long long FileSize;
    unsigned int CalcHashes;
 
-   PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
+   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
+   explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
+      unsigned int calcHashes = Hashes.usable() ? 0 : ~0;
+      if (Hashes.find("MD5Sum") != NULL)
+	 calcHashes |= Hashes::MD5SUM;
+      if (Hashes.find("SHA1") != NULL)
+	 calcHashes |= Hashes::SHA1SUM;
+      if (Hashes.find("SHA256") != NULL)
+	 calcHashes |= Hashes::SHA256SUM;
+      if (Hashes.find("SHA512") != NULL)
+	 calcHashes |= Hashes::SHA512SUM;
+      CalcHashes = calcHashes;
+   }
 };
 									/*}}}*/
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/
@@ -351,25 +380,12 @@ APT_IGNORE_DEPRECATED_PUSH
    if ((d->CalcHashes & SHA512SUM) == SHA512SUM)
       hashes.push_back(HashString("SHA512", SHA512.Result().Value()));
 APT_IGNORE_DEPRECATED_POP
-   std::string SizeStr;
-   strprintf(SizeStr, "%llu", d->FileSize);
-   hashes.push_back(HashString("Checksum-FileSize", SizeStr));
+   hashes.FileSize(d->FileSize);
    return hashes;
 }
 APT_IGNORE_DEPRECATED_PUSH
-Hashes::Hashes() { d = new PrivateHashes(~0); }
-Hashes::Hashes(unsigned int const Hashes) { d = new PrivateHashes(Hashes); }
-Hashes::Hashes(HashStringList const &Hashes) {
-   unsigned int calcHashes = Hashes.usable() ? 0 : ~0;
-   if (Hashes.find("MD5Sum") != NULL)
-      calcHashes |= MD5SUM;
-   if (Hashes.find("SHA1") != NULL)
-      calcHashes |= SHA1SUM;
-   if (Hashes.find("SHA256") != NULL)
-      calcHashes |= SHA256SUM;
-   if (Hashes.find("SHA512") != NULL)
-      calcHashes |= SHA512SUM;
-   d = new PrivateHashes(calcHashes);
-}
+Hashes::Hashes() : d(new PrivateHashes(~0)) { }
+Hashes::Hashes(unsigned int const Hashes) : d(new PrivateHashes(Hashes)) {}
+Hashes::Hashes(HashStringList const &Hashes) : d(new PrivateHashes(Hashes)) {}
 Hashes::~Hashes() { delete d; }
 APT_IGNORE_DEPRECATED_POP

@@ -109,6 +109,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	if (_config->FindI("quiet", 0) < 1)
 		_config->Set("Debug::EDSP::WriteSolution", true);
 
+	_config->Set("APT::System", "Debian APT solver interface");
 	_config->Set("APT::Solver", "internal");
 	_config->Set("edsp::scenario", "stdin");
 	int input = STDIN_FILENO;

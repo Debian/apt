@@ -53,20 +53,26 @@ void helperCreateLink(std::string const &dir, std::string const &targetname, std
    link.append(linkname);
    ASSERT_EQ(0, symlink(target.c_str(), link.c_str()));
 }
-void helperCreateTemporaryFile(std::string const &id, FileFd &fd, char * * const filename, char const * const content)
+void helperCreateTemporaryFile(std::string const &id, FileFd &fd, std::string * const filename, char const * const content)
 {
    std::string name("apt-test-");
-   name.append(id).append(".XXXXXXXX");
+   name.append(id);
+   size_t const giventmp = name.find(".XXXXXX.");
+   if (giventmp == std::string::npos)
+      name.append(".XXXXXX");
    char * tempfile = strdup(name.c_str());
-   int tempfile_fd = mkstemp(tempfile);
+   ASSERT_STRNE(NULL, tempfile);
+   int tempfile_fd;
+   if (giventmp == std::string::npos)
+      tempfile_fd = mkstemp(tempfile);
+   else
+      tempfile_fd = mkstemps(tempfile, name.length() - (giventmp + 7));
    ASSERT_NE(-1, tempfile_fd);
    if (filename != NULL)
       *filename = tempfile;
    else
-   {
       unlink(tempfile);
-      free(tempfile);
-   }
+   free(tempfile);
 
    EXPECT_TRUE(fd.OpenDescriptor(tempfile_fd, FileFd::ReadWrite));
    if (content != NULL)

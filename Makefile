@@ -9,7 +9,7 @@ endif
 .PHONY: default
 default: startup all
 
-.PHONY: headers library clean veryclean all binary program doc test update-po
+.PHONY: fast headers library clean veryclean all binary program doc test update-po
 all headers library clean veryclean binary program doc manpages docbook test update-po startup dirs:
 	$(MAKE) -C vendor $@
 	$(MAKE) -C apt-pkg $@
@@ -21,7 +21,18 @@ all headers library clean veryclean binary program doc manpages docbook test upd
 	$(MAKE) -C dselect $@
 	$(MAKE) -C doc $@
 	$(MAKE) -C po $@
-	$(MAKE) -C test $@
+	# FIXME: -C test has issue swith parallel builds, investigate!
+	-$(MAKE) -C test $@
+
+fast:
+	$(MAKE) -C vendor all
+	$(MAKE) -C apt-pkg all
+	$(MAKE) -C apt-inst all
+	$(MAKE) -C apt-private all
+	$(MAKE) -C methods all
+	$(MAKE) -C cmdline all
+	$(MAKE) -C ftparchive all
+	$(MAKE) -C test all
 
 all headers library clean veryclean binary program doc manpages docbook test update-po: startup dirs
 
