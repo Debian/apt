@@ -41,6 +41,8 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       return _error->Errno("res_init", "Failed to init resolver");
 
    answer_len = res_query(name.c_str(), C_IN, T_SRV, answer, sizeof(answer));
+   if (answer_len == -1)
+      return false;
    if (answer_len < (int)sizeof(HEADER))
       return _error->Warning("Not enough data from res_query (%i)", answer_len);
 
