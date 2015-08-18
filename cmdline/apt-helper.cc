@@ -86,8 +86,9 @@ static bool DoSrvLookup(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 1)
       return _error->Error(_("Must specifc at least one srv record"));
-   
+
    std::vector<SrvRec> srv_records;
+   c1out << "# target priority weight port" << std::endl;
    for(int i=1; CmdL.FileList[i] != NULL; i++)
    {
       if(GetSrvRecords(CmdL.FileList[i], srv_records) == false)
@@ -95,13 +96,14 @@ static bool DoSrvLookup(CommandLine &CmdL)
       for (std::vector<SrvRec>::const_iterator I = srv_records.begin();
            I != srv_records.end(); ++I)
       {
-         c1out << (*I).target.c_str() << " " 
-               << (*I).priority << " " 
+         c1out << (*I).target.c_str() << " "
+               << (*I).priority << " "
                << (*I).weight << " "
                << (*I).port << " "
                << std::endl;
       }
    }
+
    return true;
 }
 
@@ -120,6 +122,7 @@ static bool ShowHelp(CommandLine &)
       "\n"
       "Commands:\n"
       "   download-file - download the given uri to the target-path\n"
+      "   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
       "   auto-detect-proxy - detect proxy using apt.conf\n"
       "\n"
       "                       This APT helper has Super Meep Powers.\n");

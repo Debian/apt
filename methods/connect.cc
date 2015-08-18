@@ -136,7 +136,7 @@ static bool DoConnect(struct addrinfo *Addr,std::string Host,
 									/*}}}*/
 
 // Connect to a given Hostname 
-bool ConnectAfterSrvRecords(std::string Host,int Port,const char *Service,
+bool ConnectToHostname(std::string Host,int Port,const char *Service,
                             int DefPort,int &Fd,
                             unsigned long TimeOut,pkgAcqMethod *Owner)
 {
@@ -261,36 +261,34 @@ bool ConnectAfterSrvRecords(std::string Host,int Port,const char *Service,
 									/*}}}*/
 // Connect - Connect to a server					/*{{{*/
 // ---------------------------------------------------------------------
-/* Performs a connection to the server */
+/* Performs a connection to the server (including SRV record lookup) */
 bool Connect(std::string Host,int Port,const char *Service,
                             int DefPort,int &Fd,
                             unsigned long TimeOut,pkgAcqMethod *Owner)
 {
-#if 0
    if (_error->PendingError() == true)
       return false;
-#endif
 
    if(LastHost != Host || LastPort != Port)
    {
       SrvRecords.clear();
       bool res = GetSrvRecords(Host, DefPort, SrvRecords);
    }
+   // we have no SrvRecords for this host, connect right away
    if(SrvRecords.size() == 0)
-      return ConnectAfterSrvRecords(Host, Port, Service, DefPort, Fd, 
+      return ConnectToHostname(Host, Port, Service, DefPort, Fd, 
                                     TimeOut, Owner);
 
-   bool connected = false;
+   // try to connect in the priority order of the srv records
    while(SrvRecords.size() > 0)
    {
       Host = SrvRecords[0].target;
-      connected = ConnectAfterSrvRecords(Host, Port, Service, DefPort, Fd, 
-                                         TimeOut, Owner);
-      if(connected == true)
+      if(ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner))
          return true;
 
       // we couldn't connect to this one, use the next
       SrvRecords.erase(SrvRecords.begin());
-   } 
+   }
+
    return false;
 }

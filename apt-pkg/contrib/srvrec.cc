@@ -64,7 +64,7 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       SrvRec rec;
       u_int16_t type, klass, priority, weight, port, dlen;
       char buf[MAXDNAME];
-      
+
       compressed_name_len = dn_skipname(pt, answer+answer_len);
       if (compressed_name_len < 0)
          return _error->Warning("dn_skipname failed (2): %i",
@@ -74,15 +74,15 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
          return _error->Warning("packet too short");
 
       // extract the data out of the result buffer
-      #define extract_u16(target, p) target = *p++ << 8; target |= *p++; 
+      #define extract_u16(target, p) target = *p++ << 8; target |= *p++;
 
       extract_u16(type, pt);
       if(type != T_SRV)
-         return _error->Warning("Unexpected type excepted %x != %x", 
+         return _error->Warning("Unexpected type excepted %x != %x",
                                 T_SRV, type);
       extract_u16(klass, pt);
       if(klass != C_IN)
-         return _error->Warning("Unexpected class excepted %x != %x", 
+         return _error->Warning("Unexpected class excepted %x != %x",
                                 C_IN, klass);
       pt += 4;  // ttl
       extract_u16(dlen, pt);
@@ -135,7 +135,7 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       I->random_number_range_max = max;
    }
 
-   // now shuffle 
+   // FIXME: now shuffle 
 
    return true;
 }
