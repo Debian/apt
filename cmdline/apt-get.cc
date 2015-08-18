@@ -78,10 +78,11 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/statfs.h>
-#include <sys/statvfs.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <pwd.h>
+#include <grp.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -135,28 +136,6 @@ static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
-
-
-// helper that can go wit hthe next ABI break
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-static std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
-{
-   // FIXME: this cast is the horror, the horror
-   debReleaseIndex *r = (debReleaseIndex*)metaindex;
-
-   // see if we have a InRelease file
-   std::string PathInRelease =  r->MetaIndexFile("InRelease");
-   if (FileExists(PathInRelease))
-      return PathInRelease;
-
-   // and if not return the normal one
-   if (FileExists(PathInRelease))
-      return r->MetaIndexFile("Release");
-
-   return "";
-}
-#endif
-
 // GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -175,12 +154,8 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
       {
          if (&CurrentIndexFile == (*IF))
          {
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-            std::string path = MetaIndexFileNameOnDisk(*S);
-#else
-            std::string path = (*S)->LocalFileName();
-#endif
-            if (path != "") 
+            std::string const path = (*S)->LocalFileName();
+            if (path != "")
             {
                indexRecords records;
                records.Load(path);
@@ -195,7 +170,11 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+#if APT_PKG_ABI >= 413
+static pkgSrcRecords::Parser *FindSrc(const char *Name,
+#else
 static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
+#endif
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
@@ -303,16 +282,21 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
 		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
+		  // the Version we have is possibly fuzzy or includes binUploads,
+		  // so we use the Version of the SourcePkg (empty if same as package)
+#if APT_PKG_ABI >= 413
+		  Src = Ver.SourcePkgName();
+		  VerTag = Ver.SourceVerStr();
+#else
 		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
 		  Src = Parse.SourcePkg();
 		  // no SourcePkg name, so it is the "binary" name
 		  if (Src.empty() == true)
 		     Src = TmpSrc;
-		  // the Version we have is possibly fuzzy or includes binUploads,
-		  // so we use the Version of the SourcePkg (empty if same as package)
 		  VerTag = Parse.SourceVer();
 		  if (VerTag.empty() == true)
 		     VerTag = Ver.VerStr();
+#endif
 		  break;
 	       }
 	    }
@@ -343,10 +327,17 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
+#if APT_PKG_ABI >= 413
+	    if (strcmp(Ver.SourcePkgName(),Ver.ParentPkg().Name()) != 0)
+	       Src = Ver.SourcePkgName();
+	    if (VerTag.empty() == true && strcmp(Ver.SourceVerStr(),Ver.VerStr()) != 0)
+	       VerTag = Ver.SourceVerStr();
+#else
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
 	    Src = Parse.SourcePkg();
 	    if (VerTag.empty() == true)
 	       VerTag = Parse.SourceVer();
+#endif
 	 }
       }
    }
@@ -540,7 +531,7 @@ static bool DoDSelectUpgrade(CommandLine &)
    }
 
    // Now upgrade everything
-   if (pkgAllUpgrade(Cache) == false)
+   if (APT::Upgrade::Upgrade(Cache, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
    {
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, problem resolver broke stuff"));
@@ -555,29 +546,25 @@ static bool DoDSelectUpgrade(CommandLine &)
 static bool DoClean(CommandLine &)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
-   std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
-   std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+   std::string const listsdir = _config->FindDir("Dir::state::lists");
 
    if (_config->FindB("APT::Get::Simulate") == true)
    {
+      std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+      std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
       cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< endl
+	   << "Del " << listsdir << "partial/*" << endl
 	   << "Del " << pkgcache << " " << srcpkgcache << endl;
       return true;
    }
-   
-   // Lock the archive directory
-   FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
-   {
-      int lock_fd = GetLock(archivedir + "lock");
-      if (lock_fd < 0)
-	 return _error->Error(_("Unable to lock the download directory"));
-      Lock.Fd(lock_fd);
-   }
-   
+
    pkgAcquire Fetcher;
+   Fetcher.GetLock(archivedir);
    Fetcher.Clean(archivedir);
    Fetcher.Clean(archivedir + "partial/");
+
+   Fetcher.GetLock(listsdir);
+   Fetcher.Clean(listsdir + "partial/");
 
    pkgCacheFile::RemoveCaches();
 
@@ -630,17 +617,15 @@ static bool DoDownload(CommandLine &CmdL)
    if (Cache.ReadOnlyOpen() == false)
       return false;
 
-   APT::CacheSetHelper helper(c0out);
+   APT::CacheSetHelper helper;
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
-   pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
-      return false;
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+   pkgAcquire Fetcher(&Stat);
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
@@ -655,6 +640,8 @@ static bool DoDownload(CommandLine &CmdL)
 	 Ver != verset.end(); ++Ver, ++i)
    {
       pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
+      if (storefile[i].empty())
+	 continue;
       std::string const filename = cwd + flNotDir(storefile[i]);
       storefile[i].assign(filename);
       I->DestFile.assign(filename);
@@ -665,10 +652,13 @@ static bool DoDownload(CommandLine &CmdL)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile)  << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
 
    if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
       return false;
@@ -731,15 +721,16 @@ static bool DoSource(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
+#if APT_PKG_ABI < 413
    pkgRecords Recs(Cache);
+#endif
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
 
    // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher;
-   Fetcher.SetLog(&Stat);
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+   pkgAcquire Fetcher(&Stat);
 
    SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
    
@@ -756,14 +747,21 @@ static bool DoSource(CommandLine &CmdL)
 
    // Load the requestd sources into the fetcher
    unsigned J = 0;
+   std::string UntrustedList;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
+#if APT_PKG_ABI >= 413
+      pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
+#else
       pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
-      
+#endif
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
+
+      if (Last->Index().IsTrusted() == false)
+         UntrustedList += Src + " ";
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
@@ -793,13 +791,13 @@ static bool DoSource(CommandLine &CmdL)
       }
 
       // Back track
-      vector<pkgSrcRecords::File> Lst;
-      if (Last->Files(Lst) == false) {
+      vector<pkgSrcRecords::File2> Lst;
+      if (Last->Files2(Lst) == false) {
 	 return false;
       }
 
       // Load them into the fetcher
-      for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
+      for (vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
 	   I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
@@ -828,54 +826,36 @@ static bool DoSource(CommandLine &CmdL)
 	 queued.insert(Last->Index().ArchiveURI(I->Path));
 
 	 // check if we have a file with that md5 sum already localy
-	 if(!I->MD5Hash.empty() && FileExists(flNotDir(I->Path)))  
-	 {
-	    FileFd Fd(flNotDir(I->Path), FileFd::ReadOnly);
-	    MD5Summation sum;
-	    sum.AddFD(Fd.Fd(), Fd.Size());
-	    Fd.Close();
-	    if((string)sum.Result() == I->MD5Hash) 
+	 std::string localFile = flNotDir(I->Path);
+	 if (FileExists(localFile) == true)
+	    if(I->Hashes.VerifyFile(localFile) == true)
 	    {
 	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
-			flNotDir(I->Path).c_str());
+			localFile.c_str());
 	       continue;
 	    }
+
+	 // see if we have a hash (Acquire::ForceHash is the only way to have none)
+	 if (I->Hashes.usable() == false && _config->FindB("APT::Get::AllowUnauthenticated",false) == false)
+	 {
+	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
+		     localFile.c_str());
+	    continue;
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			I->MD5Hash,I->Size,
-			Last->Index().SourceInfo(*Last,*I),Src);
+			I->Hashes, I->FileSize, Last->Index().SourceInfo(*Last,*I), Src);
       }
    }
-   
+
    // Display statistics
    unsigned long long FetchBytes = Fetcher.FetchNeeded();
    unsigned long long FetchPBytes = Fetcher.PartialPresent();
    unsigned long long DebBytes = Fetcher.TotalNeeded();
 
-   // Check for enough free space
-   struct statvfs Buf;
-   string OutputDir = ".";
-   if (statvfs(OutputDir.c_str(),&Buf) != 0) {
-      if (errno == EOVERFLOW)
-	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
-				OutputDir.c_str());
-      else
-	 return _error->Errno("statvfs",_("Couldn't determine free space in %s"),
-				OutputDir.c_str());
-   } else if (unsigned(Buf.f_bfree) < (FetchBytes - FetchPBytes)/Buf.f_bsize)
-     {
-       struct statfs Stat;
-       if (statfs(OutputDir.c_str(),&Stat) != 0
-#if HAVE_STRUCT_STATFS_F_TYPE
-           || unsigned(Stat.f_type) != RAMFS_MAGIC
-#endif
-           )  {
-          return _error->Error(_("You don't have enough free space in %s"),
-              OutputDir.c_str());
-       }
-     }
-   
+   if (CheckFreeSpaceBeforeDownload(".", (FetchBytes - FetchPBytes)) == false)
+      return false;
+
    // Number of bytes
    if (DebBytes != FetchBytes)
       //TRANSLATOR: The required space between number and unit is already included
@@ -894,7 +874,7 @@ static bool DoSource(CommandLine &CmdL)
 	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
       return true;
    }
-   
+
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
@@ -904,6 +884,13 @@ static bool DoSource(CommandLine &CmdL)
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
+
+   // check authentication status of the source as well
+   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+      return false;
 
    // Run it
    bool Failed = false;
@@ -945,18 +932,19 @@ static bool DoSource(CommandLine &CmdL)
 	 else
 	 {
 	    // Call dpkg-source
-	    char S[500];
-	    snprintf(S,sizeof(S),"%s -x %s",
+	    std::string const sourceopts = _config->Find("DPkg::Source-Options", "-x");
+	    std::string S;
+	    strprintf(S, "%s %s %s",
 		     _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
-		     Dsc[I].Dsc.c_str());
-	    if (system(S) != 0)
+		     sourceopts.c_str(), Dsc[I].Dsc.c_str());
+	    if (system(S.c_str()) != 0)
 	    {
-	       fprintf(stderr,_("Unpack command '%s' failed.\n"),S);
-	       fprintf(stderr,_("Check if the 'dpkg-dev' package is installed.\n"));
+	       fprintf(stderr, _("Unpack command '%s' failed.\n"), S.c_str());
+	       fprintf(stderr, _("Check if the 'dpkg-dev' package is installed.\n"));
 	       _exit(1);
-	    }	    
+	    }
 	 }
-	 
+
 	 // Try to compile it with dpkg-buildpackage
 	 if (_config->FindB("APT::Get::Compile",false) == true)
 	 {
@@ -972,20 +960,20 @@ static bool DoSource(CommandLine &CmdL)
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage
-	    char S[500];
-	    snprintf(S,sizeof(S),"cd %s && %s %s",
+	    std::string S;
+	    strprintf(S, "cd %s && %s %s",
 		     Dir.c_str(),
 		     _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
 		     buildopts.c_str());
-	    
-	    if (system(S) != 0)
+
+	    if (system(S.c_str()) != 0)
 	    {
-	       fprintf(stderr,_("Build command '%s' failed.\n"),S);
+	       fprintf(stderr, _("Build command '%s' failed.\n"), S.c_str());
 	       _exit(1);
-	    }	    
-	 }      
+	    }
+	 }
       }
-      
+
       _exit(0);
    }
 
@@ -1026,15 +1014,11 @@ static bool DoBuildDep(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
+#if APT_PKG_ABI < 413
    pkgRecords Recs(Cache);
+#endif
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
-      return false;
-
-   // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
       return false;
 
    bool StripMultiArch;
@@ -1053,7 +1037,39 @@ static bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = 0;
+
+      // an unpacked debian source tree
+      using APT::String::Startswith;
+      if ((Startswith(*I, "./") || Startswith(*I, "/")) &&
+          DirectoryExists(*I))
+      {
+         ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), *I);
+         // FIXME: how can we make this more elegant?
+         std::string TypeName = "debian/control File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
+      }
+      // if its a local file (e.g. .dsc) use this
+      else if (FileExists(*I))
+      {
+         ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), *I);
+
+         // see if we can get a parser for this pkgIndexFile type
+         string TypeName = flExtension(*I) + " File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
+      } else {
+         // normal case, search the cache for the source file
+#if APT_PKG_ABI >= 413
+	 Last = FindSrc(*I,SrcRecs,Src,Cache);
+#else
+	 Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+#endif
+      }
+
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
@@ -1071,7 +1087,7 @@ static bool DoBuildDep(CommandLine &CmdL)
       }
       else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
 	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-   
+
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
       if (Opts) 
@@ -1402,21 +1418,24 @@ static bool DoBuildDep(CommandLine &CmdL)
  * pool/ next to the deb itself)
  * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
  */
-static string GetChangelogPath(CacheFile &Cache, 
-                        pkgCache::PkgIterator Pkg,
+static string GetChangelogPath(CacheFile &Cache,
                         pkgCache::VerIterator Ver)
 {
-   string path;
-
    pkgRecords Recs(Cache);
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   string path = flNotFile(rec.FileName());
+#if APT_PKG_ABI >= 413
+   path.append(Ver.SourcePkgName());
+   path.append("_");
+   path.append(StripEpoch(Ver.SourceVerStr()));
+#else
+   string srcpkg = rec.SourcePkg().empty() ? Ver.ParentPkg().Name() : rec.SourcePkg();
    string ver = Ver.VerStr();
    // if there is a source version it always wins
    if (rec.SourceVer() != "")
       ver = rec.SourceVer();
-   path = flNotFile(rec.FileName());
    path += srcpkg + "_" + StripEpoch(ver);
+#endif
    return path;
 }
 									/*}}}*/
@@ -1430,7 +1449,6 @@ static string GetChangelogPath(CacheFile &Cache,
  *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
  */
 static bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
-                                 pkgCache::PkgIterator Pkg,
                                  pkgCache::VerIterator Ver,
                                  string &out_uri)
 {
@@ -1445,7 +1463,7 @@ static bool GuessThirdPartyChangelogUri(CacheFile &Cache,
       return false;
 
    // get archive uri for the binary deb
-   string path_without_dot_changelog = GetChangelogPath(Cache, Pkg, Ver);
+   string path_without_dot_changelog = GetChangelogPath(Cache, Ver);
    out_uri = index->ArchiveURI(path_without_dot_changelog + ".changelog");
 
    // now strip away the filename and add srcpkg_srcver.changelog
@@ -1463,44 +1481,45 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
  * GuessThirdPartyChangelogUri for details how)
  */
 {
-   string path;
-   string descr;
-   string server;
-   string changelog_uri;
-
-   // data structures we need
-   pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-
    // make the server root configurable
-   server = _config->Find("Apt::Changelogs::Server",
+   string const server = _config->Find("Apt::Changelogs::Server",
                           "http://packages.debian.org/changelogs");
-   path = GetChangelogPath(CacheFile, Pkg, Ver);
-   strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
+   string const path = GetChangelogPath(CacheFile, Ver);
+   string changelog_uri;
+   if (APT::String::Endswith(server, "/") == true)
+      strprintf(changelog_uri, "%s%s/changelog", server.c_str(), path.c_str());
+   else
+      strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
    {
       std::cout << '\'' << changelog_uri << '\'' << std::endl;
       return true;
    }
+   pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
 
+   string descr;
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
-   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+   pkgAcquire::Item const * itm = new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
 
    // try downloading it, if that fails, try third-party-changelogs location
    // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?
    Fetcher.Run();
-   if (!FileExists(targetfile))
+   if (itm->Status != pkgAcquire::Item::StatDone)
    {
       string third_party_uri;
-      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, Ver, third_party_uri))
+      if (GuessThirdPartyChangelogUri(CacheFile, Ver, third_party_uri))
       {
          strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
-         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+         itm = new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
          Fetcher.Run();
       }
    }
 
-   if (FileExists(targetfile))
+   if (itm->Status == pkgAcquire::Item::StatDone)
       return true;
 
    // error
@@ -1515,9 +1534,9 @@ static bool DoChangelog(CommandLine &CmdL)
    if (Cache.ReadOnlyOpen() == false)
       return false;
    
-   APT::CacheSetHelper helper(c0out);
+   APT::CacheSetHelper helper;
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
@@ -1531,8 +1550,8 @@ static bool DoChangelog(CommandLine &CmdL)
       return Success;
    }
 
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+   Fetcher.SetLog(&Stat);
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
@@ -1546,6 +1565,19 @@ static bool DoChangelog(CommandLine &CmdL)
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
+
+      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+      if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+      {
+	 struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+	 struct group const * const gr = getgrnam("root");
+	 if (pw != NULL && gr != NULL)
+	 {
+	    // chown the tmp dir directory we use to the sandbox user
+	    if(chown(tmpdir, pw->pw_uid, gr->gr_gid) != 0)
+	       _error->WarningE("DoChangelog", "chown to %s:%s of directory %s failed", SandboxUser.c_str(), "root", tmpdir);
+	 }
+      }
    }
 
    for (APT::VersionList::const_iterator Ver = verset.begin(); 
@@ -1554,14 +1586,14 @@ static bool DoChangelog(CommandLine &CmdL)
    {
       string changelogfile;
       if (downOnly == false)
-	 changelogfile.append(tmpname).append("changelog");
+	 changelogfile.append(tmpname).append("/changelog");
       else
 	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
       if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)
       {
          DisplayFileInPager(changelogfile);
          // cleanup temp file
-         unlink(changelogfile.c_str());
+	 unlink(changelogfile.c_str());
       }
    }
    // clenaup tmp dir
@@ -1575,13 +1607,12 @@ static bool DoChangelog(CommandLine &CmdL)
 /* */
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
-	    
+   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
+
    if (_config->FindB("version") == true)
    {
       cout << _("Supported modules:") << endl;
-      
+
       for (unsigned I = 0; I != pkgVersioningSystem::GlobalListLen; I++)
       {
 	 pkgVersioningSystem *VS = pkgVersioningSystem::GlobalList[I];
@@ -1590,7 +1621,7 @@ static bool ShowHelp(CommandLine &)
 	 else
 	    cout << ' ';
 	 cout << "Ver: " << VS->Label << endl;
-	 
+
 	 /* Print out all the packaging systems that will work with 
 	    this VS */
 	 for (unsigned J = 0; J != pkgSystem::GlobalListLen; J++)
@@ -1696,26 +1727,8 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(),_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      if (_config->FindB("version") == true)
-	 ShowHelp(CmdL);
-	 
-      _error->DumpErrors();
-      return 100;
-   }
-
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
    // see if we are in simulate mode
    CheckSimulateMode(CmdL);

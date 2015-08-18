@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Ensure that we do not modify file:/// uris (regression test for
+# CVE-2014-0487
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "amd64"
+configcompression 'bz2' 'gz'
+
+insertpackage 'unstable' 'foo' 'all' '1'
+insertsource 'unstable' 'foo' 'all' '1'
+
+setupaptarchive --no-update
+
+# ensure the archive is not writable
+addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-amd64;'
+chmod 550 aptarchive/dists/unstable/main/binary-amd64
+
+testsuccess aptget update
+testsuccess aptget update -o Debug::pkgAcquire::Auth=1
+cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
+
+# ensure that the hash of the uncompressed file was verified even on a local ims hit
+canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
+testsuccess grep -- "$canary" rootdir/tmp/update.output
+
+# foo is still available
+testsuccess aptget install -s foo
+testsuccess aptcache showsrc foo
+testsuccess aptget source foo --print-uris

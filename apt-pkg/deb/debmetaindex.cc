@@ -78,7 +78,6 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    return Res;
 }
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 std::string debReleaseIndex::LocalFileName() const
 {
    // see if we have a InRelease file
@@ -92,7 +91,6 @@ std::string debReleaseIndex::LocalFileName() const
 
    return "";
 }
-#endif
 
 string debReleaseIndex::IndexURISuffix(const char *Type, string const &Section, string const &Arch) const
 {
@@ -186,8 +184,8 @@ debReleaseIndex::~debReleaseIndex() {
 			delete *S;
 }
 
-vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
-	vector <struct IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
+vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
+	vector <IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
 
 	map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
 	if (src != ArchEntries.end()) {
@@ -253,38 +251,44 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 {
    bool const tryInRelease = _config->FindB("Acquire::TryInRelease", true);
 
+   indexRecords * const iR = new indexRecords(Dist);
+   if (Trusted == ALWAYS_TRUSTED)
+      iR->SetTrusted(true);
+   else if (Trusted == NEVER_TRUSTED)
+      iR->SetTrusted(false);
+
    // special case for --print-uris
    if (GetAll) {
-      vector <struct IndexTarget *> *targets = ComputeIndexTargets();
-      for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
+      vector <IndexTarget *> *targets = ComputeIndexTargets();
+      for (vector <IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			 (*Target)->ShortDesc, HashString());
+			 (*Target)->ShortDesc, HashStringList());
       }
       delete targets;
 
       // this is normally created in pkgAcqMetaSig, but if we run
       // in --print-uris mode, we add it here
       if (tryInRelease == false)
-	 new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
-	       MetaIndexInfo("Release"), "Release",
-	       MetaIndexURI("Release.gpg"),
-	       ComputeIndexTargets(),
-	       new indexRecords (Dist));
+	 new pkgAcqMetaIndex(Owner, NULL,
+                             MetaIndexURI("Release"),
+                             MetaIndexInfo("Release"), "Release",
+                             MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+                             ComputeIndexTargets(),
+                             iR);
    }
-
    if (tryInRelease == true)
-      new pkgAcqMetaClearSig(Owner, MetaIndexURI("InRelease"),
-	    MetaIndexInfo("InRelease"), "InRelease",
+      new pkgAcqMetaClearSig(Owner, 
+            MetaIndexURI("InRelease"), MetaIndexInfo("InRelease"), "InRelease",
 	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
 	    MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
 	    ComputeIndexTargets(),
-	    new indexRecords (Dist));
+	    iR);
    else
-      new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
-	    MetaIndexInfo("Release.gpg"), "Release.gpg",
-	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-	    ComputeIndexTargets(),
-	    new indexRecords (Dist));
+      new pkgAcqMetaIndex(Owner, NULL,
+          MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
+          MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+          ComputeIndexTargets(),
+          iR);
 
    return true;
 }
@@ -388,7 +392,7 @@ debReleaseIndex::debSectionEntry::debSectionEntry (string const &Section,
 		bool const &IsSrc): Section(Section), IsSrc(IsSrc)
 {}
 
-class debSLTypeDebian : public pkgSourceList::Type
+class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type
 {
    protected:
 
@@ -398,9 +402,12 @@ class debSLTypeDebian : public pkgSourceList::Type
    {
       // parse arch=, arch+= and arch-= settings
       map<string, string>::const_iterator arch = Options.find("arch");
-      vector<string> Archs =
-		(arch != Options.end()) ? VectorizeString(arch->second, ',') :
-				APT::Configuration::getArchitectures();
+      vector<string> Archs;
+      if (arch != Options.end())
+	 Archs = VectorizeString(arch->second, ',');
+      else
+	 Archs = APT::Configuration::getArchitectures();
+
       if ((arch = Options.find("arch+")) != Options.end())
       {
 	 std::vector<std::string> const plusArch = VectorizeString(arch->second, ',');
@@ -471,7 +478,16 @@ class debSLTypeDebian : public pkgSourceList::Type
    }
 };
 
-class debSLTypeDeb : public debSLTypeDebian
+debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)
+   : metaIndex(DebFile, "local-uri", "deb-dist"), DebFile(DebFile)
+{
+   DebIndex = new debDebPkgFileIndex(DebFile);
+   Indexes = new vector<pkgIndexFile *>();
+   Indexes->push_back(DebIndex);
+}
+
+
+class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian
 {
    public:
 
@@ -489,7 +505,7 @@ class debSLTypeDeb : public debSLTypeDebian
    }   
 };
 
-class debSLTypeDebSrc : public debSLTypeDebian
+class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian
 {
    public:
 
@@ -507,5 +523,26 @@ class debSLTypeDebSrc : public debSLTypeDebian
    }   
 };
 
-debSLTypeDeb _apt_DebType;
-debSLTypeDebSrc _apt_DebSrcType;
+class APT_HIDDEN debSLTypeDebFile : public pkgSourceList::Type
+{
+   public:
+
+   bool CreateItem(vector<metaIndex *> &List, string const &URI,
+		   string const &/*Dist*/, string const &/*Section*/,
+		   std::map<string, string> const &/*Options*/) const
+   {
+      metaIndex *mi = new debDebFileMetaIndex(URI);
+      List.push_back(mi);
+      return true;
+   }
+   
+   debSLTypeDebFile()
+   {
+      Name = "deb-file";
+      Label = "Debian Deb File";
+   }   
+};
+
+APT_HIDDEN debSLTypeDeb _apt_DebType;
+APT_HIDDEN debSLTypeDebSrc _apt_DebSrcType;
+APT_HIDDEN debSLTypeDebFile _apt_DebFileType;

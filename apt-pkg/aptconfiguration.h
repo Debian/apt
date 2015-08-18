@@ -123,9 +123,6 @@ public:									/*{{{*/
 	/** \return Return a comma-separated list of enabled build profile specifications */
 	std::string static const getBuildProfilesString();
 									/*}}}*/
-	private:							/*{{{*/
-	void static setDefaultConfigurationForCompressors();
-									/*}}}*/
 };
 									/*}}}*/
 }

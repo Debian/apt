@@ -1,0 +1,101 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'bar' 'amd64,i386' '1'
+insertpackage 'unstable' 'uninstalled' 'all' '1'
+insertpackage 'unstable' 'uninstalled-native' 'amd64' '1'
+
+insertinstalledpackage 'foo' 'all' '1'
+insertinstalledpackage 'bar' 'amd64' '1'
+
+setupaptarchive
+
+# dpkg is "installed" by our test framework
+testdpkginstalled dpkg
+
+testnoautopkg() {
+	testempty aptmark showauto
+	testempty aptcache showauto
+	testsuccessequal 'bar
+dpkg
+foo' aptmark showmanual
+	testsuccessequal 'bar
+foo' aptmark showmanual bar foo uninstalled
+}
+testfooisauto() {
+	testsuccessequal 'foo' aptmark showauto
+	testsuccessequal 'foo' aptcache showauto
+	testsuccessequal 'foo' aptmark showauto foo
+	testsuccessequal 'foo' aptcache showauto foo
+	testsuccessequal 'bar
+dpkg' aptmark showmanual
+	testsuccessequal 'bar' aptmark showmanual bar
+}
+testmarkonpkgasauto() {
+	testsuccess $1 $2 foo
+	testfooisauto
+	testsuccess $1 $2 foo
+	testfooisauto
+
+	testsuccess $1 $3 foo
+	testnoautopkg
+	testsuccess $1 $3 foo
+	testnoautopkg
+}
+
+testfailureequal 'E: No packages found' aptmark auto
+testfailureequal 'E: No packages found' aptmark manual
+
+testnoautopkg
+testmarkonpkgasauto 'aptmark' 'auto' 'manual'
+testmarkonpkgasauto 'aptmark' 'markauto' 'unmarkauto'
+testmarkonpkgasauto 'aptget' 'markauto' 'unmarkauto'
+
+testnoholdpkg() {
+	testempty aptmark showhold
+	testempty aptmark showholds  # typical "typo"
+	testempty aptmark showhold dpkg
+	testempty aptmark showholds dpkg
+}
+testpkgonhold() {
+	testsuccessequal "$1" aptmark showhold
+	testsuccessequal "$1" aptmark showholds
+	testsuccessequal "$1" aptmark showhold $1
+	testsuccessequal "$1" aptmark showholds $1
+}
+testmarkonepkgashold() {
+	testsuccess aptmark hold $1
+	testpkgonhold $1
+	testsuccess aptmark hold $1
+	testpkgonhold $1
+	testsuccess aptmark unhold $1
+	testnoholdpkg
+	testsuccess aptmark unhold $1
+	testnoholdpkg
+}
+
+testfailureequal 'E: No packages found' aptmark hold
+testfailureequal 'E: No packages found' aptmark unhold
+
+testnoholdpkg
+testmarkonepkgashold 'foo'
+testmarkonepkgashold 'bar'
+
+msgtest 'dpkg supports --merge-avail via' 'stdin'
+if dpkg --merge-avail - < /dev/null >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip 'dpkg version too old'
+	exit 0
+fi
+
+testmarkonepkgashold 'uninstalled'
+testmarkonepkgashold 'uninstalled-native'
+
+testsuccessequal 'uninstalled set on hold.' aptmark hold uninstalled
+testsuccessequal 'uninstalled-native set on hold.' aptmark hold uninstalled-native

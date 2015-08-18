@@ -37,6 +37,11 @@ APT_PURE string indexRecords::GetSuite() const
    return this->Suite;
 }
 
+APT_PURE bool indexRecords::GetSupportsAcquireByHash() const
+{
+   return this->SupportsAcquireByHash;
+}
+
 APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist
@@ -53,7 +58,12 @@ APT_PURE time_t indexRecords::GetValidUntil() const
    return this->ValidUntil;
 }
 
-APT_PURE const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
+APT_PURE time_t indexRecords::GetDate() const
+{
+   return this->Date;
+}
+
+APT_PURE indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())
@@ -86,12 +96,14 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
       return false;
    }
+   // FIXME: find better tag name
+   SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");
 
-   int i;
-   for (i=0;HashString::SupportedHashes()[i] != NULL; i++)
+   bool FoundHashSum = false;
+   for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
    {
       if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
 	 continue;
@@ -103,24 +115,38 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       {
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
-	 indexRecords::checkSum *Sum = new indexRecords::checkSum;
-	 Sum->MetaKeyFilename = Name;
-	 Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);
-	 Sum->Size = Size;
-	 Entries[Name] = Sum;
+
+         if (Entries.find(Name) == Entries.end())
+         {
+            indexRecords::checkSum *Sum = new indexRecords::checkSum;
+            Sum->MetaKeyFilename = Name;
+            Sum->Size = Size;
+	    std::string SizeStr;
+	    strprintf(SizeStr, "%llu", Size);
+	    Sum->Hashes.push_back(HashString("Checksum-FileSize", SizeStr));
+            APT_IGNORE_DEPRECATED(Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);)
+            Entries[Name] = Sum;
+         }
+         Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
+         FoundHashSum = true;
       }
-      break;
    }
 
-   if(HashString::SupportedHashes()[i] == NULL)
+   if(FoundHashSum == false)
    {
       strprintf(ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
       return false;
    }
 
-   string Label = Section.FindS("Label");
-   string StrDate = Section.FindS("Date");
-   string StrValidUntil = Section.FindS("Valid-Until");
+   string const StrDate = Section.FindS("Date");
+   if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
+   {
+      strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+
+   string const Label = Section.FindS("Label");
+   string const StrValidUntil = Section.FindS("Valid-Until");
 
    // if we have a Valid-Until header in the Release file, use it as default
    if (StrValidUntil.empty() == false)
@@ -143,20 +169,13 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file
       return true;
 
-   time_t date;
-   if (RFC1123StrToTime(StrDate.c_str(), date) == false)
-   {
-      strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
-      return false;
-   }
-
    if (MinAge != 0 && ValidUntil != 0) {
-      time_t const min_date = date + MinAge;
+      time_t const min_date = Date + MinAge;
       if (ValidUntil < min_date)
 	 ValidUntil = min_date;
    }
    if (MaxAge != 0) {
-      time_t const max_date = date + MaxAge;
+      time_t const max_date = Date + MaxAge;
       if (ValidUntil == 0 || ValidUntil > max_date)
 	 ValidUntil = max_date;
    }
@@ -234,11 +253,44 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    return true;
 }
 									/*}}}*/
-indexRecords::indexRecords()
+
+APT_PURE bool indexRecords::IsAlwaysTrusted() const
 {
+   if (Trusted == ALWAYS_TRUSTED)
+      return true;
+   return false;
+}
+APT_PURE bool indexRecords::IsNeverTrusted() const
+{
+   if (Trusted == NEVER_TRUSTED)
+      return true;
+   return false;
+}
+void indexRecords::SetTrusted(bool const Trusted)
+{
+   if (Trusted == true)
+      this->Trusted = ALWAYS_TRUSTED;
+   else
+      this->Trusted = NEVER_TRUSTED;
 }
 
-indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist), ValidUntil(0)
+#if APT_PKG_ABI >= 413
+indexRecords::indexRecords(const string &ExpectedDist) :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
+   SupportsAcquireByHash(false)
 {
 }
+#else
+indexRecords::indexRecords() :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(""), ValidUntil(0),
+   SupportsAcquireByHash(false)
+{
+}
+indexRecords::indexRecords(const string ExpectedDist) :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
+   SupportsAcquireByHash(false)
+{
+}
+#endif
+
+indexRecords::~indexRecords() {}

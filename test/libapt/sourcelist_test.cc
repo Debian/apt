@@ -20,7 +20,7 @@ class SourceList : public pkgSourceList {
 TEST(SourceListTest,ParseFileDeb822)
 {
    FileFd fd;
-   char * tempfile;
+   char * tempfile = NULL;
    createTemporaryFile("parsefiledeb822", fd, &tempfile,
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"

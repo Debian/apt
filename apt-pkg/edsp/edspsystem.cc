@@ -26,8 +26,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-edspSystem edspSys;
-
 // System::debSystem - Constructor					/*{{{*/
 edspSystem::edspSystem()
 {
@@ -126,3 +124,5 @@ bool edspSystem::FindIndex(pkgCache::PkgFileIterator File,
    return false;
 }
 									/*}}}*/
+
+APT_HIDDEN edspSystem edspSys;

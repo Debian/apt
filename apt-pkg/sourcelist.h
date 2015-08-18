@@ -55,12 +55,12 @@ class metaIndex;
 class pkgSourceList
 {
    public:
-   
+
    // List of supported source list types
    class Type
    {
       public:
-      
+
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
@@ -83,9 +83,9 @@ class pkgSourceList
       Type();
       virtual ~Type() {};
    };
-   
+
    typedef std::vector<metaIndex *>::const_iterator const_iterator;
-   
+
    protected:
 
    std::vector<metaIndex *> SrcList;

@@ -63,6 +63,8 @@ class CircleBuf
 
    public:
    Hashes *Hash;
+   // total amount of data that got written so far
+   unsigned long long TotalWriten;
 
    // Read data in
    bool Read(int Fd);
@@ -81,8 +83,8 @@ class CircleBuf
    bool ReadSpace() const {return Size - (InP - OutP) > 0;};
    bool WriteSpace() const {return InP - OutP > 0;};
 
-   // Dump everything
    void Reset();
+   // Dump everything
    void Stats();
 
    CircleBuf(unsigned long long Size);
@@ -109,7 +111,7 @@ struct HttpServerState: public ServerState
    virtual bool Open();
    virtual bool IsOpen();
    virtual bool Close();
-   virtual bool InitHashes(FileFd &File);
+   virtual bool InitHashes(HashStringList const &ExpectedHashes);
    virtual Hashes * GetHashes();
    virtual bool Die(FileFd &File);
    virtual bool Flush(FileFd * const File);
@@ -123,9 +125,6 @@ class HttpMethod : public ServerMethod
 {
    public:
    virtual void SendReq(FetchItem *Itm);
-
-   /** \brief Try to AutoDetect the proxy */
-   bool AutoDetectProxy();
 
    virtual bool Configuration(std::string Message);
 

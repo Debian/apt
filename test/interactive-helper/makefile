@@ -39,7 +39,7 @@ include $(PROGRAM_H)
 #SOURCE = rpmver.cc
 #include $(PROGRAM_H)
 
-# Program for testing udevcdrom
+# very simple webserver for APT testing
 PROGRAM=aptwebserver
 SLIBS = -lapt-pkg -lpthread
 LIB_MAKES = apt-pkg/makefile

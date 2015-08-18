@@ -4,33 +4,54 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture 'native'
+configarchitecture 'amd64' 'i386'
 
-setupsimplenativepackage 'compiz-core' 'native' '1.0' 'unstable'
-BUILDDIR='incoming/compiz-core-1.0'
-mkdir -p ${BUILDDIR}/debian/compiz-core/etc
-echo 'foo=bar;' > ${BUILDDIR}/compiz.conf
-echo 'compiz.conf	/etc/compiz.conf' >> ${BUILDDIR}/debian/install
-buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
-rm -rf "$BUILDDIR"
+buildcompizpkg() {
+	setupsimplenativepackage "compiz-core-$1" "$2" "$3" "$4"
+	BUILDDIR="incoming/compiz-core-$1-$3"
+	mkdir -p ${BUILDDIR}/debian/compiz-core/etc
+	echo 'foo=bar;' > ${BUILDDIR}/compiz.conf
+	echo 'compiz.conf	/etc/compiz.conf' >> ${BUILDDIR}/debian/install
+	buildpackage "$BUILDDIR" "$4" 'main' "$2"
+	rm -rf "$BUILDDIR"
+}
+buildcompizpkg 'native' 'all' '1.0' 'stable'
+buildcompizpkg 'all' 'native' '1.0' 'stable'
+buildcompizpkg 'native' 'native' '2.0' 'unstable'
+buildcompizpkg 'all' 'all' '2.0' 'unstable'
 
 setupaptarchive
 
+runtests() {
+	testdpkgnotinstalled compiz-core-$1
+	testsuccess aptget install compiz-core-$1 -t "${2:-unstable}"
+	testdpkginstalled compiz-core-$1
 
-testdpkgnotinstalled compiz-core
-testsuccess aptget install compiz-core
-testdpkginstalled compiz-core
+	testsuccess aptget remove compiz-core-$1 -y
+	testdpkgnotinstalled compiz-core-$1
+	testdpkgstatus 'rc' '1' "compiz-core-$1"
 
-testsuccess aptget remove compiz-core -y
-testdpkgnotinstalled compiz-core
-
-msgtest 'Check that conffiles are still around for' 'compiz-core'
-dpkg -l compiz-core | grep -q '^rc' && msgpass || msgfail
-
-testequal 'Reading package lists...
+	testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
-  compiz-core*
+  compiz-core-$1*
 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
-Purg compiz-core' aptget purge compiz-core -s
+Purg compiz-core-$1" aptget purge compiz-core-$1 -s
+	testsuccess aptget purge compiz-core-$1 -y
+	echo -n '' > rootdir/var/lib/dpkg/available # dpkg -l < 1.16.2 reads the available file by default, where the package can be found
+	testequalor2 "dpkg-query: no packages found matching compiz-core-$1" "No packages found matching compiz-core-$1." dpkg -l compiz-core-$1
+}
+
+msgmsg 'Test in multi arch environment'
+runtests 'native'
+runtests 'all'
+runtests 'native' 'stable'
+runtests 'all' 'stable'
+
+msgmsg 'Test in single arch environment'
+configarchitecture 'amd64'
+runtests 'native'
+runtests 'all'
+runtests 'native' 'stable'
+runtests 'all' 'stable'

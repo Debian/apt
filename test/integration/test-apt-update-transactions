@@ -1,0 +1,74 @@
+#!/bin/sh
+set -e
+
+# ensure that an update will only succeed entirely or not at all
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+insertsource 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+
+breakfile() {
+	mv "$1" "${1}.bak"
+	cat > "$1" <<EOF
+Package: bar
+EOF
+	compressfile "$1"
+}
+restorefile() {
+	mv "${1}.bak" "$1"
+}
+
+testrun() {
+	# produce an unsigned repository
+	find aptarchive \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
+	testfailure aptget update --no-allow-insecure-repositories
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
+
+	# signed but broken
+	signreleasefiles
+
+	breakfile aptarchive/dists/unstable/main/binary-i386/Packages
+	testfailure aptget update
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
+	restorefile aptarchive/dists/unstable/main/binary-i386/Packages
+
+	breakfile aptarchive/dists/unstable/main/source/Sources
+	testfailure aptget update
+	testfileequal "$1" "$(listcurrentlistsdirectory)"
+	restorefile aptarchive/dists/unstable/main/source/Sources
+}
+
+testsetup() {
+	msgmsg 'Test with no initial data over' "$1"
+	redatereleasefiles 'now'
+	rm -rf rootdir/var/lib/apt/lists
+	mkdir -p rootdir/var/lib/apt/lists/partial
+	listcurrentlistsdirectory > listsdir.lst
+	testrun 'listsdir.lst'
+
+	msgmsg 'Test with initial data over' "$1"
+	testsuccess aptget update
+	listcurrentlistsdirectory > listsdir.lst
+	redatereleasefiles '+1hour'
+	testrun 'listsdir.lst'
+}
+
+testsetup 'file'
+
+changetowebserver
+webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
+webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
+webserverconfig 'aptwebserver::support::range' 'false' "$1"
+
+testsetup 'http'
+
+changetohttpswebserver
+
+testsetup 'https'

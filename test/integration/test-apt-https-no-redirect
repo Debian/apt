@@ -14,17 +14,15 @@ echo 'alright' > aptarchive/working
 changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=http://localhost:8080/'
 
 msgtest 'download of a file works via' 'http'
-downloadfile 'http://localhost:8080/working' httpfile >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg downloadfile 'http://localhost:8080/working' httpfile
 testfileequal httpfile 'alright'
 
 msgtest 'download of a file works via' 'https'
-downloadfile 'https://localhost:4433/working' httpsfile >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg downloadfile 'https://localhost:4433/working' httpsfile
 testfileequal httpsfile 'alright'
 
 msgtest 'download of a file does not work if' 'https redirected to http'
-downloadfile 'https://localhost:4433/redirectme/working' redirectfile >curloutput 2>&1 && msgfail || msgpass
+testfailure --nomsg downloadfile 'https://localhost:4433/redirectme/working' redirectfile
 
 msgtest 'libcurl has forbidden access in last request to' 'http resource'
-grep -q -- 'Protocol http not supported or disabled in libcurl' curloutput && msgpass || msgfail
-
-
+testsuccess --nomsg grep -q -E -- 'Protocol "?http"? not supported or disabled in libcurl' rootdir/tmp/testfailure.output

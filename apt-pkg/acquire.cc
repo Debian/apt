@@ -27,15 +27,20 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <pwd.h>
+#include <grp.h>
 #include <dirent.h>
 #include <sys/time.h>
 #include <sys/select.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -49,52 +54,110 @@ pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NU
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
-   string const Mode = _config->Find("Acquire::Queue-Mode","host");
-   if (strcasecmp(Mode.c_str(),"host") == 0)
-      QueueMode = QueueHost;
-   if (strcasecmp(Mode.c_str(),"access") == 0)
-      QueueMode = QueueAccess;
+   Initialize();
 }
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Workers(0),
-			   Configs(0), Log(Progress), ToFetch(0),
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), Queues(0), Workers(0),
+			   Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
+   Initialize();
+   SetLog(Progress);
+}
+void pkgAcquire::Initialize()
+{
    string const Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
       QueueMode = QueueHost;
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
-   Setup(Progress, "");
+
+   // chown the auth.conf file as it will be accessed by our methods
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+   {
+      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+      struct group const * const gr = getgrnam("root");
+      if (pw != NULL && gr != NULL)
+      {
+	 std::string const AuthConf = _config->FindFile("Dir::Etc::netrc");
+	 if(AuthConf.empty() == false && RealFileExists(AuthConf) &&
+	       chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+	    _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
+      }
+   }
 }
 									/*}}}*/
-// Acquire::Setup - Delayed Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* Do everything needed to be a complete Acquire object and report the
-   success (or failure) back so the user knows that something is wrong… */
+// Acquire::GetLock - lock directory and prepare for action		/*{{{*/
+static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent)
+{
+   std::string const partial = parent + "partial";
+   mode_t const mode = umask(S_IWGRP | S_IWOTH);
+   bool const creation_fail = (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
+	 CreateAPTDirectoryIfNeeded(parent, partial) == false);
+   umask(mode);
+   if (creation_fail == true)
+      return false;
+
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+   {
+      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+      struct group const * const gr = getgrnam("root");
+      if (pw != NULL && gr != NULL)
+      {
+         // chown the partial dir
+         if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+            _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+      }
+   }
+   if (chmod(partial.c_str(), 0700) != 0)
+      _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+
+   return true;
+}
 bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
 {
    Log = Progress;
+   if (Lock.empty())
+   {
+      string const listDir = _config->FindDir("Dir::State::lists");
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
+	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
+	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+      return true;
+   }
+   return GetLock(Lock);
+}
+bool pkgAcquire::GetLock(std::string const &Lock)
+{
+   if (Lock.empty() == true)
+      return false;
 
    // check for existence and possibly create auxiliary directories
    string const listDir = _config->FindDir("Dir::State::lists");
-   string const partialListDir = listDir + "partial/";
    string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-   string const partialArchivesDir = archivesDir + "partial/";
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
-      return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+   if (Lock == listDir)
+   {
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
+	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+   }
+   if (Lock == archivesDir)
+   {
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
+	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+   }
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-       CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
-      return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
-
-   if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
+   if (_config->FindB("Debug::NoLocking", false) == true)
       return true;
 
    // Lock the directory this acquire object will work in
-   LockFD = GetLock(flCombine(Lock, "lock"));
+   if (LockFD != -1)
+      close(LockFD);
+   LockFD = ::GetLock(flCombine(Lock, "lock"));
    if (LockFD == -1)
       return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
 
@@ -486,6 +549,9 @@ bool pkgAcquire::Clean(string Dir)
    if (DirectoryExists(Dir) == false)
       return true;
 
+   if(Dir == "/")
+      return _error->Error(_("Clean of %s is not supported"), Dir.c_str());
+
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
@@ -577,27 +643,18 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::MethodConfig::MethodConfig()
+pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(false),
+   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
+   Removable(false)
 {
-   SingleInstance = false;
-   Pipeline = false;
-   SendConfig = false;
-   LocalOnly = false;
-   Removable = false;
-   Next = 0;
 }
 									/*}}}*/
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : Name(Name), 
-            Owner(Owner)
+pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : d(NULL), Next(0),
+   Name(Name), Items(0), Workers(0), Owner(Owner), PipeDepth(0), MaxPipeDepth(1)
 {
-   Items = 0;
-   Next = 0;
-   Workers = 0;
-   MaxPipeDepth = 1;
-   PipeDepth = 0;
 }
 									/*}}}*/
 // Queue::~Queue - Destructor						/*{{{*/
@@ -801,7 +858,7 @@ void pkgAcquire::Queue::Bump()
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(0), Update(true), MorePulses(false)
 {
    Start();
 }
@@ -821,7 +878,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
    unsigned int Count = 0;
-   for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); I != Owner->ItemsEnd();
+   bool UnfetchedReleaseFiles = false;
+   for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); 
+        I != Owner->ItemsEnd();
 	++I, ++Count)
    {
       TotalItems++;
@@ -831,6 +890,13 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       // Totally ignore local items
       if ((*I)->Local == true)
 	 continue;
+
+      // see if the method tells us to expect more
+      TotalItems += (*I)->ExpectedAdditionalItems;
+
+      // check if there are unfetched Release files
+      if ((*I)->Complete == false && (*I)->ExpectedAdditionalItems > 0)
+         UnfetchedReleaseFiles = true;
 
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
@@ -843,6 +909,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    unsigned long long ResumeSize = 0;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
+   {
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
       {
 	 CurrentBytes += I->CurrentSize;
@@ -853,6 +920,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	     I->CurrentItem->Owner->Complete == false)
 	    TotalBytes += I->CurrentSize;
       }
+   }
    
    // Normalize the figures and account for unknown size downloads
    if (TotalBytes <= 0)
@@ -863,6 +931,12 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Wha?! Is not supposed to happen.
    if (CurrentBytes > TotalBytes)
       CurrentBytes = TotalBytes;
+
+   // debug
+   if (_config->FindB("Debug::acquire::progress", false) == true)
+      std::clog << " Bytes: " 
+                << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes) 
+                << std::endl;
    
    // Compute the CPS
    struct timeval NewTime;
@@ -883,6 +957,14 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Time = NewTime;
    }
 
+   // calculate the percentage, if we have too little data assume 1%
+   if (TotalBytes > 0 && UnfetchedReleaseFiles)
+      Percent = 0;
+   else 
+      // use both files and bytes because bytes can be unreliable
+      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) + 
+                 0.2 * (CurrentItems/float(TotalItems)*100.0));
+
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0) 
    {
@@ -900,13 +982,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       else
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
 	 
-
-
       // build the status str
       status << "dlstatus:" << i
-	     << ":"  << (CurrentBytes/float(TotalBytes)*100.0) 
-	     << ":" << msg 
-	     << endl;
+             << ":"  << std::setprecision(3) << Percent
+             << ":" << msg 
+             << endl;
 
       std::string const dlstatus = status.str();
       FileFd::Write(fd, dlstatus.c_str(), dlstatus.size());
@@ -961,3 +1041,7 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
    FetchedBytes += Size - Resume;
 }
 									/*}}}*/
+
+APT_CONST pkgAcquire::UriIterator::~UriIterator() {}
+APT_CONST pkgAcquire::MethodConfig::~MethodConfig() {}
+APT_CONST pkgAcquireStatus::~pkgAcquireStatus() {}

@@ -1,0 +1,49 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# make Packages *only* accessable by-hash for this test
+mkdir -p aptarchive/dists/unstable/main/binary-i386/by-hash/SHA512
+(cd  aptarchive/dists/unstable/main/binary-i386/by-hash/SHA512 && 
+     mv ../../Packages* . &&
+     ln -s Packages.gz  $(sha512sum Packages.gz|cut -f1 -d' ') )
+
+# add sources
+mkdir -p aptarchive/dists/unstable/main/source/by-hash/SHA512
+(cd  aptarchive/dists/unstable/main/source/by-hash/SHA512 && 
+     ln -s ../../Sources.gz  $(sha512sum ../../Sources.gz|cut -f1 -d' ') 
+)
+
+# we moved the Packages file away, normal update won't work
+testfailure aptget upate
+
+# ensure we do not know about "foo"
+testfailureequal "Reading package lists...
+Building dependency tree...
+E: Unable to locate package foo" aptget install -q -s foo
+
+# ensure we can apt-get update by hash
+testsuccess aptget update -o APT::Acquire::By-Hash=1 -o Acquire::Languages=none
+
+# ensure it works
+testsuccessequal "Inst foo (1.0 unstable [all])
+Conf foo (1.0 unstable [all])" aptget install -qq -s foo
+
+# add magic string to Release file ...
+MAGIC="Acquire-By-Hash: true"
+sed -i "s#Suite: unstable#Suite: unstable\n$MAGIC#" aptarchive/dists/unstable/Release
+signreleasefiles
+# ... and verify that it fetches by hash now
+testsuccess aptget update -o Acquire::Languages=none
+

@@ -13,6 +13,8 @@
 #ifndef WRITER_H
 #define WRITER_H
 
+#include <apt-pkg/hashes.h>
+
 #include <string>
 #include <stdio.h>
 #include <iostream>
@@ -40,10 +42,10 @@ class FTWScanner
    string Arch;
    const char *OriginalPath;
    bool ErrorPrinted;
-   
+
    // Stuff for the delinker
    bool NoLinkAct;
-   
+
    static FTWScanner *Owner;
    static int ScannerFTW(const char *File,const struct stat *sb,int Flag);
    static int ScannerFile(const char *File, bool const &ReadLink);
@@ -57,14 +59,12 @@ class FTWScanner
       {
 	 c1out << endl;
 	 ErrorPrinted = true;
-      }	 
+      }
    }
-   
+
    public:
-   bool DoMD5;
-   bool DoSHA1;
-   bool DoSHA256;
-   bool DoSHA512;
+   FileFd *Output;
+   unsigned int DoHashes;
 
    unsigned long DeLinkLimit;
    string InternalPrefix;
@@ -77,8 +77,8 @@ class FTWScanner
    void AddPattern(char const *Pattern) { Patterns.push_back(Pattern); };
    void AddPatterns(std::vector<std::string> const &patterns) { Patterns.insert(Patterns.end(), patterns.begin(), patterns.end()); };
    bool SetExts(string const &Vals);
-      
-   FTWScanner(string const &Arch = string());
+
+   FTWScanner(FileFd * const Output, string const &Arch = string());
    virtual ~FTWScanner() {};
 };
 
@@ -87,9 +87,9 @@ class MultiCompress;
 class TranslationWriter
 {
    MultiCompress *Comp;
-   FILE *Output;
    std::set<string> Included;
    unsigned short RefCounter;
+   FileFd *Output;
 
    public:
    void IncreaseRefCounter() { ++RefCounter; };
@@ -98,7 +98,7 @@ class TranslationWriter
    bool DoPackage(string const &Pkg, string const &Desc, string const &MD5);
 
    TranslationWriter(string const &File, string const &TransCompress, mode_t const &Permissions);
-   TranslationWriter() : Comp(NULL), Output(NULL), RefCounter(0) {};
+   TranslationWriter() : Comp(NULL), RefCounter(0) {};
    ~TranslationWriter();
 };
 
@@ -106,7 +106,7 @@ class PackagesWriter : public FTWScanner
 {
    Override Over;
    CacheDB Db;
-      
+
    public:
 
    // Some flags
@@ -118,7 +118,6 @@ class PackagesWriter : public FTWScanner
    // General options
    string PathPrefix;
    string DirStrip;
-   FILE *Output;
    struct CacheDB::Stats &Stats;
    TranslationWriter *TransWriter;
 
@@ -127,33 +126,34 @@ class PackagesWriter : public FTWScanner
       {return Over.ReadExtraOverride(File);};
    virtual bool DoPackage(string FileName);
 
-   PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides=string(),
-		  string const &Arch=string());
+   PackagesWriter(FileFd * const Output, string const &DB,
+                  string const &Overrides,
+                  string const &ExtOverrides = "",
+		  string const &Arch = "");
    virtual ~PackagesWriter() {};
 };
 
 class ContentsWriter : public FTWScanner
 {
    CacheDB Db;
-   
+
    GenContents Gen;
-   
+
    public:
 
    // General options
-   FILE *Output;
    struct CacheDB::Stats &Stats;
    string Prefix;
-   
+
    bool DoPackage(string FileName,string Package);
    virtual bool DoPackage(string FileName) 
              {return DoPackage(FileName,string());};
    bool ReadFromPkgs(string const &PkgFile,string const &PkgCompress);
 
-   void Finish() {Gen.Print(Output);};
+   void Finish() {Gen.Print(*Output);};
    inline bool ReadyDB(string const &DB) {return Db.ReadyDB(DB);};
-   
-   ContentsWriter(string const &DB, string const &Arch = string());
+
+   ContentsWriter(FileFd * const Output, string const &DB, string const &Arch = string());
    virtual ~ContentsWriter() {};
 };
 
@@ -164,21 +164,20 @@ class SourcesWriter : public FTWScanner
    Override SOver;
    char *Buffer;
    unsigned long long BufSize;
-   
+
    public:
 
    bool NoOverride;
    bool DoAlwaysStat;
-   
+
    // General options
    string PathPrefix;
    string DirStrip;
-   FILE *Output;
-   struct CacheDB::Stats Stats;
+   struct CacheDB::Stats &Stats;
 
    virtual bool DoPackage(string FileName);
 
-   SourcesWriter(string const &DB,string const &BOverrides,string const &SOverrides,
+   SourcesWriter(FileFd * const Output, string const &DB,string const &BOverrides,string const &SOverrides,
 		 string const &ExtOverrides=string());
    virtual ~SourcesWriter() {free(Buffer);};
 };
@@ -186,26 +185,22 @@ class SourcesWriter : public FTWScanner
 class ReleaseWriter : public FTWScanner
 {
 public:
-   ReleaseWriter(string const &DB);
+   ReleaseWriter(FileFd * const Output, string const &DB);
    virtual bool DoPackage(string FileName);
    void Finish();
 
-   FILE *Output;
    // General options
    string PathPrefix;
    string DirStrip;
 
-protected:
    struct CheckSum
    {
-      string MD5;
-      string SHA1;
-      string SHA256;
-      string SHA512;
+      HashStringList Hashes;
       // Limited by FileFd::Size()
       unsigned long long size;
       ~CheckSum() {};
    };
+protected:
    map<string,struct CheckSum> CheckSums;
 };
 

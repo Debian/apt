@@ -16,6 +16,7 @@
 #include <config.h>
 
 #include <apt-pkg/acquire-method.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
@@ -33,7 +34,7 @@ class FileMethod : public pkgAcqMethod
    
    public:
    
-   FileMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly) {};
+   FileMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig | LocalOnly) {};
 };
 
 // FileMethod::Fetch - Fetch a file					/*{{{*/
@@ -58,31 +59,35 @@ bool FileMethod::Fetch(FetchItem *Itm)
       if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	 Res.IMSHit = true;
    }
-   
-   // See if we can compute a file without a .gz exentsion
-   std::string::size_type Pos = File.rfind(".gz");
-   if (Pos + 3 == File.length())
+
+   // See if the uncompressed file exists and reuse it
+   std::vector<std::string> extensions = APT::Configuration::getCompressorExtensions();
+   for (std::vector<std::string>::const_iterator ext = extensions.begin(); ext != extensions.end(); ++ext)
    {
-      File = std::string(File,0,Pos);
-      if (stat(File.c_str(),&Buf) == 0)
+      if (APT::String::Endswith(File, *ext) == true)
       {
-	 FetchResult AltRes;
-	 AltRes.Size = Buf.st_size;
-	 AltRes.Filename = File;
-	 AltRes.LastModified = Buf.st_mtime;
-	 AltRes.IMSHit = false;
-	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
-	    AltRes.IMSHit = true;
-	 
-	 URIDone(Res,&AltRes);
-	 return true;
-      }      
+	 std::string const unfile = File.substr(0, File.length() - ext->length() - 1);
+	 if (stat(unfile.c_str(),&Buf) == 0)
+	 {
+	    FetchResult AltRes;
+	    AltRes.Size = Buf.st_size;
+	    AltRes.Filename = unfile;
+	    AltRes.LastModified = Buf.st_mtime;
+	    AltRes.IMSHit = false;
+	    if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+	       AltRes.IMSHit = true;
+
+	    URIDone(Res,&AltRes);
+	    return true;
+	 }
+	 // no break here as we could have situations similar to '.gz' vs '.tar.gz' here
+      }
    }
-   
+
    if (Res.Filename.empty() == true)
       return _error->Error(_("File not found"));
 
-   Hashes Hash;
+   Hashes Hash(Itm->ExpectedHashes);
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);

@@ -14,6 +14,7 @@
 #define PKGLIB_SRCRECORDS_H
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/hashes.h>
 
 #include <string>
 #include <vector>
@@ -29,15 +30,22 @@ class pkgSrcRecords
 {
    public:
 
+APT_IGNORE_DEPRECATED_PUSH
    // Describes a single file
    struct File
    {
-      std::string MD5Hash;
-      unsigned long Size;
+      APT_DEPRECATED std::string MD5Hash;
+      APT_DEPRECATED unsigned long Size;
       std::string Path;
       std::string Type;
    };
-   
+   struct File2 : public File
+   {
+      unsigned long long FileSize;
+      HashStringList Hashes;
+   };
+APT_IGNORE_DEPRECATED_POP
+
    // Abstract parser for each source record
    class Parser
    {
@@ -77,6 +85,7 @@ class pkgSrcRecords
       static const char *BuildDepType(unsigned char const &Type) APT_PURE;
 
       virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
+      bool Files2(std::vector<pkgSrcRecords::File2> &F);
       
       Parser(const pkgIndexFile *Index) : iIndex(Index) {};
       virtual ~Parser() {};
@@ -95,8 +104,13 @@ class pkgSrcRecords
    // Reset the search
    bool Restart();
 
-   // Locate a package by name
-   Parser *Find(const char *Package,bool const &SrcOnly = false);
+   // Step to the next SourcePackage and return pointer to the 
+   // next SourceRecord. The pointer is owned by libapt.
+   const Parser* Step();
+
+   // Locate a package by name and return pointer to the Parser.
+   // The pointer is owned by libapt.
+   Parser* Find(const char *Package,bool const &SrcOnly = false);
    
    pkgSrcRecords(pkgSourceList &List);
    virtual ~pkgSrcRecords();

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<book lang="en">
+
+<title>The APT project design document</title>
+
+<bookinfo>
+
+<authorgroup>
+  <author>
+    <personname>Manoj Srivastava</personname><email>srivasta@debian.org</email>
+  </author>
+</authorgroup>
+
+<releaseinfo>Version &apt-product-version;</releaseinfo>
+
+<abstract>
+<para>
+This document is an overview of the specifications and design goals of the APT
+project. It also attempts to give a broad description of the implementation
+as well.
+</para>
+</abstract>
+
+<copyright><year>1997</year><holder>Manoj Srivastava</holder></copyright>
+
+<legalnotice>
+<title>License Notice</title>
+<para>
+APT, including this document, is free software; you may redistribute it and/or
+modify it under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any later
+version.
+</para>
+<para>
+This is distributed in the hope that it will be useful, but <emphasis>without
+any warranty</emphasis>; without even the implied warranty of merchantability
+or fitness for a particular purpose. See the GNU General Public License for
+more details.
+</para>
+<para>
+You should have received a copy of the GNU General Public License with your
+Debian system, in <literal>/usr/share/common-licenses/GPL</literal>, or with
+the <command>debiandoc-sgml</command> source package as the file
+<literal>COPYING</literal>. If not, write to the Free Software Foundation,
+Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+</para>
+</legalnotice>
+
+</bookinfo>
+
+<chapter id="introduction"><title>Introduction</title>
+<para>
+APT is supposed to be a replacement for dselect, and not a replacement for
+dpkg. However, since addition functionality has been required for APT, and
+given the fact that this is very closely related to dpkg, it is not
+unreasonable to expect that additional functionality in the underlying dpkg
+would also be requested.
+</para>
+<para>
+Deity/dselect are the first introduction that people have to Debian, and
+unfortunately this first impression contributes greatly to the public
+perception of the distribution. It is imperative that this be a showcase for
+Debian, rather than frighten novices away (which has been an accusation often
+levelled at the current system)
+</para>
+</chapter>
+
+<chapter id="ch2"><title>Requirements</title>
+<orderedlist numeration="arabic">
+<listitem>
+<para>
+APT should be a replacement for dselect. Therefore it should have all the
+functionality that dselect has currently. This is the primary means of
+interaction between the user and the package management system, and it should
+be able to handle all tasks involved in installing, upgrading, and routine
+management without having the users take recourse to the underlying management
+system.
+</para>
+</listitem>
+<listitem>
+<para>
+It should be easier to use and less confusing for novice users. The primary
+stimulus for the creation of APT was the perceived intractability, complexity,
+and non-intuitive behavior of the existing user interface, and as such, human
+factors must be a primary mandate of APT.
+</para>
+</listitem>
+<listitem>
+<para>
+It should be able to group packages more flexibly, and possibly allow
+operations based on a group. One should be able to select, or deselect,
+a coherent group of related packages simultaneously, allowing one to add,
+remove, or upgrade functionality to a machine as one step.
+</para>
+</listitem>
+<listitem>
+<para>
+This would allow APT to handle <emphasis>standard installations</emphasis>,
+namely, one could then install a set of packages to enable a machine to
+fulfill specific tasks. Define a few standard installations, and which
+packages are included therein. The packages should be internally consistent.
+</para>
+</listitem>
+<listitem>
+<para>
+Make use of a keywords field in package headers; provide a standard list of
+keywords for people to use. This could be the underpinning to allow the
+previous two requirements to work (though the developers are not constrained
+to implement the previous requirements using keywords)
+</para>
+</listitem>
+<listitem>
+<para>
+Use dependencies, conflicts, and reverse dependencies to properly order
+packages for installation and removal. This has been a complaint in the past
+that the installation methods do not really understand dependencies, causing
+the upgrade process to break, or allowing the removal of packages that left the
+system in an untenable state by breaking the dependencies on packages that were
+dependent on the package being removed. A special emphasis is placed on
+handling pre-dependencies correctly; the target of a predependency has to be
+fully configured before attempting to install the pre-dependent package. Also,
+<emphasis>configure immediately</emphasis> requests mentioned below should be
+handled.
+</para>
+</listitem>
+<listitem>
+<para>
+Handle replacement of a package providing a virtual package with another (for
+example, it has been very difficult replacing <command>sendmail</command> with
+<command>smail</command>, or vice versa), making sure that the dependencies are
+still satisfied.
+</para>
+</listitem>
+<listitem>
+<para>
+Handle source lists for updates from multiple sources. APT should also be able
+to handle diverse methods of acquiring new packages; local filesystem,
+mountable CD-ROM drives, FTP accessible repositories are some of the methods
+that come to mind. Also, the source lists can be separated into categories,
+such as main, contrib, non-us, non-local, non-free, my-very-own, etc. APT
+should be set up to retrieve the Packages files from these multiple source
+lists, as well as retrieving the packages themselves.
+</para>
+</listitem>
+<listitem>
+<para>
+Handle base of source and acquire all Packages files underneath. (possibly
+select based on architecture), this should be a simple extension of the
+previous requirement.
+</para>
+</listitem>
+<listitem>
+<para>
+Handle remote installation (to be implemented maybe in a future version, it
+still needs to be designed). This would ease the burden of maintaining
+multiple Debian machines on a site. In the authors opinion this is a killer
+difference for the distribution, though it may be too hard a problem to be
+implemented with the initial version of APT. However, some thought must be
+given to this to enable APT to retain hooks for future functionality, or at
+least to refrain from methods that may preclude remote activity. It is
+desirable that adding remote installation not require a redesign of APT from
+the ground up.
+</para>
+</listitem>
+<listitem>
+<para>
+Be scalable. Dselect worked a lot better with 400 packages, but at last count
+the number of packages was around twelve hundred and climbing. This also
+requires APT to pay attention to the needs of small machines which are low on
+memory (though this requirement shall diminish as we move towards bigger
+machines, it would still be nice if Debian worked on all old machines where
+Linux itself would work).
+</para>
+</listitem>
+<listitem>
+<para>
+Handle install immediately requests. Some packages, like watchdog, are
+required to be working for the stability of the machine itself. There are
+others which may be required for the correct functioning of a production
+machine, or which are mission critical applications. APT should, in these
+cases, upgrade the packages with minimal downtime; allowing these packages to
+be one of potentially hundreds of packages being upgraded concurrently may
+not satisfy the requirements of the package or the site. (Watchdog, for
+example, if not restarted quickly, may cause the machine to reboot in the
+midst of installation, which may cause havoc on the machine)
+</para>
+</listitem>
+</orderedlist>
+</chapter>
+
+<chapter id="ch3"><title>Procedural description</title>
+<variablelist>
+<varlistentry>
+<term>Set Options</term>
+<listitem>
+<para>
+This process handles setting of user or site options, and configuration of all
+aspects of APT. It allows the user to set the location and order of package
+sources, allowing them to set up source list details, like ftp site locations,
+passwords, etc. Display options may also be set.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Updates</term>
+<listitem>
+<para>
+Build a list of available packages, using source lists or a base location and
+trawling for Packages files (needs to be aware of architecture). This may
+involve finding and retrieving Packages files, storing them locally for
+efficiency, and parsing the data for later use. This would entail contacting
+various underlying access modules (ftp, cdrom mounts, etc) Use a backing store
+for speed. This may also require downloading the actual package files locally
+for speed.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Local status</term>
+<listitem>
+<para>
+Build up a list of packages already installed. This requires reading and
+writing the local??  status file. For remote installation, this should
+probably use similar mechanisms as the Packages file retrieval does. Use
+the backing store for speed. One should consider multiple backing stores,
+one for each machine.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Relationship determination</term>
+<listitem>
+<para>
+Determine forward and reverse dependencies. All known dependency fields should
+be acted upon, since it is fairly cheap to do so. Update the backing store
+with this information.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Selection</term>
+<listitem>
+<para>
+Present the data to the user. Look at Behan Webster's documentation for the
+user interface procedures. (Note: In the authors opinion deletions and reverse
+dependencies should also be presented to the user, in a strictly symmetric
+fashion; this may make it easier to prevent a package being removed that breaks
+dependencies)
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Ordering of package installations and configuration</term>
+<listitem>
+<para>
+Build a list of events. Simple topological sorting gives order of packages
+in dependency order. At certain points in this ordering,
+predependencies/immediate configure directives cause an break in normal
+ordering. We need to insert the uninstall/purge directive in the stream
+(default: as early as possible).
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Action</term>
+<listitem>
+<para>
+Take the order of installations and removals and build up a stream of events
+to send to the packaging system (dpkg). Execute the list of events if
+successful. Do not partially install packages and leave system in broken
+state. Go to The Selection step as needed.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</chapter>
+
+<chapter id="ch4"><title>Modules and interfaces</title>
+<variablelist>
+<varlistentry>
+<term>The user interface module</term>
+<listitem>
+<para>
+Look at Behan Webster's documentation.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Widget set</term>
+<listitem>
+<para>
+Related closely to above Could some one present design decisions of the widget
+set here?
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>pdate Module</term>
+<listitem>
+<para>
+Distinct versions of the same package are recorded separately, but if multiple
+Packages files contain the same version of a package, then only the first one
+is recorded. For this reason, the least expensive update source should be
+listed first (local file system is better than a remote ftp site)
+</para>
+<para>
+This module should interact with the user interface module to set and change
+configuration parameters for the modules listed below. It needs to record that
+information in an on disk data file, to be read on future invocations.
+</para>
+<orderedlist numeration="arabic">
+<listitem>
+<para>
+FTP methods
+</para>
+</listitem>
+<listitem>
+<para>
+mount and file traversal module(s)?
+</para>
+</listitem>
+<listitem>
+<para>
+Other methods ???
+</para>
+</listitem>
+</orderedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Status file parser/generator</term>
+<listitem>
+<para>
+The status file records the current state of the system, listing the packages
+installed, etc. The status file is also one method of communicating with dpkg,
+since it is perfectly permissible for the user to use APT to request packages
+be updated, put others on hold, mark other for removal, etc, and then run
+<literal>dpkg -BORGiE</literal> on a file system.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Package file parser/generator</term>
+<listitem>
+<para>
+Related to above. Handle multiple Packages files, from different
+sources. Each package contains a link back to the packages file structure
+that contains details about the origin of the data.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Dependency module</term>
+<listitem>
+<itemizedlist>
+<listitem>
+<para>
+dependency/conflict determination and linking
+</para>
+</listitem>
+<listitem>
+<para>
+reverse dependency generator. Maybe merged with above
+</para>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Package ordering Module</term>
+<listitem>
+<para>
+Create an ordering of the actions to be taken.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Event generator</term>
+<listitem>
+<para>
+module to interact with dpkg
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</chapter>
+
+<chapter id="ch5"><title>Data flow and conversions analysis.</title>
+<screen>
+                                                          ____________
+                                                       __\|ftp modules|
+                                                      /  /|___________|
+                                    _ ____________   /     ________________
+                                    |    update   | /     |mount/local file|
+        |==========================&gt;|   module    |/_____\|  traversals    |
+        |                           |_____________|      /|________________|
+        |                             ^        ^
+        |                             |        |               ______________
+  ______|_______    _ _____ ______    |   _____v________      \|            |
+ |Configuration |   |configuration|   |   |Packages Files|  ===|Status file |
+ |  module      |&lt;=&gt;|    data     |   |   |______________| /  /|____________|
+ |______________|   |_____________|   |        ^          /
+         ^                            |        |         /
+         |                            | _______v_______|/_
+         |                            | |              |    ________________
+         |                            | |              |/_\|   Dependency  |
+         |                            | |backing store |\ /|     Module    |
+         |                            | |______________|  _|_______________|
+         |                             \       ^          /|       ^
+         |                              \      |         /         |
+         |                              _\|____v_______|/__    ____v_______
+         |_____________________________\| User interaction|    |    dpkg   |
+                                       /|_________________|&lt;==&gt;  Invoker  |
+                                                               |___________|
+</screen>
+<para>
+dpkg also interacts with status and available files.
+</para>
+<para>
+The backing store and the associated data structures are the core of APT. All
+modules essentially revolve around the backing store, feeding it data, adding
+and manipulating links and relationships between data in the backing store,
+allowing the user to interact with and modify the data in the backing store,
+and finally writing it out as the status file and possibly issuing directives
+to dpkg.
+</para>
+<para>
+The other focal point for APT is the user interface.
+</para>
+</chapter>
+
+</book>

@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 
 // forward declaration
 class pkgCacheFile;
@@ -20,15 +21,16 @@ APT_PUBLIC extern std::ostream c2out;
 APT_PUBLIC extern std::ofstream devnull;
 APT_PUBLIC extern unsigned int ScreenWidth;
 
-APT_PUBLIC bool InitOutput();
+APT_PUBLIC bool InitOutput(std::basic_streambuf<char> * const out = std::cout.rdbuf());
 
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
-                       pkgCache::VerIterator V, std::ostream &out,
-                       bool include_summary=true);
+                       pkgCache::VerIterator const &V, std::ostream &out,
+                       std::string const &format);
 
 
 // helper to describe global state
-APT_PUBLIC void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);
+APT_PUBLIC void ShowBroken(std::ostream &out, CacheFile &Cache, bool const Now);
+APT_PUBLIC void ShowBroken(std::ostream &out, pkgCacheFile &Cache, bool const Now);
 
 APT_PUBLIC bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);

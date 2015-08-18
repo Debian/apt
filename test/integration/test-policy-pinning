@@ -17,7 +17,7 @@ testequalpolicy() {
 	local SP="$1"
 	local AP="$2"
 	shift 2
-	testequal "Package files:
+	testsuccessequal "Package files:
  $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
      release a=now
  $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}/  Packages
@@ -25,69 +25,58 @@ testequalpolicy() {
 Pinned packages:" aptcache policy $*
 }
 
-aptgetupdate() {
-	# just to be sure that no old files are used
-	rm -rf rootdir/var/lib/apt
-	if aptget update -qq 2>&1 | grep '^E: '; then
-		msgwarn 'apt-get update failed with an error'
-	fi
+testglobalpolicy() {
+	aptgetupdate
+
+	testequalpolicy 100 500
+	testequalpolicy 990 500 -t now
+
+	sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
+	aptgetupdate
+
+	testequalpolicy 100 1 -o Test=NotAutomatic
+	testequalpolicy 990 1 -o Test=NotAutomatic -t now
+
+	sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
+	aptgetupdate
+
+	testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
+	testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
+
+	sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
+	aptgetupdate
+
+	testequalpolicy 100 500 -o Test=Automatic
+	testequalpolicy 990 500 -o Test=Automatic -t now
+
+	sed -i aptarchive/Release -e '/NotAutomatic: / d' -e '/ButAutomaticUpgrades: / d'
 }
 
-### not signed archive
+msgmsg 'Test with not signed archive'
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt
+	testwarning aptget update  --allow-insecure-repositories
+}
+testglobalpolicy
 
-aptgetupdate
-testequalpolicy 100 500
-testequalpolicy 990 500 -t now
+msgmsg 'Test with signed but no key in trusted'
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt
+	signreleasefiles 'Marvin Paranoid'
+	testwarning aptget update  --allow-insecure-repositories
+}
+testglobalpolicy
 
-sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
-aptgetupdate
+# much the same tests will be executed below in more detail again for this one
+msgmsg 'Test with signed and valid key'
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt
+	signreleasefiles 'Joe Sixpack'
+	testsuccess aptget update
+}
+testglobalpolicy
 
-testequalpolicy 100 1 -o Test=NotAutomatic
-testequalpolicy 990 1 -o Test=NotAutomatic -t now
-
-sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
-aptgetupdate
-
-testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
-testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
-
-sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
-aptgetupdate
-
-testequalpolicy 100 500 -o Test=Automatic
-testequalpolicy 990 500 -o Test=Automatic -t now
-
-sed -i aptarchive/Release -e '/NotAutomatic: / d' -e '/ButAutomaticUpgrades: / d'
-
-### signed but no key in trusted
-
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-testequalpolicy 100 500
-testequalpolicy 990 500 -t now
-
-sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 1 -o Test=NotAutomatic
-testequalpolicy 990 1 -o Test=NotAutomatic -t now
-
-sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
-testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
-
-sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
-signreleasefiles 'Marvin Paranoid'
-aptgetupdate
-
-testequalpolicy 100 500 -o Test=Automatic
-testequalpolicy 990 500 -o Test=Automatic -t now
-
-### signed and valid key
+msgmsg 'Test with specific packages'
 
 buildsimplenativepackage "coolstuff" "all" "1.0" "stable"
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
@@ -125,7 +114,7 @@ testequalpolicycoolstuff() {
 		shift
 	fi
 	shift 6
-	testequal "coolstuff:
+	testsuccessequal "coolstuff:
   Installed: $INSTALLED
   Candidate: $CANDIDATE
   ${PINVERSION}Version table:${BPO2ARCHIVE}

@@ -44,7 +44,8 @@ time_t ServerMethod::FailTime = 0;
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
    parse error occurred */
-ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
+ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
+                                                      const std::string &Uri)
 {
    State = Header;
    
@@ -53,7 +54,8 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
    Major = 0; 
    Minor = 0; 
    Result = 0; 
-   Size = 0; 
+   TotalFileSize = 0;
+   JunkSize = 0;
    StartPos = 0;
    Encoding = Closes;
    HaveContent = false;
@@ -66,7 +68,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
 	 continue;
 
       if (Owner->Debug == true)
-	 clog << Data;
+	 clog << "Answer for: " << Uri << endl << Data;
       
       for (string::const_iterator I = Data.begin(); I < Data.end(); ++I)
       {
@@ -127,7 +129,7 @@ bool ServerState::HeaderLine(string Line)
 	 if (elements == 3)
 	 {
 	    Code[0] = '\0';
-	    if (Owner->Debug == true)
+	    if (Owner != NULL && Owner->Debug == true)
 	       clog << "HTTP server doesn't give Reason-Phrase for " << Result << std::endl;
 	 }
 	 else if (elements != 4)
@@ -162,15 +164,22 @@ bool ServerState::HeaderLine(string Line)
 	 Encoding = Stream;
       HaveContent = true;
 
-      // The length is already set from the Content-Range header
-      if (StartPos != 0)
-	 return true;
+      unsigned long long * DownloadSizePtr = &DownloadSize;
+      if (Result == 416)
+	 DownloadSizePtr = &JunkSize;
 
-      Size = strtoull(Val.c_str(), NULL, 10);
-      if (Size >= std::numeric_limits<unsigned long long>::max())
+      *DownloadSizePtr = strtoull(Val.c_str(), NULL, 10);
+      if (*DownloadSizePtr >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
-      else if (Size == 0)
+      else if (*DownloadSizePtr == 0)
 	 HaveContent = false;
+
+      // On partial content (206) the Content-Length less than the real
+      // size, so do not set it here but leave that to the Content-Range
+      // header instead
+      if(Result != 206 && TotalFileSize == 0)
+         TotalFileSize = DownloadSize;
+
       return true;
    }
 
@@ -185,15 +194,15 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
 
       // §14.16 says 'byte-range-resp-spec' should be a '*' in case of 416
-      if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&Size) == 1)
-      {
-	 StartPos = 1; // ignore Content-Length, it would override Size
-	 HaveContent = false;
-      }
-      else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&Size) != 2)
+      if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&TotalFileSize) == 1)
+	 ; // we got the expected filesize which is all we wanted
+      else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&TotalFileSize) != 2)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
-      if ((unsigned long long)StartPos > Size)
+      if ((unsigned long long)StartPos > TotalFileSize)
 	 return _error->Error(_("This HTTP server has broken range support"));
+
+      // figure out what we will download
+      DownloadSize = TotalFileSize - StartPos;
       return true;
    }
 
@@ -236,10 +245,21 @@ ServerState::ServerState(URI Srv, ServerMethod *Owner) : ServerName(Srv), TimeOu
    Reset();
 }
 									/*}}}*/
+bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
+{
+   File.Truncate(StartPos);
+   return GetHashes()->AddFD(File, StartPos);
+}
+									/*}}}*/
 
 bool ServerMethod::Configuration(string Message)			/*{{{*/
 {
-   return pkgAcqMethod::Configuration(Message);
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
 }
 									/*}}}*/
 
@@ -259,7 +279,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       Res.LastModified = Queue->LastModified;
       return IMS_HIT;
    }
-   
+
    /* Redirect
     *
     * Note that it is only OK for us to treat all redirection the same
@@ -304,12 +324,31 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       struct stat SBuf;
       if (stat(Queue->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
       {
-	 if ((unsigned long long)SBuf.st_size == Server->Size)
+	 bool partialHit = false;
+	 if (Queue->ExpectedHashes.usable() == true)
+	 {
+	    Hashes resultHashes(Queue->ExpectedHashes);
+	    FileFd file(Queue->DestFile, FileFd::ReadOnly);
+	    Server->TotalFileSize = file.FileSize();
+	    Server->Date = file.ModificationTime();
+	    resultHashes.AddFD(file);
+	    HashStringList const hashList = resultHashes.GetHashStringList();
+	    partialHit = (Queue->ExpectedHashes == hashList);
+	 }
+	 else if ((unsigned long long)SBuf.st_size == Server->TotalFileSize)
+	    partialHit = true;
+	 if (partialHit == true)
 	 {
 	    // the file is completely downloaded, but was not moved
-	    Server->StartPos = Server->Size;
-	    Server->Result = 200;
+	    if (Server->HaveContent == true)
+	    {
+	       // Send to error page to dev/null
+	       FileFd DevNull("/dev/null",FileFd::WriteExists);
+	       Server->RunData(&DevNull);
+	    }
 	    Server->HaveContent = false;
+	    Server->StartPos = Server->TotalFileSize;
+	    Server->Result = 200;
 	 }
 	 else if (unlink(Queue->DestFile.c_str()) == 0)
 	 {
@@ -323,10 +362,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
-      char err[255];
-      snprintf(err,sizeof(err)-1,"HttpError%i",Server->Result);
+      std::string err;
+      strprintf(err, "HttpError%u", Server->Result);
       SetFailReason(err);
-      _error->Error("%u %s",Server->Result,Server->Code);
+      _error->Error("%u %s", Server->Result, Server->Code);
       if (Server->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
@@ -334,7 +373,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 
    // This is some sort of 2xx 'data follows' reply
    Res.LastModified = Server->Date;
-   Res.Size = Server->Size;
+   Res.Size = Server->TotalFileSize;
    
    // Open the file
    delete File;
@@ -347,7 +386,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    FailFd = File->Fd();
    FailTime = Server->Date;
 
-   if (Server->InitHashes(*File) == false)
+   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
    {
       _error->Errno("read",_("Problem hashing file"));
       return ERROR_NOT_FROM_SERVER;
@@ -392,9 +431,16 @@ bool ServerMethod::Fetch(FetchItem *)
    for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
 	I = I->Next, Depth++)
    {
-      // If pipelining is disabled, we only queue 1 request
-      if (Server->Pipeline == false && Depth >= 0)
-	 break;
+      if (Depth >= 0)
+      {
+	 // If pipelining is disabled, we only queue 1 request
+	 if (Server->Pipeline == false)
+	    break;
+	 // if we have no hashes, do at most one such request
+	 // as we can't fixup pipeling misbehaviors otherwise
+	 else if (I->ExpectedHashes.usable() == false)
+	    break;
+      }
       
       // Make sure we stick with the same server
       if (Server->Comp(I->Uri) == false)
@@ -478,7 +524,7 @@ int ServerMethod::Loop()
       Fetch(0);
       
       // Fetch the next URL header data from the server.
-      switch (Server->RunHeaders(File))
+      switch (Server->RunHeaders(File, Queue->Uri))
       {
 	 case ServerState::RUN_HEADERS_OK:
 	 break;
@@ -524,6 +570,13 @@ int ServerMethod::Loop()
 
 	    // Run the data
 	    bool Result = true;
+
+            // ensure we don't fetch too much
+            // we could do "Server->MaximumSize = Queue->MaximumSize" here
+            // but that would break the clever pipeline messup detection
+            // so instead we use the size of the biggest item in the queue
+            Server->MaximumSize = FindMaximumObjectSizeInQueue();
+
             if (Server->HaveContent)
 	       Result = Server->RunData(File);
 
@@ -546,7 +599,38 @@ int ServerMethod::Loop()
 	    // Send status to APT
 	    if (Result == true)
 	    {
-	       Res.TakeHashes(*Server->GetHashes());
+	       Hashes * const resultHashes = Server->GetHashes();
+	       HashStringList const hashList = resultHashes->GetHashStringList();
+	       if (PipelineDepth != 0 && Queue->ExpectedHashes.usable() == true && Queue->ExpectedHashes != hashList)
+	       {
+		  // we did not get the expected hash… mhhh:
+		  // could it be that server/proxy messed up pipelining?
+		  FetchItem * BeforeI = Queue;
+		  for (FetchItem *I = Queue->Next; I != 0 && I != QueueBack; I = I->Next)
+		  {
+		     if (I->ExpectedHashes.usable() == true && I->ExpectedHashes == hashList)
+		     {
+			// yes, he did! Disable pipelining and rewrite queue
+			if (Server->Pipeline == true)
+			{
+			   // FIXME: fake a warning message as we have no proper way of communicating here
+			   std::string out;
+			   strprintf(out, _("Automatically disabled %s due to incorrect response from server/proxy. (man 5 apt.conf)"), "Acquire::http::PipelineDepth");
+			   std::cerr << "W: " << out << std::endl;
+			   Server->Pipeline = false;
+			   // we keep the PipelineDepth value so that the rest of the queue can be fixed up as well
+			}
+			Rename(Res.Filename, I->DestFile);
+			Res.Filename = I->DestFile;
+			BeforeI->Next = I->Next;
+			I->Next = Queue;
+			Queue = I;
+			break;
+		     }
+		     BeforeI = I;
+		  }
+	       }
+	       Res.TakeHashes(*resultHashes);
 	       URIDone(Res);
 	    }
 	    else
@@ -566,7 +650,10 @@ int ServerMethod::Loop()
 		  QueueBack = Queue;
 	       }
 	       else
+               {
+                  Server->Close();
 		  Fail(true);
+               }
 	    }
 	    break;
 	 }
@@ -659,5 +746,15 @@ int ServerMethod::Loop()
    }
    
    return 0;
+}
+									/*}}}*/
+                         						/*{{{*/
+unsigned long long
+ServerMethod::FindMaximumObjectSizeInQueue() const 
+{
+   unsigned long long MaxSizeInQueue = 0;
+   for (FetchItem *I = Queue; I != 0 && I != QueueBack; I = I->Next)
+      MaxSizeInQueue = std::max(MaxSizeInQueue, I->MaximumSize);
+   return MaxSizeInQueue;
 }
 									/*}}}*/

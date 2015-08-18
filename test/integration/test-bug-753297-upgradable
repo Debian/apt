@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+cat > rootdir/etc/apt/preferences <<EOF
+Package: *
+Pin: release testing
+Pin-Priority: 600
+
+Package: *
+Pin: release unstable
+Pin-Priority: 1
+EOF
+
+insertpackage 'testing,installed' 'foo' 'all' '1'
+insertpackage 'testing-updates' 'foo' 'all' '2'
+insertpackage 'unstable' 'foo' 'all' '3'
+
+insertinstalledpackage 'bar' 'all' '1'
+insertpackage 'testing' 'bar' 'all' '2'
+
+setupaptarchive
+
+testsuccessequal "Listing...
+bar/testing 2 all [upgradable from: 1]" apt list --upgradable
+
+testsuccessequal "Listing...
+bar/testing 2 all [upgradable from: 1]
+foo/testing,now 1 all [installed]" apt list

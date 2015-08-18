@@ -21,11 +21,12 @@
 
 class pkgIndexFile;
 
-class debSrcRecordParser : public pkgSrcRecords::Parser
+class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
+ protected:
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
@@ -53,11 +54,18 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
       return std::string(Start,Stop);
    };
    virtual bool Files(std::vector<pkgSrcRecords::File> &F);
+   bool Files2(std::vector<pkgSrcRecords::File2> &F);
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
       : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),
         iOffset(0), Buffer(NULL) {}
    virtual ~debSrcRecordParser();
+};
+
+class APT_HIDDEN debDscRecordParser : public debSrcRecordParser
+{
+ public:
+   debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index);
 };
 
 #endif

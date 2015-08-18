@@ -116,7 +116,7 @@ static bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 		  continue;
 
 	    // Skip conflicts and replaces
-	    if (End.IsNegative() == true)
+	    if (End.IsNegative() == true || End->Type == pkgCache::Dep::Replaces)
 	       continue;
 
 	    // Verify the or group
@@ -133,7 +133,7 @@ static bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 		  break;
 	       }
 	       delete [] VList;
-	       
+
 	       if (Start == End)
 		  break;
 	       ++Start;
@@ -191,7 +191,7 @@ static bool UnMet(CommandLine &CmdL)
    {
       CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
       APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1,
-				APT::VersionList::CANDIDATE, helper);
+				APT::CacheSetHelper::CANDIDATE, helper);
       for (APT::VersionList::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
@@ -262,6 +262,49 @@ static bool DumpPackage(CommandLine &CmdL)
    }
 
    return true;
+}
+									/*}}}*/
+// ShowHashTableStats - Show stats about a hashtable			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static map_pointer_t PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
+static map_pointer_t GroupNext(pkgCache::Group const * const G) { return G->Next; }
+template<class T>
+static void ShowHashTableStats(std::string Type,
+                               T *StartP,
+                               map_pointer_t *Hashtable,
+                               unsigned long Size,
+			       map_pointer_t(*Next)(T const * const))
+{
+   // hashtable stats for the HashTable
+   unsigned long NumBuckets = Size;
+   unsigned long UsedBuckets = 0;
+   unsigned long UnusedBuckets = 0;
+   unsigned long LongestBucket = 0;
+   unsigned long ShortestBucket = NumBuckets;
+   unsigned long Entries = 0;
+   for (unsigned int i=0; i < NumBuckets; ++i)
+   {
+      T *P = StartP + Hashtable[i];
+      if(P == 0 || P == StartP)
+      {
+         ++UnusedBuckets;
+         continue;
+      }
+      ++UsedBuckets;
+      unsigned long ThisBucketSize = 0;
+      for (; P != StartP; P = StartP + Next(P))
+         ++ThisBucketSize;
+      Entries += ThisBucketSize;
+      LongestBucket = std::max(ThisBucketSize, LongestBucket);
+      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
+   }
+   cout << "Total buckets in " << Type << ": " << NumBuckets << std::endl;
+   cout << "  Unused: " << UnusedBuckets << std::endl;
+   cout << "  Used: " << UsedBuckets  << std::endl;
+   cout << "  Average entries: " << Entries/(double)NumBuckets << std::endl;
+   cout << "  Longest: " << LongestBucket << std::endl;
+   cout << "  Shortest: " << ShortestBucket << std::endl;
 }
 									/*}}}*/
 // Stats - Dump some nice statistics					/*{{{*/
@@ -335,45 +378,86 @@ static bool Stats(CommandLine &)
       SizeToStr(Cache->Head().DescFileCount*Cache->Head().DescFileSz) << ')' << endl;
    cout << _("Total Provides mappings: ") << Cache->Head().ProvidesCount << " (" <<
       SizeToStr(Cache->Head().ProvidesCount*Cache->Head().ProvidesSz) << ')' << endl;
-   
-   // String list stats
-   unsigned long Size = 0;
-   unsigned long Count = 0;
-   for (pkgCache::StringItem *I = Cache->StringItemP + Cache->Head().StringList;
-        I!= Cache->StringItemP; I = Cache->StringItemP + I->NextItem)
-   {
-      Count++;
-      Size += strlen(Cache->StrP + I->String) + 1;
-   }
-   cout << _("Total globbed strings: ") << Count << " (" << SizeToStr(Size) << ')' << endl;
 
-   unsigned long DepVerSize = 0;
+   // String list stats
+   std::set<map_stringitem_t> stritems;
+   for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
+      stritems.insert(G->Name);
    for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
    {
+      stritems.insert(P->Arch);
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
       {
+	 if (V->VerStr != 0)
+	    stritems.insert(V->VerStr);
+	 if (V->Section != 0)
+	    stritems.insert(V->Section);
+#if APT_PKG_ABI >= 413
+	 stritems.insert(V->SourcePkgName);
+	 stritems.insert(V->SourceVerStr);
+#endif
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
-	       DepVerSize += strlen(D.TargetVer()) + 1;
+	       stritems.insert(D->Version);
+	 }
+	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; ++D)
+	 {
+	    stritems.insert(D->md5sum);
+	    stritems.insert(D->language_code);
 	 }
       }
+      for (pkgCache::PrvIterator Prv = P.ProvidesList(); Prv.end() == false; ++Prv)
+      {
+	 if (Prv->ProvideVersion != 0)
+	    stritems.insert(Prv->ProvideVersion);
+      }
    }
-   cout << _("Total dependency version space: ") << SizeToStr(DepVerSize) << endl;
-   
+   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+   {
+      stritems.insert(F->FileName);
+      stritems.insert(F->Archive);
+      stritems.insert(F->Codename);
+      stritems.insert(F->Component);
+      stritems.insert(F->Version);
+      stritems.insert(F->Origin);
+      stritems.insert(F->Label);
+      stritems.insert(F->Architecture);
+      stritems.insert(F->Site);
+      stritems.insert(F->IndexType);
+   }
+   unsigned long Size = 0;
+   for (std::set<map_stringitem_t>::const_iterator i = stritems.begin(); i != stritems.end(); ++i)
+      Size += strlen(Cache->StrP + *i) + 1;
+
+   cout << _("Total globbed strings: ") << stritems.size() << " (" << SizeToStr(Size) << ')' << endl;
+   stritems.clear();
+
    unsigned long Slack = 0;
    for (int I = 0; I != 7; I++)
       Slack += Cache->Head().Pools[I].ItemSize*Cache->Head().Pools[I].Count;
    cout << _("Total slack space: ") << SizeToStr(Slack) << endl;
-   
+
    unsigned long Total = 0;
-   Total = Slack + Size + Cache->Head().DependsCount*Cache->Head().DependencySz + 
-           Cache->Head().VersionCount*Cache->Head().VersionSz +
-           Cache->Head().PackageCount*Cache->Head().PackageSz + 
-           Cache->Head().VerFileCount*Cache->Head().VerFileSz +
-           Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
+#define APT_CACHESIZE(X,Y) (Cache->Head().X * Cache->Head().Y)
+   Total = Slack + Size +
+      APT_CACHESIZE(GroupCount, GroupSz) +
+      APT_CACHESIZE(PackageCount, PackageSz) +
+      APT_CACHESIZE(VersionCount, VersionSz) +
+      APT_CACHESIZE(DescriptionCount, DescriptionSz) +
+      APT_CACHESIZE(DependsCount, DependencySz) +
+      APT_CACHESIZE(PackageFileCount, PackageFileSz) +
+      APT_CACHESIZE(VerFileCount, VerFileSz) +
+      APT_CACHESIZE(DescFileCount, DescFileSz) +
+      APT_CACHESIZE(ProvidesCount, ProvidesSz) +
+      (2 * Cache->Head().GetHashTableSize() * sizeof(map_id_t));
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
-   
+#undef APT_CACHESIZE
+
+   // hashtable stats
+   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->Head().PkgHashTableP(), Cache->Head().GetHashTableSize(), PackageNext);
+   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->Head().GrpHashTableP(), Cache->Head().GetHashTableSize(), GroupNext);
+
    return true;
 }
 									/*}}}*/
@@ -496,6 +580,12 @@ static bool DumpAvail(CommandLine &)
    
    LocalitySort(VFList,Count,sizeof(*VFList));
 
+   std::vector<pkgTagSection::Tag> RW;
+   RW.push_back(pkgTagSection::Tag::Remove("Status"));
+   RW.push_back(pkgTagSection::Tag::Remove("Config-Version"));
+   FileFd stdoutfd;
+   stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
+
    // Iterate over all the package files and write them out.
    char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
@@ -507,7 +597,7 @@ static bool DumpAvail(CommandLine &)
 	 break;
       }
 
-      FileFd PkgF(File.FileName(),FileFd::ReadOnly);
+      FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
 	 break;
       
@@ -536,35 +626,32 @@ static bool DumpAvail(CommandLine &)
 	 if (PkgF.Read(Buffer,VF.Size + Jitter) == false)
 	    break;
 	 Buffer[VF.Size + Jitter] = '\n';
-	 
+
 	 // See above..
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
 	    pkgTagSection Tags;
-	    TFRewriteData RW[] = {{"Status", NULL, NULL},{"Config-Version", NULL, NULL},{NULL, NULL, NULL}};
-	    const char *Zero = 0;
 	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
-		TFRewrite(stdout,Tags,&Zero,RW) == false)
+		Tags.Write(stdoutfd, NULL, RW) == false ||
+		stdoutfd.Write("\n", 1) == false)
 	    {
 	       _error->Error("Internal Error, Unable to parse a package record");
 	       break;
 	    }
-	    fputc('\n',stdout);
 	 }
 	 else
 	 {
-	    if (fwrite(Buffer+Jitter,VF.Size+1,1,stdout) != 1)
+	    if (stdoutfd.Write(Buffer + Jitter, VF.Size + 1) == false)
 	       break;
 	 }
-	 
+
 	 Pos = VF.Offset + VF.Size;
       }
 
-      fflush(stdout);
       if (_error->PendingError() == true)
          break;
    }
-   
+
    delete [] Buffer;
    delete [] VFList;
    return !_error->PendingError();
@@ -579,7 +666,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
       return false;
 
    CacheSetHelperVirtuals helper(false);
-   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
       return _error->Error(_("No packages found"));
    std::vector<bool> Shown(Cache->Head().PackageCount);
@@ -647,7 +734,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (Recurse == true && Shown[Trg->ID] == false)
 		{
 		  Shown[Trg->ID] = true;
-		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::VersionSet::CANDIDATE, helper));
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::CacheSetHelper::CANDIDATE, helper));
 		}
 
 	      }
@@ -666,7 +753,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
 		{
 		  Shown[V.ParentPkg()->ID] = true;
-		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::VersionSet::CANDIDATE, helper));
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::CacheSetHelper::CANDIDATE, helper));
 		}
 	    }
 
@@ -761,9 +848,9 @@ static bool XVcg(CommandLine &CmdL)
 
    // Load the list of packages from the command line into the show list
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   std::list<APT::PackageSet::Modifier> mods;
-   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
-   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::list<APT::CacheSetHelper::PkgModifier> mods;
+   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
 		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
@@ -973,9 +1060,9 @@ static bool Dotty(CommandLine &CmdL)
 
    // Load the list of packages from the command line into the show list
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   std::list<APT::PackageSet::Modifier> mods;
-   mods.push_back(APT::PackageSet::Modifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
-   mods.push_back(APT::PackageSet::Modifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   std::list<APT::CacheSetHelper::PkgModifier> mods;
+   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
 		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
@@ -1231,7 +1318,7 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
-   map_ptrloc ID;
+   map_id_t ID;
 };
 
 // Search - Perform a search						/*{{{*/
@@ -1278,8 +1365,8 @@ static bool Search(CommandLine &CmdL)
    ExDescFile *DFList = new ExDescFile[descCount];
    memset(DFList,0,sizeof(*DFList) * descCount);
 
-   bool PatternMatch[descCount * NumPatterns];
-   memset(PatternMatch,false,sizeof(PatternMatch));
+   bool *PatternMatch = new bool[descCount * NumPatterns];
+   memset(PatternMatch,false,sizeof(*PatternMatch) * descCount * NumPatterns);
 
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
@@ -1389,6 +1476,7 @@ static bool Search(CommandLine &CmdL)
    }
    
    delete [] DFList;
+   delete [] PatternMatch;
    for (unsigned I = 0; I != NumPatterns; I++)
       regfree(&Patterns[I]);
    if (ferror(stdout))
@@ -1428,8 +1516,8 @@ static bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
+   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
+			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
@@ -1739,9 +1827,8 @@ static bool GenCaches(CommandLine &)
 /* */
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
-   
+   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
+
    if (_config->FindB("version") == true)
      return true;
 
@@ -1811,26 +1898,10 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(),_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
-   
-   // Deal with stdout not being a tty
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
+   InitOutput();
 
    if (_config->Exists("APT::Cache::Generate") == true)
       _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));

@@ -8,71 +8,137 @@ setupenvironment
 configarchitecture "i386"
 
 # simple case
-insertpackage 'stable' 'upgrade-simple' 'all' '1.0'
+insertpackage 'stable,installed' 'upgrade-simple' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-simple' 'all' '2.0'
-insertinstalledpackage 'upgrade-simple' 'all' '1.0'
 
 # upgrade with a new dependency
-insertpackage 'stable' 'upgrade-with-new-dep' 'all' '1.0' 
+insertpackage 'stable,installed' 'upgrade-with-new-dep' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-with-new-dep' 'all' '2.0' 'Depends: new-dep'
 insertpackage 'stable' 'new-dep' 'all' '1.0'
-insertinstalledpackage 'upgrade-with-new-dep' 'all' '1.0'
 
 # upgrade with conflict and a new pkg with higher priority than conflict
-insertpackage 'stable' 'upgrade-with-conflict' 'all' '1.0'
+insertpackage 'stable,installed' 'upgrade-with-conflict' 'all' '1.0'
 insertpackage 'unstable' 'upgrade-with-conflict' 'all' '2.0' 'Conflicts: conflicting-dep' 'standard'
-insertpackage 'stable' 'conflicting-dep' 'all' '1.0'
-insertinstalledpackage 'upgrade-with-conflict' 'all' '1.0'
-insertinstalledpackage 'conflicting-dep' 'all' '1.0'
+insertpackage 'stable,installed' 'conflicting-dep' 'all' '1.0'
 
+# upgrade with conflict and a new pkg with higher priority than conflict
+insertpackage 'stable,installed' 'init' 'all' '1'
+insertpackage 'unstable' 'init' 'all' '2' 'Pre-Depends: systemd | sysvinit'
+insertpackage 'unstable' 'systemd' 'all' '2' 'Conflicts: conflicting-dep'
+insertpackage 'unstable' 'sysvinit' 'all' '2'
 
 setupaptarchive
 
 # Test if normal upgrade works as expected
-testequal 'Reading package lists...
+UPGRADE='Reading package lists...
 Building dependency tree...
+Calculating upgrade...
 The following packages have been kept back:
-  upgrade-with-conflict upgrade-with-new-dep
+  init upgrade-with-conflict upgrade-with-new-dep
 The following packages will be upgraded:
   upgrade-simple
-1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+1 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
 Inst upgrade-simple [1.0] (2.0 unstable [all])
-Conf upgrade-simple (2.0 unstable [all])' aptget -s upgrade
+Conf upgrade-simple (2.0 unstable [all])'
+testsuccessequal "$UPGRADE" aptget upgrade -s
+testsuccessequal "$UPGRADE" apt upgrade -s --without-new-pkgs
 
 # Test if apt-get upgrade --with-new-pkgs works
-testequal 'Reading package lists...
+UPGRADENEW='Reading package lists...
 Building dependency tree...
+Calculating upgrade...
 The following NEW packages will be installed:
   new-dep
 The following packages have been kept back:
-  upgrade-with-conflict
+  init upgrade-with-conflict
 The following packages will be upgraded:
   upgrade-simple upgrade-with-new-dep
-2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+2 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
 Inst new-dep (1.0 stable [all])
 Inst upgrade-simple [1.0] (2.0 unstable [all])
 Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
-Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs
+Conf upgrade-with-new-dep (2.0 unstable [all])'
+testsuccessequal "$UPGRADENEW" aptget upgrade -s --with-new-pkgs
+testsuccessequal "$UPGRADENEW" apt upgrade -s
 
 # Test if apt-get dist-upgrade works
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
+Calculating upgrade...
 The following packages will be REMOVED:
   conflicting-dep
 The following NEW packages will be installed:
-  new-dep
+  new-dep systemd
 The following packages will be upgraded:
-  upgrade-simple upgrade-with-conflict upgrade-with-new-dep
-3 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+  init upgrade-simple upgrade-with-conflict upgrade-with-new-dep
+4 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
 Remv conflicting-dep [1.0]
+Inst systemd (2 unstable [all])
+Conf systemd (2 unstable [all])
+Inst init [1] (2 unstable [all])
 Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
 Inst new-dep (1.0 stable [all])
 Inst upgrade-simple [1.0] (2.0 unstable [all])
 Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
 Conf upgrade-with-conflict (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
 Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade
 
+msgmsg 'make systemd a non-choice in the or-group and try again'
+echo 'Package: systemd
+Pin: release unstable
+Pin-Priority: -1' > rootdir/etc/apt/preferences.d/nosystemd.pref
+
+testsuccessequal "$UPGRADE" aptget upgrade -s
+testsuccessequal "$UPGRADE" apt upgrade -s --without-new-pkgs
+
+UPGRADENEW='Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  new-dep sysvinit
+The following packages have been kept back:
+  upgrade-with-conflict
+The following packages will be upgraded:
+  init upgrade-simple upgrade-with-new-dep
+3 upgraded, 2 newly installed, 0 to remove and 1 not upgraded.
+Inst sysvinit (2 unstable [all])
+Conf sysvinit (2 unstable [all])
+Inst init [1] (2 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])'
+testsuccessequal "$UPGRADENEW" aptget upgrade -s --with-new-pkgs
+testsuccessequal "$UPGRADENEW" apt upgrade -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  conflicting-dep
+The following NEW packages will be installed:
+  new-dep sysvinit
+The following packages will be upgraded:
+  init upgrade-simple upgrade-with-conflict upgrade-with-new-dep
+4 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicting-dep [1.0]
+Inst sysvinit (2 unstable [all])
+Conf sysvinit (2 unstable [all])
+Inst init [1] (2 unstable [all])
+Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
+Conf upgrade-with-conflict (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade

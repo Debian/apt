@@ -11,7 +11,7 @@ touch rootdir/var/lib/apt/extended_states
 testsuccess aptmark markauto 'libvtk5.4'
 testmarkedauto 'libvtk5.4'
 
-testequal "Reading package lists...
+testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
@@ -23,7 +23,7 @@ The following NEW packages will be installed:
 Inst libavcodec52 (4:0.5.2-6 localhost [i386])
 Conf libavcodec52 (4:0.5.2-6 localhost [i386])" aptget install libavcodec52 -s
 
-testequal "Reading package lists...
+testfailureequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
@@ -61,6 +61,6 @@ Need to get 0 B/6304 kB of archives.
 After this operation, 17.3 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation.'
 
-testequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=0
-testequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=1
-testequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=small
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=0
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=1
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=small

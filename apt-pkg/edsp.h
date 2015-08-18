@@ -205,10 +205,10 @@ public:
 	 *  \param[out] solver_in will be the stdin of the solver
 	 *  \param[out] solver_out will be the stdout of the solver
 	 *
-	 *  \return true if the solver could be started and the pipes
-	 *  are set up correctly, otherwise false and the pipes are invalid
+	 *  \return PID of the started solver or 0 if failure occurred
 	 */
-	bool static ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
+	pid_t static ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
+	APT_DEPRECATED bool static ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
 
 	/** \brief call an external resolver to handle the request
 	 *

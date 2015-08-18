@@ -28,6 +28,7 @@ using std::vector;
 class pkgTagSection;
 class indexRecords;
 class pkgCdromStatus;
+class FileFd;
 
 class IndexCopy								/*{{{*/
 {
@@ -45,7 +46,7 @@ class IndexCopy								/*{{{*/
    void ConvertToSourceList(std::string CD,std::string &Path);
    bool GrabFirst(std::string Path,std::string &To,unsigned int Depth);
    virtual bool GetFile(std::string &Filename,unsigned long long &Size) = 0;
-   virtual bool RewriteEntry(FILE *Target,std::string File) = 0;
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File) = 0;
    virtual const char *GetFileName() = 0;
    virtual const char *Type() = 0;
    
@@ -53,7 +54,7 @@ class IndexCopy								/*{{{*/
 
    bool CopyPackages(std::string CDROM,std::string Name,std::vector<std::string> &List,
 		     pkgCdromStatus *log);
-   virtual ~IndexCopy() {};
+   virtual ~IndexCopy();
 };
 									/*}}}*/
 class PackageCopy : public IndexCopy					/*{{{*/
@@ -61,7 +62,7 @@ class PackageCopy : public IndexCopy					/*{{{*/
    protected:
    
    virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FILE *Target,std::string File);
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
    virtual const char *GetFileName() {return "Packages";};
    virtual const char *Type() {return "Package";};
    
@@ -72,7 +73,7 @@ class SourceCopy : public IndexCopy					/*{{{*/
    protected:
    
    virtual bool GetFile(std::string &Filename,unsigned long long &Size);
-   virtual bool RewriteEntry(FILE *Target,std::string File);
+   virtual bool RewriteEntry(FileFd &Target, std::string const &File);
    virtual const char *GetFileName() {return "Sources";};
    virtual const char *Type() {return "Source";};
    
@@ -93,8 +94,8 @@ class SigVerify								/*{{{*/
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
-   bool Verify(std::string prefix,std::string file, indexRecords *records);
-   bool CopyMetaIndex(std::string CDROM, std::string CDName, 
+   APT_HIDDEN bool Verify(std::string prefix,std::string file, indexRecords *records);
+   APT_HIDDEN bool CopyMetaIndex(std::string CDROM, std::string CDName,
 		      std::string prefix, std::string file);
 
  public:

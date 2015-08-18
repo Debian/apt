@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-
-<!ENTITY % aptent SYSTEM "apt.ent">
-%aptent;
-
-<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
-%aptverbatiment;
-
-<!ENTITY % aptvendor SYSTEM "apt-vendor.ent">
-%aptvendor;
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
 ]>
 
 <refentry>
@@ -529,6 +523,14 @@
      <listitem><para>Ignore if packages can't be authenticated and don't prompt about it.
      This is useful for tools like pbuilder.
      Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--no-allow-insecure-repositories</option></term>
+     <listitem><para>Forbid the update command to acquire unverifiable
+     data from configured sources. Apt will fail at the update command
+     for repositories without valid cryptographically signatures.
+
+     Configuration Item: <literal>Acquire::AllowInsecureRepositories</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--show-progress</option></term>

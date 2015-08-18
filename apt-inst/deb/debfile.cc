@@ -203,7 +203,11 @@ bool debDebFile::MemControlExtract::DoItem(Item &Itm,int &Fd)
 /* Just memcopy the block from the tar extractor and put it in the right
    place in the pre-allocated memory block. */
 bool debDebFile::MemControlExtract::Process(Item &/*Itm*/,const unsigned char *Data,
+#if APT_PKG_ABI >= 413
+			     unsigned long long Size,unsigned long long Pos)
+#else
 			     unsigned long Size,unsigned long Pos)
+#endif
 {
    memcpy(Control + Pos, Data,Size);
    return true;
@@ -232,7 +236,11 @@ bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
 // ---------------------------------------------------------------------
 /* The given memory block is loaded into the parser and parsed as a control
    record. */
+#if APT_PKG_ABI >= 413
+bool debDebFile::MemControlExtract::TakeControl(const void *Data,unsigned long long Size)
+#else
 bool debDebFile::MemControlExtract::TakeControl(const void *Data,unsigned long Size)
+#endif
 {
    delete [] Control;
    Control = new char[Size+2];

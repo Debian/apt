@@ -26,9 +26,8 @@ namespace Progress {
     int last_reported_progress;
 
  public:
-    PackageManager()
-       : percentage(0.0), last_reported_progress(-1) {};
-    virtual ~PackageManager() {};
+    PackageManager();
+    virtual ~PackageManager();
 
     /* Global Start/Stop */
     virtual void Start(int /*child_pty*/=-1) {};
@@ -120,7 +119,7 @@ namespace Progress {
  class PackageManagerFancy : public PackageManager
  {
  private:
-    static void staticSIGWINCH(int);
+    APT_HIDDEN static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
     APT_HIDDEN bool DrawStatusLine();
 

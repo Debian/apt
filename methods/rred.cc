@@ -150,11 +150,11 @@ class FileChanges {
    std::list<struct Change>::iterator where;
    size_t pos; // line number is as far left of iterator as possible
 
-   bool pos_is_okay(void)
+   bool pos_is_okay(void) const
    {
 #ifdef POSDEBUG
       size_t cpos = 0;
-      std::list<struct Change>::iterator x;
+      std::list<struct Change>::const_iterator x;
       for (x = changes.begin(); x != where; ++x) {
 	 assert(x != changes.end());
 	 cpos += x->offset + x->add_cnt;
@@ -581,7 +581,7 @@ class RredMethod : public pkgAcqMethod {
 	 FILE *inp = fopen(Path.c_str(), "r");
 	 FILE *out = fopen(Itm->DestFile.c_str(), "w");
 
-	 Hashes hash;
+	 Hashes hash(Itm->ExpectedHashes);
 
 	 patch.apply_against_file(out, inp, &hash);
 

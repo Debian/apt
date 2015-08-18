@@ -1,0 +1,148 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'unrelated' 'all' '0.5~squeeze1'
+insertsource 'unstable' 'unrelated' 'all' '0.5~squeeze1'
+
+setupaptarchive --no-update
+changetowebserver
+
+runtest() {
+    if [ -n "$1" ]; then
+	configallowinsecurerepositories 'true'
+    else
+	configallowinsecurerepositories 'false'
+    fi
+
+    rm -rf rootdir/var/lib/apt/lists/
+
+    local TEST="test${1:-success}"
+    $TEST aptget update
+    if [ "$1" = 'failure' ]; then
+	# accept the outdated Release file so we can check Hit behaviour
+	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=99999999999
+    fi
+    listcurrentlistsdirectory > listsdir.lst
+    testsuccess grep '_Packages\(\.gz\)\?$' listsdir.lst
+    testsuccess grep '_Sources\(\.gz\)\?$' listsdir.lst
+    testsuccess grep '_Translation-en\(\.gz\)\?$' listsdir.lst
+
+    # ensure no leftovers in partial
+    testfailure ls 'rootdir/var/lib/apt/lists/partial/*'
+
+    # check that I-M-S header is kept in redirections
+    echo "$EXPECT" | sed -e 's#(invalid since [^)]\+)#(invalid since)#' > expected.output
+    $TEST aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0
+    sed -i -e 's#(invalid since [^)]\+)#(invalid since)#' rootdir/tmp/${TEST}.output
+    testequal "$(cat expected.output)" cat rootdir/tmp/${TEST}.output
+    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+    # ensure that we still do a hash check for other files on ims hit of Release
+    if grep -q '^Hit .* InRelease$' expected.output || ! grep -q '^Ign .* Release\(\.gpg\)\?$' expected.output; then
+	    $TEST aptget update -o Debug::Acquire::gpgv=1
+	    cp rootdir/tmp/${TEST}.output goodsign.output
+	    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+	    testsuccess grep '^Got GOODSIG, key ID:GOODSIG' goodsign.output
+    fi
+
+    # ensure no leftovers in partial
+    testfailure ls 'rootdir/var/lib/apt/lists/partial/*'
+}
+
+msgmsg 'InRelease'
+EXPECT='Hit http://localhost:8080 unstable InRelease
+Reading package lists...'
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+msgmsg 'Release/Release.gpg'
+EXPECT='Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+Reading package lists...'
+find aptarchive -name 'InRelease' -delete
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+msgmsg 'Release only'
+EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+Ign http://localhost:8080 unstable Release.gpg
+  404  Not Found
+Reading package lists...
+W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated."
+find aptarchive -name 'Release.gpg' -delete
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'warning'
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'warning'
+
+
+# make the release file old
+find aptarchive -name '*Release' -exec sed -i \
+	-e "s#^Date: .*\$#Date: $(date -d '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')#" \
+	-e '/^Valid-Until: / d' -e "/^Date: / a\
+Valid-Until: $(date -d '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
+signreleasefiles
+
+msgmsg 'expired InRelease'
+EXPECT='Hit http://localhost:8080 unstable InRelease
+E: Release file for http://localhost:8080/dists/unstable/InRelease is expired (invalid since). Updates for this repository will not be applied.'
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure'
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure'
+
+msgmsg 'expired Release/Release.gpg'
+EXPECT='Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied.'
+find aptarchive -name 'InRelease' -delete
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure'
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure'
+
+msgmsg 'expired Release only'
+EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+Ign http://localhost:8080 unstable Release.gpg
+  404  Not Found
+W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated.
+E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
+find aptarchive -name 'Release.gpg' -delete
+echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure' 'warning'
+echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'failure' 'warning'
+
+
+msgmsg 'no Release at all'
+EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Ign http://localhost:8080 unstable Release
+  404  Not Found
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists...
+W: The repository 'http://localhost:8080 unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository."
+find aptarchive -name '*Release*' -delete
+echo 'Acquire::GzipIndexes "0";
+Acquire::PDiffs "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'warning'
+echo 'Acquire::GzipIndexes "1";
+Acquire::PDiffs "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest 'warning'

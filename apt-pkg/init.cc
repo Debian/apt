@@ -88,8 +88,18 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.orig$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
+   // Repository security
+   // FIXME: this is set to "true" for backward compatibility, once
+   //        jessie is out we want to change this to "false" to
+   //        improve security
+   Cnf.CndSet("Acquire::AllowInsecureRepositories", true);
+   Cnf.CndSet("Acquire::AllowDowngradeToInsecureRepositories", false);
+
    // Default cdrom mount point
    Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");
+
+   // The default user we drop to in the methods
+   Cnf.CndSet("APT::Sandbox::User", "_apt");
 
    bool Res = true;
    

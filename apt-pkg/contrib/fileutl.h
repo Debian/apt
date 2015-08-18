@@ -85,7 +85,9 @@ class FileFd
    bool Skip(unsigned long long To);
    bool Truncate(unsigned long long To);
    unsigned long long Tell();
+   // the size of the file content (compressed files will be uncompressed first)
    unsigned long long Size();
+   // the size of the file itself
    unsigned long long FileSize();
    time_t ModificationTime();
 
@@ -168,6 +170,8 @@ time_t GetModificationTime(std::string const &Path);
 bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
+FileFd* GetTempFile(std::string const &Prefix = "", 
+                    bool ImmediateUnlink = true);
 
 /** \brief Ensure the existence of the given Path
  *
@@ -191,6 +195,34 @@ pid_t ExecFork(std::set<int> keep_fds);
 void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
+// check if the given file starts with a PGP cleartext signature
+bool StartsWithGPGClearTextSignature(std::string const &FileName);
+
+/** change file attributes to requested known good values
+ *
+ * The method skips the user:group setting if not root.
+ *
+ * @param requester is printed as functionname in error cases
+ * @param file is the file to be modified
+ * @param user is the (new) owner of the file, e.g. _apt
+ * @param group is the (new) group owning the file, e.g. root
+ * @param mode is the access mode of the file, e.g. 0644
+ */
+bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode);
+
+/**
+ * \brief Drop privileges
+ *
+ * Drop the privileges to the user _apt (or the one specified in
+ * APT::Sandbox::User). This does not set the supplementary group
+ * ids up correctly, it only uses the default group. Also prevent
+ * the process from gaining any new privileges afterwards, at least
+ * on Linux.
+ *
+ * \return true on success, false on failure with _error set
+ */
+bool DropPrivileges();
+
 // File string manipulators
 std::string flNotDir(std::string File);
 std::string flNotFile(std::string File);
@@ -198,7 +230,23 @@ std::string flNoLink(std::string File);
 std::string flExtension(std::string File);
 std::string flCombine(std::string Dir,std::string File);
 
+/** \brief Takes a file path and returns the absolute path
+ */
+std::string flAbsPath(std::string File);
+
 // simple c++ glob
 std::vector<std::string> Glob(std::string const &pattern, int flags=0);
+
+/** \brief Popen() implementation that execv() instead of using a shell
+ *
+ * \param Args the execv style command to run
+ * \param FileFd is a referenz to the FileFd to use for input or output
+ * \param Child a reference to the integer that stores the child pid
+ *        Note that you must call ExecWait() or similar to cleanup
+ * \param Mode is either FileFd::ReadOnly or FileFd::WriteOnly
+ * \return true on success, false on failure with _error set
+ */
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
+
 
 #endif

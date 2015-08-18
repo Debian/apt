@@ -24,13 +24,13 @@ class pkgArchiveCleaner
    void *d;
 
    protected:
-   
+
    virtual void Erase(const char * /*File*/,std::string /*Pkg*/,std::string /*Ver*/,struct stat & /*St*/) {};
 
-   public:   
-   
+   public:
+
    bool Go(std::string Dir,pkgCache &Cache);
-   virtual ~pkgArchiveCleaner() {};
+   virtual ~pkgArchiveCleaner();
 };
 
 #endif

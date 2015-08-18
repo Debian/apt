@@ -46,8 +46,8 @@ EOF
 setupaptarchive
 
 testshowvirtual libc6:i386
-testequal "$pkglibc6" aptcache show libc6:armel
-testequal "$pkglibc6" aptcache show libc6
-testequal "$pkglibdb1" aptcache show libdb1:i386
+testsuccessequal "$pkglibc6" aptcache show libc6:armel
+testsuccessequal "$pkglibc6" aptcache show libc6
+testsuccessequal "$pkglibdb1" aptcache show libdb1:i386
 testnopackage libdb1:armel
-testequal "$pkglibdb1" aptcache show libdb1
+testsuccessequal "$pkglibdb1" aptcache show libdb1

@@ -111,6 +111,7 @@ class pkgAcquire
    struct MethodConfig;
    struct ItemDesc;
    friend class Item;
+   friend class pkgAcqMetaBase;
    friend class Queue;
 
    typedef std::vector<Item *>::iterator ItemIterator;
@@ -351,14 +352,24 @@ class pkgAcquire
     *  long as the pkgAcquire object does.
     *  \param Lock defines a lock file that should be acquired to ensure
     *  only one Acquire class is in action at the time or an empty string
-    *  if no lock file should be used.
+    *  if no lock file should be used. If set also all needed directories
+    *  will be created.
     */
-   bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
+   APT_DEPRECATED bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
 
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
+   /** \brief acquire lock and perform directory setup
+    *
+    *  \param Lock defines a lock file that should be acquired to ensure
+    *  only one Acquire class is in action at the time or an empty string
+    *  if no lock file should be used. If set also all needed directories
+    *  will be created and setup.
+    */
+   bool GetLock(std::string const &Lock);
+
    /** \brief Construct a new pkgAcquire. */
-   pkgAcquire(pkgAcquireStatus *Log) APT_DEPRECATED;
+   pkgAcquire(pkgAcquireStatus *Log);
    pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.
@@ -368,6 +379,8 @@ class pkgAcquire
     */
    virtual ~pkgAcquire();
 
+   private:
+   APT_HIDDEN void Initialize();
 };
 
 /** \brief Represents a single download source from which an item
@@ -585,7 +598,7 @@ class pkgAcquire::UriIterator
     *
     *  \param Q The queue over which this UriIterator should iterate.
     */
-   UriIterator(pkgAcquire::Queue *Q) : CurQ(Q), CurItem(0)
+   UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
    {
       while (CurItem == 0 && CurQ != 0)
       {
@@ -593,7 +606,7 @@ class pkgAcquire::UriIterator
 	 CurQ = CurQ->Next;
       }
    }   
-   virtual ~UriIterator() {};
+   virtual ~UriIterator();
 };
 									/*}}}*/
 /** \brief Information about the properties of a single acquire method.	{{{*/
@@ -651,8 +664,7 @@ struct pkgAcquire::MethodConfig
     */
    MethodConfig();
 
-   /* \brief Destructor, empty currently */
-   virtual ~MethodConfig() {};
+   virtual ~MethodConfig();
 };
 									/*}}}*/
 /** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
@@ -714,6 +726,10 @@ class pkgAcquireStatus
    /** \brief The number of items that have been successfully downloaded. */
    unsigned long CurrentItems;
    
+   /** \brief The estimated percentage of the download (0-100)
+    */
+   double Percent;
+
    public:
 
    /** \brief If \b true, the download scheduler should call Pulse()
@@ -794,7 +810,7 @@ class pkgAcquireStatus
    
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
-   virtual ~pkgAcquireStatus() {};
+   virtual ~pkgAcquireStatus();
 };
 									/*}}}*/
 /** @} */

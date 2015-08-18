@@ -8,7 +8,7 @@ configarchitecture 'amd64'
 
 buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver -o aptwebserver::redirect::replace::/pool/=/newpool/ \
 		  -o aptwebserver::redirect::replace::/dists/=/newdists/
 
@@ -16,14 +16,12 @@ mv aptarchive/pool aptarchive/newpool
 mv aptarchive/dists aptarchive/newdists
 
 testrun() {
+	msgmsg 'Test redirection works in method boundaries' "$1"
 	msgtest 'Test redirection works in' 'apt-get update'
 	testsuccess --nomsg aptget update
 
 	# check that I-M-S header is kept in redirections
-	testequal "Hit $1 unstable InRelease
-Hit $1 unstable/main Sources
-Hit $1 unstable/main amd64 Packages
-Hit $1 unstable/main Translation-en
+	testsuccessequal "Hit $1 unstable InRelease
 Reading package lists..." aptget update
 
 	msgtest 'Test redirection works in' 'package download'

@@ -45,14 +45,26 @@ using namespace std;
 // ---------------------------------------------------------------------
 namespace APT {
    namespace String {
-std::string Strip(const std::string &s)
+std::string Strip(const std::string &str)
 {
-   size_t start = s.find_first_not_of(" \t\n");
-   // only whitespace
-   if (start == string::npos)
+   // ensure we have at least one character
+   if (str.empty() == true)
+      return str;
+
+   char const * const s = str.c_str();
+   size_t start = 0;
+   for (; isspace(s[start]) != 0; ++start)
+      ; // find the first not-space
+
+   // string contains only whitespaces
+   if (s[start] == '\0')
       return "";
-   size_t end = s.find_last_not_of(" \t\n");
-   return s.substr(start, end-start+1);
+
+   size_t end = str.length() - 1;
+   for (; isspace(s[end]) != 0; --end)
+      ; // find the last not-space
+
+   return str.substr(start, end - start + 1);
 }
 
 bool Endswith(const std::string &s, const std::string &end)
@@ -60,6 +72,13 @@ bool Endswith(const std::string &s, const std::string &end)
    if (end.size() > s.size())
       return false;
    return (s.substr(s.size() - end.size(), s.size()) == end);
+}
+
+bool Startswith(const std::string &s, const std::string &start)
+{
+   if (start.size() > s.size())
+      return false;
+   return (s.substr(0, start.size()) == start);
 }
 
 }
@@ -305,21 +324,19 @@ bool ParseCWord(const char *&String,string &Res)
 /* */
 string QuoteString(const string &Str, const char *Bad)
 {
-   string Res;
+   std::stringstream Res;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
    {
-      if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
+      if (strchr(Bad,*I) != 0 || isprint(*I) == 0 ||
 	  *I == 0x25 || // percent '%' char
 	  *I <= 0x20 || *I >= 0x7F) // control chars
       {
-	 char Buf[10];
-	 sprintf(Buf,"%%%02x",(int)*I);
-	 Res += Buf;
+	 ioprintf(Res,"%%%02x",(int)*I);
       }
       else
-	 Res += *I;
+	 Res << *I;
    }
-   return Res;
+   return Res.str();
 }
 									/*}}}*/
 // DeQuoteString - Convert a string from quoted from                    /*{{{*/
@@ -360,13 +377,12 @@ string DeQuoteString(string::const_iterator const &begin,
    YottaBytes (E24) */
 string SizeToStr(double Size)
 {
-   char S[300];
    double ASize;
    if (Size >= 0)
       ASize = Size;
    else
       ASize = -1*Size;
-   
+
    /* bytes, KiloBytes, MegaBytes, GigaBytes, TeraBytes, PetaBytes, 
       ExaBytes, ZettaBytes, YottaBytes */
    char Ext[] = {'\0','k','M','G','T','P','E','Z','Y'};
@@ -375,20 +391,21 @@ string SizeToStr(double Size)
    {
       if (ASize < 100 && I != 0)
       {
-         sprintf(S,"%'.1f %c",ASize,Ext[I]);
-	 break;
+	 std::string S;
+	 strprintf(S, "%'.1f %c", ASize, Ext[I]);
+	 return S;
       }
-      
+
       if (ASize < 10000)
       {
-         sprintf(S,"%'.0f %c",ASize,Ext[I]);
-	 break;
+	 std::string S;
+	 strprintf(S, "%'.0f %c", ASize, Ext[I]);
+	 return S;
       }
       ASize /= 1000.0;
       I++;
    }
-   
-   return S;
+   return "";
 }
 									/*}}}*/
 // TimeToStr - Convert the time into a string				/*{{{*/
@@ -396,36 +413,27 @@ string SizeToStr(double Size)
 /* Converts a number of seconds to a hms format */
 string TimeToStr(unsigned long Sec)
 {
-   char S[300];
-   
-   while (1)
+   std::string S;
+   if (Sec > 60*60*24)
    {
-      if (Sec > 60*60*24)
-      {
-	 //d means days, h means hours, min means minutes, s means seconds
-	 sprintf(S,_("%lid %lih %limin %lis"),Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
-	 break;
-      }
-      
-      if (Sec > 60*60)
-      {
-	 //h means hours, min means minutes, s means seconds
-	 sprintf(S,_("%lih %limin %lis"),Sec/60/60,(Sec/60) % 60,Sec % 60);
-	 break;
-      }
-      
-      if (Sec > 60)
-      {
-	 //min means minutes, s means seconds
-	 sprintf(S,_("%limin %lis"),Sec/60,Sec % 60);
-	 break;
-      }
-
-      //s means seconds
-      sprintf(S,_("%lis"),Sec);
-      break;
+      //TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+      strprintf(S,_("%lid %lih %limin %lis"),Sec/60/60/24,(Sec/60/60) % 24,(Sec/60) % 60,Sec % 60);
    }
-   
+   else if (Sec > 60*60)
+   {
+      //TRANSLATOR: h means hours, min means minutes, s means seconds
+      strprintf(S,_("%lih %limin %lis"),Sec/60/60,(Sec/60) % 60,Sec % 60);
+   }
+   else if (Sec > 60)
+   {
+      //TRANSLATOR: min means minutes, s means seconds
+      strprintf(S,_("%limin %lis"),Sec/60,Sec % 60);
+   }
+   else
+   {
+      //TRANSLATOR: s means seconds
+      strprintf(S,_("%lis"),Sec);
+   }
    return S;
 }
 									/*}}}*/
@@ -434,23 +442,30 @@ string TimeToStr(unsigned long Sec)
 /* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
+   if (Subst.empty() == true)
+      return Str;
+
    string::size_type Pos = 0;
    string::size_type OldPos = 0;
    string Temp;
-   
-   while (OldPos < Str.length() && 
+
+   while (OldPos < Str.length() &&
 	  (Pos = Str.find(Subst,OldPos)) != string::npos)
    {
-      Temp += string(Str,OldPos,Pos) + Contents;
-      OldPos = Pos + Subst.length();      
+      if (OldPos != Pos)
+	 Temp.append(Str, OldPos, Pos - OldPos);
+      if (Contents.empty() == false)
+	 Temp.append(Contents);
+      OldPos = Pos + Subst.length();
    }
-   
+
    if (OldPos == 0)
       return Str;
-   
+
+   if (OldPos >= Str.length())
+      return Temp;
    return Temp + string(Str,OldPos);
 }
-
 string SubstVar(string Str,const struct SubstVar *Vars)
 {
    for (; Vars->Subst != 0; Vars++)
@@ -697,9 +712,12 @@ string LookupTag(const string &Message,const char *Tag,const char *Default)
    then returns the result. Several varients on true/false are checked. */
 int StringToBool(const string &Text,int Default)
 {
-   char *End;
-   int Res = strtol(Text.c_str(),&End,0);   
-   if (End != Text.c_str() && Res >= 0 && Res <= 1)
+   char *ParseEnd;
+   int Res = strtol(Text.c_str(),&ParseEnd,0);
+   // ensure that the entire string was converted by strtol to avoid
+   // failures on "apt-cache show -a 0ad" where the "0" is converted
+   const char *TextEnd = Text.c_str()+Text.size();
+   if (ParseEnd == TextEnd && Res >= 0 && Res <= 1)
       return Res;
    
    // Check for positives
@@ -750,86 +768,94 @@ string TimeRFC1123(time_t Date)
 
    In particular: this reads blocks from the input until it believes
    that it's run out of input text.  Each block is terminated by a
-   double newline ('\n' followed by '\n').  As noted below, there is a
-   bug in this code: it assumes that all the blocks have been read if
-   it doesn't see additional text in the buffer after the last one is
-   parsed, which will cause it to lose blocks if the last block
-   coincides with the end of the buffer.
+   double newline ('\n' followed by '\n').
  */
 bool ReadMessages(int Fd, vector<string> &List)
 {
    char Buffer[64000];
-   char *End = Buffer;
    // Represents any left-over from the previous iteration of the
    // parse loop.  (i.e., if a message is split across the end
    // of the buffer, it goes here)
    string PartialMessage;
-   
-   while (1)
-   {
-      int Res = read(Fd,End,sizeof(Buffer) - (End-Buffer));
+
+   do {
+      int const Res = read(Fd, Buffer, sizeof(Buffer));
       if (Res < 0 && errno == EINTR)
 	 continue;
-      
-      // Process is dead, this is kind of bad..
+
+      // process we read from has died
       if (Res == 0)
 	 return false;
-      
+
       // No data
-      if (Res < 0 && errno == EAGAIN)
+      if (Res < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 	 return true;
       if (Res < 0)
 	 return false;
-			      
-      End += Res;
-      
-      // Look for the end of the message
-      for (char *I = Buffer; I + 1 < End; I++)
-      {
-	 if (I[1] != '\n' ||
-	       (I[0] != '\n' && strncmp(I, "\r\n\r\n", 4) != 0))
-	    continue;
-	 
-	 // Pull the message out
-	 string Message(Buffer,I-Buffer);
-	 PartialMessage += Message;
 
-	 // Fix up the buffer
-	 for (; I < End && (*I == '\n' || *I == '\r'); ++I);
-	 End -= I-Buffer;	 
-	 memmove(Buffer,I,End-Buffer);
-	 I = Buffer;
-	 
-	 List.push_back(PartialMessage);
-	 PartialMessage.clear();
+      // extract the message(s) from the buffer
+      char const *Start = Buffer;
+      char const * const End = Buffer + Res;
+
+      char const * NL = (char const *) memchr(Start, '\n', End - Start);
+      if (NL == NULL)
+      {
+	 // end of buffer: store what we have so far and read new data in
+	 PartialMessage.append(Start, End - Start);
+	 Start = End;
       }
-      if (End != Buffer)
-	{
-	  // If there's text left in the buffer, store it
-	  // in PartialMessage and throw the rest of the buffer
-	  // away.  This allows us to handle messages that
-	  // are longer than the static buffer size.
-	  PartialMessage += string(Buffer, End);
-	  End = Buffer;
-	}
       else
-	{
-	  // BUG ALERT: if a message block happens to end at a
-	  // multiple of 64000 characters, this will cause it to
-	  // terminate early, leading to a badly formed block and
-	  // probably crashing the method.  However, this is the only
-	  // way we have to find the end of the message block.  I have
-	  // an idea of how to fix this, but it will require changes
-	  // to the protocol (essentially to mark the beginning and
-	  // end of the block).
-	  //
-	  //  -- dburrows 2008-04-02
-	  return true;
-	}
+	 ++NL;
+
+      if (PartialMessage.empty() == false && Start < End)
+      {
+	 // if we start with a new line, see if the partial message we have ended with one
+	 // so that we properly detect records ending between two read() runs
+	 // cases are: \n|\n  ,  \r\n|\r\n  and  \r\n\r|\n
+	 // the case \r|\n\r\n is handled by the usual double-newline handling
+	 if ((NL - Start) == 1 || ((NL - Start) == 2 && *Start == '\r'))
+	 {
+	    if (APT::String::Endswith(PartialMessage, "\n") || APT::String::Endswith(PartialMessage, "\r\n\r"))
+	    {
+	       PartialMessage.erase(PartialMessage.find_last_not_of("\r\n") + 1);
+	       List.push_back(PartialMessage);
+	       PartialMessage.clear();
+	       while (NL < End && (*NL == '\n' || *NL == '\r')) ++NL;
+	       Start = NL;
+	    }
+	 }
+      }
+
+      while (Start < End) {
+	 char const * NL2 = (char const *) memchr(NL, '\n', End - NL);
+	 if (NL2 == NULL)
+	 {
+	    // end of buffer: store what we have so far and read new data in
+	    PartialMessage.append(Start, End - Start);
+	    break;
+	 }
+	 ++NL2;
+
+	 // did we find a double newline?
+	 if ((NL2 - NL) == 1 || ((NL2 - NL) == 2 && *NL == '\r'))
+	 {
+	    PartialMessage.append(Start, NL2 - Start);
+	    PartialMessage.erase(PartialMessage.find_last_not_of("\r\n") + 1);
+	    List.push_back(PartialMessage);
+	    PartialMessage.clear();
+	    while (NL2 < End && (*NL2 == '\n' || *NL2 == '\r')) ++NL2;
+	    Start = NL2;
+	 }
+	 NL = NL2;
+      }
+
+      // we have read at least one complete message and nothing left
+      if (PartialMessage.empty() == true)
+	 return true;
 
       if (WaitFd(Fd) == false)
 	 return false;
-   }   
+   } while (true);
 }
 									/*}}}*/
 // MonthConv - Converts a month string into a number			/*{{{*/
@@ -1039,7 +1065,7 @@ bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in
    tar files */
-bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len)
 {
    if ((Str[0] & 0x80) == 0)
       return false;
@@ -1050,6 +1076,23 @@ bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
          Res = (Res<<8) + Str[i];
       return true;
    }
+}
+									/*}}}*/
+// Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the 256bit encoded fixed length fields in
+   tar files */
+bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+{
+   unsigned long long Num;
+   bool rc;
+
+   rc = Base256ToNum(Str, Num, Len);
+   Res = Num;
+   if (Res != Num)
+      return false;
+
+   return rc;
 }
 									/*}}}*/
 // HexDigit - Convert a hex character into an integer			/*{{{*/
@@ -1265,10 +1308,12 @@ void ioprintf(ostream &out,const char *format,...)
    va_list args;
    ssize_t size = 400;
    while (true) {
+      bool ret = false;
       va_start(args,format);
-      if (iovprintf(out, format, args, size) == true)
-	 return;
+      ret = iovprintf(out, format, args, size);
       va_end(args);
+      if (ret == true)
+	 return;
    }
 }
 void strprintf(string &out,const char *format,...)
@@ -1277,10 +1322,12 @@ void strprintf(string &out,const char *format,...)
    ssize_t size = 400;
    std::ostringstream outstr;
    while (true) {
+      bool ret = false;
       va_start(args,format);
-      if (iovprintf(outstr, format, args, size) == true)
-	 break;
+      ret = iovprintf(outstr, format, args, size);
       va_end(args);
+      if (ret == true)
+	 break;
    }
    out = outstr.str();
 }
@@ -1365,7 +1412,7 @@ size_t strv_length(const char **str_array)
       ;
    return i;
 }
-
+									/*}}}*/
 // DeEscapeString - unescape (\0XX and \xXX) from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1547,51 +1594,46 @@ void URI::CopyFrom(const string &U)
 /* */
 URI::operator string()
 {
-   string Res;
-   
+   std::stringstream Res;
+
    if (Access.empty() == false)
-      Res = Access + ':';
-   
+      Res << Access << ':';
+
    if (Host.empty() == false)
-   {	 
+   {
       if (Access.empty() == false)
-	 Res += "//";
-          
+	 Res << "//";
+
       if (User.empty() == false)
       {
 	 // FIXME: Technically userinfo is permitted even less
 	 // characters than these, but this is not conveniently
 	 // expressed with a blacklist.
-	 Res += QuoteString(User, ":/?#[]@");
+	 Res << QuoteString(User, ":/?#[]@");
 	 if (Password.empty() == false)
-	    Res += ":" + QuoteString(Password, ":/?#[]@");
-	 Res += "@";
+	    Res << ":" << QuoteString(Password, ":/?#[]@");
+	 Res << "@";
       }
-      
+
       // Add RFC 2732 escaping characters
-      if (Access.empty() == false &&
-	  (Host.find('/') != string::npos || Host.find(':') != string::npos))
-	 Res += '[' + Host + ']';
+      if (Access.empty() == false && Host.find_first_of("/:") != string::npos)
+	 Res << '[' << Host << ']';
       else
-	 Res += Host;
-      
+	 Res << Host;
+
       if (Port != 0)
-      {
-	 char S[30];
-	 sprintf(S,":%u",Port);
-	 Res += S;
-      }	 
+	 Res << ':' << Port;
    }
-   
+
    if (Path.empty() == false)
    {
       if (Path[0] != '/')
-	 Res += "/" + Path;
+	 Res << "/" << Path;
       else
-	 Res += Path;
+	 Res << Path;
    }
-   
-   return Res;
+
+   return Res.str();
 }
 									/*}}}*/
 // URI::SiteOnly - Return the schema and site for the URI		/*{{{*/

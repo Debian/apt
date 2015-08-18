@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-
-<!ENTITY % aptent SYSTEM "apt.ent">
-%aptent;
-
-<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
-%aptverbatiment;
-
-<!ENTITY % aptvendor SYSTEM "apt-vendor.ent">
-%aptvendor;
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
 ]>
 
 <refentry>
@@ -390,9 +384,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para>The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to
      enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e.g. on
      high-latency connections. It specifies how many requests are sent in a pipeline.
-     Previous APT versions had a default of 10 for this setting, but the default value
-     is now 0 (= disabled) to avoid problems with the ever-growing amount of webservers
-     and proxies which choose to not conform to the HTTP/1.1 specification.</para>
+     APT tries to detect and workaround misbehaving webservers and proxies at runtime, but
+     if you know that yours does not conform to the HTTP/1.1 specification pipelining can
+     be disabled by setting the value to 0. It is enabled by default with the value 10.</para>
 
      <para><literal>Acquire::http::AllowRedirect</literal> controls whether APT will follow
      redirects, which is enabled by default.</para>
@@ -592,6 +586,38 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>MaxReleaseFileSize</option></term>
+	 <listitem><para>
+           The maximum file size of Release/Release.gpg/InRelease files.
+           The default is 10MB.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>AllowInsecureRepositories</option></term>
+	 <listitem><para>
+           Allow the update operation to load data files from
+           a repository without a trusted signature. If enabled this
+           option no data files will be loaded and the update
+           operation fails with a error for this source. The default
+           is false for backward compatibility. This will be changed
+           in the future.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>AllowDowngradeToInsecureRepositories</option></term>
+	 <listitem><para>
+           Allow that a repository that was previously gpg signed to become
+           unsigned durign a update operation. When there is no valid signature
+           of a perviously trusted repository apt will refuse the update. This
+           option can be used to override this protection. You almost certainly
+           never want to enable this. The default is false.
+
+           Note that apt will still consider packages from this source
+           untrusted and warn about them if you try to install
+           them.
+         </para></listitem>
+     </varlistentry>
+
    </variablelist>
  </refsect1>
 
@@ -608,10 +634,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    information, such as the two package caches <literal>srcpkgcache</literal> and 
    <literal>pkgcache</literal> as well as the location to place downloaded archives, 
    <literal>Dir::Cache::archives</literal>. Generation of caches can be turned off
-   by setting their names to the empty string. This will slow down startup but
-   save disk space. It is probably preferable to turn off the pkgcache rather
-   than the srcpkgcache. Like <literal>Dir::State</literal> the default
-   directory is contained in <literal>Dir::Cache</literal></para>
+   by setting <literal>pkgcache</literal> or <literal>srcpkgcache</literal> to
+   <literal>""</literal>.  This will slow down startup but save disk space. It
+   is probably preferable to turn off the pkgcache rather than the srcpkgcache.
+   Like <literal>Dir::State</literal> the default directory is contained in
+   <literal>Dir::Cache</literal></para>
 
    <para><literal>Dir::Etc</literal> contains the location of configuration files, 
    <literal>sourcelist</literal> gives the location of the sourcelist and 

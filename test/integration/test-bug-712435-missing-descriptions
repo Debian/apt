@@ -81,57 +81,54 @@ Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" > aptarchive/Packages
 
 setupaptarchive
 
-testequal "Package: apt-normal
+testsuccessequal "Package: apt-normal
 $PACKAGESTANZA
 $DESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 " aptcache show apt-normal
 
-# displaying the translated Description would be equally valid,
-# but we assume only one description is in a Packages file and
-# so we prefer "Description" over "Description-*" currently.
 for variant in 'below' 'middle' 'top'; do
-	testequal "Package: apt-both-$variant
+	testsuccessequal "Package: apt-both-$variant
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 " aptcache show apt-both-$variant
 done
 
-testequal "Package: apt-trans
+testsuccessequal "Package: apt-trans
 $PACKAGESTANZA
 $TRANSDESCRIPTION
 Description-md5: cccccccccccccccccccccccccccccccc
 " aptcache show apt-trans
 
-testequal "Package: apt-md5
+testsuccessequal "Package: apt-md5
 $PACKAGESTANZA
 Description-md5: dddddddddddddddddddddddddddddddd
 " aptcache show apt-md5
 
-testequal "Package: apt-none
+testsuccessequal "Package: apt-none
 $PACKAGESTANZA
 " aptcache show apt-none
 
-testequal "Package: apt-intermixed
+testsuccessequal "Package: apt-intermixed
 $PACKAGESTANZA
 $DESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 X-Some-Flag: yes
 " aptcache show apt-intermixed
 
-testequal "Package: apt-intermixed2
+testsuccessequal "Package: apt-intermixed2
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 X-Some-Flag: yes
 X-Foo-Flag: Something with a Description
 X-Bar-Flag: no
 " aptcache show apt-intermixed2
 
-testequal "Package: apt-intermixed3
+testsuccessequal "Package: apt-intermixed3
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 X-Some-Flag: yes
 X-Foo-Flag: Something with a Description
@@ -155,7 +152,7 @@ Reverse Provides: '
 testempty aptcache search nonexistentstring
 
 # packages without a description can't be found
-testequal 'apt-normal - commandline package manager
+testsuccessequal 'apt-normal - commandline package manager
 apt-both-below - commandline package manager
 apt-both-middle - commandline package manager
 apt-both-top - commandline package manager

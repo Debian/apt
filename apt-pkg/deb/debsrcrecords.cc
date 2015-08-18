@@ -18,6 +18,8 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/gpgv.h>
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -55,12 +57,13 @@ const char **debSrcRecordParser::Binaries()
       char* binStartNext = strchrnul(bin, ',');
       char* binEnd = binStartNext - 1;
       for (; isspace(*binEnd) != 0; --binEnd)
-	 binEnd = '\0';
+	 binEnd = 0;
       StaticBinList.push_back(bin);
       if (*binStartNext != ',')
 	 break;
       *binStartNext = '\0';
-      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin);
+      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin)
+         ;
    } while (*bin != '\0');
    StaticBinList.push_back(NULL);
 
@@ -118,13 +121,32 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 // ---------------------------------------------------------------------
 /* This parses the list of files and returns it, each file is required to have
    a complete source package */
-bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
+bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &F)
 {
-   List.erase(List.begin(),List.end());
-   
-   string Files = Sect.FindS("Files");
-   if (Files.empty() == true)
+   std::vector<pkgSrcRecords::File2> F2;
+   if (Files2(F2) == false)
       return false;
+   for (std::vector<pkgSrcRecords::File2>::const_iterator f2 = F2.begin(); f2 != F2.end(); ++f2)
+   {
+      pkgSrcRecords::File2 f;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      f.MD5Hash = f2->MD5Hash;
+      f.Size = f2->Size;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+      f.Path = f2->Path;
+      f.Type = f2->Type;
+      F.push_back(f);
+   }
+   return true;
+}
+bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
+{
+   List.clear();
 
    // Stash the / terminated directory prefix
    string Base = Sect.FindS("Directory");
@@ -133,51 +155,92 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 
    std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
 
-   // Iterate over the entire list grabbing each triplet
-   const char *C = Files.c_str();
-   while (*C != 0)
-   {   
-      pkgSrcRecords::File F;
-      string Size;
-      
-      // Parse each of the elements
-      if (ParseQuoteWord(C,F.MD5Hash) == false ||
-	  ParseQuoteWord(C,Size) == false ||
-	  ParseQuoteWord(C,F.Path) == false)
-	 return _error->Error("Error parsing file record");
-      
-      // Parse the size and append the directory
-      F.Size = atoi(Size.c_str());
-      F.Path = Base + F.Path;
-      
-      // Try to guess what sort of file it is we are getting.
-      string::size_type Pos = F.Path.length()-1;
-      while (1)
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      // derive field from checksum type
+      std::string checksumField("Checksums-");
+      if (strcmp(*type, "MD5Sum") == 0)
+	 checksumField = "Files"; // historic name for MD5 checksums
+      else
+	 checksumField.append(*type);
+
+      string const Files = Sect.FindS(checksumField.c_str());
+      if (Files.empty() == true)
+	 continue;
+
+      // Iterate over the entire list grabbing each triplet
+      const char *C = Files.c_str();
+      while (*C != 0)
       {
-	 string::size_type Tmp = F.Path.rfind('.',Pos);
-	 if (Tmp == string::npos)
-	    break;
-	 if (F.Type == "tar") {
-	    // source v3 has extension 'debian.tar.*' instead of 'diff.*'
-	    if (string(F.Path, Tmp+1, Pos-Tmp) == "debian")
-	       F.Type = "diff";
-	    break;
-	 }
-	 F.Type = string(F.Path,Tmp+1,Pos-Tmp);
-	 
-	 if (std::find(compExts.begin(), compExts.end(), std::string(".").append(F.Type)) != compExts.end() ||
-	     F.Type == "tar")
+	 string hash, size, path;
+
+	 // Parse each of the elements
+	 if (ParseQuoteWord(C, hash) == false ||
+	       ParseQuoteWord(C, size) == false ||
+	       ParseQuoteWord(C, path) == false)
+	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+
+	 HashString const hashString(*type, hash);
+	 if (Base.empty() == false)
+	    path = Base + path;
+
+	 // look if we have a record for this file already
+	 std::vector<pkgSrcRecords::File2>::iterator file = List.begin();
+	 for (; file != List.end(); ++file)
+	    if (file->Path == path)
+	       break;
+
+	 // we have it already, store the new hash and be done
+	 if (file != List.end())
 	 {
-	    Pos = Tmp-1;
+	    if (checksumField == "Files")
+	       APT_IGNORE_DEPRECATED(file->MD5Hash = hash;)
+	    // an error here indicates that we have two different hashes for the same file
+	    if (file->Hashes.push_back(hashString) == false)
+	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());
 	    continue;
 	 }
-	 
-	 break;
+
+	 // we haven't seen this file yet
+	 pkgSrcRecords::File2 F;
+	 F.Path = path;
+	 F.FileSize = strtoull(size.c_str(), NULL, 10);
+	 F.Hashes.push_back(hashString);
+
+	 APT_IGNORE_DEPRECATED_PUSH
+	 F.Size = F.FileSize;
+	 if (checksumField == "Files")
+	    F.MD5Hash = hash;
+	 APT_IGNORE_DEPRECATED_POP
+
+	 // Try to guess what sort of file it is we are getting.
+	 string::size_type Pos = F.Path.length()-1;
+	 while (1)
+	 {
+	    string::size_type Tmp = F.Path.rfind('.',Pos);
+	    if (Tmp == string::npos)
+	       break;
+	    if (F.Type == "tar") {
+	       // source v3 has extension 'debian.tar.*' instead of 'diff.*'
+	       if (string(F.Path, Tmp+1, Pos-Tmp) == "debian")
+		  F.Type = "diff";
+	       break;
+	    }
+	    F.Type = string(F.Path,Tmp+1,Pos-Tmp);
+
+	    if (std::find(compExts.begin(), compExts.end(), std::string(".").append(F.Type)) != compExts.end() ||
+		  F.Type == "tar")
+	    {
+	       Pos = Tmp-1;
+	       continue;
+	    }
+
+	    break;
+	 }
+	 List.push_back(F);
       }
-      
-      List.push_back(F);
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -186,6 +249,25 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 /* */
 debSrcRecordParser::~debSrcRecordParser()
 {
-   delete[] Buffer;
+   // was allocated via strndup()
+   free(Buffer);
 }
 									/*}}}*/
+
+
+debDscRecordParser::debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index)
+   : debSrcRecordParser(DscFile, Index)
+{
+   // support clear signed files
+   if (OpenMaybeClearSignedFile(DscFile, Fd) == false)
+   {
+      _error->Error("Failed to open %s", DscFile.c_str());
+      return;
+   }
+
+   // re-init to ensure the updated Fd is used
+   Tags.Init(&Fd);
+   // read the first (and only) record
+   Step();
+
+}

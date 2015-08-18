@@ -33,6 +33,8 @@
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/mmap.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -52,7 +54,7 @@ pkgCache *DebFile::Cache = 0;
 // ---------------------------------------------------------------------
 /* */
 DebFile::DebFile(const char *debfile)
-	: File(debfile, FileFd::ReadOnly), Size(0), Control(NULL), ControlLen(0),
+	: File(debfile, FileFd::ReadOnly), Control(NULL), ControlLen(0),
 	  DepOp(0), PreDepOp(0), Config(0), Template(0), Which(None)
 {
 }
@@ -103,10 +105,12 @@ bool DebFile::DoItem(Item &I, int &Fd)
 	if (strcmp(I.Name, "control") == 0)
 	{
 		delete [] Control;
-		Control = new char[I.Size+1];
-		Control[I.Size] = 0;
+		Control = new char[I.Size+3];
+		Control[I.Size] = '\n';
+		Control[I.Size + 1] = '\n';
+		Control[I.Size + 2] = '\0';
 		Which = IsControl;
-		ControlLen = I.Size;
+		ControlLen = I.Size + 3;
 		// make it call the Process method below. this is so evil
 		Fd = -2;
 	}
@@ -138,7 +142,7 @@ bool DebFile::DoItem(Item &I, int &Fd)
 // ---------------------------------------------------------------------
 /* */
 bool DebFile::Process(Item &/*I*/, const unsigned char *data,
-		unsigned long size, unsigned long pos)
+		unsigned long long size, unsigned long long pos)
 {
 	switch (Which)
 	{
@@ -162,9 +166,10 @@ bool DebFile::Process(Item &/*I*/, const unsigned char *data,
 bool DebFile::ParseInfo()
 {
 	if (Control == NULL) return false;
-	
+
 	pkgTagSection Section;
-	Section.Scan(Control, ControlLen);
+	if (Section.Scan(Control, ControlLen) == false)
+		return false;
 
 	Package = Section.FindS("Package");
 	Version = GetInstalledVer(Package);
@@ -212,15 +217,14 @@ bool DebFile::ParseInfo()
 // ShowHelp - show a short help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static int ShowHelp(void)
+static bool ShowHelp(CommandLine &)
 {
-   	ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
-	if (_config->FindB("version") == true) 
-		return 0;
+	if (_config->FindB("version") == true)
+		return true;
 
-	cout << 
+	cout <<
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
 		"\n"
 		"apt-extracttemplates is a tool to extract config and template info\n"
@@ -231,7 +235,7 @@ static int ShowHelp(void)
 		"  -t   Set the temp dir\n"
 		"  -c=? Read this configuration file\n"
 		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
-	return 0;
+	return true;
 }
 									/*}}}*/
 // WriteFile - write the contents of the passed string to a file	/*{{{*/
@@ -353,20 +357,10 @@ int main(int argc, const char **argv)					/*{{{*/
 	textdomain(PACKAGE);
 
 	// Parse the command line and initialize the package library
-	CommandLine CmdL(Args,_config);
-	if (pkgInitConfig(*_config) == false ||
-	    CmdL.Parse(argc,argv) == false ||
-	    pkgInitSystem(*_config,_system) == false)
-	{
-		_error->DumpErrors();
-		return 100;
-	}
-	
-	// See if the help should be shown
-	if (_config->FindB("help") == true ||
-	    CmdL.FileSize() == 0)
-		return ShowHelp();
-	
+	CommandLine::Dispatch Cmds[] = {{NULL, NULL}};
+	CommandLine CmdL;
+	ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
+
 	Go(CmdL);
 
 	// Print any errors or warnings found during operation

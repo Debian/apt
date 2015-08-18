@@ -9,6 +9,7 @@ setupaptarchive
 
 UPGRADEFAIL="Reading package lists...
 Building dependency tree...
+Calculating upgrade...
 The following packages will be REMOVED:
   conkeror libdatrie0 libkrb53 libxcb-xlib0 xulrunner-1.9
 The following NEW packages will be installed:
@@ -40,6 +41,7 @@ E: Trivial Only specified but this is not a trivial operation."
 
 UPGRADESUCCESS="Reading package lists...
 Building dependency tree...
+Calculating upgrade...
 The following packages will be REMOVED:
   libdatrie0 libkrb53 libxcb-xlib0 xulrunner-1.9
 The following NEW packages will be installed:
@@ -71,5 +73,5 @@ After this operation, 36.0 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation."
 
 # Test that the old behavior can be restored with the option
-testequal "$UPGRADEFAIL" aptget dist-upgrade --trivial-only -o pkgProblemResolver::FixByInstall=0
-testequal "$UPGRADESUCCESS" aptget dist-upgrade --trivial-only #-o pkgProblemResolver::FixByInstall=0
+testfailureequal "$UPGRADEFAIL" aptget dist-upgrade --trivial-only -o pkgProblemResolver::FixByInstall=0
+testfailureequal "$UPGRADESUCCESS" aptget dist-upgrade --trivial-only #-o pkgProblemResolver::FixByInstall=0

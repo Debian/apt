@@ -1,0 +1,82 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+
+dpkg_field_ordered_list() {
+	local FIELDS="$(perl -e "
+use Dpkg::Control;
+use Dpkg::Control::Fields;
+foreach \$f (field_ordered_list(${1})) {
+	print \"\$f\\n\";
+}" | sort -u)"
+	if [ -z "$FIELDS" ]; then
+		msgfail 'Could not get fields via libdpkg-perl'
+	fi
+	echo "$FIELDS"
+}
+
+comparelsts() {
+	local DIFFOUTPUT="$(diff -u apt.lst dpkg.lst || true)"
+	if echo "$DIFFOUTPUT" | grep -q '^+[^+]'; then
+		echo
+		echo "$DIFFOUTPUT" | grep '^[+-][^+-]'
+		msgfail
+	else
+		msgpass
+	fi
+}
+
+msgtest 'Check that apt knows all fields dpkg orders in' 'Packages'
+dpkg_field_ordered_list 'CTRL_INDEX_PKG' > dpkg.lst
+sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+comparelsts
+
+msgtest 'Check that apt knows all fields dpkg orders in' 'status'
+dpkg_field_ordered_list 'CTRL_FILE_STATUS' > dpkg.lst
+comparelsts
+
+msgtest 'Check that apt knows all fields dpkg orders in' 'DEBIAN/control'
+dpkg_field_ordered_list 'CTRL_PKG_DEB' > dpkg.lst
+comparelsts
+
+msgtest 'Check that apt knows all fields dpkg orders in' 'Sources'
+dpkg_field_ordered_list 'CTRL_INDEX_SRC' > dpkg.lst
+echo 'Package' > apt.tmp
+sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed '/^Package$/,/^Package$/ d' >> apt.tmp
+sort -u apt.tmp > apt.lst
+comparelsts
+
+msgtest 'Check that apt knows all fields dpkg orders in' 'dsc'
+dpkg_field_ordered_list 'CTRL_PKG_SRC' > dpkg.lst
+comparelsts
+
+# HACK, but there is no good way to acquire sources in tests and/or to remember to run this regular manually
+if [ "$USER" = 'david' ]; then
+	msgtest 'Check if we have somewhere the sources of' 'dpkg'
+	DPKGSOURCE="$(locate dpkg/lib/dpkg/parse.c  | head -n 1 || true)"
+	if [ -z "$DPKGSOURCE" ]; then
+		msgskip 'Not found'
+	else
+		msgpass
+		msgtest 'Check that apt knows about all fields' 'dpkg parses'
+		sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKGSOURCE}" | sort -u > dpkg.lst
+		sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+		comparelsts
+	fi
+
+	msgtest 'Check if we have somewhere the sources of' 'dak'
+	DAKSOURCE="$(locate dak/setup/core-init.d/080_metadatakeys | head -n 1 || true)"
+	if [ -z "$DAKSOURCE" ]; then
+		msgskip 'Not found'
+	else
+		msgpass
+		msgtest 'Check that apt knows about all fields' 'dak knows'
+		# dak mixes both, so we can only check with the mixed one as well
+		sed -ne "s#^.* VALUES ('\(.*\)', \(.*\)).*\$#\1 \2#p" "${DAKSOURCE}" | cut -d ' ' -f 1 | sort -u > dpkg.lst
+		sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sort -u > apt.lst
+		comparelsts
+	fi
+fi

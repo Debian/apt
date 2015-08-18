@@ -21,13 +21,13 @@ foo - tool best used with bar
 bar - tool best used with foo
 baz - alternative tool best used with foo'
 
-testequal "$FOOBAR" aptcache search foo
-testequal "$FOOBAR" aptcache search bar
-testequal "$FOOBAR" aptcache search foo bar
+testsuccessequal "$FOOBAR" aptcache search foo
+testsuccessequal "$FOOBAR" aptcache search bar
+testsuccessequal "$FOOBAR" aptcache search foo bar
 
-testequal 'foobar - funky tool
+testsuccessequal 'foobar - funky tool
 foo - tool best used with bar' aptcache search -n foo
-testequal 'foobar - funky tool
+testsuccessequal 'foobar - funky tool
 bar - tool best used with foo
 baz - alternative tool best used with foo' aptcache search -n bar
-testequal 'foobar - funky tool' aptcache search -n foo bar
+testsuccessequal 'foobar - funky tool' aptcache search -n foo bar

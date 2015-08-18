@@ -21,9 +21,12 @@ endif
 -include build/environment.mak
 
 ifneq (,$(shell which dpkg-buildflags))
-  export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
-  export LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
-  export CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
+  # make does not export to $(shell) so we need to workaround 
+  # (http://savannah.gnu.org/bugs/?10593)
+  dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags
+  export CXXFLAGS = $(shell $(dpkg_buildflags) --get CXXFLAGS)
+  export LDFLAGS = $(shell $(dpkg_buildflags) --get LDFLAGS)
+  export CPPFLAGS = $(shell $(dpkg_buildflags) --get CPPFLAGS)
 else
   ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
     export CXXFLAGS = -O0 -g -Wall
@@ -70,7 +73,7 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 build-binary: build/build-binary-stamp
-build-debiandoc: build/build-debiandoc-stamp
+build-docbook: build/build-docbook-stamp
 build-manpages: build/build-manpages-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
@@ -101,9 +104,9 @@ else
 endif
 	touch $@
 
-build/build-debiandoc-stamp: build/configure-stamp
+build/build-docbook-stamp: build/configure-stamp
 	# Add here commands to compile the package.
-	$(MAKE) debiandoc
+	$(MAKE) docbook
 	touch $@
 
 build/build-manpages-stamp: build/configure-stamp
@@ -126,7 +129,7 @@ debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
 # Build architecture-independent files here.
-libapt-pkg-doc: build-debiandoc
+libapt-pkg-doc: build-docbook
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -153,7 +156,7 @@ libapt-pkg-doc: build-debiandoc
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-doc: build-debiandoc
+apt-doc: build-docbook
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -189,8 +192,6 @@ apt: build-binary build-manpages debian/apt.install
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
 	cp debian/apt.auto-removal.sh debian/$@/etc/kernel/postinst.d/apt-auto-removal
 	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
-	# install bash completion
-	cp share/bash-completions/* debian/$@/usr/share/bash-completion/completions/
 	# install vendor specific apt confs
 	find -L vendor/current -name 'apt.conf-*' | while read conf; do cp "$${conf}" "debian/$@/etc/apt/apt.conf.d/$${conf#*-}"; done
 
@@ -353,7 +354,7 @@ binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-trans
 binary-indep: apt-doc libapt-pkg-doc
 binary: binary-indep binary-arch
 build-arch: build-binary
-build-indep: build-manpages build-debiandoc
+build-indep: build-manpages build-docbook
 build: build-indep build-arch
 
 .PHONY: build clean binary-indep binary-arch binary

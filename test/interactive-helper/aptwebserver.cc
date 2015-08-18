@@ -19,82 +19,99 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
+
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <list>
 #include <string>
 #include <vector>
 
-static char const * httpcodeToStr(int const httpcode)		/*{{{*/
+static std::string httpcodeToStr(int const httpcode)			/*{{{*/
 {
    switch (httpcode)
    {
       // Informational 1xx
-      case 100: return "100 Continue";
-      case 101: return "101 Switching Protocols";
+      case 100: return _config->Find("aptwebserver::httpcode::100", "100 Continue");
+      case 101: return _config->Find("aptwebserver::httpcode::101", "101 Switching Protocols");
       // Successful 2xx
-      case 200: return "200 OK";
-      case 201: return "201 Created";
-      case 202: return "202 Accepted";
-      case 203: return "203 Non-Authoritative Information";
-      case 204: return "204 No Content";
-      case 205: return "205 Reset Content";
-      case 206: return "206 Partial Content";
+      case 200: return _config->Find("aptwebserver::httpcode::200", "200 OK");
+      case 201: return _config->Find("aptwebserver::httpcode::201", "201 Created");
+      case 202: return _config->Find("aptwebserver::httpcode::202", "202 Accepted");
+      case 203: return _config->Find("aptwebserver::httpcode::203", "203 Non-Authoritative Information");
+      case 204: return _config->Find("aptwebserver::httpcode::204", "204 No Content");
+      case 205: return _config->Find("aptwebserver::httpcode::205", "205 Reset Content");
+      case 206: return _config->Find("aptwebserver::httpcode::206", "206 Partial Content");
       // Redirections 3xx
-      case 300: return "300 Multiple Choices";
-      case 301: return "301 Moved Permanently";
-      case 302: return "302 Found";
-      case 303: return "303 See Other";
-      case 304: return "304 Not Modified";
-      case 305: return "304 Use Proxy";
-      case 307: return "307 Temporary Redirect";
+      case 300: return _config->Find("aptwebserver::httpcode::300", "300 Multiple Choices");
+      case 301: return _config->Find("aptwebserver::httpcode::301", "301 Moved Permanently");
+      case 302: return _config->Find("aptwebserver::httpcode::302", "302 Found");
+      case 303: return _config->Find("aptwebserver::httpcode::303", "303 See Other");
+      case 304: return _config->Find("aptwebserver::httpcode::304", "304 Not Modified");
+      case 305: return _config->Find("aptwebserver::httpcode::305", "305 Use Proxy");
+      case 307: return _config->Find("aptwebserver::httpcode::307", "307 Temporary Redirect");
       // Client errors 4xx
-      case 400: return "400 Bad Request";
-      case 401: return "401 Unauthorized";
-      case 402: return "402 Payment Required";
-      case 403: return "403 Forbidden";
-      case 404: return "404 Not Found";
-      case 405: return "405 Method Not Allowed";
-      case 406: return "406 Not Acceptable";
-      case 407: return "407 Proxy Authentication Required";
-      case 408: return "408 Request Time-out";
-      case 409: return "409 Conflict";
-      case 410: return "410 Gone";
-      case 411: return "411 Length Required";
-      case 412: return "412 Precondition Failed";
-      case 413: return "413 Request Entity Too Large";
-      case 414: return "414 Request-URI Too Large";
-      case 415: return "415 Unsupported Media Type";
-      case 416: return "416 Requested range not satisfiable";
-      case 417: return "417 Expectation Failed";
-      case 418: return "418 I'm a teapot";
+      case 400: return _config->Find("aptwebserver::httpcode::400", "400 Bad Request");
+      case 401: return _config->Find("aptwebserver::httpcode::401", "401 Unauthorized");
+      case 402: return _config->Find("aptwebserver::httpcode::402", "402 Payment Required");
+      case 403: return _config->Find("aptwebserver::httpcode::403", "403 Forbidden");
+      case 404: return _config->Find("aptwebserver::httpcode::404", "404 Not Found");
+      case 405: return _config->Find("aptwebserver::httpcode::405", "405 Method Not Allowed");
+      case 406: return _config->Find("aptwebserver::httpcode::406", "406 Not Acceptable");
+      case 407: return _config->Find("aptwebserver::httpcode::407", "407 Proxy Authentication Required");
+      case 408: return _config->Find("aptwebserver::httpcode::408", "408 Request Time-out");
+      case 409: return _config->Find("aptwebserver::httpcode::409", "409 Conflict");
+      case 410: return _config->Find("aptwebserver::httpcode::410", "410 Gone");
+      case 411: return _config->Find("aptwebserver::httpcode::411", "411 Length Required");
+      case 412: return _config->Find("aptwebserver::httpcode::412", "412 Precondition Failed");
+      case 413: return _config->Find("aptwebserver::httpcode::413", "413 Request Entity Too Large");
+      case 414: return _config->Find("aptwebserver::httpcode::414", "414 Request-URI Too Large");
+      case 415: return _config->Find("aptwebserver::httpcode::415", "415 Unsupported Media Type");
+      case 416: return _config->Find("aptwebserver::httpcode::416", "416 Requested range not satisfiable");
+      case 417: return _config->Find("aptwebserver::httpcode::417", "417 Expectation Failed");
+      case 418: return _config->Find("aptwebserver::httpcode::418", "418 I'm a teapot");
       // Server error 5xx
-      case 500: return "500 Internal Server Error";
-      case 501: return "501 Not Implemented";
-      case 502: return "502 Bad Gateway";
-      case 503: return "503 Service Unavailable";
-      case 504: return "504 Gateway Time-out";
-      case 505: return "505 HTTP Version not supported";
+      case 500: return _config->Find("aptwebserver::httpcode::500", "500 Internal Server Error");
+      case 501: return _config->Find("aptwebserver::httpcode::501", "501 Not Implemented");
+      case 502: return _config->Find("aptwebserver::httpcode::502", "502 Bad Gateway");
+      case 503: return _config->Find("aptwebserver::httpcode::503", "503 Service Unavailable");
+      case 504: return _config->Find("aptwebserver::httpcode::504", "504 Gateway Time-out");
+      case 505: return _config->Find("aptwebserver::httpcode::505", "505 HTTP Version not supported");
    }
-   return NULL;
+   return "";
 }
 									/*}}}*/
+static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
+   if (std::find(headers.begin(), headers.end(), "Transfer-Encoding: chunked") != headers.end())
+      return true;
+   if (_config->FindB("aptwebserver::chunked-transfer-encoding", false) == true)
+      return true;
+   return false;
+}
 static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 {
-   std::ostringstream contentlength;
-   contentlength << "Content-Length: " << data.FileSize();
-   headers.push_back(contentlength.str());
-
-   std::string lastmodified("Last-Modified: ");
-   lastmodified.append(TimeRFC1123(data.ModificationTime()));
-   headers.push_back(lastmodified);
+   if (chunkedTransferEncoding(headers) == false)
+   {
+      std::ostringstream contentlength;
+      contentlength << "Content-Length: " << data.FileSize();
+      headers.push_back(contentlength.str());
+   }
+   if (_config->FindB("aptwebserver::support::last-modified", true) == true)
+   {
+      std::string lastmodified("Last-Modified: ");
+      lastmodified.append(TimeRFC1123(data.ModificationTime()));
+      headers.push_back(lastmodified);
+   }
 }
 									/*}}}*/
 static void addDataHeaders(std::list<std::string> &headers, std::string &data)/*{{{*/
 {
-   std::ostringstream contentlength;
-   contentlength << "Content-Length: " << data.size();
-   headers.push_back(contentlength.str());
+   if (chunkedTransferEncoding(headers) == false)
+   {
+      std::ostringstream contentlength;
+      contentlength << "Content-Length: " << data.size();
+      headers.push_back(contentlength.str());
+   }
 }
 									/*}}}*/
 static bool sendHead(int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
@@ -114,6 +131,9 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    date.append(TimeRFC1123(time(NULL)));
    headers.push_back(date);
 
+   if (chunkedTransferEncoding(headers) == true)
+      headers.push_back("Transfer-Encoding: chunked");
+
    std::clog << ">>> RESPONSE to " << client << " >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
@@ -130,25 +150,55 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    return Success;
 }
 									/*}}}*/
-static bool sendFile(int const client, FileFd &data)			/*{{{*/
+static bool sendFile(int const client, std::list<std::string> const &headers, FileFd &data)/*{{{*/
 {
    bool Success = true;
+   bool const chunked = chunkedTransferEncoding(headers);
    char buffer[500];
    unsigned long long actual = 0;
    while ((Success &= data.Read(buffer, sizeof(buffer), &actual)) == true)
    {
       if (actual == 0)
 	 break;
-      Success &= FileFd::Write(client, buffer, actual);
+
+      if (chunked == true)
+      {
+	 std::string size;
+	 strprintf(size, "%llX\r\n", actual);
+	 Success &= FileFd::Write(client, size.c_str(), size.size());
+	 Success &= FileFd::Write(client, buffer, actual);
+	 Success &= FileFd::Write(client, "\r\n", strlen("\r\n"));
+      }
+      else
+	 Success &= FileFd::Write(client, buffer, actual);
+   }
+   if (chunked == true)
+   {
+      char const * const finish = "0\r\n\r\n";
+      Success &= FileFd::Write(client, finish, strlen(finish));
    }
    if (Success == false)
-      std::cerr << "SENDFILE: READ/WRITE ERROR to " << client << std::endl;
+      std::cerr << "SENDFILE:" << (chunked ? " CHUNKED" : "") << " READ/WRITE ERROR to " << client << std::endl;
    return Success;
 }
 									/*}}}*/
-static bool sendData(int const client, std::string const &data)		/*{{{*/
+static bool sendData(int const client, std::list<std::string> const &headers, std::string const &data)/*{{{*/
 {
-   if (FileFd::Write(client, data.c_str(), data.size()) == false)
+   if (chunkedTransferEncoding(headers) == true)
+   {
+      unsigned long long const ullsize = data.length();
+      std::string size;
+      strprintf(size, "%llX\r\n", ullsize);
+      char const * const finish = "\r\n0\r\n\r\n";
+      if (FileFd::Write(client, size.c_str(), size.length()) == false ||
+	    FileFd::Write(client, data.c_str(), ullsize) == false ||
+	    FileFd::Write(client, finish, strlen(finish)) == false)
+      {
+	 std::cerr << "SENDDATA: CHUNK WRITE ERROR to " << client << std::endl;
+	 return false;
+      }
+   }
+   else if (FileFd::Write(client, data.c_str(), data.size()) == false)
    {
       std::cerr << "SENDDATA: WRITE ERROR to " << client << std::endl;
       return false;
@@ -157,34 +207,38 @@ static bool sendData(int const client, std::string const &data)		/*{{{*/
 }
 									/*}}}*/
 static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
-	       bool content, std::string const &error = "")
+	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   std::list<std::string> headers;
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
    if (httpcode != 200)
-   {
-      if (error.empty() == false)
-	 response.append("<p><em>Error</em>: ").append(error).append("</p>");
-      response.append("This error is a result of the request: <pre>");
-   }
+      response.append("<p><em>Error</em>: ");
    else
-   {
-      if (error.empty() == false)
-	 response.append("<p><em>Success</em>: ").append(error).append("</p>");
+      response.append("<p><em>Success</em>: ");
+   if (error.empty() == false)
+      response.append(error);
+   else
+      response.append(httpcodeToStr(httpcode));
+   if (httpcode != 200)
+      response.append("</p>This error is a result of the request: <pre>");
+   else
       response.append("The successfully executed operation was requested by: <pre>");
-   }
    response.append(request).append("</pre></body></html>");
+   if (httpcode != 200)
+   {
+      if (_config->FindB("aptwebserver::closeOnError", false) == true)
+	 headers.push_back("Connection: close");
+   }
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 static void sendSuccess(int const client, std::string const &request,
-	       bool content, std::string const &error = "")
+	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   sendError(client, 200, request, content, error);
+   sendError(client, 200, request, content, error, headers);
 }
 									/*}}}*/
 static void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
@@ -221,7 +275,7 @@ static void sendRedirect(int const client, int const httpcode, std::string const
    headers.push_back(location);
    sendHead(client, httpcode, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 									/*}}}*/
 static int filter_hidden_files(const struct dirent *a)			/*{{{*/
@@ -263,16 +317,15 @@ static int grouped_alpha_case_sort(const struct dirent **a, const struct dirent 
 }
 									/*}}}*/
 static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*/
-			  std::string const &request, bool content)
+			  std::string const &request, bool content, std::list<std::string> &headers)
 {
-   std::list<std::string> headers;
    std::ostringstream listing;
 
    struct dirent **namelist;
    int const counter = scandir(dir.c_str(), &namelist, filter_hidden_files, grouped_alpha_case_sort);
    if (counter == -1)
    {
-      sendError(client, 500, request, content);
+      sendError(client, 500, request, content, "scandir failed", headers);
       return;
    }
 
@@ -311,18 +364,18 @@ static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*
    addDataHeaders(headers, response);
    sendHead(client, 200, headers);
    if (content == true)
-      sendData(client, response);
+      sendData(client, headers, response);
 }
 									/*}}}*/
 static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 		    std::string &filename, std::string &params, bool &sendContent,
-		    bool &closeConnection)
+		    bool &closeConnection, std::list<std::string> &headers)
 {
    if (strncmp(request.c_str(), "HEAD ", 5) == 0)
       sendContent = false;
    if (strncmp(request.c_str(), "GET ", 4) != 0)
    {
-      sendError(client, 501, request, true);
+      sendError(client, 501, request, true, "", headers);
       return false;
    }
 
@@ -333,7 +386,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (lineend == std::string::npos || filestart == std::string::npos ||
 	 fileend == std::string::npos || filestart == fileend)
    {
-      sendError(client, 500, request, sendContent, "Filename can't be extracted");
+      sendError(client, 500, request, sendContent, "Filename can't be extracted", headers);
       return false;
    }
 
@@ -345,14 +398,14 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "close") == 0;
    else
    {
-      sendError(client, 500, request, sendContent, "Not a HTTP/1.{0,1} request");
+      sendError(client, 500, request, sendContent, "Not a HTTP/1.{0,1} request", headers);
       return false;
    }
 
    filename = request.substr(filestart, fileend - filestart);
    if (filename.find(' ') != std::string::npos)
    {
-      sendError(client, 500, request, sendContent, "Filename contains an unencoded space");
+      sendError(client, 500, request, sendContent, "Filename contains an unencoded space", headers);
       return false;
    }
 
@@ -360,27 +413,92 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (host.empty() == true)
    {
       // RFC 2616 §14.23 requires Host
-      sendError(client, 400, request, sendContent, "Host header is required");
+      sendError(client, 400, request, sendContent, "Host header is required", headers);
       return false;
    }
    host = "http://" + host;
 
    // Proxies require absolute uris, so this is a simple proxy-fake option
    std::string const absolute = _config->Find("aptwebserver::request::absolute", "uri,path");
-   if (strncmp(host.c_str(), filename.c_str(), host.length()) == 0)
+   if (strncmp(host.c_str(), filename.c_str(), host.length()) == 0 && APT::String::Startswith(filename, "/_config/") == false)
    {
       if (absolute.find("uri") == std::string::npos)
       {
-	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that");
+	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that", headers);
 	 return false;
       }
+
       // strip the host from the request to make it an absolute path
       filename.erase(0, host.length());
+
+      std::string const authConf = _config->Find("aptwebserver::proxy-authorization", "");
+      std::string auth = LookupTag(request, "Proxy-Authorization", "");
+      if (authConf.empty() != auth.empty())
+      {
+	 if (auth.empty())
+	    sendError(client, 407, request, sendContent, "Proxy requires authentication", headers);
+	 else
+	    sendError(client, 407, request, sendContent, "Client wants to authenticate to proxy, but proxy doesn't need it", headers);
+	return false;
+      }
+      if (authConf.empty() == false)
+      {
+	 char const * const basic = "Basic ";
+	 if (strncmp(auth.c_str(), basic, strlen(basic)) == 0)
+	 {
+	    auth.erase(0, strlen(basic));
+	    if (auth != authConf)
+	    {
+	       sendError(client, 407, request, sendContent, "Proxy-Authentication doesn't match", headers);
+	       return false;
+	    }
+	 }
+	 else
+	 {
+	    std::list<std::string> headers;
+	    headers.push_back("Proxy-Authenticate: Basic");
+	    sendError(client, 407, request, sendContent, "Unsupported Proxy-Authentication Scheme", headers);
+	    return false;
+	 }
+      }
    }
-   else if (absolute.find("path") == std::string::npos)
+   else if (absolute.find("path") == std::string::npos && APT::String::Startswith(filename, "/_config/") == false)
    {
-      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
+      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that", headers);
       return false;
+   }
+
+   if (APT::String::Startswith(filename, "/_config/") == false)
+   {
+      std::string const authConf = _config->Find("aptwebserver::authorization", "");
+      std::string auth = LookupTag(request, "Authorization", "");
+      if (authConf.empty() != auth.empty())
+      {
+	 if (auth.empty())
+	    sendError(client, 401, request, sendContent, "Server requires authentication", headers);
+	 else
+	    sendError(client, 401, request, sendContent, "Client wants to authenticate to server, but server doesn't need it", headers);
+	 return false;
+      }
+      if (authConf.empty() == false)
+      {
+	 char const * const basic = "Basic ";
+	 if (strncmp(auth.c_str(), basic, strlen(basic)) == 0)
+	 {
+	    auth.erase(0, strlen(basic));
+	    if (auth != authConf)
+	    {
+	       sendError(client, 401, request, sendContent, "Authentication doesn't match", headers);
+	       return false;
+	    }
+	 }
+	 else
+	 {
+	    headers.push_back("WWW-Authenticate: Basic");
+	    sendError(client, 401, request, sendContent, "Unsupported Authentication Scheme", headers);
+	    return false;
+	 }
+      }
    }
 
    size_t paramspos = filename.find('?');
@@ -398,7 +516,8 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
        filename.find_first_of("\r\n\t\f\v") != std::string::npos ||
        filename.find("/../") != std::string::npos)
    {
-      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)");
+      std::list<std::string> headers;
+      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)", headers);
       return false;
    }
 
@@ -434,46 +553,47 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    return true;
 }
 									/*}}}*/
-static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+static bool handleOnTheFlyReconfiguration(int const client, std::string const &request,/*{{{*/
+      std::vector<std::string> parts, std::list<std::string> &headers)
 {
    size_t const pcount = parts.size();
+   for (size_t i = 0; i < pcount; ++i)
+      parts[i] = DeQuoteString(parts[i]);
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!");
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!", headers);
       return true;
    }
    else if (pcount == 4 && parts[1] == "find")
    {
-      std::list<std::string> headers;
       std::string response = _config->Find(parts[2], parts[3]);
       addDataHeaders(headers, response);
       sendHead(client, 200, headers);
-      sendData(client, response);
+      sendData(client, headers, response);
       return true;
    }
    else if (pcount == 3 && parts[1] == "find")
    {
-      std::list<std::string> headers;
       if (_config->Exists(parts[2]) == true)
       {
 	 std::string response = _config->Find(parts[2]);
 	 addDataHeaders(headers, response);
 	 sendHead(client, 200, headers);
-	 sendData(client, response);
+	 sendData(client, headers, response);
 	 return true;
       }
-      sendError(client, 404, request, "Requested Configuration option doesn't exist.");
+      sendError(client, 404, request, true, "Requested Configuration option doesn't exist", headers);
       return false;
    }
    else if (pcount == 3 && parts[1] == "clear")
    {
       _config->Clear(parts[2]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.");
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.", headers);
       return true;
    }
 
-   sendError(client, 400, request, true, "Unknown on-the-fly configuration request");
+   sendError(client, 400, request, true, "Unknown on-the-fly configuration request", headers);
    return false;
 }
 									/*}}}*/
@@ -481,19 +601,30 @@ static void * handleClient(void * voidclient)				/*{{{*/
 {
    int client = *((int*)(voidclient));
    std::clog << "ACCEPT client " << client << std::endl;
-   std::vector<std::string> messages;
-   while (ReadMessages(client, messages))
+   bool closeConnection = false;
+   while (closeConnection == false)
    {
-      bool closeConnection = false;
+      std::vector<std::string> messages;
+      if (ReadMessages(client, messages) == false)
+	 break;
+
+      std::list<std::string> headers;
       for (std::vector<std::string>::const_iterator m = messages.begin();
 	    m != messages.end() && closeConnection == false; ++m) {
+	 // if we announced a closing in previous response, do the close now
+	 if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+	 {
+	    closeConnection = true;
+	    break;
+	 }
+	 headers.clear();
+
 	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
 	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
-	 std::list<std::string> headers;
 	 std::string filename;
 	 std::string params;
 	 bool sendContent = true;
-	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection) == false)
+	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection, headers) == false)
 	    continue;
 
 	 // special webserver command request
@@ -502,7 +633,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    std::vector<std::string> parts = VectorizeString(filename, '/');
 	    if (parts[0] == "_config")
 	    {
-	       handleOnTheFlyReconfiguration(client, *m, parts);
+	       handleOnTheFlyReconfiguration(client, *m, parts, headers);
 	       continue;
 	    }
 	 }
@@ -534,7 +665,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       {
 		  char error[300];
 		  regerror(res, pattern, error, sizeof(error));
-		  sendError(client, 500, *m, sendContent, error);
+		  sendError(client, 500, *m, sendContent, error, headers);
 		  continue;
 	       }
 	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
@@ -553,7 +684,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 if (_config->FindB("aptwebserver::support::http", true) == false &&
 	       LookupTag(*m, "Host").find(":4433") == std::string::npos)
 	 {
-	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS");
+	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS", headers);
 	    continue;
 	 }
 	 else if (RealFileExists(filename) == true)
@@ -600,26 +731,30 @@ static void * handleClient(void * voidclient)				/*{{{*/
 		     if (filesize > filestart)
 		     {
 			data.Skip(filestart);
-			std::ostringstream contentlength;
-			contentlength << "Content-Length: " << (filesize - filestart);
-			headers.push_back(contentlength.str());
+                        // make sure to send content-range before conent-length
+                        // as regression test for LP: #1445239
 			std::ostringstream contentrange;
 			contentrange << "Content-Range: bytes " << filestart << "-"
 			   << filesize - 1 << "/" << filesize;
 			headers.push_back(contentrange.str());
+			std::ostringstream contentlength;
+			contentlength << "Content-Length: " << (filesize - filestart);
+			headers.push_back(contentlength.str());
 			sendHead(client, 206, headers);
 			if (sendContent == true)
-			   sendFile(client, data);
+			   sendFile(client, headers, data);
 			continue;
 		     }
 		     else
 		     {
-			headers.push_back("Content-Length: 0");
-			std::ostringstream contentrange;
-			contentrange << "Content-Range: bytes */" << filesize;
-			headers.push_back(contentrange.str());
-			sendHead(client, 416, headers);
-			continue;
+			if (_config->FindB("aptwebserver::support::content-range", true) == true)
+			{
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes */" << filesize;
+			   headers.push_back(contentrange.str());
+			}
+			sendError(client, 416, *m, sendContent, "", headers);
+			break;
 		     }
 		  }
 	       }
@@ -628,23 +763,28 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    addFileHeaders(headers, data);
 	    sendHead(client, 200, headers);
 	    if (sendContent == true)
-	       sendFile(client, data);
+	       sendFile(client, headers, data);
 	 }
 	 else if (DirectoryExists(filename) == true)
 	 {
 	    if (filename[filename.length()-1] == '/')
-	       sendDirectoryListing(client, filename, *m, sendContent);
+	       sendDirectoryListing(client, filename, *m, sendContent, headers);
 	    else
 	       sendRedirect(client, 301, filename.append("/"), *m, sendContent);
 	 }
 	 else
-	    sendError(client, 404, *m, sendContent);
+	    sendError(client, 404, *m, sendContent, "", headers);
       }
-      _error->DumpErrors(std::cerr);
-      messages.clear();
-      if (closeConnection == true)
+
+      // if we announced a closing in the last response, do the close now
+      if (std::find(headers.begin(), headers.end(), std::string("Connection: close")) != headers.end())
+	 closeConnection = true;
+
+      if (_error->PendingError() == true)
 	 break;
+      _error->DumpErrors(std::cerr);
    }
+   _error->DumpErrors(std::cerr);
    close(client);
    std::clog << "CLOSE client " << client << std::endl;
    return NULL;
@@ -656,6 +796,8 @@ int main(int const argc, const char * argv[])
    CommandLine::Args Args[] = {
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
       {0, "request-absolute", "aptwebserver::request::absolute", CommandLine::HasArg},
+      {0, "authorization", "aptwebserver::authorization", CommandLine::HasArg},
+      {0, "proxy-authorization", "aptwebserver::proxy-authorization", CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}
@@ -741,7 +883,8 @@ int main(int const argc, const char * argv[])
 
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
-   int const slaves = _config->FindB("aptwebserver::slaves", SOMAXCONN);
+   int const slaves = _config->FindI("aptwebserver::slaves", SOMAXCONN);
+   std::cerr << "SLAVES: " << slaves << std::endl;
    listen(sock, slaves);
    /*}}}*/
 

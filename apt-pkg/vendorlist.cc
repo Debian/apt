@@ -11,10 +11,8 @@
 
 #include <apti18n.h>
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+// The whole vendor system is deprecated
+APT_IGNORE_DEPRECATED_PUSH
 
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/vendorlist.h>
@@ -163,6 +161,4 @@ const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)	/*
 }
 									/*}}}*/
 
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+APT_IGNORE_DEPRECATED_POP

@@ -34,8 +34,16 @@ struct ServerState
    char Code[360];
 
    // These are some statistics from the last parsed header lines
-   unsigned long long Size;
+
+   // total size of the usable content (aka: the file)
+   unsigned long long TotalFileSize;
+   // size we actually download (can be smaller than Size if we have partial content)
+   unsigned long long DownloadSize;
+   // size of junk content (aka: server error pages)
+   unsigned long long JunkSize;
+   // The start of the data (for partial content)
    unsigned long long StartPos;
+
    time_t Date;
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
@@ -48,6 +56,8 @@ struct ServerState
    URI ServerName;
    URI Proxy;
    unsigned long TimeOut;
+
+   unsigned long long MaximumSize;
 
    protected:
    ServerMethod *Owner;
@@ -68,12 +78,13 @@ struct ServerState
       RUN_HEADERS_PARSE_ERROR
    };
    /** \brief Get the headers before the data */
-   RunHeadersResult RunHeaders(FileFd * const File);
+   RunHeadersResult RunHeaders(FileFd * const File, const std::string &Uri);
+   bool AddPartialFileToHashes(FileFd &File);
 
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
-   virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
+   virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; TotalFileSize = 0; JunkSize = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
-		 State = Header; Persistent = false; Pipeline = true;};
+		 State = Header; Persistent = false; Pipeline = true; MaximumSize = 0;};
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */
@@ -82,7 +93,7 @@ struct ServerState
    virtual bool Open() = 0;
    virtual bool IsOpen() = 0;
    virtual bool Close() = 0;
-   virtual bool InitHashes(FileFd &File) = 0;
+   virtual bool InitHashes(HashStringList const &ExpectedHashes) = 0;
    virtual Hashes * GetHashes() = 0;
    virtual bool Die(FileFd &File) = 0;
    virtual bool Flush(FileFd * const File) = 0;
@@ -103,6 +114,10 @@ class ServerMethod : public pkgAcqMethod
 
    unsigned long PipelineDepth;
    bool AllowRedirect;
+
+   // Find the biggest item in the fetch queue for the checking of the maximum
+   // size
+   unsigned long long FindMaximumObjectSizeInQueue() const APT_PURE;
 
    public:
    bool Debug;
@@ -140,7 +155,7 @@ class ServerMethod : public pkgAcqMethod
    virtual ServerState * CreateServerState(URI uri) = 0;
    virtual void RotateDNS() = 0;
 
-   ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), Server(NULL), File(NULL), PipelineDepth(0), AllowRedirect(false), Debug(false) {};
+   ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), Server(NULL), File(NULL), PipelineDepth(10), AllowRedirect(false), Debug(false) {};
    virtual ~ServerMethod() {};
 };
 

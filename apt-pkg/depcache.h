@@ -91,7 +91,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param follow_suggests If \b true, suggestions of the package
     *  will be recursively marked.
     */
-   void MarkPackage(const pkgCache::PkgIterator &pkg,
+   APT_HIDDEN void MarkPackage(const pkgCache::PkgIterator &pkg,
 		    const pkgCache::VerIterator &ver,
 		    bool const &follow_recommends,
 		    bool const &follow_suggests);
@@ -169,7 +169,7 @@ class pkgDepCache : protected pkgCache::Namespace
        bool released;
 
        /** Action groups are noncopyable. */
-       ActionGroup(const ActionGroup &other);
+       APT_HIDDEN ActionGroup(const ActionGroup &other);
    public:
        /** \brief Create a new ActionGroup.
 	*
@@ -396,19 +396,8 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param rootFunc A predicate that returns \b true for packages
     *  that should be added to the root set.
     */
-   bool MarkAndSweep(InRootSetFunc &rootFunc)
-   {
-     return MarkRequired(rootFunc) && Sweep();
-   }
-
-   bool MarkAndSweep()
-   {
-     std::auto_ptr<InRootSetFunc> f(GetRootSetFunc());
-     if(f.get() != NULL)
-       return MarkAndSweep(*f.get());
-     else
-       return false;
-   }
+   bool MarkAndSweep(InRootSetFunc &rootFunc);
+   bool MarkAndSweep();
 
    /** \name State Manipulators
     */
@@ -514,7 +503,7 @@ class pkgDepCache : protected pkgCache::Namespace
 	 bool const rPurge, unsigned long const Depth, bool const FromUser);
 
    private:
-   bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
+   APT_HIDDEN bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 			unsigned long const Depth, bool const FromUser);
 };
 

@@ -129,6 +129,14 @@ typedef u_int64_t sha2_word64;	/* Exactly 8 bytes */
 
 /*** ENDIAN REVERSAL MACROS *******************************************/
 #if BYTE_ORDER == LITTLE_ENDIAN
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
+#define REVERSE32(w,x)	{ \
+	(x) = __builtin_bswap32(w); \
+}
+#define REVERSE64(w,x)	{ \
+	(x) = __builtin_bswap64(w); \
+}
+#else
 #define REVERSE32(w,x)	{ \
 	sha2_word32 tmp = (w); \
 	tmp = (tmp >> 16) | (tmp << 16); \
@@ -142,6 +150,7 @@ typedef u_int64_t sha2_word64;	/* Exactly 8 bytes */
 	(x) = ((tmp & 0xffff0000ffff0000ULL) >> 16) | \
 	      ((tmp & 0x0000ffff0000ffffULL) << 16); \
 }
+#endif
 #endif /* BYTE_ORDER == LITTLE_ENDIAN */
 
 /*

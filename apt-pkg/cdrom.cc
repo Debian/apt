@@ -466,7 +466,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    // Open the stream for reading
    ifstream F((FileExists(File)?File.c_str():"/dev/null"),
 	      ios::in );
-   if (!F != 0)
+   if (F.fail() == true)
       return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
 
    string NewFile = File + ".new";
@@ -477,7 +477,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
 			   "Failed to open %s.new",File.c_str());
 
    // Create a short uri without the path
-   string ShortURI = "cdrom:[" + Name + "]/";   
+   string ShortURI = "cdrom:[" + Name + "]/";
    string ShortURI2 = "cdrom:" + Name + "/";     // For Compatibility
 
    string Type;
@@ -485,12 +485,12 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
       Type = "deb-src";
    else
       Type = "deb";
-   
+
    char Buffer[300];
    int CurLine = 0;
    bool First = true;
    while (F.eof() == false)
-   {      
+   {
       F.getline(Buffer,sizeof(Buffer));
       CurLine++;
       if (F.fail() && !F.eof())
@@ -754,7 +754,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 	  FileExists(InfoDir + "/info") == true)
       {
 	 ifstream F((InfoDir + "/info").c_str());
-	 if (!F == 0)
+	 if (F.good() == true)
 	    getline(F,Name);
 
 	 if (Name.empty() == false)
@@ -822,8 +822,11 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    // check for existence and possibly create state directory for copying
    string const listDir = _config->FindDir("Dir::State::lists");
    string const partialListDir = listDir + "partial/";
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+   mode_t const mode = umask(S_IWGRP | S_IWOTH);
+   bool const creation_fail = (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+	 CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false);
+   umask(mode);
+   if (creation_fail == true)
    {
       UnmountCDROM(CDROM, NULL);
       return _error->Errno("cdrom", _("List directory %spartial is missing."), listDir.c_str());
@@ -913,15 +916,18 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    return true;
 }
 									/*}}}*/
-pkgUdevCdromDevices::pkgUdevCdromDevices()                     		/*{{{*/
-   : libudev_handle(NULL)
+pkgUdevCdromDevices::pkgUdevCdromDevices()				/*{{{*/
+: libudev_handle(NULL), udev_new(NULL), udev_enumerate_add_match_property(NULL),
+   udev_enumerate_scan_devices(NULL), udev_enumerate_get_list_entry(NULL),
+   udev_device_new_from_syspath(NULL), udev_enumerate_get_udev(NULL),
+   udev_list_entry_get_name(NULL), udev_device_get_devnode(NULL),
+   udev_enumerate_new(NULL), udev_list_entry_get_next(NULL),
+   udev_device_get_property_value(NULL), udev_enumerate_add_match_sysattr(NULL)
 {
-
 }
 									/*}}}*/
 
-bool
-pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
+bool pkgUdevCdromDevices::Dlopen()					/*{{{*/
 {
    // alread open
    if(libudev_handle != NULL)
@@ -950,18 +956,14 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
-                                                                        /*{{{*/
-// convenience interface, this will just call ScanForRemovable
-vector<CdromDevice>
-pkgUdevCdromDevices::Scan()
+// convenience interface, this will just call ScanForRemovable		/*{{{*/
+vector<CdromDevice> pkgUdevCdromDevices::Scan()
 {
    bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
    return ScanForRemovable(CdromOnly);
 }
 									/*}}}*/
-                                                                        /*{{{*/
-vector<CdromDevice>
-pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
+vector<CdromDevice> pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)/*{{{*/
 {
    vector<CdromDevice> cdrom_devices;
    struct udev_enumerate *enumerate;

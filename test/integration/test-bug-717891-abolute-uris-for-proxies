@@ -12,14 +12,14 @@ setupaptarchive
 changetowebserver --request-absolute='uri'
 
 msgtest 'Check that absolute paths are' 'not accepted'
-testfailure --nomsg aptget update
+testfailure --nomsg aptget update --allow-insecure-repositories
 
 echo 'Acquire::http::Proxy "http://localhost:8080";' > rootdir/etc/apt/apt.conf.d/99proxy
 
 msgtest 'Check that requests to proxies are' 'absolute uris'
 testsuccess --nomsg aptget update
 
-testequal 'Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   unrelated

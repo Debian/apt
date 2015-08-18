@@ -28,14 +28,16 @@ RANLIB:=@RANLIB@
 GCC3DEP = @GCC3DEP@
 INLINEDEPFLAG = -MD
 
-# Debian doc stuff
-DEBIANDOC_HTML = @DEBIANDOC_HTML@
-DEBIANDOC_TEXT = @DEBIANDOC_TEXT@
-
 DOXYGEN = @DOXYGEN@
+W3M = @W3M@
 
-# xsltproc for the man pages
+# xsltproc for the man pages and documentation
 XSLTPROC := @XSLTPROC@
+
+# DocBook XML
+DOCBOOK = $(XSLTPROC) --nonet --novalid --xinclude
+DOCBOOK2TEXT = $(W3M) -o display_charset=UTF-8 -no-graph -T text/html \
+	-cols 78 -dump
 
 # po4a for the man pages
 PO4A := @PO4A@

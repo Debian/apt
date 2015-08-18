@@ -25,7 +25,7 @@
 
 class FileFd;
 
-class edspListParser : public debListParser
+class APT_HIDDEN edspListParser : public debListParser
 {
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver);

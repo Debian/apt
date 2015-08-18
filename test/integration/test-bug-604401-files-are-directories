@@ -57,7 +57,7 @@ echo 'Package: apt
 Pin: release a=now
 Pin-Value: 1000' > rootdir/etc/apt/good-link.pref
 ln -s rootdir/etc/apt/good-link.pref rootdir/etc/apt/preferences
-test -n "$(aptcache policy | grep 1000)" && msgfail || msgpass
+test -n "$(aptcache policy | grep '1000 ')" && msgfail || msgpass
 rm rootdir/etc/apt/preferences
 
 msgtest "Broken link instead of a file as preferences ignored"

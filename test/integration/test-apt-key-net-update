@@ -23,11 +23,14 @@ echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/test-arc
 echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
 # test against the "real" webserver
-testequal 'Checking for new archive signing keys now
+testsuccessequal 'Checking for new archive signing keys now
 gpg: key F68C85A3: public key "Test Automatic Archive Signing Key <ftpmaster@example.com>" imported
 gpg: Total number processed: 1
 gpg:               imported: 1  (RSA: 1)' aptkey --fakeroot net-update
 
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   1024R/F68C85A3 2013-12-19
+pub   2048R/DBAC8DAE 2010-08-18'
 
 # now try a different one
 # setup archive-keyring 
@@ -37,7 +40,9 @@ echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/marvinpa
 echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
 # test against the "real" webserver
-testequal "Checking for new archive signing keys now
-Key 'E8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
+testsuccessequal "Checking for new archive signing keys now
+Key 'DE66AECA9151AFA1877EC31DE8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
 
-
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   1024R/F68C85A3 2013-12-19
+pub   2048R/DBAC8DAE 2010-08-18'

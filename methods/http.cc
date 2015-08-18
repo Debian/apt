@@ -34,6 +34,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/proxy.h>
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -63,7 +64,8 @@ const unsigned int CircleBuf::BW_HZ=10;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long long Size) : Size(Size), Hash(0)
+CircleBuf::CircleBuf(unsigned long long Size)
+   : Size(Size), Hash(NULL), TotalWriten(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -79,12 +81,13 @@ void CircleBuf::Reset()
    InP = 0;
    OutP = 0;
    StrPos = 0;
+   TotalWriten = 0;
    MaxGet = (unsigned long long)-1;
    OutQueue = string();
-   if (Hash != 0)
+   if (Hash != NULL)
    {
       delete Hash;
-      Hash = new Hashes;
+      Hash = NULL;
    }
 }
 									/*}}}*/
@@ -216,8 +219,10 @@ bool CircleBuf::Write(int Fd)
 	 
 	 return false;
       }
+
+      TotalWriten += Res;
       
-      if (Hash != 0)
+      if (Hash != NULL)
 	 Hash->Add(Buf + (OutP%Size),Res);
       
       OutP += Res;
@@ -304,6 +309,7 @@ bool HttpServerState::Open()
    Persistent = true;
    
    // Determine the proxy setting
+   AutoDetectProxy(ServerName);
    string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
    if (!SpecificProxy.empty())
    {
@@ -436,10 +442,12 @@ bool HttpServerState::RunData(FileFd * const File)
    {
       /* Closes encoding is used when the server did not specify a size, the
          loss of the connection means we are done */
-      if (Encoding == Closes)
+      if (Persistent == false)
 	 In.Limit(-1);
+      else if (JunkSize != 0)
+	 In.Limit(JunkSize);
       else
-	 In.Limit(Size - StartPos);
+	 In.Limit(DownloadSize);
       
       // Just transfer the whole block.
       do
@@ -476,16 +484,14 @@ APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
    return (ServerFd != -1);
 }
 									/*}}}*/
-bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
+bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
 {
    delete In.Hash;
-   In.Hash = new Hashes;
-
-   // Set the expected size and read file for the hashes
-   File.Truncate(StartPos);
-   return In.Hash->AddFD(File, StartPos);
+   In.Hash = new Hashes(ExpectedHashes);
+   return true;
 }
 									/*}}}*/
+
 APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;
@@ -516,7 +522,7 @@ bool HttpServerState::Die(FileFd &File)
 
    // See if this is because the server finished the data stream
    if (In.IsLimit() == false && State != HttpServerState::Header &&
-       Encoding != HttpServerState::Closes)
+       Persistent == true)
    {
       Close();
       if (LErrno == 0)
@@ -563,7 +569,7 @@ bool HttpServerState::Flush(FileFd * const File)
 	    return true;
       }
 
-      if (In.IsLimit() == true || Encoding == ServerState::Closes)
+      if (In.IsLimit() == true || Persistent == false)
 	 return true;
    }
    return false;
@@ -647,6 +653,13 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
    {
       if (In.Write(FileFD) == false)
 	 return _error->Errno("write",_("Error writing to output file"));
+   }
+
+   if (MaximumSize > 0 && File && File->Tell() > MaximumSize)
+   {
+      Owner->SetFailReason("MaximumSizeExceeded");
+      return _error->Error("Writing more data than expected (%llu > %llu)",
+                           File->Tell(), MaximumSize);
    }
 
    // Handle commands from APT
@@ -744,7 +757,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    Req << "\r\n";
 
    if (Debug == true)
-      cerr << Req << endl;
+      cerr << Req.str() << endl;
 
    Server->WriteResponse(Req.str());
 }
@@ -761,66 +774,6 @@ bool HttpMethod::Configuration(string Message)
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
    Debug = _config->FindB("Debug::Acquire::http",false);
-
-   // Get the proxy to use
-   AutoDetectProxy();
-
-   return true;
-}
-									/*}}}*/
-// HttpMethod::AutoDetectProxy - auto detect proxy			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool HttpMethod::AutoDetectProxy()
-{
-   // option is "Acquire::http::Proxy-Auto-Detect" but we allow the old
-   // name without the dash ("-")
-   AutoDetectProxyCmd = _config->Find("Acquire::http::Proxy-Auto-Detect",
-                                      _config->Find("Acquire::http::ProxyAutoDetect"));
-
-   if (AutoDetectProxyCmd.empty())
-      return true;
-
-   if (Debug)
-      clog << "Using auto proxy detect command: " << AutoDetectProxyCmd << endl;
-
-   int Pipes[2] = {-1,-1};
-   if (pipe(Pipes) != 0)
-      return _error->Errno("pipe", "Failed to create Pipe");
-
-   pid_t Process = ExecFork();
-   if (Process == 0)
-   {
-      close(Pipes[0]);
-      dup2(Pipes[1],STDOUT_FILENO);
-      SetCloseExec(STDOUT_FILENO,false);
-
-      const char *Args[2];
-      Args[0] = AutoDetectProxyCmd.c_str();
-      Args[1] = 0;
-      execv(Args[0],(char **)Args);
-      cerr << "Failed to exec method " << Args[0] << endl;
-      _exit(100);
-   }
-   char buf[512];
-   int InFd = Pipes[0];
-   close(Pipes[1]);
-   int res = read(InFd, buf, sizeof(buf)-1);
-   ExecWait(Process, "ProxyAutoDetect", true);
-
-   if (res < 0)
-      return _error->Errno("read", "Failed to read");
-   if (res == 0)
-      return _error->Warning("ProxyAutoDetect returned no data");
-
-   // add trailing \0
-   buf[res] = 0;
-
-   if (Debug)
-      clog << "auto detect command returned: '" << buf << "'" << endl;
-
-   if (strstr(buf, "http://") == buf)
-      _config->Set("Acquire::http::proxy", _strstrip(buf));
 
    return true;
 }

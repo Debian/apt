@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'sparc' 'armel'
+
+msgtest 'Check that dpkg supports' 'arch-specific dependencies'
+set +e
+# this fails always, the question is just how it fails
+dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null 2>/dev/null >/dev/null
+RETURNCODE=$?
+set -e
+if [ "$RETURNCODE" != '1' ]; then
+	dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null || true
+	echo "Command had returncode: $RETURNCODE"
+	msgskip
+	exit 0
+else
+	msgpass
+fi
+
+buildsimplenativepackage 'libc6' 'amd64,sparc,armel' '1' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'libc6-i386' 'amd64' '1' 'stable' 'Conflicts: libc6:sparc'
+
+setupaptarchive
+
+testsuccess aptget install 'libc6:amd64' 'libc6:sparc' -y
+testdpkginstalled 'libc6:amd64' 'libc6:sparc'
+testdpkgnotinstalled 'libc6-i386' 'libc6:armel'
+
+testsuccess aptget install libc6-i386 -y
+testdpkginstalled 'libc6:amd64' 'libc6-i386'
+testdpkgnotinstalled 'libc6:sparc' 'libc6:armel'
+
+testsuccess aptget install libc6:armel -y
+testdpkginstalled 'libc6:amd64' 'libc6:armel' 'libc6-i386'
+testdpkgnotinstalled 'libc6:sparc'
+
+testsuccess aptget install libc6:sparc -y
+testdpkginstalled 'libc6:amd64' 'libc6:armel' 'libc6:sparc'
+testdpkgnotinstalled 'libc6-i386'
+
+testsuccess aptget purge 'libc6:*' 'libc6-i386' -y
+testdpkgnotinstalled 'libc6:amd64' 'libc6:armel' 'libc6:sparc' 'libc6-i386'
+
+# check that (the actually simpler) single arch is fine, too
+configarchitecture 'amd64'
+testfailure aptget install libc6:sparc -s
+testsuccess aptget install libc6 libc6-i386 -y

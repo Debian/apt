@@ -34,6 +34,8 @@
 #include <vector>
 #include <iostream>
 
+#include <apt-pkg/macros.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 #endif
@@ -59,7 +61,7 @@ class Configuration
    
    Item *Root;
    bool ToFree;
-   
+
    Item *Lookup(Item *Head,const char *S,unsigned long const &Len,bool const &Create);
    Item *Lookup(const char *Name,const bool &Create);
    inline const Item *Lookup(const char *Name) const
@@ -82,14 +84,16 @@ class Configuration
     *
     * \param Name of the parent node
     * \param Default list of values separated by commas */
+#if APT_PKG_ABI >= 413
+   std::vector<std::string> FindVector(const char *Name, std::string const &Default = "") const;
+   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default = "") const { return FindVector(Name.c_str(), Default); };
+#else
    std::vector<std::string> FindVector(const char *Name, std::string const &Default) const;
    std::vector<std::string> FindVector(std::string const &Name, std::string const &Default) const { return FindVector(Name.c_str(), Default); };
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   std::vector<std::string> FindVector(const char *Name) const { return FindVector(Name, ""); };
-#else
    std::vector<std::string> FindVector(const char *Name) const;
-#endif
    std::vector<std::string> FindVector(std::string const &Name) const { return FindVector(Name.c_str(), ""); };
+#endif
+
    int FindI(const char *Name,int const &Default = 0) const;
    int FindI(std::string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool const &Default = false) const;
@@ -129,7 +133,7 @@ class Configuration
    class MatchAgainstConfig
    {
      std::vector<regex_t *> patterns;
-     void clearPatterns();
+     APT_HIDDEN void clearPatterns();
 
    public:
      MatchAgainstConfig(char const * Config);

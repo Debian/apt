@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+
+insertinstalledpackage 'sysvinit' 'native' '1' 'Essential: yes'
+
+buildsimplenativepackage 'sysvinit' 'native' '2' 'sid' 'Pre-Depends: sysvinit-core | systemd-sysv
+Essential: yes'
+buildsimplenativepackage 'sysvinit-core' 'native' '2' 'sid'
+
+buildsimplenativepackage 'systemd-sysv' 'native' '2~conflict' 'sid-conflict' 'Conflicts: sysvinit (<< 2)
+Breaks: sysvinit-core'
+
+buildsimplenativepackage 'systemd-sysv' 'native' '2~break' 'sid-break' 'Breaks: sysvinit (<< 2), sysvinit-core'
+
+setupaptarchive
+
+cp -a rootdir/var/lib/dpkg/status dpkg.status.backup
+
+testforcebreak() {
+	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	rm -f rootdir/var/lib/apt/extended_states
+	testfailureequal "Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  sysvinit
+The following NEW packages will be installed:
+  systemd-sysv
+The following packages will be upgraded:
+  sysvinit
+1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+E: This installation run will require temporarily removing the essential package sysvinit:$(getarchitecture 'native') due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option.
+E: Internal Error, Could not early remove sysvinit:$(dpkg --print-architecture) (2)" aptget install systemd-sysv -t "$1" -s
+	# ensure that really nothing happens
+	testfailure aptget install systemd-sysv -y -t "$1"
+	testdpkginstalled 'sysvinit'
+	testdpkgnotinstalled 'systemd-sysv'
+
+	# with enough force however …
+	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	testsuccess aptget install systemd-sysv -y -t "$1" -o APT::Force-LoopBreak=1
+	testdpkginstalled 'sysvinit' 'systemd-sysv'
+}
+
+testforcebreak 'sid-conflict'
+testforcebreak 'sid-break'

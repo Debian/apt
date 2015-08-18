@@ -23,6 +23,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
@@ -106,8 +108,10 @@ static bool DoIt(string InFile)
    const char **Order = TFRewritePackageOrder;
    if (Source == true)
       Order = TFRewriteSourceOrder;
-   
+
    // Emit
+   FileFd stdoutfd;
+   stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
    unsigned char *Buffer = new unsigned char[Largest+1];
    for (vector<PkgName>::iterator I = List.begin(); I != List.end(); ++I)
    {
@@ -117,8 +121,8 @@ static bool DoIt(string InFile)
 	 delete [] Buffer;
 	 return false;
       }
-      
-      Buffer[I->Length] = '\n';      
+
+      Buffer[I->Length] = '\n';
       if (Section.Scan((char *)Buffer,I->Length+1) == false)
       {
 	 delete [] Buffer;
@@ -126,15 +130,13 @@ static bool DoIt(string InFile)
       }
 
       // Sort the section
-      if (TFRewrite(stdout,Section,Order,0) == false)
+      if (Section.Write(stdoutfd, Order) == false || stdoutfd.Write("\n", 1) == false)
       {
 	 delete [] Buffer;
 	 return _error->Error("Internal error, failed to sort fields");
       }
-      
-      fputc('\n',stdout);      
    }
-   
+
    delete [] Buffer;
    return true;
 }
@@ -142,12 +144,11 @@ static bool DoIt(string InFile)
 // ShowHelp - Show the help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static int ShowHelp()
+static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
-      return 0;
+      return true;
    
    cout <<
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
@@ -161,7 +162,7 @@ static int ShowHelp()
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
 
-   return 0;
+   return true;
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
@@ -179,19 +180,9 @@ int main(int argc,const char *argv[])					/*{{{*/
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
-
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       CmdL.FileSize() == 0)
-      return ShowHelp();
+   CommandLine::Dispatch Cmds[] = {{NULL, NULL}};
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
 
    // Match the operation
    for (unsigned int I = 0; I != CmdL.FileSize(); I++)

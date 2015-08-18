@@ -18,5 +18,10 @@ setupaptarchive
 exec 3> apt-progress.log
 testfailure aptget install foo1 foo2 -y -o APT::Status-Fd=3
 msgtest "Ensure correct error message"
-grep -q "aptarchive/pool/foo2_0.8.15_amd64.deb :40:trying to overwrite '/usr/bin/file-conflict', which is also in package foo1 0.8.15" apt-progress.log && msgpass || (cat apt-progress.log && msgfail)
+if grep -q "aptarchive/pool/foo2_0.8.15_amd64.deb:36.3636:trying to overwrite '/usr/bin/file-conflict', which is also in package foo1 0.8.15" apt-progress.log; then
+	msgpass
+else
+	cat apt-progress.log
+	msgfail
+fi
 

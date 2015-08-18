@@ -253,8 +253,11 @@ string Configuration::FindDir(const char *Name,const char *Default) const
 // Configuration::FindVector - Find a vector of values			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns a vector of config values under the given item */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-vector<string> Configuration::FindVector(const char *Name) const { return FindVector(Name, ""); }
+#if APT_PKG_ABI < 413
+vector<string> Configuration::FindVector(const char *Name) const
+{
+   return FindVector(Name, "");
+}
 #endif
 vector<string> Configuration::FindVector(const char *Name, std::string const &Default) const
 {
@@ -626,19 +629,19 @@ string Configuration::Item::FullTag(const Item *Stop) const
    tag/value. AsSectional enables Sectional parsing.*/
 bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectional,
 		    unsigned const &Depth)
-{   
+{
    // Open the stream for reading
-   ifstream F(FName.c_str(),ios::in); 
-   if (!F != 0)
+   ifstream F(FName.c_str(),ios::in);
+   if (F.fail() == true)
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
 
    string LineBuffer;
    string Stack[100];
    unsigned int StackPos = 0;
-   
+
    // Parser state
    string ParentTag;
-   
+
    int CurLine = 0;
    bool InComment = false;
    while (F.eof() == false)

@@ -55,5 +55,5 @@ The following packages will be upgraded:
 Need to get 0 B/5505 kB of archives.
 After this operation, 2294 kB disk space will be freed.
 E: Trivial Only specified but this is not a trivial operation."
-testequal "$UPGRADE" aptget install xserver-xorg --trivial-only
+testfailureequal "$UPGRADE" aptget install xserver-xorg --trivial-only
 

@@ -28,6 +28,10 @@
 /* If there is no socklen_t, define this for the netdb shim */
 #undef NEED_SOCKLEN_T_DEFINE
 
+/* We need the getresuid() function */
+#undef HAVE_GETRESUID
+#undef HAVE_GETRESGID
+
 /* Define to the size of the filesize containing structures */
 #undef _FILE_OFFSET_BITS
 
@@ -46,3 +50,6 @@
 #define APT_8_CLEANER_HEADERS
 #define APT_9_CLEANER_HEADERS
 #define APT_10_CLEANER_HEADERS
+
+/* unrolling is faster combined with an optimizing compiler */
+#define SHA2_UNROLL_TRANSFORM

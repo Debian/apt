@@ -11,7 +11,26 @@ buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'
 insertinstalledpackage 'vrms' 'all' '1.0'
 
-setupaptarchive
+OLD_UMASK="$(umask)"
+umask 0027
+setupaptarchive --no-update
+umask "$OLD_UMASK"
+
+# directories should be readable by everyone
+find aptarchive/dists -type d | while read dir; do
+	chmod o+rx "$dir"
+done
+# apt-ftparchive knows how to chmod files
+find aptarchive/dists -name '*Packages*' -type f | while read file; do
+	testaccessrights "$file" '644'
+	chmod 640 "$file"
+done
+# created by the framework without special care
+find aptarchive/dists -name '*Release*' -type f | while read file; do
+	testaccessrights "$file" '640'
+done
+
+testsuccess aptget update
 
 testdownload() {
 	local APT="$2"
@@ -20,18 +39,34 @@ testdownload() {
 	fi
 	msgtest "Test download of package file $1 with" "$APT"
 	testsuccess --nomsg aptget download ${APT}
-	testsuccess test -f $1
-	rm $1
+	testsuccess test -f "$1"
+	rm -f "$1"
 }
+
+# normal case as "root"
+OLDPWD="$(pwd)"
+cd downloaded
+testdownload apt_2.0_all.deb apt
+cd "$OLDPWD"
+
+# simulate normal user with non-existent root-owned directories
+rm -rf rootdir/var/cache/apt/archives/
+mkdir rootdir/var/cache/apt/archives/
+addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/cache/apt/archives || true;"
+chmod -R -w rootdir/var/cache/apt/archives
+
+OLDPWD="$(pwd)"
+cd downloaded
 
 # normal case(es)
 testdownload apt_1.0_all.deb apt stable
 testdownload apt_2.0_all.deb apt
 
-DEBFILE="$(readlink -f aptarchive)/pool/apt_2.0_all.deb"
+DEBFILE="$(readlink -f ../aptarchive)/pool/apt_2.0_all.deb"
 testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sha512sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris
 
 # deb:677887
+testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms --print-uris
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms
 
 # deb:736962
@@ -45,3 +80,21 @@ rm -f apt_1.0_all.deb apt_2.0_all.deb
 testsuccess aptget download apt apt apt/unstable apt=2.0
 testsuccess test -s apt_2.0_all.deb
 
+# restore "root" rights
+cd "$OLDPWD"
+chmod -f -R +w $PWD/rootdir/var/cache/apt/archives
+rm -rf rootdir/var/cache/apt/archives/
+
+# file: debs aren't copied to archives, so change to http which obviously are
+changetowebserver
+testsuccess aptget update
+
+# test with already stored deb
+testsuccess aptget install -d apt
+testsuccess test -s rootdir/var/cache/apt/archives/apt_2.0_all.deb
+testaccessrights 'aptarchive/pool/apt_2.0_all.deb' '644'
+mv aptarchive/pool/apt_2.0_all.deb aptarchive/pool/apt_2.0_all.deb.gone
+cd downloaded
+testdownload apt_2.0_all.deb apt
+cd "$OLDPWD"
+mv aptarchive/pool/apt_2.0_all.deb.gone aptarchive/pool/apt_2.0_all.deb

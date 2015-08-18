@@ -25,35 +25,23 @@
 #include <apt-pkg/indexfile.h>
 #endif
 
-class debRecordParser : public pkgRecords::Parser
+class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void *d;
-
-   FileFd File;
-   pkgTagFile Tags;
+ protected:
    pkgTagSection Section;
-   
-   protected:
-   
-   virtual bool Jump(pkgCache::VerFileIterator const &Ver);
-   virtual bool Jump(pkgCache::DescFileIterator const &Desc);
-   
-   public:
 
+ public:
    // These refer to the archive file for the Version
    virtual std::string FileName();
-   virtual std::string MD5Hash();
-   virtual std::string SHA1Hash();
-   virtual std::string SHA256Hash();
-   virtual std::string SHA512Hash();
    virtual std::string SourcePkg();
    virtual std::string SourceVer();
-   
+
+   virtual HashStringList Hashes() const;
+
    // These are some general stats about the package
    virtual std::string Maintainer();
-   virtual std::string ShortDesc();
-   virtual std::string LongDesc();
+   virtual std::string ShortDesc(std::string const &lang);
+   virtual std::string LongDesc(std::string const &lang);
    virtual std::string Name();
    virtual std::string Homepage();
 
@@ -61,9 +49,42 @@ class debRecordParser : public pkgRecords::Parser
    virtual std::string RecordField(const char *fieldName);
 
    virtual void GetRec(const char *&Start,const char *&Stop);
-   
+
+   debRecordParserBase() : Parser() {}
+   virtual ~debRecordParserBase();
+};
+
+class APT_HIDDEN debRecordParser : public debRecordParserBase
+{
+ protected:
+   FileFd File;
+   pkgTagFile Tags;
+
+   virtual bool Jump(pkgCache::VerFileIterator const &Ver);
+   virtual bool Jump(pkgCache::DescFileIterator const &Desc);
+
+ public:
    debRecordParser(std::string FileName,pkgCache &Cache);
-   virtual ~debRecordParser() {};
+   virtual ~debRecordParser();
+};
+
+// custom record parser that reads deb files directly
+class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
+{
+   std::string debFileName;
+   std::string controlContent;
+
+   APT_HIDDEN bool LoadContent();
+ protected:
+   // single file files, so no jumping whatsoever
+   bool Jump(pkgCache::VerFileIterator const &) { return LoadContent(); }
+   bool Jump(pkgCache::DescFileIterator const &) { return LoadContent(); }
+
+ public:
+   virtual std::string FileName() { return debFileName; }
+
+   debDebFileRecordParser(std::string FileName)
+      : debRecordParserBase(), debFileName(FileName) {};
 };
 
 #endif

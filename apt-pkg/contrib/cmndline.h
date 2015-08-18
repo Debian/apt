@@ -91,6 +91,7 @@ class CommandLine
    static CommandLine::Args MakeArgs(char ShortOpt, char const *LongOpt,
 	 char const *ConfName, unsigned long Flags) APT_CONST;
 
+   CommandLine();
    CommandLine(Args *AList,Configuration *Conf);
    ~CommandLine();
 };

@@ -19,6 +19,9 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 
+#include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
+
 #include <algorithm>
 #include <climits>
 #include <sys/time.h>
@@ -40,11 +43,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-using namespace std;    
-ostream c0out(0);
-ostream c1out(0);
-ostream c2out(0);
-ofstream devnull("/dev/null");
+using namespace std;
 unsigned Quiet = 0;
 
 // struct PackageMap - List of all package files in the config file	/*{{{*/
@@ -62,6 +61,7 @@ struct PackageMap
    // Stuff for the Package File
    string PkgFile;
    string BinCacheDB;
+   string SrcCacheDB;
    string BinOverride;
    string ExtraOverride;
 
@@ -106,6 +106,12 @@ struct PackageMap
       inline bool operator() (const PackageMap &x,const PackageMap &y)
       {return x.BinCacheDB < y.BinCacheDB;};
    };  
+
+   struct SrcDBCompare : public binary_function<PackageMap,PackageMap,bool>
+   {
+      inline bool operator() (const PackageMap &x,const PackageMap &y)
+      {return x.SrcCacheDB < y.SrcCacheDB;};
+   };
    
    void GetGeneral(Configuration &Setup,Configuration &Block);
    bool GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats);
@@ -172,7 +178,9 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    PkgDone = true;
    
    // Create a package writer object.
-   PackagesWriter Packages(flCombine(CacheDir,BinCacheDB),
+   MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
+		      PkgCompress,Permissions);
+   PackagesWriter Packages(&Comp.Input, flCombine(CacheDir,BinCacheDB),
 			   flCombine(OverrideDir,BinOverride),
 			   flCombine(OverrideDir,ExtraOverride),
 			   Arch);
@@ -191,10 +199,6 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.Stats.DeLinkBytes = Stats.DeLinkBytes;
    Packages.DeLinkLimit = DeLinkLimit;
 
-   // Create a compressor object
-   MultiCompress Comp(flCombine(ArchiveDir,PkgFile),
-		      PkgCompress,Permissions);
-   Packages.Output = Comp.Input;
    if (_error->PendingError() == true)
       return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
    
@@ -232,11 +236,14 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    gettimeofday(&NewTime,0);
    double Delta = NewTime.tv_sec - StartTime.tv_sec + 
                   (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
-   
+
    c0out << Packages.Stats.Packages << " files " <<
 /*      SizeToStr(Packages.Stats.MD5Bytes) << "B/" << */
       SizeToStr(Packages.Stats.Bytes) << "B " <<
       TimeToStr((long)Delta) << endl;
+
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Packages.Stats.Misses<< endl;
    
    Stats.Add(Packages.Stats);
    Stats.DeLinkBytes = Packages.Stats.DeLinkBytes;
@@ -263,7 +270,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    SrcDone = true;
    
    // Create a package writer object.
-   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),
+   MultiCompress Comp(flCombine(ArchiveDir,SrcFile),
+		      SrcCompress,Permissions);
+   SourcesWriter Sources(&Comp.Input, flCombine(CacheDir, SrcCacheDB),
 			 flCombine(OverrideDir,BinOverride),
 			 flCombine(OverrideDir,SrcOverride),
 			 flCombine(OverrideDir,SrcExtraOverride));
@@ -278,11 +287,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
 
    Sources.DeLinkLimit = DeLinkLimit;
    Sources.Stats.DeLinkBytes = Stats.DeLinkBytes;
-   
-   // Create a compressor object
-   MultiCompress Comp(flCombine(ArchiveDir,SrcFile),
-		      SrcCompress,Permissions);
-   Sources.Output = Comp.Input;
+
    if (_error->PendingError() == true)
       return _error->Error(_("Error processing directory %s"),BaseDir.c_str());
 
@@ -323,6 +328,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    c0out << Sources.Stats.Packages << " pkgs in " <<
       TimeToStr((long)Delta) << endl;
 
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Sources.Stats.Misses << endl;
+
    Stats.Add(Sources.Stats);
    Stats.DeLinkBytes = Sources.Stats.DeLinkBytes;
    
@@ -353,16 +361,15 @@ bool PackageMap::GenContents(Configuration &Setup,
    gettimeofday(&StartTime,0);   
    
    // Create a package writer object.
-   ContentsWriter Contents("", Arch);
+   MultiCompress Comp(flCombine(ArchiveDir,this->Contents),
+		      CntCompress,Permissions);
+   Comp.UpdateMTime = Setup.FindI("Default::ContentsAge",10)*24*60*60;
+   ContentsWriter Contents(&Comp.Input, "", Arch);
    if (PkgExt.empty() == false && Contents.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
       return false;
 
-   MultiCompress Comp(flCombine(ArchiveDir,this->Contents),
-		      CntCompress,Permissions);
-   Comp.UpdateMTime = Setup.FindI("Default::ContentsAge",10)*24*60*60;
-   Contents.Output = Comp.Input;
    if (_error->PendingError() == true)
       return false;
 
@@ -372,7 +379,7 @@ bool PackageMap::GenContents(Configuration &Setup,
       FileFd Head(flCombine(OverrideDir,ContentsHead),FileFd::ReadOnly);
       if (_error->PendingError() == true)
 	 return false;
-      
+
       unsigned long long Size = Head.Size();
       unsigned char Buf[4096];
       while (Size != 0)
@@ -380,17 +387,17 @@ bool PackageMap::GenContents(Configuration &Setup,
 	 unsigned long long ToRead = Size;
 	 if (Size > sizeof(Buf))
 	    ToRead = sizeof(Buf);
-	 
+
 	 if (Head.Read(Buf,ToRead) == false)
 	    return false;
-	 
-	 if (fwrite(Buf,1,ToRead,Comp.Input) != ToRead)
+
+	 if (Comp.Input.Write(Buf, ToRead) == false)
 	    return _error->Errno("fwrite",_("Error writing header to contents file"));
-	 
+
 	 Size -= ToRead;
-      }            
-   }  
-      
+      }
+   }
+
    /* Go over all the package file records and parse all the package
       files associated with this contents file into one great big honking
       memory structure, then dump the sorted version */
@@ -435,6 +442,9 @@ bool PackageMap::GenContents(Configuration &Setup,
    double Delta = NewTime.tv_sec - StartTime.tv_sec + 
                   (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
    
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Contents.Stats.Misses<< endl;
+
    c0out << Contents.Stats.Packages << " files " <<
       SizeToStr(Contents.Stats.Bytes) << "B " <<
       TimeToStr((long)Delta) << endl;
@@ -465,6 +475,8 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DContentsH = Setup.Find("TreeDefault::Contents::Header","");
    string DBCache = Setup.Find("TreeDefault::BinCacheDB",
 			       "packages-$(ARCH).db");
+   string SrcDBCache = Setup.Find("TreeDefault::SrcCacheDB",
+			       "sources-$(SECTION).db");
    string DSources = Setup.Find("TreeDefault::Sources",
 				"$(DIST)/$(SECTION)/source/Sources");
    string DFLFile = Setup.Find("TreeDefault::FileList", "");
@@ -524,6 +536,7 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/source",Vars);
 	       Itm.FLFile = SubstVar(Block.Find("SourceFileList",DSFLFile.c_str()),Vars);
 	       Itm.SrcExtraOverride = SubstVar(Block.Find("SrcExtraOverride"),Vars);
+	       Itm.SrcCacheDB = SubstVar(Block.Find("SrcCacheDB",SrcDBCache.c_str()),Vars);
 	    }
 	    else
 	    {
@@ -573,6 +586,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
       Itm.PkgFile = Block.Find("Packages");
       Itm.SrcFile = Block.Find("Sources");
       Itm.BinCacheDB = Block.Find("BinCacheDB");
+      Itm.SrcCacheDB = Block.Find("SrcCacheDB");
       Itm.BinOverride = Block.Find("BinOverride");
       Itm.ExtraOverride = Block.Find("ExtraOverride");
       Itm.SrcExtraOverride = Block.Find("SrcExtraOverride");
@@ -597,8 +611,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 /* */
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
       return true;
 
@@ -658,7 +671,7 @@ static bool SimpleGenPackages(CommandLine &CmdL)
       Override = CmdL.FileList[2];
    
    // Create a package writer object.
-   PackagesWriter Packages(_config->Find("APT::FTPArchive::DB"),
+   PackagesWriter Packages(NULL, _config->Find("APT::FTPArchive::DB"),
 			   Override, "", _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
@@ -669,6 +682,10 @@ static bool SimpleGenPackages(CommandLine &CmdL)
    // Do recursive directory searching
    if (Packages.RecursiveScan(CmdL.FileList[1]) == false)
       return false;
+
+   // Give some stats if asked for
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Packages.Stats.Misses<< endl;
 
    return true;
 }
@@ -682,7 +699,7 @@ static bool SimpleGenContents(CommandLine &CmdL)
       return ShowHelp(CmdL);
    
    // Create a package writer object.
-   ContentsWriter Contents(_config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
+   ContentsWriter Contents(NULL, _config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
    if (_error->PendingError() == true)
       return false;
    
@@ -715,7 +732,7 @@ static bool SimpleGenSources(CommandLine &CmdL)
 			     SOverride.c_str());
        
    // Create a package writer object.
-   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),Override,SOverride);
+   SourcesWriter Sources(NULL, _config->Find("APT::FTPArchive::DB"),Override,SOverride);
    if (_error->PendingError() == true)
       return false;
    
@@ -725,6 +742,10 @@ static bool SimpleGenSources(CommandLine &CmdL)
    // Do recursive directory searching
    if (Sources.RecursiveScan(CmdL.FileList[1]) == false)
       return false;
+
+   // Give some stats if asked for
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Sources.Stats.Misses<< endl;
 
    return true;
 }
@@ -738,7 +759,7 @@ static bool SimpleGenRelease(CommandLine &CmdL)
 
    string Dir = CmdL.FileList[1];
 
-   ReleaseWriter Release("");
+   ReleaseWriter Release(NULL, "");
    Release.DirStrip = Dir;
 
    if (_error->PendingError() == true)
@@ -753,32 +774,14 @@ static bool SimpleGenRelease(CommandLine &CmdL)
 }
 
 									/*}}}*/
-// Generate - Full generate, using a config file			/*{{{*/
+// DoGeneratePackagesAndSources - Helper for Generate                   /*{{{*/
 // ---------------------------------------------------------------------
-/* */
-static bool Generate(CommandLine &CmdL)
+static bool DoGeneratePackagesAndSources(Configuration &Setup,
+					 vector<PackageMap> &PkgList,
+					 struct CacheDB::Stats &SrcStats,
+					 struct CacheDB::Stats &Stats,
+					 CommandLine &CmdL)
 {
-   struct CacheDB::Stats SrcStats;
-   if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL);
-
-   struct timeval StartTime;
-   gettimeofday(&StartTime,0);   
-   struct CacheDB::Stats Stats;
-   
-   // Read the configuration file.
-   Configuration Setup;
-   if (ReadConfigFile(Setup,CmdL.FileList[1],true) == false)
-      return false;
-
-   vector<PackageMap> PkgList;
-   LoadTree(PkgList,Setup);
-   LoadBinDir(PkgList,Setup);
-
-   // Sort by cache DB to improve IO locality.
-   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
-		
-   // Generate packages
    if (CmdL.FileSize() <= 2)
    {
       for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
@@ -847,9 +850,16 @@ static bool Generate(CommandLine &CmdL)
       if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
 	 delete I->TransWriter;
 
-   if (_config->FindB("APT::FTPArchive::Contents",true) == false)
-      return true;
-   
+   return true;
+}
+
+                                                                        /*}}}*/
+// DoGenerateContents - Helper for Generate to generate the Contents    /*{{{*/
+// ---------------------------------------------------------------------
+static bool DoGenerateContents(Configuration &Setup,
+			       vector<PackageMap> &PkgList,
+			       CommandLine &CmdL)
+{
    c1out << "Packages done, Starting contents." << endl;
 
    // Sort the contents file list by date
@@ -906,17 +916,62 @@ static bool Generate(CommandLine &CmdL)
 	 break;
       }      
    }
-   
-   struct timeval NewTime;
-   gettimeofday(&NewTime,0);   
-   double Delta = NewTime.tv_sec - StartTime.tv_sec + 
-                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
-   c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages 
-         << " archives. Took " << TimeToStr((long)Delta) << endl;
-   
+
    return true;
 }
+
 									/*}}}*/
+// Generate - Full generate, using a config file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static bool Generate(CommandLine &CmdL)
+{
+   struct CacheDB::Stats SrcStats;
+   if (CmdL.FileSize() < 2)
+      return ShowHelp(CmdL);
+
+   struct timeval StartTime;
+   gettimeofday(&StartTime,0);
+   struct CacheDB::Stats Stats;
+   
+   // Read the configuration file.
+   Configuration Setup;
+   if (ReadConfigFile(Setup,CmdL.FileList[1],true) == false)
+      return false;
+
+   vector<PackageMap> PkgList;
+   LoadTree(PkgList,Setup);
+   LoadBinDir(PkgList,Setup);
+
+   // Sort by cache DB to improve IO locality.
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
+
+   // Generate packages
+   if (_config->FindB("APT::FTPArchive::ContentsOnly", false) == false)
+   {
+      if(DoGeneratePackagesAndSources(Setup, PkgList, SrcStats, Stats, CmdL) == false)
+         return false;
+   } else {
+      c1out << "Skipping Packages/Sources generation" << endl;
+   }
+
+   // do Contents if needed
+   if (_config->FindB("APT::FTPArchive::Contents", true) == true)
+      if (DoGenerateContents(Setup, PkgList, CmdL) == false)
+         return false;
+
+   struct timeval NewTime;
+   gettimeofday(&NewTime,0);
+   double Delta = NewTime.tv_sec - StartTime.tv_sec +
+                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
+   c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages
+         << " archives. Took " << TimeToStr((long)Delta) << endl;
+
+   return true;
+}
+
+                                                                        /*}}}*/
 // Clean - Clean out the databases					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -936,20 +991,33 @@ static bool Clean(CommandLine &CmdL)
 
    // Sort by cache DB to improve IO locality.
    stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
 
    string CacheDir = Setup.FindDir("Dir::CacheDir");
    
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); )
    {
-      c0out << I->BinCacheDB << endl;
+      if(I->BinCacheDB != "")
+         c0out << I->BinCacheDB << endl;
+      if(I->SrcCacheDB != "")
+         c0out << I->SrcCacheDB << endl;
       CacheDB DB(flCombine(CacheDir,I->BinCacheDB));
+      CacheDB DB_SRC(flCombine(CacheDir,I->SrcCacheDB));
       if (DB.Clean() == false)
+	 _error->DumpErrors();
+      if (DB_SRC.Clean() == false)
 	 _error->DumpErrors();
       
       string CacheDB = I->BinCacheDB;
-      for (; I != PkgList.end() && I->BinCacheDB == CacheDB; ++I);
+      string SrcCacheDB = I->SrcCacheDB;
+      while(I != PkgList.end() && 
+            I->BinCacheDB == CacheDB && 
+            I->SrcCacheDB == SrcCacheDB)
+         ++I;
+
    }
-   
+
+  
    return true;
 }
 									/*}}}*/
@@ -985,31 +1053,12 @@ int main(int argc, const char *argv[])
 
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args,_config);
-   if (pkgInitConfig(*_config) == false || CmdL.Parse(argc,argv) == false)
-   {
-      _error->DumpErrors();
-      return 100;
-   }
-   
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
-   
-   // Setup the output streams
-   c0out.rdbuf(clog.rdbuf());
-   c1out.rdbuf(clog.rdbuf());
-   c2out.rdbuf(clog.rdbuf());
+   ParseCommandLine(CmdL, Cmds, Args, &_config, NULL, argc, argv, ShowHelp);
+
+   _config->CndSet("quiet",0);
    Quiet = _config->FindI("quiet",0);
-   if (Quiet > 0)
-      c0out.rdbuf(devnull.rdbuf());
-   if (Quiet > 1)
-      c1out.rdbuf(devnull.rdbuf());
- 
+   InitOutput(clog.rdbuf());
+
    // Match the operation
    CmdL.DispatchArg(Cmds);
    

@@ -12,6 +12,7 @@
 #ifndef CACHEDB_H
 #define CACHEDB_H
 
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/debfile.h>
 
 #include <db.h>
@@ -22,8 +23,10 @@
 #include <stdio.h>
 
 #include "contents.h"
+#include "sources.h"
 
 class FileFd;
+
 
 class CacheDB
 {
@@ -39,7 +42,7 @@ class CacheDB
    std::string DBFile;
 
    // Generate a key for the DB of a given type
-   inline void InitQuery(const char *Type)
+   void _InitQuery(const char *Type)
    {
       memset(&Key,0,sizeof(Key));
       memset(&Data,0,sizeof(Data));
@@ -47,6 +50,19 @@ class CacheDB
       Key.size = snprintf(TmpKey,sizeof(TmpKey),"%s:%s",FileName.c_str(), Type);
    }
    
+   void InitQueryStats() {
+      _InitQuery("st");
+   }
+   void InitQuerySource() {
+      _InitQuery("cs");
+   }
+   void InitQueryControl() {
+      _InitQuery("cl");
+   }
+   void InitQueryContent() {
+      _InitQuery("cn");
+   }
+
    inline bool Get() 
    {
       return Dbp->get(Dbp,0,&Key,&Data,0) == 0;
@@ -65,20 +81,42 @@ class CacheDB
       return true;
    }
    bool OpenFile();
-   bool GetFileStat(bool const &doStat = false);
+   void CloseFile();
+
+   bool OpenDebFile();
+   void CloseDebFile();
+
+   // GetCurStat needs some compat code, see lp #1274466)
+   bool GetCurStatCompatOldFormat();
+   bool GetCurStatCompatNewFormat();
    bool GetCurStat();
+
+   bool GetFileStat(bool const &doStat = false);
    bool LoadControl();
    bool LoadContents(bool const &GenOnly);
-   bool GetMD5(bool const &GenOnly);
-   bool GetSHA1(bool const &GenOnly);
-   bool GetSHA256(bool const &GenOnly);
-   bool GetSHA512(bool const &GenOnly);
-   
+   bool LoadSource();
+   bool GetHashes(bool const GenOnly, unsigned int const DoHashes);
+
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
-                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5), 
-                  FlSHA512=(1<<6)};
+                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5),
+                  FlSHA512=(1<<6), FlSource=(1<<7)
+   };
 
+   // the on-disk format changed (FileSize increased to 64bit) in 
+   // commit 650faab0 which will lead to corruption with old caches
+   struct StatStoreOldFormat
+   {
+      uint32_t Flags;
+      uint32_t mtime;
+      uint32_t FileSize;
+      uint8_t  MD5[16];
+      uint8_t  SHA1[20];
+      uint8_t  SHA256[32];
+   } CurStatOldFormat;
+
+   // WARNING: this struct is read/written to the DB so do not change the
+   //          layout of the fields (see lp #1274466), only append to it
    struct StatStore
    {
       uint32_t Flags;
@@ -101,11 +139,9 @@ class CacheDB
    // Data collection helpers
    debDebFile::MemControlExtract Control;
    ContentsExtract Contents;
-   std::string MD5Res;
-   std::string SHA1Res;
-   std::string SHA256Res;
-   std::string SHA512Res;
-   
+   DscExtract Dsc;
+   HashStringList HashesList;
+
    // Runtime statistics
    struct Stats
    {
@@ -132,21 +168,29 @@ class CacheDB
 		SHA512Bytes(0),Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
-   bool ReadyDB(std::string const &DB);
+   bool ReadyDB(std::string const &DB = "");
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
    inline unsigned long long GetFileSize(void) {return CurStat.FileSize;}
    
    bool SetFile(std::string const &FileName,struct stat St,FileFd *Fd);
-   bool GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,
-		    bool const &DoMD5, bool const &DoSHA1, bool const &DoSHA256, bool const &DoSHA512, bool const &checkMtime = false);
+
+   // terrible old overloaded interface
+   bool GetFileInfo(std::string const &FileName,
+	 bool const &DoControl,
+	 bool const &DoContents,
+	 bool const &GenContentsOnly,
+	 bool const DoSource,
+	 unsigned int const DoHashes,
+	 bool const &checkMtime = false);
+
    bool Finish();   
    
    bool Clean();
    
-   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {TmpKey[0]='\0'; ReadyDB(DB);};
-   ~CacheDB() {ReadyDB(std::string()); delete DebFile;};
+   CacheDB(std::string const &DB);
+   ~CacheDB();
 };
     
 #endif

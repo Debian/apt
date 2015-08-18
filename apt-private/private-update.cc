@@ -38,8 +38,8 @@ bool DoUpdate(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
 
    // Create the progress
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
-      
+   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
@@ -47,19 +47,24 @@ bool DoUpdate(CommandLine &CmdL)
       _config->CndSet("Acquire::ForceHash", "md5sum");
 
       // get a fetcher
-      pkgAcquire Fetcher;
-      if (Fetcher.Setup(&Stat) == false)
-	 return false;
+      pkgAcquire Fetcher(&Stat);
 
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)
       if (List->GetIndexes(&Fetcher,true) == false)
 	 return false;
 
+      std::string compExt = APT::Configuration::getCompressionTypes()[0];
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 c1out << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+      {
+         std::string FileName = flNotDir(I->Owner->DestFile);
+         if(compExt.empty() == false && 
+            APT::String::Endswith(FileName, compExt))
+            FileName = FileName.substr(0, FileName.size() - compExt.size() - 1);
+	 c1out << '\'' << I->URI << "' " << FileName << ' ' << 
             I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+      }
       return true;
    }
 
@@ -73,6 +78,27 @@ bool DoUpdate(CommandLine &CmdL)
       pkgCacheFile::RemoveCaches();
       if (Cache.BuildCaches() == false)
 	 return false;
+   }
+
+   // show basic stats (if the user whishes)
+   if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
+   {
+      int upgradable = 0;
+      Cache.Open();
+      for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
+      {
+         pkgDepCache::StateCache &state = Cache[I];
+         if (I->CurrentVer != 0 && state.Upgradable() && state.CandidateVer != NULL)
+            upgradable++;
+      }
+      const char *msg = P_(
+         "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n",
+         "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n",
+         upgradable);
+      if (upgradable == 0)
+         c1out << _("All packages are up to date.") << std::endl;
+      else
+         ioprintf(c1out, msg, upgradable);
    }
 
    return true;

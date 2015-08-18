@@ -17,6 +17,7 @@
 
 
 #include <string>
+#include <apt-pkg/macros.h>
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
 #endif
@@ -61,7 +62,11 @@ struct ARArchive::Member
    unsigned long long Size;
    
    // Location of the data.
+#if APT_PKG_ABI >= 413
+   unsigned long long Start;
+#else
    unsigned long Start;
+#endif
    Member *Next;
    
    Member() : Start(0), Next(0) {};

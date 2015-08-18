@@ -21,9 +21,8 @@
 // ---------------------------------------------------------------------
 /* */
 static bool ShowHelp() {
-
+	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 	std::cout <<
-		PACKAGE " " PACKAGE_VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<
 		"Usage: apt-dump-resolver\n"
 		"\n"
 		"apt-dump-resolver is a dummy solver who just dumps its input to the\n"
@@ -40,6 +39,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 		ShowHelp();
 		return 0;
 	}
+        // we really don't need anything
+        DropPrivileges();
 
 	FILE* input = fdopen(STDIN_FILENO, "r");
 	FILE* output = fopen("/tmp/dump.edsp", "w");

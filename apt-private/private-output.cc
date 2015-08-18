@@ -23,6 +23,7 @@
 #include <langinfo.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -51,14 +52,14 @@ static void SigWinch(int)
 #endif
 }
 									/*}}}*/
-bool InitOutput()							/*{{{*/
+bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
 {
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
       _config->Set("quiet","1");
 
-   c0out.rdbuf(cout.rdbuf());
-   c1out.rdbuf(cout.rdbuf());
-   c2out.rdbuf(cout.rdbuf());
+   c0out.rdbuf(out);
+   c1out.rdbuf(out);
+   c2out.rdbuf(out);
    if (_config->FindI("quiet",0) > 0)
       c0out.rdbuf(devnull.rdbuf());
    if (_config->FindI("quiet",0) > 1)
@@ -93,7 +94,7 @@ bool InitOutput()							/*{{{*/
 static std::string GetArchiveSuite(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
-   if (ver && ver.FileList() && ver.FileList())
+   if (ver && ver.FileList())
    {
       pkgCache::VerFileIterator VF = ver.FileList();
       for (; VF.end() == false ; ++VF)
@@ -117,7 +118,7 @@ static std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
    std::string flags_str;
    if (state.NowBroken())
       flags_str = "B";
-   if (P.CurrentVer() && state.Upgradable())
+   if (P.CurrentVer() && state.Upgradable() && state.CandidateVer != NULL)
       flags_str = "g";
    else if (P.CurrentVer() != NULL)
       flags_str = "i";
@@ -163,15 +164,26 @@ static std::string GetVersion(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator
 									/*}}}*/
 static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
-   pkgPolicy *policy = CacheFile.GetPolicy();
-   pkgCache::VerIterator inst = P.CurrentVer();
-   pkgCache::VerIterator cand = policy->GetCandidateVer(P);
-
-   // this may happen for packages in dpkg "deinstall ok config-file" state
-   if (inst.IsGood() == false && cand.IsGood() == false)
-      return P.VersionList().Arch();
-
-   return inst ? inst.Arch() : cand.Arch();
+   if (P->CurrentVer == 0)
+   {
+      pkgDepCache * const DepCache = CacheFile.GetDepCache();
+      pkgDepCache::StateCache const &state = (*DepCache)[P];
+      if (state.CandidateVer != NULL)
+      {
+	 pkgCache::VerIterator const CandV(CacheFile, state.CandidateVer);
+	 return CandV.Arch();
+      }
+      else
+      {
+	 pkgCache::VerIterator const V = P.VersionList();
+	 if (V.end() == false)
+	    return V.Arch();
+	 else
+	    return P.Arch();
+      }
+   }
+   else
+      return P.CurrentVer().Arch();
 }
 									/*}}}*/
 static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
@@ -195,80 +207,90 @@ static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &reco
    return ShortDescription;
 }
 									/*}}}*/
-void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
-                       pkgCache::VerIterator V, std::ostream &out,
-                       bool include_summary)
+static std::string GetLongDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
-   pkgCache::PkgIterator P = V.ParentPkg();
+   pkgPolicy *policy = CacheFile.GetPolicy();
 
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
-   pkgDepCache::StateCache &state = (*DepCache)[P];
+   pkgCache::VerIterator ver;
+   if (P->CurrentVer != 0)
+      ver = P.CurrentVer();
+   else
+      ver = policy->GetCandidateVer(P);
 
-   std::string suite = GetArchiveSuite(CacheFile, V);
-   std::string name_str = P.Name();
+   std::string const EmptyDescription = "(none)";
+   if(ver.end() == true)
+      return EmptyDescription;
 
+   pkgCache::DescIterator const Desc = ver.TranslatedDescription();
+   pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+   std::string const longdesc = parser.LongDesc();
+   if (longdesc.empty() == true)
+      return EmptyDescription;
+   return SubstVar(longdesc, "\n ", "\n  ");
+}
+									/*}}}*/
+void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
+                       pkgCache::VerIterator const &V, std::ostream &out,
+                       std::string const &format)
+{
+   pkgCache::PkgIterator const P = V.ParentPkg();
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   pkgDepCache::StateCache const &state = (*DepCache)[P];
+
+   std::string output;
    if (_config->FindB("APT::Cmd::use-format", false))
+      output = _config->Find("APT::Cmd::format", "${db::Status-Abbrev} ${Package} ${Version} ${Origin} ${Description}");
+   else
+      output = format;
+
+   // FIXME: some of these names are really icky – and all is nowhere documented
+   output = SubstVar(output, "${db::Status-Abbrev}", GetFlagsStr(CacheFile, P));
+   output = SubstVar(output, "${Package}", P.Name());
+   std::string const ArchStr = GetArchitecture(CacheFile, P);
+   output = SubstVar(output, "${Architecture}", ArchStr);
+   std::string const InstalledVerStr = GetInstalledVersion(CacheFile, P);
+   output = SubstVar(output, "${installed:Version}", InstalledVerStr);
+   std::string const CandidateVerStr = GetCandidateVersion(CacheFile, P);
+   output = SubstVar(output, "${candidate:Version}", CandidateVerStr);
+   std::string const VersionStr = GetVersion(CacheFile, V);
+   output = SubstVar(output, "${Version}", VersionStr);
+   output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
+
+   std::string StatusStr = "";
+   if (P->CurrentVer != 0)
    {
-      std::string format = _config->Find("APT::Cmd::format", "${db::Status-Abbrev} ${Package} ${Version} ${Origin} ${Description}");
-      std::string output = format;
-   
-      output = SubstVar(output, "${db::Status-Abbrev}", GetFlagsStr(CacheFile, P));
-      output = SubstVar(output, "${Package}", name_str);
-      output = SubstVar(output, "${installed:Version}", GetInstalledVersion(CacheFile, P));
-      output = SubstVar(output, "${candidate:Version}", GetCandidateVersion(CacheFile, P));
-      output = SubstVar(output, "${Version}", GetVersion(CacheFile, V));
-      output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
-      output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
-      out << output << std::endl;
-   } else {
-      // raring/linux-kernel version [upradable: new-version]
-      //    description
-      pkgPolicy *policy = CacheFile.GetPolicy();
-      std::string VersionStr = GetVersion(CacheFile, V);
-      std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
-      std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
-      std::string StatusStr;
-      if(P.CurrentVer() == V && state.Upgradable()) {
-         strprintf(StatusStr, _("[installed,upgradable to: %s]"),
-                   CandidateVerStr.c_str());
-      } else if (P.CurrentVer() == V) {
-         if(!V.Downloadable())
-            StatusStr = _("[installed,local]");
-         else
-            if(V.Automatic() && state.Garbage)
-               StatusStr = _("[installed,auto-removable]");
-            else if (state.Flags & pkgCache::Flag::Auto)
-               StatusStr = _("[installed,automatic]");
-            else
-               StatusStr = _("[installed]");
-      } else if (P.CurrentVer() && 
-                 policy->GetCandidateVer(P) == V && 
-                 state.Upgradable()) {
-            strprintf(StatusStr, _("[upgradable from: %s]"),
-                      InstalledVerStr.c_str());
-      } else {
-         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
-            StatusStr = _("[residual-config]");
-         else
-            StatusStr = "";
-      }
-      out << std::setiosflags(std::ios::left)
-          << _config->Find("APT::Color::Highlight", "")
-          << name_str 
-          << _config->Find("APT::Color::Neutral", "")
-          << "/" << suite
-          << " "
-          << VersionStr << " " 
-          << GetArchitecture(CacheFile, P);
-      if (StatusStr != "") 
-         out << " " << StatusStr;
-      if (include_summary)
+      if (P.CurrentVer() == V)
       {
-         out << std::endl 
-             << "  " << GetShortDescription(CacheFile, records, P)
-             << std::endl;
+	 if (state.Upgradable() && state.CandidateVer != NULL)
+	    strprintf(StatusStr, _("[installed,upgradable to: %s]"),
+		  CandidateVerStr.c_str());
+	 else if (V.Downloadable() == false)
+	    StatusStr = _("[installed,local]");
+	 else if(V.Automatic() == true && state.Garbage == true)
+	    StatusStr = _("[installed,auto-removable]");
+	 else if ((state.Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+	    StatusStr = _("[installed,automatic]");
+	 else
+	    StatusStr = _("[installed]");
       }
+      else if (state.CandidateVer == V && state.Upgradable())
+	 strprintf(StatusStr, _("[upgradable from: %s]"),
+	       InstalledVerStr.c_str());
    }
+   else if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
+      StatusStr = _("[residual-config]");
+   output = SubstVar(output, "${apt:Status}", StatusStr);
+   output = SubstVar(output, "${color:highlight}", _config->Find("APT::Color::Highlight", ""));
+   output = SubstVar(output, "${color:neutral}", _config->Find("APT::Color::Neutral", ""));
+   output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
+   output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
+   output = SubstVar(output, "${ }${ }", "${ }");
+   output = SubstVar(output, "${ }\n", "\n");
+   output = SubstVar(output, "${ }", " ");
+   if (APT::String::Endswith(output, " ") == true)
+      output.erase(output.length() - 1);
+
+   out << output;
 }
 									/*}}}*/
 // ShowList - Show a list						/*{{{*/
@@ -343,7 +365,122 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
            Depends: libldap2 (>= 2.0.2-2) but it is not going to be installed
            Depends: libsasl7 but it is not going to be installed   
  */
-void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
+static void ShowBrokenPackage(ostream &out, pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg, bool const Now)
+{
+   if (Now == true)
+   {
+      if ((*Cache)[Pkg].NowBroken() == false)
+	 return;
+   }
+   else
+   {
+      if ((*Cache)[Pkg].InstBroken() == false)
+	 return;
+   }
+
+   // Print out each package and the failed dependencies
+   out << " " << Pkg.FullName(true) << " :";
+   unsigned const Indent = Pkg.FullName(true).size() + 3;
+   bool First = true;
+   pkgCache::VerIterator Ver;
+
+   if (Now == true)
+      Ver = Pkg.CurrentVer();
+   else
+      Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+
+   if (Ver.end() == true)
+   {
+      out << endl;
+      return;
+   }
+
+   for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
+   {
+      // Compute a single dependency element (glob or)
+      pkgCache::DepIterator Start;
+      pkgCache::DepIterator End;
+      D.GlobOr(Start,End); // advances D
+
+      if ((*Cache)->IsImportantDep(End) == false)
+	 continue;
+
+      if (Now == true)
+      {
+	 if (((*Cache)[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
+	    continue;
+      }
+      else
+      {
+	 if (((*Cache)[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	    continue;
+      }
+
+      bool FirstOr = true;
+      while (1)
+      {
+	 if (First == false)
+	    for (unsigned J = 0; J != Indent; J++)
+	       out << ' ';
+	 First = false;
+
+	 if (FirstOr == false)
+	 {
+	    for (unsigned J = 0; J != strlen(End.DepType()) + 3; J++)
+	       out << ' ';
+	 }
+	 else
+	    out << ' ' << End.DepType() << ": ";
+	 FirstOr = false;
+
+	 out << Start.TargetPkg().FullName(true);
+
+	 // Show a quick summary of the version requirements
+	 if (Start.TargetVer() != 0)
+	    out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
+
+	 /* Show a summary of the target package if possible. In the case
+	    of virtual packages we show nothing */
+	 pkgCache::PkgIterator Targ = Start.TargetPkg();
+	 if (Targ->ProvidesList == 0)
+	 {
+	    out << ' ';
+	    pkgCache::VerIterator Ver = (*Cache)[Targ].InstVerIter(*Cache);
+	    if (Now == true)
+	       Ver = Targ.CurrentVer();
+
+	    if (Ver.end() == false)
+	    {
+	       if (Now == true)
+		  ioprintf(out,_("but %s is installed"),Ver.VerStr());
+	       else
+		  ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
+	    }
+	    else
+	    {
+	       if ((*Cache)[Targ].CandidateVerIter(*Cache).end() == true)
+	       {
+		  if (Targ->ProvidesList == 0)
+		     out << _("but it is not installable");
+		  else
+		     out << _("but it is a virtual package");
+	       }
+	       else
+		  out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
+	    }
+	 }
+
+	 if (Start != End)
+	    out << _(" or");
+	 out << endl;
+
+	 if (Start == End)
+	    break;
+	 ++Start;
+      }
+   }
+}
+void ShowBroken(ostream &out, CacheFile &Cache, bool const Now)
 {
    if (Cache->BrokenCount() == 0)
       return;
@@ -351,121 +488,18 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
    out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      
-      if (Now == true)
-      {
-	 if (Cache[I].NowBroken() == false)
-	    continue;
-      }
-      else
-      {
-	 if (Cache[I].InstBroken() == false)
-	    continue;
-      }
-      
-      // Print out each package and the failed dependencies
-      out << " " << I.FullName(true) << " :";
-      unsigned const Indent = I.FullName(true).size() + 3;
-      bool First = true;
-      pkgCache::VerIterator Ver;
-      
-      if (Now == true)
-	 Ver = I.CurrentVer();
-      else
-	 Ver = Cache[I].InstVerIter(Cache);
-      
-      if (Ver.end() == true)
-      {
-	 out << endl;
-	 continue;
-      }
-      
-      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
-      {
-	 // Compute a single dependency element (glob or)
-	 pkgCache::DepIterator Start;
-	 pkgCache::DepIterator End;
-	 D.GlobOr(Start,End); // advances D
+      pkgCache::PkgIterator const I(Cache,Cache.List[J]);
+      ShowBrokenPackage(out, &Cache, I, Now);
+   }
+}
+void ShowBroken(ostream &out, pkgCacheFile &Cache, bool const Now)
+{
+   if (Cache->BrokenCount() == 0)
+      return;
 
-	 if (Cache->IsImportantDep(End) == false)
-	    continue;
-	 
-	 if (Now == true)
-	 {
-	    if ((Cache[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
-	       continue;
-	 }
-	 else
-	 {
-	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
-	       continue;
-	 }
-	 
-	 bool FirstOr = true;
-	 while (1)
-	 {
-	    if (First == false)
-	       for (unsigned J = 0; J != Indent; J++)
-		  out << ' ';
-	    First = false;
-
-	    if (FirstOr == false)
-	    {
-	       for (unsigned J = 0; J != strlen(End.DepType()) + 3; J++)
-		  out << ' ';
-	    }
-	    else
-	       out << ' ' << End.DepType() << ": ";
-	    FirstOr = false;
-	    
-	    out << Start.TargetPkg().FullName(true);
-	 
-	    // Show a quick summary of the version requirements
-	    if (Start.TargetVer() != 0)
-	       out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
-	    
-	    /* Show a summary of the target package if possible. In the case
-	       of virtual packages we show nothing */	 
-	    pkgCache::PkgIterator Targ = Start.TargetPkg();
-	    if (Targ->ProvidesList == 0)
-	    {
-	       out << ' ';
-	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
-	       if (Now == true)
-		  Ver = Targ.CurrentVer();
-	       	    
-	       if (Ver.end() == false)
-	       {
-		  if (Now == true)
-		     ioprintf(out,_("but %s is installed"),Ver.VerStr());
-		  else
-		     ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
-	       }	       
-	       else
-	       {
-		  if (Cache[Targ].CandidateVerIter(Cache).end() == true)
-		  {
-		     if (Targ->ProvidesList == 0)
-			out << _("but it is not installable");
-		     else
-			out << _("but it is a virtual package");
-		  }		  
-		  else
-		     out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
-	       }	       
-	    }
-	    
-	    if (Start != End)
-	       out << _(" or");
-	    out << endl;
-	    
-	    if (Start == End)
-	       break;
-	    ++Start;
-	 }	 
-      }	    
-   }   
+   out << _("The following packages have unmet dependencies:") << endl;
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
+      ShowBrokenPackage(out, &Cache, Pkg, Now);
 }
 									/*}}}*/
 // ShowNew - Show packages to newly install				/*{{{*/

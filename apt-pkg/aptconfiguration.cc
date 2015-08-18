@@ -32,6 +32,35 @@
 #include <apti18n.h>
 									/*}}}*/
 namespace APT {
+// setDefaultConfigurationForCompressors				/*{{{*/
+static void setDefaultConfigurationForCompressors() {
+	// Set default application paths to check for optional compression types
+	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
+	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
+		_config->Set("Dir::Bin::lzma", _config->FindFile("Dir::Bin::xz"));
+		_config->Set("APT::Compressor::lzma::Binary", "xz");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	} else {
+		_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	}
+}
+									/*}}}*/
 // getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
 // ---------------------------------------------------------------------
 /* return a vector of compression types in the preferred order. */
@@ -402,35 +431,6 @@ bool Configuration::checkArchitecture(std::string const &Arch) {
 	return (std::find(archs.begin(), archs.end(), Arch) != archs.end());
 }
 									/*}}}*/
-// setDefaultConfigurationForCompressors				/*{{{*/
-void Configuration::setDefaultConfigurationForCompressors() {
-	// Set default application paths to check for optional compression types
-	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
-	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
-	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
-		_config->Set("Dir::Bin::lzma", _config->FindFile("Dir::Bin::xz"));
-		_config->Set("APT::Compressor::lzma::Binary", "xz");
-		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
-			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
-			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
-		}
-		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
-			_config->Set("APT::Compressor::lzma::UncompressArg::", "--format=lzma");
-			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
-		}
-	} else {
-		_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
-		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
-			_config->Set("APT::Compressor::lzma::CompressArg::", "--suffix=");
-			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
-		}
-		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
-			_config->Set("APT::Compressor::lzma::UncompressArg::", "--suffix=");
-			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
-		}
-	}
-}
-									/*}}}*/
 // getCompressors - Return Vector of usealbe compressors		/*{{{*/
 // ---------------------------------------------------------------------
 /* return a vector of compressors used by apt-ftparchive in the
@@ -540,7 +540,7 @@ std::string const Configuration::getBuildProfilesString() {
 		return "";
 	std::vector<std::string>::const_iterator p = profiles.begin();
 	std::string list = *p;
-	for (; p != profiles.end(); ++p)
+	for (++p; p != profiles.end(); ++p)
 	   list.append(",").append(*p);
 	return list;
 }

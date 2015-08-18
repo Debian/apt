@@ -29,6 +29,8 @@ class FileFd;
 
 class HttpsServerState : public ServerState
 {
+   Hashes * Hash;
+
    protected:
    virtual bool ReadHeaderLines(std::string &/*Data*/) { return false; }
    virtual bool LoadNextResponse(bool const /*ToFile*/, FileFd * const /*File*/) { return false; }
@@ -42,8 +44,8 @@ class HttpsServerState : public ServerState
    virtual bool Open() { return false; }
    virtual bool IsOpen() { return false; }
    virtual bool Close() { return false; }
-   virtual bool InitHashes(FileFd &/*File*/) { return false; }
-   virtual Hashes * GetHashes() { return NULL; }
+   virtual bool InitHashes(HashStringList const &ExpectedHashes);
+   virtual Hashes * GetHashes();
    virtual bool Die(FileFd &/*File*/) { return false; }
    virtual bool Flush(FileFd * const /*File*/) { return false; }
    virtual bool Go(bool /*ToFile*/, FileFd * const /*File*/) { return false; }
@@ -52,27 +54,35 @@ class HttpsServerState : public ServerState
    virtual ~HttpsServerState() {Close();};
 };
 
-class HttpsMethod : public pkgAcqMethod
+class HttpsMethod : public ServerMethod
 {
    // minimum speed in bytes/se that triggers download timeout handling
    static const int DL_MIN_SPEED = 10;
 
    virtual bool Fetch(FetchItem *);
+
    static size_t parse_header(void *buffer, size_t size, size_t nmemb, void *userp);
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
-   static int progress_callback(void *clientp, double dltotal, double dlnow, 
-				double ultotal, double ulnow);
+   static int progress_callback(void *clientp, double dltotal, double dlnow,
+				 double ultotal, double ulnow);
    void SetupProxy();
    CURL *curl;
-   FetchResult Res;
-   HttpsServerState *Server;
+   ServerState *Server;
+
+   // Used by ServerMethods unused by https
+   virtual void SendReq(FetchItem *) { exit(42); }
+   virtual void RotateDNS() { exit(42); }
 
    public:
    FileFd *File;
-      
-   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), File(NULL)
+
+   virtual bool Configuration(std::string Message);
+   virtual ServerState * CreateServerState(URI uri);
+   using pkgAcqMethod::FetchResult;
+   using pkgAcqMethod::FetchItem;
+
+   HttpsMethod() : ServerMethod("1.2",Pipeline | SendConfig), File(NULL)
    {
-      File = 0;
       curl = curl_easy_init();
    };
 

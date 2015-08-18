@@ -44,6 +44,11 @@ class pkgDepCache;
 class pkgSourceList;
 class pkgOrderList;
 class pkgRecords;
+namespace APT {
+   namespace Progress {
+      class PackageManager;
+   }
+}
 
 
 class pkgPackageManager : protected pkgCache::Namespace
@@ -79,22 +84,22 @@ class pkgPackageManager : protected pkgCache::Namespace
    
    // Install helpers
    bool ConfigureAll();
-   bool SmartConfigure(PkgIterator Pkg, int const Depth);
+   bool SmartConfigure(PkgIterator Pkg, int const Depth) APT_MUSTCHECK;
    //FIXME: merge on abi break
-   bool SmartUnPack(PkgIterator Pkg);
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth);
-   bool SmartRemove(PkgIterator Pkg);
-   bool EarlyRemove(PkgIterator Pkg);  
-   
+   bool SmartUnPack(PkgIterator Pkg) APT_MUSTCHECK;
+   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth) APT_MUSTCHECK;
+   bool SmartRemove(PkgIterator Pkg) APT_MUSTCHECK;
+   bool EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep) APT_MUSTCHECK;
+   APT_DEPRECATED bool EarlyRemove(PkgIterator Pkg) APT_MUSTCHECK;
+
    // The Actual installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
    virtual bool Go(APT::Progress::PackageManager * /*progress*/) {return true;};
-#else
-   virtual bool Go(int /*statusFd*/=-1) {return true;};
 #endif
+   virtual bool Go(int /*statusFd*/=-1) {return true;};
 
    virtual void Reset() {};
 
@@ -107,8 +112,8 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
 		    pkgRecords *Recs);
 
-   // Do the installation 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   // Do the installation
+#if APT_PKG_ABI >= 413
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
    APT_DEPRECATED OrderResult DoInstall(int statusFd=-1);
@@ -122,7 +127,7 @@ class pkgPackageManager : protected pkgCache::Namespace
       Res = OrderInstall();
       return Res;
    };
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if APT_PKG_ABI >= 413
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
@@ -139,6 +144,12 @@ class pkgPackageManager : protected pkgCache::Namespace
 
    pkgPackageManager(pkgDepCache *Cache);
    virtual ~pkgPackageManager();
+
+   private:
+   enum APT_HIDDEN SmartAction { UNPACK_IMMEDIATE, UNPACK, CONFIGURE };
+   APT_HIDDEN bool NonLoopingSmart(SmartAction const action, pkgCache::PkgIterator &Pkg,
+      pkgCache::PkgIterator DepPkg, int const Depth, bool const PkgLoop,
+      bool * const Bad, bool * const Changed) APT_MUSTCHECK;
 };
 
 #endif

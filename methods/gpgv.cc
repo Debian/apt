@@ -5,6 +5,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -43,11 +44,21 @@ class GPGVMethod : public pkgAcqMethod
    
    protected:
    virtual bool Fetch(FetchItem *Itm);
-   
+   virtual bool Configuration(string Message);
    public:
    
    GPGVMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
 };
+
+bool GPGVMethod::Configuration(string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
+}
 
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
@@ -74,34 +85,13 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
    FILE *pipein = fdopen(fd[0], "r");
 
-   // Loop over the output of gpgv, and check the signatures.
-   size_t buffersize = 64;
-   char *buffer = (char *) malloc(buffersize);
-   size_t bufferoff = 0;
+   // Loop over the output of apt-key (which really is gnupg), and check the signatures.
+   size_t buffersize = 0;
+   char *buffer = NULL;
    while (1)
    {
-      int c;
-
-      // Read a line.  Sigh.
-      while ((c = getc(pipein)) != EOF && c != '\n')
-      {
-	 if (bufferoff == buffersize)
-	 {
-	    char* newBuffer = (char *) realloc(buffer, buffersize *= 2);
-	    if (newBuffer == NULL)
-	    {
-	       free(buffer);
-	       return "Couldn't allocate a buffer big enough for reading";
-	    }
-	    buffer = newBuffer;
-	 }
-         *(buffer+bufferoff) = c;
-         bufferoff++;
-      }
-      if (bufferoff == 0 && c == EOF)
-         break;
-      *(buffer+bufferoff) = '\0';
-      bufferoff = 0;
+      if (getline(&buffer, &buffersize, pipein) == -1)
+	 break;
       if (Debug == true)
          std::clog << "Read: " << buffer << std::endl;
 
@@ -115,7 +105,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::clog << "Got BADSIG! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
-      
+
       if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
       {
          if (Debug == true)
@@ -159,7 +149,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    waitpid(pid, &status, 0);
    if (Debug == true)
    {
-      std::clog << "gpgv exited\n";
+      ioprintf(std::clog, "gpgv exited with status %i\n", WEXITSTATUS(status));
    }
    
    if (WEXITSTATUS(status) == 0)
@@ -171,7 +161,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (WEXITSTATUS(status) == 1)
       return _("At least one invalid signature was encountered.");
    else if (WEXITSTATUS(status) == 111)
-      return _("Could not execute 'gpgv' to verify signature (is gpgv installed?)");
+      return _("Could not execute 'apt-key' to verify signature (is gnupg installed?)");
    else if (WEXITSTATUS(status) == 112)
    {
       // acquire system checks for "NODATA" to generate GPG errors (the others are only warnings)
@@ -181,7 +171,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return errmsg;
    }
    else
-      return _("Unknown error executing gpgv");
+      return _("Unknown error executing apt-key");
 }
 
 bool GPGVMethod::Fetch(FetchItem *Itm)
@@ -199,7 +189,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    URIStart(Res);
 
-   // Run gpgv on file, extract contents and get the key ID of the signer
+   // Run apt-key on file, extract contents and get the key ID of the signer
    string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  NoPubKeySigners);
@@ -251,7 +241,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
-      std::clog << "gpgv succeeded\n";
+      std::clog << "apt-key succeeded\n";
    }
 
    return true;
@@ -261,7 +251,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 int main()
 {
    setlocale(LC_ALL, "");
-   
+
    GPGVMethod Mth;
 
    return Mth.Run();

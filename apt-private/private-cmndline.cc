@@ -2,12 +2,17 @@
 #include <config.h>
 
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/error.h>
 
 #include <apt-private/private-cmndline.h>
 
 #include <vector>
 #include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -70,6 +75,8 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
    else
       return false;
 
+   bool const found_something = Args.empty() == false;
+
    // FIXME: move to the correct command(s)
    addArg('g', "generate", "APT::Cache::Generate", 0);
    addArg('t', "target-release", "APT::Default-Release", CommandLine::HasArg);
@@ -77,7 +84,8 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
 
    addArg('p', "pkg-cache", "Dir::Cache::pkgcache", CommandLine::HasArg);
    addArg('s', "src-cache", "Dir::Cache::srcpkgcache", CommandLine::HasArg);
-   return true;
+
+   return found_something;
 }
 									/*}}}*/
 static bool addArgumentsAPTCDROM(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
@@ -162,8 +170,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "color", "APT::Moo::Color", 0);
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "deselect-upgrade", "autoremove", "clean", "autoclean", "check",
-	    "build-dep", "full-upgrade"))
+	    "dselect-upgrade", "autoremove", "clean", "autoclean", "check",
+	    "build-dep", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
       addArg('s', "just-print", "APT::Get::Simulate", 0);
@@ -171,6 +179,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg('s', "dry-run", "APT::Get::Simulate", 0);
       addArg('s', "no-act", "APT::Get::Simulate", 0);
    }
+
+   bool const found_something = Args.empty() == false;
 
    // FIXME: move to the correct command(s)
    addArg('d',"download-only","APT::Get::Download-Only",0);
@@ -193,11 +203,12 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg(0,"only-source","APT::Get::Only-Source",0);
    addArg(0,"arch-only","APT::Get::Arch-Only",0);
    addArg(0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0);
+   addArg(0,"allow-insecure-repositories","Acquire::AllowInsecureRepositories",0);
    addArg(0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean);
    addArg(0,"install-suggests","APT::Install-Suggests",CommandLine::Boolean);
    addArg(0,"fix-policy","APT::Get::Fix-Policy-Broken",0);
 
-   return true;
+   return found_something;
 }
 									/*}}}*/
 static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
@@ -281,3 +292,31 @@ std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char c
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
+void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, CommandLine::Args * const Args,/*{{{*/
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
+{
+   CmdL = CommandLine(Args,_config);
+   if ((Cnf != NULL && pkgInitConfig(**Cnf) == false) ||
+       CmdL.Parse(argc,argv) == false ||
+       (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
+   {
+      if (_config->FindB("version") == true)
+	 ShowHelp(CmdL);
+
+      _error->DumpErrors();
+      exit(100);
+   }
+
+   // See if the help should be shown
+   if (_config->FindB("help") == true || _config->FindB("version") == true)
+   {
+      ShowHelp(CmdL);
+      exit(0);
+   }
+   if (Cmds != NULL && CmdL.FileSize() == 0)
+   {
+      ShowHelp(CmdL);
+      exit(1);
+   }
+}
+									/*}}}*/

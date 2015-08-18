@@ -28,7 +28,7 @@ class pkgAcquire;
 class pkgCacheGenerator;
 
 
-class debStatusIndex : public pkgIndexFile
+class APT_HIDDEN debStatusIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -52,10 +52,10 @@ class debStatusIndex : public pkgIndexFile
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debStatusIndex(std::string File);
-   virtual ~debStatusIndex() {};
+   virtual ~debStatusIndex();
 };
     
-class debPackagesIndex : public pkgIndexFile
+class APT_HIDDEN debPackagesIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -65,10 +65,10 @@ class debPackagesIndex : public pkgIndexFile
    std::string Section;
    std::string Architecture;
 
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
-   
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
+
    public:
    
    virtual const Type *GetType() const APT_CONST;
@@ -89,33 +89,32 @@ class debPackagesIndex : public pkgIndexFile
 
    debPackagesIndex(std::string const &URI, std::string const &Dist, std::string const &Section,
 			bool const &Trusted, std::string const &Arch = "native");
-   virtual ~debPackagesIndex() {};
+   virtual ~debPackagesIndex();
 };
 
-class debTranslationsIndex : public pkgIndexFile
+class APT_HIDDEN debTranslationsIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
-   std::string URI;
-   std::string Dist;
-   std::string Section;
-   const char * const Language;
-   
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
+   std::string const URI;
+   std::string const Dist;
+   std::string const Section;
+   std::string const Language;
 
-   inline std::string TranslationFile() const {return std::string("Translation-").append(Language);};
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
+
+   APT_HIDDEN std::string TranslationFile() const {return std::string("Translation-").append(Language);};
 
    public:
-   
+
    virtual const Type *GetType() const APT_CONST;
 
    // Interface for acquire
-   virtual std::string Describe(bool Short) const;   
-   virtual bool GetIndexes(pkgAcquire *Owner) const;
-   
+   virtual std::string Describe(bool Short) const;
+
    // Interface for the Cache Generator
    virtual bool Exists() const;
    virtual bool HasPackages() const;
@@ -123,11 +122,11 @@ class debTranslationsIndex : public pkgIndexFile
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
-   debTranslationsIndex(std::string URI,std::string Dist,std::string Section, char const * const Language);
-   virtual ~debTranslationsIndex() {};
+   debTranslationsIndex(std::string const &URI,std::string const &Dist,std::string const &Section, std::string const &Language);
+   virtual ~debTranslationsIndex();
 };
 
-class debSourcesIndex : public pkgIndexFile
+class APT_HIDDEN debSourcesIndex : public pkgIndexFile
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
@@ -136,10 +135,10 @@ class debSourcesIndex : public pkgIndexFile
    std::string Dist;
    std::string Section;
 
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
-   
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
+
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -161,7 +160,69 @@ class debSourcesIndex : public pkgIndexFile
    virtual unsigned long Size() const;
    
    debSourcesIndex(std::string URI,std::string Dist,std::string Section,bool Trusted);
-   virtual ~debSourcesIndex() {};
+   virtual ~debSourcesIndex();
+};
+
+class APT_HIDDEN debDebPkgFileIndex : public pkgIndexFile
+{
+ private:
+   void *d;
+   std::string DebFile;
+   std::string DebFileFullPath;
+
+ public:
+   virtual const Type *GetType() const APT_CONST;
+
+   virtual std::string Describe(bool /*Short*/) const {
+      return DebFile;
+   }
+
+   /** get the control (file) content of the deb file
+    *
+    * @param[out] content of the control file
+    * @param debfile is the filename of the .deb-file
+    * @return \b true if successful, otherwise \b false.
+    */
+   static bool GetContent(std::ostream &content, std::string const &debfile);
+
+   // Interface for the Cache Generator
+   virtual bool Exists() const;
+   virtual bool HasPackages() const {
+      return true;
+   };
+   virtual unsigned long Size() const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
+   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
+
+   // Interface for acquire
+   virtual std::string ArchiveURI(std::string /*File*/) const;
+
+   debDebPkgFileIndex(std::string DebFile);
+   virtual ~debDebPkgFileIndex();
+};
+
+class APT_HIDDEN debDscFileIndex : public pkgIndexFile
+{
+ private:
+   std::string DscFile;
+ public:
+   virtual const Type *GetType() const APT_CONST;
+   virtual pkgSrcRecords::Parser *CreateSrcParser() const;
+   virtual bool Exists() const;
+   virtual bool HasPackages() const {return false;};
+   virtual unsigned long Size() const;
+   virtual std::string Describe(bool /*Short*/) const {
+      return DscFile;
+   };
+
+   debDscFileIndex(std::string &DscFile);
+   virtual ~debDscFileIndex() {};
+};
+
+class APT_HIDDEN debDebianSourceDirIndex : public debDscFileIndex
+{
+ public:
+   virtual const Type *GetType() const APT_CONST;
 };
 
 #endif

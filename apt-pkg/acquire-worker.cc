@@ -34,6 +34,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -306,7 +309,10 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
-	    
+
+	    if (RealFileExists(Owner->DestFile))
+	       ChangeOwnerAndPermissionOfFile("201::URIDone", Owner->DestFile.c_str(), "root", "root", 0644);
+
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Owner->GetOwner());
@@ -326,25 +332,30 @@ bool pkgAcquire::Worker::RunMessages()
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    // see if there is a hash to verify
-	    string RecivedHash;
-	    HashString expectedHash(Owner->HashSum());
-	    if(!expectedHash.empty()) 
+	    HashStringList ReceivedHashes;
+	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
-	       string hashTag = expectedHash.HashType()+"-Hash";
-	       string hashSum = LookupTag(Message, hashTag.c_str());
-	       if(!hashSum.empty())
-		  RecivedHash = expectedHash.HashType() + ":" + hashSum;
-	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
-	       {
-		  clog << "201 URI Done: " << Owner->DescURI() << endl
-		       << "RecivedHash: " << RecivedHash << endl
-		       << "ExpectedHash: " << expectedHash.toStr() 
-		       << endl << endl;
-	       }
+	       std::string const tagname = std::string(*type) + "-Hash";
+	       std::string const hashsum = LookupTag(Message, tagname.c_str());
+	       if (hashsum.empty() == false)
+		  ReceivedHashes.push_back(HashString(*type, hashsum));
 	    }
-	    Owner->Done(Message, ServerSize, RecivedHash.c_str(), Config);
+
+	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
+	    {
+	       std::clog << "201 URI Done: " << Owner->DescURI() << endl
+		  << "ReceivedHash:" << endl;
+	       for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
+		  std::clog <<  "\t- " << hs->toStr() << std::endl;
+	       std::clog << "ExpectedHash:" << endl;
+	       HashStringList expectedHashes = Owner->HashSums();
+	       for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
+		  std::clog <<  "\t- " << hs->toStr() << std::endl;
+	       std::clog << endl;
+	    }
+	    Owner->Done(Message, ServerSize, ReceivedHashes, Config);
 	    ItemDone();
-	    
+
 	    // Log that we are done
 	    if (Log != 0)
 	    {
@@ -366,16 +377,21 @@ bool pkgAcquire::Worker::RunMessages()
 	 {
 	    if (Itm == 0)
 	    {
-	       _error->Error("Method gave invalid 400 URI Failure message");
+	       std::string const msg = LookupTag(Message,"Message");
+	       _error->Error("Method gave invalid 400 URI Failure message: %s", msg.c_str());
 	       break;
 	    }
 
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
 	       Log->Pulse(Itm->Owner->GetOwner());
-	    
+
 	    pkgAcquire::Item *Owner = Itm->Owner;
 	    pkgAcquire::ItemDesc Desc = *Itm;
+
+	    if (RealFileExists(Owner->DestFile))
+	       ChangeOwnerAndPermissionOfFile("400::URIFailure", Owner->DestFile.c_str(), "root", "root", 0644);
+
 	    OwnerQ->ItemDone(Itm);
 
 	    // set some status
@@ -525,9 +541,25 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
+   HashStringList const hsl = Item->Owner->HashSums();
+   for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
+      Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
+   if(Item->Owner->FileSize > 0)
+   {
+      string MaximumSize;
+      strprintf(MaximumSize, "%llu", Item->Owner->FileSize);
+      Message += "\nMaximum-Size: " + MaximumSize;
+   }
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
-   
+
+   if (RealFileExists(Item->Owner->DestFile))
+   {
+      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      ChangeOwnerAndPermissionOfFile("Item::QueueURI", Item->Owner->DestFile.c_str(),
+                                     SandboxUser.c_str(), "root", 0600);
+   }
+
    if (Debug == true)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
    OutQueue += Message;

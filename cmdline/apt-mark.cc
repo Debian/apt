@@ -22,6 +22,7 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-output.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -41,10 +42,6 @@
 									/*}}}*/
 using namespace std;
 
-ostream c0out(0);
-ostream c1out(0);
-ostream c2out(0);
-ofstream devnull("/dev/null");
 /* DoAuto - mark packages as automatically/manually installed		{{{*/
 static bool DoAuto(CommandLine &CmdL)
 {
@@ -277,6 +274,70 @@ static bool DoHold(CommandLine &CmdL)
       return true;
    }
 
+   APT::PackageList keepoffset;
+   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
+      if (Pkg->CurrentVer != 0)
+	 continue;
+      keepoffset.insert(*Pkg);
+   }
+
+   if (keepoffset.empty() == false)
+   {
+      Args.erase(Args.begin() + BaseArgs, Args.end());
+      Args.push_back("--merge-avail");
+      // FIXME: supported only since 1.17.7 in dpkg
+      Args.push_back("-");
+      Args.push_back(NULL);
+
+      int external[2] = {-1, -1};
+      if (pipe(external) != 0)
+	 return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --merge-avail");
+
+      pid_t dpkgMergeAvail = ExecFork();
+      if (dpkgMergeAvail == 0)
+      {
+	 close(external[1]);
+	 std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+	 if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
+	    _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --merge-avail", chrootDir.c_str());
+	 dup2(external[0], STDIN_FILENO);
+	 int const nullfd = open("/dev/null", O_RDONLY);
+	 dup2(nullfd, STDOUT_FILENO);
+	 execvp(Args[0], (char**) &Args[0]);
+	 _error->WarningE("dpkgGo", "Can't get dpkg --merge-avail running!");
+	 _exit(2);
+      }
+
+      FILE* dpkg = fdopen(external[1], "w");
+      for (APT::PackageList::iterator Pkg = keepoffset.begin(); Pkg != keepoffset.end(); ++Pkg)
+      {
+	 char const * Arch;
+	 if (Pkg->VersionList != 0)
+	    Arch = Pkg.VersionList().Arch();
+	 else
+	    Arch = Pkg.Arch();
+	 fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
+	       "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", Pkg.Name(), Arch);
+      }
+      fclose(dpkg);
+      keepoffset.clear();
+
+      if (dpkgMergeAvail > 0)
+      {
+	 int Status = 0;
+	 while (waitpid(dpkgMergeAvail, &Status, 0) != dpkgMergeAvail)
+	 {
+	    if (errno == EINTR)
+	       continue;
+	    _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --merge-avail");
+	    break;
+	 }
+	 if (WIFEXITED(Status) == false || WEXITSTATUS(Status) != 0)
+	    return _error->Error(_("Executing dpkg failed. Are you root?"));
+      }
+   }
+
    Args.erase(Args.begin() + BaseArgs, Args.end());
    Args.push_back("--set-selections");
    Args.push_back(NULL);
@@ -292,12 +353,9 @@ static bool DoHold(CommandLine &CmdL)
       std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
       if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
-      int const nullfd = open("/dev/null", O_RDONLY);
       dup2(external[0], STDIN_FILENO);
-      dup2(nullfd, STDOUT_FILENO);
-      dup2(nullfd, STDERR_FILENO);
       execvp(Args[0], (char**) &Args[0]);
-      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _error->WarningE("dpkgGo", "Can't get dpkg --set-selections running!");
       _exit(2);
    }
 
@@ -385,8 +443,7 @@ static bool ShowHold(CommandLine &CmdL)
 /* */
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
-	    COMMON_ARCH,__DATE__,__TIME__);
+   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    cout <<
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
@@ -441,39 +498,10 @@ int main(int argc,const char *argv[])					/*{{{*/
    setlocale(LC_ALL,"");
    textdomain(PACKAGE);
 
-   // Parse the command line and initialize the package library
-   CommandLine CmdL(Args.data(),_config);
-   if (pkgInitConfig(*_config) == false ||
-       CmdL.Parse(argc,argv) == false ||
-       pkgInitSystem(*_config,_system) == false)
-   {
-      if (_config->FindB("version") == true)
-	 ShowHelp(CmdL);
-      _error->DumpErrors();
-      return 100;
-   }
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
 
-   // See if the help should be shown
-   if (_config->FindB("help") == true ||
-       _config->FindB("version") == true ||
-       CmdL.FileSize() == 0)
-   {
-      ShowHelp(CmdL);
-      return 0;
-   }
-
-   // Deal with stdout not being a tty
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
-
-   // Setup the output streams
-   c0out.rdbuf(cout.rdbuf());
-   c1out.rdbuf(cout.rdbuf());
-   c2out.rdbuf(cout.rdbuf());
-   if (_config->FindI("quiet",0) > 0)
-      c0out.rdbuf(devnull.rdbuf());
-   if (_config->FindI("quiet",0) > 1)
-      c1out.rdbuf(devnull.rdbuf());
+   InitOutput();
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

@@ -1,0 +1,62 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'wheezy' 'apt' 'all' '0.8.15'
+
+setupaptarchive --no-update
+
+# we don't complain as the server could have just sent a 'Hit' here and this
+# 'downgrade attack' is usually performed by out-of-sync mirrors. Valid-Until
+# catches the 'real' downgrade attacks (expect that it finds stale mirrors).
+# Scaring users with an error here serves hence no point.
+
+msgmsg 'InRelease file is silently rejected if' 'new Date is before old Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 7 days'
+signreleasefiles
+testsuccess aptget update
+listcurrentlistsdirectory > listsdir.lst
+redatereleasefiles 'now - 2 days'
+testsuccess aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+msgmsg 'Release.gpg file is silently rejected if' 'new Date is before old Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 7 days'
+signreleasefiles
+find aptarchive -name 'InRelease' -delete
+testsuccess aptget update
+listcurrentlistsdirectory > listsdir.lst
+redatereleasefiles 'now - 2 days'
+find aptarchive -name 'InRelease' -delete
+testsuccess aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+msgmsg 'Crisscross InRelease/Release.gpg file is silently rejected if' 'new Date is before old Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 7 days'
+signreleasefiles
+find aptarchive -name 'Release.gpg' -delete
+testsuccess aptget update
+listcurrentlistsdirectory > listsdir.lst
+redatereleasefiles 'now - 2 days'
+find aptarchive -name 'InRelease' -delete
+testsuccess aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+msgmsg 'Crisscross Release.gpg/InRelease file is silently rejected if' 'new Date is before old Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 7 days'
+signreleasefiles
+find aptarchive -name 'InRelease' -delete
+testsuccess aptget update
+listcurrentlistsdirectory > listsdir.lst
+redatereleasefiles 'now - 2 days'
+find aptarchive -name 'Release.gpg' -delete
+testsuccess aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"

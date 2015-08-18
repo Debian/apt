@@ -47,6 +47,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <glob.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <set>
 #include <algorithm>
@@ -62,6 +64,10 @@
 #endif
 #include <endian.h>
 #include <stdint.h>
+
+#if __gnu_linux__
+#include <sys/prctl.h>
+#endif
 
 #include <apti18n.h>
 									/*}}}*/
@@ -656,6 +662,22 @@ string flCombine(string Dir,string File)
    return Dir + '/' + File;
 }
 									/*}}}*/
+// flAbsPath - Return the absolute path of the filename			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string flAbsPath(string File)
+{
+   char *p = realpath(File.c_str(), NULL);
+   if (p == NULL)
+   {
+      _error->Errno("realpath", "flAbsPath failed");
+      return "";
+   }
+   std::string AbsPath(p);
+   free(p);
+   return AbsPath;
+}
+									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -778,8 +800,9 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
+      long ScOpenMax = sysconf(_SC_OPEN_MAX);
       // Close all of our FDs - just in case
-      for (int K = 3; K != sysconf(_SC_OPEN_MAX); K++)
+      for (int K = 3; K != ScOpenMax; K++)
       {
 	 if(KeepFDs.find(K) == KeepFDs.end())
 	    fcntl(K,F_SETFD,FD_CLOEXEC);
@@ -835,6 +858,42 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
    return true;
 }
 									/*}}}*/
+// StartsWithGPGClearTextSignature - Check if a file is Pgp/GPG clearsigned	/*{{{*/
+bool StartsWithGPGClearTextSignature(string const &FileName)
+{
+   static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
+   char buffer[strlen(SIGMSG)+1];
+   FILE* gpg = fopen(FileName.c_str(), "r");
+   if (gpg == NULL)
+      return false;
+
+   char const * const test = fgets(buffer, sizeof(buffer), gpg);
+   fclose(gpg);
+   if (test == NULL || strcmp(buffer, SIGMSG) != 0)
+      return false;
+
+   return true;
+}
+									/*}}}*/
+// ChangeOwnerAndPermissionOfFile - set file attributes to requested values /*{{{*/
+bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode)
+{
+   if (strcmp(file, "/dev/null") == 0)
+      return true;
+   bool Res = true;
+   if (getuid() == 0 && strlen(user) != 0 && strlen(group) != 0) // if we aren't root, we can't chown, so don't try it
+   {
+      // ensure the file is owned by root and has good permissions
+      struct passwd const * const pw = getpwnam(user);
+      struct group const * const gr = getgrnam(group);
+      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
+	 Res &= _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
+   }
+   if (chmod(file, mode) != 0)
+      Res &= _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
+   return Res;
+}
+									/*}}}*/
 
 class FileFdPrivate {							/*{{{*/
 	public:
@@ -853,7 +912,7 @@ class FileFdPrivate {							/*{{{*/
 	   bool eof;
 	   bool compressing;
 
-	   LZMAFILE() : file(NULL), eof(false), compressing(false) {}
+	   LZMAFILE() : file(NULL), eof(false), compressing(false) { buffer[0] = '\0'; }
 	   ~LZMAFILE() {
 	      if (compressing == true)
 	      {
@@ -1241,7 +1300,8 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 if (d->lzma == NULL)
 	    d->lzma = new FileFdPrivate::LZMAFILE;
 	 d->lzma->file = (FILE*) compress_struct;
-	 d->lzma->stream = LZMA_STREAM_INIT;
+         lzma_stream tmp_stream = LZMA_STREAM_INIT;
+	 d->lzma->stream = tmp_stream;
 
 	 if ((Mode & ReadWrite) == ReadWrite)
 	    return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());
@@ -1481,7 +1541,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
-	       return FileFdError("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	       return FileFdError("BZ2_bzread: %s %s (%d: %s)", FileName.c_str(), _("Read error"), err, errmsg);
 	 }
 #endif
 #ifdef HAVE_LZMA
@@ -1797,7 +1857,8 @@ static bool StatFileFd(char const * const msg, int const iFd, std::string const 
 	 // higher-level code will generate more meaningful messages,
 	 // even translated this would be meaningless for users
 	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
-      ispipe = S_ISFIFO(Buf.st_mode);
+      if (FileName.empty() == false)
+	 ispipe = S_ISFIFO(Buf.st_mode);
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
@@ -1911,7 +1972,6 @@ bool FileFd::Close()
    {
       if ((Flags & Compressed) != Compressed && iFd > 0 && close(iFd) != 0)
 	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
-
       if (d != NULL)
       {
 	 Res &= d->CloseDown(FileName);
@@ -1991,10 +2051,7 @@ APT_DEPRECATED gzFile FileFd::gzFd() {
 #endif
 }
 
-
-// Glob - wrapper around "glob()"                                      /*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// Glob - wrapper around "glob()"					/*{{{*/
 std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
    std::vector<std::string> result;
@@ -2020,8 +2077,7 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
    return result;
 }
 									/*}}}*/
-
-std::string GetTempDir()
+std::string GetTempDir()						/*{{{*/
 {
    const char *tmpdir = getenv("TMPDIR");
 
@@ -2030,21 +2086,202 @@ std::string GetTempDir()
       tmpdir = P_tmpdir;
 #endif
 
-   // check that tmpdir is set and exists
    struct stat st;
-   if (!tmpdir || strlen(tmpdir) == 0 || stat(tmpdir, &st) != 0)
+   if (!tmpdir || strlen(tmpdir) == 0 || // tmpdir is set
+	 stat(tmpdir, &st) != 0 || (st.st_mode & S_IFDIR) == 0 || // exists and is directory
+	 access(tmpdir, R_OK | W_OK | X_OK) != 0 // current user has rwx access to directory
+      )
       tmpdir = "/tmp";
 
    return string(tmpdir);
 }
+									/*}}}*/
+FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)	/*{{{*/
+{
+   char fn[512];
+   FileFd *Fd = new FileFd();
 
-bool Rename(std::string From, std::string To)
+   std::string tempdir = GetTempDir();
+   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", 
+            tempdir.c_str(), Prefix.c_str());
+   int fd = mkstemp(fn);
+   if(ImmediateUnlink)
+      unlink(fn);
+   if (fd < 0) 
+   {
+      _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
+      return NULL;
+   }
+   if (!Fd->OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
+   {
+      _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
+      return NULL;
+   }
+
+   return Fd;
+}
+									/*}}}*/
+bool Rename(std::string From, std::string To)				/*{{{*/
 {
    if (rename(From.c_str(),To.c_str()) != 0)
    {
       _error->Error(_("rename failed, %s (%s -> %s)."),strerror(errno),
                     From.c_str(),To.c_str());
       return false;
-   }   
+   }
    return true;
 }
+									/*}}}*/
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
+{
+   int fd;
+   if (Mode != FileFd::ReadOnly && Mode != FileFd::WriteOnly)
+      return _error->Error("Popen supports ReadOnly (x)or WriteOnly mode only");
+
+   int Pipe[2] = {-1, -1};
+   if(pipe(Pipe) != 0)
+      return _error->Errno("pipe", _("Failed to create subprocess IPC"));
+
+   std::set<int> keep_fds;
+   keep_fds.insert(Pipe[0]);
+   keep_fds.insert(Pipe[1]);
+   Child = ExecFork(keep_fds);
+   if(Child < 0)
+      return _error->Errno("fork", "Failed to fork");
+   if(Child == 0)
+   {
+      if(Mode == FileFd::ReadOnly)
+      {
+         close(Pipe[0]);
+         fd = Pipe[1];
+      }
+      else if(Mode == FileFd::WriteOnly)
+      {
+         close(Pipe[1]);
+         fd = Pipe[0];
+      }
+
+      if(Mode == FileFd::ReadOnly)
+      {
+         dup2(fd, 1);
+         dup2(fd, 2);
+      } else if(Mode == FileFd::WriteOnly)
+         dup2(fd, 0);
+
+      execv(Args[0], (char**)Args);
+      _exit(100);
+   }
+   if(Mode == FileFd::ReadOnly)
+   {
+      close(Pipe[1]);
+      fd = Pipe[0];
+   } else if(Mode == FileFd::WriteOnly)
+   {
+      close(Pipe[0]);
+      fd = Pipe[1];
+   }
+   Fd.OpenDescriptor(fd, Mode, FileFd::None, true);
+
+   return true;
+}
+									/*}}}*/
+bool DropPrivileges()							/*{{{*/
+{
+   if(_config->FindB("Debug::NoDropPrivs", false) == true)
+      return true;
+
+#if __gnu_linux__
+#if defined(PR_SET_NO_NEW_PRIVS) && ( PR_SET_NO_NEW_PRIVS != 38 )
+#error "PR_SET_NO_NEW_PRIVS is defined, but with a different value than expected!"
+#endif
+   // see prctl(2), needs linux3.5 at runtime - magic constant to avoid it at buildtime
+   int ret = prctl(38, 1, 0, 0, 0);
+   // ignore EINVAL - kernel is too old to understand the option
+   if(ret < 0 && errno != EINVAL)
+      _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
+#endif
+
+   // empty setting disables privilege dropping - this also ensures
+   // backward compatibility, see bug #764506
+   const std::string toUser = _config->Find("APT::Sandbox::User");
+   if (toUser.empty())
+      return true;
+
+   // uid will be 0 in the end, but gid might be different anyway
+   uid_t const old_uid = getuid();
+   gid_t const old_gid = getgid();
+
+   if (old_uid != 0)
+      return true;
+
+   struct passwd *pw = getpwnam(toUser.c_str());
+   if (pw == NULL)
+      return _error->Error("No user %s, can not drop rights", toUser.c_str());
+
+   // Do not change the order here, it might break things
+   if (setgroups(1, &pw->pw_gid))
+      return _error->Errno("setgroups", "Failed to setgroups");
+
+   if (setegid(pw->pw_gid) != 0)
+      return _error->Errno("setegid", "Failed to setegid");
+
+   if (setgid(pw->pw_gid) != 0)
+      return _error->Errno("setgid", "Failed to setgid");
+
+   if (setuid(pw->pw_uid) != 0)
+      return _error->Errno("setuid", "Failed to setuid");
+
+   // the seteuid() is probably uneeded (at least thats what the linux
+   // man-page says about setuid(2)) but we cargo culted it anyway
+   if (seteuid(pw->pw_uid) != 0)
+      return _error->Errno("seteuid", "Failed to seteuid");
+
+   // Verify that the user has only a single group, and the correct one
+   gid_t groups[1];
+   if (getgroups(1, groups) != 1)
+      return _error->Errno("getgroups", "Could not get new groups");
+   if (groups[0] != pw->pw_gid)
+      return _error->Error("Could not switch group");
+
+   // Verify that gid, egid, uid, and euid changed
+   if (getgid() != pw->pw_gid)
+      return _error->Error("Could not switch group");
+   if (getegid() != pw->pw_gid)
+      return _error->Error("Could not switch effective group");
+   if (getuid() != pw->pw_uid)
+      return _error->Error("Could not switch user");
+   if (geteuid() != pw->pw_uid)
+      return _error->Error("Could not switch effective user");
+
+#ifdef HAVE_GETRESUID
+   // verify that the saved set-user-id was changed as well
+   uid_t ruid = 0;
+   uid_t euid = 0;
+   uid_t suid = 0;
+   if (getresuid(&ruid, &euid, &suid))
+      return _error->Errno("getresuid", "Could not get saved set-user-ID");
+   if (suid != pw->pw_uid)
+      return _error->Error("Could not switch saved set-user-ID");
+#endif
+
+#ifdef HAVE_GETRESGID
+   // verify that the saved set-group-id was changed as well
+   gid_t rgid = 0;
+   gid_t egid = 0;
+   gid_t sgid = 0;
+   if (getresgid(&rgid, &egid, &sgid))
+      return _error->Errno("getresuid", "Could not get saved set-group-ID");
+   if (sgid != pw->pw_gid)
+      return _error->Error("Could not switch saved set-group-ID");
+#endif
+
+   // Check that uid and gid changes do not work anymore
+   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
+      return _error->Error("Could restore a gid to root, privilege dropping did not work");
+
+   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+      return _error->Error("Could restore a uid to root, privilege dropping did not work");
+
+   return true;
+}
+									/*}}}*/

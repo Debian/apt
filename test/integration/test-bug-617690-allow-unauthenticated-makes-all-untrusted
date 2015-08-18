@@ -24,15 +24,19 @@ testfilemissing() {
 
 testrun() {
 	rm -rf rootdir/var/lib/apt
-	testsuccess aptget update
+	cd downloaded
 
 	if [ "$1" = 'trusted' ]; then
+	        testsuccess aptget update
+
 		testsuccess aptget download cool
 		testfileexists 'cool_1.0_i386.deb'
 
 		testsuccess aptget download cool --allow-unauthenticated
 		testfileexists 'cool_1.0_i386.deb'
 	else
+                testwarning aptget update --allow-insecure-repositories
+
 		testfailure aptget download cool
 		testfilemissing 'cool_1.0_i386.deb'
 
@@ -40,18 +44,19 @@ testrun() {
 		testfileexists 'cool_1.0_i386.deb'
 	fi
 
-	mv aptarchive/pool/cool_1.0_i386.deb aptarchive/pool/cool_1.0_i386.deb.bak
-	echo 'this is not a good package' > aptarchive/pool/cool_1.0_i386.deb
+	mv ../aptarchive/pool/cool_1.0_i386.deb ../aptarchive/pool/cool_1.0_i386.deb.bak
+	echo 'this is not a good package' > ../aptarchive/pool/cool_1.0_i386.deb
 	testfailure aptget download cool
 	testfilemissing cool_1.0_i386.deb
 
 	testfailure aptget download cool --allow-unauthenticated  # unauthenticated doesn't mean unchecked
 	testfilemissing cool_1.0_i386.deb
 
-	rm -f aptarchive/pool/cool_1.0_i386.deb
-	mv aptarchive/pool/cool_1.0_i386.deb.bak aptarchive/pool/cool_1.0_i386.deb
+	rm -f ../aptarchive/pool/cool_1.0_i386.deb
+	mv ../aptarchive/pool/cool_1.0_i386.deb.bak ../aptarchive/pool/cool_1.0_i386.deb
 	testsuccess aptget download cool --allow-unauthenticated
 	testfileexists 'cool_1.0_i386.deb'
+	cd - >/dev/null
 }
 
 testrun 'trusted'

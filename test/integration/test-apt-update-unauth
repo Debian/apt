@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Ensure that when going from unauthenticated to authenticated all
+# files are checked again
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+umask 022
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+insertsource 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+changetowebserver
+
+# FIXME: 
+#  - also check the unauth -> auth success case, i.e. that all files are
+#    reverified
+runtest() {
+    # start unauthenticated
+    rm -rf rootdir/var/lib/apt/lists/
+    find aptarchive/ -name '*Release*' -delete
+
+    testwarning aptget update --allow-insecure-repositories
+
+    # become authenticated
+    generatereleasefiles
+    signreleasefiles
+
+    # move uncompressed away
+    mv aptarchive/dists/unstable/main/binary-i386/Packages \
+        aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed
+
+    # and ensure we re-check the downloaded data
+
+    # change the local packages file
+    PKGS=$(ls rootdir/var/lib/apt/lists/*Packages*)
+    echo "meep" > $PKGS
+    listcurrentlistsdirectory > lists.before
+
+    # update and ensure all is reverted on the hashsum failure
+    testfailure aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0
+
+    # ensure we have before what we have after
+    msgtest 'Check rollback on going from' 'unauth -> auth'
+    listcurrentlistsdirectory > lists.after
+    if cmp lists.before lists.after; then
+        msgpass
+    else
+	echo >&2 '### Output of previous apt-get update ###'
+	cat >&2 rootdir/tmp/testfailure.output
+	echo >&2 '### Changes in the lists-directory: ###'
+	diff -u >&2 lists.before lists.after
+	msgfail
+    fi
+
+    # move uncompressed back for release file
+    mv aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed \
+        aptarchive/dists/unstable/main/binary-i386/Packages
+}
+
+for COMPRESSEDINDEXES in 'false' 'true'; do
+	echo "Acquire::GzipIndexes \"$COMPRESSEDINDEXES\";" > rootdir/etc/apt/apt.conf.d/compressindexes
+	if $COMPRESSEDINDEXES; then
+		msgmsg 'Run tests with GzipIndexes enabled'
+	else
+		msgmsg 'Run tests with GzipIndexes disabled'
+	fi
+	runtest
+done

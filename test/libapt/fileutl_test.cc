@@ -53,11 +53,16 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
    // ensure the memory is as predictably messed up
 #define APT_INIT_READBACK \
    char readback[20]; \
-   memset(readback, 'D', sizeof(readback)/sizeof(readback[0])); \
+   memset(readback, 'D', sizeof(readback)*sizeof(readback[0])); \
    readback[19] = '\0';
 #define EXPECT_N_STR(expect, actual) \
    EXPECT_EQ(0, strncmp(expect, actual, strlen(expect)));
-
+   {
+      APT_INIT_READBACK
+      char const * const expect = "DDDDDDDDDDDDDDDDDDD";
+      EXPECT_STREQ(expect,readback);
+      EXPECT_N_STR(expect, readback);
+   }
    {
       APT_INIT_READBACK
       char const * const expect = "This";
@@ -217,10 +222,79 @@ TEST(FileUtlTest, GetTempDir)
    setenv("TMPDIR", "/not-there-no-really-not", 1);
    EXPECT_EQ("/tmp", GetTempDir());
 
+   // here but not accessible for non-roots
    setenv("TMPDIR", "/usr", 1);
-   EXPECT_EQ("/usr", GetTempDir());
+   EXPECT_EQ("/tmp", GetTempDir());
+
+   // files are no good for tmpdirs, too
+   setenv("TMPDIR", "/dev/null", 1);
+   EXPECT_EQ("/tmp", GetTempDir());
+
+   setenv("TMPDIR", "/var/tmp", 1);
+   EXPECT_EQ("/var/tmp", GetTempDir());
 
    unsetenv("TMPDIR");
    if (old_tmpdir.empty() == false)
       setenv("TMPDIR", old_tmpdir.c_str(), 1);
+}
+TEST(FileUtlTest, Popen)
+{
+   FileFd Fd;
+   pid_t Child;
+   char buf[1024];
+   std::string s;
+   unsigned long long n = 0;
+   std::vector<std::string> OpenFds;
+
+   // count Fds to ensure we don't have a resource leak
+   if(FileExists("/proc/self/fd"))
+      OpenFds = Glob("/proc/self/fd/*");
+
+   // output something
+   const char* Args[10] = {"/bin/echo", "meepmeep", NULL};
+   EXPECT_TRUE(Popen(Args, Fd, Child, FileFd::ReadOnly));
+   EXPECT_TRUE(Fd.Read(buf, sizeof(buf)-1, &n));
+   buf[n] = 0;
+   EXPECT_NE(n, 0);
+   EXPECT_STREQ(buf, "meepmeep\n");
+
+   // wait for the child to exit and cleanup
+   EXPECT_TRUE(ExecWait(Child, "PopenRead"));
+   EXPECT_TRUE(Fd.Close());
+
+   // ensure that after a close all is good again
+   if(FileExists("/proc/self/fd"))
+      EXPECT_EQ(Glob("/proc/self/fd/*").size(), OpenFds.size());
+
+   // ReadWrite is not supported
+   _error->PushToStack();
+   EXPECT_FALSE(Popen(Args, Fd, Child, FileFd::ReadWrite));
+   EXPECT_FALSE(Fd.IsOpen());
+   EXPECT_FALSE(Fd.Failed());
+   EXPECT_TRUE(_error->PendingError());
+   _error->RevertToStack();
+
+   // write something
+   Args[0] = "/bin/bash";
+   Args[1] = "-c";
+   Args[2] = "read";
+   Args[3] = NULL;
+   EXPECT_TRUE(Popen(Args, Fd, Child, FileFd::WriteOnly));
+   s = "\n";
+   EXPECT_TRUE(Fd.Write(s.c_str(), s.length()));
+   EXPECT_TRUE(Fd.Close());
+   EXPECT_FALSE(Fd.IsOpen());
+   EXPECT_FALSE(Fd.Failed());
+   EXPECT_TRUE(ExecWait(Child, "PopenWrite"));
+}
+TEST(FileUtlTest, flAbsPath)
+{
+   std::string cwd = SafeGetCWD();
+   int res = chdir("/bin/");
+   EXPECT_EQ(res, 0);
+   std::string p = flAbsPath("ls");
+   EXPECT_EQ(p, "/bin/ls");
+
+   res = chdir(cwd.c_str());
+   EXPECT_EQ(res, 0);
 }

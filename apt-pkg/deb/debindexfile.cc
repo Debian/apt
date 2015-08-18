@@ -30,9 +30,11 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
+#include <apt-pkg/sptr.h>
 
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/stat.h>
 									/*}}}*/
@@ -80,14 +82,18 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
    string SourcesURI = _config->FindDir("Dir::State::lists") + 
       URItoFileName(IndexURI("Sources"));
-   string SourcesURIgzip = SourcesURI + ".gz";
 
-   if (!FileExists(SourcesURI) && !FileExists(SourcesURIgzip))
-      return NULL;
-   else if (!FileExists(SourcesURI) && FileExists(SourcesURIgzip))
-      SourcesURI = SourcesURIgzip;
-
-   return new debSrcRecordParser(SourcesURI,this);
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p;
+      p = SourcesURI + '.' + *t;
+      if (FileExists(p))
+         return new debSrcRecordParser(p, this);
+   }
+   if (FileExists(SourcesURI))
+      return new debSrcRecordParser(SourcesURI, this);
+   return NULL;
 }
 									/*}}}*/
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
@@ -126,14 +132,18 @@ string debSourcesIndex::Info(const char *Type) const
 // SourcesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debSourcesIndex::IndexFile(const char *Type) const
+string debSourcesIndex::IndexFile(const char *Type) const
 {
    string s = URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 
 string debSourcesIndex::IndexURI(const char *Type) const
@@ -256,14 +266,18 @@ string debPackagesIndex::Info(const char *Type) const
 // PackagesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debPackagesIndex::IndexFile(const char *Type) const
+string debPackagesIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debPackagesIndex::IndexURI(const char *Type) const
 {
@@ -399,8 +413,8 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 // TranslationsIndex::debTranslationsIndex - Contructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section,
-						char const * const Translation) :
+debTranslationsIndex::debTranslationsIndex(std::string const &URI, std::string const &Dist,
+						std::string const &Section, std::string const &Translation) :
 			pkgIndexFile(true), URI(URI), Dist(Dist), Section(Section),
 				Language(Translation)
 {}
@@ -408,14 +422,18 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 // TranslationIndex::Trans* - Return the URI to the translation files	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debTranslationsIndex::IndexFile(const char *Type) const
+string debTranslationsIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debTranslationsIndex::IndexURI(const char *Type) const
 {
@@ -435,31 +453,18 @@ string debTranslationsIndex::IndexURI(const char *Type) const
    return Res;
 }
 									/*}}}*/
-// TranslationsIndex::GetIndexes - Fetch the index files		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
-{
-   string const TranslationFile = string("Translation-").append(Language);
-   new pkgAcqIndexTrans(Owner, IndexURI(Language),
-                        Info(TranslationFile.c_str()),
-                        TranslationFile);
-
-   return true;
-}
-									/*}}}*/
 // TranslationsIndex::Describe - Give a descriptive path to the index	/*{{{*/
 // ---------------------------------------------------------------------
 /* This should help the user find the index in the sources.list and
    in the filesystem for problem solving */
 string debTranslationsIndex::Describe(bool Short) const
-{   
-   char S[300];
+{
+   std::string S;
    if (Short == true)
-      snprintf(S,sizeof(S),"%s",Info(TranslationFile().c_str()).c_str());
+      strprintf(S,"%s",Info(TranslationFile().c_str()).c_str());
    else
-      snprintf(S,sizeof(S),"%s (%s)",Info(TranslationFile().c_str()).c_str(),
-	       IndexFile(Language).c_str());
+      strprintf(S,"%s (%s)",Info(TranslationFile().c_str()).c_str(),
+	       IndexFile(Language.c_str()).c_str());
    return S;
 }
 									/*}}}*/
@@ -483,7 +488,7 @@ string debTranslationsIndex::Info(const char *Type) const
 									/*}}}*/
 bool debTranslationsIndex::HasPackages() const				/*{{{*/
 {
-   return FileExists(IndexFile(Language));
+   return FileExists(IndexFile(Language.c_str()));
 }
 									/*}}}*/
 // TranslationsIndex::Exists - Check if the index is available		/*{{{*/
@@ -491,7 +496,7 @@ bool debTranslationsIndex::HasPackages() const				/*{{{*/
 /* */
 bool debTranslationsIndex::Exists() const
 {
-   return FileExists(IndexFile(Language));
+   return FileExists(IndexFile(Language.c_str()));
 }
 									/*}}}*/
 // TranslationsIndex::Size - Return the size of the index		/*{{{*/
@@ -504,7 +509,7 @@ unsigned long debTranslationsIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f(IndexFile(Language), FileFd::ReadOnly, FileFd::Extension);
+   FileFd f(IndexFile(Language.c_str()), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -521,11 +526,11 @@ unsigned long debTranslationsIndex::Size() const
 bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    // Check the translation file, if in use
-   string TranslationFile = IndexFile(Language);
+   string TranslationFile = IndexFile(Language.c_str());
    if (FileExists(TranslationFile))
    {
      FileFd Trans(TranslationFile,FileFd::ReadOnly, FileFd::Extension);
-     debListParser TransParser(&Trans);
+     debTranslationsParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
      
@@ -551,7 +556,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 /* */
 pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) const
 {
-   string FileName = IndexFile(Language);
+   string FileName = IndexFile(Language.c_str());
    
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; ++File)
@@ -618,7 +623,7 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_ptrloc const storage = Gen.WriteUniqString("now");
+   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "now");
    CFile->Archive = storage;
    
    if (Gen.MergeList(Parser) == false)
@@ -667,14 +672,146 @@ APT_CONST bool debStatusIndex::Exists() const
 }
 									/*}}}*/
 
+// debDebPkgFile - Single .deb file					/*{{{*/
+debDebPkgFileIndex::debDebPkgFileIndex(std::string DebFile)
+   : pkgIndexFile(true), DebFile(DebFile)
+{
+   DebFileFullPath = flAbsPath(DebFile);
+}
+
+std::string debDebPkgFileIndex::ArchiveURI(std::string /*File*/) const
+{
+   return "file:" + DebFileFullPath;
+}
+
+bool debDebPkgFileIndex::Exists() const
+{
+   return FileExists(DebFile);
+}
+bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &debfile)
+{
+   // get the control data out of the deb file via dpkg-deb -I
+   std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg-deb");
+   std::vector<const char *> Args;
+   Args.push_back(dpkg.c_str());
+   Args.push_back("-I");
+   Args.push_back(debfile.c_str());
+   Args.push_back("control");
+   Args.push_back(NULL);
+   FileFd PipeFd;
+   pid_t Child;
+   if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
+      return _error->Error("Popen failed");
+
+   char buffer[1024];
+   do {
+      unsigned long long actual = 0;
+      if (PipeFd.Read(buffer, sizeof(buffer)-1, &actual) == false)
+	 return _error->Errno("read", "Failed to read dpkg pipe");
+      if (actual == 0)
+	 break;
+      buffer[actual] = '\0';
+      content << buffer;
+   } while(true);
+   ExecWait(Child, "Popen");
+
+   content << "Filename: " << debfile << "\n";
+   struct stat Buf;
+   if (stat(debfile.c_str(), &Buf) != 0)
+      return false;
+   content << "Size: " << Buf.st_size << "\n";
+
+   return true;
+}
+bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
+{
+   if(Prog)
+      Prog->SubProgress(0, "Reading deb file");
+
+   // write the control data to a tempfile
+   SPtr<FileFd> DebControl = GetTempFile("deb-file-" + flNotDir(DebFile));
+   if(DebControl == NULL)
+      return false;
+   std::ostringstream content;
+   if (GetContent(content, DebFile) == false)
+      return false;
+   std::string const contentstr = content.str();
+   DebControl->Write(contentstr.c_str(), contentstr.length());
+   // rewind for the listparser
+   DebControl->Seek(0);
+
+   // and give it to the list parser
+   debDebFileParser Parser(DebControl, DebFile);
+   if(Gen.SelectFile(DebFile, "local", *this) == false)
+      return _error->Error("Problem with SelectFile %s", DebFile.c_str());
+
+   pkgCache::PkgFileIterator File = Gen.GetCurFile();
+   File->Size = DebControl->Size();
+   File->mtime = DebControl->ModificationTime();
+   
+   if (Gen.MergeList(Parser) == false)
+      return _error->Error("Problem with MergeLister for %s", DebFile.c_str());
+
+   return true;
+}
+pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
+{
+   pkgCache::PkgFileIterator File = Cache.FileBegin();
+   for (; File.end() == false; ++File)
+   {
+       if (File.FileName() == NULL || DebFile != File.FileName())
+	 continue;
+
+       return File;
+   }
+   
+   return File;
+}
+unsigned long debDebPkgFileIndex::Size() const
+{
+   struct stat buf;
+   if(stat(DebFile.c_str(), &buf) != 0)
+      return 0;
+   return buf.st_size;
+}
+									/*}}}*/
+
+// debDscFileIndex stuff
+debDscFileIndex::debDscFileIndex(std::string &DscFile) 
+   : pkgIndexFile(true), DscFile(DscFile)
+{
+}
+
+bool debDscFileIndex::Exists() const
+{
+   return FileExists(DscFile);
+}
+
+unsigned long debDscFileIndex::Size() const
+{
+   struct stat buf;
+   if(stat(DscFile.c_str(), &buf) == 0)
+      return buf.st_size;
+   return 0;
+}
+
+// DscFileIndex::CreateSrcParser - Get a parser for the .dsc file	/*{{{*/
+pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
+{
+   if (!FileExists(DscFile))
+      return NULL;
+
+   return new debDscRecordParser(DscFile,this);
+}
+									/*}}}*/
 // Index File types for Debian						/*{{{*/
-class debIFTypeSrc : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeSrc : public pkgIndexFile::Type
 {
    public:
    
    debIFTypeSrc() {Label = "Debian Source Index";};
 };
-class debIFTypePkg : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypePkg : public pkgIndexFile::Type
 {
    public:
    
@@ -684,12 +821,12 @@ class debIFTypePkg : public pkgIndexFile::Type
    };
    debIFTypePkg() {Label = "Debian Package Index";};
 };
-class debIFTypeTrans : public debIFTypePkg
+class APT_HIDDEN debIFTypeTrans : public debIFTypePkg
 {
    public:
    debIFTypeTrans() {Label = "Debian Translation Index";};
 };
-class debIFTypeStatus : public pkgIndexFile::Type
+class APT_HIDDEN debIFTypeStatus : public pkgIndexFile::Type
 {
    public:
    
@@ -699,10 +836,42 @@ class debIFTypeStatus : public pkgIndexFile::Type
    };
    debIFTypeStatus() {Label = "Debian dpkg status file";};
 };
-static debIFTypeSrc _apt_Src;
-static debIFTypePkg _apt_Pkg;
-static debIFTypeTrans _apt_Trans;
-static debIFTypeStatus _apt_Status;
+class APT_HIDDEN debIFTypeDebPkgFile : public pkgIndexFile::Type
+{
+   public:
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const 
+   {
+      return new debDebFileRecordParser(File.FileName());
+   };
+   debIFTypeDebPkgFile() {Label = "deb Package file";};
+};
+class APT_HIDDEN debIFTypeDscFile : public pkgIndexFile::Type
+{
+   public:
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string DscFile) const
+   {
+      return new debDscRecordParser(DscFile, NULL);
+   };
+   debIFTypeDscFile() {Label = "dsc File Source Index";};
+};
+class APT_HIDDEN debIFTypeDebianSourceDir : public pkgIndexFile::Type
+{
+   public:
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string SourceDir) const
+   {
+      return new debDscRecordParser(SourceDir + string("/debian/control"), NULL);
+   };
+   debIFTypeDebianSourceDir() {Label = "debian/control File Source Index";};
+};
+
+APT_HIDDEN debIFTypeSrc _apt_Src;
+APT_HIDDEN debIFTypePkg _apt_Pkg;
+APT_HIDDEN debIFTypeTrans _apt_Trans;
+APT_HIDDEN debIFTypeStatus _apt_Status;
+APT_HIDDEN debIFTypeDebPkgFile _apt_DebPkgFile;
+// file based pseudo indexes
+APT_HIDDEN debIFTypeDscFile _apt_DscFile;
+APT_HIDDEN debIFTypeDebianSourceDir _apt_DebianSourceDir;
 
 const pkgIndexFile::Type *debSourcesIndex::GetType() const
 {
@@ -720,5 +889,23 @@ const pkgIndexFile::Type *debStatusIndex::GetType() const
 {
    return &_apt_Status;
 }
-
+const pkgIndexFile::Type *debDebPkgFileIndex::GetType() const
+{
+   return &_apt_DebPkgFile;
+}
+const pkgIndexFile::Type *debDscFileIndex::GetType() const
+{
+   return &_apt_DscFile;
+}
+const pkgIndexFile::Type *debDebianSourceDirIndex::GetType() const
+{
+   return &_apt_DebianSourceDir;
+}
 									/*}}}*/
+
+debStatusIndex::~debStatusIndex() {}
+debPackagesIndex::~debPackagesIndex() {}
+debTranslationsIndex::~debTranslationsIndex() {}
+debSourcesIndex::~debSourcesIndex() {}
+
+debDebPkgFileIndex::~debDebPkgFileIndex() {}
