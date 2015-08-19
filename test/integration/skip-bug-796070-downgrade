@@ -1,0 +1,67 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'apt' 'all' '1.0.10.1' 'Depends: libapt-pkg4.16 (>= 1.0.10.1)'
+insertinstalledpackage 'libapt-pkg4.16' 'all' '1.0.10.1' 'Breaks: apt (<< 0.9.4~), libapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'libapt-pkg5.0' 'all' '1.1~exp9' 'Breaks: apt (<< 1.1~exp4), libapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'apt' 'all' '1.1~exp9' 'Depends: libapt-pkg5.0'
+
+insertpackage 'unstable' 'napt' 'all' '1.0.10.1' 'Depends: nlibapt-pkg4.16 (>= 1.0.10.1)'
+insertinstalledpackage 'nlibapt-pkg4.16' 'all' '1.0.10.1' 'Breaks: napt (<< 0.9.4~), nlibapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'nlibapt-pkg5.0' 'all' '1.1~exp9' 'Breaks: napt (<< 1.1~exp4), nlibapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'napt' 'all' '1.1~exp9' 'Depends: nlibapt-pkg5.0'
+
+insertpackage 'unstable' 'eapt' 'all' '1.0.10.1' 'Depends: elibapt-pkg4.16 (>= 1.0.10.1)
+Essential: yes'
+insertinstalledpackage 'elibapt-pkg4.16' 'all' '1.0.10.1' 'Breaks: eapt (<< 0.9.4~), elibapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'elibapt-pkg5.0' 'all' '1.1~exp9' 'Breaks: eapt (<< 1.1~exp4), elibapt-inst1.5 (<< 0.9.9~)'
+insertinstalledpackage 'eapt' 'all' '1.1~exp9' 'Depends: elibapt-pkg5.0
+Essential: yes'
+
+
+setupaptarchive
+
+
+# Check with a normal package
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  nlibapt-pkg5.0
+The following packages will be DOWNGRADED:
+  napt
+0 upgraded, 0 newly installed, 1 downgraded, 1 to remove and 0 not upgraded.
+Remv nlibapt-pkg5.0 [1.1~exp9] [napt:i386 ]
+Inst napt [1.1~exp9] (1.0.10.1 unstable [all])
+Conf napt (1.0.10.1 unstable [all])' apt install -s napt=1.0.10.1
+
+
+# Check with Essential
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  elibapt-pkg5.0
+The following packages will be DOWNGRADED:
+  eapt
+0 upgraded, 0 newly installed, 1 downgraded, 1 to remove and 0 not upgraded.
+Remv elibapt-pkg5.0 [1.1~exp9]
+Inst eapt [1.1~exp9] (1.0.10.1 unstable [all])
+Conf eapt (1.0.10.1 unstable [all])' apt install -s eapt=1.0.10.1
+
+
+# Check with the APT name, aka essential
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libapt-pkg5.0
+The following packages will be DOWNGRADED:
+  apt
+0 upgraded, 0 newly installed, 1 downgraded, 1 to remove and 0 not upgraded.
+Remv libapt-pkg5.0 [1.1~exp9]
+Inst apt [1.1~exp9] (1.0.10.1 unstable [all])
+Conf apt (1.0.10.1 unstable [all])' apt install -s apt=1.0.10.1
