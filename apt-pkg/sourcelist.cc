@@ -384,7 +384,7 @@ bool pkgSourceList::ParseFileOldStyle(std::string const &File)
 	 continue;
 
       // Grok it
-      std::string const LineType = Buffer.substr(0, Buffer.find(' '));
+      std::string const LineType = Buffer.substr(0, Buffer.find_first_of(" \t\v"));
       if (LineType.empty() || LineType == Buffer)
 	 return _error->Error(_("Malformed line %u in source list %s (type)"),CurLine,File.c_str());
 

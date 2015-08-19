@@ -31,6 +31,12 @@ testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.deb
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
+msgcleantest 'Test sources.list' 'old style with tabs'
+echo "deb	http://ftp.debian.org/debian	stable main" > $LISTS
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
+
 msgcleantest 'Test sources.list' 'old style with options'
 echo "deb [trusted=yes arch+=armel,powerpc] http://ftp.debian.org/debian stable main" > $LISTS
 testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
