@@ -236,15 +236,15 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const 
    pkgVersioningSystem *vs = Cache->VS;
 
    for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
-      int priority = GetPriority(ver);
+      int priority = GetPriority(ver, true);
 
-	 if (priority == 0 || priority <= candPriority)
-	    continue;
+      if (priority == 0 || priority <= candPriority)
+	 continue;
 
-	 // TODO: Maybe optimize to not compare versions
-	 if (!cur.end() && priority < 1000
-	    && (vs->CmpVersion(ver.VerStr(), cur.VerStr()) < 0))
-	    continue;
+      // TODO: Maybe optimize to not compare versions
+      if (!cur.end() && priority < 1000
+	  && (vs->CmpVersion(ver.VerStr(), cur.VerStr()) < 0))
+	 continue;
 
       candPriority = priority;
       cand = ver;
