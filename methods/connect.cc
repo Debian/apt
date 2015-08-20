@@ -18,6 +18,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/srvrec.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -42,6 +43,9 @@ static std::string LastHost;
 static int LastPort = 0;
 static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
+
+static std::vector<SrvRec> SrvRecords;
+static int LastSrvRecord = 0;
 
 // Set of IP/hostnames that we timed out before or couldn't resolve
 static std::set<std::string> bad_addr;
@@ -130,15 +134,12 @@ static bool DoConnect(struct addrinfo *Addr,std::string Host,
    return true;
 }
 									/*}}}*/
-// Connect - Connect to a server					/*{{{*/
-// ---------------------------------------------------------------------
-/* Performs a connection to the server */
-bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
-	     unsigned long TimeOut,pkgAcqMethod *Owner)
-{
-   if (_error->PendingError() == true)
-      return false;
 
+// Connect to a given Hostname 
+bool ConnectToHostname(std::string Host,int Port,const char *Service,
+                            int DefPort,int &Fd,
+                            unsigned long TimeOut,pkgAcqMethod *Owner)
+{
    // Convert the port name/number
    char ServStr[300];
    if (Port != 0)
@@ -258,3 +259,37 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
    return _error->Error(_("Unable to connect to %s:%s:"),Host.c_str(),ServStr);
 }
 									/*}}}*/
+// Connect - Connect to a server					/*{{{*/
+// ---------------------------------------------------------------------
+/* Performs a connection to the server (including SRV record lookup) */
+bool Connect(std::string Host,int Port,const char *Service,
+                            int DefPort,int &Fd,
+                            unsigned long TimeOut,pkgAcqMethod *Owner)
+{
+   if (_error->PendingError() == true)
+      return false;
+
+   if(LastHost != Host || LastPort != Port)
+   {
+      SrvRecords.clear();
+      if (_config->FindB("Acquire::EnableSrvRecods", true) == true)
+         GetSrvRecords(Host, DefPort, SrvRecords);
+   }
+   // we have no SrvRecords for this host, connect right away
+   if(SrvRecords.size() == 0)
+      return ConnectToHostname(Host, Port, Service, DefPort, Fd, 
+                                    TimeOut, Owner);
+
+   // try to connect in the priority order of the srv records
+   while(SrvRecords.size() > 0)
+   {
+      Host = PopFromSrvRecs(SrvRecords).target;
+      if(ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner))
+         return true;
+
+      // we couldn't connect to this one, use the next
+      SrvRecords.erase(SrvRecords.begin());
+   }
+
+   return false;
+}
