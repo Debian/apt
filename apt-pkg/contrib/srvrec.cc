@@ -13,12 +13,17 @@
 #include <netinet/in.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
+#include <chrono>
 
 #include <algorithm>
 
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
+
+
 #include "srvrec.h"
+
 
 bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result)
 {
@@ -112,6 +117,29 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
    // sort them by priority
    std::stable_sort(Result.begin(), Result.end());
 
+   for(std::vector<SrvRec>::iterator I = Result.begin();
+      I != Result.end(); ++I)
+   {
+      if (_config->FindB("Debug::Acquire::SrvRecs", false) == true)
+      {
+         std::cerr << "SrvRecs: got " << I->target
+                   << " prio: " << I->priority
+                   << " weight: " << I->weight
+                   << std::endl;
+      }
+   }
+
+   return true;
+}
+
+SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs)
+{
+   // FIXME: instead of the simplistic shuffle below use the algorithm
+   //        described in rfc2782 (with weights)
+   //        and figure out how the weights need to be adjusted if
+   //        a host refuses connections
+
+#if 0  // all code below is only needed for the weight adjusted selection 
    // assign random number ranges
    int prev_weight = 0;
    int prev_priority = 0;
@@ -124,6 +152,12 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       I->random_number_range_end = prev_weight + I->weight;
       prev_weight = I->random_number_range_end;
       prev_priority = I->priority;
+
+      if (_config->FindB("Debug::Acquire::SrvRecs", false) == true)
+         std::cerr << "SrvRecs: got " << I->target
+                   << " prio: " << I->priority
+                   << " weight: " << I->weight
+                   << std::endl;
    }
 
    // go over the code in reverse order and note the max random range
@@ -136,8 +170,27 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
          max = I->random_number_range_end;
       I->random_number_range_max = max;
    }
+#endif
 
-   // FIXME: now shuffle 
+   // shuffle in a very simplistic way for now (equal weights)
+   std::vector<SrvRec>::iterator I, J;
+   I = J = Recs.begin();
+   for(;I != Recs.end(); ++I)
+   {
+      if(I->priority != J->priority)
+         break;
+   }
 
-   return true;
+   // FIXME: meeeeh, where to init this properly
+   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+   std::shuffle(J, I, std::default_random_engine(seed));
+
+   // meh, no pop_front() in std::vector?
+   SrvRec selected = *Recs.begin();
+   Recs.erase(Recs.begin());
+
+   if (_config->FindB("Debug::Acquire::SrvRecs", false) == true)
+      std::cerr << "PopFromSrvRecs: selecting " << selected.target << std::endl;
+
+   return selected;
 }

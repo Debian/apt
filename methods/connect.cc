@@ -272,7 +272,8 @@ bool Connect(std::string Host,int Port,const char *Service,
    if(LastHost != Host || LastPort != Port)
    {
       SrvRecords.clear();
-      bool res = GetSrvRecords(Host, DefPort, SrvRecords);
+      if (_config->FindB("Acquire::EnableSrvRecods", true) == true)
+         GetSrvRecords(Host, DefPort, SrvRecords);
    }
    // we have no SrvRecords for this host, connect right away
    if(SrvRecords.size() == 0)
@@ -282,7 +283,7 @@ bool Connect(std::string Host,int Port,const char *Service,
    // try to connect in the priority order of the srv records
    while(SrvRecords.size() > 0)
    {
-      Host = SrvRecords[0].target;
+      Host = PopFromSrvRecs(SrvRecords).target;
       if(ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner))
          return true;
 
