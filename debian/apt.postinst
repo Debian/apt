@@ -40,8 +40,13 @@ case "$1" in
 	fi
 
 	# add unprivileged user for the apt methods
-	adduser --force-badname --system -home /var/empty \
+	adduser --force-badname --system --home /nonexistent  \
 	    --no-create-home --quiet _apt || true
+
+	# Fixup any mistake in the home directory of the _apt user
+	if dpkg --compare-versions "$2" lt-nl 1.1~exp10~; then
+	    usermod --home /nonexistent _apt
+	fi
 
 	# deal with upgrades from experimental
 	if dpkg --compare-versions "$2" 'eq' '1.1~exp3'; then
