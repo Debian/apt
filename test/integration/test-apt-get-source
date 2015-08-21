@@ -50,11 +50,20 @@ $DOWNLOAD1" aptget source -q --print-uris foo/stable
 testsuccessequal "$HEADER
 Selected version '2.0' (unstable) for foo
 $DOWNLOAD2" aptget source -q --print-uris foo/unstable
+testsuccessequal "$HEADER
+Selected version '1.0' (stable) for foo
+$DOWNLOAD1" aptget source -q --print-uris foo -t stable
+testsuccessequal "$HEADER
+Selected version '2.0' (unstable) for foo
+$DOWNLOAD2" aptget source -q --print-uris foo -t unstable
 
 # select by release: codename
 testsuccessequal "$HEADER
 Selected version '2.0' (sid) for foo
 $DOWNLOAD2" aptget source -q --print-uris foo/sid
+testsuccessequal "$HEADER
+Selected version '2.0' (sid) for foo
+$DOWNLOAD2" aptget source -q --print-uris foo -t sid
 
 # select by version
 testsuccessequal "$HEADER
