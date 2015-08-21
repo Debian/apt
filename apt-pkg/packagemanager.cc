@@ -268,6 +268,33 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
    return true;
 }
 									/*}}}*/
+// PM::CheckRBreaks - Look for reverse breaks				/*{{{*/
+bool pkgPackageManager::CheckRBreaks(PkgIterator const &Pkg, DepIterator D,
+				     const char * const Ver)
+{
+   for (;D.end() == false; ++D)
+   {
+      if (D->Type != pkgCache::Dep::DpkgBreaks)
+	 continue;
+
+      PkgIterator const DP = D.ParentPkg();
+      if (Cache[DP].Delete() == false)
+	 continue;
+
+      // Ignore self conflicts, ignore conflicts from irrelevant versions
+      if (D.IsIgnorable(Pkg) || D.ParentVer() != DP.CurrentVer())
+	 continue;
+
+      if (Cache.VS().CheckDep(Ver, D->CompareOp, D.TargetVer()) == false)
+	 continue;
+
+      // no earlyremove() here as user has already agreed to the permanent removal
+      if (SmartRemove(DP) == false)
+	 return _error->Error("Internal Error, Could not early remove %s (%d)",DP.FullName().c_str(), 4);
+   }
+   return true;
+}
+									/*}}}*/
 // PM::ConfigureAll - Run the all out configuration			/*{{{*/
 // ---------------------------------------------------------------------
 /* This configures every package. It is assumed they are all unpacked and
@@ -561,6 +588,14 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
    if (Bad == true)
       return _error->Error(_("Could not configure '%s'. "),Pkg.FullName().c_str());
 
+   // Check for reverse conflicts.
+   if (CheckRBreaks(Pkg,Pkg.RevDependsList(), instVer.VerStr()) == false)
+      return false;
+
+   for (PrvIterator P = instVer.ProvidesList(); P.end() == false; ++P)
+      if (Pkg->Group != P.OwnerPkg()->Group)
+	 CheckRBreaks(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+
    if (PkgLoop) return true;
 
    static std::string const conf = _config->Find("PackageManager::Configure","all");
@@ -847,7 +882,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			clog << OutputInDepth(Depth) << "Because of conflict knot, removing " << ConflictPkg.FullName() << " temporarily" << endl;
 		  }
 		  if (EarlyRemove(ConflictPkg, &End) == false)
-		     return _error->Error("Internal Error, Could not early remove %s (2)",ConflictPkg.FullName().c_str());
+		     return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 3);
 		  SomethingBad = true;
 		  continue;
 	       }
@@ -889,7 +924,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			if (Debug)
 			   clog << OutputInDepth(Depth) << "So temprorary remove/deconfigure " << ConflictPkg.FullName() << " to satisfy " << End << endl;
 			if (EarlyRemove(ConflictPkg, &End) == false)
-			   return _error->Error("Internal Error, Could not early remove %s (2)",ConflictPkg.FullName().c_str());
+			   return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 2);
 		     }
 		  }
 		  else
@@ -901,7 +936,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     clog << OutputInDepth(Depth) << "Removing " << ConflictPkg.FullName() << " now to avoid " << End << endl;
 		  // no earlyremove() here as user has already agreed to the permanent removal
 		  if (SmartRemove(Pkg) == false)
-		     return _error->Error("Internal Error, Could not early remove %s (1)",ConflictPkg.FullName().c_str());
+		     return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 1);
 	       }
 	    }
 	 }

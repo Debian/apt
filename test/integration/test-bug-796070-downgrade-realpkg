@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+buildsimplenativepackage 'apt' 'all' '1.0.10.1' 'stable' 'Depends: libapt-pkg4.16 (>= 1.0.10.1)'
+buildsimplenativepackage 'libapt-pkg4.16' 'all' '1.0.10.1' 'stable' 'Breaks: apt (<< 0.9.4~), libapt-inst1.5 (<< 0.9.9~)'
+buildsimplenativepackage 'libapt-pkg5.0' 'all' '1.1~exp9'  'unstable' 'Breaks: apt (<< 1.1~exp4), libapt-inst1.5 (<< 0.9.9~)'
+buildsimplenativepackage 'apt' 'all' '1.1~exp9' 'unstable' 'Depends: libapt-pkg5.0'
+
+setupaptarchive
+
+# Check with the APT name, aka essential
+testsuccess aptget install apt -t stable -y
+testsuccess aptget dist-upgrade -y
+
+testsuccess aptget install apt/stable -y --allow-downgrades -o Debug::pkgPackageManager=1 #-o Debug::pkgDpkgPM=1
+testdpkginstalled apt libapt-pkg4.16
+testdpkgnotinstalled libapt-pkg5.0

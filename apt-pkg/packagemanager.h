@@ -76,6 +76,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth = 0);
    virtual OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
+   bool CheckRBreaks(PkgIterator const &Pkg,DepIterator Dep,const char * const Ver);
    bool CreateOrderList();
    
    // Analysis helpers
