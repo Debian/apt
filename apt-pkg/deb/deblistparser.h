@@ -117,4 +117,11 @@ class debTranslationsParser : public debListParser
       : debListParser(File, Arch) {};
 };
 
+class APT_HIDDEN debStatusListParser : public debListParser
+{
+ public:
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
+   debStatusListParser(FileFd *File)
+      : debListParser(File) {};
+};
 #endif
