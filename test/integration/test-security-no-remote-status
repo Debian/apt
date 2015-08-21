@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Test that packages from remote sources cannot set the Status field.
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+TMPDIR=$(readlink -f .)
+
+insertpackage 'unstable' 'pretends-installed' 'all' '1' 'Status: install ok installed'
+insertinstalledpackage 'really-installed' 'all' '1'
+setupaptarchive
+
+testequal "pretends-installed:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 0
+        500 file:${TMPDIR}/aptarchive/ unstable/main amd64 Packages" aptcache policy pretends-installed
+
+testequal "really-installed:
+  Installed: 1
+  Candidate: 1
+  Version table:
+ *** 1 0
+        100 ${TMPDIR}/rootdir/var/lib/dpkg/status" aptcache policy really-installed

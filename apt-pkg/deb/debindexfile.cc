@@ -621,7 +621,7 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    FileFd Pkg(File,FileFd::ReadOnly, FileFd::Extension);
    if (_error->PendingError() == true)
       return false;
-   debListParser Parser(&Pkg);
+   debStatusListParser Parser(&Pkg);
    if (_error->PendingError() == true)
       return false;
 
