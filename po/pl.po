@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -102,10 +102,10 @@ msgstr "Całkowity rozmiar: "
 msgid "Package file %s is out of sync."
 msgstr "Plik pakietu %s jest przestarzały."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Nie znaleziono żadnych pakietów"
 
@@ -692,9 +692,8 @@ msgstr "%s został już zatrzymany.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s został już odznaczony jako zatrzymany.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Oczekiwano na proces %s, ale nie było go"
@@ -1161,6 +1160,14 @@ msgstr "Połączenie nie powiodło się"
 msgid "Internal error"
 msgstr "Błąd wewnętrzny"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Obliczanie aktualizacji..."
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Gotowe"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr ""
@@ -1400,18 +1407,6 @@ msgstr[2] ""
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"UWAGA: To jest tylko symulacja!\n"
-"      apt-get wymaga do normalnego działania uprawnień administratora.\n"
-"      Aktualnie blokowanie jest wyłączone, więc nie należy polegać\n"
-"      na związku z rzeczywistą sytuacją!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1698,6 +1693,18 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Pakiet \"%s\" nie jest zainstalowany, więc nie zostanie usunięty\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"UWAGA: To jest tylko symulacja!\n"
+"      apt-get wymaga do normalnego działania uprawnień administratora.\n"
+"      Aktualnie blokowanie jest wyłączone, więc nie należy polegać\n"
+"      na związku z rzeczywistą sytuacją!"
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "UWAGA: Następujące pakiety nie mogą zostać zweryfikowane!"
@@ -1732,14 +1739,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr ""
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Obliczanie aktualizacji..."
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Gotowe"
 
 # Ujednolicono z aptitude
 #: apt-private/acqprogress.cc:66
@@ -1784,17 +1783,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nie można czytać %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1919,6 +1918,18 @@ msgstr "Nie udało się znaleźć wpisu uwierzytelnienia dla: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Błędna suma kontrolna dla: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "Nie udało się otworzyć lub zanalizować zawartości list pakietów."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Należy uruchomić apt-get update aby naprawić te problemy."
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Nie udało się odczytać list źródeł."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1938,18 +1949,6 @@ msgstr "Metoda %s nie uruchomiła się poprawnie"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Proszę włożyć do napędu \"%s\" dysk o nazwie: \"%s\" i nacisnąć enter."
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "Nie udało się otworzyć lub zanalizować zawartości list pakietów."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Należy uruchomić apt-get update aby naprawić te problemy."
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Nie udało się odczytać list źródeł."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -2036,98 +2035,6 @@ msgstr "dodatkowy"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Plik indeksu typu \"%s\" nie jest obsługiwany"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
-"Nieprawidłowa linia %lu w liście źródeł %s ([opcja] nie dająca się sparsować)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([opcja] zbyt krótka)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([%s] nie jest przypisane)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([%s] nie ma klucza)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Nieprawidłowa linia %lu w liście źródeł %s ([%s] klucz %s nie ma wartości)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (dystrybucja)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (bezwzględna dystrybucja)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza dystrybucji)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Otwieranie %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Linia %u w liście źródeł %s jest zbyt długa."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Nieprawidłowa linia %u w liście źródeł %s (typ)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Typ \"%s\" jest nieznany w linii %u listy źródeł %s"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Typ \"%s\" jest nieznany w linii %u listy źródeł %s"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Plik indeksu typu \"%s\" nie jest obsługiwany"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Nie udało się wykonać operacji stat na pliku %s."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2321,6 +2228,11 @@ msgstr "Brakuje katalogu archiwów %spartial."
 msgid "Unable to lock directory %s"
 msgstr "Nie udało się zablokować katalogu %s"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Plik indeksu typu \"%s\" nie jest obsługiwany"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2332,10 +2244,6 @@ msgstr "Pobieranie pliku %li z %li (pozostało %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Pobieranie pliku %li z %li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Należy dopisać jakieś URI pakietów źródłowych do pliku sources.list"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2359,6 +2267,23 @@ msgstr "Nierozpoznany typ przypinania %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Brak (lub zerowy) priorytet przypięcia"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Nie udało się pobrać niektórych plików indeksu, zostały one zignorowane lub "
+"użyto ich starszej wersji."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Należy dopisać jakieś URI pakietów źródłowych do pliku sources.list"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Nie udało się wykonać operacji stat na pliku %s."
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2387,13 +2312,10 @@ msgstr ""
 "rozwiązanie, ale jeśli jest się pewnym swoich działań, należy włączyć opcję "
 "APT::Force-LoopBreak."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Nie udało się pobrać niektórych plików indeksu, zostały one zignorowane lub "
-"użyto ich starszej wersji."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Linia %u w liście źródeł %s jest zbyt długa."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2616,6 +2538,256 @@ msgstr "Nieprawidłowy wpis Valid-Until w pliku Release %s"
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Nieprawidłowy wpis Date w pliku Release %s"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr ""
+"Nieprawidłowa linia %lu w liście źródeł %s ([opcja] nie dająca się sparsować)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([opcja] zbyt krótka)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([%s] nie jest przypisane)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s ([%s] nie ma klucza)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Nieprawidłowa linia %lu w liście źródeł %s ([%s] klucz %s nie ma wartości)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (dystrybucja)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (bezwzględna dystrybucja)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Nieprawidłowa linia %lu w liście źródeł %s (analiza dystrybucji)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Otwieranie %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Nieprawidłowa linia %u w liście źródeł %s (typ)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Typ \"%s\" jest nieznany w linii %u listy źródeł %s"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typ \"%s\" jest nieznany w linii %u listy źródeł %s"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "Instalowanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "Konfigurowanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "Usuwanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "Całkowite usuwanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "Proszę odnotować zniknięcie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Uruchamianie wyzwalacza post-installation %s"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Brakuje katalogu \"%s\""
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Nie udało się otworzyć pliku \"%s\""
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "Przygotowywanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "Rozpakowywanie %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Przygotowywanie do konfiguracji %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "Pakiet %s został zainstalowany"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Przygotowywanie do usunięcia %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "Pakiet %s został usunięty"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Przygotowywanie do całkowitego usunięcia %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "Pakiet %s został całkowicie usunięty"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr "Nie udało się pisać do %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "Operacja została przerwana, zanim mogła zostać zakończona"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr "Brak raportu programu apport, ponieważ osiągnięto limit MaxReports"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "problemy z zależnościami - pozostawianie nieskonfigurowanego"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Brak raportu programu apport, ponieważ komunikat błędu wskazuje, że "
+"przyczyna niepowodzenia leży w poprzednim błędzie."
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na "
+"przepełnienie dysku"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na błąd "
+"braku wolnej pamięci"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+#, fuzzy
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na "
+"przepełnienie dysku"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na błąd "
+"wejścia/wyjścia dpkg"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Nie udało się zablokować katalogu administracyjnego (%s), czy inny proces go "
+"używa?"
+
+# Musi pasować do su i sudo.
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr ""
+"Nie udało się zablokować katalogu administracyjnego (%s), czy użyto "
+"uprawnień administratora?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg został przerwany, należy wykonać ręcznie \"%s\", aby naprawić problem."
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Niezablokowany"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2957,179 +3129,6 @@ msgstr "Znaczenie %s jest nieznane, proszę spróbować true lub false."
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Nieprawidłowa operacja %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "Instalowanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "Konfigurowanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "Usuwanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "Całkowite usuwanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "Proszę odnotować zniknięcie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Uruchamianie wyzwalacza post-installation %s"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Brakuje katalogu \"%s\""
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Nie udało się otworzyć pliku \"%s\""
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "Przygotowywanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "Rozpakowywanie %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Przygotowywanie do konfiguracji %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "Pakiet %s został zainstalowany"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Przygotowywanie do usunięcia %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "Pakiet %s został usunięty"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Przygotowywanie do całkowitego usunięcia %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "Pakiet %s został całkowicie usunięty"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr "Nie udało się pisać do %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr "Operacja została przerwana, zanim mogła zostać zakończona"
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr "Brak raportu programu apport, ponieważ osiągnięto limit MaxReports"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "problemy z zależnościami - pozostawianie nieskonfigurowanego"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Brak raportu programu apport, ponieważ komunikat błędu wskazuje, że "
-"przyczyna niepowodzenia leży w poprzednim błędzie."
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na "
-"przepełnienie dysku"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na błąd "
-"braku wolnej pamięci"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-#, fuzzy
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na "
-"przepełnienie dysku"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Brak raportu programu apport, ponieważ komunikat błędu wskazuje na błąd "
-"wejścia/wyjścia dpkg"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Nie udało się zablokować katalogu administracyjnego (%s), czy inny proces go "
-"używa?"
-
-# Musi pasować do su i sudo.
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr ""
-"Nie udało się zablokować katalogu administracyjnego (%s), czy użyto "
-"uprawnień administratora?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg został przerwany, należy wykonać ręcznie \"%s\", aby naprawić problem."
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Niezablokowany"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

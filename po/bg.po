@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -100,10 +100,10 @@ msgstr "Общо отчетено пространство: "
 msgid "Package file %s is out of sync."
 msgstr "Пакетният файл %s не е синхронизиран."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Няма намерени пакети"
 
@@ -686,9 +686,8 @@ msgstr "Пакетът „%s“ вече е задуржан.\n"
 msgid "%s was already not hold.\n"
 msgstr "Пакетът „%s“ вече е задържан.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Изчака се завършването на %s, но той не беше пуснат"
@@ -1152,6 +1151,14 @@ msgstr "Неуспех при свързването"
 msgid "Internal error"
 msgstr "Вътрешна грешка"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Изчисляване на актуализацията..."
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Готово"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr ""
@@ -1390,18 +1397,6 @@ msgstr[1] ""
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"Забележка: това е само симулация!\n"
-"           apt-get има нужда от административни права за да работи.\n"
-"           Заключването е деактивирано, така че не разчитайте\n"
-"           на повтаряемост в реална ситуация."
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1670,6 +1665,18 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Пакетът „%s“ не е инсталиран, така че не е премахнат\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"Забележка: това е само симулация!\n"
+"           apt-get има нужда от административни права за да работи.\n"
+"           Заключването е деактивирано, така че не разчитайте\n"
+"           на повтаряемост в реална ситуация."
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "ПРЕДУПРЕЖДЕНИЕ: Следните пакети не могат да бъдат удостоверени!"
@@ -1704,14 +1711,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr ""
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Изчисляване на актуализацията..."
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Готово"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1753,17 +1752,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Неуспех при четенето на %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1885,6 +1884,21 @@ msgstr "Не е намерен oторизационен запис за: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Несъответствие на контролната сума за: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"Списъците с пакети или файлът за състояние не можаха да бъдат анализирани "
+"или отворени."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr ""
+"Може да искате да изпълните „apt-get update“, за да коригирате тези проблеми"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Списъкът с източници не можа да бъде прочетен."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1904,21 +1918,6 @@ msgstr "Методът %s не стартира правилно"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Сложете диска, озаглавен „%s“ в устройство „%s“ и натиснете „Enter“."
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"Списъците с пакети или файлът за състояние не можаха да бъдат анализирани "
-"или отворени."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr ""
-"Може да искате да изпълните „apt-get update“, за да коригирате тези проблеми"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Списъкът с източници не можа да бъде прочетен."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -2005,103 +2004,6 @@ msgstr "допълнителен"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Не се поддържа индексен файл от типа „%s“"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s (неразбираема [опция])"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s (твърде кратка [опция])"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s ([%s] не е присвояване)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Лошо форматиран ред %lu в списъка с източници %s (липсва ключ в [%s])"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s ([%s] ключът %s няма "
-"стойност)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Лошо форматиран ред %lu в списъка с източници %s (адрес-URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Лошо форматиран ред %lu в списъка с източници %s (дистрибуция)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s (неограничена дистрибуция)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr ""
-"Лошо форматиран ред %lu в списъка с източници %s (анализ на дистрибуция)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Отваряне на %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Ред %u в списъка с източници %s е твърде дълъг."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Лошо форматиран ред %u в списъка с източници %s (тип)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Не се поддържа индексен файл от типа „%s“"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Неуспех при получаването на атрибути на %s."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2299,6 +2201,11 @@ msgstr "Директорията за архиви %spartial липсва."
 msgid "Unable to lock directory %s"
 msgstr "Неуспех при заключване на директорията %s"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Не се поддържа индексен файл от типа „%s“"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2310,10 +2217,6 @@ msgstr "Изтегляне на файл %li от %li (остават %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Изтегляне на файл %li от %li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Трябва да добавите адреси-URI от тип „source“ в sources.list"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2337,6 +2240,23 @@ msgstr "Неизвестен тип за отбиване %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Няма указан приоритет (или е нула) на отбиването"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Някои индексни файлове не можаха да бъдат изтеглени. Те са пренебрегнати или "
+"са използвани по-стари."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Трябва да добавите адреси-URI от тип „source“ в sources.list"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Неуспех при получаването на атрибути на %s."
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2364,13 +2284,10 @@ msgstr ""
 "пакет %s. Това често е лошо, но ако наистина искате да го направите, "
 "активирайте опцията APT::Force-LoopBreak."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Някои индексни файлове не можаха да бъдат изтеглени. Те са пренебрегнати или "
-"са използвани по-стари."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Ред %u в списъка с източници %s е твърде дълъг."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2590,6 +2507,262 @@ msgstr "Неправилна стойност за „Valid-Until“ във фа
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Неправилна стойност за „Date“ във файла Release %s"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s (неразбираема [опция])"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s (твърде кратка [опция])"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s ([%s] не е присвояване)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (липсва ключ в [%s])"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s ([%s] ключът %s няма "
+"стойност)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (адрес-URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (дистрибуция)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s (неограничена дистрибуция)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr ""
+"Лошо форматиран ред %lu в списъка с източници %s (анализ на дистрибуция)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Отваряне на %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Лошо форматиран ред %u в списъка с източници %s (тип)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "Инсталиране на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "Конфигуриране на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "Премахване на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "Окончателно премахване на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "Отбелязване на изчезването на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Изпълнение на тригер след инсталиране %s"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Директорията „%s“ липсва"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Неуспех при отваряне на файла „%s“"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "Подготвяне на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "Разпакетиране на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Подготвяне на %s за конфигуриране"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "%s е инсталиран"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Подготвяне за премахване на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "%s е премахнат"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Подготовка за пълно премахване на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s е напълно премахнат"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr "Неуспех при записа на %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "Операцията е прекъсната"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+"Поради достигане на максималния брой доклади (MaxReports) не е записан нов "
+"доклад за зависимостите."
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "отлагане на настройката поради неудовлетворени зависимости"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Доклад за зависимостите не е записан защото съобщението за грешка е породено "
+"от друга грешка."
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Доклад за зависимостите не е записан защото грешката е причинена от "
+"недостатъчно дисково пространство"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Доклад за зависимостите не е записан защото грешката е причинена от "
+"недостатъчна оперативна памет"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+#, fuzzy
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Доклад за зависимостите не е записан защото грешката е причинена от "
+"недостатъчно дисково пространство"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Доклад за зависимостите не е записан поради входно-изходна грешка с dpkg"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Неуспех при заключване на административната директория (%s). Може би се "
+"използва от друг процес?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr ""
+"Неуспех при заключване на административната директория (%s). Може би липсват "
+"административни права?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"Процесът dpkg е беше прекъснат. Проблемът трябва да се коригира чрез ръчно "
+"изпълнение на „%s“."
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Без заключване"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2931,180 +3104,6 @@ msgstr "Смисълът %s не е ясен, опитайте true или false
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Невалидна операция %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "Инсталиране на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "Конфигуриране на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "Премахване на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "Окончателно премахване на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "Отбелязване на изчезването на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Изпълнение на тригер след инсталиране %s"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Директорията „%s“ липсва"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Неуспех при отваряне на файла „%s“"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "Подготвяне на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "Разпакетиране на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Подготвяне на %s за конфигуриране"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "%s е инсталиран"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Подготвяне за премахване на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "%s е премахнат"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Подготовка за пълно премахване на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s е напълно премахнат"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr "Неуспех при записа на %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr "Операцията е прекъсната"
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-"Поради достигане на максималния брой доклади (MaxReports) не е записан нов "
-"доклад за зависимостите."
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "отлагане на настройката поради неудовлетворени зависимости"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Доклад за зависимостите не е записан защото съобщението за грешка е породено "
-"от друга грешка."
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Доклад за зависимостите не е записан защото грешката е причинена от "
-"недостатъчно дисково пространство"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Доклад за зависимостите не е записан защото грешката е причинена от "
-"недостатъчна оперативна памет"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-#, fuzzy
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Доклад за зависимостите не е записан защото грешката е причинена от "
-"недостатъчно дисково пространство"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Доклад за зависимостите не е записан поради входно-изходна грешка с dpkg"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Неуспех при заключване на административната директория (%s). Може би се "
-"използва от друг процес?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr ""
-"Неуспех при заключване на административната директория (%s). Може би липсват "
-"административни права?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"Процесът dpkg е беше прекъснат. Проблемът трябва да се коригира чрез ръчно "
-"изпълнение на „%s“."
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Без заключване"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

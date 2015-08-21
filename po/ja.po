@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -97,10 +97,10 @@ msgstr "総占有容量: "
 msgid "Package file %s is out of sync."
 msgstr "Package ファイル %s が同期していません。"
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "パッケージが見つかりません"
 
@@ -699,9 +699,8 @@ msgstr "%s はすでに保留に設定されています。\n"
 msgid "%s was already not hold.\n"
 msgstr "%s はすでに保留されていません。\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s を待ちましたが、そこにはありませんでした"
@@ -1185,6 +1184,14 @@ msgstr "接続失敗"
 msgid "Internal error"
 msgstr "内部エラー"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "アップグレードパッケージを検出しています ... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "完了"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr "一覧表示"
@@ -1421,18 +1428,6 @@ msgstr[0] ""
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr "実際のパッケージではありません (仮想)"
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"注意: これはシミュレーションにすぎません!\n"
-"      apt-get は実際の実行に root 権限を必要とします。\n"
-"      ロックが非アクティブであることから、今この時点の状態に妥当性が\n"
-"      あるとは言い切れないことに注意してください!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1699,6 +1694,18 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "パッケージ '%s' はインストールされていないため、削除もされません\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"注意: これはシミュレーションにすぎません!\n"
+"      apt-get は実際の実行に root 権限を必要とします。\n"
+"      ロックが非アクティブであることから、今この時点の状態に妥当性が\n"
+"      あるとは言い切れないことに注意してください!"
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "警告: 以下のパッケージは認証されていません!"
@@ -1734,14 +1741,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr "全文検索"
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "アップグレードパッケージを検出しています ... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "完了"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1783,17 +1782,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s を読み込むことができません"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1915,6 +1914,22 @@ msgstr "認証レコードが見つかりません: %s"
 msgid "Hash mismatch for: %s"
 msgstr "ハッシュサムが適合しません: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"パッケージリストまたはステータスファイルを解釈またはオープンすることができま"
+"せん。"
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr ""
+"これらの問題を解決するためには apt-get update を実行する必要があるかもしれま"
+"せん"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "ソースのリストを読むことができません。"
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1936,22 +1951,6 @@ msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 "'%s' とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してくだ"
 "さい。"
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"パッケージリストまたはステータスファイルを解釈またはオープンすることができま"
-"せん。"
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr ""
-"これらの問題を解決するためには apt-get update を実行する必要があるかもしれま"
-"せん"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "ソースのリストを読むことができません。"
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -2038,100 +2037,6 @@ msgstr "特別"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "インデックスファイルのタイプ '%s' はサポートされていません"
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "ソースリスト %2$s の %1$u 個目の区切りが不正です (URI parse)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
-"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] を解釈できません)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr ""
-"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] が短かすぎます)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] は割り当てられていません)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s にキーがありません)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] キー %4$s に値がありません)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI parse)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (absolute dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s をオープンしています"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "ソースリスト %2$s の %1$u 行目が長すぎます。"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "ソースリスト %2$s の %1$u 行目が不正です (type)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "ソースリスト %3$s の %2$u 行にあるタイプ '%1$s' は不明です"
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "ソースリスト %3$s の %2$u 個目の節 '%1$s' は不明です"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "%s の消去はサポートされていません"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "%s の状態を取得できません。"
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2324,6 +2229,11 @@ msgstr "アーカイブディレクトリ %spartial が見つかりません。"
 msgid "Unable to lock directory %s"
 msgstr "ディレクトリ %s をロックできません"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "%s の消去はサポートされていません"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2335,10 +2245,6 @@ msgstr "ファイルを取得しています %li/%li (残り %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "ファイルを取得しています %li/%li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "sources.list に 'ソース' URI を指定する必要があります"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2365,6 +2271,23 @@ msgstr "pin タイプ %s を理解できませんでした"
 msgid "No priority (or zero) specified for pin"
 msgstr "pin で優先度 (または 0) が指定されていません"
 
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"いくつかのインデックスファイルのダウンロードに失敗しました。これらは無視され"
+"るか、古いものが代わりに使われます。"
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "sources.list に 'ソース' URI を指定する必要があります"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "%s の状態を取得できません。"
+
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
 msgid ""
@@ -2390,13 +2313,10 @@ msgstr ""
 "ケージ %s を削除します。これは多くの場合に問題が起こる原因となります。本当に"
 "これを行いたいなら、APT::Force-LoopBreak オプションを有効にしてください。"
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"いくつかのインデックスファイルのダウンロードに失敗しました。これらは無視され"
-"るか、古いものが代わりに使われます。"
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "ソースリスト %2$s の %1$u 行目が長すぎます。"
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2612,6 +2532,256 @@ msgstr "Release ファイル %s に無効な 'Valid-Until' エントリがあり
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Release ファイル %s に無効な 'Date' エントリがあります"
+
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "ソースリスト %2$s の %1$u 個目の区切りが不正です (URI parse)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] を解釈できません)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([オプション] が短かすぎます)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] は割り当てられていません)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s にキーがありません)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] キー %4$s に値がありません)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI parse)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です (absolute dist)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s をオープンしています"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "ソースリスト %2$s の %1$u 行目が不正です (type)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "ソースリスト %3$s の %2$u 行にあるタイプ '%1$s' は不明です"
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "ソースリスト %3$s の %2$u 個目の節 '%1$s' は不明です"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "%s をインストールしています"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "%s を設定しています"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "%s を削除しています"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "%s を完全に削除しています"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "%s の消失を記録しています"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "インストール後トリガ %s を実行しています"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "ディレクトリ '%s' が見つかりません"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "ファイル '%s' をオープンできませんでした"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "%s を準備しています"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "%s を展開しています"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "%s の設定を準備しています"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "%s をインストールしました"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "%s の削除を準備しています"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "%s を削除しました"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "%s を完全に削除する準備をしています"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s を完全に削除しました"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, c-format
+msgid "Can not write log (%s)"
+msgstr "ログを書き込めません (%s)"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr "/dev/pts はマウントされていますか?"
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "操作はそれが完了する前に中断されました"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr "MaxReports にすでに達しているため、レポートは書き込まれません"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "依存関係の問題 - 未設定のままにしています"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"エラーメッセージは前の失敗から続くエラーであることを示しているので、レポート"
+"は書き込まれません。"
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"エラーメッセージはディスクフルエラーであることを示しているので、レポートは書"
+"き込まれません。"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"エラーメッセージはメモリ超過エラーであることを示しているので、レポートは書き"
+"込まれません。"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"エラーメッセージはローカルシステムの問題であることを示しているので、レポート"
+"は書き込まれません。"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"エラーメッセージは dpkg I/O エラーであることを示しているので、レポートは書き"
+"込まれません。"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"管理用ディレクトリ (%s) をロックできません。これを使う別のプロセスが動いてい"
+"ませんか?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr ""
+"管理用ディレクトリ (%s) をロックできません。root 権限で実行していますか?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg は中断されました。問題を修正するには '%s' を手動で実行する必要がありま"
+"す。"
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "ロックされていません"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2948,177 +3118,6 @@ msgstr "%s を解釈することができません。true か false を試して
 #, c-format
 msgid "Invalid operation %s"
 msgstr "不正な操作 %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "%s をインストールしています"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "%s を設定しています"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "%s を削除しています"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "%s を完全に削除しています"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "%s の消失を記録しています"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "インストール後トリガ %s を実行しています"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "ディレクトリ '%s' が見つかりません"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "ファイル '%s' をオープンできませんでした"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "%s を準備しています"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "%s を展開しています"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "%s の設定を準備しています"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "%s をインストールしました"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "%s の削除を準備しています"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "%s を削除しました"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "%s を完全に削除する準備をしています"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s を完全に削除しました"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, c-format
-msgid "Can not write log (%s)"
-msgstr "ログを書き込めません (%s)"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr "/dev/pts はマウントされていますか?"
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr "操作はそれが完了する前に中断されました"
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr "MaxReports にすでに達しているため、レポートは書き込まれません"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "依存関係の問題 - 未設定のままにしています"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"エラーメッセージは前の失敗から続くエラーであることを示しているので、レポート"
-"は書き込まれません。"
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"エラーメッセージはディスクフルエラーであることを示しているので、レポートは書"
-"き込まれません。"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"エラーメッセージはメモリ超過エラーであることを示しているので、レポートは書き"
-"込まれません。"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"エラーメッセージはローカルシステムの問題であることを示しているので、レポート"
-"は書き込まれません。"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"エラーメッセージは dpkg I/O エラーであることを示しているので、レポートは書き"
-"込まれません。"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"管理用ディレクトリ (%s) をロックできません。これを使う別のプロセスが動いてい"
-"ませんか?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr ""
-"管理用ディレクトリ (%s) をロックできません。root 権限で実行していますか?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg は中断されました。問題を修正するには '%s' を手動で実行する必要がありま"
-"す。"
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "ロックされていません"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

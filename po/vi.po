@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -101,10 +101,10 @@ msgstr "Tổng chỗ đã tính dành cho: "
 msgid "Package file %s is out of sync."
 msgstr "Tập tin gói %s không đồng bộ được."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Không tìm thấy gói"
 
@@ -706,9 +706,8 @@ msgstr "%s đã sẵn được đặt là giữ lại.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s đã sẵn được đặt là không giữ lại.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Cần %s nhưng mà không thấy nó ở đây"
@@ -1197,6 +1196,14 @@ msgstr "Kết nối bị lỗi"
 msgid "Internal error"
 msgstr "Gặp lỗi nội bộ"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Đang tính toán nâng cấp... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Xong"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr "Đang liệt kê"
@@ -1428,18 +1435,6 @@ msgstr[0] "Ở đây có %i bản ghi phụ thêm. Hãy dùng tùy chọn “-a�
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr "không là gói thật (ảo)"
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"CHÚ Ý: đây chỉ là mô phỏng!\n"
-"       apt-get yêu cầu quyền root để thực hiện thật.\n"
-"       Cần nhớ rằng chức năng khóa đã bị tắt,\n"
-"       nên có thể nó không chính xác như khi làm thật!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1701,6 +1696,18 @@ msgstr "Chưa cài đặt gói %s nên không thể gỡ bỏ nó. Có phải ý
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Gói %s chưa được cài đặt, thế nên không thể gỡ bỏ nó\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"CHÚ Ý: đây chỉ là mô phỏng!\n"
+"       apt-get yêu cầu quyền root để thực hiện thật.\n"
+"       Cần nhớ rằng chức năng khóa đã bị tắt,\n"
+"       nên có thể nó không chính xác như khi làm thật!"
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "CẢNH BÁO: Không thể xác thực những gói sau đây!"
@@ -1735,14 +1742,6 @@ msgstr "Tập tin “%s” của bạn đã thay đổi, hãy chạy lệnh “a
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr "Tìm kiếm toàn văn"
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Đang tính toán nâng cấp... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Xong"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1784,17 +1783,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Không thể đọc %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1918,6 +1917,20 @@ msgstr "Không tìm thấy bản ghi xác thực cho: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Sai khớp chuỗi duy nhất cho: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "Không thể phân tích hay mở danh sách gói hay tập tin trạng thái."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr ""
+"Bạn nên lấy cơ sở dữ liệu mới bằng lệnh “apt-get update” để sửa các vấn đề "
+"này"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Không thể đọc danh sách nguồn."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1937,20 +1950,6 @@ msgstr "Phương thức %s đã không khởi chạy đúng đắn."
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Hãy cho đĩa có nhãn “%s” vào ổ “%s” rồi bấm nút Enter."
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "Không thể phân tích hay mở danh sách gói hay tập tin trạng thái."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr ""
-"Bạn nên lấy cơ sở dữ liệu mới bằng lệnh “apt-get update” để sửa các vấn đề "
-"này"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Không thể đọc danh sách nguồn."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -2037,105 +2036,6 @@ msgstr "bổ sung"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Không hỗ trợ kiểu tập tin chỉ mục “%s”"
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Gặp đoạn sai dạng %u trong danh sách nguồn %s (ngữ pháp URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
-"Gặp dòng có sai dạng %lu trong danh sách nguồn %s ([tùy chọn] không thể phân "
-"tích được)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s ([tùy chọn] quá ngắn)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"Gặp dòng sai dạng %lu trong danh sách nguồn %s ([%s] không phải là một phép "
-"gán)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr ""
-"Gặp dòng sai dạng %lu trong danh sách nguồn %s ([%s] không có khoá nào)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Gặp dòng sai dạng %lu trong danh sách nguồn %s (khoá [%s] %s không có giá "
-"trị)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (địa chỉ URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (bản phân phối)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (ngữ pháp URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr ""
-"Gặp dòng sai dạng %lu trong danh sách nguồn %s (bản phân phối tuyệt đối)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr ""
-"Gặp dòng sai dạng %lu trong danh sách nguồn %s (phân tách bản phân phối)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Đang mở %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Dòng %u quá dài trong danh sách nguồn %s."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Gặp dòng sai dạng %u trong danh sách nguồn %s (kiểu)."
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Không biết kiểu “%s” trên dòng %u trong danh sách nguồn %s."
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Không hiểu kiểu “%s” trên đoạn %u trong danh sách nguồn %s"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Không hỗ trợ việc xóa %s"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Không thể lấy trạng thái về %s."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2327,6 +2227,11 @@ msgstr "Thiếu thư mục kho lưu %spartial."
 msgid "Unable to lock directory %s"
 msgstr "Không thể khoá thư mục %s"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Không hỗ trợ việc xóa %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2338,11 +2243,6 @@ msgstr "Đang tải tập tin thứ %li trong tổng số %li (còn lại %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Đang tải tập tin %li trong tổng số %li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr ""
-"Bạn phải để một số địa chỉ URI “nguồn” vào “sources.list” (danh sách nguồn)"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2367,6 +2267,24 @@ msgstr "Không hiểu kiểu ghim %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Chưa ghi rõ ưu tiên (hay số không) cho ghim"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Một số tập tin chỉ mục không tải về được. Chúng đã bị bỏ qua, hoặc cái cũ đã "
+"được dùng thay thế."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr ""
+"Bạn phải để một số địa chỉ URI “nguồn” vào “sources.list” (danh sách nguồn)"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Không thể lấy trạng thái về %s."
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2394,13 +2312,10 @@ msgstr ""
 "bạn thật sự muốn tiếp tục, có thể hoạt hóa tuy chọn “APT::Force-"
 "LoopBreak” (buộc ngắt vòng lặp)."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Một số tập tin chỉ mục không tải về được. Chúng đã bị bỏ qua, hoặc cái cũ đã "
-"được dùng thay thế."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Dòng %u quá dài trong danh sách nguồn %s."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2615,6 +2530,259 @@ msgstr ""
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr ""
 "Gặp mục tin “Date” (ngày tháng) không hợp lệ trong tập tin Phát hành %s"
+
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Gặp đoạn sai dạng %u trong danh sách nguồn %s (ngữ pháp URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr ""
+"Gặp dòng có sai dạng %lu trong danh sách nguồn %s ([tùy chọn] không thể phân "
+"tích được)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s ([tùy chọn] quá ngắn)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"Gặp dòng sai dạng %lu trong danh sách nguồn %s ([%s] không phải là một phép "
+"gán)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr ""
+"Gặp dòng sai dạng %lu trong danh sách nguồn %s ([%s] không có khoá nào)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Gặp dòng sai dạng %lu trong danh sách nguồn %s (khoá [%s] %s không có giá "
+"trị)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (địa chỉ URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (bản phân phối)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Gặp dòng sai dạng %lu trong danh sách nguồn %s (ngữ pháp URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr ""
+"Gặp dòng sai dạng %lu trong danh sách nguồn %s (bản phân phối tuyệt đối)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr ""
+"Gặp dòng sai dạng %lu trong danh sách nguồn %s (phân tách bản phân phối)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Đang mở %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Gặp dòng sai dạng %u trong danh sách nguồn %s (kiểu)."
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Không biết kiểu “%s” trên dòng %u trong danh sách nguồn %s."
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Không hiểu kiểu “%s” trên đoạn %u trong danh sách nguồn %s"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "Đang cài đặt %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "Đang cấu hình %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "Đang gỡ bỏ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "Đang gỡ bỏ hoàn toàn %s"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "Đang ghi chép sự biến mất của %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Đang chạy bẫy sau-cài-đặt %s"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Thiếu thư mục “%s”"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Không thể mở tập tin “%s”"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "Đang chuẩn bị %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "Đang mở gói %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Đang chuẩn bị cấu hình %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "Đã cài đặt %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Đang chuẩn bị gỡ bỏ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "Đã gỡ bỏ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Đang chuẩn bị gỡ bỏ hoàn toàn %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "Gỡ bỏ hoàn toàn %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, c-format
+msgid "Can not write log (%s)"
+msgstr "Không thể ghi nhật ký (%s)"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr "/dev/pts đã gắn chưa?"
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "Hệ điều hành đã ngắt trước khi nó kịp hoàn thành"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+"Không ghi báo cáo apport, vì đã chạm giới hạn số các báo cáo (MaxReports)"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "gặp vấn đề về quan hệ phụ thuộc nên để lại không cấu hình"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi kế tiếp "
+"do một sự thất bại trước đó."
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “đĩa đầy”"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “không đủ "
+"bộ nhớ”"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi trên hệ "
+"thống nội bộ"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “V/R dpkg”"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Không thể khoá thư mục quản trị (%s), có một tiến trình khác đang sử dụng nó "
+"phải không?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "Không thể khoá thư mục quản trị (%s), bạn có quyền root không?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg bị ngắt giữa chừng, bạn cần phải chạy “%s” một cách thủ công để giải "
+"vấn đề này. "
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Chưa được khoá"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2954,175 +3122,6 @@ msgstr "Không hiểu %s: hãy thử dùng true (đúng) hoặc false (sai)."
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Thao tác “%s” không hợp lệ"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "Đang cài đặt %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "Đang cấu hình %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "Đang gỡ bỏ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "Đang gỡ bỏ hoàn toàn %s"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "Đang ghi chép sự biến mất của %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Đang chạy bẫy sau-cài-đặt %s"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Thiếu thư mục “%s”"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Không thể mở tập tin “%s”"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "Đang chuẩn bị %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "Đang mở gói %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Đang chuẩn bị cấu hình %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "Đã cài đặt %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Đang chuẩn bị gỡ bỏ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "Đã gỡ bỏ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Đang chuẩn bị gỡ bỏ hoàn toàn %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "Gỡ bỏ hoàn toàn %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, c-format
-msgid "Can not write log (%s)"
-msgstr "Không thể ghi nhật ký (%s)"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr "/dev/pts đã gắn chưa?"
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr "Hệ điều hành đã ngắt trước khi nó kịp hoàn thành"
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-"Không ghi báo cáo apport, vì đã chạm giới hạn số các báo cáo (MaxReports)"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "gặp vấn đề về quan hệ phụ thuộc nên để lại không cấu hình"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi kế tiếp "
-"do một sự thất bại trước đó."
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “đĩa đầy”"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “không đủ "
-"bộ nhớ”"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi trên hệ "
-"thống nội bộ"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Không ghi báo cáo apport, vì thông điệp lỗi chỉ thị đây là một lỗi “V/R dpkg”"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Không thể khoá thư mục quản trị (%s), có một tiến trình khác đang sử dụng nó "
-"phải không?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Không thể khoá thư mục quản trị (%s), bạn có quyền root không?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg bị ngắt giữa chừng, bạn cần phải chạy “%s” một cách thủ công để giải "
-"vấn đề này. "
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Chưa được khoá"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

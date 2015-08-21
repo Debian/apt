@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -94,10 +94,10 @@ msgstr "Informe del total d'espaciu: "
 msgid "Package file %s is out of sync."
 msgstr "El ficheru de paquetes %s nun ta sincronizáu."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Nun s'alcontraron paquetes"
 
@@ -679,9 +679,8 @@ msgstr "%s yá ta na versión más nueva.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s yá ta na versión más nueva.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperaba %s pero nun taba ellí"
@@ -1120,6 +1119,14 @@ msgstr "Fallo la conexón"
 msgid "Internal error"
 msgstr "Fallu internu"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Calculando l'anovamientu... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Fecho"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr ""
@@ -1356,19 +1363,6 @@ msgstr[1] ""
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"NOTA: ¡Esto sólo ye una simulación!\n"
-"       apt-get necesita privilexos de root pa la execución real.\n"
-"       ¡Ten tamién en cuenta que'l bloquéu ta desactiváu,\n"
-"       asina que nun dependen de la pertinencia de la verdadera situación "
-"actual!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1633,6 +1627,19 @@ msgstr "El paquete %s nun ta instalau, nun va desaniciase\n"
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "El paquete %s nun ta instalau, nun va desaniciase\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"NOTA: ¡Esto sólo ye una simulación!\n"
+"       apt-get necesita privilexos de root pa la execución real.\n"
+"       ¡Ten tamién en cuenta que'l bloquéu ta desactiváu,\n"
+"       asina que nun dependen de la pertinencia de la verdadera situación "
+"actual!"
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "AVISU: ¡Nun pudieron autenticase los siguientes paquetes!"
@@ -1667,14 +1674,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr ""
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Calculando l'anovamientu... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Fecho"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1716,17 +1715,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nun ye a lleer %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1853,6 +1852,19 @@ msgstr "Nun puede alcontrase'l rexistru d'autenticación pa: %s"
 msgid "Hash mismatch for: %s"
 msgstr "El hash nun concasa pa: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"Nun pudieron analizase o abrise les llistes de paquetes o el ficheru d'estáu."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Has d'executar apt-get update pa iguar estos problemes"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Nun pudo lleese la llista de fontes."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1872,19 +1884,6 @@ msgstr "El métodu %s nun entamó correchamente"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Por favor, introduz el discu '%s' nel preséu '%s' y calca Intro."
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"Nun pudieron analizase o abrise les llistes de paquetes o el ficheru d'estáu."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Has d'executar apt-get update pa iguar estos problemes"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Nun pudo lleese la llista de fontes."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -1972,99 +1971,6 @@ msgstr "extra"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís d'URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Llinia %lu mal formada na llista d'oríxe %s ([opción] nun parcheable)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr ""
-"Llinia %lu mal formada na llista d'oríxenes %s ([option] enforma curtia)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"Llinia %lu mal formada na llista d'oríxenes %s ([%s] nun ye una asignación)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s ([%s] nun tien clave)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Llinia %lu mal formada na llista d'oríxenes %s ([%s] clave %s nun tien valor)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís d'URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (dist absoluta)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís de dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Abriendo %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Llinia %u enforma llarga na llista d'oríxenes %s."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Llinia %u mal formada na llista d'oríxenes %s (triba)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Triba '%s' desconocida na llinia %u de la llista d'oríxenes %s"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Triba '%s' desconocida na llinia %u de la llista d'oríxenes %s"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Nun pudo lleese %s."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2253,6 +2159,11 @@ msgstr "Falta'l direutoriu d'archivos %spartial."
 msgid "Unable to lock directory %s"
 msgstr "Nun pudo bloquiase'l direutoriu %s"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2264,10 +2175,6 @@ msgstr "Descargando ficheru %li de %li (falten %s)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Descargando ficheru %li de %li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Has de poner delles URIs 'fonte' nel ficheru sources.list"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2290,6 +2197,24 @@ msgstr "Nun s'entiende'l tipu de pin %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Nun hai prioridá (o ye cero) conseñada pa pin"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Nun pudieron descargase dellos ficheros d'índiz; inoráronse o usáronse los "
+"antiguos nel so llugar."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Has de poner delles URIs 'fonte' nel ficheru sources.list"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Nun pudo lleese %s."
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2316,14 +2241,10 @@ msgstr ""
 "esencial %s por un cote de Conflictos/Pre-Dependencies. Esto normalmente ye "
 "malo, pero si daveres quies facelo, activa la opción  APT::Force-LoopBreak."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Nun pudieron descargase dellos ficheros d'índiz; inoráronse o usáronse los "
-"antiguos nel so llugar."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Llinia %u enforma llarga na llista d'oríxenes %s."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2541,6 +2462,255 @@ msgstr "Entrada inválida pa 'Valid-Until' nel ficheru release %s"
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Entrada inválida pa 'Date' nel ficheru release %s"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís d'URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Llinia %lu mal formada na llista d'oríxe %s ([opción] nun parcheable)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr ""
+"Llinia %lu mal formada na llista d'oríxenes %s ([option] enforma curtia)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"Llinia %lu mal formada na llista d'oríxenes %s ([%s] nun ye una asignación)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s ([%s] nun tien clave)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Llinia %lu mal formada na llista d'oríxenes %s ([%s] clave %s nun tien valor)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís d'URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (dist absoluta)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Llinia %lu mal formada na llista d'oríxenes %s (analís de dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Abriendo %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Llinia %u mal formada na llista d'oríxenes %s (triba)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Triba '%s' desconocida na llinia %u de la llista d'oríxenes %s"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Triba '%s' desconocida na llinia %u de la llista d'oríxenes %s"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "Instalando %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "Configurando %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "Desinstalando %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "Desinstalóse dafechu %s"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "Anotando desaniciáu de %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Executando activador de post-instalación de %s"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Falta'l direutoriu '%s'."
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Nun pudo abrise'l ficheru '%s'"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "Preparando %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "Desempaquetando %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Preparándose pa configurar %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "%s instaláu"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Preparándose pa desinstalar %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "%s desinstaláu"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Preparándose pa desinstalar dafechu %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "Desinstalóse dafechu %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr "Nun se pue escribir en %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr "Ensin informe escritu d'apport porque MaxReports llegó dafechu"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "problemes de dependencies - déxase ensin configurar"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu que "
+"siguió dende un fallu previu"
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
+"discu llenu"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
+"memoria"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+#, fuzzy
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
+"discu llenu"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu E/S "
+"dpkg"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Nun pudó bloquease'l direutoriu d'alministración (%s), ¿hai otru procesu "
+"usándolu?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "Nun pudo bloquiase'l direutoriu d'alministración (%s), ¿yes root?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg interrumpióse, tienes qu'executar manualmente '%s' pa iguar el "
+"problema. "
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Non bloquiáu"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2877,177 +3047,6 @@ msgstr "El sentíu %s nun s'entiende, prueba con braeru o falsu."
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Operación incorreuta: %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "Instalando %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "Configurando %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "Desinstalando %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "Desinstalóse dafechu %s"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "Anotando desaniciáu de %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Executando activador de post-instalación de %s"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Falta'l direutoriu '%s'."
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Nun pudo abrise'l ficheru '%s'"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "Preparando %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "Desempaquetando %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Preparándose pa configurar %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "%s instaláu"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Preparándose pa desinstalar %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "%s desinstaláu"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Preparándose pa desinstalar dafechu %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "Desinstalóse dafechu %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr "Nun se pue escribir en %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr "Ensin informe escritu d'apport porque MaxReports llegó dafechu"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "problemes de dependencies - déxase ensin configurar"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu que "
-"siguió dende un fallu previu"
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
-"discu llenu"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
-"memoria"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-#, fuzzy
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu de "
-"discu llenu"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Ensin informe escritu d'apport porque'l mensax de fallu indica un fallu E/S "
-"dpkg"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Nun pudó bloquease'l direutoriu d'alministración (%s), ¿hai otru procesu "
-"usándolu?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Nun pudo bloquiase'l direutoriu d'alministración (%s), ¿yes root?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg interrumpióse, tienes qu'executar manualmente '%s' pa iguar el "
-"problema. "
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Non bloquiáu"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

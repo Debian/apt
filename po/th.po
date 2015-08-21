@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -97,10 +97,10 @@ msgstr "พื้นที่ที่นับรวมทั้งหมด: "
 msgid "Package file %s is out of sync."
 msgstr "ข้อมูลแฟ้ม Package %s ไม่ตรงกับความเป็นจริง"
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "ไม่พบแพกเกจ"
 
@@ -674,9 +674,8 @@ msgstr "%s ถูกกำหนดให้คงรุ่นอยู่ก่
 msgid "%s was already not hold.\n"
 msgstr "%s ไม่ได้คงรุ่นอยู่ก่อนแล้ว\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "รอโพรเซส %s แต่ตัวโพรเซสไม่อยู่"
@@ -1151,6 +1150,14 @@ msgstr "เชื่อมต่อไม่สำเร็จ"
 msgid "Internal error"
 msgstr "ข้อผิดพลาดภายใน"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "กำลังคำนวณการปรับรุ่น... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "เสร็จแล้ว"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr "กำลังแสดงรายชื่อ"
@@ -1382,18 +1389,6 @@ msgstr[0] "มีอีก %i ระเบียน กรุณาใช้ต�
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
 msgstr "ไม่ใช่แพกเกจจริง (เสมือน)"
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"หมายเหตุ: นี่เป็นเพียงการจำลองการทำงานเท่านั้น!\n"
-"         การทำงานจริงของ apt-get ต้องอาศัยสิทธิ์ผู้ดูแลระบบ\n"
-"         อย่าลืมด้วยว่าการล็อคก็ไม่ทำงานเช่นกัน\n"
-"         ดังนั้น อย่าถือผลลัพธ์นี้ว่าตรงกับสภาพความเป็นจริงของระบบ!"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1646,6 +1641,18 @@ msgstr "แพกเกจ '%s' ไม่ได้ติดตั้งไว้
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "แพกเกจ '%s' ไม่ได้ติดตั้งไว้ จึงไม่มีการถอดถอน\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"หมายเหตุ: นี่เป็นเพียงการจำลองการทำงานเท่านั้น!\n"
+"         การทำงานจริงของ apt-get ต้องอาศัยสิทธิ์ผู้ดูแลระบบ\n"
+"         อย่าลืมด้วยว่าการล็อคก็ไม่ทำงานเช่นกัน\n"
+"         ดังนั้น อย่าถือผลลัพธ์นี้ว่าตรงกับสภาพความเป็นจริงของระบบ!"
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "*คำเตือน*: แพกเกจต่อไปนี้ไม่สามารถยืนยันแหล่งต้นตอได้!"
@@ -1680,14 +1687,6 @@ msgstr "แฟ้ม '%s' ของคุณมีการเปลี่ยน
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr "ค้นทั่วทั้งเนื้อความ"
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "กำลังคำนวณการปรับรุ่น... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "เสร็จแล้ว"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1729,17 +1728,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "ไม่สามารถอ่าน %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1859,6 +1858,18 @@ msgstr "ไม่พบระเบียนยืนยันความแท
 msgid "Hash mismatch for: %s"
 msgstr "แฮชไม่ตรงกันสำหรับ: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "ไม่สามารถแจงหรือเปิดรายชื่อแพกเกจหรือสถานะแพกเกจได้"
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "คุณอาจเรียก `apt-get update' เพื่อแก้ปัญหาเหล่านี้ได้"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "ไม่สามารถอ่านรายชื่อแหล่งแพกเกจได้"
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1878,18 +1889,6 @@ msgstr "ไม่สามารถเรียกทำงานวิธีก
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "กรุณาใส่แผ่นชื่อ: '%s' ลงในไดรว์ '%s' แล้วกด enter"
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "ไม่สามารถแจงหรือเปิดรายชื่อแพกเกจหรือสถานะแพกเกจได้"
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "คุณอาจเรียก `apt-get update' เพื่อแก้ปัญหาเหล่านี้ได้"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "ไม่สามารถอ่านรายชื่อแหล่งแพกเกจได้"
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -1976,96 +1975,6 @@ msgstr "ส่วนเสริม"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "ไม่รองรับแฟ้มดัชนีชนิด '%s'"
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([ตัวเลือก] แจงไม่ผ่าน)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([ตัวเลือก] สั้นเกินไป)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] ไม่ใช่การกำหนดค่า)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] ไม่มีคีย์)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] คีย์ %s ไม่มีค่า)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (dist แบบสัมบูรณ์)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "กำลังเปิด %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ยาวเกินไป"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ชนิด)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "ไม่รู้จักชนิด '%s' ที่บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "ไม่สามารถ stat %s"
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2252,6 +2161,11 @@ msgstr "ไม่มีไดเรกทอรีแพกเกจ %spartial"
 msgid "Unable to lock directory %s"
 msgstr "ไม่สามารถล็อคไดเรกทอรี %s"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2263,10 +2177,6 @@ msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จ�
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "คุณต้องเพิ่ม URI ชนิด 'source' ใน sources.list ของคุณด้วย"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2288,6 +2198,21 @@ msgstr "ไม่เข้าใจชนิดการตรึง %s"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "ไม่ได้ระบุลำดับความสำคัญ (หรือค่าศูนย์) สำหรับการตรึง"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr "ดาวน์โหลดแฟ้มดัชนีบางแฟ้มไม่สำเร็จ จะข้ามรายการดังกล่าวไป หรือใช้ข้อมูลเก่าแทน"
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "คุณต้องเพิ่ม URI ชนิด 'source' ใน sources.list ของคุณด้วย"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "ไม่สามารถ stat %s"
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2315,11 +2240,10 @@ msgstr ""
 "ซึ่งแพกเกจดังกล่าวเป็นแพกเกจที่จำเป็นสำหรับระบบ การลบดังกล่าวมักเป็นอันตราย "
 "แต่ถ้าคุณต้องการทำเช่นนั้นจริงๆ ก็ให้เปิดตัวเลือก APT::Force-LoopBreak"
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr "ดาวน์โหลดแฟ้มดัชนีบางแฟ้มไม่สำเร็จ จะข้ามรายการดังกล่าวไป หรือใช้ข้อมูลเก่าแทน"
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ยาวเกินไป"
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2527,6 +2451,240 @@ msgstr "รายการ 'Valid-Until' ไม่ถูกต้องในแ
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "รายการ 'Date' ไม่ถูกต้องในแฟ้ม Release %s"
+
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([ตัวเลือก] แจงไม่ผ่าน)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([ตัวเลือก] สั้นเกินไป)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] ไม่ใช่การกำหนดค่า)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] ไม่มีคีย์)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ ([%s] คีย์ %s ไม่มีค่า)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (dist แบบสัมบูรณ์)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "กำลังเปิด %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ชนิด)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "ไม่รู้จักชนิด '%s' ที่บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "กำลังติดตั้ง %s"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "กำลังตั้งค่า %s"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "กำลังถอดถอน %s"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "กำลังถอดถอน %s อย่างสมบูรณ์"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "กำลังจดบันทึกการหายไปของ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "กำลังเรียกการสะกิด %s หลังการติดตั้ง"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "ไม่มีไดเรกทอรี '%s'"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "ไม่สามารถเปิดแฟ้ม '%s'"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "กำลังเตรียม %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "กำลังแตกแพกเกจ %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "กำลังเตรียมตั้งค่า %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "ติดตั้ง %s แล้ว"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "กำลังเตรียมถอดถอน %s"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "ถอดถอน %s แล้ว"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "กำลังเตรียมถอดถอน %s อย่างสมบูรณ์"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "ถอดถอน %s อย่างสมบูรณ์แล้ว"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, c-format
+msgid "Can not write log (%s)"
+msgstr "ไม่สามารถเขียนปูม (%s)"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr "ได้เมานท์ /dev/pts ไว้หรือไม่?"
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "ปฏิบัติการถูกขัดจังหวะก่อนที่จะสามารถทำงานเสร็จ"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr "ไม่มีการเขียนรายงาน apport เพราะถึงขีดจำกัด MaxReports แล้ว"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "มีปัญหาความขึ้นต่อกัน - จะทิ้งไว้โดยไม่ตั้งค่า"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเป็นสิ่งที่ตามมาจากข้อผิดพลาดก่อนหน้า"
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากดิสก์เต็ม"
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากหน่วยความจำเต็ม"
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากปัญหาของระบบในเครื่อง"
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากปัญหาการอ่าน/เขียนของ dpkg"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) มีโพรเซสอื่นใช้งานอยู่หรือเปล่า?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) คุณเป็น root หรือเปล่า?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr "dpkg ถูกขัดจังหวะ คุณต้องเรียก '%s' เองเพื่อแก้ปัญหา"
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "ไม่ได้ล็อคอยู่"
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2857,165 +3015,6 @@ msgstr "ไม่เข้าใจค่าบูลีน %s กรุณา�
 #, c-format
 msgid "Invalid operation %s"
 msgstr "ไม่รู้จักคำสั่ง %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "กำลังติดตั้ง %s"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "กำลังตั้งค่า %s"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "กำลังถอดถอน %s"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "กำลังถอดถอน %s อย่างสมบูรณ์"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "กำลังจดบันทึกการหายไปของ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "กำลังเรียกการสะกิด %s หลังการติดตั้ง"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "ไม่มีไดเรกทอรี '%s'"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "ไม่สามารถเปิดแฟ้ม '%s'"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "กำลังเตรียม %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "กำลังแตกแพกเกจ %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "กำลังเตรียมตั้งค่า %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "ติดตั้ง %s แล้ว"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "กำลังเตรียมถอดถอน %s"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "ถอดถอน %s แล้ว"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "กำลังเตรียมถอดถอน %s อย่างสมบูรณ์"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "ถอดถอน %s อย่างสมบูรณ์แล้ว"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, c-format
-msgid "Can not write log (%s)"
-msgstr "ไม่สามารถเขียนปูม (%s)"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr "ได้เมานท์ /dev/pts ไว้หรือไม่?"
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr "ปฏิบัติการถูกขัดจังหวะก่อนที่จะสามารถทำงานเสร็จ"
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr "ไม่มีการเขียนรายงาน apport เพราะถึงขีดจำกัด MaxReports แล้ว"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr "มีปัญหาความขึ้นต่อกัน - จะทิ้งไว้โดยไม่ตั้งค่า"
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเป็นสิ่งที่ตามมาจากข้อผิดพลาดก่อนหน้า"
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากดิสก์เต็ม"
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากหน่วยความจำเต็ม"
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากปัญหาของระบบในเครื่อง"
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากปัญหาการอ่าน/เขียนของ dpkg"
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) มีโพรเซสอื่นใช้งานอยู่หรือเปล่า?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) คุณเป็น root หรือเปล่า?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr "dpkg ถูกขัดจังหวะ คุณต้องเรียก '%s' เองเพื่อแก้ปัญหา"
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "ไม่ได้ล็อคอยู่"
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

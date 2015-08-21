@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -99,10 +99,10 @@ msgstr "को लागि कूल खाली ठाऊँ लेखां�
 msgid "Package file %s is out of sync."
 msgstr "प्याकेज फाइल %s sync भन्दा बाहिर छ ।"
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "कुनै प्याकेजहरू फेला परेन"
 
@@ -661,9 +661,8 @@ msgstr "%s पहिल्यै नयाँ संस्करण हो ।\n
 msgid "%s was already not hold.\n"
 msgstr "%s पहिल्यै नयाँ संस्करण हो ।\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr " %s को लागि पर्खिरहेको तर यो त्यहाँ छैन"
@@ -1100,6 +1099,14 @@ msgstr "जडान असफल भयो"
 msgid "Internal error"
 msgstr "आन्तरिक त्रुटि"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "स्तर वृद्धि गणना गरिदैछ..."
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "काम भयो"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr ""
@@ -1335,14 +1342,6 @@ msgstr[1] ""
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
 #: apt-private/private-install.cc:83
@@ -1601,6 +1600,14 @@ msgstr "प्याकेज %s स्थापना भएन, त्यस�
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "प्याकेज %s स्थापना भएन, त्यसैले हटेन\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "चेतावनी: निम्न प्याकलेजहरू प्रणाणीकरण हुन सक्दैन! "
@@ -1636,14 +1643,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr ""
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "स्तर वृद्धि गणना गरिदैछ..."
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "काम भयो"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1685,17 +1684,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s पढ्न असफल भयो"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1819,6 +1818,18 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "MD5Sum मेल भएन"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "प्याकेज सूचीहरू वा वस्तुस्थिति फाइल पद वर्णन गर्न वा खोल्न सकिएन ।"
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "यो समस्याहरू सुधार्न तपाईँ apt-get अद्यावधिक चलाउन चाहनुहुन्छ"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "स्रोतहरुको सूचि पढ्न सकिएन ।"
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1838,18 +1849,6 @@ msgstr "विधि %s सही रुपले सुरू हुन सक�
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "कृपया डिस्क लेबुल: '%s' ड्राइभ '%s'मा घुसउनुहोस् र इन्टर थिच्नुहोस् । "
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "प्याकेज सूचीहरू वा वस्तुस्थिति फाइल पद वर्णन गर्न वा खोल्न सकिएन ।"
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "यो समस्याहरू सुधार्न तपाईँ apt-get अद्यावधिक चलाउन चाहनुहुन्छ"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "स्रोतहरुको सूचि पढ्न सकिएन ।"
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -1937,96 +1936,6 @@ msgstr "अतिरिक्त"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
-
-#: apt-pkg/sourcelist.cc:170
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
-
-#: apt-pkg/sourcelist.cc:173
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
-
-#: apt-pkg/sourcelist.cc:184
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
-
-#: apt-pkg/sourcelist.cc:190
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
-
-#: apt-pkg/sourcelist.cc:193
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (पूर्ण dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s खोलिदैछ"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "लाइन %u स्रोत सूचि %s मा अति लामो छ ।"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "वैरुप्य लाइन %u स्रोत सूचिमा %s (प्रकार)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "%s स्थिर गर्न असक्षम भयो ।"
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2212,6 +2121,11 @@ msgstr "आंशिक संग्रह डाइरेक्ट्री %s 
 msgid "Unable to lock directory %s"
 msgstr "सूचि डाइरेक्ट्री ताल्चा मार्न असफल"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2223,10 +2137,6 @@ msgstr "%li को %li फाइल पुन:प्राप्त गरिद
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "%li को %li फाइल पुन:प्राप्त गरिदैछ"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "तपाईँको स्रोत सूचिमा केही 'source' URIs राख्नुहोस्"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2248,6 +2158,24 @@ msgstr "पिन टाइप %s बुझ्न सकिएन "
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "पिनको लागि कुनै प्राथमिकता (वा शून्य) निर्दिष्ट छैन"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"केही अनुक्रमणिका फाइलहरू डाउनलोड गर्न असफल भयो, तिनीहरू उपेक्षित भए, वा सट्टामा पुरानो "
+"एउटा प्रयोग गरियो ।"
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "तपाईँको स्रोत सूचिमा केही 'source' URIs राख्नुहोस्"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "%s स्थिर गर्न असक्षम भयो ।"
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2272,14 +2200,10 @@ msgstr ""
 "हटाउनु पर्नेछ । यो प्राय नराम्रो हो, तर यदि तपाईँ यो साँच्चै गर्न चाहनुहुन्छ भने, APT::"
 "Force-LoopBreak विकल्प सक्रिय गर्नुहोस् ।"
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"केही अनुक्रमणिका फाइलहरू डाउनलोड गर्न असफल भयो, तिनीहरू उपेक्षित भए, वा सट्टामा पुरानो "
-"एउटा प्रयोग गरियो ।"
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "लाइन %u स्रोत सूचि %s मा अति लामो छ ।"
 
 #: apt-pkg/cdrom.cc:571
 #, fuzzy
@@ -2486,6 +2410,237 @@ msgstr "घुमाउरो फाइलमा अवैध लाइन:%s"
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "प्याकेज फाइल पद वर्णन गर्न असक्षम %s (१)"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
+
+#: apt-pkg/sourcelist.cc:170
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
+
+#: apt-pkg/sourcelist.cc:173
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
+
+#: apt-pkg/sourcelist.cc:184
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
+
+#: apt-pkg/sourcelist.cc:190
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
+
+#: apt-pkg/sourcelist.cc:193
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (पूर्ण dist)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s खोलिदैछ"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "वैरुप्य लाइन %u स्रोत सूचिमा %s (प्रकार)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, fuzzy, c-format
+msgid "Installing %s"
+msgstr " %s स्थापना भयो"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr " %s कनफिगर गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr " %s हटाइदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, fuzzy, c-format
+msgid "Completely removing %s"
+msgstr " %s पूर्ण रुपले हट्यो"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr ""
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, fuzzy, c-format
+msgid "Directory '%s' missing"
+msgstr "आंशिक सूचिहरुको डाइरेक्ट्री %s हराइरहेछ ।"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, fuzzy, c-format
+msgid "Could not open file '%s'"
+msgstr "फाइल %s खोल्न सकिएन"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr " %s तयार गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr " %s अनप्याक गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr " %s कनफिगर गर्न तयार गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr " %s स्थापना भयो"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr " %s हटाउन तयार गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr " %s हट्यो"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr " %s पूर्ण रुपले हटाउन तयार गरिदैछ"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr " %s पूर्ण रुपले हट्यो"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr " %s मा लेख्न असक्षम"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:94
+#, fuzzy, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "सूचि डाइरेक्ट्री ताल्चा मार्न असफल"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2817,162 +2972,6 @@ msgstr "अर्थ %s बुझिएन, सत्य वा झूठो प
 #, c-format
 msgid "Invalid operation %s"
 msgstr "अवैध सञ्चालन  %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, fuzzy, c-format
-msgid "Installing %s"
-msgstr " %s स्थापना भयो"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr " %s कनफिगर गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr " %s हटाइदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, fuzzy, c-format
-msgid "Completely removing %s"
-msgstr " %s पूर्ण रुपले हट्यो"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr ""
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "आंशिक सूचिहरुको डाइरेक्ट्री %s हराइरहेछ ।"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, fuzzy, c-format
-msgid "Could not open file '%s'"
-msgstr "फाइल %s खोल्न सकिएन"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr " %s तयार गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr " %s अनप्याक गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr " %s कनफिगर गर्न तयार गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr " %s स्थापना भयो"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr " %s हटाउन तयार गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr " %s हट्यो"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr " %s पूर्ण रुपले हटाउन तयार गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr " %s पूर्ण रुपले हट्यो"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr " %s मा लेख्न असक्षम"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:94
-#, fuzzy, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "सूचि डाइरेक्ट्री ताल्चा मार्न असफल"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr ""
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""

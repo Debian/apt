@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_eu\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-03 07:15+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -98,10 +98,10 @@ msgstr "Guztira erregistratutako lekua: "
 msgid "Package file %s is out of sync."
 msgstr "%s pakete fitxategia ez dago sinkronizatuta."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Ez da paketerik aurkitu"
 
@@ -670,9 +670,8 @@ msgstr "%s bertsiorik berriena da jada.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s bertsiorik berriena da jada.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
 #: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1328
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s espero zen baina ez zegoen han"
@@ -1116,6 +1115,14 @@ msgstr "Konexioak huts egin du"
 msgid "Internal error"
 msgstr "Barne errorea"
 
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Berriketak kalkulatzen... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Eginda"
+
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr ""
@@ -1351,14 +1358,6 @@ msgstr[1] ""
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
 #: apt-private/private-install.cc:83
@@ -1627,6 +1626,14 @@ msgstr "%s paketea ez dago instalatuta, eta, beraz, ez da kenduko\n"
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "%s paketea ez dago instalatuta, eta, beraz, ez da kenduko\n"
 
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "KONTUZ: Hurrengo paketeak ezin dira egiaztatu!"
@@ -1661,14 +1668,6 @@ msgstr ""
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr ""
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Berriketak kalkulatzen... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Eginda"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1710,17 +1709,17 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286 apt-pkg/clean.cc:43
-#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/contrib/fileutl.cc:368
-#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
-#: apt-inst/extract.cc:471
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
+#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Ezin da %s irakurri"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1845,6 +1844,18 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Egiaztapena ez dator bat"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "Pakete zerrenda edo egoera fitxategia ezin dira analizatu edo ireki."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Beharbada 'apt-get update' exekutatu nahiko duzu arazoak konpontzeko"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Ezin izan da Iturburu zerrenda irakurri."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -1864,18 +1875,6 @@ msgstr "%s metodoa ez da behar bezala abiarazi"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Mesedez sa ''%s' izeneko diska '%s' gailuan eta enter sakatu"
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "Pakete zerrenda edo egoera fitxategia ezin dira analizatu edo ireki."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Beharbada 'apt-get update' exekutatu nahiko duzu arazoak konpontzeko"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Ezin izan da Iturburu zerrenda irakurri."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -1963,96 +1962,6 @@ msgstr "estra"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "'%s' motako indize fitxategirik ez da onartzen"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI analisia)"
-
-#: apt-pkg/sourcelist.cc:170
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
-
-#: apt-pkg/sourcelist.cc:173
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist)"
-
-#: apt-pkg/sourcelist.cc:184
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
-
-#: apt-pkg/sourcelist.cc:190
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
-
-#: apt-pkg/sourcelist.cc:193
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI analisia)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Gaizkieratutako %lu lerroa %s iturburu zerrendan (banaketa orokorra)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s irekitzen"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "%2$s iturburu zerrendako %1$u lerroa luzeegia da."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Gaizki osatutako %u lerroa %s Iturburu zerrendan (type)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "'%s' motako indize fitxategirik ez da onartzen"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Ezin da %s atzitu."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2238,6 +2147,11 @@ msgstr "%spartial artxibo direktorioa falta da."
 msgid "Unable to lock directory %s"
 msgstr "Ezin da zerrenda direktorioa blokeatu"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "'%s' motako indize fitxategirik ez da onartzen"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2249,10 +2163,6 @@ msgstr "%li fitxategi deskargatzen %li -tik (%s falta da)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "%li fitxategia jasotzen %li-tik"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "'Iturburu' URI batzuk jarri behar dituzu sources.list-en"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2274,6 +2184,24 @@ msgstr "Ez da ulertu %s orratz-mota (pin)"
 #: apt-pkg/policy.cc:452
 msgid "No priority (or zero) specified for pin"
 msgstr "Ez da lehentasunik zehaztu orratzarentzat (pin) (edo zero da)"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Indize fitxategi batzuk ezin izan dira deskargatu; ez ikusi egin zaie, edo "
+"zaharrak erabili dira haien ordez."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "'Iturburu' URI batzuk jarri behar dituzu sources.list-en"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Ezin da %s atzitu."
 
 #: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
@@ -2299,14 +2227,10 @@ msgstr ""
 "izaten da, baina hala ere egin nahi baduzu, aktibatu APT::Force-LoopBreak "
 "aukera."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Indize fitxategi batzuk ezin izan dira deskargatu; ez ikusi egin zaie, edo "
-"zaharrak erabili dira haien ordez."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "%2$s iturburu zerrendako %1$u lerroa luzeegia da."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2514,6 +2438,237 @@ msgstr "Lerro baliogabea desbideratze fitxategian: %s"
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ezin da %s pakete fitxategia analizatu (1)"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI analisia)"
+
+#: apt-pkg/sourcelist.cc:170
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
+
+#: apt-pkg/sourcelist.cc:173
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist)"
+
+#: apt-pkg/sourcelist.cc:184
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
+
+#: apt-pkg/sourcelist.cc:190
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
+
+#: apt-pkg/sourcelist.cc:193
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (URI analisia)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Gaizkieratutako %lu lerroa %s iturburu zerrendan (banaketa orokorra)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Gaizki osatutako %lu lerroa %s Iturburu zerrendan (dist analisia)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s irekitzen"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Gaizki osatutako %u lerroa %s Iturburu zerrendan (type)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "%s Instalatzen"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "%s konfiguratzen"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "%s kentzen"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, fuzzy, c-format
+msgid "Completely removing %s"
+msgstr "%s guztiz ezabatu da"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Inbstalazio-ondorengo %s abiarazlea exekutatzen"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "'%s' direktorioa falta da"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, fuzzy, c-format
+msgid "Could not open file '%s'"
+msgstr "%s fitxategia ezin izan da ireki"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "%s prestatzen"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "%s irekitzen"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "%s konfiguratzeko prestatzen"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "%s Instalatuta"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "%s kentzeko prestatzen"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "%s kendurik"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "%s guztiz ezabatzeko prestatzen"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s guztiz ezabatu da"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr "%s : ezin da idatzi"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:94
+#, fuzzy, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "Ezin da zerrenda direktorioa blokeatu"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
@@ -2850,162 +3005,6 @@ msgstr "%s zentzua ez da ulertzen; probatu egiazkoa edo faltsua."
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Eragiketa baliogabea: %s"
-
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "%s Instalatzen"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "%s konfiguratzen"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "%s kentzen"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, fuzzy, c-format
-msgid "Completely removing %s"
-msgstr "%s guztiz ezabatu da"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Inbstalazio-ondorengo %s abiarazlea exekutatzen"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "'%s' direktorioa falta da"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, fuzzy, c-format
-msgid "Could not open file '%s'"
-msgstr "%s fitxategia ezin izan da ireki"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "%s prestatzen"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "%s irekitzen"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "%s konfiguratzeko prestatzen"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "%s Instalatuta"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "%s kentzeko prestatzen"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "%s kendurik"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "%s guztiz ezabatzeko prestatzen"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s guztiz ezabatu da"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr "%s : ezin da idatzi"
-
-#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1681
-msgid "Operation was interrupted before it could finish"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1743
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1748
-msgid "dependency problems - leaving unconfigured"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1750
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1756
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1763
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1798
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:94
-#, fuzzy, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Ezin da zerrenda direktorioa blokeatu"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr ""
 
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""
