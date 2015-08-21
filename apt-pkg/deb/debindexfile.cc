@@ -145,6 +145,17 @@ uint8_t debStatusIndex::GetIndexFlags() const
 {
    return pkgCache::Flag::NotSource;
 }
+
+pkgCacheListParser * debStatusIndex::CreateListParser(FileFd &Pkg)
+{
+   if (Pkg.IsOpen() == false)
+      return NULL;
+   _error->PushToStack();
+   pkgCacheListParser * const Parser = new debStatusListParser(&Pkg);
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
+   return newError ? NULL : Parser;
+}
 									/*}}}*/
 // DebPkgFile Index - a single .deb file as an index			/*{{{*/
 debDebPkgFileIndex::debDebPkgFileIndex(std::string const &DebFile)

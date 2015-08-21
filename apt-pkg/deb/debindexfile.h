@@ -43,6 +43,8 @@ public:
    // Abort if the file does not exist.
    virtual bool Exists() const APT_OVERRIDE {return true;};
 
+   virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+
    debStatusIndex(std::string const &File);
    virtual ~debStatusIndex();
 };
