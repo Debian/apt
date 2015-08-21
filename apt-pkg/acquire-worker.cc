@@ -335,9 +335,10 @@ bool pkgAcquire::Worker::RunMessages()
 	       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
 		  Log->Pulse((*O)->GetOwner());
 
-	    std::string const filename = LookupTag(Message, "Filename", Itm->Owner->DestFile.c_str());
 	    HashStringList ReceivedHashes;
 	    {
+	       std::string const givenfilename = LookupTag(Message, "Filename");
+	       std::string const filename = givenfilename.empty() ? Itm->Owner->DestFile : givenfilename;
 	       // see if we got hashes to verify
 	       for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	       {
@@ -358,11 +359,11 @@ bool pkgAcquire::Worker::RunMessages()
 		     ReceivedHashes = calc.GetHashStringList();
 		  }
 	       }
-	    }
 
-	    // only local files can refer other filenames and counting them as fetched would be unfair
-	    if (Log !=  NULL && filename != Itm->Owner->DestFile)
-	       Log->Fetched(ReceivedHashes.FileSize(),atoi(LookupTag(Message,"Resume-Point","0").c_str()));
+	       // only local files can refer other filenames and counting them as fetched would be unfair
+	       if (Log != NULL && Itm->Owner->Complete == false && Itm->Owner->Local == false && givenfilename == filename)
+		  Log->Fetched(ReceivedHashes.FileSize(),atoi(LookupTag(Message,"Resume-Point","0").c_str()));
+	    }
 
 	    std::vector<Item*> const ItmOwners = Itm->Owners;
 	    OwnerQ->ItemDone(Itm);
