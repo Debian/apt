@@ -84,17 +84,14 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    if (WithLock == true)
       if (_system->Lock() == false)
 	 return false;
-   
-   if (_config->FindB("Debug::NoLocking",false) == true)
-      WithLock = false;
-      
+
    if (_error->PendingError() == true)
       return false;
 
    BuildSourceList(Progress);
 
    // Read the caches
-   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map,!WithLock);
+   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map, true);
    if (Progress != NULL)
       Progress->Done();
    if (Res == false)

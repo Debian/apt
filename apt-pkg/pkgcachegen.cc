@@ -1516,8 +1516,9 @@ APT_DEPRECATED bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap, bool AllowMem)
    { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
 bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
-			MMap **OutMap,bool AllowMem)
+			MMap **OutMap,bool)
 {
+   // FIXME: deprecate the ignored AllowMem parameter
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
 
    std::vector<pkgIndexFile *> Files;
@@ -1582,16 +1583,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 
       if (Debug == true)
 	 std::clog << "Do we have write-access to the cache files? " << (Writeable ? "YES" : "NO") << std::endl;
-
-      if (Writeable == false && AllowMem == false)
-      {
-	 if (CacheFile.empty() == false)
-	    return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
-	 else if (SrcCacheFile.empty() == false)
-	    return _error->Error(_("Unable to write to %s"),flNotFile(SrcCacheFile).c_str());
-	 else
-	    return _error->Error("Unable to create caches as file usage is disabled, but memory not allowed either!");
-      }
    }
 
    // At this point we know we need to construct something, so get storage ready
