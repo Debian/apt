@@ -1072,7 +1072,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       URIStart(Res);
       
       FailFile = Itm->DestFile;
-      FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
+      FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
       FailFd = Fd.Fd();
       
       bool Missing;

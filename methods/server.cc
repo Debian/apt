@@ -358,7 +358,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       }
    }
 
-   /* We have a reply we dont handle. This should indicate a perm server
+   /* We have a reply we don't handle. This should indicate a perm server
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
@@ -382,7 +382,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       return ERROR_NOT_FROM_SERVER;
 
    FailFile = Queue->DestFile;
-   FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
+   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
    FailFd = File->Fd();
    FailTime = Server->Date;
 

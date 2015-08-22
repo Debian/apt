@@ -298,7 +298,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 		return (S2->CompareOp & pkgCache::Dep::MultiArchImplicit) == pkgCache::Dep::MultiArchImplicit;
 	}
 	/* This covers additionally negative dependencies, which aren't arch-specific,
-	   but change architecture nontheless as a Conflicts: foo does applies for all archs */
+	   but change architecture nonetheless as a Conflicts: foo does applies for all archs */
 	bool IsImplicit() const APT_PURE;
 
 	bool IsSatisfied(VerIterator const &Ver) const APT_PURE;

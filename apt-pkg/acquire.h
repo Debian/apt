@@ -4,7 +4,7 @@
 
    Acquire - File Acquiration
    
-   This module contians the Acquire system. It is responsible for bringing
+   This module contains the Acquire system. It is responsible for bringing
    files into the local pathname space. It deals with URIs for files and
    URI handlers responsible for downloading or finding the URIs.
    

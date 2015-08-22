@@ -257,7 +257,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       clog << "** Pass C" << endl;
    LoopCount = 0;
    RevDepends = 0;
-   Remove = 0;             // Otherwise the libreadline remove problem occures
+   Remove = 0;             // Otherwise the libreadline remove problem occurs
    if (DoRun() == false)
       return false;
 

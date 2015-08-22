@@ -468,7 +468,7 @@ bool pkgFLCache::AddDiversion(PkgIterator const &Owner,
    if (FromN->Pointer != 0)
       Diver = FromN->Pointer;
   
-   /* Make sure from and to point to the same diversion, if they dont
+   /* Make sure from and to point to the same diversion, if they don't
       then we are trying to intermix diversions - very bad */
    if (ToN->Pointer != 0 && ToN->Pointer != Diver)
    {
