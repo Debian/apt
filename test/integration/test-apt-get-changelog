@@ -60,14 +60,15 @@ testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0/change.txt' foo.chan
 echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/pool/CHANGEPATH/changelog";' > rootdir/etc/apt/apt.conf.d/changelog.conf
 testsuccessequal "'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo --print-uris
 
-cd downloaded
 
 testsuccess aptget changelog foo -qq
-testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testfileequal 'rootdir/tmp/testsuccess.output' "$(cat aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 
 testsuccess aptget changelog foo libbar -qq
-testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)
-$(cat ../aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
+testfileequal 'rootdir/tmp/testsuccess.output' "$(cat aptarchive/pool/main/f/foo/foo_1.0/changelog)
+$(cat aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
+
+cd downloaded
 
 testsuccess aptget changelog foo -d
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"

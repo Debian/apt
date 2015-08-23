@@ -2935,6 +2935,10 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 	 return;
       }
       DestFile = TemporaryDirectory = tmpname;
+
+      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
+                                     SandboxUser.c_str(), "root", 0700);
    }
    else
       DestFile = DestDir;

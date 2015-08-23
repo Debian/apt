@@ -1403,10 +1403,7 @@ static bool DoChangelog(CommandLine &CmdL)
 
    if (printOnly == false)
    {
-      // Disable drop-privs if "_apt" can not write to the target dir
-      CheckDropPrivsMustBeDisabled(Fetcher);
-      if (_error->PendingError() == true)
-	 return false;
+      // Note: CheckDropPrivsMustBeDisabled isn't needed here as the download happens in a dedicated tempdir
 
       bool Failed = false;
       if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
