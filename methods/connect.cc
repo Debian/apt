@@ -272,7 +272,7 @@ bool Connect(std::string Host,int Port,const char *Service,
    if(LastHost != Host || LastPort != Port)
    {
       SrvRecords.clear();
-      if (_config->FindB("Acquire::EnableSrvRecods", true) == true)
+      if (_config->FindB("Acquire::EnableSrvRecords", true) == true)
          GetSrvRecords(Host, DefPort, SrvRecords);
    }
    // we have no SrvRecords for this host, connect right away
