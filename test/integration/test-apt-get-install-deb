@@ -60,3 +60,21 @@ The following NEW packages will be installed:
 Remv foo:i386 [1.0]
 Inst foo (1.0 local-deb [amd64])
 Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0
+
+# Check that installing the local deb works if it is not the candidate
+echo "Package: foo
+Pin: version 1.0
+Pin-Priority: -1" > rootdir/etc/apt/preferences
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Note, selecting 'foo' instead of './incoming/foo_1.0_amd64.deb'
+The following packages will be REMOVED:
+  foo:i386
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:i386 [1.0]
+Inst foo (1.0 local-deb [amd64])
+Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0

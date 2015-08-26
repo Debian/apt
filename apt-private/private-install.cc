@@ -675,6 +675,18 @@ bool DoInstall(CommandLine &CmdL)
    
    std::map<unsigned short, APT::VersionSet> verset;
 
+   for (const char **I = CmdL.FileList; *I != 0; I++) {
+      // Check for local pkgs like in the loop above.
+      if(!FileExists(*I) || flExtension(*I) != "deb")
+	 continue;
+
+      pkgCache::PkgIterator pkg = Cache->FindPkg(*I);
+
+      // Set any version providing the .deb as the candidate.
+      for (auto Prv = pkg.ProvidesList(); Prv.end() == false; Prv++)
+	 Cache.GetDepCache()->SetCandidateVersion(Prv.OwnerVer());
+   }
+
    if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset, 0))
       return false;
 
