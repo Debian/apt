@@ -594,8 +594,10 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       // and negative dependencies, don't forget negative dependencies
       {
 	 pkgCache::PkgIterator const M = Grp.FindPreferredPkg(false);
-	 if (M.end() == false)
-	    for (pkgCache::DepIterator Dep = M.RevDependsList(); Dep.end() == false; ++Dep)
+	 if (M.end() == false) {
+	    pkgCache::DepIterator Dep;
+	    Dynamic<pkgCache::DepIterator> DynDep(Dep);
+	    for (Dep = M.RevDependsList(); Dep.end() == false; ++Dep)
 	    {
 	       if ((Dep->CompareOp & (pkgCache::Dep::ArchSpecific | pkgCache::Dep::MultiArchImplicit)) != 0)
 		  continue;
@@ -603,10 +605,12 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
 		     Dep->Type != pkgCache::Dep::Replaces)
 		  continue;
 	       pkgCache::VerIterator Ver = Dep.ParentVer();
+	       Dynamic<pkgCache::VerIterator> DynVer(Ver);
 	       map_pointer_t * unused = NULL;
 	       if (NewDepends(Pkg, Ver, Dep->Version, Dep->CompareOp, Dep->Type, unused) == false)
 		  return false;
 	    }
+	 }
       }
 
       // this package is the new last package
