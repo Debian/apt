@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-21 06:13-0400\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -282,7 +282,7 @@ msgid "Couldn't find package %s"
 msgstr "تعذر العثور على الحزمة %s"
 
 #: cmdline/apt-get.cc:422 cmdline/apt-mark.cc:78
-#: apt-private/private-install.cc:839
+#: apt-private/private-install.cc:851
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "إلا أنه سيتم تثبيت %s"
@@ -464,11 +464,11 @@ msgstr ""
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1551
 msgid "Supported modules:"
 msgstr "الوحدات المدعومة:"
 
-#: cmdline/apt-get.cc:1595
+#: cmdline/apt-get.cc:1592
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -578,8 +578,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s هي النسخة الأحدث.\n"
 
 #: cmdline/apt-mark.cc:255 cmdline/apt-mark.cc:333 cmdline/apt-mark.cc:397
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:207
-#: apt-pkg/deb/dpkgpm.cc:1302
+#: apt-pkg/deb/dpkgpm.cc:1302 apt-pkg/contrib/fileutl.cc:850
+#: apt-pkg/contrib/gpgv.cc:207
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr ""
@@ -1023,336 +1023,6 @@ msgstr ""
 msgid "Internal error"
 msgstr "خطأ داخلي"
 
-#: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc:127
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
-
-#: apt-private/private-cacheset.cc:133
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
-
-#: apt-private/private-cacheset.cc:139
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
-
-#: apt-private/private-cacheset.cc:157
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "الحزمة %s وهميّة وتوفّرها:\n"
-
-#: apt-private/private-cacheset.cc:168
-#, fuzzy
-msgid " [Installed]"
-msgstr " [مُثبّتة]"
-
-#: apt-private/private-cacheset.cc:177
-msgid " [Not candidate version]"
-msgstr ""
-
-#: apt-private/private-cacheset.cc:179
-msgid "You should explicitly select one to install."
-msgstr "يجب اختيار واحدة بالتحديد لتثبيتها."
-
-#: apt-private/private-cacheset.cc:182
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-
-#: apt-private/private-cacheset.cc:200
-msgid "However the following packages replace it:"
-msgstr "على أيّ فإن الحزم التالية تحلّ مكانها:"
-
-#: apt-private/private-cacheset.cc:213
-#, fuzzy, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "الحزمة %s ليس لها مرشح تثبيت"
-
-#: apt-private/private-cacheset.cc:226
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:915
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "الحزمة %s غير مُثبّتة، لذلك لن تُزال\n"
-
-#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:921
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "الحزمة %s غير مُثبّتة، لذلك لن تُزال\n"
-
-#: apt-private/private-cacheset.cc:289
-#, fuzzy, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "لاحظ، تحديد %s بدلاً من %s\n"
-
-#: apt-private/private-install.cc:87
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "خطأ داخلي، تم طلب InstallPackages مع وجود حزم معطوبة!"
-
-#: apt-private/private-install.cc:96
-msgid "Packages need to be removed but remove is disabled."
-msgstr "حزم بحاجة للإزالة لكن الإزالة مُعطّلة."
-
-#: apt-private/private-install.cc:103 apt-private/private-download.cc:118
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-install.cc:108
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "هناك مشاكل وتم استخدام -y دون --force-yes"
-
-#: apt-private/private-install.cc:110
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "هناك مشاكل وتم استخدام -y دون --force-yes"
-
-#: apt-private/private-install.cc:112
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc:128
-msgid "Internal error, Ordering didn't finish"
-msgstr "خطأ داخلي، لم تنته عملية الترتيب"
-
-#: apt-private/private-install.cc:166
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "يا للغرابة... لم تتطابق الأحجام، الرجاء مراسلة apt@packages.debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:173
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "بحاجة إلى جلب %sب/%sب من الأرشيف.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:178
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "بحاجة إلى جلب %sب من الأرشيف.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:185
-#, fuzzy, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "بعد الاستخراج %sب من المساحة الإضافيّة سيتمّ استخدامها.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:190
-#, fuzzy, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "بعد الاستخراج %sب من المساحة ستفرّغ.\n"
-
-#: apt-private/private-install.cc:202 apt-private/private-install.cc:224
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr ""
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:206
-msgid "Yes, do as I say!"
-msgstr "نعم، افعل ما أقوله!"
-
-#: apt-private/private-install.cc:208
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"أنت على وشك أن تقوم بشيء ضارّ جداً\n"
-"كي تستمر اكتب العبارة '%s'\n"
-" ؟] "
-
-#: apt-private/private-install.cc:214 apt-private/private-install.cc:232
-msgid "Abort."
-msgstr "إجهاض."
-
-#: apt-private/private-install.cc:229
-msgid "Do you want to continue?"
-msgstr "هل تريد الاستمرار؟"
-
-#: apt-private/private-install.cc:299
-msgid "Some files failed to download"
-msgstr "فشل تنزيل بعض الملفات"
-
-#: apt-private/private-install.cc:306
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"تعذر إحضار بعض الأرشيف، ربما يمكنك محاولة تنفيذ apt-get update أو إضافة --"
-"fix-missing؟"
-
-#: apt-private/private-install.cc:310
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing وتبديل الأوساط غير مدعومة حالياً"
-
-#: apt-private/private-install.cc:315
-msgid "Unable to correct missing packages."
-msgstr "تعذر تصحيح الحزم المفقودة."
-
-#: apt-private/private-install.cc:316
-msgid "Aborting install."
-msgstr "إجهاض التثبيت."
-
-#: apt-private/private-install.cc:341
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc:348
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr ""
-
-#: apt-private/private-install.cc:370
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
-
-#: apt-private/private-install.cc:463
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc:466 apt-private/private-install.cc:622
-msgid "The following information may help to resolve the situation:"
-msgstr "قد تساعد المعلومات التالية في حل المشكلة:"
-
-#: apt-private/private-install.cc:470
-#, fuzzy
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "خطأ داخلي، عطب AllUpgrade بعض الأشياء"
-
-#: apt-private/private-install.cc:479
-#, fuzzy
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "سيتم تثبيت الحزم الجديدة التالية:"
-msgstr[1] "سيتم تثبيت الحزم الجديدة التالية:"
-
-#: apt-private/private-install.cc:486
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "سيتم تثبيت الحزم الجديدة التالية:"
-msgstr[1] "سيتم تثبيت الحزم الجديدة التالية:"
-
-#: apt-private/private-install.cc:488
-msgid "Use 'apt-get autoremove' to remove it."
-msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc:582
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "قد ترغب بتشغيل 'apt-get -f install' لتصحيح هذه:"
-
-#: apt-private/private-install.cc:584
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"مُعتمدات غير مستوفاة. جرب 'apt-get -f install' بدون أسماء حزم (أو حدّد حلاً)."
-
-#: apt-private/private-install.cc:607
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-
-#: apt-private/private-install.cc:628
-msgid "Broken packages"
-msgstr "حزم معطوبة"
-
-#: apt-private/private-install.cc:685
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "سيتم تثبيت الحزم الإضافيّة التالية:"
-
-#: apt-private/private-install.cc:774
-msgid "Suggested packages:"
-msgstr "الحزم المقترحة:"
-
-#: apt-private/private-install.cc:776
-msgid "Recommended packages:"
-msgstr "الحزم المستحسنة:"
-
-#: apt-private/private-install.cc:798
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "تخطّي %s، حيث أنها مثبتة ولم يتمّ تعيين الترقية.\n"
-
-#: apt-private/private-install.cc:802
-#, fuzzy, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "تخطّي %s، حيث أنها مثبتة ولم يتمّ تعيين الترقية.\n"
-
-#: apt-private/private-install.cc:814
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "إعادة تثبيت  %s غير ممكنة، حيث أنّه لا يمكن تنزيلها.\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc:820
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s هي النسخة الأحدث.\n"
-
-#: apt-private/private-install.cc:868
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "النسخة المحددة %s (%s) للإصدارة %s\n"
-
-#: apt-private/private-install.cc:873
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "النسخة المحددة %s (%s) للإصدارة %s\n"
-
 #: apt-private/private-list.cc:121
 msgid "Listing"
 msgstr ""
@@ -1574,6 +1244,81 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr ""
 
+#: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc:127
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
+
+#: apt-private/private-cacheset.cc:133
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
+
+#: apt-private/private-cacheset.cc:139
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "لاحظ، تحديد %s بسبب صيغة regex '%s'\n"
+
+#: apt-private/private-cacheset.cc:157
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "الحزمة %s وهميّة وتوفّرها:\n"
+
+#: apt-private/private-cacheset.cc:168
+#, fuzzy
+msgid " [Installed]"
+msgstr " [مُثبّتة]"
+
+#: apt-private/private-cacheset.cc:177
+msgid " [Not candidate version]"
+msgstr ""
+
+#: apt-private/private-cacheset.cc:179
+msgid "You should explicitly select one to install."
+msgstr "يجب اختيار واحدة بالتحديد لتثبيتها."
+
+#: apt-private/private-cacheset.cc:182
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+
+#: apt-private/private-cacheset.cc:200
+msgid "However the following packages replace it:"
+msgstr "على أيّ فإن الحزم التالية تحلّ مكانها:"
+
+#: apt-private/private-cacheset.cc:213
+#, fuzzy, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "الحزمة %s ليس لها مرشح تثبيت"
+
+#: apt-private/private-cacheset.cc:226
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr ""
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:927
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "الحزمة %s غير مُثبّتة، لذلك لن تُزال\n"
+
+#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:933
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "الحزمة %s غير مُثبّتة، لذلك لن تُزال\n"
+
+#: apt-private/private-cacheset.cc:289
+#, fuzzy, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "لاحظ، تحديد %s بدلاً من %s\n"
+
 #: apt-private/private-show.cc:158
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -1585,6 +1330,261 @@ msgstr[1] ""
 #: apt-private/private-show.cc:165
 msgid "not a real package (virtual)"
 msgstr ""
+
+#: apt-private/private-install.cc:87
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "خطأ داخلي، تم طلب InstallPackages مع وجود حزم معطوبة!"
+
+#: apt-private/private-install.cc:96
+msgid "Packages need to be removed but remove is disabled."
+msgstr "حزم بحاجة للإزالة لكن الإزالة مُعطّلة."
+
+#: apt-private/private-install.cc:103 apt-private/private-download.cc:118
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-install.cc:108
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "هناك مشاكل وتم استخدام -y دون --force-yes"
+
+#: apt-private/private-install.cc:110
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "هناك مشاكل وتم استخدام -y دون --force-yes"
+
+#: apt-private/private-install.cc:112
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc:128
+msgid "Internal error, Ordering didn't finish"
+msgstr "خطأ داخلي، لم تنته عملية الترتيب"
+
+#: apt-private/private-install.cc:166
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr "يا للغرابة... لم تتطابق الأحجام، الرجاء مراسلة apt@packages.debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:173
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "بحاجة إلى جلب %sب/%sب من الأرشيف.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:178
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "بحاجة إلى جلب %sب من الأرشيف.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:185
+#, fuzzy, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "بعد الاستخراج %sب من المساحة الإضافيّة سيتمّ استخدامها.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:190
+#, fuzzy, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "بعد الاستخراج %sب من المساحة ستفرّغ.\n"
+
+#: apt-private/private-install.cc:202 apt-private/private-install.cc:224
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr ""
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc:206
+msgid "Yes, do as I say!"
+msgstr "نعم، افعل ما أقوله!"
+
+#: apt-private/private-install.cc:208
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"أنت على وشك أن تقوم بشيء ضارّ جداً\n"
+"كي تستمر اكتب العبارة '%s'\n"
+" ؟] "
+
+#: apt-private/private-install.cc:214 apt-private/private-install.cc:232
+msgid "Abort."
+msgstr "إجهاض."
+
+#: apt-private/private-install.cc:229
+msgid "Do you want to continue?"
+msgstr "هل تريد الاستمرار؟"
+
+#: apt-private/private-install.cc:299
+msgid "Some files failed to download"
+msgstr "فشل تنزيل بعض الملفات"
+
+#: apt-private/private-install.cc:306
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"تعذر إحضار بعض الأرشيف، ربما يمكنك محاولة تنفيذ apt-get update أو إضافة --"
+"fix-missing؟"
+
+#: apt-private/private-install.cc:310
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing وتبديل الأوساط غير مدعومة حالياً"
+
+#: apt-private/private-install.cc:315
+msgid "Unable to correct missing packages."
+msgstr "تعذر تصحيح الحزم المفقودة."
+
+#: apt-private/private-install.cc:316
+msgid "Aborting install."
+msgstr "إجهاض التثبيت."
+
+#: apt-private/private-install.cc:341
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc:348
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr ""
+
+#: apt-private/private-install.cc:370
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr ""
+
+#: apt-private/private-install.cc:463
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc:466 apt-private/private-install.cc:622
+msgid "The following information may help to resolve the situation:"
+msgstr "قد تساعد المعلومات التالية في حل المشكلة:"
+
+#: apt-private/private-install.cc:470
+#, fuzzy
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "خطأ داخلي، عطب AllUpgrade بعض الأشياء"
+
+#: apt-private/private-install.cc:479
+#, fuzzy
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "سيتم تثبيت الحزم الجديدة التالية:"
+msgstr[1] "سيتم تثبيت الحزم الجديدة التالية:"
+
+#: apt-private/private-install.cc:486
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "سيتم تثبيت الحزم الجديدة التالية:"
+msgstr[1] "سيتم تثبيت الحزم الجديدة التالية:"
+
+#: apt-private/private-install.cc:488
+msgid "Use 'apt-get autoremove' to remove it."
+msgid_plural "Use 'apt-get autoremove' to remove them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc:582
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "قد ترغب بتشغيل 'apt-get -f install' لتصحيح هذه:"
+
+#: apt-private/private-install.cc:584
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"مُعتمدات غير مستوفاة. جرب 'apt-get -f install' بدون أسماء حزم (أو حدّد حلاً)."
+
+#: apt-private/private-install.cc:607
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+
+#: apt-private/private-install.cc:628
+msgid "Broken packages"
+msgstr "حزم معطوبة"
+
+#: apt-private/private-install.cc:697
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "سيتم تثبيت الحزم الإضافيّة التالية:"
+
+#: apt-private/private-install.cc:786
+msgid "Suggested packages:"
+msgstr "الحزم المقترحة:"
+
+#: apt-private/private-install.cc:788
+msgid "Recommended packages:"
+msgstr "الحزم المستحسنة:"
+
+#: apt-private/private-install.cc:810
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "تخطّي %s، حيث أنها مثبتة ولم يتمّ تعيين الترقية.\n"
+
+#: apt-private/private-install.cc:814
+#, fuzzy, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "تخطّي %s، حيث أنها مثبتة ولم يتمّ تعيين الترقية.\n"
+
+#: apt-private/private-install.cc:826
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "إعادة تثبيت  %s غير ممكنة، حيث أنّه لا يمكن تنزيلها.\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc:832
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s هي النسخة الأحدث.\n"
+
+#: apt-private/private-install.cc:880
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "النسخة المحددة %s (%s) للإصدارة %s\n"
+
+#: apt-private/private-install.cc:885
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "النسخة المحددة %s (%s) للإصدارة %s\n"
 
 #: apt-private/private-main.cc:34
 msgid ""
@@ -1703,7 +1703,7 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:133 apt-pkg/init.cc:141
-#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412
+#: apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412 apt-pkg/clean.cc:43
 #: apt-pkg/sourcelist.cc:306 apt-pkg/sourcelist.cc:312
 #: apt-pkg/contrib/fileutl.cc:375 apt-pkg/contrib/fileutl.cc:488
 #: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
@@ -1711,9 +1711,9 @@ msgstr ""
 msgid "Unable to read %s"
 msgstr "تعذرت قراءة %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:563
-#: apt-pkg/acquire.cc:588 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:563
+#: apt-pkg/acquire.cc:588 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1836,17 +1836,38 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "MD5Sum غير متطابقة"
 
-#: apt-pkg/cachefile.cc:101
+#: apt-pkg/cachefile.cc:98
 msgid "The package lists or status file could not be parsed or opened."
 msgstr ""
 
-#: apt-pkg/cachefile.cc:105
+#: apt-pkg/cachefile.cc:102
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "قد يساعدك تنفيذ الأمر apt-get update في تصحيح هذه المشاكل"
 
-#: apt-pkg/cachefile.cc:123
+#: apt-pkg/cachefile.cc:120
 msgid "The list of sources could not be read."
 msgstr "تعذرت قراءة قائمة المصادر."
+
+#: apt-pkg/acquire-worker.cc:111
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:113
+#, c-format
+msgid "Is the package %s installed?"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:164
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc:537
+#, fuzzy, c-format
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
+msgstr "الرجاء إدخال القرص المُسمّى  '%s' في السوّاقة '%s' وضغط مفتاح الإدخال."
 
 #: apt-pkg/pkgcache.cc:163
 msgid "Empty package cache"
@@ -1930,64 +1951,81 @@ msgstr "اختياري"
 msgid "extra"
 msgstr "إضافي"
 
-#: apt-pkg/acquire-worker.cc:111
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr ""
-
-#: apt-pkg/acquire-worker.cc:113
-#, c-format
-msgid "Is the package %s installed?"
-msgstr ""
-
-#: apt-pkg/acquire-worker.cc:164
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr ""
-
-#: apt-pkg/acquire-worker.cc:536
-#, fuzzy, c-format
-msgid ""
-"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "الرجاء إدخال القرص المُسمّى  '%s' في السوّاقة '%s' وضغط مفتاح الإدخال."
+#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
+msgid "Calculating upgrade"
+msgstr "حساب الترقية"
 
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
+#: apt-pkg/pkgcachegen.cc:112
+msgid "Cache has an incompatible versioning system"
 msgstr ""
 
-#: apt-pkg/depcache.cc:140
-msgid "Candidate versions"
-msgstr ""
-
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr ""
-
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-#, fuzzy
-msgid "Reading state information"
-msgstr "دمج المعلومات المتوفرة"
-
-#: apt-pkg/depcache.cc:252
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
+#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
+#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
+#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
+#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
 #, fuzzy, c-format
-msgid "Failed to open StateFile %s"
-msgstr "فشل فتح %s"
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "حدث خطأ أثناء معالجة %s (NewVersion1)"
 
-#: apt-pkg/depcache.cc:257
-#, fuzzy, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "فشلت كتابة الملف %s"
+#: apt-pkg/pkgcachegen.cc:257
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr ""
+
+#: apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr ""
+
+#: apt-pkg/pkgcachegen.cc:263
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr ""
+
+#: apt-pkg/pkgcachegen.cc:266
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr ""
+
+#: apt-pkg/pkgcachegen.cc:1419 apt-pkg/pkgcachegen.cc:1546
+#: apt-pkg/pkgcachegen.cc:1572 apt-pkg/pkgcachegen.cc:1681
+msgid "Reading package lists"
+msgstr "قراءة قوائم الحزم"
+
+#: apt-pkg/pkgcachegen.cc:1490 apt-pkg/pkgcachegen.cc:1497
+msgid "IO Error saving source cache"
+msgstr ""
+
+#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:232
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:311
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:318
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
+msgid "Execute external solver"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc:116
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2161
+#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "فشل إعادة التسمية ، %s (%s -> %s)."
@@ -2094,67 +2132,10 @@ msgid ""
 msgstr ""
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
-#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3054
+#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "الاتصال بـ%s (%s)"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:553
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "نظام الحزم '%s' غير مدعوم"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:112
-msgid "Cache has an incompatible versioning system"
-msgstr ""
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
-#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
-#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
-#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
-#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "حدث خطأ أثناء معالجة %s (NewVersion1)"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:263
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:1400 apt-pkg/pkgcachegen.cc:1526
-#: apt-pkg/pkgcachegen.cc:1552 apt-pkg/pkgcachegen.cc:1671
-msgid "Reading package lists"
-msgstr "قراءة قوائم الحزم"
-
-#: apt-pkg/pkgcachegen.cc:1471 apt-pkg/pkgcachegen.cc:1478
-msgid "IO Error saving source cache"
-msgstr ""
-
-#: apt-pkg/pkgcachegen.cc:1570 apt-pkg/pkgcachegen.cc:1572
-#: apt-pkg/contrib/fileutl.cc:2151 cmdline/apt-extracttemplates.cc:263
-#, c-format
-msgid "Unable to write to %s"
-msgstr "تعذرت الكتابة إلى %s"
 
 #: apt-pkg/acquire.cc:126 apt-pkg/acquire.cc:146 apt-pkg/cdrom.cc:833
 #, c-format
@@ -2171,6 +2152,11 @@ msgstr ""
 msgid "Unable to lock directory %s"
 msgstr "تعذر قفل دليل القائمة"
 
+#: apt-pkg/acquire.cc:553 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "نظام الحزم '%s' غير مدعوم"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:1081
@@ -2181,21 +2167,6 @@ msgstr ""
 #: apt-pkg/acquire.cc:1083
 #, c-format
 msgid "Retrieving file %li of %li"
-msgstr ""
-
-#: apt-pkg/update.cc:76
-#, fuzzy, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "فشل إحضار %s  %s\n"
-
-#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
 msgstr ""
 
 #: apt-pkg/policy.cc:77
@@ -2224,19 +2195,39 @@ msgstr ""
 msgid "No priority (or zero) specified for pin"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:983
+#: apt-pkg/update.cc:76
+#, fuzzy, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "فشل إحضار %s  %s\n"
+
+#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr ""
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr ""
+
+#: apt-pkg/packagemanager.cc:330 apt-pkg/packagemanager.cc:1018
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:562 apt-pkg/packagemanager.cc:592
+#: apt-pkg/packagemanager.cc:589 apt-pkg/packagemanager.cc:627
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "فشل إغلاق الملف %s"
 
-#: apt-pkg/packagemanager.cc:642
+#: apt-pkg/packagemanager.cc:677
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2322,10 +2313,6 @@ msgstr "كتابة لائحة المصادر الجديدة\n"
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
-msgid "Calculating upgrade"
-msgstr "حساب الترقية"
-
 #: apt-pkg/algorithms.cc:263
 #, c-format
 msgid ""
@@ -2342,25 +2329,32 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 
-#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
-msgid "Send scenario to solver"
+#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
 msgstr ""
 
-#: apt-pkg/edsp.cc:232
-msgid "Send request to solver"
+#: apt-pkg/depcache.cc:140
+msgid "Candidate versions"
 msgstr ""
 
-#: apt-pkg/edsp.cc:311
-msgid "Prepare for receiving solution"
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
 msgstr ""
 
-#: apt-pkg/edsp.cc:318
-msgid "External solver failed without a proper error message"
-msgstr ""
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+#, fuzzy
+msgid "Reading state information"
+msgstr "دمج المعلومات المتوفرة"
 
-#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
-msgid "Execute external solver"
-msgstr ""
+#: apt-pkg/depcache.cc:252
+#, fuzzy, c-format
+msgid "Failed to open StateFile %s"
+msgstr "فشل فتح %s"
+
+#: apt-pkg/depcache.cc:257
+#, fuzzy, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "فشلت كتابة الملف %s"
 
 #: apt-pkg/tagfile.cc:196 apt-pkg/tagfile.cc:296 apt-pkg/deb/debrecords.cc:212
 #, c-format
@@ -2370,44 +2364,6 @@ msgstr ""
 #: apt-pkg/tagfile.cc:541 apt-pkg/tagfile.cc:544
 #, c-format
 msgid "Cannot convert %s to integer"
-msgstr ""
-
-#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
-#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
-#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
-#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
-#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
-#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
-#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
-#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
-#: apt-pkg/sourcelist.cc:251
-#, c-format
-msgid "Malformed entry %u in %s file %s (%s)"
-msgstr ""
-
-#: apt-pkg/sourcelist.cc:355
-#, c-format
-msgid "Opening %s"
-msgstr "فتح %s"
-
-#: apt-pkg/sourcelist.cc:389
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr ""
-
-#: apt-pkg/sourcelist.cc:393
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr ""
-
-#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
-#, c-format
-msgid "Malformed stanza %u in source list %s (type)"
-msgstr ""
-
-#: apt-pkg/sourcelist.cc:429
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr ""
 
 #: apt-pkg/cacheset.cc:500
@@ -2462,339 +2418,43 @@ msgid ""
 "neither of them"
 msgstr ""
 
-#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
+#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
+#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
+#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
+#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
+#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
+#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
+#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
+#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:251
 #, c-format
-msgid "%lid %lih %limin %lis"
+msgid "Malformed entry %u in %s file %s (%s)"
 msgstr ""
 
-#. TRANSLATOR: h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
+#: apt-pkg/sourcelist.cc:355
 #, c-format
-msgid "%lih %limin %lis"
+msgid "Opening %s"
+msgstr "فتح %s"
+
+#: apt-pkg/sourcelist.cc:389
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
 msgstr ""
 
-#. TRANSLATOR: min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:430
+#: apt-pkg/sourcelist.cc:393
 #, c-format
-msgid "%limin %lis"
+msgid "Type '%s' is not known on line %u in source list %s"
 msgstr ""
 
-#. TRANSLATOR: s means seconds
-#: apt-pkg/contrib/strutl.cc:435
+#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
 #, c-format
-msgid "%lis"
+msgid "Malformed stanza %u in source list %s (type)"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1279
+#: apt-pkg/sourcelist.cc:429
 #, c-format
-msgid "Selection %s not found"
-msgstr "تعذر العثور على التحديد %s"
-
-#: apt-pkg/contrib/fileutl.cc:197
-#, c-format
-msgid "Not using locking for read only lock file %s"
+msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:202
-#, c-format
-msgid "Could not open lock file %s"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:225
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:230
-#, c-format
-msgid "Could not get lock %s"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:401
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:419
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:428
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:862
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:864
-#, c-format
-msgid "Sub-process %s received signal %u."
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
-#, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
-#, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:987
-#, fuzzy, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "مشكلة في إغلاق الملف"
-
-#: apt-pkg/contrib/fileutl.cc:1194
-#, c-format
-msgid "Could not open file %s"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
-#, fuzzy, c-format
-msgid "Could not open file descriptor %d"
-msgstr "فشل إغلاق الملف %s"
-
-#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2176
-msgid "Failed to create subprocess IPC"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:1466
-msgid "Failed to exec compressor "
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:1607
-#, c-format
-msgid "read, still have %llu to read but none left"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
-#, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:2008
-#, fuzzy, c-format
-msgid "Problem closing the file %s"
-msgstr "مشكلة في إغلاق الملف"
-
-#: apt-pkg/contrib/fileutl.cc:2019
-#, fuzzy, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "مشكلة في مزامنة الملف"
-
-#: apt-pkg/contrib/fileutl.cc:2030
-#, fuzzy, c-format
-msgid "Problem unlinking the file %s"
-msgstr "مشكلة في إغلاق الملف"
-
-#: apt-pkg/contrib/fileutl.cc:2043
-msgid "Problem syncing the file"
-msgstr "مشكلة في مزامنة الملف"
-
-#: apt-pkg/contrib/fileutl.cc:2146 cmdline/apt-extracttemplates.cc:258
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "تعذر إنشاء %s"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s... خطأ!"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s... تمّ"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr ""
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s... تمّ"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:111
-#, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "تعذر التغيير إلى %s"
-
-#: apt-pkg/contrib/mmap.cc:146
-#, fuzzy
-msgid "Unable to close mmap"
-msgstr "تعذر فتح %s"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-#, fuzzy
-msgid "Unable to synchronize mmap"
-msgstr "تعذر إرسال الأمر PORT"
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:322
-#, fuzzy
-msgid "Failed to truncate file"
-msgstr "فشلت كتابة الملف %s"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr ""
-
-#: apt-pkg/contrib/cdromutl.cc:247
-msgid "Failed to stat the cdrom"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:516
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "اختصار نوع مجهول: '%c'"
-
-#: apt-pkg/contrib/configuration.cc:630
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "فتح ملف التهيئة %s"
-
-#: apt-pkg/contrib/configuration.cc:798
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:817
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:834
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:874
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:881
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:894
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:897
-#, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr ""
-
-#: apt-pkg/contrib/configuration.cc:947
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr ""
-
-#: apt-pkg/contrib/cmndline.cc:127
-#, fuzzy, c-format
-msgid ""
-"Command line option '%c' [from %s] is not understood in combination with the "
-"other options."
-msgstr "خيار سطر الأمر '%c' [من %s] مجهول."
-
-#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
-#: apt-pkg/contrib/cmndline.cc:169
-#, fuzzy, c-format
-msgid ""
-"Command line option %s is not understood in combination with the other "
-"options"
-msgstr "خيار سطر الأمر %s غير مفهوم"
-
-#: apt-pkg/contrib/cmndline.cc:174
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr ""
-
-#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "الخيار %s يتطلّب مُعطى."
-
-#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr ""
-
-#: apt-pkg/contrib/cmndline.cc:284
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr ""
-
-#: apt-pkg/contrib/cmndline.cc:315
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "الخيار '%s' طويل جداً"
-
-#: apt-pkg/contrib/cmndline.cc:347
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr ""
-
-#: apt-pkg/contrib/cmndline.cc:397
-#, c-format
-msgid "Invalid operation %s"
-msgstr "عمليّة غير صالحة %s"
 
 #: apt-pkg/deb/debmetaindex.cc:229
 #, fuzzy, c-format
@@ -2989,6 +2649,345 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:125
 msgid "Not locked"
 msgstr ""
+
+#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:430
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. TRANSLATOR: s means seconds
+#: apt-pkg/contrib/strutl.cc:435
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/contrib/strutl.cc:1279
+#, c-format
+msgid "Selection %s not found"
+msgstr "تعذر العثور على التحديد %s"
+
+#: apt-pkg/contrib/fileutl.cc:197
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:202
+#, c-format
+msgid "Could not open lock file %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:225
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:230
+#, c-format
+msgid "Could not get lock %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:401
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:419
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:428
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:862
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:864
+#, c-format
+msgid "Sub-process %s received signal %u."
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:987
+#, fuzzy, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "مشكلة في إغلاق الملف"
+
+#: apt-pkg/contrib/fileutl.cc:1194
+#, c-format
+msgid "Could not open file %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#, fuzzy, c-format
+msgid "Could not open file descriptor %d"
+msgstr "فشل إغلاق الملف %s"
+
+#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2177
+msgid "Failed to create subprocess IPC"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:1466
+msgid "Failed to exec compressor "
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:1607
+#, c-format
+msgid "read, still have %llu to read but none left"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
+#, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:2008
+#, fuzzy, c-format
+msgid "Problem closing the file %s"
+msgstr "مشكلة في إغلاق الملف"
+
+#: apt-pkg/contrib/fileutl.cc:2020
+#, fuzzy, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "مشكلة في مزامنة الملف"
+
+#: apt-pkg/contrib/fileutl.cc:2031
+#, fuzzy, c-format
+msgid "Problem unlinking the file %s"
+msgstr "مشكلة في إغلاق الملف"
+
+#: apt-pkg/contrib/fileutl.cc:2044
+msgid "Problem syncing the file"
+msgstr "مشكلة في مزامنة الملف"
+
+#: apt-pkg/contrib/fileutl.cc:2147 cmdline/apt-extracttemplates.cc:258
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "تعذر إنشاء %s"
+
+#: apt-pkg/contrib/fileutl.cc:2152 cmdline/apt-extracttemplates.cc:263
+#, c-format
+msgid "Unable to write to %s"
+msgstr "تعذرت الكتابة إلى %s"
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... خطأ!"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... تمّ"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... تمّ"
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:111
+#, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:119
+#, fuzzy, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "تعذر التغيير إلى %s"
+
+#: apt-pkg/contrib/mmap.cc:146
+#, fuzzy
+msgid "Unable to close mmap"
+msgstr "تعذر فتح %s"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#, fuzzy
+msgid "Unable to synchronize mmap"
+msgstr "تعذر إرسال الأمر PORT"
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:322
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "فشلت كتابة الملف %s"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr ""
+
+#: apt-pkg/contrib/cdromutl.cc:247
+msgid "Failed to stat the cdrom"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:516
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "اختصار نوع مجهول: '%c'"
+
+#: apt-pkg/contrib/configuration.cc:630
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "فتح ملف التهيئة %s"
+
+#: apt-pkg/contrib/configuration.cc:798
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:817
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:834
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:874
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:881
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:894
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:897
+#, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr ""
+
+#: apt-pkg/contrib/configuration.cc:947
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr ""
+
+#: apt-pkg/contrib/cmndline.cc:127
+#, fuzzy, c-format
+msgid ""
+"Command line option '%c' [from %s] is not understood in combination with the "
+"other options."
+msgstr "خيار سطر الأمر '%c' [من %s] مجهول."
+
+#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
+#: apt-pkg/contrib/cmndline.cc:169
+#, fuzzy, c-format
+msgid ""
+"Command line option %s is not understood in combination with the other "
+"options"
+msgstr "خيار سطر الأمر %s غير مفهوم"
+
+#: apt-pkg/contrib/cmndline.cc:174
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr ""
+
+#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "الخيار %s يتطلّب مُعطى."
+
+#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr ""
+
+#: apt-pkg/contrib/cmndline.cc:284
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr ""
+
+#: apt-pkg/contrib/cmndline.cc:315
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "الخيار '%s' طويل جداً"
+
+#: apt-pkg/contrib/cmndline.cc:347
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr ""
+
+#: apt-pkg/contrib/cmndline.cc:397
+#, c-format
+msgid "Invalid operation %s"
+msgstr "عمليّة غير صالحة %s"
 
 #: cmdline/apt-extracttemplates.cc:228
 msgid ""
@@ -3450,26 +3449,26 @@ msgstr "الأرشيف قصير جداً"
 msgid "Failed to read the archive headers"
 msgstr "فشلت قراءة ترويسات الأرشيف"
 
-#: apt-inst/contrib/extracttar.cc:123
-msgid "Failed to create pipes"
-msgstr ""
+#: apt-inst/contrib/extracttar.cc:110
+#, fuzzy, c-format
+msgid "Cannot find a configured compressor for '%s'"
+msgstr "تعذر العثور على الحزمة %s"
 
-#: apt-inst/contrib/extracttar.cc:150
-msgid "Failed to exec gzip "
-msgstr "فشل تنفيذ gzip"
-
-#: apt-inst/contrib/extracttar.cc:187 apt-inst/contrib/extracttar.cc:217
+#: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
 msgstr "أرشيف فاسد"
 
-#: apt-inst/contrib/extracttar.cc:202
+#: apt-inst/contrib/extracttar.cc:157
 msgid "Tar checksum failed, archive corrupted"
 msgstr "فشل تحقّق Checksum لملف Tar، الأرشيف فاسد"
 
-#: apt-inst/contrib/extracttar.cc:307
+#: apt-inst/contrib/extracttar.cc:262
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr ""
+
+#~ msgid "Failed to exec gzip "
+#~ msgstr "فشل تنفيذ gzip"
 
 #, fuzzy
 #~ msgid "%s %s for %s compiled on %s %s\n"

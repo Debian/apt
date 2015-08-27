@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-20 11:22+0200\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -330,7 +330,7 @@ msgid "Couldn't find package %s"
 msgstr "Kunde inte hitta paketet %s"
 
 #: cmdline/apt-get.cc:422 cmdline/apt-mark.cc:78
-#: apt-private/private-install.cc:839
+#: apt-private/private-install.cc:851
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s är satt till manuellt installerad.\n"
@@ -533,11 +533,11 @@ msgstr "Byggberoenden för %s kunde inte tillfredsställas."
 msgid "Failed to process build dependencies"
 msgstr "Misslyckades med att behandla byggberoenden"
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1551
 msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
-#: cmdline/apt-get.cc:1595
+#: cmdline/apt-get.cc:1592
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -624,19 +624,30 @@ msgstr ""
 "för mer information och flaggor.\n"
 "                     Denna APT har Speciella Ko-Krafter.\n"
 
-#: cmdline/apt-helper.cc:36
+#: cmdline/apt-helper.cc:37
 msgid "Need one URL as argument"
 msgstr "Behöver en URL som argument"
 
-#: cmdline/apt-helper.cc:49
+#: cmdline/apt-helper.cc:50
 msgid "Must specify at least one pair url/filename"
 msgstr "Du måste ange minst ett par bestående av url och filnamn"
 
-#: cmdline/apt-helper.cc:75 cmdline/apt-helper.cc:79
+#: cmdline/apt-helper.cc:76 cmdline/apt-helper.cc:80
 msgid "Download Failed"
 msgstr "Hämtning misslyckades"
 
-#: cmdline/apt-helper.cc:92
+#: cmdline/apt-helper.cc:88
+#, fuzzy
+msgid "Must specifc at least one srv record"
+msgstr "Du måste ange minst ett par bestående av url och filnamn"
+
+#: cmdline/apt-helper.cc:95
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr ""
+
+#: cmdline/apt-helper.cc:118
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -645,6 +656,7 @@ msgid ""
 "\n"
 "Commands:\n"
 "   download-file - download the given uri to the target-path\n"
+"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
 "   auto-detect-proxy - detect proxy using apt.conf\n"
 "\n"
 "                       This APT helper has Super Meep Powers.\n"
@@ -926,7 +938,7 @@ msgstr "Kunde inte skapa ett uttag (socket)"
 msgid "Could not connect data socket, connection timed out"
 msgstr "Kunde inte ansluta datauttaget (socket), inget svar inom tidsgräns"
 
-#: methods/ftp.cc:718 methods/connect.cc:116 methods/rsh.cc:102
+#: methods/ftp.cc:718 methods/connect.cc:120 methods/rsh.cc:102
 msgid "Failed"
 msgstr "Misslyckades"
 
@@ -1000,67 +1012,67 @@ msgstr "Frågar"
 msgid "Unable to invoke "
 msgstr "Kunde inte starta "
 
-#: methods/connect.cc:76
+#: methods/connect.cc:80
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Ansluter till %s (%s)"
 
-#: methods/connect.cc:87
+#: methods/connect.cc:91
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 # [f]amilj, [t]yp, [p]rotokoll
-#: methods/connect.cc:94
+#: methods/connect.cc:98
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr "Kunde inte skapa ett uttag (socket) för %s (f=%u t=%u p=%u)"
 
-#: methods/connect.cc:100
+#: methods/connect.cc:104
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kunde inte initiera anslutningen till %s:%s (%s)."
 
-#: methods/connect.cc:108
+#: methods/connect.cc:112
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Kunde inte ansluta till %s:%s (%s), anslutningen överskred tidsgräns"
 
-#: methods/connect.cc:126
+#: methods/connect.cc:130
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Kunde inte ansluta till %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:154 methods/rsh.cc:460
+#: methods/connect.cc:155 methods/rsh.cc:460
 #, c-format
 msgid "Connecting to %s"
 msgstr "Ansluter till %s"
 
-#: methods/connect.cc:180 methods/connect.cc:199
+#: methods/connect.cc:181 methods/connect.cc:200
 #, c-format
 msgid "Could not resolve '%s'"
 msgstr "Kunde inte slå upp ”%s”"
 
-#: methods/connect.cc:205
+#: methods/connect.cc:206
 #, c-format
 msgid "Temporary failure resolving '%s'"
 msgstr "Temporärt fel vid uppslagning av ”%s”"
 
 # Okänd felkod; %i = koden
-#: methods/connect.cc:209
+#: methods/connect.cc:210
 #, c-format
 msgid "System error resolving '%s:%s'"
 msgstr "Systemfel när ”%s:%s” slogs upp"
 
 # Okänd felkod; %i = koden
-#: methods/connect.cc:211
+#: methods/connect.cc:212
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
 msgstr "Något konstigt hände när ”%s:%s” slogs upp (%i - %s)"
 
-#: methods/connect.cc:258
+#: methods/connect.cc:259
 #, c-format
 msgid "Unable to connect to %s:%s:"
 msgstr "Kunde inte ansluta till %s:%s:"
@@ -1474,13 +1486,13 @@ msgid "Virtual packages like '%s' can't be removed\n"
 msgstr "Virtuella paket som \"%s\" kan inte tas bort\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:915
+#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:927
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr ""
 "Paketet ”%s” är inte installerat, så det tas inte bort. Menade du ”%s”?\n"
 
-#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:921
+#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:933
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Paketet ”%s” är inte installerat, så det tas inte bort\n"
@@ -1732,49 +1744,49 @@ msgstr ""
 msgid "Broken packages"
 msgstr "Trasiga paket"
 
-#: apt-private/private-install.cc:685
+#: apt-private/private-install.cc:697
 #, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "Följande ytterligare paket kommer att installeras:"
 
-#: apt-private/private-install.cc:774
+#: apt-private/private-install.cc:786
 msgid "Suggested packages:"
 msgstr "Föreslagna paket:"
 
-#: apt-private/private-install.cc:776
+#: apt-private/private-install.cc:788
 msgid "Recommended packages:"
 msgstr "Rekommenderade paket:"
 
-#: apt-private/private-install.cc:798
+#: apt-private/private-install.cc:810
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "Hoppar över %s, det är redan installerat och uppgradering har inte valts.\n"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:814
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "Hoppar över %s, det är inte installerat och endast uppgraderingar har "
 "begärts.\n"
 
-#: apt-private/private-install.cc:814
+#: apt-private/private-install.cc:826
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Ominstallation av %s är inte möjlig, det kan inte hämtas.\n"
 
 #. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc:820
+#: apt-private/private-install.cc:832
 #, fuzzy, c-format
 msgid "%s is already the newest version (%s).\n"
 msgstr "%s är redan den senaste versionen.\n"
 
-#: apt-private/private-install.cc:868
+#: apt-private/private-install.cc:880
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Valde version ”%s” (%s) för ”%s”\n"
 
-#: apt-private/private-install.cc:873
+#: apt-private/private-install.cc:885
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Valde version ”%s” (%s) för ”%s” på grund av ”%s”\n"
@@ -2038,15 +2050,15 @@ msgstr "Kan inte hitta autentiseringspost för: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Hash-kontrollsumman stämmer inte för: %s"
 
-#: apt-pkg/cachefile.cc:101
+#: apt-pkg/cachefile.cc:98
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "Paketlistan eller statusfilen kunde inte tolkas eller öppnas."
 
-#: apt-pkg/cachefile.cc:105
+#: apt-pkg/cachefile.cc:102
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Du kan möjligen rätta till problemet genom att köra ”apt-get update”"
 
-#: apt-pkg/cachefile.cc:123
+#: apt-pkg/cachefile.cc:120
 msgid "The list of sources could not be read."
 msgstr "Listan över källor kunde inte läsas."
 
@@ -2065,7 +2077,7 @@ msgstr "Är paketet %s installerat?"
 msgid "Method %s did not start correctly"
 msgstr "Metoden %s startade inte korrekt"
 
-#: apt-pkg/acquire-worker.cc:536
+#: apt-pkg/acquire-worker.cc:537
 #, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
@@ -2198,20 +2210,14 @@ msgstr "Grattis, du överskred antalet beskrivningar som denna APT kan hantera."
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "Grattis, du överskred antalet beroenden som denna APT kan hantera."
 
-#: apt-pkg/pkgcachegen.cc:1400 apt-pkg/pkgcachegen.cc:1526
-#: apt-pkg/pkgcachegen.cc:1552 apt-pkg/pkgcachegen.cc:1671
+#: apt-pkg/pkgcachegen.cc:1419 apt-pkg/pkgcachegen.cc:1546
+#: apt-pkg/pkgcachegen.cc:1572 apt-pkg/pkgcachegen.cc:1681
 msgid "Reading package lists"
 msgstr "Läser paketlistor"
 
-#: apt-pkg/pkgcachegen.cc:1471 apt-pkg/pkgcachegen.cc:1478
+#: apt-pkg/pkgcachegen.cc:1490 apt-pkg/pkgcachegen.cc:1497
 msgid "IO Error saving source cache"
 msgstr "In-/utfel vid lagring av källcache"
-
-#: apt-pkg/pkgcachegen.cc:1570 apt-pkg/pkgcachegen.cc:1572
-#: apt-pkg/contrib/fileutl.cc:2151 cmdline/apt-extracttemplates.cc:263
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Kunde inte skriva till %s"
 
 #: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
 msgid "Send scenario to solver"
@@ -2237,7 +2243,7 @@ msgstr "Kör extern lösare"
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr "Använd --allow-insecure-repositories för att tvinga uppdateringen"
 
-#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2161
+#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "namnbyte misslyckades, %s (%s -> %s)."
@@ -2356,7 +2362,7 @@ msgid ""
 msgstr "Paketindexfilerna är skadade. Inget ”Filename:”-fält för paketet %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
-#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3054
+#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Ändringslogg för %s (%s)"
@@ -2444,7 +2450,7 @@ msgstr "Du måste lägga till några ”source”-URI:er i din sources.list"
 msgid "Unable to stat %s."
 msgstr "Kunde inte ta status på %s."
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:983
+#: apt-pkg/packagemanager.cc:330 apt-pkg/packagemanager.cc:1018
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2453,12 +2459,12 @@ msgstr ""
 "Kunde inte genomföra omedelbar konfiguration på ”%s”. Se man 5 apt.conf "
 "under APT::Immediate-Configure för information. (%d)"
 
-#: apt-pkg/packagemanager.cc:562 apt-pkg/packagemanager.cc:592
+#: apt-pkg/packagemanager.cc:589 apt-pkg/packagemanager.cc:627
 #, c-format
 msgid "Could not configure '%s'. "
 msgstr "Kunde inte konfigurera ”%s”. "
 
-#: apt-pkg/packagemanager.cc:642
+#: apt-pkg/packagemanager.cc:677
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -3020,7 +3026,7 @@ msgstr "Kunde inte öppna filen %s"
 msgid "Could not open file descriptor %d"
 msgstr "Kunde inte öppna filhandtag %d"
 
-#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2176
+#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2177
 msgid "Failed to create subprocess IPC"
 msgstr "Misslyckades med att skapa underprocess-IPC"
 
@@ -3043,24 +3049,29 @@ msgstr "skrivning, har fortfarande %llu att skriva men kunde inte"
 msgid "Problem closing the file %s"
 msgstr "Problem med att stänga filen %s"
 
-#: apt-pkg/contrib/fileutl.cc:2019
+#: apt-pkg/contrib/fileutl.cc:2020
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Problem med att byta namn på filen %s till %s"
 
-#: apt-pkg/contrib/fileutl.cc:2030
+#: apt-pkg/contrib/fileutl.cc:2031
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Problem med att avlänka filen %s"
 
-#: apt-pkg/contrib/fileutl.cc:2043
+#: apt-pkg/contrib/fileutl.cc:2044
 msgid "Problem syncing the file"
 msgstr "Problem med att synkronisera filen"
 
-#: apt-pkg/contrib/fileutl.cc:2146 cmdline/apt-extracttemplates.cc:258
+#: apt-pkg/contrib/fileutl.cc:2147 cmdline/apt-extracttemplates.cc:258
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Kunde inte anropa mkstemp för %s"
+
+#: apt-pkg/contrib/fileutl.cc:2152 cmdline/apt-extracttemplates.cc:263
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Kunde inte skriva till %s"
 
 #: apt-pkg/contrib/progress.cc:148
 #, c-format
@@ -3791,26 +3802,29 @@ msgstr "Arkivet är för kort"
 msgid "Failed to read the archive headers"
 msgstr "Misslyckades med att läsa arkivrubriker"
 
-#: apt-inst/contrib/extracttar.cc:123
-msgid "Failed to create pipes"
-msgstr "Misslyckades med att skapa rör"
+#: apt-inst/contrib/extracttar.cc:110
+#, fuzzy, c-format
+msgid "Cannot find a configured compressor for '%s'"
+msgstr "Kan inte hitta autentiseringspost för: %s"
 
-#: apt-inst/contrib/extracttar.cc:150
-msgid "Failed to exec gzip "
-msgstr "Misslyckades med att köra gzip "
-
-#: apt-inst/contrib/extracttar.cc:187 apt-inst/contrib/extracttar.cc:217
+#: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
 msgstr "Skadat arkiv"
 
-#: apt-inst/contrib/extracttar.cc:202
+#: apt-inst/contrib/extracttar.cc:157
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-kontrollsumma misslyckades, arkivet skadat"
 
-#: apt-inst/contrib/extracttar.cc:307
+#: apt-inst/contrib/extracttar.cc:262
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Okänd TAR-rubriktyp %u, del %s"
+
+#~ msgid "Failed to create pipes"
+#~ msgstr "Misslyckades med att skapa rör"
+
+#~ msgid "Failed to exec gzip "
+#~ msgstr "Misslyckades med att köra gzip "
 
 #~ msgid "%s %s for %s compiled on %s %s\n"
 #~ msgstr "%s %s för %s kompilerad den %s %s\n"

@@ -1,3 +1,30 @@
+apt (1.1~exp11) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * pkgcachegen: Account for remapping when parsing depends from NewPackage.
+    Thanks to Jakub Wilk for the bug report and the backtraces (Closes: #796999)
+  * debian/rules: Only do parallel build if specified in DEB_BUILD_OPTIONS.
+    Thanks to Jakub Wilk for the suggestion
+  * cacheset: Prefer the depcache over the policy again
+  * install: Set a local deb as the candidate for that package
+  * Always close compressed files in FileFd
+  * Use compressor support from FileFd for ExtractTar instead of programs
+  * Do not parse Status fields from remote sources
+
+  [ David Kalnischkies ]
+  * just-in-time removal of broken essential packages (Closes: 796070)
+  * correct 'apt update' download summary line
+  * ignore AllowMem parameter in cache generation (Closes: 796459)
+  * add a libapt-pkg recommends apt
+  * fix various typos reported by codespell
+  * use always priv-dropping for changelog download as root
+  * allow explicit dis/enable of IndexTargets in sources options
+
+  [ Anders Jonsson ]
+  * Swedish program translation update (Closes: 796059)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 27 Aug 2015 17:55:12 +0200
+
 apt (1.1~exp10) experimental; urgency=medium
 
   [ Michael Vogt ]

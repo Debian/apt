@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-21 06:13-0400\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2010-09-01 21:10+0200\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
@@ -331,7 +331,7 @@ msgid "Couldn't find package %s"
 msgstr "Klarte ikke å finne pakken %s"
 
 #: cmdline/apt-get.cc:422 cmdline/apt-mark.cc:78
-#: apt-private/private-install.cc:839
+#: apt-private/private-install.cc:851
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s satt til manuell installasjon.\n"
@@ -522,11 +522,11 @@ msgstr "Klarte ikke å tilfredstille bygg-avhengighetene for %s."
 msgid "Failed to process build dependencies"
 msgstr "Klarte ikke å behandle forutsetningene for bygging"
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1551
 msgid "Supported modules:"
 msgstr "Støttede moduler:"
 
-#: cmdline/apt-get.cc:1595
+#: cmdline/apt-get.cc:1592
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -679,8 +679,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s er allerede nyeste versjon.\n"
 
 #: cmdline/apt-mark.cc:255 cmdline/apt-mark.cc:333 cmdline/apt-mark.cc:397
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:207
-#: apt-pkg/deb/dpkgpm.cc:1302
+#: apt-pkg/deb/dpkgpm.cc:1302 apt-pkg/contrib/fileutl.cc:850
+#: apt-pkg/contrib/gpgv.cc:207
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Ventet på %s, men den ble ikke funnet"
@@ -1130,6 +1130,227 @@ msgstr ""
 msgid "Internal error"
 msgstr "Intern feil"
 
+#: apt-private/private-list.cc:121
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc:151
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-cachefile.cc:96
+msgid "Correcting dependencies..."
+msgstr "Retter på avhengighetsforhold ..."
+
+#: apt-private/private-cachefile.cc:99
+msgid " failed."
+msgstr " mislyktes."
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to correct dependencies"
+msgstr "Klarer ikke å rette på avhengighetsforholdene"
+
+#: apt-private/private-cachefile.cc:105
+msgid "Unable to minimize the upgrade set"
+msgstr "Klarer ikke å minimere oppgraderingsettet"
+
+#: apt-private/private-cachefile.cc:107
+msgid " Done"
+msgstr " Utført"
+
+#: apt-private/private-cachefile.cc:111
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Du vil kanskje kjøre «apt-get -f install» for å rette på dette."
+
+#: apt-private/private-cachefile.cc:114
+msgid "Unmet dependencies. Try using -f."
+msgstr "Uinnfridde avhengighetsforhold - Prøv «-f»."
+
+#: apt-private/private-output.cc:105 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc:272
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Installert]"
+
+#: apt-private/private-output.cc:275
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Installert]"
+
+#: apt-private/private-output.cc:277
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc:279
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Installert]"
+
+#: apt-private/private-output.cc:281
+#, fuzzy
+msgid "[installed]"
+msgstr " [Installert]"
+
+#: apt-private/private-output.cc:284
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc:288
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc:402
+#, c-format
+msgid "but %s is installed"
+msgstr "men %s er installert"
+
+#: apt-private/private-output.cc:404
+#, c-format
+msgid "but %s is to be installed"
+msgstr "men %s skal installeres"
+
+#: apt-private/private-output.cc:411
+msgid "but it is not installable"
+msgstr "men lar seg ikke installere"
+
+#: apt-private/private-output.cc:413
+msgid "but it is a virtual package"
+msgstr "men er en virtuell pakke"
+
+#: apt-private/private-output.cc:416
+msgid "but it is not installed"
+msgstr "men er ikke installert"
+
+#: apt-private/private-output.cc:416
+msgid "but it is not going to be installed"
+msgstr "men skal ikke installeres"
+
+#: apt-private/private-output.cc:421
+msgid " or"
+msgstr " eller"
+
+#: apt-private/private-output.cc:435 apt-private/private-output.cc:445
+msgid "The following packages have unmet dependencies:"
+msgstr "Følgende pakker har uinnfridde avhengighetsforhold:"
+
+#: apt-private/private-output.cc:455
+msgid "The following NEW packages will be installed:"
+msgstr "Følgende NYE pakker vil bli installert:"
+
+#: apt-private/private-output.cc:465
+msgid "The following packages will be REMOVED:"
+msgstr "Følgende pakker vil bli FJERNET:"
+
+#: apt-private/private-output.cc:481
+msgid "The following packages have been kept back:"
+msgstr "Følgende pakker er holdt tilbake:"
+
+#: apt-private/private-output.cc:497
+msgid "The following packages will be upgraded:"
+msgstr "Følgende pakker vil bli oppgradert:"
+
+#: apt-private/private-output.cc:512
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Følgende pakker vil bli NEDGRADERT:"
+
+#: apt-private/private-output.cc:525
+msgid "The following held packages will be changed:"
+msgstr "Følgende pakker vil bli endret:"
+
+#: apt-private/private-output.cc:552
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (pga. %s)"
+
+#: apt-private/private-output.cc:602
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"ADVARSEL: Følgende essensielle pakker vil bli fjernet.\n"
+"Dette bør IKKE gjøres, med mindre du vet nøyaktig hva du gjør!"
+
+#: apt-private/private-output.cc:633
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu oppgraderte, %lu nylig installerte, "
+
+#: apt-private/private-output.cc:637
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu installert på nytt, "
+
+#: apt-private/private-output.cc:639
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu nedgraderte, "
+
+#: apt-private/private-output.cc:641
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu å fjerne og %lu ikke oppgradert.\n"
+
+#: apt-private/private-output.cc:645
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu pakker ikke fullt installert eller fjernet.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:667
+msgid "[Y/n]"
+msgstr "[J/n]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:673
+msgid "[y/N]"
+msgstr "[j/N]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:684
+msgid "Y"
+msgstr "J"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:690
+msgid "N"
+msgstr ""
+
+#: apt-private/private-output.cc:712 apt-pkg/cachefilter.cc:40
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Kompileringsfeil i regulært uttrykk - %s"
+
+#: apt-private/private-update.cc:31
+msgid "The update command takes no arguments"
+msgstr "Oppdaterings-kommandoen tar ingen argumenter"
+
+#: apt-private/private-update.cc:96
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc:100
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr ""
@@ -1193,12 +1414,12 @@ msgid "Virtual packages like '%s' can't be removed\n"
 msgstr "Virtuelle pakker som «%s» kan ikke fjernes\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:915
+#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:927
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "Pakken %s er ikke installert, og derfor heller ikke fjernet\n"
 
-#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:921
+#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:933
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Pakken %s er ikke installert, og derfor heller ikke fjernet\n"
@@ -1207,6 +1428,18 @@ msgstr "Pakken %s er ikke installert, og derfor heller ikke fjernet\n"
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Merk, velger «%s» istedenfor «%s»\n"
+
+#: apt-private/private-show.cc:158
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:165
+msgid "not a real package (virtual)"
+msgstr ""
 
 #: apt-private/private-install.cc:87
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1434,285 +1667,52 @@ msgstr ""
 msgid "Broken packages"
 msgstr "Ødelagte pakker"
 
-#: apt-private/private-install.cc:685
+#: apt-private/private-install.cc:697
 #, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "Følgende ekstra pakker vil bli installert."
 
-#: apt-private/private-install.cc:774
+#: apt-private/private-install.cc:786
 msgid "Suggested packages:"
 msgstr "Foreslåtte pakker:"
 
-#: apt-private/private-install.cc:776
+#: apt-private/private-install.cc:788
 msgid "Recommended packages:"
 msgstr "Anbefalte pakker"
 
-#: apt-private/private-install.cc:798
+#: apt-private/private-install.cc:810
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "Omgår %s - den er allerede installert eller ikke satt til oppgradering.\n"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:814
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "Hopper over %s siden den ikke er installert eller kun oppgraderinger er "
 "ønsket.\n"
 
-#: apt-private/private-install.cc:814
+#: apt-private/private-install.cc:826
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Det er ikke mulig å installere %s på nytt - den kan ikke nedlastes.\n"
 
 #. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc:820
+#: apt-private/private-install.cc:832
 #, fuzzy, c-format
 msgid "%s is already the newest version (%s).\n"
 msgstr "%s er allerede nyeste versjon.\n"
 
-#: apt-private/private-install.cc:868
+#: apt-private/private-install.cc:880
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Utvalgt versjon «%s» (%s) for «%s»\n"
 
-#: apt-private/private-install.cc:873
+#: apt-private/private-install.cc:885
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Utvalgt versjon «%s» (%s) for «%s»\n"
-
-#: apt-private/private-list.cc:121
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc:151
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-cachefile.cc:96
-msgid "Correcting dependencies..."
-msgstr "Retter på avhengighetsforhold ..."
-
-#: apt-private/private-cachefile.cc:99
-msgid " failed."
-msgstr " mislyktes."
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to correct dependencies"
-msgstr "Klarer ikke å rette på avhengighetsforholdene"
-
-#: apt-private/private-cachefile.cc:105
-msgid "Unable to minimize the upgrade set"
-msgstr "Klarer ikke å minimere oppgraderingsettet"
-
-#: apt-private/private-cachefile.cc:107
-msgid " Done"
-msgstr " Utført"
-
-#: apt-private/private-cachefile.cc:111
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Du vil kanskje kjøre «apt-get -f install» for å rette på dette."
-
-#: apt-private/private-cachefile.cc:114
-msgid "Unmet dependencies. Try using -f."
-msgstr "Uinnfridde avhengighetsforhold - Prøv «-f»."
-
-#: apt-private/private-output.cc:105 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc:272
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Installert]"
-
-#: apt-private/private-output.cc:275
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Installert]"
-
-#: apt-private/private-output.cc:277
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc:279
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Installert]"
-
-#: apt-private/private-output.cc:281
-#, fuzzy
-msgid "[installed]"
-msgstr " [Installert]"
-
-#: apt-private/private-output.cc:284
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc:288
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc:402
-#, c-format
-msgid "but %s is installed"
-msgstr "men %s er installert"
-
-#: apt-private/private-output.cc:404
-#, c-format
-msgid "but %s is to be installed"
-msgstr "men %s skal installeres"
-
-#: apt-private/private-output.cc:411
-msgid "but it is not installable"
-msgstr "men lar seg ikke installere"
-
-#: apt-private/private-output.cc:413
-msgid "but it is a virtual package"
-msgstr "men er en virtuell pakke"
-
-#: apt-private/private-output.cc:416
-msgid "but it is not installed"
-msgstr "men er ikke installert"
-
-#: apt-private/private-output.cc:416
-msgid "but it is not going to be installed"
-msgstr "men skal ikke installeres"
-
-#: apt-private/private-output.cc:421
-msgid " or"
-msgstr " eller"
-
-#: apt-private/private-output.cc:435 apt-private/private-output.cc:445
-msgid "The following packages have unmet dependencies:"
-msgstr "Følgende pakker har uinnfridde avhengighetsforhold:"
-
-#: apt-private/private-output.cc:455
-msgid "The following NEW packages will be installed:"
-msgstr "Følgende NYE pakker vil bli installert:"
-
-#: apt-private/private-output.cc:465
-msgid "The following packages will be REMOVED:"
-msgstr "Følgende pakker vil bli FJERNET:"
-
-#: apt-private/private-output.cc:481
-msgid "The following packages have been kept back:"
-msgstr "Følgende pakker er holdt tilbake:"
-
-#: apt-private/private-output.cc:497
-msgid "The following packages will be upgraded:"
-msgstr "Følgende pakker vil bli oppgradert:"
-
-#: apt-private/private-output.cc:512
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Følgende pakker vil bli NEDGRADERT:"
-
-#: apt-private/private-output.cc:525
-msgid "The following held packages will be changed:"
-msgstr "Følgende pakker vil bli endret:"
-
-#: apt-private/private-output.cc:552
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (pga. %s)"
-
-#: apt-private/private-output.cc:602
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"ADVARSEL: Følgende essensielle pakker vil bli fjernet.\n"
-"Dette bør IKKE gjøres, med mindre du vet nøyaktig hva du gjør!"
-
-#: apt-private/private-output.cc:633
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu oppgraderte, %lu nylig installerte, "
-
-#: apt-private/private-output.cc:637
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu installert på nytt, "
-
-#: apt-private/private-output.cc:639
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu nedgraderte, "
-
-#: apt-private/private-output.cc:641
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu å fjerne og %lu ikke oppgradert.\n"
-
-#: apt-private/private-output.cc:645
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu pakker ikke fullt installert eller fjernet.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:667
-msgid "[Y/n]"
-msgstr "[J/n]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:673
-msgid "[y/N]"
-msgstr "[j/N]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:684
-msgid "Y"
-msgstr "J"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:690
-msgid "N"
-msgstr ""
-
-#: apt-private/private-output.cc:712 apt-pkg/cachefilter.cc:40
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Kompileringsfeil i regulært uttrykk - %s"
-
-#: apt-private/private-update.cc:31
-msgid "The update command takes no arguments"
-msgstr "Oppdaterings-kommandoen tar ingen argumenter"
-
-#: apt-private/private-update.cc:96
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc:100
-msgid "All packages are up to date."
-msgstr ""
-
-#: apt-private/private-show.cc:158
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc:165
-msgid "not a real package (virtual)"
-msgstr ""
 
 #: apt-private/private-main.cc:34
 msgid ""
@@ -1835,7 +1835,7 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:133 apt-pkg/init.cc:141
-#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412
+#: apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412 apt-pkg/clean.cc:43
 #: apt-pkg/sourcelist.cc:306 apt-pkg/sourcelist.cc:312
 #: apt-pkg/contrib/fileutl.cc:375 apt-pkg/contrib/fileutl.cc:488
 #: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
@@ -1843,9 +1843,9 @@ msgstr ""
 msgid "Unable to read %s"
 msgstr "Klarer ikke å lese %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:563
-#: apt-pkg/acquire.cc:588 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:563
+#: apt-pkg/acquire.cc:588 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1969,18 +1969,39 @@ msgstr "Klarte ikke finne autentiseringsoppføring for: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Hashsummen stemmer ikke for: %s"
 
-#: apt-pkg/cachefile.cc:101
+#: apt-pkg/cachefile.cc:98
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "Pakkelista eller tilstandsfila kunne ikke fortolkes eller åpnes."
 
-#: apt-pkg/cachefile.cc:105
+#: apt-pkg/cachefile.cc:102
 msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 "Det kan hende du vil kjøre «apt-get update» for å rette på disse problemene"
 
-#: apt-pkg/cachefile.cc:123
+#: apt-pkg/cachefile.cc:120
 msgid "The list of sources could not be read."
 msgstr "Kan ikke lese kildlista."
+
+#: apt-pkg/acquire-worker.cc:111
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "Finner ikke metode-driveren %s."
+
+#: apt-pkg/acquire-worker.cc:113
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Sjekk om pakken «dpkg-dev» er installert.\n"
+
+#: apt-pkg/acquire-worker.cc:164
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "Metoden %s startet ikke korrekt"
+
+#: apt-pkg/acquire-worker.cc:537
+#, fuzzy, c-format
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
+msgstr "Sett inn disken merket «%s» i lagringsenheten «%s» og trykk Enter."
 
 #: apt-pkg/pkgcache.cc:163
 msgid "Empty package cache"
@@ -2065,63 +2086,81 @@ msgstr "valgfri"
 msgid "extra"
 msgstr "tillegg"
 
-#: apt-pkg/acquire-worker.cc:111
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "Finner ikke metode-driveren %s."
-
-#: apt-pkg/acquire-worker.cc:113
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "Sjekk om pakken «dpkg-dev» er installert.\n"
-
-#: apt-pkg/acquire-worker.cc:164
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Metoden %s startet ikke korrekt"
-
-#: apt-pkg/acquire-worker.cc:536
-#, fuzzy, c-format
-msgid ""
-"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "Sett inn disken merket «%s» i lagringsenheten «%s» og trykk Enter."
+#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
+msgid "Calculating upgrade"
+msgstr "Beregner oppgradering"
 
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Oversiktsfil av typen «%s» støttes ikke"
 
-#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "Skaper oversikt over avhengighetsforhold"
+#: apt-pkg/pkgcachegen.cc:112
+msgid "Cache has an incompatible versioning system"
+msgstr "Lageret har et uoverensstemmende versjonssystem"
 
-#: apt-pkg/depcache.cc:140
-msgid "Candidate versions"
-msgstr "Versjons-kandidater"
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
+#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
+#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
+#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
+#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "Feil oppsto under behandling av %s (FindPkg)"
 
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "Oppretter avhengighetsforhold"
+#: apt-pkg/pkgcachegen.cc:257
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr "Jøss, du har overgått antallet pakkenavn denne APT klarer."
 
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "Leser tilstandsinformasjon"
+#: apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "Jøss, du har overgått antallet versjoner denne APT klarer."
 
-#: apt-pkg/depcache.cc:252
-#, c-format
-msgid "Failed to open StateFile %s"
-msgstr "Klarte ikke å åpne StateFile %s"
+#: apt-pkg/pkgcachegen.cc:263
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "Jøss, du har overgått antallet beskrivelser denne APT klarer."
 
-#: apt-pkg/depcache.cc:257
-#, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "Klarte ikke å skrive midlertidig StateFile %s"
+#: apt-pkg/pkgcachegen.cc:266
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "Jøss, du har overgått antallet avhengighetsforhold denne APT klarer."
+
+#: apt-pkg/pkgcachegen.cc:1419 apt-pkg/pkgcachegen.cc:1546
+#: apt-pkg/pkgcachegen.cc:1572 apt-pkg/pkgcachegen.cc:1681
+msgid "Reading package lists"
+msgstr "Leser pakkelister"
+
+#: apt-pkg/pkgcachegen.cc:1490 apt-pkg/pkgcachegen.cc:1497
+msgid "IO Error saving source cache"
+msgstr "IO-feil ved lagring av kildekode-lager"
+
+#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:232
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:311
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:318
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
+msgid "Execute external solver"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc:116
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2161
+#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "klarte ikke å endre navnet, %s (%s -> %s)."
@@ -2232,67 +2271,10 @@ msgid ""
 msgstr "Oversiktsfilene er ødelagte. Feltet «Filename:» mangler for pakken %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
-#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3054
+#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Kobler til %s (%s)"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:553
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Oversiktsfil av typen «%s» støttes ikke"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Klarer ikke finne informasjonom %s."
-
-#: apt-pkg/pkgcachegen.cc:112
-msgid "Cache has an incompatible versioning system"
-msgstr "Lageret har et uoverensstemmende versjonssystem"
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
-#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
-#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
-#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
-#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "Feil oppsto under behandling av %s (FindPkg)"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Jøss, du har overgått antallet pakkenavn denne APT klarer."
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Jøss, du har overgått antallet versjoner denne APT klarer."
-
-#: apt-pkg/pkgcachegen.cc:263
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Jøss, du har overgått antallet beskrivelser denne APT klarer."
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Jøss, du har overgått antallet avhengighetsforhold denne APT klarer."
-
-#: apt-pkg/pkgcachegen.cc:1400 apt-pkg/pkgcachegen.cc:1526
-#: apt-pkg/pkgcachegen.cc:1552 apt-pkg/pkgcachegen.cc:1671
-msgid "Reading package lists"
-msgstr "Leser pakkelister"
-
-#: apt-pkg/pkgcachegen.cc:1471 apt-pkg/pkgcachegen.cc:1478
-msgid "IO Error saving source cache"
-msgstr "IO-feil ved lagring av kildekode-lager"
-
-#: apt-pkg/pkgcachegen.cc:1570 apt-pkg/pkgcachegen.cc:1572
-#: apt-pkg/contrib/fileutl.cc:2151 cmdline/apt-extracttemplates.cc:263
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Kan ikke skrive til %s"
 
 #: apt-pkg/acquire.cc:126 apt-pkg/acquire.cc:146 apt-pkg/cdrom.cc:833
 #, c-format
@@ -2309,6 +2291,11 @@ msgstr "Arkivmappa %spartial mangler."
 msgid "Unable to lock directory %s"
 msgstr "Klarte ikke låse mappa %s"
 
+#: apt-pkg/acquire.cc:553 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Oversiktsfil av typen «%s» støttes ikke"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:1081
@@ -2320,25 +2307,6 @@ msgstr "Henter fil %li av %li (%s gjenværende)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Henter fil %li av %li"
-
-#: apt-pkg/update.cc:76
-#, fuzzy, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Klarte ikke å skaffe %s  %s\n"
-
-#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Klarte ikke å laste ned alle oversiktfilene. De ble ignorerte, eller gamle "
-"ble brukt isteden. "
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr ""
-"Beklager, du må legge inn noen kilder (nettadresser) i din «sources.list»."
 
 #: apt-pkg/policy.cc:77
 #, c-format
@@ -2366,7 +2334,31 @@ msgstr ""
 msgid "No priority (or zero) specified for pin"
 msgstr "Ingen prioritet (eller null) spesifisert for pin"
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:983
+#: apt-pkg/update.cc:76
+#, fuzzy, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Klarte ikke å skaffe %s  %s\n"
+
+#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Klarte ikke å laste ned alle oversiktfilene. De ble ignorerte, eller gamle "
+"ble brukt isteden. "
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr ""
+"Beklager, du må legge inn noen kilder (nettadresser) i din «sources.list»."
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Klarer ikke finne informasjonom %s."
+
+#: apt-pkg/packagemanager.cc:330 apt-pkg/packagemanager.cc:1018
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2375,12 +2367,12 @@ msgstr ""
 "Klarte ikke gjennomføre umiddelbar konfigurasjon av «%s». Se man 5 apt.conf "
 "under APT::Immediate-Configure for detaljer. (%d)"
 
-#: apt-pkg/packagemanager.cc:562 apt-pkg/packagemanager.cc:592
+#: apt-pkg/packagemanager.cc:589 apt-pkg/packagemanager.cc:627
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "Klarte ikke åpne fila «%s»"
 
-#: apt-pkg/packagemanager.cc:642
+#: apt-pkg/packagemanager.cc:677
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2473,10 +2465,6 @@ msgstr "Skriver ny kildeliste\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Kildelisteoppføringer for denne CD-en er:\n"
 
-#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
-msgid "Calculating upgrade"
-msgstr "Beregner oppgradering"
-
 #: apt-pkg/algorithms.cc:263
 #, c-format
 msgid ""
@@ -2496,25 +2484,31 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Klarer ikke å rette problemene, noen ødelagte pakker er holdt tilbake."
 
-#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
-msgid "Send scenario to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "Skaper oversikt over avhengighetsforhold"
 
-#: apt-pkg/edsp.cc:232
-msgid "Send request to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:140
+msgid "Candidate versions"
+msgstr "Versjons-kandidater"
 
-#: apt-pkg/edsp.cc:311
-msgid "Prepare for receiving solution"
-msgstr ""
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "Oppretter avhengighetsforhold"
 
-#: apt-pkg/edsp.cc:318
-msgid "External solver failed without a proper error message"
-msgstr ""
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "Leser tilstandsinformasjon"
 
-#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
-msgid "Execute external solver"
-msgstr ""
+#: apt-pkg/depcache.cc:252
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Klarte ikke å åpne StateFile %s"
+
+#: apt-pkg/depcache.cc:257
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Klarte ikke å skrive midlertidig StateFile %s"
 
 #: apt-pkg/tagfile.cc:196 apt-pkg/tagfile.cc:296 apt-pkg/deb/debrecords.cc:212
 #, c-format
@@ -2525,44 +2519,6 @@ msgstr "Klarer ikke å fortolke pakkefila %s (%d)"
 #, c-format
 msgid "Cannot convert %s to integer"
 msgstr ""
-
-#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
-#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
-#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
-#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
-#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
-#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
-#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
-#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
-#: apt-pkg/sourcelist.cc:251
-#, fuzzy, c-format
-msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Ugyldig overstyring %s linje %lu #1"
-
-#: apt-pkg/sourcelist.cc:355
-#, c-format
-msgid "Opening %s"
-msgstr "Åpner %s"
-
-#: apt-pkg/sourcelist.cc:389
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Feil på %u i kildelista %s (type)"
-
-#: apt-pkg/sourcelist.cc:393
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Typen «%s» er ukjent i linje %u i kildelista %s"
-
-#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Feil på %u i kildelista %s (type)"
-
-#: apt-pkg/sourcelist.cc:429
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Typen «%s» er ukjent i linje %u i kildelista %s"
 
 #: apt-pkg/cacheset.cc:500
 #, c-format
@@ -2623,342 +2579,43 @@ msgstr ""
 "Klarte ikke velge installert eller kandidatversjon fra pakken «%s» siden den "
 "har ingen av dem"
 
-#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr "%lid %lit %lim %lis"
-
-#. TRANSLATOR: h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lih %limin %lis"
-msgstr "%lit %lim %lis"
-
-#. TRANSLATOR: min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:430
-#, c-format
-msgid "%limin %lis"
-msgstr "%lim %lis"
-
-#. TRANSLATOR: s means seconds
-#: apt-pkg/contrib/strutl.cc:435
-#, c-format
-msgid "%lis"
-msgstr "%lis"
-
-#: apt-pkg/contrib/strutl.cc:1279
-#, c-format
-msgid "Selection %s not found"
-msgstr "Fant ikke utvalget %s"
-
-#: apt-pkg/contrib/fileutl.cc:197
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "Bruker ikke låsing for den skrivebeskyttede låsefila %s"
-
-#: apt-pkg/contrib/fileutl.cc:202
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "Klarte ikke åpne låsefila %s"
-
-#: apt-pkg/contrib/fileutl.cc:225
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr "Bruker ikke låsing på den nfs-monterte låsefila %s"
-
-#: apt-pkg/contrib/fileutl.cc:230
-#, c-format
-msgid "Could not get lock %s"
-msgstr "Får ikke låst %s"
-
-#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:401
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:419
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:428
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:862
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "Underprosessen %s mottok et minnefeilsignal."
-
-#: apt-pkg/contrib/fileutl.cc:864
-#, c-format
-msgid "Sub-process %s received signal %u."
-msgstr "Underprosessen %s mottok signalet %u."
-
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
-#, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "Underprosessen %s ga en feilkode (%u)"
-
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
-#, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "Underprosessen %s avsluttet uventet"
-
-#: apt-pkg/contrib/fileutl.cc:987
-#, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "Problem ved låsing av gzip-fila %s"
-
-#: apt-pkg/contrib/fileutl.cc:1194
-#, c-format
-msgid "Could not open file %s"
-msgstr "Klarte ikke åpne fila %s"
-
-#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
-#, c-format
-msgid "Could not open file descriptor %d"
-msgstr "Klarte ikke åpne fildeskriptor %d"
-
-#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2176
-msgid "Failed to create subprocess IPC"
-msgstr "Klarte ikke å opprette underprosessen IPC"
-
-#: apt-pkg/contrib/fileutl.cc:1466
-msgid "Failed to exec compressor "
-msgstr "Klarte ikke å kjøre komprimeringen"
-
-#: apt-pkg/contrib/fileutl.cc:1607
+#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
+#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
+#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
+#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
+#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
+#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
+#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
+#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:251
 #, fuzzy, c-format
-msgid "read, still have %llu to read but none left"
-msgstr "lese, har fremdeles %lu igjen å lese, men ingen igjen"
+msgid "Malformed entry %u in %s file %s (%s)"
+msgstr "Ugyldig overstyring %s linje %lu #1"
 
-#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
+#: apt-pkg/sourcelist.cc:355
+#, c-format
+msgid "Opening %s"
+msgstr "Åpner %s"
+
+#: apt-pkg/sourcelist.cc:389
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Feil på %u i kildelista %s (type)"
+
+#: apt-pkg/sourcelist.cc:393
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Typen «%s» er ukjent i linje %u i kildelista %s"
+
+#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
 #, fuzzy, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr "skrive, har fremdeles %lu igjen å skrive, men klarte ikke å"
+msgid "Malformed stanza %u in source list %s (type)"
+msgstr "Feil på %u i kildelista %s (type)"
 
-#: apt-pkg/contrib/fileutl.cc:2008
-#, c-format
-msgid "Problem closing the file %s"
-msgstr "Problem ved låsing av fila %s"
-
-#: apt-pkg/contrib/fileutl.cc:2019
-#, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "Problem ved endring av navn på fila %s til %s"
-
-#: apt-pkg/contrib/fileutl.cc:2030
-#, c-format
-msgid "Problem unlinking the file %s"
-msgstr "Problem ved oppheving av lenke til fila %s"
-
-#: apt-pkg/contrib/fileutl.cc:2043
-msgid "Problem syncing the file"
-msgstr "Problem ved oppdatering av fila"
-
-#: apt-pkg/contrib/fileutl.cc:2146 cmdline/apt-extracttemplates.cc:258
+#: apt-pkg/sourcelist.cc:429
 #, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Klarte ikke å få statusen på %s"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s ... Feil"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s ... Ferdig"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr ""
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s ... Ferdig"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr "Kan ikke utføre mmap på en tom fil"
-
-#: apt-pkg/contrib/mmap.cc:111
-#, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "Klarte ikke duplisere fildeskriptor %i"
-
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "Klarte ikke lage mmap av %lu bytes"
-
-#: apt-pkg/contrib/mmap.cc:146
-msgid "Unable to close mmap"
-msgstr "Klarte ikke lukke mmap"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-msgid "Unable to synchronize mmap"
-msgstr "Klarte ikke synkronisere mmap"
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "Klarte ikke lage mmap av %lu bytes"
-
-#: apt-pkg/contrib/mmap.cc:322
-msgid "Failed to truncate file"
-msgstr "Klarte ikke forkorte fila %s"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-"Dynamisk MMap gikk tom for minne. Øk størrelsen på APT::Cache-Start. "
-"Nåværende verdi: %lu. (man 5 apt.conf)"
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr ""
-"Klarte ikke øke størrelsen på MMap-en siden grensen på %lu byte allerede er "
-"nådd."
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-"Klarte ikke øke størrelsen på MMap-en siden automatisk voksing er deaktivert "
-"av brukeren."
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "Klarer ikke å fastsette monteringspunktet %s"
-
-#: apt-pkg/contrib/cdromutl.cc:247
-msgid "Failed to stat the cdrom"
-msgstr "Klarer ikke å få statusen på CD-spilleren"
-
-#: apt-pkg/contrib/configuration.cc:516
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Ukjent typeforkortelse: «%c»"
-
-#: apt-pkg/contrib/configuration.cc:630
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Åpner oppsettsfila %s"
-
-#: apt-pkg/contrib/configuration.cc:798
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "Syntaksfeil %s:%u: Blokka starter uten navn."
-
-#: apt-pkg/contrib/configuration.cc:817
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "Syntaksfeil %s:%u: Feil på taggen"
-
-#: apt-pkg/contrib/configuration.cc:834
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "Syntaksfeil %s:%u: Ugyldige angivelser etter verdien"
-
-#: apt-pkg/contrib/configuration.cc:874
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "Syntaksfeil %s:%u: Direktivene kan bare ligge i det øverste nivået"
-
-#: apt-pkg/contrib/configuration.cc:881
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "Syntaksfeil %s:%u: For mange nøstede inkluderte filer"
-
-#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "Syntaksfeil %s:%u: Inkludert herfra"
-
-#: apt-pkg/contrib/configuration.cc:894
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Syntaksfeil %s:%u: Direktivet «%s» er ikke støttet"
-
-#: apt-pkg/contrib/configuration.cc:897
-#, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "Syntaksfeil %s:%u: clear-direktivet krever et valgtre som argument"
-
-#: apt-pkg/contrib/configuration.cc:947
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "Syntaksfeil %s:%u: Ugyldige angivelser på slutten av fila"
-
-#: apt-pkg/contrib/cmndline.cc:127
-#, fuzzy, c-format
-msgid ""
-"Command line option '%c' [from %s] is not understood in combination with the "
-"other options."
-msgstr "Kjenner ikke kommandolinjevalget «%c» (fra %s)."
-
-#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
-#: apt-pkg/contrib/cmndline.cc:169
-#, fuzzy, c-format
-msgid ""
-"Command line option %s is not understood in combination with the other "
-"options"
-msgstr "Skjønner ikke kommandolinjevalget %s"
-
-#: apt-pkg/contrib/cmndline.cc:174
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "Kommandolinjevalget %s er ikke boolsk"
-
-#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "Valget %s krever et argument."
-
-#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Valg %s: Angivelsen av oppsettselementet må ha en =<verdi>."
-
-#: apt-pkg/contrib/cmndline.cc:284
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "Valget %s må ha et heltallsargument, ikke «%s»"
-
-#: apt-pkg/contrib/cmndline.cc:315
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "Valget «%s» er for langt"
-
-#: apt-pkg/contrib/cmndline.cc:347
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "Skjønner ikke %s. Prøv «true» eller «false»."
-
-#: apt-pkg/contrib/cmndline.cc:397
-#, c-format
-msgid "Invalid operation %s"
-msgstr "Ugyldig operasjon %s"
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typen «%s» er ukjent i linje %u i kildelista %s"
 
 #: apt-pkg/deb/debmetaindex.cc:229
 #, c-format
@@ -3164,6 +2821,348 @@ msgstr "dpkg ble avbrutt. Du må kjøre «%s» manuelt for å rette problemet,"
 #: apt-pkg/deb/debsystem.cc:125
 msgid "Not locked"
 msgstr "Ikke låst"
+
+#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr "%lid %lit %lim %lis"
+
+#. TRANSLATOR: h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lih %limin %lis"
+msgstr "%lit %lim %lis"
+
+#. TRANSLATOR: min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:430
+#, c-format
+msgid "%limin %lis"
+msgstr "%lim %lis"
+
+#. TRANSLATOR: s means seconds
+#: apt-pkg/contrib/strutl.cc:435
+#, c-format
+msgid "%lis"
+msgstr "%lis"
+
+#: apt-pkg/contrib/strutl.cc:1279
+#, c-format
+msgid "Selection %s not found"
+msgstr "Fant ikke utvalget %s"
+
+#: apt-pkg/contrib/fileutl.cc:197
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "Bruker ikke låsing for den skrivebeskyttede låsefila %s"
+
+#: apt-pkg/contrib/fileutl.cc:202
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "Klarte ikke åpne låsefila %s"
+
+#: apt-pkg/contrib/fileutl.cc:225
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "Bruker ikke låsing på den nfs-monterte låsefila %s"
+
+#: apt-pkg/contrib/fileutl.cc:230
+#, c-format
+msgid "Could not get lock %s"
+msgstr "Får ikke låst %s"
+
+#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:401
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:419
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:428
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:862
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "Underprosessen %s mottok et minnefeilsignal."
+
+#: apt-pkg/contrib/fileutl.cc:864
+#, c-format
+msgid "Sub-process %s received signal %u."
+msgstr "Underprosessen %s mottok signalet %u."
+
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "Underprosessen %s ga en feilkode (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "Underprosessen %s avsluttet uventet"
+
+#: apt-pkg/contrib/fileutl.cc:987
+#, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "Problem ved låsing av gzip-fila %s"
+
+#: apt-pkg/contrib/fileutl.cc:1194
+#, c-format
+msgid "Could not open file %s"
+msgstr "Klarte ikke åpne fila %s"
+
+#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#, c-format
+msgid "Could not open file descriptor %d"
+msgstr "Klarte ikke åpne fildeskriptor %d"
+
+#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2177
+msgid "Failed to create subprocess IPC"
+msgstr "Klarte ikke å opprette underprosessen IPC"
+
+#: apt-pkg/contrib/fileutl.cc:1466
+msgid "Failed to exec compressor "
+msgstr "Klarte ikke å kjøre komprimeringen"
+
+#: apt-pkg/contrib/fileutl.cc:1607
+#, fuzzy, c-format
+msgid "read, still have %llu to read but none left"
+msgstr "lese, har fremdeles %lu igjen å lese, men ingen igjen"
+
+#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
+#, fuzzy, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr "skrive, har fremdeles %lu igjen å skrive, men klarte ikke å"
+
+#: apt-pkg/contrib/fileutl.cc:2008
+#, c-format
+msgid "Problem closing the file %s"
+msgstr "Problem ved låsing av fila %s"
+
+#: apt-pkg/contrib/fileutl.cc:2020
+#, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "Problem ved endring av navn på fila %s til %s"
+
+#: apt-pkg/contrib/fileutl.cc:2031
+#, c-format
+msgid "Problem unlinking the file %s"
+msgstr "Problem ved oppheving av lenke til fila %s"
+
+#: apt-pkg/contrib/fileutl.cc:2044
+msgid "Problem syncing the file"
+msgstr "Problem ved oppdatering av fila"
+
+#: apt-pkg/contrib/fileutl.cc:2147 cmdline/apt-extracttemplates.cc:258
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Klarte ikke å få statusen på %s"
+
+#: apt-pkg/contrib/fileutl.cc:2152 cmdline/apt-extracttemplates.cc:263
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Kan ikke skrive til %s"
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s ... Feil"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s ... Ferdig"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s ... Ferdig"
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr "Kan ikke utføre mmap på en tom fil"
+
+#: apt-pkg/contrib/mmap.cc:111
+#, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "Klarte ikke duplisere fildeskriptor %i"
+
+#: apt-pkg/contrib/mmap.cc:119
+#, fuzzy, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "Klarte ikke lage mmap av %lu bytes"
+
+#: apt-pkg/contrib/mmap.cc:146
+msgid "Unable to close mmap"
+msgstr "Klarte ikke lukke mmap"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+msgid "Unable to synchronize mmap"
+msgstr "Klarte ikke synkronisere mmap"
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "Klarte ikke lage mmap av %lu bytes"
+
+#: apt-pkg/contrib/mmap.cc:322
+msgid "Failed to truncate file"
+msgstr "Klarte ikke forkorte fila %s"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"Dynamisk MMap gikk tom for minne. Øk størrelsen på APT::Cache-Start. "
+"Nåværende verdi: %lu. (man 5 apt.conf)"
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr ""
+"Klarte ikke øke størrelsen på MMap-en siden grensen på %lu byte allerede er "
+"nådd."
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+"Klarte ikke øke størrelsen på MMap-en siden automatisk voksing er deaktivert "
+"av brukeren."
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "Klarer ikke å fastsette monteringspunktet %s"
+
+#: apt-pkg/contrib/cdromutl.cc:247
+msgid "Failed to stat the cdrom"
+msgstr "Klarer ikke å få statusen på CD-spilleren"
+
+#: apt-pkg/contrib/configuration.cc:516
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "Ukjent typeforkortelse: «%c»"
+
+#: apt-pkg/contrib/configuration.cc:630
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "Åpner oppsettsfila %s"
+
+#: apt-pkg/contrib/configuration.cc:798
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "Syntaksfeil %s:%u: Blokka starter uten navn."
+
+#: apt-pkg/contrib/configuration.cc:817
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "Syntaksfeil %s:%u: Feil på taggen"
+
+#: apt-pkg/contrib/configuration.cc:834
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "Syntaksfeil %s:%u: Ugyldige angivelser etter verdien"
+
+#: apt-pkg/contrib/configuration.cc:874
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "Syntaksfeil %s:%u: Direktivene kan bare ligge i det øverste nivået"
+
+#: apt-pkg/contrib/configuration.cc:881
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "Syntaksfeil %s:%u: For mange nøstede inkluderte filer"
+
+#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "Syntaksfeil %s:%u: Inkludert herfra"
+
+#: apt-pkg/contrib/configuration.cc:894
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "Syntaksfeil %s:%u: Direktivet «%s» er ikke støttet"
+
+#: apt-pkg/contrib/configuration.cc:897
+#, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr "Syntaksfeil %s:%u: clear-direktivet krever et valgtre som argument"
+
+#: apt-pkg/contrib/configuration.cc:947
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "Syntaksfeil %s:%u: Ugyldige angivelser på slutten av fila"
+
+#: apt-pkg/contrib/cmndline.cc:127
+#, fuzzy, c-format
+msgid ""
+"Command line option '%c' [from %s] is not understood in combination with the "
+"other options."
+msgstr "Kjenner ikke kommandolinjevalget «%c» (fra %s)."
+
+#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
+#: apt-pkg/contrib/cmndline.cc:169
+#, fuzzy, c-format
+msgid ""
+"Command line option %s is not understood in combination with the other "
+"options"
+msgstr "Skjønner ikke kommandolinjevalget %s"
+
+#: apt-pkg/contrib/cmndline.cc:174
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "Kommandolinjevalget %s er ikke boolsk"
+
+#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "Valget %s krever et argument."
+
+#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "Valg %s: Angivelsen av oppsettselementet må ha en =<verdi>."
+
+#: apt-pkg/contrib/cmndline.cc:284
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "Valget %s må ha et heltallsargument, ikke «%s»"
+
+#: apt-pkg/contrib/cmndline.cc:315
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "Valget «%s» er for langt"
+
+#: apt-pkg/contrib/cmndline.cc:347
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "Skjønner ikke %s. Prøv «true» eller «false»."
+
+#: apt-pkg/contrib/cmndline.cc:397
+#, c-format
+msgid "Invalid operation %s"
+msgstr "Ugyldig operasjon %s"
 
 #: cmdline/apt-extracttemplates.cc:228
 msgid ""
@@ -3700,26 +3699,29 @@ msgstr "Arkivet er for kort"
 msgid "Failed to read the archive headers"
 msgstr "Klarte ikke å lese arkivhodene"
 
-#: apt-inst/contrib/extracttar.cc:123
-msgid "Failed to create pipes"
-msgstr "Klarte ikke å opprette rør"
+#: apt-inst/contrib/extracttar.cc:110
+#, fuzzy, c-format
+msgid "Cannot find a configured compressor for '%s'"
+msgstr "Klarte ikke finne autentiseringsoppføring for: %s"
 
-#: apt-inst/contrib/extracttar.cc:150
-msgid "Failed to exec gzip "
-msgstr "Klarte ikke å kjøre gzip "
-
-#: apt-inst/contrib/extracttar.cc:187 apt-inst/contrib/extracttar.cc:217
+#: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
 msgstr "Ødelagt arkiv"
 
-#: apt-inst/contrib/extracttar.cc:202
+#: apt-inst/contrib/extracttar.cc:157
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-sjekksummen mislykkes, arkivet er ødelagt"
 
-#: apt-inst/contrib/extracttar.cc:307
+#: apt-inst/contrib/extracttar.cc:262
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Ukjent TAR-hode: type %u, medlem %s"
+
+#~ msgid "Failed to create pipes"
+#~ msgstr "Klarte ikke å opprette rør"
+
+#~ msgid "Failed to exec gzip "
+#~ msgstr "Klarte ikke å kjøre gzip "
 
 #~ msgid "%s %s for %s compiled on %s %s\n"
 #~ msgstr "%s %s for %s kompilert på %s %s\n"

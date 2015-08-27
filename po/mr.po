@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-21 06:13-0400\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -326,7 +326,7 @@ msgid "Couldn't find package %s"
 msgstr "%s पॅकेज सापडू शकले नाही"
 
 #: cmdline/apt-get.cc:422 cmdline/apt-mark.cc:78
-#: apt-private/private-install.cc:839
+#: apt-private/private-install.cc:851
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
@@ -510,11 +510,11 @@ msgstr "%s साठी बांधणी-डिपेंडन्सीज प
 msgid "Failed to process build dependencies"
 msgstr "बांधणी-डिपेंडन्सीज क्रिया पूर्ण करण्यास असमर्थ "
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1551
 msgid "Supported modules:"
 msgstr "प्रोग्राम गटाला तांत्रिक मदत दिली:"
 
-#: cmdline/apt-get.cc:1595
+#: cmdline/apt-get.cc:1592
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -665,8 +665,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s ही आधीच नविन आवृत्ती आहे.\n"
 
 #: cmdline/apt-mark.cc:255 cmdline/apt-mark.cc:333 cmdline/apt-mark.cc:397
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:207
-#: apt-pkg/deb/dpkgpm.cc:1302
+#: apt-pkg/deb/dpkgpm.cc:1302 apt-pkg/contrib/fileutl.cc:850
+#: apt-pkg/contrib/gpgv.cc:207
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s साठी थांबलो पण ते तेथे नव्हते"
@@ -1112,6 +1112,227 @@ msgstr ""
 msgid "Internal error"
 msgstr "अंतर्गत त्रुटी"
 
+#: apt-private/private-list.cc:121
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc:151
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-cachefile.cc:96
+msgid "Correcting dependencies..."
+msgstr "डिपेन्डन्सीज बरोबर/दुरूस्त करत आहे..."
+
+#: apt-private/private-cachefile.cc:99
+msgid " failed."
+msgstr "अयशस्वी/चूकीचे झाले."
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to correct dependencies"
+msgstr "डिपेन्डन्सीज बरोबर करण्यास असमर्थ आहे "
+
+#: apt-private/private-cachefile.cc:105
+msgid "Unable to minimize the upgrade set"
+msgstr "आवृत्तीकृत संच कमीतकमी करण्यास असमर्थ"
+
+#: apt-private/private-cachefile.cc:107
+msgid " Done"
+msgstr "झाले"
+
+#: apt-private/private-cachefile.cc:111
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "हे बरोबर करण्यासाठी तुम्हाला `apt-get -f संस्थापना' प्रोग्राम चालू करावा लागेल."
+
+#: apt-private/private-cachefile.cc:114
+msgid "Unmet dependencies. Try using -f."
+msgstr "अनमेट डिपेंडन्सीज.-f.वापरून प्रयत्न करा "
+
+#: apt-private/private-output.cc:105 apt-private/private-show.cc:84
+#: apt-private/private-show.cc:89
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc:272
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-output.cc:275
+#, fuzzy
+msgid "[installed,local]"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-output.cc:277
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc:279
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-output.cc:281
+#, fuzzy
+msgid "[installed]"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-output.cc:284
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc:288
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc:402
+#, c-format
+msgid "but %s is installed"
+msgstr "पण %s संस्थापित झाले"
+
+#: apt-private/private-output.cc:404
+#, c-format
+msgid "but %s is to be installed"
+msgstr "पण %s संस्थापित करायचे आहे"
+
+#: apt-private/private-output.cc:411
+msgid "but it is not installable"
+msgstr "पण ते संस्थापित करण्याजोगे नाही"
+
+#: apt-private/private-output.cc:413
+msgid "but it is a virtual package"
+msgstr "पण ते आभासी पॅकेज आहे"
+
+#: apt-private/private-output.cc:416
+msgid "but it is not installed"
+msgstr "पण ते संस्थापित केले नाही"
+
+#: apt-private/private-output.cc:416
+msgid "but it is not going to be installed"
+msgstr "पण ते संस्थापित होणार नाही"
+
+#: apt-private/private-output.cc:421
+msgid " or"
+msgstr "किंवा"
+
+#: apt-private/private-output.cc:435 apt-private/private-output.cc:445
+msgid "The following packages have unmet dependencies:"
+msgstr "खालील पॅकेजेस मध्ये नमिळणाऱ्या निर्भरता/ डिपेन्डन्सीज आहेत:"
+
+#: apt-private/private-output.cc:455
+msgid "The following NEW packages will be installed:"
+msgstr "खालील नविन पॅकेजेस संस्थापित होतील:"
+
+#: apt-private/private-output.cc:465
+msgid "The following packages will be REMOVED:"
+msgstr "खालील नविन पॅकेजेस कायमची काढून टाकली जातील:"
+
+#: apt-private/private-output.cc:481
+msgid "The following packages have been kept back:"
+msgstr "खालील पॅकेजेस परत ठेवली गेली:"
+
+#: apt-private/private-output.cc:497
+msgid "The following packages will be upgraded:"
+msgstr "खालील पॅकेजेस पुढिल आवृत्तीकृत होतील:"
+
+#: apt-private/private-output.cc:512
+msgid "The following packages will be DOWNGRADED:"
+msgstr "खालील पॅकेजेस पुढच्या आवृत्तीकृत होणार नाहीत:"
+
+#: apt-private/private-output.cc:525
+msgid "The following held packages will be changed:"
+msgstr "पुढिल ठेवलेली पॅकेजेस बदलतील:"
+
+#: apt-private/private-output.cc:552
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (च्या मुळे %s)"
+
+#: apt-private/private-output.cc:602
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"धोक्याची सूचना:खालील जरूरीची पॅकेजेस कायमची काढून टाकली जातील।\n"
+"तुम्हाला तुम्ही काय करत आहात हे कळेपर्यंत असं करता येणार नाही!"
+
+#: apt-private/private-output.cc:633
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu पुढे आवृत्तीकृत केले, %lu नव्याने संस्थापित केले,"
+
+#: apt-private/private-output.cc:637
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu पुनर्संस्थापित केले,"
+
+#: apt-private/private-output.cc:639
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu मागील आवृत्तीकृत केले,"
+
+#: apt-private/private-output.cc:641
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu कायमचे काढून टाकण्यासाठी आणि %lu पुढच्या आवृत्तीकृत झालेली नाही.\n"
+
+#: apt-private/private-output.cc:645
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu संपूर्ण संस्थापित किंवा कायमची काढून टाकलेली नाही.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:667
+msgid "[Y/n]"
+msgstr ""
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc:673
+msgid "[y/N]"
+msgstr ""
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc:684
+msgid "Y"
+msgstr "होय"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc:690
+msgid "N"
+msgstr ""
+
+#: apt-private/private-output.cc:712 apt-pkg/cachefilter.cc:40
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "रिजेक्स कंपायलेशन त्रुटी -%s "
+
+#: apt-private/private-update.cc:31
+msgid "The update command takes no arguments"
+msgstr "सुधारित आवृत्तीचा विधान आर्ग्युमेंटस घेऊ    शकत नाही."
+
+#: apt-private/private-update.cc:96
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc:100
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
 msgid "Sorting"
 msgstr ""
@@ -1176,12 +1397,12 @@ msgid "Virtual packages like '%s' can't be removed\n"
 msgstr ""
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:915
+#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:927
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "%s पॅकेज संस्थापित केलेले नाही,म्हणून काढले नाही\n"
 
-#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:921
+#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:933
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "%s पॅकेज संस्थापित केलेले नाही,म्हणून काढले नाही\n"
@@ -1190,6 +1411,18 @@ msgstr "%s पॅकेज संस्थापित केलेले ना
 #, fuzzy, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "लक्षात घ्या,%s ऐवजी %s ची निवड करत आहे \n"
+
+#: apt-private/private-show.cc:158
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:165
+msgid "not a real package (virtual)"
+msgstr ""
 
 #: apt-private/private-install.cc:87
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1413,282 +1646,49 @@ msgstr ""
 msgid "Broken packages"
 msgstr "तुटलेली पॅकेजेस"
 
-#: apt-private/private-install.cc:685
+#: apt-private/private-install.cc:697
 #, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "खालील अतिरिक्त पॅकेजेस संस्थापित होतील:"
 
-#: apt-private/private-install.cc:774
+#: apt-private/private-install.cc:786
 msgid "Suggested packages:"
 msgstr "सुचवलेली पॅकेजेस:"
 
-#: apt-private/private-install.cc:776
+#: apt-private/private-install.cc:788
 msgid "Recommended packages:"
 msgstr "शिफारस केलेली पॅकेजेस:"
 
-#: apt-private/private-install.cc:798
+#: apt-private/private-install.cc:810
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "%s सोडून देत आहे, ते आधिच संस्थापित केले आहे आणि पुढिल आवृत्ती निश्चित केलेली नाही.\n"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:814
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr "%s सोडून देत आहे, ते आधिच संस्थापित केले आहे आणि पुढिल आवृत्ती निश्चित केलेली नाही.\n"
 
-#: apt-private/private-install.cc:814
+#: apt-private/private-install.cc:826
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "%s चे पुनर्संस्थापन शक्य नाही, हे डाऊनलोड करता येत नाही.\n"
 
 #. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc:820
+#: apt-private/private-install.cc:832
 #, fuzzy, c-format
 msgid "%s is already the newest version (%s).\n"
 msgstr "%s ही आधीच नविन आवृत्ती आहे.\n"
 
-#: apt-private/private-install.cc:868
+#: apt-private/private-install.cc:880
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "%s साठी %s (%s) निवडलेली आवृत्ती.\n"
 
-#: apt-private/private-install.cc:873
+#: apt-private/private-install.cc:885
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "%s साठी %s (%s) निवडलेली आवृत्ती.\n"
-
-#: apt-private/private-list.cc:121
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc:151
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-cachefile.cc:96
-msgid "Correcting dependencies..."
-msgstr "डिपेन्डन्सीज बरोबर/दुरूस्त करत आहे..."
-
-#: apt-private/private-cachefile.cc:99
-msgid " failed."
-msgstr "अयशस्वी/चूकीचे झाले."
-
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to correct dependencies"
-msgstr "डिपेन्डन्सीज बरोबर करण्यास असमर्थ आहे "
-
-#: apt-private/private-cachefile.cc:105
-msgid "Unable to minimize the upgrade set"
-msgstr "आवृत्तीकृत संच कमीतकमी करण्यास असमर्थ"
-
-#: apt-private/private-cachefile.cc:107
-msgid " Done"
-msgstr "झाले"
-
-#: apt-private/private-cachefile.cc:111
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "हे बरोबर करण्यासाठी तुम्हाला `apt-get -f संस्थापना' प्रोग्राम चालू करावा लागेल."
-
-#: apt-private/private-cachefile.cc:114
-msgid "Unmet dependencies. Try using -f."
-msgstr "अनमेट डिपेंडन्सीज.-f.वापरून प्रयत्न करा "
-
-#: apt-private/private-output.cc:105 apt-private/private-show.cc:84
-#: apt-private/private-show.cc:89
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc:272
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr "[संस्थापित केले]"
-
-#: apt-private/private-output.cc:275
-#, fuzzy
-msgid "[installed,local]"
-msgstr "[संस्थापित केले]"
-
-#: apt-private/private-output.cc:277
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc:279
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr "[संस्थापित केले]"
-
-#: apt-private/private-output.cc:281
-#, fuzzy
-msgid "[installed]"
-msgstr "[संस्थापित केले]"
-
-#: apt-private/private-output.cc:284
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc:288
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc:402
-#, c-format
-msgid "but %s is installed"
-msgstr "पण %s संस्थापित झाले"
-
-#: apt-private/private-output.cc:404
-#, c-format
-msgid "but %s is to be installed"
-msgstr "पण %s संस्थापित करायचे आहे"
-
-#: apt-private/private-output.cc:411
-msgid "but it is not installable"
-msgstr "पण ते संस्थापित करण्याजोगे नाही"
-
-#: apt-private/private-output.cc:413
-msgid "but it is a virtual package"
-msgstr "पण ते आभासी पॅकेज आहे"
-
-#: apt-private/private-output.cc:416
-msgid "but it is not installed"
-msgstr "पण ते संस्थापित केले नाही"
-
-#: apt-private/private-output.cc:416
-msgid "but it is not going to be installed"
-msgstr "पण ते संस्थापित होणार नाही"
-
-#: apt-private/private-output.cc:421
-msgid " or"
-msgstr "किंवा"
-
-#: apt-private/private-output.cc:435 apt-private/private-output.cc:445
-msgid "The following packages have unmet dependencies:"
-msgstr "खालील पॅकेजेस मध्ये नमिळणाऱ्या निर्भरता/ डिपेन्डन्सीज आहेत:"
-
-#: apt-private/private-output.cc:455
-msgid "The following NEW packages will be installed:"
-msgstr "खालील नविन पॅकेजेस संस्थापित होतील:"
-
-#: apt-private/private-output.cc:465
-msgid "The following packages will be REMOVED:"
-msgstr "खालील नविन पॅकेजेस कायमची काढून टाकली जातील:"
-
-#: apt-private/private-output.cc:481
-msgid "The following packages have been kept back:"
-msgstr "खालील पॅकेजेस परत ठेवली गेली:"
-
-#: apt-private/private-output.cc:497
-msgid "The following packages will be upgraded:"
-msgstr "खालील पॅकेजेस पुढिल आवृत्तीकृत होतील:"
-
-#: apt-private/private-output.cc:512
-msgid "The following packages will be DOWNGRADED:"
-msgstr "खालील पॅकेजेस पुढच्या आवृत्तीकृत होणार नाहीत:"
-
-#: apt-private/private-output.cc:525
-msgid "The following held packages will be changed:"
-msgstr "पुढिल ठेवलेली पॅकेजेस बदलतील:"
-
-#: apt-private/private-output.cc:552
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (च्या मुळे %s)"
-
-#: apt-private/private-output.cc:602
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"धोक्याची सूचना:खालील जरूरीची पॅकेजेस कायमची काढून टाकली जातील।\n"
-"तुम्हाला तुम्ही काय करत आहात हे कळेपर्यंत असं करता येणार नाही!"
-
-#: apt-private/private-output.cc:633
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu पुढे आवृत्तीकृत केले, %lu नव्याने संस्थापित केले,"
-
-#: apt-private/private-output.cc:637
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu पुनर्संस्थापित केले,"
-
-#: apt-private/private-output.cc:639
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu मागील आवृत्तीकृत केले,"
-
-#: apt-private/private-output.cc:641
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu कायमचे काढून टाकण्यासाठी आणि %lu पुढच्या आवृत्तीकृत झालेली नाही.\n"
-
-#: apt-private/private-output.cc:645
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu संपूर्ण संस्थापित किंवा कायमची काढून टाकलेली नाही.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:667
-msgid "[Y/n]"
-msgstr ""
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:673
-msgid "[y/N]"
-msgstr ""
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:684
-msgid "Y"
-msgstr "होय"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:690
-msgid "N"
-msgstr ""
-
-#: apt-private/private-output.cc:712 apt-pkg/cachefilter.cc:40
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "रिजेक्स कंपायलेशन त्रुटी -%s "
-
-#: apt-private/private-update.cc:31
-msgid "The update command takes no arguments"
-msgstr "सुधारित आवृत्तीचा विधान आर्ग्युमेंटस घेऊ    शकत नाही."
-
-#: apt-private/private-update.cc:96
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc:100
-msgid "All packages are up to date."
-msgstr ""
-
-#: apt-private/private-show.cc:158
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc:165
-msgid "not a real package (virtual)"
-msgstr ""
 
 #: apt-private/private-main.cc:34
 msgid ""
@@ -1808,7 +1808,7 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:133 apt-pkg/init.cc:141
-#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412
+#: apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412 apt-pkg/clean.cc:43
 #: apt-pkg/sourcelist.cc:306 apt-pkg/sourcelist.cc:312
 #: apt-pkg/contrib/fileutl.cc:375 apt-pkg/contrib/fileutl.cc:488
 #: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
@@ -1816,9 +1816,9 @@ msgstr ""
 msgid "Unable to read %s"
 msgstr "%s वाचण्यास असमर्थ"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:563
-#: apt-pkg/acquire.cc:588 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:563
+#: apt-pkg/acquire.cc:588 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1942,17 +1942,38 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "हॅश बेरीज जुळत नाही"
 
-#: apt-pkg/cachefile.cc:101
+#: apt-pkg/cachefile.cc:98
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "पॅकेजच्या याद्या किंवा संचिकेची स्थिती स्पष्ट होऊ शकत नाही किंवा ती उघडू शकत नाही."
 
-#: apt-pkg/cachefile.cc:105
+#: apt-pkg/cachefile.cc:102
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "तुम्ही ह्या समस्यांचे निवारण करण्यासाठी  apt-get update प्रोग्राम चालू करु शकता"
 
-#: apt-pkg/cachefile.cc:123
+#: apt-pkg/cachefile.cc:120
 msgid "The list of sources could not be read."
 msgstr "उगमांच्या याद्या वाचता येणार नाहीत."
+
+#: apt-pkg/acquire-worker.cc:111
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "%s कार्यपध्दतीचा ड्राइव्हर सापडू शकला नाही. "
+
+#: apt-pkg/acquire-worker.cc:113
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "'dpkg-dev' पॅकेज संस्थापित केले आहे का ते पडताळून पहा.\n"
+
+#: apt-pkg/acquire-worker.cc:164
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "%s कार्यपध्दती योग्य रीतीने सुरु झालेली नाही"
+
+#: apt-pkg/acquire-worker.cc:537
+#, fuzzy, c-format
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
+msgstr "कृपया '%s' लेबल असलेली डिस्क '%s' या ड्राइव्हमध्ये ठेवा आणि एन्टर कळ दाबा."
 
 #: apt-pkg/pkgcache.cc:163
 msgid "Empty package cache"
@@ -2037,63 +2058,86 @@ msgstr "एच्छिक"
 msgid "extra"
 msgstr "अधिक"
 
-#: apt-pkg/acquire-worker.cc:111
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "%s कार्यपध्दतीचा ड्राइव्हर सापडू शकला नाही. "
-
-#: apt-pkg/acquire-worker.cc:113
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "'dpkg-dev' पॅकेज संस्थापित केले आहे का ते पडताळून पहा.\n"
-
-#: apt-pkg/acquire-worker.cc:164
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "%s कार्यपध्दती योग्य रीतीने सुरु झालेली नाही"
-
-#: apt-pkg/acquire-worker.cc:536
-#, fuzzy, c-format
-msgid ""
-"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "कृपया '%s' लेबल असलेली डिस्क '%s' या ड्राइव्हमध्ये ठेवा आणि एन्टर कळ दाबा."
+#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
+msgid "Calculating upgrade"
+msgstr "पुढिल आवृत्तीची गणती करीत आहे"
 
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "'%s' प्रकारची निर्देशक संचिका सहाय्यकारी नाही"
 
-#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "अवलंबित रचना बांधणी करत आहे"
+#: apt-pkg/pkgcachegen.cc:112
+msgid "Cache has an incompatible versioning system"
+msgstr "अस्थायी स्मृतिकोष मध्ये विसंगत आवृतीकरण प्रणाली आहे"
 
-#: apt-pkg/depcache.cc:140
-msgid "Candidate versions"
-msgstr "कंॅडिडेट आवृत्त्या"
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
+#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
+#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
+#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
+#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "%s (पॅकेज शोधतांना) प्रक्रिया करीत असतांना दोष आढळून आला"
 
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "अवलंबित/विसंबून असलेले उत्पादन "
+#: apt-pkg/pkgcachegen.cc:257
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr ""
+"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही पॅकेज नांवांच्या संख्येची मर्यादा ओलांडली "
+"आहे."
 
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "स्थिती माहिती वाचत आहे"
+#: apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr ""
+"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही आवृत्त्या संख्येची मर्यादा ओलांडली आहे."
 
-#: apt-pkg/depcache.cc:252
-#, c-format
-msgid "Failed to open StateFile %s"
-msgstr "%s StateFile उघडणे असफल"
+#: apt-pkg/pkgcachegen.cc:263
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "अरेवा!, तुम्ही तर ह्या ऍप्टच्या कार्यक्षमतेपेक्षाही विवरण संख्येची मर्यादा ओलांडली आहे."
 
-#: apt-pkg/depcache.cc:257
-#, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "%s तात्पुरत्या StateFile मध्ये लिहिणे असफल"
+#: apt-pkg/pkgcachegen.cc:266
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr ""
+"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही अवलंबित/विसंबून असलेल्या संख्येची मर्यादा "
+"ओलांडली आहे."
+
+#: apt-pkg/pkgcachegen.cc:1419 apt-pkg/pkgcachegen.cc:1546
+#: apt-pkg/pkgcachegen.cc:1572 apt-pkg/pkgcachegen.cc:1681
+msgid "Reading package lists"
+msgstr "पॅकेज याद्या वाचत आहोत"
+
+#: apt-pkg/pkgcachegen.cc:1490 apt-pkg/pkgcachegen.cc:1497
+msgid "IO Error saving source cache"
+msgstr "IO त्रुटी उगम निवडक संचयस्थानात संग्रहित होत आहे"
+
+#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:232
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:311
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:318
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
+msgid "Execute external solver"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc:116
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2161
+#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "पुनर्नामांकन अयशस्वी, %s (%s -> %s)."
@@ -2203,72 +2247,10 @@ msgstr ""
 "ठिकाण %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
-#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3054
+#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s (%s) ला जोडत आहे"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:553
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "'%s' प्रकारची निर्देशक संचिका सहाय्यकारी नाही"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "%s स्टॅट करण्यात असमर्थ. "
-
-#: apt-pkg/pkgcachegen.cc:112
-msgid "Cache has an incompatible versioning system"
-msgstr "अस्थायी स्मृतिकोष मध्ये विसंगत आवृतीकरण प्रणाली आहे"
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
-#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
-#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
-#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
-#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "%s (पॅकेज शोधतांना) प्रक्रिया करीत असतांना दोष आढळून आला"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr ""
-"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही पॅकेज नांवांच्या संख्येची मर्यादा ओलांडली "
-"आहे."
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr ""
-"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही आवृत्त्या संख्येची मर्यादा ओलांडली आहे."
-
-#: apt-pkg/pkgcachegen.cc:263
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "अरेवा!, तुम्ही तर ह्या ऍप्टच्या कार्यक्षमतेपेक्षाही विवरण संख्येची मर्यादा ओलांडली आहे."
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr ""
-"अरेवा!, तुम्ही तर ह्या एपिटीच्या कार्यक्षमतेपेक्षाही अवलंबित/विसंबून असलेल्या संख्येची मर्यादा "
-"ओलांडली आहे."
-
-#: apt-pkg/pkgcachegen.cc:1400 apt-pkg/pkgcachegen.cc:1526
-#: apt-pkg/pkgcachegen.cc:1552 apt-pkg/pkgcachegen.cc:1671
-msgid "Reading package lists"
-msgstr "पॅकेज याद्या वाचत आहोत"
-
-#: apt-pkg/pkgcachegen.cc:1471 apt-pkg/pkgcachegen.cc:1478
-msgid "IO Error saving source cache"
-msgstr "IO त्रुटी उगम निवडक संचयस्थानात संग्रहित होत आहे"
-
-#: apt-pkg/pkgcachegen.cc:1570 apt-pkg/pkgcachegen.cc:1572
-#: apt-pkg/contrib/fileutl.cc:2151 cmdline/apt-extracttemplates.cc:263
-#, c-format
-msgid "Unable to write to %s"
-msgstr "%s मध्ये लिहिण्यास असमर्थ "
 
 #: apt-pkg/acquire.cc:126 apt-pkg/acquire.cc:146 apt-pkg/cdrom.cc:833
 #, fuzzy, c-format
@@ -2285,6 +2267,11 @@ msgstr "ऑर्काइव्ह संचयिका %spartial गायब
 msgid "Unable to lock directory %s"
 msgstr "संचयिका यादीला कुलुप लावण्यात असमर्थ"
 
+#: apt-pkg/acquire.cc:553 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "'%s' प्रकारची निर्देशक संचिका सहाय्यकारी नाही"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:1081
@@ -2296,24 +2283,6 @@ msgstr "%li ची %li(%s राहिलेले) संचिका पुन
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "%li ची %li संचिका पुन:प्राप्त करीत आहे"
-
-#: apt-pkg/update.cc:76
-#, fuzzy, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "%s  %s आणणे असफल\n"
-
-#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"काही अनुक्रमणिका संचयिका डाऊनलोड    करण्यास असमर्थ,त्या दुर्लक्षित झाल्या, किंवा "
-"त्याऐवजी जुन्या वापरल्या गेल्या."
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "तुम्ही तुमच्या उगमस्थान यादीत URI घाला"
 
 #: apt-pkg/policy.cc:77
 #, c-format
@@ -2341,19 +2310,42 @@ msgstr ""
 msgid "No priority (or zero) specified for pin"
 msgstr "पिन करिता प्राधान्य/अग्रक्रम (किंवा शून्य)निर्देशीत केलेला नाही"
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:983
+#: apt-pkg/update.cc:76
+#, fuzzy, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "%s  %s आणणे असफल\n"
+
+#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"काही अनुक्रमणिका संचयिका डाऊनलोड    करण्यास असमर्थ,त्या दुर्लक्षित झाल्या, किंवा "
+"त्याऐवजी जुन्या वापरल्या गेल्या."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "तुम्ही तुमच्या उगमस्थान यादीत URI घाला"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "%s स्टॅट करण्यात असमर्थ. "
+
+#: apt-pkg/packagemanager.cc:330 apt-pkg/packagemanager.cc:1018
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:562 apt-pkg/packagemanager.cc:592
+#: apt-pkg/packagemanager.cc:589 apt-pkg/packagemanager.cc:627
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "%s फाईल उघडता येत नाही"
 
-#: apt-pkg/packagemanager.cc:642
+#: apt-pkg/packagemanager.cc:677
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2444,10 +2436,6 @@ msgstr "नविन स्त्रोत सूची लिहित आह�
 msgid "Source list entries for this disc are:\n"
 msgstr "ह्या डिस्क/चकती करिता स्त्रोत सूचीच्या प्रवेशिका आहेत: \n"
 
-#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
-msgid "Calculating upgrade"
-msgstr "पुढिल आवृत्तीची गणती करीत आहे"
-
 #: apt-pkg/algorithms.cc:263
 #, c-format
 msgid ""
@@ -2467,25 +2455,31 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "अडचणी दूर करण्यास असमर्थ, तुम्ही तुटलेले पॅकेज घेतलेले आहे."
 
-#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
-msgid "Send scenario to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "अवलंबित रचना बांधणी करत आहे"
 
-#: apt-pkg/edsp.cc:232
-msgid "Send request to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:140
+msgid "Candidate versions"
+msgstr "कंॅडिडेट आवृत्त्या"
 
-#: apt-pkg/edsp.cc:311
-msgid "Prepare for receiving solution"
-msgstr ""
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "अवलंबित/विसंबून असलेले उत्पादन "
 
-#: apt-pkg/edsp.cc:318
-msgid "External solver failed without a proper error message"
-msgstr ""
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "स्थिती माहिती वाचत आहे"
 
-#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
-msgid "Execute external solver"
-msgstr ""
+#: apt-pkg/depcache.cc:252
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "%s StateFile उघडणे असफल"
+
+#: apt-pkg/depcache.cc:257
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "%s तात्पुरत्या StateFile मध्ये लिहिणे असफल"
 
 #: apt-pkg/tagfile.cc:196 apt-pkg/tagfile.cc:296 apt-pkg/deb/debrecords.cc:212
 #, c-format
@@ -2496,44 +2490,6 @@ msgstr "%s पॅकेज फाईल पार्स करण्यात �
 #, c-format
 msgid "Cannot convert %s to integer"
 msgstr ""
-
-#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
-#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
-#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
-#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
-#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
-#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
-#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
-#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
-#: apt-pkg/sourcelist.cc:251
-#, fuzzy, c-format
-msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "व्यंगीत/हिडीस दुर्लक्षित केले %s रेषा %lu #1"
-
-#: apt-pkg/sourcelist.cc:355
-#, c-format
-msgid "Opening %s"
-msgstr "%s उघडत आहे"
-
-#: apt-pkg/sourcelist.cc:389
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "स्त्रोत सुची %2$s (प्रकार) मध्ये %1$u वाईट/व्यंग रेषा"
-
-#: apt-pkg/sourcelist.cc:393
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "%s स्त्रोत सुचीमध्ये %u रेषेवर '%s' प्रकार माहित नाही "
-
-#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (type)"
-msgstr "स्त्रोत सुची %2$s (प्रकार) मध्ये %1$u वाईट/व्यंग रेषा"
-
-#: apt-pkg/sourcelist.cc:429
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "%s स्त्रोत सुचीमध्ये %u रेषेवर '%s' प्रकार माहित नाही "
 
 #: apt-pkg/cacheset.cc:500
 #, c-format
@@ -2587,338 +2543,43 @@ msgid ""
 "neither of them"
 msgstr ""
 
-#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr ""
-
-#. TRANSLATOR: h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lih %limin %lis"
-msgstr ""
-
-#. TRANSLATOR: min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:430
-#, c-format
-msgid "%limin %lis"
-msgstr ""
-
-#. TRANSLATOR: s means seconds
-#: apt-pkg/contrib/strutl.cc:435
-#, c-format
-msgid "%lis"
-msgstr ""
-
-#: apt-pkg/contrib/strutl.cc:1279
-#, c-format
-msgid "Selection %s not found"
-msgstr "%s निवडक भाग सापडत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:197
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "फक्त वाचण्यासाठी कुलूप संचिका %s साठी कुलूपबंदचा वापर करीत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:202
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "%s कुलूप फाईल उघडता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:225
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr "%s nfs(नेटवर्क फाईल सिस्टीम) माऊंटेड कुलुप फाईल ला कुलुप /बंद करता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:230
-#, c-format
-msgid "Could not get lock %s"
-msgstr "%s कुलुप मिळवता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:401
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:419
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:428
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:862
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "%s उपक्रियेला सेगमेंटेशन दोष प्राप्त झाला."
-
-#: apt-pkg/contrib/fileutl.cc:864
+#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
+#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
+#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
+#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
+#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
+#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
+#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
+#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:251
 #, fuzzy, c-format
-msgid "Sub-process %s received signal %u."
-msgstr "%s उपक्रियेला सेगमेंटेशन दोष प्राप्त झाला."
+msgid "Malformed entry %u in %s file %s (%s)"
+msgstr "व्यंगीत/हिडीस दुर्लक्षित केले %s रेषा %lu #1"
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#: apt-pkg/sourcelist.cc:355
 #, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "%s उपक्रियेने (%u) त्रुटी कोड दिलेला आहे"
+msgid "Opening %s"
+msgstr "%s उघडत आहे"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#: apt-pkg/sourcelist.cc:389
 #, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "%s उपक्रिया अचानकपणे बाहेर पडली"
+msgid "Malformed line %u in source list %s (type)"
+msgstr "स्त्रोत सुची %2$s (प्रकार) मध्ये %1$u वाईट/व्यंग रेषा"
 
-#: apt-pkg/contrib/fileutl.cc:987
+#: apt-pkg/sourcelist.cc:393
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "%s स्त्रोत सुचीमध्ये %u रेषेवर '%s' प्रकार माहित नाही "
+
+#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
 #, fuzzy, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "फाईल बंद करण्यात अडचण"
+msgid "Malformed stanza %u in source list %s (type)"
+msgstr "स्त्रोत सुची %2$s (प्रकार) मध्ये %1$u वाईट/व्यंग रेषा"
 
-#: apt-pkg/contrib/fileutl.cc:1194
-#, c-format
-msgid "Could not open file %s"
-msgstr "%s फाईल उघडता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#: apt-pkg/sourcelist.cc:429
 #, fuzzy, c-format
-msgid "Could not open file descriptor %d"
-msgstr "%s साठी पाईप उघडता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2176
-msgid "Failed to create subprocess IPC"
-msgstr "आयपीसी उपक्रिया तयार करण्यास असमर्थ"
-
-#: apt-pkg/contrib/fileutl.cc:1466
-msgid "Failed to exec compressor "
-msgstr "दाबक(संकलितकर्ता) कर्यान्वित करण्यास असमर्थ"
-
-#: apt-pkg/contrib/fileutl.cc:1607
-#, fuzzy, c-format
-msgid "read, still have %llu to read but none left"
-msgstr "वाचा, %lu अजूनही वाचण्यासाठी आहे पण आता काही उरली नाही"
-
-#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
-#, fuzzy, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr "लिहा, %lu अजूनही लिहिण्यासाठी आहे पण लिहिता येत नाही"
-
-#: apt-pkg/contrib/fileutl.cc:2008
-#, fuzzy, c-format
-msgid "Problem closing the file %s"
-msgstr "फाईल बंद करण्यात अडचण"
-
-#: apt-pkg/contrib/fileutl.cc:2019
-#, fuzzy, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "संचिकेची syncing समस्या"
-
-#: apt-pkg/contrib/fileutl.cc:2030
-#, fuzzy, c-format
-msgid "Problem unlinking the file %s"
-msgstr "फाईल अनलिंकिंग करण्यात अडचण"
-
-#: apt-pkg/contrib/fileutl.cc:2043
-msgid "Problem syncing the file"
-msgstr "संचिकेची syncing समस्या"
-
-#: apt-pkg/contrib/fileutl.cc:2146 cmdline/apt-extracttemplates.cc:258
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "%s स्टॅट करण्यास असमर्थ"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s... चूक/त्रुटी!"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s... झाले"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr ""
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s... झाले"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr "रिकामी फाईल mmap करता येणार नाही"
-
-#: apt-pkg/contrib/mmap.cc:111
-#, fuzzy, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "%s साठी पाईप उघडता येत नाही"
-
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "mmap चे %lu बाईटस् करता येणार नाहीत"
-
-#: apt-pkg/contrib/mmap.cc:146
-#, fuzzy
-msgid "Unable to close mmap"
-msgstr "%s उघडण्यास असमर्थ"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-#, fuzzy
-msgid "Unable to synchronize mmap"
-msgstr "जारी करण्यास करण्यास असमर्थ"
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "mmap चे %lu बाईटस् करता येणार नाहीत"
-
-#: apt-pkg/contrib/mmap.cc:322
-msgid "Failed to truncate file"
-msgstr "फाईल छोटी करणे असफल"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "%s माऊंट पॉईंट स्टॅट करण्यास असमर्थ"
-
-#: apt-pkg/contrib/cdromutl.cc:247
-msgid "Failed to stat the cdrom"
-msgstr "सीडी-रॉम स्टॅट करण्यास असमर्थ"
-
-#: apt-pkg/contrib/configuration.cc:516
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "संक्षिप्तरुपाचा माहित नसलेला प्रकार: '%c'"
-
-#: apt-pkg/contrib/configuration.cc:630
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "%s संरचना फाईल उघडत आहे"
-
-#: apt-pkg/contrib/configuration.cc:798
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "रचनेच्या नियमांचा दोष %s:%u: ब्लॉक नावाशिवाय सुरू होतो."
-
-#: apt-pkg/contrib/configuration.cc:817
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "रचनेच्या नियमांचा दोष : %s:%u: मालफॉर्मड् टॅग"
-
-#: apt-pkg/contrib/configuration.cc:834
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "रचनेच्या नियमांचा दोष %s:%u: मुल्यांच्या नंतर अधिक जंक"
-
-#: apt-pkg/contrib/configuration.cc:874
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "रचनेच्या नियमांचा दोष %s:%u: दिशादर्शक फक्त उच्च पातळीवर केले जाऊ शकतात"
-
-#: apt-pkg/contrib/configuration.cc:881
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "रचनेच्या नियमांचा दोष %s:%u: खूपच एकात एक इनक्लूडस्"
-
-#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "रचनेच्या नियमांचा दोष %s:%u: ह्या पासून  समाविष्ट "
-
-#: apt-pkg/contrib/configuration.cc:894
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "नियम रचनेचा दोष %s:%u: '%s' दिशादर्शक असहाय्यकारी"
-
-#: apt-pkg/contrib/configuration.cc:897
-#, fuzzy, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "रचनेच्या नियमांचा दोष %s:%u: दिशादर्शक फक्त उच्च पातळीवर केले जाऊ शकतात"
-
-#: apt-pkg/contrib/configuration.cc:947
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "नियम रचनेचा दोष %s:%u: फाईलच्या अंती अधिक जंक"
-
-#: apt-pkg/contrib/cmndline.cc:127
-#, fuzzy, c-format
-msgid ""
-"Command line option '%c' [from %s] is not understood in combination with the "
-"other options."
-msgstr "आदेश रेखा पर्याय '%c' [पासून %s] हे माहित नाही."
-
-#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
-#: apt-pkg/contrib/cmndline.cc:169
-#, fuzzy, c-format
-msgid ""
-"Command line option %s is not understood in combination with the other "
-"options"
-msgstr "आदेश रेखा पर्याय %s नीट समजला नाही"
-
-#: apt-pkg/contrib/cmndline.cc:174
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "आदेश रेखा पर्याय %s हे बूलियन नाही"
-
-#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "पर्याय %s साठी ऑर्गुमेंट पाहिजे"
-
-#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "पर्याय %s: संरचितेच्या यादीतील कलमांचा तपशीलाला असलेच पाहिजे ते =<मूल्य>."
-
-#: apt-pkg/contrib/cmndline.cc:284
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "%s पर्याय ला पूर्णांक ऑर्गुमेंट पाहिजे,'%s' नको"
-
-#: apt-pkg/contrib/cmndline.cc:315
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "'%s' पर्याय खूप लांब आहे"
-
-#: apt-pkg/contrib/cmndline.cc:347
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "%s संवेदना हे समजत नाही, चूक की बरोबर चा प्रयत्न करा."
-
-#: apt-pkg/contrib/cmndline.cc:397
-#, c-format
-msgid "Invalid operation %s"
-msgstr "%s अवैध क्रिया"
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "%s स्त्रोत सुचीमध्ये %u रेषेवर '%s' प्रकार माहित नाही "
 
 #: apt-pkg/deb/debmetaindex.cc:229
 #, fuzzy, c-format
@@ -3113,6 +2774,344 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:125
 msgid "Not locked"
 msgstr ""
+
+#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:430
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. TRANSLATOR: s means seconds
+#: apt-pkg/contrib/strutl.cc:435
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/contrib/strutl.cc:1279
+#, c-format
+msgid "Selection %s not found"
+msgstr "%s निवडक भाग सापडत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:197
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "फक्त वाचण्यासाठी कुलूप संचिका %s साठी कुलूपबंदचा वापर करीत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:202
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "%s कुलूप फाईल उघडता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:225
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "%s nfs(नेटवर्क फाईल सिस्टीम) माऊंटेड कुलुप फाईल ला कुलुप /बंद करता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:230
+#, c-format
+msgid "Could not get lock %s"
+msgstr "%s कुलुप मिळवता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:401
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:419
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:428
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:862
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "%s उपक्रियेला सेगमेंटेशन दोष प्राप्त झाला."
+
+#: apt-pkg/contrib/fileutl.cc:864
+#, fuzzy, c-format
+msgid "Sub-process %s received signal %u."
+msgstr "%s उपक्रियेला सेगमेंटेशन दोष प्राप्त झाला."
+
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "%s उपक्रियेने (%u) त्रुटी कोड दिलेला आहे"
+
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "%s उपक्रिया अचानकपणे बाहेर पडली"
+
+#: apt-pkg/contrib/fileutl.cc:987
+#, fuzzy, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "फाईल बंद करण्यात अडचण"
+
+#: apt-pkg/contrib/fileutl.cc:1194
+#, c-format
+msgid "Could not open file %s"
+msgstr "%s फाईल उघडता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#, fuzzy, c-format
+msgid "Could not open file descriptor %d"
+msgstr "%s साठी पाईप उघडता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2177
+msgid "Failed to create subprocess IPC"
+msgstr "आयपीसी उपक्रिया तयार करण्यास असमर्थ"
+
+#: apt-pkg/contrib/fileutl.cc:1466
+msgid "Failed to exec compressor "
+msgstr "दाबक(संकलितकर्ता) कर्यान्वित करण्यास असमर्थ"
+
+#: apt-pkg/contrib/fileutl.cc:1607
+#, fuzzy, c-format
+msgid "read, still have %llu to read but none left"
+msgstr "वाचा, %lu अजूनही वाचण्यासाठी आहे पण आता काही उरली नाही"
+
+#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
+#, fuzzy, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr "लिहा, %lu अजूनही लिहिण्यासाठी आहे पण लिहिता येत नाही"
+
+#: apt-pkg/contrib/fileutl.cc:2008
+#, fuzzy, c-format
+msgid "Problem closing the file %s"
+msgstr "फाईल बंद करण्यात अडचण"
+
+#: apt-pkg/contrib/fileutl.cc:2020
+#, fuzzy, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "संचिकेची syncing समस्या"
+
+#: apt-pkg/contrib/fileutl.cc:2031
+#, fuzzy, c-format
+msgid "Problem unlinking the file %s"
+msgstr "फाईल अनलिंकिंग करण्यात अडचण"
+
+#: apt-pkg/contrib/fileutl.cc:2044
+msgid "Problem syncing the file"
+msgstr "संचिकेची syncing समस्या"
+
+#: apt-pkg/contrib/fileutl.cc:2147 cmdline/apt-extracttemplates.cc:258
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "%s स्टॅट करण्यास असमर्थ"
+
+#: apt-pkg/contrib/fileutl.cc:2152 cmdline/apt-extracttemplates.cc:263
+#, c-format
+msgid "Unable to write to %s"
+msgstr "%s मध्ये लिहिण्यास असमर्थ "
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... चूक/त्रुटी!"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... झाले"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... झाले"
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr "रिकामी फाईल mmap करता येणार नाही"
+
+#: apt-pkg/contrib/mmap.cc:111
+#, fuzzy, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "%s साठी पाईप उघडता येत नाही"
+
+#: apt-pkg/contrib/mmap.cc:119
+#, fuzzy, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "mmap चे %lu बाईटस् करता येणार नाहीत"
+
+#: apt-pkg/contrib/mmap.cc:146
+#, fuzzy
+msgid "Unable to close mmap"
+msgstr "%s उघडण्यास असमर्थ"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#, fuzzy
+msgid "Unable to synchronize mmap"
+msgstr "जारी करण्यास करण्यास असमर्थ"
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "mmap चे %lu बाईटस् करता येणार नाहीत"
+
+#: apt-pkg/contrib/mmap.cc:322
+msgid "Failed to truncate file"
+msgstr "फाईल छोटी करणे असफल"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "%s माऊंट पॉईंट स्टॅट करण्यास असमर्थ"
+
+#: apt-pkg/contrib/cdromutl.cc:247
+msgid "Failed to stat the cdrom"
+msgstr "सीडी-रॉम स्टॅट करण्यास असमर्थ"
+
+#: apt-pkg/contrib/configuration.cc:516
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "संक्षिप्तरुपाचा माहित नसलेला प्रकार: '%c'"
+
+#: apt-pkg/contrib/configuration.cc:630
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "%s संरचना फाईल उघडत आहे"
+
+#: apt-pkg/contrib/configuration.cc:798
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "रचनेच्या नियमांचा दोष %s:%u: ब्लॉक नावाशिवाय सुरू होतो."
+
+#: apt-pkg/contrib/configuration.cc:817
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "रचनेच्या नियमांचा दोष : %s:%u: मालफॉर्मड् टॅग"
+
+#: apt-pkg/contrib/configuration.cc:834
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "रचनेच्या नियमांचा दोष %s:%u: मुल्यांच्या नंतर अधिक जंक"
+
+#: apt-pkg/contrib/configuration.cc:874
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "रचनेच्या नियमांचा दोष %s:%u: दिशादर्शक फक्त उच्च पातळीवर केले जाऊ शकतात"
+
+#: apt-pkg/contrib/configuration.cc:881
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "रचनेच्या नियमांचा दोष %s:%u: खूपच एकात एक इनक्लूडस्"
+
+#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "रचनेच्या नियमांचा दोष %s:%u: ह्या पासून  समाविष्ट "
+
+#: apt-pkg/contrib/configuration.cc:894
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "नियम रचनेचा दोष %s:%u: '%s' दिशादर्शक असहाय्यकारी"
+
+#: apt-pkg/contrib/configuration.cc:897
+#, fuzzy, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr "रचनेच्या नियमांचा दोष %s:%u: दिशादर्शक फक्त उच्च पातळीवर केले जाऊ शकतात"
+
+#: apt-pkg/contrib/configuration.cc:947
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "नियम रचनेचा दोष %s:%u: फाईलच्या अंती अधिक जंक"
+
+#: apt-pkg/contrib/cmndline.cc:127
+#, fuzzy, c-format
+msgid ""
+"Command line option '%c' [from %s] is not understood in combination with the "
+"other options."
+msgstr "आदेश रेखा पर्याय '%c' [पासून %s] हे माहित नाही."
+
+#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
+#: apt-pkg/contrib/cmndline.cc:169
+#, fuzzy, c-format
+msgid ""
+"Command line option %s is not understood in combination with the other "
+"options"
+msgstr "आदेश रेखा पर्याय %s नीट समजला नाही"
+
+#: apt-pkg/contrib/cmndline.cc:174
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "आदेश रेखा पर्याय %s हे बूलियन नाही"
+
+#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "पर्याय %s साठी ऑर्गुमेंट पाहिजे"
+
+#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "पर्याय %s: संरचितेच्या यादीतील कलमांचा तपशीलाला असलेच पाहिजे ते =<मूल्य>."
+
+#: apt-pkg/contrib/cmndline.cc:284
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "%s पर्याय ला पूर्णांक ऑर्गुमेंट पाहिजे,'%s' नको"
+
+#: apt-pkg/contrib/cmndline.cc:315
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "'%s' पर्याय खूप लांब आहे"
+
+#: apt-pkg/contrib/cmndline.cc:347
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "%s संवेदना हे समजत नाही, चूक की बरोबर चा प्रयत्न करा."
+
+#: apt-pkg/contrib/cmndline.cc:397
+#, c-format
+msgid "Invalid operation %s"
+msgstr "%s अवैध क्रिया"
 
 #: cmdline/apt-extracttemplates.cc:228
 msgid ""
@@ -3648,26 +3647,29 @@ msgstr "अर्काईव्ह खूप छोटे आहे"
 msgid "Failed to read the archive headers"
 msgstr "अर्काईव्ह शीर्षके वाचणे असफल"
 
-#: apt-inst/contrib/extracttar.cc:123
-msgid "Failed to create pipes"
-msgstr "पाईप तयार करण्यास असमर्थ"
+#: apt-inst/contrib/extracttar.cc:110
+#, fuzzy, c-format
+msgid "Cannot find a configured compressor for '%s'"
+msgstr "%s पॅकेज सापडू शकले नाही"
 
-#: apt-inst/contrib/extracttar.cc:150
-msgid "Failed to exec gzip "
-msgstr "exec gzip करण्यास असमर्थ"
-
-#: apt-inst/contrib/extracttar.cc:187 apt-inst/contrib/extracttar.cc:217
+#: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
 msgstr "बिघडलेली अर्काईव्हज"
 
-#: apt-inst/contrib/extracttar.cc:202
+#: apt-inst/contrib/extracttar.cc:157
 msgid "Tar checksum failed, archive corrupted"
 msgstr "टार(टेपअर्काईव्ह) चेकसम चुकला, बिघडलेली अर्काईव्ह"
 
-#: apt-inst/contrib/extracttar.cc:307
+#: apt-inst/contrib/extracttar.cc:262
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "अपरिचित TAR शीर्षक प्रकार %u, मेंबर %s"
+
+#~ msgid "Failed to create pipes"
+#~ msgstr "पाईप तयार करण्यास असमर्थ"
+
+#~ msgid "Failed to exec gzip "
+#~ msgstr "exec gzip करण्यास असमर्थ"
 
 #~ msgid "%s %s for %s compiled on %s %s\n"
 #~ msgstr "%s %s हे %s करिता %s %s वर संग्रहित\n"

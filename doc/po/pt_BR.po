@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-21 06:12-0400\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2004-09-20 17:02+0000\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: <debian-l10n-portuguese@lists.debian.org>\n"
@@ -681,7 +681,7 @@ msgstr "a linha <literal>Archive:</literal>"
 #: apt.8.xml:176 apt-get.8.xml:597 apt-cache.8.xml:359 apt-key.8.xml:191
 #: apt-mark.8.xml:127 apt-secure.8.xml:187 apt-cdrom.8.xml:148
 #: apt-config.8.xml:105 apt.conf.5.xml:1319 apt_preferences.5.xml:716
-#: sources.list.5.xml:453 apt-extracttemplates.1.xml:66 apt-sortpkgs.1.xml:59
+#: sources.list.5.xml:456 apt-extracttemplates.1.xml:66 apt-sortpkgs.1.xml:59
 #: apt-ftparchive.1.xml:603
 #, fuzzy
 msgid "See Also"
@@ -3960,7 +3960,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:1307 apt_preferences.5.xml:556 sources.list.5.xml:358
+#: apt.conf.5.xml:1307 apt_preferences.5.xml:556 sources.list.5.xml:361
 #: apt-ftparchive.1.xml:592
 #, fuzzy
 msgid "Examples"
@@ -5683,11 +5683,13 @@ msgid ""
 "<option>Targets</option> (<option>target</option>) is a multivalue option "
 "defining which download targets apt will try to acquire from this source. If "
 "not specified, the default set is defined by the <option>Acquire::"
-"IndexTargets</option> configuration scope."
+"IndexTargets</option> configuration scope.  Aditionally, specific targets "
+"can be enabled or disabled by using the identifier as field name instead of "
+"using this multivalue option."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:228
+#: sources.list.5.xml:231
 msgid ""
 "Further more, there are options which if set effect <emphasis>all</emphasis> "
 "sources with the same URI and Suite, so they have to be set on all such "
@@ -5696,7 +5698,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:235
+#: sources.list.5.xml:238
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
 "absolute path to a keyring file (has to be accessible and readable for the "
@@ -5711,7 +5713,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:249
+#: sources.list.5.xml:252
 msgid ""
 "<option>Check-Valid-Until</option> (<option>check-valid-until</option>)  is "
 "a yes/no value which controls if APT should try to detect replay attacks. A "
@@ -5728,14 +5730,14 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:266
+#: sources.list.5.xml:269
 msgid ""
 "<option>Valid-Until-Min</option> (<option>check-valid-min</option>) and "
 "<option>Valid-Until-Max</option> (<option>valid-until-max</option>) can be "
 "used to raise or lower the time period in seconds in which the data from "
 "this repository is considered valid. -Max can be especially useful if the "
 "repository provides no Valid-Until field on its Release file to set your own "
-"value, while -Min can be used to increase the valid time on seldomly updated "
+"value, while -Min can be used to increase the valid time on seldom updated "
 "(local) mirrors of a more frequently updated but less accessible archive "
 "(which is in the sources.list as well) instead of disabling the check "
 "entirely.  Default to the value of the configuration options "
@@ -5744,17 +5746,17 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: sources.list.5.xml:288
+#: sources.list.5.xml:291
 msgid "URI specification"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:290
+#: sources.list.5.xml:293
 msgid "The currently recognized URI types are:"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:294
+#: sources.list.5.xml:297
 msgid ""
 "The file scheme allows an arbitrary directory in the file system to be "
 "considered an archive. This is useful for NFS mounts and local mirrors or "
@@ -5762,14 +5764,14 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:301
+#: sources.list.5.xml:304
 msgid ""
 "The cdrom scheme allows APT to use a local CD-ROM drive with media swapping. "
 "Use the &apt-cdrom; program to create cdrom entries in the source list."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:308
+#: sources.list.5.xml:311
 msgid ""
 "The http scheme specifies an HTTP server for the archive. If an environment "
 "variable <envar>http_proxy</envar> is set with the format http://server:"
@@ -5780,7 +5782,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:319
+#: sources.list.5.xml:322
 msgid ""
 "The ftp scheme specifies an FTP server for the archive. APT's FTP behavior "
 "is highly configurable; for more information see the &apt-conf; manual page. "
@@ -5793,7 +5795,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:331
+#: sources.list.5.xml:334
 msgid ""
 "The copy scheme is identical to the file scheme except that packages are "
 "copied into the cache directory instead of used directly at their location.  "
@@ -5802,7 +5804,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:338
+#: sources.list.5.xml:341
 msgid ""
 "The rsh/ssh method invokes RSH/SSH to connect to a remote host and access "
 "the files as a given user. Prior configuration of rhosts or RSA keys is "
@@ -5811,12 +5813,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:345
+#: sources.list.5.xml:348
 msgid "adding more recognizable URI types"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:347
+#: sources.list.5.xml:350
 msgid ""
 "APT can be extended with more methods shipped in other optional packages, "
 "which should follow the naming scheme <package>apt-transport-"
@@ -5828,20 +5830,20 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:359
+#: sources.list.5.xml:362
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/apt/debian for "
 "stable/main, stable/contrib, and stable/non-free."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:361
+#: sources.list.5.xml:364
 #, no-wrap
 msgid "deb file:/home/apt/debian stable main contrib non-free"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:362
+#: sources.list.5.xml:365
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5851,18 +5853,18 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:367
+#: sources.list.5.xml:370
 msgid "As above, except this uses the unstable (development) distribution."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:368
+#: sources.list.5.xml:371
 #, no-wrap
 msgid "deb file:/home/apt/debian unstable main contrib non-free"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:369
+#: sources.list.5.xml:372
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5872,18 +5874,18 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:374
+#: sources.list.5.xml:377
 msgid "Source line for the above"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:375
+#: sources.list.5.xml:378
 #, no-wrap
 msgid "deb-src file:/home/apt/debian unstable main contrib non-free"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:376
+#: sources.list.5.xml:379
 #, no-wrap
 msgid ""
 "Types: deb-src\n"
@@ -5893,7 +5895,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:382
+#: sources.list.5.xml:385
 msgid ""
 "The first line gets package information for the architectures in "
 "<literal>APT::Architectures</literal> while the second always retrieves "
@@ -5901,7 +5903,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:384
+#: sources.list.5.xml:387
 #, no-wrap
 msgid ""
 "deb http://httpredir.debian.org/debian &stable-codename; main\n"
@@ -5909,7 +5911,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:386
+#: sources.list.5.xml:389
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5925,20 +5927,20 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:398
+#: sources.list.5.xml:401
 msgid ""
 "Uses HTTP to access the archive at archive.debian.org, and uses only the "
 "hamm/main area."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:400
+#: sources.list.5.xml:403
 #, no-wrap
 msgid "deb http://archive.debian.org/debian-archive hamm main"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:401
+#: sources.list.5.xml:404
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5948,20 +5950,20 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:406
+#: sources.list.5.xml:409
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the &stable-codename;/contrib area."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:408
+#: sources.list.5.xml:411
 #, no-wrap
 msgid "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:409
+#: sources.list.5.xml:412
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5971,7 +5973,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:414
+#: sources.list.5.xml:417
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the unstable/contrib area. If this line appears as "
@@ -5980,13 +5982,13 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:418
+#: sources.list.5.xml:421
 #, no-wrap
 msgid "deb ftp://ftp.debian.org/debian unstable contrib"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:419
+#: sources.list.5.xml:422
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -5996,13 +5998,13 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
-#: sources.list.5.xml:431
+#: sources.list.5.xml:434
 #, no-wrap
 msgid "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
-#: sources.list.5.xml:432
+#: sources.list.5.xml:435
 #, no-wrap
 msgid ""
 "Types: deb\n"
@@ -6011,7 +6013,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:424
+#: sources.list.5.xml:427
 msgid ""
 "Uses HTTP to access the archive at ftp.tlh.debian.org, under the universe "
 "directory, and uses only files found under <filename>unstable/binary-i386</"
@@ -6023,14 +6025,14 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:437
+#: sources.list.5.xml:440
 msgid ""
 "Uses HTTP to get binary packages as well as sources from the stable, testing "
 "and unstable suites and the components main and contrib."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:439
+#: sources.list.5.xml:442
 #, no-wrap
 msgid ""
 "deb http://httpredir.debian.org/debian stable main contrib\n"
@@ -6042,7 +6044,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:445
+#: sources.list.5.xml:448
 #, no-wrap
 msgid ""
 "Types: deb deb-src\n"
@@ -6052,7 +6054,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:454
+#: sources.list.5.xml:457
 #, fuzzy
 msgid "&apt-get;, &apt-conf;"
 msgstr "&apt-get; &apt-cache; &apt-conf; &sources-list;"
@@ -7719,8 +7721,8 @@ msgstr ""
 msgid ""
 "This is achieved by creatively manipulating the APT configuration file. The "
 "essential premise to tell APT to look on a disc for it's archive files. Note "
-"that the disc should be formated with a filesystem that can handle long file "
-"names such as ext2, fat32 or vfat."
+"that the disc should be formatted with a filesystem that can handle long "
+"file names such as ext2, fat32 or vfat."
 msgstr ""
 
 #. type: Content of: <book><chapter><title>

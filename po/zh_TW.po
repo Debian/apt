@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-08-21 06:13-0400\n"
+"POT-Creation-Date: 2015-08-27 17:55+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -327,7 +327,7 @@ msgid "Couldn't find package %s"
 msgstr "無法找到套件 %s"
 
 #: cmdline/apt-get.cc:422 cmdline/apt-mark.cc:78
-#: apt-private/private-install.cc:839
+#: apt-private/private-install.cc:851
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s 被設定為手動安裝。\n"
@@ -510,11 +510,11 @@ msgstr "無法滿足套件 %s 的編譯相依關係。"
 msgid "Failed to process build dependencies"
 msgstr "無法處理編譯相依關係"
 
-#: cmdline/apt-get.cc:1554
+#: cmdline/apt-get.cc:1551
 msgid "Supported modules:"
 msgstr "已支援模組："
 
-#: cmdline/apt-get.cc:1595
+#: cmdline/apt-get.cc:1592
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -664,8 +664,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s 已經是最新版本了。\n"
 
 #: cmdline/apt-mark.cc:255 cmdline/apt-mark.cc:333 cmdline/apt-mark.cc:397
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:207
-#: apt-pkg/deb/dpkgpm.cc:1302
+#: apt-pkg/deb/dpkgpm.cc:1302 apt-pkg/contrib/fileutl.cc:850
+#: apt-pkg/contrib/gpgv.cc:207
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待 %s 但是它並不存在"
@@ -1108,345 +1108,6 @@ msgstr ""
 msgid "Internal error"
 msgstr "內部錯誤"
 
-#: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc:127
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc:133
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc:139
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc:157
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "套件 %s 是虛擬套件，提供者為：\n"
-
-#: apt-private/private-cacheset.cc:168
-#, fuzzy
-msgid " [Installed]"
-msgstr "【已安裝】"
-
-#: apt-private/private-cacheset.cc:177
-#, fuzzy
-msgid " [Not candidate version]"
-msgstr "候選版本"
-
-#: apt-private/private-cacheset.cc:179
-msgid "You should explicitly select one to install."
-msgstr "請您明確地選擇一個來進行安裝。"
-
-#: apt-private/private-cacheset.cc:182
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"無法取得套件 %s，但它卻被其它的套件引用了。\n"
-"這意味著這個套件可能已經消失了、被廢棄了，或是只能由其他的來源取得\n"
-
-#: apt-private/private-cacheset.cc:200
-msgid "However the following packages replace it:"
-msgstr "然而，下列的套件取代了它："
-
-#: apt-private/private-cacheset.cc:213
-#, fuzzy, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "套件 %s 沒有可安裝的候選版本"
-
-#: apt-private/private-cacheset.cc:226
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:915
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
-
-#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:921
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
-
-#: apt-private/private-cacheset.cc:289
-#, fuzzy, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "注意，選擇了以 %s 替代 %s\n"
-
-#: apt-private/private-install.cc:87
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "內部錯誤，在損毀的套件上執行 InstallPackages！"
-
-#: apt-private/private-install.cc:96
-msgid "Packages need to be removed but remove is disabled."
-msgstr "有套件需要被移除，但卻被禁止移除。"
-
-#: apt-private/private-install.cc:103 apt-private/private-download.cc:118
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-install.cc:108
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
-
-#: apt-private/private-install.cc:110
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
-
-#: apt-private/private-install.cc:112
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc:128
-msgid "Internal error, Ordering didn't finish"
-msgstr "內部錯誤，排序未能完成"
-
-#: apt-private/private-install.cc:166
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "怪哉... 檔案大小不符，請發信給 apt@packages.debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:173
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "需要下載 %sB/%sB 的套件檔。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:178
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "需要下載 %sB 的套件檔。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:185
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:190
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
-
-#: apt-private/private-install.cc:202 apt-private/private-install.cc:224
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 trivial 操作。"
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:206
-msgid "Yes, do as I say!"
-msgstr "Yes, do as I say!"
-
-#: apt-private/private-install.cc:208
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"您所進行的操作可能會帶來危險。\n"
-"請輸入 '%s' 這個句子以繼續進行\n"
-" ?] "
-
-#: apt-private/private-install.cc:214 apt-private/private-install.cc:232
-msgid "Abort."
-msgstr "放棄執行。"
-
-#: apt-private/private-install.cc:229
-#, fuzzy
-msgid "Do you want to continue?"
-msgstr "是否繼續進行 [Y/n]？"
-
-#: apt-private/private-install.cc:299
-msgid "Some files failed to download"
-msgstr "有部份檔案無法下載"
-
-#: apt-private/private-install.cc:306
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"有部份套件檔無法取得，試著執行 apt-get update 或者試著加上 --fix-missing 選"
-"項？"
-
-#: apt-private/private-install.cc:310
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "目前尚未支援 --fix-missing 和媒體抽換"
-
-#: apt-private/private-install.cc:315
-msgid "Unable to correct missing packages."
-msgstr "無法修正欠缺的套件。"
-
-#: apt-private/private-install.cc:316
-msgid "Aborting install."
-msgstr "放棄安裝。"
-
-#: apt-private/private-install.cc:341
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc:348
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr ""
-
-#: apt-private/private-install.cc:370
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "我們沒有計劃要刪除任何東西，無法啟動 AutoRemover"
-
-#: apt-private/private-install.cc:463
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"嗯，看起來 AutoRemover 弄壞了什麼東西，而這是不該發生的。\n"
-"請針對 apt 發佈錯誤回報。"
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc:466 apt-private/private-install.cc:622
-msgid "The following information may help to resolve the situation:"
-msgstr "以下的資訊或許有助於解決當前的情況："
-
-#: apt-private/private-install.cc:470
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "內部錯誤，AutoRemover 處理失敗"
-
-#: apt-private/private-install.cc:479
-#, fuzzy
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
-msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
-
-#: apt-private/private-install.cc:486
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
-msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
-
-#: apt-private/private-install.cc:488
-#, fuzzy
-msgid "Use 'apt-get autoremove' to remove it."
-msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "使用 'apt-get autoremove' 來將其移除。"
-msgstr[1] "使用 'apt-get autoremove' 來將其移除。"
-
-#: apt-private/private-install.cc:582
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
-
-#: apt-private/private-install.cc:584
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
-"決方案）。"
-
-#: apt-private/private-install.cc:607
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"有些套件無法安裝。這可能意謂著您的要求難以解決，或是若您使用的是\n"
-"unstable 發行版，可能有些必要的套件尚未建立，或是被移出 Incoming 了。"
-
-#: apt-private/private-install.cc:628
-msgid "Broken packages"
-msgstr "損毀的套件"
-
-#: apt-private/private-install.cc:685
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "下列的額外套件將被安裝："
-
-#: apt-private/private-install.cc:774
-msgid "Suggested packages:"
-msgstr "建議套件："
-
-#: apt-private/private-install.cc:776
-msgid "Recommended packages:"
-msgstr "推薦套件："
-
-#: apt-private/private-install.cc:798
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
-
-#: apt-private/private-install.cc:802
-#, fuzzy, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
-
-#: apt-private/private-install.cc:814
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "無法重新安裝 %s，因為它無法下載。\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc:820
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s 已經是最新版本了。\n"
-
-#: apt-private/private-install.cc:868
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
-
-#: apt-private/private-install.cc:873
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
-
 #: apt-private/private-list.cc:121
 msgid "Listing"
 msgstr ""
@@ -1668,6 +1329,84 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr ""
 
+#: apt-private/private-cacheset.cc:38 apt-private/private-search.cc:65
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc:127
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc:133
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc:139
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc:157
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "套件 %s 是虛擬套件，提供者為：\n"
+
+#: apt-private/private-cacheset.cc:168
+#, fuzzy
+msgid " [Installed]"
+msgstr "【已安裝】"
+
+#: apt-private/private-cacheset.cc:177
+#, fuzzy
+msgid " [Not candidate version]"
+msgstr "候選版本"
+
+#: apt-private/private-cacheset.cc:179
+msgid "You should explicitly select one to install."
+msgstr "請您明確地選擇一個來進行安裝。"
+
+#: apt-private/private-cacheset.cc:182
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"無法取得套件 %s，但它卻被其它的套件引用了。\n"
+"這意味著這個套件可能已經消失了、被廢棄了，或是只能由其他的來源取得\n"
+
+#: apt-private/private-cacheset.cc:200
+msgid "However the following packages replace it:"
+msgstr "然而，下列的套件取代了它："
+
+#: apt-private/private-cacheset.cc:213
+#, fuzzy, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "套件 %s 沒有可安裝的候選版本"
+
+#: apt-private/private-cacheset.cc:226
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr ""
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc:238 apt-private/private-install.cc:927
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
+
+#: apt-private/private-cacheset.cc:244 apt-private/private-install.cc:933
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
+
+#: apt-private/private-cacheset.cc:289
+#, fuzzy, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "注意，選擇了以 %s 替代 %s\n"
+
 #: apt-private/private-show.cc:158
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -1679,6 +1418,267 @@ msgstr[1] ""
 #: apt-private/private-show.cc:165
 msgid "not a real package (virtual)"
 msgstr ""
+
+#: apt-private/private-install.cc:87
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "內部錯誤，在損毀的套件上執行 InstallPackages！"
+
+#: apt-private/private-install.cc:96
+msgid "Packages need to be removed but remove is disabled."
+msgstr "有套件需要被移除，但卻被禁止移除。"
+
+#: apt-private/private-install.cc:103 apt-private/private-download.cc:118
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-install.cc:108
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
+
+#: apt-private/private-install.cc:110
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
+
+#: apt-private/private-install.cc:112
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc:128
+msgid "Internal error, Ordering didn't finish"
+msgstr "內部錯誤，排序未能完成"
+
+#: apt-private/private-install.cc:166
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr "怪哉... 檔案大小不符，請發信給 apt@packages.debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:173
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "需要下載 %sB/%sB 的套件檔。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:178
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "需要下載 %sB 的套件檔。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:185
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc:190
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
+
+#: apt-private/private-install.cc:202 apt-private/private-install.cc:224
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 trivial 操作。"
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc:206
+msgid "Yes, do as I say!"
+msgstr "Yes, do as I say!"
+
+#: apt-private/private-install.cc:208
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"您所進行的操作可能會帶來危險。\n"
+"請輸入 '%s' 這個句子以繼續進行\n"
+" ?] "
+
+#: apt-private/private-install.cc:214 apt-private/private-install.cc:232
+msgid "Abort."
+msgstr "放棄執行。"
+
+#: apt-private/private-install.cc:229
+#, fuzzy
+msgid "Do you want to continue?"
+msgstr "是否繼續進行 [Y/n]？"
+
+#: apt-private/private-install.cc:299
+msgid "Some files failed to download"
+msgstr "有部份檔案無法下載"
+
+#: apt-private/private-install.cc:306
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"有部份套件檔無法取得，試著執行 apt-get update 或者試著加上 --fix-missing 選"
+"項？"
+
+#: apt-private/private-install.cc:310
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "目前尚未支援 --fix-missing 和媒體抽換"
+
+#: apt-private/private-install.cc:315
+msgid "Unable to correct missing packages."
+msgstr "無法修正欠缺的套件。"
+
+#: apt-private/private-install.cc:316
+msgid "Aborting install."
+msgstr "放棄安裝。"
+
+#: apt-private/private-install.cc:341
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc:348
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr ""
+
+#: apt-private/private-install.cc:370
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "我們沒有計劃要刪除任何東西，無法啟動 AutoRemover"
+
+#: apt-private/private-install.cc:463
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"嗯，看起來 AutoRemover 弄壞了什麼東西，而這是不該發生的。\n"
+"請針對 apt 發佈錯誤回報。"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc:466 apt-private/private-install.cc:622
+msgid "The following information may help to resolve the situation:"
+msgstr "以下的資訊或許有助於解決當前的情況："
+
+#: apt-private/private-install.cc:470
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "內部錯誤，AutoRemover 處理失敗"
+
+#: apt-private/private-install.cc:479
+#, fuzzy
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
+msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
+
+#: apt-private/private-install.cc:486
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
+msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
+
+#: apt-private/private-install.cc:488
+#, fuzzy
+msgid "Use 'apt-get autoremove' to remove it."
+msgid_plural "Use 'apt-get autoremove' to remove them."
+msgstr[0] "使用 'apt-get autoremove' 來將其移除。"
+msgstr[1] "使用 'apt-get autoremove' 來將其移除。"
+
+#: apt-private/private-install.cc:582
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
+
+#: apt-private/private-install.cc:584
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
+"決方案）。"
+
+#: apt-private/private-install.cc:607
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"有些套件無法安裝。這可能意謂著您的要求難以解決，或是若您使用的是\n"
+"unstable 發行版，可能有些必要的套件尚未建立，或是被移出 Incoming 了。"
+
+#: apt-private/private-install.cc:628
+msgid "Broken packages"
+msgstr "損毀的套件"
+
+#: apt-private/private-install.cc:697
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "下列的額外套件將被安裝："
+
+#: apt-private/private-install.cc:786
+msgid "Suggested packages:"
+msgstr "建議套件："
+
+#: apt-private/private-install.cc:788
+msgid "Recommended packages:"
+msgstr "推薦套件："
+
+#: apt-private/private-install.cc:810
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
+
+#: apt-private/private-install.cc:814
+#, fuzzy, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
+
+#: apt-private/private-install.cc:826
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "無法重新安裝 %s，因為它無法下載。\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc:832
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s 已經是最新版本了。\n"
+
+#: apt-private/private-install.cc:880
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
+
+#: apt-private/private-install.cc:885
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
 
 #: apt-private/private-main.cc:34
 msgid ""
@@ -1797,7 +1797,7 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-pkg/init.cc:133 apt-pkg/init.cc:141
-#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412
+#: apt-pkg/acquire.cc:557 apt-pkg/policy.cc:412 apt-pkg/clean.cc:43
 #: apt-pkg/sourcelist.cc:306 apt-pkg/sourcelist.cc:312
 #: apt-pkg/contrib/fileutl.cc:375 apt-pkg/contrib/fileutl.cc:488
 #: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
@@ -1805,9 +1805,9 @@ msgstr ""
 msgid "Unable to read %s"
 msgstr "無法讀取 %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:563
-#: apt-pkg/acquire.cc:588 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:563
+#: apt-pkg/acquire.cc:588 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1930,17 +1930,38 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Hash Sum 不符"
 
-#: apt-pkg/cachefile.cc:101
+#: apt-pkg/cachefile.cc:98
 msgid "The package lists or status file could not be parsed or opened."
 msgstr "無法分析或開啟套件清單或狀況檔。"
 
-#: apt-pkg/cachefile.cc:105
+#: apt-pkg/cachefile.cc:102
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "您也許得執行 apt-get update 以修正這些問題"
 
-#: apt-pkg/cachefile.cc:123
+#: apt-pkg/cachefile.cc:120
 msgid "The list of sources could not be read."
 msgstr "無法讀取來源列表。"
+
+#: apt-pkg/acquire-worker.cc:111
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "找不到安裝方式的驅動程式 %s。"
+
+#: apt-pkg/acquire-worker.cc:113
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
+
+#: apt-pkg/acquire-worker.cc:164
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "安裝方式 %s 沒有正確啟動"
+
+#: apt-pkg/acquire-worker.cc:537
+#, fuzzy, c-format
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
+msgstr "請把標籤為 '%s' 的光碟放入 '%s' 裝置中，然後按下 [Enter] 鍵。"
 
 #: apt-pkg/pkgcache.cc:163
 msgid "Empty package cache"
@@ -2025,63 +2046,81 @@ msgstr "次要"
 msgid "extra"
 msgstr "額外"
 
-#: apt-pkg/acquire-worker.cc:111
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "找不到安裝方式的驅動程式 %s。"
-
-#: apt-pkg/acquire-worker.cc:113
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
-
-#: apt-pkg/acquire-worker.cc:164
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "安裝方式 %s 沒有正確啟動"
-
-#: apt-pkg/acquire-worker.cc:536
-#, fuzzy, c-format
-msgid ""
-"Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "請把標籤為 '%s' 的光碟放入 '%s' 裝置中，然後按下 [Enter] 鍵。"
+#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
+msgid "Calculating upgrade"
+msgstr "籌備升級中"
 
 #: apt-pkg/pkgrecords.cc:38
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "不被支援的索引檔類型 '%s'"
 
-#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "正在重建相依關係"
+#: apt-pkg/pkgcachegen.cc:112
+msgid "Cache has an incompatible versioning system"
+msgstr "快取使用的是不相容的版本系統"
 
-#: apt-pkg/depcache.cc:140
-msgid "Candidate versions"
-msgstr "候選版本"
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
+#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
+#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
+#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
+#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "在處理 %s 時發生錯誤 (FindPkg)"
 
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "建立相依關係"
+#: apt-pkg/pkgcachegen.cc:257
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr "哇呀，您已經超過這個 APT 所能處理的套件名稱數量了。"
 
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "正在讀取狀態資料"
+#: apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "哇呀，您已經超過這個 APT 所能處理的版本數量了。"
 
-#: apt-pkg/depcache.cc:252
-#, c-format
-msgid "Failed to open StateFile %s"
-msgstr "無法開啟 StateFile %s"
+#: apt-pkg/pkgcachegen.cc:263
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "哇呀，您已經超過這個 APT 所能處理的說明數量了。"
 
-#: apt-pkg/depcache.cc:257
-#, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "無法寫入暫存的 StateFile %s"
+#: apt-pkg/pkgcachegen.cc:266
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "哇呀，您已經超過這個 APT 所能處理的相依關係數量了。"
+
+#: apt-pkg/pkgcachegen.cc:1419 apt-pkg/pkgcachegen.cc:1546
+#: apt-pkg/pkgcachegen.cc:1572 apt-pkg/pkgcachegen.cc:1681
+msgid "Reading package lists"
+msgstr "正在讀取套件清單"
+
+#: apt-pkg/pkgcachegen.cc:1490 apt-pkg/pkgcachegen.cc:1497
+msgid "IO Error saving source cache"
+msgstr "在儲存來源快取時 IO 錯誤"
+
+#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:232
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:311
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:318
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
+msgid "Execute external solver"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc:116
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2161
+#: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "無法重新命名，%s (%s -> %s)。"
@@ -2189,67 +2228,10 @@ msgid ""
 msgstr "這個套件的索引檔損壞了。沒有套件 %s 的 Filename: 欄位。"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
-#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3054
+#: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "正和 %s (%s) 連線"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:553
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "不被支援的索引檔類型 '%s'"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "無法取得 %s 的狀態。"
-
-#: apt-pkg/pkgcachegen.cc:112
-msgid "Cache has an incompatible versioning system"
-msgstr "快取使用的是不相容的版本系統"
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:237 apt-pkg/pkgcachegen.cc:299
-#: apt-pkg/pkgcachegen.cc:365 apt-pkg/pkgcachegen.cc:369
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:394
-#: apt-pkg/pkgcachegen.cc:398 apt-pkg/pkgcachegen.cc:402
-#: apt-pkg/pkgcachegen.cc:423 apt-pkg/pkgcachegen.cc:428
-#: apt-pkg/pkgcachegen.cc:474 apt-pkg/pkgcachegen.cc:488
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "在處理 %s 時發生錯誤 (FindPkg)"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "哇呀，您已經超過這個 APT 所能處理的套件名稱數量了。"
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "哇呀，您已經超過這個 APT 所能處理的版本數量了。"
-
-#: apt-pkg/pkgcachegen.cc:263
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "哇呀，您已經超過這個 APT 所能處理的說明數量了。"
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "哇呀，您已經超過這個 APT 所能處理的相依關係數量了。"
-
-#: apt-pkg/pkgcachegen.cc:1400 apt-pkg/pkgcachegen.cc:1526
-#: apt-pkg/pkgcachegen.cc:1552 apt-pkg/pkgcachegen.cc:1671
-msgid "Reading package lists"
-msgstr "正在讀取套件清單"
-
-#: apt-pkg/pkgcachegen.cc:1471 apt-pkg/pkgcachegen.cc:1478
-msgid "IO Error saving source cache"
-msgstr "在儲存來源快取時 IO 錯誤"
-
-#: apt-pkg/pkgcachegen.cc:1570 apt-pkg/pkgcachegen.cc:1572
-#: apt-pkg/contrib/fileutl.cc:2151 cmdline/apt-extracttemplates.cc:263
-#, c-format
-msgid "Unable to write to %s"
-msgstr "無法寫入 %s"
 
 #: apt-pkg/acquire.cc:126 apt-pkg/acquire.cc:146 apt-pkg/cdrom.cc:833
 #, fuzzy, c-format
@@ -2266,6 +2248,11 @@ msgstr "找不到套件檔目錄 %spartial。"
 msgid "Unable to lock directory %s"
 msgstr "無法鎖定列表目錄"
 
+#: apt-pkg/acquire.cc:553 apt-pkg/clean.cc:39
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "不被支援的索引檔類型 '%s'"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:1081
@@ -2277,22 +2264,6 @@ msgstr "正在取得檔案 %li/%li（還有 %s）"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "正在取得檔案 %li/%li"
-
-#: apt-pkg/update.cc:76
-#, fuzzy, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "無法取得 %s，%s\n"
-
-#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr "有一些索引檔不能下載，它們可能被略過了，或是替而使用原有的索引檔。"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "在 sources.list 中必須包含一些 'source' URI"
 
 #: apt-pkg/policy.cc:77
 #, c-format
@@ -2320,19 +2291,40 @@ msgstr ""
 msgid "No priority (or zero) specified for pin"
 msgstr "銷定並沒有優先順序之分（或零）"
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:983
+#: apt-pkg/update.cc:76
+#, fuzzy, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "無法取得 %s，%s\n"
+
+#: apt-pkg/update.cc:102 apt-pkg/update.cc:104
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr "有一些索引檔不能下載，它們可能被略過了，或是替而使用原有的索引檔。"
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "在 sources.list 中必須包含一些 'source' URI"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "無法取得 %s 的狀態。"
+
+#: apt-pkg/packagemanager.cc:330 apt-pkg/packagemanager.cc:1018
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:562 apt-pkg/packagemanager.cc:592
+#: apt-pkg/packagemanager.cc:589 apt-pkg/packagemanager.cc:627
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "無法開啟檔案 %s"
 
-#: apt-pkg/packagemanager.cc:642
+#: apt-pkg/packagemanager.cc:677
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2420,10 +2412,6 @@ msgstr "正在寫入新的來源列表\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "該碟片的來源列表項目為：\n"
 
-#: apt-pkg/upgrade.cc:34 apt-pkg/upgrade.cc:136 apt-pkg/upgrade.cc:182
-msgid "Calculating upgrade"
-msgstr "籌備升級中"
-
 #: apt-pkg/algorithms.cc:263
 #, c-format
 msgid ""
@@ -2442,25 +2430,31 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "無法修正問題，您保留 (hold) 了損毀的套件。"
 
-#: apt-pkg/edsp.cc:184 apt-pkg/edsp.cc:210
-msgid "Send scenario to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:139 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "正在重建相依關係"
 
-#: apt-pkg/edsp.cc:232
-msgid "Send request to solver"
-msgstr ""
+#: apt-pkg/depcache.cc:140
+msgid "Candidate versions"
+msgstr "候選版本"
 
-#: apt-pkg/edsp.cc:311
-msgid "Prepare for receiving solution"
-msgstr ""
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "建立相依關係"
 
-#: apt-pkg/edsp.cc:318
-msgid "External solver failed without a proper error message"
-msgstr ""
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "正在讀取狀態資料"
 
-#: apt-pkg/edsp.cc:610 apt-pkg/edsp.cc:613 apt-pkg/edsp.cc:618
-msgid "Execute external solver"
-msgstr ""
+#: apt-pkg/depcache.cc:252
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "無法開啟 StateFile %s"
+
+#: apt-pkg/depcache.cc:257
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "無法寫入暫存的 StateFile %s"
 
 #: apt-pkg/tagfile.cc:196 apt-pkg/tagfile.cc:296 apt-pkg/deb/debrecords.cc:212
 #, c-format
@@ -2471,44 +2465,6 @@ msgstr "無法辨識套件檔 %s (%d)"
 #, c-format
 msgid "Cannot convert %s to integer"
 msgstr ""
-
-#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
-#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
-#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
-#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
-#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
-#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
-#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
-#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
-#: apt-pkg/sourcelist.cc:251
-#, fuzzy, c-format
-msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
-
-#: apt-pkg/sourcelist.cc:355
-#, c-format
-msgid "Opening %s"
-msgstr "正在開啟 %s"
-
-#: apt-pkg/sourcelist.cc:389
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
-
-#: apt-pkg/sourcelist.cc:393
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
-
-#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (type)"
-msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
-
-#: apt-pkg/sourcelist.cc:429
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
 
 #: apt-pkg/cacheset.cc:500
 #, c-format
@@ -2562,340 +2518,43 @@ msgid ""
 "neither of them"
 msgstr ""
 
-#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr ""
-
-#. TRANSLATOR: h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lih %limin %lis"
-msgstr ""
-
-#. TRANSLATOR: min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:430
-#, c-format
-msgid "%limin %lis"
-msgstr ""
-
-#. TRANSLATOR: s means seconds
-#: apt-pkg/contrib/strutl.cc:435
-#, c-format
-msgid "%lis"
-msgstr ""
-
-#: apt-pkg/contrib/strutl.cc:1279
-#, c-format
-msgid "Selection %s not found"
-msgstr "選項 %s 找不到"
-
-#: apt-pkg/contrib/fileutl.cc:197
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "不在唯讀檔案 %s 上使用檔案鎖定"
-
-#: apt-pkg/contrib/fileutl.cc:202
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "無法開啟鎖定檔 %s"
-
-#: apt-pkg/contrib/fileutl.cc:225
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr "不在以 nfs 掛載的檔案 %s 上使用檔案鎖定"
-
-#: apt-pkg/contrib/fileutl.cc:230
-#, c-format
-msgid "Could not get lock %s"
-msgstr "無法將 %s 鎖定"
-
-#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:401
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:419
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:428
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:862
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "子程序 %s 收到一個記憶體錯誤。"
-
-#: apt-pkg/contrib/fileutl.cc:864
+#. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
+#: apt-pkg/sourcelist.cc:133 apt-pkg/sourcelist.cc:140
+#: apt-pkg/sourcelist.cc:143 apt-pkg/sourcelist.cc:151
+#: apt-pkg/sourcelist.cc:158 apt-pkg/sourcelist.cc:197
+#: apt-pkg/sourcelist.cc:200 apt-pkg/sourcelist.cc:211
+#: apt-pkg/sourcelist.cc:217 apt-pkg/sourcelist.cc:220
+#: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
+#: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
+#: apt-pkg/sourcelist.cc:251
 #, fuzzy, c-format
-msgid "Sub-process %s received signal %u."
-msgstr "子程序 %s 收到一個記憶體錯誤。"
+msgid "Malformed entry %u in %s file %s (%s)"
+msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#: apt-pkg/sourcelist.cc:355
 #, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "子程序 %s 傳回錯誤碼 (%u)"
+msgid "Opening %s"
+msgstr "正在開啟 %s"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#: apt-pkg/sourcelist.cc:389
 #, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "子程序 %s 不預期得結束"
+msgid "Malformed line %u in source list %s (type)"
+msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
 
-#: apt-pkg/contrib/fileutl.cc:987
+#: apt-pkg/sourcelist.cc:393
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
+
+#: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
 #, fuzzy, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "在關閉檔案時發生問題"
+msgid "Malformed stanza %u in source list %s (type)"
+msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
 
-#: apt-pkg/contrib/fileutl.cc:1194
-#, c-format
-msgid "Could not open file %s"
-msgstr "無法開啟檔案 %s"
-
-#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#: apt-pkg/sourcelist.cc:429
 #, fuzzy, c-format
-msgid "Could not open file descriptor %d"
-msgstr "無法開啟管線給 %s 使用"
-
-#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2176
-msgid "Failed to create subprocess IPC"
-msgstr "無法建立子程序 IPC"
-
-#: apt-pkg/contrib/fileutl.cc:1466
-msgid "Failed to exec compressor "
-msgstr "無法執行壓縮程式"
-
-#: apt-pkg/contrib/fileutl.cc:1607
-#, fuzzy, c-format
-msgid "read, still have %llu to read but none left"
-msgstr "讀取，仍有 %lu 未讀但已無空間"
-
-#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
-#, fuzzy, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr "寫入，仍有 %lu 待寫入但已沒辨法"
-
-#: apt-pkg/contrib/fileutl.cc:2008
-#, fuzzy, c-format
-msgid "Problem closing the file %s"
-msgstr "在關閉檔案時發生問題"
-
-#: apt-pkg/contrib/fileutl.cc:2019
-#, fuzzy, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "在同步檔案時發生問題"
-
-#: apt-pkg/contrib/fileutl.cc:2030
-#, fuzzy, c-format
-msgid "Problem unlinking the file %s"
-msgstr "在刪除檔案時發生問題"
-
-#: apt-pkg/contrib/fileutl.cc:2043
-msgid "Problem syncing the file"
-msgstr "在同步檔案時發生問題"
-
-#: apt-pkg/contrib/fileutl.cc:2146 cmdline/apt-extracttemplates.cc:258
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "無法取得 %s 的狀態"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s... 錯誤！"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s... 完成"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr ""
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s... 完成"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr "不能 mmap 空白檔案"
-
-#: apt-pkg/contrib/mmap.cc:111
-#, fuzzy, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "無法開啟管線給 %s 使用"
-
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "無法 mmap 到 %lu 位元組"
-
-#: apt-pkg/contrib/mmap.cc:146
-#, fuzzy
-msgid "Unable to close mmap"
-msgstr "無法開啟 %s"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-#, fuzzy
-msgid "Unable to synchronize mmap"
-msgstr "無法 invoke "
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "無法 mmap 到 %lu 位元組"
-
-#: apt-pkg/contrib/mmap.cc:322
-msgid "Failed to truncate file"
-msgstr "無法截短檔案"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-"動態 MMap 已用完所有空間。請增加 APT::Cache-Start 的大小。目前大小為：%lu。"
-"(man 5 apt.conf)"
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "無法取得掛載點 %s 的狀態"
-
-#: apt-pkg/contrib/cdromutl.cc:247
-msgid "Failed to stat the cdrom"
-msgstr "無法取得 CD-ROM 的狀態"
-
-#: apt-pkg/contrib/configuration.cc:516
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "無法辨識的縮寫類型：'%c'"
-
-#: apt-pkg/contrib/configuration.cc:630
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "開啟設定檔 %s"
-
-#: apt-pkg/contrib/configuration.cc:798
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "語法錯誤 %s:%u：區塊開頭沒有名稱。"
-
-#: apt-pkg/contrib/configuration.cc:817
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "語法錯誤 %s:%u：標籤格式錯誤"
-
-#: apt-pkg/contrib/configuration.cc:834
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "語法錯誤 %s:%u：數值後有多餘的垃圾"
-
-#: apt-pkg/contrib/configuration.cc:874
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "語法錯誤 %s:%u：指令只能於最高層級執行"
-
-#: apt-pkg/contrib/configuration.cc:881
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "語法錯誤 %s:%u: 太多巢狀引入檔"
-
-#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "語法錯誤 %s:%u：從此引入"
-
-#: apt-pkg/contrib/configuration.cc:894
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "語法錯誤 %s:%u：不支援的指令 '%s'"
-
-#: apt-pkg/contrib/configuration.cc:897
-#, fuzzy, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "語法錯誤 %s:%u：指令只能於最高層級執行"
-
-#: apt-pkg/contrib/configuration.cc:947
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "語法錯誤 %s:%u：在檔案結尾有多餘的垃圾"
-
-#: apt-pkg/contrib/cmndline.cc:127
-#, fuzzy, c-format
-msgid ""
-"Command line option '%c' [from %s] is not understood in combination with the "
-"other options."
-msgstr "未知的命令列選項 '%c' [來自 %s]。"
-
-#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
-#: apt-pkg/contrib/cmndline.cc:169
-#, fuzzy, c-format
-msgid ""
-"Command line option %s is not understood in combination with the other "
-"options"
-msgstr "無法理解的命令列選項 %s"
-
-#: apt-pkg/contrib/cmndline.cc:174
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "命令列選項 %s 不是 boolean 值"
-
-#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "需替選項 %s 指定參數。"
-
-#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "選項 %s：在指定設定項目時應該有 =<val>。"
-
-#: apt-pkg/contrib/cmndline.cc:284
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "選項 %s 的參數應該是數字，而不是 '%s'"
-
-#: apt-pkg/contrib/cmndline.cc:315
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "選項 %s 太長"
-
-#: apt-pkg/contrib/cmndline.cc:347
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "偵測器 %s 無法理解，試試 true 或 false。"
-
-#: apt-pkg/contrib/cmndline.cc:397
-#, c-format
-msgid "Invalid operation %s"
-msgstr "無效的操作 %s"
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
 
 #: apt-pkg/deb/debmetaindex.cc:229
 #, c-format
@@ -3090,6 +2749,346 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:125
 msgid "Not locked"
 msgstr ""
+
+#. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. TRANSLATOR: min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:430
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. TRANSLATOR: s means seconds
+#: apt-pkg/contrib/strutl.cc:435
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/contrib/strutl.cc:1279
+#, c-format
+msgid "Selection %s not found"
+msgstr "選項 %s 找不到"
+
+#: apt-pkg/contrib/fileutl.cc:197
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "不在唯讀檔案 %s 上使用檔案鎖定"
+
+#: apt-pkg/contrib/fileutl.cc:202
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "無法開啟鎖定檔 %s"
+
+#: apt-pkg/contrib/fileutl.cc:225
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "不在以 nfs 掛載的檔案 %s 上使用檔案鎖定"
+
+#: apt-pkg/contrib/fileutl.cc:230
+#, c-format
+msgid "Could not get lock %s"
+msgstr "無法將 %s 鎖定"
+
+#: apt-pkg/contrib/fileutl.cc:367 apt-pkg/contrib/fileutl.cc:481
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:401
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:419
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:428
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:862
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "子程序 %s 收到一個記憶體錯誤。"
+
+#: apt-pkg/contrib/fileutl.cc:864
+#, fuzzy, c-format
+msgid "Sub-process %s received signal %u."
+msgstr "子程序 %s 收到一個記憶體錯誤。"
+
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:227
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "子程序 %s 傳回錯誤碼 (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:220
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "子程序 %s 不預期得結束"
+
+#: apt-pkg/contrib/fileutl.cc:987
+#, fuzzy, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "在關閉檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc:1194
+#, c-format
+msgid "Could not open file %s"
+msgstr "無法開啟檔案 %s"
+
+#: apt-pkg/contrib/fileutl.cc:1253 apt-pkg/contrib/fileutl.cc:1300
+#, fuzzy, c-format
+msgid "Could not open file descriptor %d"
+msgstr "無法開啟管線給 %s 使用"
+
+#: apt-pkg/contrib/fileutl.cc:1408 apt-pkg/contrib/fileutl.cc:2177
+msgid "Failed to create subprocess IPC"
+msgstr "無法建立子程序 IPC"
+
+#: apt-pkg/contrib/fileutl.cc:1466
+msgid "Failed to exec compressor "
+msgstr "無法執行壓縮程式"
+
+#: apt-pkg/contrib/fileutl.cc:1607
+#, fuzzy, c-format
+msgid "read, still have %llu to read but none left"
+msgstr "讀取，仍有 %lu 未讀但已無空間"
+
+#: apt-pkg/contrib/fileutl.cc:1720 apt-pkg/contrib/fileutl.cc:1742
+#, fuzzy, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr "寫入，仍有 %lu 待寫入但已沒辨法"
+
+#: apt-pkg/contrib/fileutl.cc:2008
+#, fuzzy, c-format
+msgid "Problem closing the file %s"
+msgstr "在關閉檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc:2020
+#, fuzzy, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "在同步檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc:2031
+#, fuzzy, c-format
+msgid "Problem unlinking the file %s"
+msgstr "在刪除檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc:2044
+msgid "Problem syncing the file"
+msgstr "在同步檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc:2147 cmdline/apt-extracttemplates.cc:258
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "無法取得 %s 的狀態"
+
+#: apt-pkg/contrib/fileutl.cc:2152 cmdline/apt-extracttemplates.cc:263
+#, c-format
+msgid "Unable to write to %s"
+msgstr "無法寫入 %s"
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... 錯誤！"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... 完成"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... 完成"
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr "不能 mmap 空白檔案"
+
+#: apt-pkg/contrib/mmap.cc:111
+#, fuzzy, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "無法開啟管線給 %s 使用"
+
+#: apt-pkg/contrib/mmap.cc:119
+#, fuzzy, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "無法 mmap 到 %lu 位元組"
+
+#: apt-pkg/contrib/mmap.cc:146
+#, fuzzy
+msgid "Unable to close mmap"
+msgstr "無法開啟 %s"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#, fuzzy
+msgid "Unable to synchronize mmap"
+msgstr "無法 invoke "
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "無法 mmap 到 %lu 位元組"
+
+#: apt-pkg/contrib/mmap.cc:322
+msgid "Failed to truncate file"
+msgstr "無法截短檔案"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"動態 MMap 已用完所有空間。請增加 APT::Cache-Start 的大小。目前大小為：%lu。"
+"(man 5 apt.conf)"
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "無法取得掛載點 %s 的狀態"
+
+#: apt-pkg/contrib/cdromutl.cc:247
+msgid "Failed to stat the cdrom"
+msgstr "無法取得 CD-ROM 的狀態"
+
+#: apt-pkg/contrib/configuration.cc:516
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "無法辨識的縮寫類型：'%c'"
+
+#: apt-pkg/contrib/configuration.cc:630
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "開啟設定檔 %s"
+
+#: apt-pkg/contrib/configuration.cc:798
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "語法錯誤 %s:%u：區塊開頭沒有名稱。"
+
+#: apt-pkg/contrib/configuration.cc:817
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "語法錯誤 %s:%u：標籤格式錯誤"
+
+#: apt-pkg/contrib/configuration.cc:834
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "語法錯誤 %s:%u：數值後有多餘的垃圾"
+
+#: apt-pkg/contrib/configuration.cc:874
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "語法錯誤 %s:%u：指令只能於最高層級執行"
+
+#: apt-pkg/contrib/configuration.cc:881
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "語法錯誤 %s:%u: 太多巢狀引入檔"
+
+#: apt-pkg/contrib/configuration.cc:885 apt-pkg/contrib/configuration.cc:890
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "語法錯誤 %s:%u：從此引入"
+
+#: apt-pkg/contrib/configuration.cc:894
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "語法錯誤 %s:%u：不支援的指令 '%s'"
+
+#: apt-pkg/contrib/configuration.cc:897
+#, fuzzy, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr "語法錯誤 %s:%u：指令只能於最高層級執行"
+
+#: apt-pkg/contrib/configuration.cc:947
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "語法錯誤 %s:%u：在檔案結尾有多餘的垃圾"
+
+#: apt-pkg/contrib/cmndline.cc:127
+#, fuzzy, c-format
+msgid ""
+"Command line option '%c' [from %s] is not understood in combination with the "
+"other options."
+msgstr "未知的命令列選項 '%c' [來自 %s]。"
+
+#: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
+#: apt-pkg/contrib/cmndline.cc:169
+#, fuzzy, c-format
+msgid ""
+"Command line option %s is not understood in combination with the other "
+"options"
+msgstr "無法理解的命令列選項 %s"
+
+#: apt-pkg/contrib/cmndline.cc:174
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "命令列選項 %s 不是 boolean 值"
+
+#: apt-pkg/contrib/cmndline.cc:215 apt-pkg/contrib/cmndline.cc:236
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "需替選項 %s 指定參數。"
+
+#: apt-pkg/contrib/cmndline.cc:249 apt-pkg/contrib/cmndline.cc:255
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "選項 %s：在指定設定項目時應該有 =<val>。"
+
+#: apt-pkg/contrib/cmndline.cc:284
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "選項 %s 的參數應該是數字，而不是 '%s'"
+
+#: apt-pkg/contrib/cmndline.cc:315
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "選項 %s 太長"
+
+#: apt-pkg/contrib/cmndline.cc:347
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "偵測器 %s 無法理解，試試 true 或 false。"
+
+#: apt-pkg/contrib/cmndline.cc:397
+#, c-format
+msgid "Invalid operation %s"
+msgstr "無效的操作 %s"
 
 #: cmdline/apt-extracttemplates.cc:228
 msgid ""
@@ -3619,26 +3618,29 @@ msgstr "套件檔過短"
 msgid "Failed to read the archive headers"
 msgstr "讀取套件檔標頭失敗"
 
-#: apt-inst/contrib/extracttar.cc:123
-msgid "Failed to create pipes"
-msgstr "無法建立管線"
+#: apt-inst/contrib/extracttar.cc:110
+#, fuzzy, c-format
+msgid "Cannot find a configured compressor for '%s'"
+msgstr "無法找到套件 %s"
 
-#: apt-inst/contrib/extracttar.cc:150
-msgid "Failed to exec gzip "
-msgstr "無法執行 gzip"
-
-#: apt-inst/contrib/extracttar.cc:187 apt-inst/contrib/extracttar.cc:217
+#: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
 msgstr "損毀的套件檔"
 
-#: apt-inst/contrib/extracttar.cc:202
+#: apt-inst/contrib/extracttar.cc:157
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar checksum 失敗，套件檔已損毀"
 
-#: apt-inst/contrib/extracttar.cc:307
+#: apt-inst/contrib/extracttar.cc:262
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "未知的 TAR 標頭類型 %u，成員 %s"
+
+#~ msgid "Failed to create pipes"
+#~ msgstr "無法建立管線"
+
+#~ msgid "Failed to exec gzip "
+#~ msgstr "無法執行 gzip"
 
 #~ msgid "%s %s for %s compiled on %s %s\n"
 #~ msgstr "%s %s 是用於 %s 並在 %s %s 上編譯的\n"
