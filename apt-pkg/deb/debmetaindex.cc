@@ -154,7 +154,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("ARCHITECTURE", *A));
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
 	       Options.insert(std::make_pair("REPO_URI", URI));
-	       Options.insert(std::make_pair("TARGET_OF", "deb-src"));
+	       Options.insert(std::make_pair("TARGET_OF", Type));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 
 	       std::string MetaKey = tplMetaKey;
