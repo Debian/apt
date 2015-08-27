@@ -29,10 +29,10 @@ like this (see also apt.conf(5) manpage for configuration file syntax):
 	Acquire::IndexTargets::deb::Packages {
 		MetaKey "$(COMPONENT)/binary-$(ARCHITECTURE)/Packages";
 		ShortDescription "Packages";
-		Description "$(SITE) $(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages";
+		Description "$(RELEASE)/$(COMPONENT) $(ARCHITECTURE) Packages";
 
 		flatMetaKey "Packages";
-		flatDescription "$(SITE) $(RELEASE) Packages";
+		flatDescription "$(RELEASE) Packages";
 
 		Optional "false";
 	};
@@ -63,6 +63,10 @@ All targets have three main properties you can define:
   of which file is acquired exactly. Mainly used for progress reporting
   and error messages. apt will e.g. use this string in the Get/Hit/Err
   progress lines.
+  An identifier of the site accessed as seen in the sources.list (e.g.
+  "http://example.org/debian" or "file:/path/to/a/repository") is
+  automatically prefixed for this property.
+
 
 Additional optional properties:
 * flat{MetaKey,Description}: APT supports two types of repositories:
@@ -104,19 +108,19 @@ Acquire::IndexTargets {
 	deb::Translations {
 		MetaKey "$(COMPONENT)/i18n/Translation-$(LANGUAGE)";
 		ShortDescription "Translation-$(LANGUAGE)";
-		Description "$(SITE) $(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)";
+		Description "$(RELEASE)/$(COMPONENT) Translation-$(LANGUAGE)";
 
 		flatMetaKey "$(LANGUAGE)";
-		flatDescription "$(SITE) $(RELEASE) Translation-$(LANGUAGE)";
+		flatDescription "$(RELEASE) Translation-$(LANGUAGE)";
 	};
 
 	deb-src::Sources {
 		MetaKey "$(COMPONENT)/source/Sources";
 		ShortDescription "Sources";
-		Description "$(SITE) $(RELEASE)/$(COMPONENT) Sources";
+		Description "$(RELEASE)/$(COMPONENT) Sources";
 
 		flatMetaKey "Sources";
-		flatDescription "$(SITE) $(RELEASE) Sources";
+		flatDescription "$(RELEASE) Sources";
 
 		Optional "false";
 	};
@@ -129,10 +133,6 @@ by the acquire system. The following variables are known; note that
 unknown variables have no default value nor are they touched: They are
 printed as-is.
 
-* $(SITE): An identifier of the site we access as seen in sources.list,
-  e.g. "http://example.org/debian" or "file:/path/to/a/repository". You
-  can't use this field in {,flat}MetaKey, it is for description proposes
-  only.
 * $(RELEASE): This is usually an archive- or codename, e.g. "stable" or
   "stretch".  Note that flat-style repositories do not have a archive-
   or codename per-se, so the value might very well be just "/" or so.
