@@ -715,10 +715,25 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 List.push_back(Deb);
       }
 
+      std::vector<std::string> const alltargets = _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true);
+      std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, alltargets);
+      if (mytargets.empty() == false)
+	 for (auto const &target : alltargets)
+	 {
+	    std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
+	    if (opt == Options.end())
+	       continue;
+	    auto const tarItr = std::find(mytargets.begin(), mytargets.end(), target);
+	    bool const optValue = StringToBool(opt->second);
+	    if (optValue == true && tarItr == mytargets.end())
+	       mytargets.push_back(target);
+	    else if (optValue == false && tarItr != mytargets.end())
+	       mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
+	 }
       Deb->AddComponent(
 	    IsSrc,
 	    Section,
-	    parsePlusMinusOptions("target", Options, _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true)),
+	    mytargets,
 	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
 	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true))
 	    );

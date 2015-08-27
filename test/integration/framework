@@ -1196,9 +1196,16 @@ checkdiff() {
 }
 
 testfileequal() {
+	local MSG='Test for correctness of file'
+	if [ "$1" = '--nomsg' ]; then
+		MSG=''
+		shift
+	fi
 	local FILE="$1"
 	shift
-	msgtest "Test for correctness of file" "$FILE"
+	if [ -n "$MSG" ]; then
+		msgtest "$MSG" "$FILE"
+	fi
 	if [ -z "$*" ]; then
 		echo -n "" | checkdiff - $FILE && msgpass || msgfail
 	else
