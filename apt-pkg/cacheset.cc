@@ -696,12 +696,12 @@ bool VersionContainerInterface::FromDependency(VersionContainerInterface * const
 pkgCache::VerIterator VersionContainerInterface::getCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, CacheSetHelper &helper) {
 	pkgCache::VerIterator Cand;
-	if (Cache.IsPolicyBuilt() == true || Cache.IsDepCacheBuilt() == false) {
-		if (unlikely(Cache.GetPolicy() == 0))
-			return pkgCache::VerIterator(Cache);
-		Cand = Cache.GetPolicy()->GetCandidateVer(Pkg);
-	} else {
+	if (Cache.IsDepCacheBuilt() == true) {
 		Cand = Cache[Pkg].CandidateVerIter(Cache);
+	} else if (unlikely(Cache.GetPolicy() == nullptr)) {
+		return pkgCache::VerIterator(Cache);
+	} else {
+		Cand = Cache.GetPolicy()->GetCandidateVer(Pkg);
 	}
 	if (Cand.end() == true)
 		return helper.canNotGetVersion(CacheSetHelper::CANDIDATE, Cache, Pkg);
