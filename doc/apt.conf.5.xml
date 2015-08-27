@@ -334,8 +334,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <varlistentry><term><option>PDiffs</option></term>
 	 <listitem><para>Try to download deltas called <literal>PDiffs</literal> for
-	 indexes (like <filename>Packages</filename> files) instead of downloading
-	 whole ones. True by default.</para>
+	 indexes (like <filename>Packages</filename> files) instead of
+	 downloading whole ones. True by default. Preferably, this can be set
+	 for specific &sources-list; entries or index files by using the
+	 <option>PDiffs</option> option there.</para>
 	 <para>Two sub-options to limit the use of PDiffs are also available:
 	 <literal>FileLimit</literal> can be used to specify a maximum number of
 	 PDiff files should be downloaded to update a file. <literal>SizeLimit</literal>

@@ -957,7 +957,7 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
         Target != IndexTargets.end();
         ++Target)
    {
-      bool trypdiff = _config->FindB("Acquire::PDiffs", true);
+      bool trypdiff = Target->OptionBool(IndexTarget::PDIFFS);
       if (verify == true)
       {
 	 if (TransactionManager->MetaIndexParser->Exists(Target->MetaKey) == false)

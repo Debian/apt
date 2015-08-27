@@ -143,6 +143,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(REPO_URI);
       APT_CASE(TARGET_OF);
       APT_CASE(CREATED_BY);
+      APT_CASE(PDIFFS);
 #undef APT_CASE
       case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
       case EXISTING_FILENAME:
@@ -162,6 +163,11 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
    if (M == Options.end())
       return "";
    return M->second;
+}
+									/*}}}*/
+bool IndexTarget::OptionBool(OptionKeys const EnumKey) const		/*{{{*/
+{
+   return StringToBool(Option(EnumKey));
 }
 									/*}}}*/
 std::string IndexTarget::Format(std::string format) const		/*{{{*/

@@ -36,6 +36,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
       std::vector<std::string> Targets;
       std::vector<std::string> Architectures;
       std::vector<std::string> Languages;
+      bool UsePDiffs;
    };
 
    std::vector<debSectionEntry> DebEntries;
@@ -131,6 +132,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
 	 bool const IsOptional = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::Optional", true);
 	 bool const KeepCompressed = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::KeepCompressed", GzipIndex);
+	 bool const UsePDiffs = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::PDiffs", E->UsePDiffs);
 #undef APT_T_CONFIG
 	 if (tplMetaKey.empty())
 	    continue;
@@ -156,6 +158,10 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("REPO_URI", URI));
 	       Options.insert(std::make_pair("TARGET_OF", Type));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
+	       if (UsePDiffs)
+		  Options.insert(std::make_pair("PDIFFS", "yes"));
+	       else
+		  Options.insert(std::make_pair("PDIFFS", "no"));
 
 	       std::string MetaKey = tplMetaKey;
 	       std::string ShortDesc = tplShortDesc;
@@ -201,12 +207,13 @@ std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
 void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{{{*/
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
-	 std::vector<std::string> Languages)
+	 std::vector<std::string> Languages,
+	 bool const usePDiffs)
 {
    if (Languages.empty() == true)
       Languages.push_back("none");
    debReleaseIndexPrivate::debSectionEntry const entry = {
-      Name, Targets, Architectures, Languages
+      Name, Targets, Architectures, Languages, usePDiffs
    };
    if (isSrc)
       d->DebSrcEntries.push_back(entry);
@@ -730,12 +737,19 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    else if (optValue == false && tarItr != mytargets.end())
 	       mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
 	 }
+      bool UsePDiffs = _config->FindB("Acquire::PDiffs", true);
+      {
+	 std::map<std::string, std::string>::const_iterator const opt = Options.find("pdiffs");
+	 if (opt != Options.end())
+	    UsePDiffs = StringToBool(opt->second);
+      }
       Deb->AddComponent(
 	    IsSrc,
 	    Section,
 	    mytargets,
 	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
-	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true))
+	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true)),
+	    UsePDiffs
 	    );
 
       if (Deb->SetTrusted(GetTriStateOption(Options, "trusted")) == false ||

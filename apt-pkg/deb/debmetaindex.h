@@ -62,7 +62,8 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    void AddComponent(bool const isSrc, std::string const &Name,
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
-	 std::vector<std::string> Languages);
+	 std::vector<std::string> Languages,
+	 bool const usePDiffs);
 };
 
 #endif

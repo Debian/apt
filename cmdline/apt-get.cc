@@ -1499,7 +1499,12 @@ static bool DoIndexTargets(CommandLine &CmdL)
 	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
 	       stanza << format_key(O->first) << ": " << O->second << "\n";
 	    for (std::map<std::string,std::string>::const_iterator O = T->Options.begin(); O != T->Options.end(); ++O)
-	       stanza << format_key(O->first) << ": " << O->second << "\n";
+	    {
+	       if (O->first == "PDIFFS")
+		  stanza << "PDiffs: " << O->second << "\n";
+	       else
+		  stanza << format_key(O->first) << ": " << O->second << "\n";
+	    }
 	    stanza << "\n";
 
 	    if (Filtered)

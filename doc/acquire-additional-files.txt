@@ -85,7 +85,15 @@ file if it is available and uncompress it for you, just as it will also
 use pdiff patching if provided by the repository and enabled by the
 user. You only have to ensure that the Release file contains the
 information about the compressed files/pdiffs to make this happen.
-NO properties have to be set to enable this.
+*NO* properties have to be set to enable this!
+
+
+Additional properties exist, but these should *NOT* be set by frontends
+requesting files. They exist for internal and end-user usage only:
+* PDiffs: controls if apt will try to use pdiffs for this target.
+  Defaults to the value of Acquire::PDiffs which is true by default.
+  Can be overridden per-source by the sources.list option of the same
+  name. See the documentation for both of these for details.
 
 # More examples
 
