@@ -82,28 +82,9 @@ ExtractTar::~ExtractTar()
    means we hit the end of the tar file but there was still gzip data. */
 bool ExtractTar::Done(bool Force)
 {
-   InFd.Close();
-   if (GZPid <= 0)
-      return true;
-
-   /* If there is a pending error then we are cleaning up gzip and are
-      not interested in it's failures */
-   if (_error->PendingError() == true)
-      Force = true;
-   
-   // Make sure we clean it up!
-   kill(GZPid,SIGINT);
-   string confvar = string("dir::bin::") + DecompressProg;
-   if (ExecWait(GZPid,_config->Find(confvar.c_str(),DecompressProg.c_str()).c_str(),
-		Force) == false)
-   {
-      GZPid = -1;
-      return Force;
-   }
-   
-   GZPid = -1;
-   return true;
+   return InFd.Close();
 }
+
 									/*}}}*/
 // ExtractTar::StartGzip - Startup gzip					/*{{{*/
 // ---------------------------------------------------------------------
@@ -118,43 +99,17 @@ bool ExtractTar::StartGzip()
       return true;
    }
 
-   int Pipes[2];
-   if (pipe(Pipes) != 0)
-      return _error->Errno("pipe",_("Failed to create pipes"));
-
-   // Fork off the process
-   GZPid = ExecFork();
-
-   // Spawn the subprocess
-   if (GZPid == 0)
-   {
-      // Setup the FDs
-      dup2(Pipes[1],STDOUT_FILENO);
-      dup2(File.Fd(),STDIN_FILENO);
-      int Fd = open("/dev/null",O_RDWR);
-      if (Fd == -1)
-	 _exit(101);
-      dup2(Fd,STDERR_FILENO);
-      close(Fd);
-      SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);
-      SetCloseExec(STDERR_FILENO,false);
-
-      const char *Args[3];
-      string confvar = string("dir::bin::") + DecompressProg;
-      string argv0 = _config->Find(confvar.c_str(),DecompressProg.c_str());
-      Args[0] = argv0.c_str();
-      Args[1] = "-d";
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
-      cerr << _("Failed to exec gzip ") << Args[0] << endl;
-      _exit(100);
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
+   for (; compressor != compressors.end(); compressor++) {
+      if (compressor->Name == DecompressProg) {
+	 return InFd.OpenDescriptor(File.Fd(), FileFd::ReadOnly, *compressor, false);
+      }
    }
 
-   // Fix up our FDs
-   InFd.OpenDescriptor(Pipes[0], FileFd::ReadOnly, FileFd::None, true);
-   close(Pipes[1]);
-   return true;
+   return _error->Error(_("Cannot find a configured compressor for '%s'"),
+			DecompressProg.c_str());
+
 }
 									/*}}}*/
 // ExtractTar::Go - Perform extraction					/*{{{*/
