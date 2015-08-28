@@ -409,7 +409,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    /** \brief The index files which should be looked up in the meta-index
     *  and then downloaded.
     */
-   std::vector<IndexTarget> const IndexTargets;
+   std::vector<IndexTarget> IndexTargets;
 
    /** \brief If \b true, the index's signature is currently being verified.
     */
@@ -943,9 +943,6 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded();
-
-   /** \brief Auto select the right compression to use */
-   void AutoSelectCompression();
 
    /** \brief Schedule file for verification after a IMS hit */
    void ReverifyAfterIMS();

@@ -21,6 +21,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 #include <sys/stat.h>
 #include <string.h>
@@ -121,19 +122,33 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
    std::string const Release = (Dist == "/") ? "" : Dist;
    std::string const Site = ::URI::ArchiveOnly(URI);
 
+   std::string DefCompressionTypes;
+   {
+      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+      if (types.empty() == false)
+      {
+	 std::ostringstream os;
+	 std::copy(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "));
+	 os << *types.rbegin();
+	 DefCompressionTypes = os.str();
+      }
+   }
    bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
       for (std::vector<std::string>::const_iterator T = E->Targets.begin(); T != E->Targets.end(); ++T)
       {
-#define APT_T_CONFIG(X) _config->Find(std::string("Acquire::IndexTargets::") + Type  + "::" + *T + "::" + (X))
-	 std::string const tplMetaKey = APT_T_CONFIG(flatArchive ? "flatMetaKey" : "MetaKey");
-	 std::string const tplShortDesc = APT_T_CONFIG("ShortDescription");
-	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG(flatArchive ? "flatDescription" : "Description");
-	 bool const IsOptional = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::Optional", true);
-	 bool const KeepCompressed = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::KeepCompressed", GzipIndex);
-	 bool const UsePDiffs = _config->FindB(std::string("Acquire::IndexTargets::") + Type + "::" + *T + "::PDiffs", E->UsePDiffs);
-#undef APT_T_CONFIG
+#define APT_T_CONFIG_STR(X, Y) _config->Find(std::string("Acquire::IndexTargets::") + Type  + "::" + *T + "::" + (X), (Y))
+#define APT_T_CONFIG_BOOL(X, Y) _config->FindB(std::string("Acquire::IndexTargets::") + Type  + "::" + *T + "::" + (X), (Y))
+	 std::string const tplMetaKey = APT_T_CONFIG_STR(flatArchive ? "flatMetaKey" : "MetaKey", "");
+	 std::string const tplShortDesc = APT_T_CONFIG_STR("ShortDescription", "");
+	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG_STR(flatArchive ? "flatDescription" : "Description", "");
+	 bool const IsOptional = APT_T_CONFIG_BOOL("Optional", true);
+	 bool const KeepCompressed = APT_T_CONFIG_BOOL("KeepCompressed", GzipIndex);
+	 bool const UsePDiffs = APT_T_CONFIG_BOOL("PDiffs", E->UsePDiffs);
+	 std::string const CompressionTypes = APT_T_CONFIG_STR("CompressionTypes", DefCompressionTypes);
+#undef APT_T_CONFIG_BOOL
+#undef APT_T_CONFIG_STR
 	 if (tplMetaKey.empty())
 	    continue;
 
@@ -144,7 +159,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 
 	    for (std::vector<std::string>::const_iterator A = E->Architectures.begin(); A != E->Architectures.end(); ++A)
 	    {
-
+	       // available in templates
 	       std::map<std::string, std::string> Options;
 	       Options.insert(std::make_pair("SITE", Site));
 	       Options.insert(std::make_pair("RELEASE", Release));
@@ -154,14 +169,6 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("LANGUAGE", *L));
 	       if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
 		  Options.insert(std::make_pair("ARCHITECTURE", *A));
-	       Options.insert(std::make_pair("BASE_URI", baseURI));
-	       Options.insert(std::make_pair("REPO_URI", URI));
-	       Options.insert(std::make_pair("TARGET_OF", Type));
-	       Options.insert(std::make_pair("CREATED_BY", *T));
-	       if (UsePDiffs)
-		  Options.insert(std::make_pair("PDIFFS", "yes"));
-	       else
-		  Options.insert(std::make_pair("PDIFFS", "no"));
 
 	       std::string MetaKey = tplMetaKey;
 	       std::string ShortDesc = tplShortDesc;
@@ -172,6 +179,18 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
 		  LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
 	       }
+
+	       // not available in templates, but in the indextarget
+	       Options.insert(std::make_pair("BASE_URI", baseURI));
+	       Options.insert(std::make_pair("REPO_URI", URI));
+	       Options.insert(std::make_pair("TARGET_OF", Type));
+	       Options.insert(std::make_pair("CREATED_BY", *T));
+	       if (UsePDiffs)
+		  Options.insert(std::make_pair("PDIFFS", "yes"));
+	       else
+		  Options.insert(std::make_pair("PDIFFS", "no"));
+	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
+
 	       IndexTarget Target(
 		     MetaKey,
 		     ShortDesc,

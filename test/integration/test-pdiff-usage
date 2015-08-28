@@ -254,23 +254,28 @@ echo 'Debug::pkgAcquire::Diffs "true";
 Debug::Acquire::Transaction "true";
 Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
 
-testrun nohash -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
-testrun nohash -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
+testcase() {
+	testrun nohash -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1 "$@"
+	testrun nohash -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1 "$@"
 
-testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
-testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
-testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0
-testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0
+	testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1 "$@"
+	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1 "$@"
+	testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0 "$@"
+	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0 "$@"
 
-sha256sum() {
-	echo '01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b -'
+	sha256sum() {
+		echo '01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b -'
+	}
+	testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA1 "$@"
+	testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA1 "$@"
+	unset -f sha256sum
+
+	sha1sum() {
+		echo 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc -'
+	}
+	testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA256 "$@"
+	testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA256 "$@"
+	unset -f sha1sum
 }
-testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA1
-testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA1
-
-unset -f sha256sum
-sha1sum() {
-	echo 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc -'
-}
-testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA256
-testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA256
+testcase -o Acquire::GzipIndexes=0
+testcase -o Acquire::GzipIndexes=1

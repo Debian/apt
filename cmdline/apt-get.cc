@@ -1495,13 +1495,16 @@ static bool DoIndexTargets(CommandLine &CmdL)
 	       << "Description: " << T->Description << "\n"
 	       << "URI: " << T->URI << "\n"
 	       << "Filename: " << filename << "\n"
-	       << "Optional: " << (T->IsOptional ? "yes" : "no") << "\n";
+	       << "Optional: " << (T->IsOptional ? "yes" : "no") << "\n"
+	       << "KeepCompressed: " << (T->KeepCompressed ? "yes" : "no") << "\n";
 	    for (std::map<std::string,std::string>::const_iterator O = AddOptions.begin(); O != AddOptions.end(); ++O)
 	       stanza << format_key(O->first) << ": " << O->second << "\n";
 	    for (std::map<std::string,std::string>::const_iterator O = T->Options.begin(); O != T->Options.end(); ++O)
 	    {
 	       if (O->first == "PDIFFS")
 		  stanza << "PDiffs: " << O->second << "\n";
+	       else if (O->first == "COMPRESSIONTYPES")
+		  stanza << "CompressionTypes: " << O->second << "\n";
 	       else
 		  stanza << format_key(O->first) << ": " << O->second << "\n";
 	    }

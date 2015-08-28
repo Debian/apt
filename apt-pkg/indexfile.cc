@@ -19,6 +19,7 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/macros.h>
 
@@ -144,11 +145,12 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(TARGET_OF);
       APT_CASE(CREATED_BY);
       APT_CASE(PDIFFS);
+      APT_CASE(COMPRESSIONTYPES);
 #undef APT_CASE
       case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
       case EXISTING_FILENAME:
 	 std::string const filename = Option(FILENAME);
-	 std::vector<std::string> const types = APT::Configuration::getCompressionTypes();
+	 std::vector<std::string> const types = VectorizeString(Option(COMPRESSIONTYPES), ' ');
 	 for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
 	 {
 	    if (t->empty())
@@ -208,7 +210,7 @@ std::string pkgDebianIndexTargetFile::IndexFileName() const			/*{{{*/
    if (FileExists(s))
       return s;
 
-   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   std::vector<std::string> const types = VectorizeString(Target.Option(IndexTarget::COMPRESSIONTYPES), ' ');
    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
    {
       std::string p = s + '.' + *t;

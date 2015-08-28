@@ -334,35 +334,30 @@ class Patch {
    FileChanges filechanges;
    MemBlock add_text;
 
-   static bool retry_fwrite(char *b, size_t l, FILE *f, Hashes *hash)
+   static bool retry_fwrite(char *b, size_t l, FileFd &f, Hashes *hash)
    {
-      size_t r = 1;
-      while (r > 0 && l > 0)
-      {
-         r = fwrite(b, 1, l, f);
-	 if (hash)
-	    hash->Add((unsigned char*)b, r);
-	 l -= r;
-	 b += r;
-      }
-      return l == 0;
+      if (f.Write(b, l) == false)
+	 return false;
+      if (hash)
+	 hash->Add((unsigned char*)b, l);
+      return true;
    }
 
-   static void dump_rest(FILE *o, FILE *i, Hashes *hash)
+   static void dump_rest(FileFd &o, FileFd &i, Hashes *hash)
    {
       char buffer[BLOCK_SIZE];
-      size_t l;
-      while (0 < (l = fread(buffer, 1, sizeof(buffer), i))) {
-	 if (!retry_fwrite(buffer, l, o, hash))
+      unsigned long long l = 0;
+      while (i.Read(buffer, sizeof(buffer), &l)) {
+	 if (l ==0  || !retry_fwrite(buffer, l, o, hash))
 	    break;
       }
    }
 
-   static void dump_lines(FILE *o, FILE *i, size_t n, Hashes *hash)
+   static void dump_lines(FileFd &o, FileFd &i, size_t n, Hashes *hash)
    {
       char buffer[BLOCK_SIZE];
       while (n > 0) {
-	 if (fgets(buffer, sizeof(buffer), i) == 0)
+	 if (i.ReadLine(buffer, sizeof(buffer)) == NULL)
 	    buffer[0] = '\0';
 	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
@@ -371,11 +366,11 @@ class Patch {
       }
    }
 
-   static void skip_lines(FILE *i, int n)
+   static void skip_lines(FileFd &i, int n)
    {
       char buffer[BLOCK_SIZE];
       while (n > 0) {
-	 if (fgets(buffer, sizeof(buffer), i) == 0)
+	 if (i.ReadLine(buffer, sizeof(buffer)) == NULL)
 	    buffer[0] = '\0';
 	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
@@ -383,7 +378,7 @@ class Patch {
       }
    }
 
-   static void dump_mem(FILE *o, char *p, size_t s, Hashes *hash) {
+   static void dump_mem(FileFd &o, char *p, size_t s, Hashes *hash) {
       retry_fwrite(p, s, o, hash);
    }
 
@@ -483,7 +478,7 @@ class Patch {
       return true;
    }
 
-   void write_diff(FILE *f)
+   void write_diff(FileFd &f)
    {
       unsigned long long line = 0;
       std::list<struct Change>::reverse_iterator ch;
@@ -496,31 +491,36 @@ class Patch {
 	 while (ch->del_cnt == 0 && ch->offset == 0)
 	    ++ch;
 	 line -= ch->del_cnt;
+	 std::string buf;
 	 if (ch->add_cnt > 0) {
 	    if (ch->del_cnt == 0) {
-	       fprintf(f, "%llua\n", line);
+	       strprintf(buf, "%llua\n", line);
 	    } else if (ch->del_cnt == 1) {
-	       fprintf(f, "%lluc\n", line+1);
+	       strprintf(buf, "%lluc\n", line+1);
 	    } else {
-	       fprintf(f, "%llu,%lluc\n", line+1, line+ch->del_cnt);
+	       strprintf(buf, "%llu,%lluc\n", line+1, line+ch->del_cnt);
 	    }
+	    f.Write(buf.c_str(), buf.length());
 
 	    mg_i = ch;
 	    do {
 	       dump_mem(f, mg_i->add, mg_i->add_len, NULL);
 	    } while (mg_i-- != mg_e);
 
-	    fprintf(f, ".\n");
+	    buf = ".\n";
+	    f.Write(buf.c_str(), buf.length());
 	 } else if (ch->del_cnt == 1) {
-	    fprintf(f, "%llud\n", line+1);
+	    strprintf(buf, "%llud\n", line+1);
+	    f.Write(buf.c_str(), buf.length());
 	 } else if (ch->del_cnt > 1) {
-	    fprintf(f, "%llu,%llud\n", line+1, line+ch->del_cnt);
+	    strprintf(buf, "%llu,%llud\n", line+1, line+ch->del_cnt);
+	    f.Write(buf.c_str(), buf.length());
 	 }
 	 line -= ch->offset;
       }
    }
 
-   void apply_against_file(FILE *out, FILE *in, Hashes *hash = NULL)
+   void apply_against_file(FileFd &out, FileFd &in, Hashes *hash = NULL)
    {
       std::list<struct Change>::iterator ch;
       for (ch = filechanges.begin(); ch != filechanges.end(); ++ch) {
@@ -635,14 +635,23 @@ class RredMethod : public pkgAcqMethod {
 	       << " and writing results to " << Itm->DestFile
 	       << std::endl;
 
-	 FILE *inp = fopen(Path.c_str(), "r");
-	 FILE *out = fopen(Itm->DestFile.c_str(), "w");
+	 FileFd inp, out;
+	 if (inp.Open(Path, FileFd::ReadOnly, FileFd::Extension) == false)
+	 {
+	    std::cerr << "FAILED to open inp " << Path << std::endl;
+	    return _error->Error("Failed to open inp %s", Path.c_str());
+	 }
+	 if (out.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create, FileFd::Extension) == false)
+	 {
+	    std::cerr << "FAILED to open out " << Itm->DestFile << std::endl;
+	    return _error->Error("Failed to open out %s", Itm->DestFile.c_str());
+	 }
 
 	 Hashes hash(Itm->ExpectedHashes);
 	 patch.apply_against_file(out, inp, &hash);
 
-	 fclose(out);
-	 fclose(inp);
+	 out.Close();
+	 inp.Close();
 
 	 if (Debug == true) {
 	    std::clog << "rred: finished file patching of " << Path  << "." << std::endl;
@@ -717,12 +726,13 @@ int main(int argc, char **argv)
    }
 
    if (just_diff) {
-      patch.write_diff(stdout);
+      FileFd out;
+      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
+      patch.write_diff(out);
    } else {
-      FILE *out, *inp;
-      out = stdout;
-      inp = stdin;
-
+      FileFd out, inp;
+      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
+      inp.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
       patch.apply_against_file(out, inp);
    }
    return 0;

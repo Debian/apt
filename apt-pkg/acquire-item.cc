@@ -32,6 +32,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/gpgv.h>
 
+#include <algorithm>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,6 +80,21 @@ static std::string GetFinalFileNameFromURI(std::string const &uri)	/*{{{*/
    return _config->FindDir("Dir::State::lists") + URItoFileName(uri);
 }
 									/*}}}*/
+static std::string GetKeepCompressedFileName(std::string file, IndexTarget const &Target)/*{{{*/
+{
+   if (Target.KeepCompressed == false)
+      return file;
+
+   std::string const CompressionTypes = Target.Option(IndexTarget::COMPRESSIONTYPES);
+   if (CompressionTypes.empty() == false)
+   {
+      std::string const ext = CompressionTypes.substr(0, CompressionTypes.find(' '));
+      if (ext != "uncompressed")
+	 file.append(".").append(ext);
+   }
+   return file;
+}
+									/*}}}*/
 static std::string GetCompressedFileName(IndexTarget const &Target, std::string const &Name, std::string const &Ext) /*{{{*/
 {
    if (Ext.empty() || Ext == "uncompressed")
@@ -105,6 +121,30 @@ static std::string GetDiffsPatchFileName(std::string const &Final)	/*{{{*/
 {
    // rred expects the patch as $FinalFile.ed
    return Final + ".ed";
+}
+									/*}}}*/
+static bool BootstrapPDiffWith(std::string const &PartialFile, std::string const &FinalFile, IndexTarget const &Target)/*{{{*/
+{
+   // patching needs to be bootstrapped with the 'old' version
+   std::vector<std::string> types = VectorizeString(Target.Option(IndexTarget::COMPRESSIONTYPES), ' ');
+   auto typeItr = types.cbegin();
+   for (; typeItr != types.cend(); ++typeItr)
+   {
+      std::string Final = FinalFile;
+      if (*typeItr != "uncompressed")
+	 Final.append(".").append(*typeItr);
+      if (RealFileExists(Final) == false)
+	 continue;
+      std::string Partial = PartialFile;
+      if (*typeItr != "uncompressed")
+	 Partial.append(".").append(*typeItr);
+      if (FileExists(Partial.c_str()) == true)
+	 return true;
+      if (symlink(Final.c_str(), Partial.c_str()) != 0)
+	 return false;
+      break;
+   }
+   return typeItr != types.cend();
 }
 									/*}}}*/
 
@@ -398,6 +438,12 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
    {
       Status = StatDone;
       DestFile = GetFinalFileNameFromURI(Target.URI);
+   }
+   NoActionItem(pkgAcquire * const Owner, IndexTarget const &Target, std::string const &FinalFile) :
+      pkgAcquire::Item(Owner), Target(Target)
+   {
+      Status = StatDone;
+      DestFile = FinalFile;
    }
 };
 									/*}}}*/
@@ -953,7 +999,7 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
-   for (std::vector <IndexTarget>::const_iterator Target = IndexTargets.begin();
+   for (std::vector <IndexTarget>::iterator Target = IndexTargets.begin();
         Target != IndexTargets.end();
         ++Target)
    {
@@ -971,34 +1017,84 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	    return;
 	 }
 
-	 if (RealFileExists(GetFinalFileNameFromURI(Target->URI)))
+	 // autoselect the compression method
+	 std::vector<std::string> types = VectorizeString(Target->Option(IndexTarget::COMPRESSIONTYPES), ' ');
+	 types.erase(std::remove_if(types.begin(), types.end(), [&](std::string const &t) {
+	    if (t == "uncompressed")
+	       return TransactionManager->MetaIndexParser->Exists(Target->MetaKey) == false;
+	    std::string const MetaKey = Target->MetaKey + "." + t;
+	    return TransactionManager->MetaIndexParser->Exists(MetaKey) == false;
+	 }), types.end());
+	 if (types.empty() == false)
 	 {
-	    if (TransactionManager->LastMetaIndexParser != NULL)
+	    std::ostringstream os;
+	    std::copy(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "));
+	    os << *types.rbegin();
+	    Target->Options["COMPRESSIONTYPES"] = os.str();
+	 }
+	 else
+	    Target->Options["COMPRESSIONTYPES"].clear();
+
+	 std::string filename = GetFinalFileNameFromURI(Target->URI);
+	 if (RealFileExists(filename) == false)
+	 {
+	    if (Target->KeepCompressed)
 	    {
+	       filename = GetKeepCompressedFileName(filename, *Target);
+	       if (RealFileExists(filename) == false)
+		  filename.clear();
+	    }
+	    else
+	       filename.clear();
+	 }
+
+	 if (filename.empty() == false)
+	 {
+	    // if the Release file is a hit and we have an index it must be the current one
+	    if (TransactionManager->IMSHit == true)
+	       ;
+	    else if (TransactionManager->LastMetaIndexParser != NULL)
+	    {
+	       // see if the file changed since the last Release file
+	       // we use the uncompressed files as we might compress differently compared to the server,
+	       // so the hashes might not match, even if they contain the same data.
 	       HashStringList const newFile = GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, Target->MetaKey);
 	       HashStringList const oldFile = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, Target->MetaKey);
-	       if (newFile == oldFile)
-	       {
-		  // we have the file already, no point in trying to acquire it again
-		  new NoActionItem(Owner, *Target);
-		  continue;
-	       }
+	       if (newFile != oldFile)
+		  filename.clear();
 	    }
-	    else if (TransactionManager->IMSHit == true)
-	    {
-	       // we have the file already, no point in trying to acquire it again
-	       new NoActionItem(Owner, *Target);
-	       continue;
-	    }
+	    else
+	       filename.clear();
 	 }
 	 else
 	    trypdiff = false; // no file to patch
 
+	 if (filename.empty() == false)
+	 {
+	    new NoActionItem(Owner, *Target, filename);
+	    continue;
+	 }
+
 	 // check if we have patches available
 	 trypdiff &= TransactionManager->MetaIndexParser->Exists(Target->MetaKey + ".diff/Index");
       }
-      // if we have no file to patch, no point in trying
-      trypdiff &= RealFileExists(GetFinalFileNameFromURI(Target->URI));
+      else
+      {
+	 // if we have no file to patch, no point in trying
+	 std::string filename = GetFinalFileNameFromURI(Target->URI);
+	 if (RealFileExists(filename) == false)
+	 {
+	    if (Target->KeepCompressed)
+	    {
+	       filename = GetKeepCompressedFileName(filename, *Target);
+	       if (RealFileExists(filename) == false)
+		  filename.clear();
+	    }
+	    else
+	       filename.clear();
+	 }
+	 trypdiff &= (filename.empty() == false);
+      }
 
       // no point in patching from local sources
       if (trypdiff)
@@ -1658,7 +1754,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       LocalHashes = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, Target.MetaKey);
    if (LocalHashes.usable() == false)
    {
-      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
+      FileFd fd(CurrentPackagesFile, FileFd::ReadOnly, FileFd::Auto);
       Hashes LocalHashesCalc(ServerHashes);
       LocalHashesCalc.AddFD(fd);
       LocalHashes = LocalHashesCalc.GetHashStringList();
@@ -1961,7 +2057,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
    : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL),
      available_patches(diffs)
 {
-   DestFile = GetPartialFileNameFromURI(Target.URI);
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
@@ -1972,20 +2068,15 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
    if(available_patches.empty() == true)
    {
       // we are done (yeah!), check hashes against the final file
-      DestFile = GetFinalFileNameFromURI(Target.URI);
+      DestFile = GetKeepCompressedFileName(GetFinalFileNameFromURI(Target.URI), Target);
       Finish(true);
    }
    else
    {
-      // patching needs to be bootstrapped with the 'old' version
-      std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
-      if (RealFileExists(PartialFile) == false)
+      if (BootstrapPDiffWith(GetPartialFileNameFromURI(Target.URI), GetFinalFilename(), Target) == false)
       {
-	 if (symlink(GetFinalFilename().c_str(), PartialFile.c_str()) != 0)
-	 {
-	    Failed("Link creation of " + PartialFile + " to " + GetFinalFilename() + " failed", NULL);
-	    return;
-	 }
+	 Failed("Bootstrapping of " + DestFile + " failed", NULL);
+	 return;
       }
 
       // get the next diff
@@ -1999,10 +2090,10 @@ void pkgAcqIndexDiffs::Failed(string const &Message,pkgAcquire::MethodConfig con
    Item::Failed(Message,Cnf);
    Status = StatDone;
 
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
-		<< "Falling back to normal index file acquire" << std::endl;
-   DestFile = GetPartialFileNameFromURI(Target.URI);
+		<< "Falling back to normal index file acquire " << std::endl;
    RenameOnError(PDiffError);
    std::string const patchname = GetDiffsPatchFileName(DestFile);
    if (RealFileExists(patchname))
@@ -2023,7 +2114,14 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
    // the file will be cleaned
    if(allDone)
    {
-      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+      std::string Final = GetFinalFilename();
+      if (Target.KeepCompressed)
+      {
+	 std::string const ext = flExtension(DestFile);
+	 if (ext.empty() == false)
+	    Final.append(".").append(ext);
+      }
+      TransactionManager->TransactionStageCopy(this, DestFile, Final);
 
       // this is for the "real" finish
       Complete = true;
@@ -2033,6 +2131,8 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 	 std::clog << "\n\nallDone: " << DestFile << "\n" << std::endl;
       return;
    }
+   else
+      DestFile.clear();
 
    if(Debug)
       std::clog << "Finishing: " << Desc.URI << std::endl;
@@ -2045,15 +2145,14 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 {
    // calc sha1 of the just patched file
-   std::string const FinalFile = GetPartialFileNameFromURI(Target.URI);
-
+   std::string const FinalFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    if(!FileExists(FinalFile))
    {
       Failed("Message: No FinalFile " + FinalFile + " available", NULL);
       return false;
    }
 
-   FileFd fd(FinalFile, FileFd::ReadOnly);
+   FileFd fd(FinalFile, FileFd::ReadOnly, FileFd::Extension);
    Hashes LocalHashesCalc;
    LocalHashesCalc.AddFD(fd);
    HashStringList const LocalHashes = LocalHashesCalc.GetHashStringList();
@@ -2097,7 +2196,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    // queue the right diff
    Desc.URI = Target.URI + ".diff/" + available_patches[0].file + ".gz";
    Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
-   DestFile = GetPartialFileNameFromURI(Target.URI + ".diff/" + available_patches[0].file);
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI + ".diff/" + available_patches[0].file), Target);
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
@@ -2115,7 +2214,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 
    Item::Done(Message, Hashes, Cnf);
 
-   std::string const FinalFile = GetPartialFileNameFromURI(Target.URI);
+   std::string const FinalFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    std::string const PatchFile = GetDiffsPatchFileName(FinalFile);
 
    // success in downloading a diff, enter ApplyDiff state
@@ -2194,7 +2293,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
    Desc.URI = Target.URI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + string(".pdiff");
 
-   DestFile = GetPartialFileNameFromURI(Target.URI + ".diff/" + patch.file);
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI + ".diff/" + patch.file), Target);
 
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
@@ -2221,12 +2320,13 @@ void pkgAcqIndexMergeDiffs::Failed(string const &Message,pkgAcquire::MethodConfi
    State = StateErrorDiff;
    if (Debug)
       std::clog << "Falling back to normal index file acquire" << std::endl;
-   DestFile = GetPartialFileNameFromURI(Target.URI);
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    RenameOnError(PDiffError);
    std::string const patchname = GetMergeDiffsPatchFileName(DestFile, patch.file);
    if (RealFileExists(patchname))
       rename(patchname.c_str(), std::string(patchname + ".FAILED").c_str());
    new pkgAcqIndex(Owner, TransactionManager, Target);
+   DestFile.clear();
 }
 									/*}}}*/
 void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Hashes,	/*{{{*/
@@ -2237,7 +2337,8 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 
    Item::Done(Message, Hashes, Cnf);
 
-   string const FinalFile = GetPartialFileNameFromURI(Target.URI);
+   std::string const UncompressedFinalFile = GetPartialFileNameFromURI(Target.URI);
+   std::string const FinalFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    if (State == StateFetchDiff)
    {
       Rename(DestFile, GetMergeDiffsPatchFileName(FinalFile, patch.file));
@@ -2256,10 +2357,9 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
       // this is the last completed diff, so we are ready to apply now
       State = StateApplyDiff;
 
-      // patching needs to be bootstrapped with the 'old' version
-      if (symlink(GetFinalFilename().c_str(), FinalFile.c_str()) != 0)
+      if (BootstrapPDiffWith(UncompressedFinalFile, GetFinalFilename(), Target) == false)
       {
-	 Failed("Link creation of " + FinalFile + " to " + GetFinalFilename() + " failed", NULL);
+	 Failed("Bootstrapping of " + DestFile + " failed", NULL);
 	 return;
       }
 
@@ -2276,7 +2376,7 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
    else if (State == StateApplyDiff)
    {
       // move the result into place
-      std::string const Final = GetFinalFilename();
+      std::string const Final = GetKeepCompressedFileName(GetFinalFilename(), Target);
       if(Debug)
 	 std::clog << "Queue patched file in place: " << std::endl
 		   << DestFile << " -> " << Final << std::endl;
@@ -2288,7 +2388,7 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	    I != allPatches->end(); ++I)
       {
-	 std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
+	 std::string const PartialFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
 	 std::string const patch = GetMergeDiffsPatchFileName(PartialFile, (*I)->patch.file);
 	 unlink(patch.c_str());
       }
@@ -2325,40 +2425,14 @@ pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs() {}
 pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
                          pkgAcqMetaClearSig * const TransactionManager,
                          IndexTarget const &Target)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), Stage(STAGE_DOWNLOAD)
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), Stage(STAGE_DOWNLOAD),
+   CompressionExtensions(Target.Option(IndexTarget::COMPRESSIONTYPES))
 {
-   // autoselect the compression method
-   AutoSelectCompression();
    Init(Target.URI, Target.Description, Target.ShortDesc);
 
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "New pkgIndex with TransactionManager "
                 << TransactionManager << std::endl;
-}
-									/*}}}*/
-// AcqIndex::AutoSelectCompression - Select compression			/*{{{*/
-void pkgAcqIndex::AutoSelectCompression()
-{
-   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-   CompressionExtensions = "";
-   if (TransactionManager->MetaIndexParser != NULL && TransactionManager->MetaIndexParser->Exists(Target.MetaKey))
-   {
-      for (std::vector<std::string>::const_iterator t = types.begin();
-           t != types.end(); ++t)
-      {
-         std::string CompressedMetaKey = string(Target.MetaKey).append(".").append(*t);
-         if (*t == "uncompressed" ||
-             TransactionManager->MetaIndexParser->Exists(CompressedMetaKey) == true)
-            CompressionExtensions.append(*t).append(" ");
-      }
-   }
-   else
-   {
-      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	 CompressionExtensions.append(*t).append(" ");
-   }
-   if (CompressionExtensions.empty() == false)
-      CompressionExtensions.erase(CompressionExtensions.end()-1);
 }
 									/*}}}*/
 // AcqIndex::Init - defered Constructor					/*{{{*/

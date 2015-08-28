@@ -82,22 +82,37 @@ Additional optional properties:
   a hard error and the update process fails. Note that failures while
   downloading (e.g. 404 or hash verification errors) are failures,
   regardless of this setting.
+* KeepCompressed: The default is the value of Acquire::GzipIndexes,
+  which defaults to false. If true, the acquire system will keep the
+  file compressed on disk rather than extract it. If your frontend can't
+  deal with compressed files transparently you have to explicitly set
+  this option to false to avoid problems with users setting the option
+  globally. On the other hand, if you set it to true or don't set it you
+  have to ensure your frontend can deal with all compressed fileformats
+  supported by apt (libapt users can e.g. use FileFd).
 
 
 The acquire system will automatically choose to download a compressed
 file if it is available and uncompress it for you, just as it will also
-use pdiff patching if provided by the repository and enabled by the
+use PDiff patching if provided by the repository and enabled by the
 user. You only have to ensure that the Release file contains the
-information about the compressed files/pdiffs to make this happen.
+information about the compressed files/PDiffs to make this happen.
 *NO* properties have to be set to enable this!
 
 
-Additional properties exist, but these should *NOT* be set by frontends
+More properties exist, but these should *NOT* be set by frontends
 requesting files. They exist for internal and end-user usage only:
-* PDiffs: controls if apt will try to use pdiffs for this target.
+* PDiffs: controls if apt will try to use PDiffs for this target.
   Defaults to the value of Acquire::PDiffs which is true by default.
   Can be overridden per-source by the sources.list option of the same
   name. See the documentation for both of these for details.
+* CompressionTypes: The default value is a space separated list of
+  compression types supported by apt (see Acquire::CompressionTypes).
+  You can set this option to prevent apt from downloading a compression
+  type a frontend can't open transparently. This should always be
+  a temporary workaround through and a bug should be reported against
+  the frontend in question.
+
 
 # More examples
 
@@ -177,7 +192,7 @@ tools like 'grep-dctrl'.
 
 Accessing this information via libapt is done by reading the
 sources.lists (pkgSourceList), iterating over the metaIndex objects this
-creates and calling GetIndexTargets() on them. See the sourcecode of
+creates and calling GetIndexTargets() on them. See the source code of
 "apt-get indextargets" for a complete example.
 
 Note that by default targets are not listed if they weren't downloaded.
@@ -195,7 +210,7 @@ it will always refer to an uncompressed file, even if the index would be
 
 Remarks on fields only available in (default) --release-info mode:
 * Trusted: Denotes with a 'yes' or 'no' if the data in this file is
-  authenticated by a trustchain rooted in a trusted gpg key. You should
+  authenticated by a trust chain rooted in a trusted gpg key. You should
   be careful with untrusted data and warn the user if you use it.
 * Codename, Suite, Version, Origin and Label are fields from the Release
   file, are only present if they are present in the Release file and
