@@ -94,11 +94,9 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 			continue;
 		// ignore types we have no app ready to use
 		std::string const app = _config->Find(method);
-		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
-		for (; c != compressors.end(); ++c)
-			if (c->Name == app)
-				break;
-		if (c == compressors.end())
+		if (std::find_if(compressors.begin(), compressors.end(), [&app](APT::Configuration::Compressor const &c) {
+				return c.Name == app;
+			}) == compressors.end())
 			continue;
 		types.push_back(*o);
 	}
@@ -115,11 +113,9 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
 			continue;
 		// ignore types we have no app ready to use
-		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
-		for (; c != compressors.end(); ++c)
-			if (c->Name == Types->Value)
-				break;
-		if (c == compressors.end())
+		if (std::find_if(compressors.begin(), compressors.end(), [&Types](APT::Configuration::Compressor const &c) {
+				return c.Name == Types->Value;
+			}) == compressors.end())
 			continue;
 		types.push_back(Types->Tag);
 	}

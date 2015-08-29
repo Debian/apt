@@ -322,7 +322,7 @@ void pkgSourceList::Reset()
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
-   SrcList.erase(SrcList.begin(),SrcList.end());
+   SrcList.clear();
 }
 									/*}}}*/
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
@@ -441,34 +441,26 @@ bool pkgSourceList::ParseFileDeb822(string const &File)
 }
 									/*}}}*/
 // SourceList::FindIndex - Get the index associated with a file		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+static bool FindInIndexFileContainer(std::vector<pkgIndexFile *> const &Cont, pkgCache::PkgFileIterator const &File, pkgIndexFile *&Found)
+{
+   auto const J = std::find_if(Cont.begin(), Cont.end(), [&File](pkgIndexFile const * const J) {
+	 return J->FindInCache(*File.Cache()) == File;
+   });
+   if (J != Cont.end())
+   {
+      Found = (*J);
+      return true;
+   }
+   return false;
+}
 bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 			      pkgIndexFile *&Found) const
 {
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
-   {
-      vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
-      for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
-	   J != Indexes->end(); ++J)
-      {
-         if ((*J)->FindInCache(*File.Cache()) == File)
-         {
-            Found = (*J);
-            return true;
-         }
-      }
-   }
-   for (vector<pkgIndexFile *>::const_iterator J = VolatileFiles.begin();
-	 J != VolatileFiles.end(); ++J)
-   {
-      if ((*J)->FindInCache(*File.Cache()) == File)
-      {
-	 Found = (*J);
+      if (FindInIndexFileContainer(*(*I)->GetIndexFiles(), File, Found))
 	 return true;
-      }
-   }
-   return false;
+
+   return FindInIndexFileContainer(VolatileFiles, File, Found);
 }
 									/*}}}*/
 // SourceList::GetIndexes - Load the index files into the downloader	/*{{{*/
@@ -517,11 +509,12 @@ time_t pkgSourceList::GetLastModifiedTime()
       List = GetListOfFilesInDir(Parts, "list", true);
 
    // calculate the time
-   time_t mtime_sources = GetModificationTime(Main);
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      mtime_sources = std::max(mtime_sources, GetModificationTime(*I));
-
-   return mtime_sources;
+   std::vector<time_t> modtimes;
+   modtimes.reserve(1 + List.size());
+   modtimes.push_back(GetModificationTime(Main));
+   std::transform(List.begin(), List.end(), std::back_inserter(modtimes), GetModificationTime);
+   auto const maxmtime = std::max_element(modtimes.begin(), modtimes.end());
+   return *maxmtime;
 }
 									/*}}}*/
 std::vector<pkgIndexFile*> pkgSourceList::GetVolatileFiles() const	/*{{{*/

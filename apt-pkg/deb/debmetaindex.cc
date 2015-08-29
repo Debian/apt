@@ -446,10 +446,8 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
 #undef APT_TARGET
    // special case for --print-uris
    if (GetAll)
-   {
-      for (std::vector<IndexTarget>::const_iterator Target = targets.begin(); Target != targets.end(); ++Target)
-	 new pkgAcqIndex(Owner, TransactionManager, *Target);
-   }
+      for (auto const &Target: targets)
+	 new pkgAcqIndex(Owner, TransactionManager, Target);
 
    return true;
 }
@@ -537,17 +535,16 @@ std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/
       return Indexes;
 
    Indexes = new std::vector<pkgIndexFile*>();
-   std::vector<IndexTarget> const Targets = GetIndexTargets();
    bool const istrusted = IsTrusted();
-   for (std::vector<IndexTarget>::const_iterator T = Targets.begin(); T != Targets.end(); ++T)
+   for (auto const &T: GetIndexTargets())
    {
-      std::string const TargetName = T->Option(IndexTarget::CREATED_BY);
+      std::string const TargetName = T.Option(IndexTarget::CREATED_BY);
       if (TargetName == "Packages")
-	 Indexes->push_back(new debPackagesIndex(*T, istrusted));
+	 Indexes->push_back(new debPackagesIndex(T, istrusted));
       else if (TargetName == "Sources")
-	 Indexes->push_back(new debSourcesIndex(*T, istrusted));
+	 Indexes->push_back(new debSourcesIndex(T, istrusted));
       else if (TargetName == "Translations")
-	 Indexes->push_back(new debTranslationsIndex(*T));
+	 Indexes->push_back(new debTranslationsIndex(T));
    }
    return Indexes;
 }
@@ -673,20 +670,17 @@ static std::vector<std::string> parsePlusMinusOptions(std::string const &Name, /
 
    if ((val = Options.find(Name + "+")) != Options.end())
    {
-      std::vector<std::string> const plusArch = VectorizeString(val->second, ',');
-      for (std::vector<std::string>::const_iterator plus = plusArch.begin(); plus != plusArch.end(); ++plus)
-	 if (std::find(Values.begin(), Values.end(), *plus) == Values.end())
-	    Values.push_back(*plus);
+      std::vector<std::string> const plus = VectorizeString(val->second, ',');
+      std::copy_if(plus.begin(), plus.end(), std::back_inserter(Values), [&Values](std::string const &v) {
+	 return std::find(Values.begin(), Values.end(), v) == Values.end();
+      });
    }
    if ((val = Options.find(Name + "-")) != Options.end())
    {
-      std::vector<std::string> const minusArch = VectorizeString(val->second, ',');
-      for (std::vector<std::string>::const_iterator minus = minusArch.begin(); minus != minusArch.end(); ++minus)
-      {
-	 std::vector<std::string>::iterator kill = std::find(Values.begin(), Values.end(), *minus);
-	 if (kill != Values.end())
-	    Values.erase(kill);
-      }
+      std::vector<std::string> const minus = VectorizeString(val->second, ',');
+      Values.erase(std::remove_if(Values.begin(), Values.end(), [&minus](std::string const &v) {
+	 return std::find(minus.begin(), minus.end(), v) != minus.end();
+      }), Values.end());
    }
    return Values;
 }
@@ -743,25 +737,26 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 
       std::vector<std::string> const alltargets = _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true);
       std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, alltargets);
-      if (mytargets.empty() == false)
-	 for (auto const &target : alltargets)
-	 {
-	    std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
-	    if (opt == Options.end())
-	       continue;
-	    auto const tarItr = std::find(mytargets.begin(), mytargets.end(), target);
-	    bool const optValue = StringToBool(opt->second);
-	    if (optValue == true && tarItr == mytargets.end())
-	       mytargets.push_back(target);
-	    else if (optValue == false && tarItr != mytargets.end())
-	       mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
-	 }
+      for (auto const &target : alltargets)
+      {
+	 std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
+	 if (opt == Options.end())
+	    continue;
+	 auto const tarItr = std::find(mytargets.begin(), mytargets.end(), target);
+	 bool const optValue = StringToBool(opt->second);
+	 if (optValue == true && tarItr == mytargets.end())
+	    mytargets.push_back(target);
+	 else if (optValue == false && tarItr != mytargets.end())
+	    mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
+      }
+
       bool UsePDiffs = _config->FindB("Acquire::PDiffs", true);
       {
 	 std::map<std::string, std::string>::const_iterator const opt = Options.find("pdiffs");
 	 if (opt != Options.end())
 	    UsePDiffs = StringToBool(opt->second);
       }
+
       Deb->AddComponent(
 	    IsSrc,
 	    Section,
