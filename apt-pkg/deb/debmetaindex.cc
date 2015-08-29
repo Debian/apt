@@ -145,6 +145,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG_STR(flatArchive ? "flatDescription" : "Description", "");
 	 bool const IsOptional = APT_T_CONFIG_BOOL("Optional", true);
 	 bool const KeepCompressed = APT_T_CONFIG_BOOL("KeepCompressed", GzipIndex);
+	 bool const DefaultEnabled = APT_T_CONFIG_BOOL("DefaultEnabled", true);
 	 bool const UsePDiffs = APT_T_CONFIG_BOOL("PDiffs", E->UsePDiffs);
 	 std::string const CompressionTypes = APT_T_CONFIG_STR("CompressionTypes", DefCompressionTypes);
 #undef APT_T_CONFIG_BOOL
@@ -185,10 +186,8 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("REPO_URI", URI));
 	       Options.insert(std::make_pair("TARGET_OF", Type));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
-	       if (UsePDiffs)
-		  Options.insert(std::make_pair("PDIFFS", "yes"));
-	       else
-		  Options.insert(std::make_pair("PDIFFS", "no"));
+	       Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
+	       Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
 	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
 
 	       IndexTarget Target(
@@ -736,7 +735,14 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       }
 
       std::vector<std::string> const alltargets = _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true);
-      std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, alltargets);
+      std::vector<std::string> deftargets;
+      deftargets.reserve(alltargets.size());
+      std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(deftargets), [&](std::string const &t) {
+	 std::string c = "Acquire::IndexTargets::";
+	 c.append(Name).append("::").append(t).append("::DefaultEnabled");
+	 return _config->FindB(c, true);
+      });
+      std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, deftargets);
       for (auto const &target : alltargets)
       {
 	 std::map<std::string, std::string>::const_iterator const opt = Options.find(target);

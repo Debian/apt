@@ -145,6 +145,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(TARGET_OF);
       APT_CASE(CREATED_BY);
       APT_CASE(PDIFFS);
+      APT_CASE(DEFAULTENABLED);
       APT_CASE(COMPRESSIONTYPES);
 #undef APT_CASE
       case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);

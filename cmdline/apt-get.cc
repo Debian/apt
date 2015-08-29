@@ -1505,6 +1505,8 @@ static bool DoIndexTargets(CommandLine &CmdL)
 		  stanza << "PDiffs: " << O->second << "\n";
 	       else if (O->first == "COMPRESSIONTYPES")
 		  stanza << "CompressionTypes: " << O->second << "\n";
+	       else if (O->first == "DEFAULTENABLED")
+		  stanza << "DefaultEnabled: " << O->second << "\n";
 	       else
 		  stanza << format_key(O->first) << ": " << O->second << "\n";
 	    }

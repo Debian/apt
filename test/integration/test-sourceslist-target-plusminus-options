@@ -20,6 +20,7 @@ testtargets() {
 echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testtargets 'default' 'Packages' 'Translations'
 
+msgmsg 'Contents as a default target'
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
 Acquire::IndexTargets::deb::Contents {
 	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
@@ -27,6 +28,8 @@ Acquire::IndexTargets::deb::Contents {
 	Description "\$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
 };
 EOF
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testtargets 'default + Contents' 'Packages' 'Translations' 'Contents'
 
 echo 'deb [target=Packages] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
@@ -55,6 +58,49 @@ testtargets 'activate non-existing' 'Packages' 'Contents' 'Translations'
 
 echo 'deb [AppStream=no] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testtargets 'deactivate non-existing' 'Packages' 'Contents' 'Translations'
+
+echo 'deb [Contents=yes] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'activate existing' 'Packages' 'Contents' 'Translations'
+
+echo 'deb [Contents=no] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'deactivate existing' 'Packages' 'Translations'
+
+echo 'deb [target=Packages Contents=yes] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'explicit + activate' 'Packages' 'Contents'
+
+
+msgmsg 'Contents NOT as a default target'
+echo 'Acquire::IndexTargets::deb::Contents::DefaultEnabled "no";' > rootdir/etc/apt/apt.conf.d/content-target-notdefault.conf
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'default + Contents' 'Packages' 'Translations'
+
+echo 'deb [target=Packages] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'force Packages target' 'Packages'
+
+echo 'deb [target=Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'force Contents target' 'Contents'
+
+echo 'deb [target=Translations,Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'force two targets' 'Contents' 'Translations'
+
+echo 'deb [target+=Translations,Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'add existing' 'Packages' 'Contents' 'Translations'
+
+echo 'deb [target+=AppStream] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'add non-existing' 'Packages' 'Translations'
+
+echo 'deb [target-=Translations,Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'remove existing' 'Packages'
+
+echo 'deb [target-=AppStream] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'remove non-existing' 'Packages' 'Translations'
+
+echo 'deb [AppStream=yes] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'activate non-existing' 'Packages' 'Translations'
+
+echo 'deb [AppStream=no] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'deactivate non-existing' 'Packages' 'Translations'
 
 echo 'deb [Contents=yes] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testtargets 'activate existing' 'Packages' 'Contents' 'Translations'

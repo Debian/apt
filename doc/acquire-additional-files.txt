@@ -12,8 +12,8 @@ apt-transport-https.
 For its own operation libapt needs or can make use of Packages, Sources
 and Translation-* files, which it will acquire by default, but
 a repository might contain more data files (e.g.  Contents) a frontend
-might want to use and would therefore need to be downloaded as well
-(e.g. apt-file).
+(e.g. apt-file) might want to use and would therefore need to be
+downloaded as well.
 
 This file describes the configuration scheme such a frontend can use to
 instruct the Acquire system to download those additional files.
@@ -34,7 +34,7 @@ like this (see also apt.conf(5) manpage for configuration file syntax):
 		flatMetaKey "Packages";
 		flatDescription "$(RELEASE) Packages";
 
-		Optional "false";
+		Optional "no";
 	};
 
 All files which should be downloaded (nicknamed 'Targets') are mentioned
@@ -47,7 +47,9 @@ multiple types!
 After the type you can pick any valid and unique string which preferable
 refers to the file it downloads (In the example we picked 'Packages').
 This string is used as identifier for the target class and accessible as
-'Created-By' e.g. in the "apt-get indextargets" output as detailed below.
+'Created-By' e.g. in the "apt-get indextargets" output as detailed
+below.  It is also used to allow user to enable/disable targets per
+sources.list entry.
 
 All targets have three main properties you can define:
 * MetaKey: The identifier of the file to be downloaded as used in the
@@ -69,17 +71,14 @@ All targets have three main properties you can define:
 
 
 Additional optional properties:
-* flat{MetaKey,Description}: APT supports two types of repositories:
-  dists-style repositories which are the default and by far the most
-  common which are named after the fact that the files are in an
-  elaborated directory structure.  In contrast a flat-style repositories
-  lumps all files together in one directory.  Support for these flat
-  repositories exists mainly for legacy purposes only.  It is therefore
-  recommend to not set these values.
-* Optional: The default value is 'true' and should be kept at this
-  value.  If enabled the acquire system will skip the download if the
-  file isn't mentioned in the Release file. Otherwise this is treated as
-  a hard error and the update process fails. Note that failures while
+* DefaultEnabled: The default value is 'yes' which means that apt will
+  try to acquire this target from all sources. If set to 'no' the user
+  has to explicitly enable this target in the sources.list file with the
+  Targets option(s) – or override this value in a config file.
+* Optional: The default value is 'yes' and should be kept at this value.
+  If enabled the acquire system will skip the download if the file isn't
+  mentioned in the Release file. Otherwise this is treated as a hard
+  error and the update process fails. Note that failures while
   downloading (e.g. 404 or hash verification errors) are failures,
   regardless of this setting.
 * KeepCompressed: The default is the value of Acquire::GzipIndexes,
@@ -90,6 +89,13 @@ Additional optional properties:
   globally. On the other hand, if you set it to true or don't set it you
   have to ensure your frontend can deal with all compressed fileformats
   supported by apt (libapt users can e.g. use FileFd).
+* flat{MetaKey,Description}: APT supports two types of repositories:
+  dists-style repositories which are the default and by far the most
+  common which are named after the fact that the files are in an
+  elaborated directory structure.  In contrast a flat-style repository
+  lumps all files together in one directory.  Support for these flat
+  repositories exists mainly for legacy purposes only.  It is therefore
+  recommend to not set these values.
 
 
 The acquire system will automatically choose to download a compressed
@@ -101,7 +107,9 @@ information about the compressed files/PDiffs to make this happen.
 
 
 More properties exist, but these should *NOT* be set by frontends
-requesting files. They exist for internal and end-user usage only:
+requesting files. They exist for internal and end-user usage only.
+Some of these are – which are documented here only to ensure that they
+aren't accidentally used by frontends:
 * PDiffs: controls if apt will try to use PDiffs for this target.
   Defaults to the value of Acquire::PDiffs which is true by default.
   Can be overridden per-source by the sources.list option of the same
@@ -137,7 +145,7 @@ Acquire::IndexTargets {
 		flatMetaKey "Sources";
 		flatDescription "$(RELEASE) Sources";
 
-		Optional "false";
+		Optional "no";
 	};
 };
 
@@ -149,9 +157,8 @@ unknown variables have no default value nor are they touched: They are
 printed as-is.
 
 * $(RELEASE): This is usually an archive- or codename, e.g. "stable" or
-  "stretch".  Note that flat-style repositories do not have a archive-
+  "stretch".  Note that flat-style repositories do not have an archive-
   or codename per-se, so the value might very well be just "/" or so.
-  Again, as seen in the sources.list.
 * $(COMPONENT): as given in the sources.list, e.g. "main", "non-free" or
   "universe".  Note that flat-style repositories again do not really
   have a meaningful value here.
@@ -187,8 +194,12 @@ To get all the filenames of all Translation-en files you can e.g. call:
 	apt-get indextargets --format '$(FILENAME)' "Created-By: Translations" "Language: en"
 
 The line-based filtering and the formating is rather crude and feature-
-less by design, so it is recommend to use dedicated and more powerful
-tools like 'grep-dctrl'.
+less by design: The default format is Debians standard format deb822 (in
+particular: Field names are case-insensitive and the order of fields in
+the stanza is undefined), so instead of apt reimplementing powerful
+filters and formating for this command, it is recommend to use piping
+and dedicated tools like 'grep-dctrl' if you need more than the basics
+provided.
 
 Accessing this information via libapt is done by reading the
 sources.lists (pkgSourceList), iterating over the metaIndex objects this
@@ -223,8 +234,8 @@ Remarks on other available fields:
 * Target-Of: type of the sources.list entry
 * URI, Repo-URI: avoid using. Contains potentially username/password.
   Prefer 'Site', especially for display.
-* Optional: Decodes the option of the same name from the configuration.
-  Note that it is using 'yes' and 'no' instead of 'true' and 'false'.
+* Optional, DefaultEnabled, KeepCompressed: Decode the options of the
+  same name from the configuration.
 * Language, Architecture, Component: as defined further above, but with
   the catch that they might be missing if they don't effect the target
   (aka: They weren't used while evaluating the MetaKey template).
@@ -233,12 +244,16 @@ Again, additional fields might be visible in certain implementations,
 but you should avoid using them and instead talk to us about a portable
 implementation.
 
-# Multiple application requiring the same files
+# Multiple applications requiring the same files
 
 It is highly encouraged that applications talk to each other and to us
 about which files they require. It is usually best to have a common
 package ship the configuration needed to get the files, but specific
 needs might require specific solutions. Again: talk to us.
+
+Bad things will happen if multiple frontends request the same file(s)
+via different targets, which is another reason why coordination is very
+important!
 
 # Acquiring files not mentioned in the Release file
 
@@ -254,3 +269,25 @@ accessible (e.g. proxy settings) or that local sources (file:/, cdrom:/)
 start requesting online files…
 
 In other words: We would be opening Pandora's box.
+
+# Acquiring files to a specific location on disk
+
+You can't by design to avoid multiple frontends requesting the same file
+to be downloaded to multiple different places on (different) disks
+(among other reasons).  See the next point for a solution if you really
+have to force a specific location by creating symlinks.
+
+# Post processing the acquired files
+
+You can't modify the files apt has downloaded as apt keeps state with
+e.g. the modification times of the files and advanced features like
+PDiffs break.
+
+You can however install an APT::Update::Post-Invoke{-Success,} hook
+script and use them to copy (modified) files to a different location.
+Use 'apt-get indextargets' (or similar) to get the filenames – do not
+look into /var/lib/apt/lists directly!
+
+Please avoid time consuming calculations in the scripts and instead just
+trigger a background task as there is little to no feedback for the user
+while hook scripts run.
