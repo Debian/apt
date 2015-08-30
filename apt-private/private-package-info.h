@@ -16,6 +16,13 @@ public:
         RESIDUAL_CONFIG
     } PackageStatus;
 
+    typedef enum{
+        ALPHABETIC,
+        REVERSEALPHABETIC,
+        STATUS,
+        VERSION
+    } SortBy;
+
     PackageInfo(pkgCacheFile &CacheFile, pkgRecords &records,
                        pkgCache::VerIterator const &V, std::string formated_output="");
 
@@ -39,6 +46,7 @@ private:
     PackageStatus GetPackageStatus(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V);
 };
 
+PackageInfo::SortBy hashit (std::string inString);
 //Sort kinds
 bool OrderByStatus (const PackageInfo &a, const PackageInfo &b);
 bool OrderByVersion (const PackageInfo &a, const PackageInfo &b);

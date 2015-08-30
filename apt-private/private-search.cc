@@ -116,12 +116,28 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 	 outputVector.push_back(pkg);
       }
    }
+   switch(hashit(_config->Find("APT::Cache::OrderBy","Alphabetic")))
+   {
+      case PackageInfo::REVERSEALPHABETIC:
+         std::sort(outputVector.begin(), outputVector.end(), OrderByReverseAlphabetic);
+         break;
+      case PackageInfo::STATUS:
+         std::sort(outputVector.begin(), outputVector.end(), OrderByStatus);
+         break;
+      case PackageInfo::VERSION:
+         std::sort(outputVector.begin(), outputVector.end(), OrderByVersion);
+         break;
+      default:
+         std::sort(outputVector.begin(), outputVector.end(), OrderByAlphabetic);
+         break;
+   }
    APT_FREE_PATTERNS();
    progress.Done();
 
-	// output the sorted vector
-	for(auto k:outputVector)
-		std::cout << k.formated_output() << std::endl;
+   // output the sorted vector
+   for(auto k:outputVector)
+      std::cout << k.formated_output() << std::endl;
+
 
    return true;
 }

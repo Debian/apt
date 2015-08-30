@@ -23,6 +23,8 @@
 #include <iostream>
 #include <sstream>
 #include <langinfo.h>
+#include <cctype>
+#include <algorithm>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/ioctl.h>
@@ -87,6 +89,18 @@ PackageInfo::GetPackageStatus(pkgCacheFile &CacheFile,
 }
                   /*}}}*/
 
+
+PackageInfo::SortBy 
+hashit (string inString)
+{
+   std::transform(inString.begin(), inString.end(), inString.begin(), ::tolower);
+   if (inString == "alphabetic") return PackageInfo::ALPHABETIC;
+   else if (inString == "reverse") return PackageInfo::REVERSEALPHABETIC;
+   else if (inString == "reverse alphabetic") return PackageInfo::REVERSEALPHABETIC;
+   else if (inString == "version") return PackageInfo::VERSION;
+   else if (inString == "status") return PackageInfo::STATUS;
+   return PackageInfo::ALPHABETIC;
+}
 
 bool OrderByStatus (const PackageInfo &a, const PackageInfo &b)
 {
