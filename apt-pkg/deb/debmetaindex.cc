@@ -33,6 +33,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    public:
    struct APT_HIDDEN debSectionEntry
    {
+      std::string sourcesEntry;
       std::string Name;
       std::vector<std::string> Targets;
       std::vector<std::string> Architectures;
@@ -186,6 +187,58 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
 	       }
 
+	       {
+		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
+		     return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
+			E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T == IT.Option(IndexTarget::CREATED_BY);
+		  });
+		  if (dup != IndexTargets.end())
+		  {
+		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
+			break;
+		     continue;
+		  }
+	       }
+
+	       {
+		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
+		     return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
+			E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T != IT.Option(IndexTarget::CREATED_BY);
+		  });
+		  if (dup != IndexTargets.end())
+		  {
+		     std::string const dupT = dup->Option(IndexTarget::CREATED_BY);
+		     std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
+		     //TRANSLATOR: an identifier like Packages; Releasefile key indicating
+		     // a file like main/binary-amd64/Packages; another identifier like Contents;
+		     // filename and linenumber of the sources.list entry currently parsed
+		     _error->Warning(_("Target %s wants to acquire the same file (%s) as %s from source %s"),
+			   T->c_str(), MetaKey.c_str(), dupT.c_str(), dupEntry.c_str());
+		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
+			break;
+		     continue;
+		  }
+	       }
+
+	       {
+		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &T) {
+		     return MetaKey == T.MetaKey && baseURI == T.Option(IndexTarget::BASE_URI) &&
+			E->sourcesEntry != T.Option(IndexTarget::SOURCESENTRY);
+		  });
+		  if (dup != IndexTargets.end())
+		  {
+		     std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
+		     //TRANSLATOR: an identifier like Packages; Releasefile key indicating
+		     // a file like main/binary-amd64/Packages; filename and linenumber of
+		     // two sources.list entries
+		     _error->Warning(_("Target %s (%s) is configured multiple times in %s and %s"),
+			   T->c_str(), MetaKey.c_str(), dupEntry.c_str(), E->sourcesEntry.c_str());
+		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
+			break;
+		     continue;
+		  }
+	       }
+
 	       // not available in templates, but in the indextarget
 	       Options.insert(std::make_pair("BASE_URI", baseURI));
 	       Options.insert(std::make_pair("REPO_URI", URI));
@@ -194,6 +247,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
 	       Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
 	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
+	       Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
 
 	       IndexTarget Target(
 		     MetaKey,
@@ -227,7 +281,8 @@ std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
    return IndexTargets;
 }
 									/*}}}*/
-void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{{{*/
+void debReleaseIndex::AddComponent(std::string const &sourcesEntry,	/*{{{*/
+	 bool const isSrc, std::string const &Name,
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
 	 std::vector<std::string> Languages,
@@ -236,7 +291,7 @@ void debReleaseIndex::AddComponent(bool const isSrc, std::string const &Name,/*{
    if (Languages.empty() == true)
       Languages.push_back("none");
    debReleaseIndexPrivate::debSectionEntry const entry = {
-      Name, Targets, Architectures, Languages, usePDiffs
+      sourcesEntry, Name, Targets, Architectures, Languages, usePDiffs
    };
    if (isSrc)
       d->DebSrcEntries.push_back(entry);
@@ -768,7 +823,9 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    UsePDiffs = StringToBool(opt->second);
       }
 
+      auto const entry = Options.find("sourceslist-entry");
       Deb->AddComponent(
+	    entry->second,
 	    IsSrc,
 	    Section,
 	    mytargets,

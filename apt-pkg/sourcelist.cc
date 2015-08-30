@@ -119,6 +119,12 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
 	 Options[m->second.first] = option;
       }
 
+   {
+      std::string entry;
+      strprintf(entry, "%s:%i", Fd.Name().c_str(), i);
+      Options["sourceslist-entry"] = entry;
+   }
+
    // now create one item per suite/section
    string Suite = Tags.FindS("Suites");
    Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
@@ -186,6 +192,11 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    // Parse option field if it exists
    // e.g.: [ option1=value1 option2=value2 ]
    map<string, string> Options;
+   {
+      std::string entry;
+      strprintf(entry, "%s:%i", File.c_str(), CurLine);
+      Options["sourceslist-entry"] = entry;
+   }
    if (Buffer != 0 && Buffer[0] == '[')
    {
       ++Buffer; // ignore the [

@@ -88,6 +88,7 @@ class IndexTarget							/*{{{*/
       PDIFFS,
       COMPRESSIONTYPES,
       DEFAULTENABLED,
+      SOURCESENTRY,
    };
    std::string Option(OptionKeys const Key) const;
    bool OptionBool(OptionKeys const Key) const;

@@ -59,7 +59,8 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
    virtual bool IsTrusted() const APT_OVERRIDE;
 
-   void AddComponent(bool const isSrc, std::string const &Name,
+   void AddComponent(std::string const &sourcesEntry,
+	 bool const isSrc, std::string const &Name,
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
 	 std::vector<std::string> Languages,
