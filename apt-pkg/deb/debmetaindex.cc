@@ -133,6 +133,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 DefCompressionTypes = os.str();
       }
    }
+   std::string const NativeArch = _config->Find("APT::Architecture");
    bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
@@ -170,6 +171,10 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("LANGUAGE", *L));
 	       if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
 		  Options.insert(std::make_pair("ARCHITECTURE", *A));
+	       else if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
+		  Options.insert(std::make_pair("ARCHITECTURE", NativeArch));
+	       if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
+		  Options.insert(std::make_pair("NATIVE_ARCHITECTURE", NativeArch));
 
 	       std::string MetaKey = tplMetaKey;
 	       std::string ShortDesc = tplShortDesc;
