@@ -25,6 +25,7 @@ APT_PUBLIC extern unsigned int ScreenWidth;
 
 APT_PUBLIC bool InitOutput(std::basic_streambuf<char> * const out = std::cout.rdbuf());
 
+std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P);
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                        pkgCache::VerIterator const &V, std::ostream &out,
                        std::string const &format);
