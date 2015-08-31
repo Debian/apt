@@ -46,7 +46,7 @@ E: Unable to correct problems, you have held broken packages." aptget install ./
 
 testdpkgnotinstalled 'foo'
 testsuccess aptget install ./incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
-testdpkginstalled 'foo'
+testdpkginstalled 'foo:i386'
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
