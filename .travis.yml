@@ -12,6 +12,6 @@ install:
 script:
  - make
  - make test
- - ./test/integration/run-tests
+ - ./test/integration/run-tests -q
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
- - sudo ./test/integration/run-tests
+ - sudo ./test/integration/run-tests -q
