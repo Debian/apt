@@ -371,8 +371,8 @@ unsigned short debListParser::VersionHash()
    status = not-installed, config-files, half-installed, unpacked,
             half-configured, triggers-awaited, triggers-pending, installed
  */
-bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
-				pkgCache::VerIterator &Ver)
+bool debListParser::ParseStatus(pkgCache::PkgIterator &,
+				pkgCache::VerIterator &)
 {
    return true;
 }

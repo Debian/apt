@@ -45,7 +45,6 @@ static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
 
 static std::vector<SrvRec> SrvRecords;
-static int LastSrvRecord = 0;
 
 // Set of IP/hostnames that we timed out before or couldn't resolve
 static std::set<std::string> bad_addr;
@@ -134,11 +133,10 @@ static bool DoConnect(struct addrinfo *Addr,std::string Host,
    return true;
 }
 									/*}}}*/
-
-// Connect to a given Hostname 
-bool ConnectToHostname(std::string Host,int Port,const char *Service,
-                            int DefPort,int &Fd,
-                            unsigned long TimeOut,pkgAcqMethod *Owner)
+// Connect to a given Hostname						/*{{{*/
+static bool ConnectToHostname(std::string const &Host, int const Port,
+      const char * const Service, int DefPort, int &Fd,
+      unsigned long const TimeOut, pkgAcqMethod * const Owner)
 {
    // Convert the port name/number
    char ServStr[300];
