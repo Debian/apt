@@ -1,6 +1,6 @@
 # Czech translation of APT
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004-2014.
+# Miroslav Kure <kurem@debian.cz>, 2004-2015.
 #
 #
 msgid ""
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2015-08-27 17:55+0200\n"
-"PO-Revision-Date: 2014-10-05 06:09+0200\n"
+"PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -23,9 +23,8 @@ msgid "Package %s version %s has an unmet dep:\n"
 msgstr "Balík %s verze %s má nesplněné závislosti:\n"
 
 #: cmdline/apt-cache.cc:319
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "Příkaz update neakceptuje žádné argumenty"
+msgstr "apt-cache stats neakceptuje žádné argumenty"
 
 #: cmdline/apt-cache.cc:325
 msgid "Total package names: "
@@ -138,7 +137,7 @@ msgstr "(nenalezeno)"
 #: cmdline/apt-cache.cc:1700
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s s prioritou %d\n"
 
 #: cmdline/apt-cache.cc:1706
 msgid "  Installed: "
@@ -235,9 +234,8 @@ msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Zadejte prosím název tohoto média, např. „Debian 5.0.3 Disk 1“"
 
 #: cmdline/apt-cdrom.cc:92
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Vložte prosím médium do mechaniky a stiskněte enter"
+msgstr "Vložte prosím médium do mechaniky a stiskněte [Enter]"
 
 #: cmdline/apt-cdrom.cc:140
 #, c-format
@@ -451,12 +449,12 @@ msgstr ""
 #: cmdline/apt-get.cc:1012
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "Pro získání závislostí pro sestavení se používá adresář „%s“\n"
 
 #: cmdline/apt-get.cc:1022
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Chyba při zpracování závislostí pro sestavení"
+msgstr "Pro získání závislostí pro sestavení se používá soubor „%s“\n"
 
 #: cmdline/apt-get.cc:1047 cmdline/apt-get.cc:1050
 #, c-format
@@ -626,17 +624,15 @@ msgid "Download Failed"
 msgstr "Stažení selhalo"
 
 #: cmdline/apt-helper.cc:88
-#, fuzzy
 msgid "Must specifc at least one srv record"
-msgstr "Musíte zadat aspoň jeden pár url/jméno souboru"
+msgstr "Musíte zadat aspoň jeden SRV záznam"
 
 #: cmdline/apt-helper.cc:95
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec %s selhalo"
 
 #: cmdline/apt-helper.cc:118
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -657,6 +653,7 @@ msgstr ""
 "\n"
 "Příkazy:\n"
 "   download-file - stáhne zadané uri do cílové cesty\n"
+"   srv-lookup - vyhledá SRV záznam (např. _http._tcp.ftp.debian.org)\n"
 "   auto-detect-proxy - detekuje proxy pomocí apt.conf\n"
 "\n"
 "                       Tento APT pomocník má schopnosti svatého čehokoliv.\n"
@@ -758,7 +755,6 @@ msgstr ""
 "Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
 
 #: cmdline/apt.cc:46
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
@@ -792,6 +788,7 @@ msgstr ""
 "\n"
 " install - nainstaluje balíky\n"
 " remove  - odstraní balíky\n"
+" autoremove - automaticky odstraní nepoužívané balíky\n"
 "\n"
 " upgrade - aktualizuje systém instalací/aktualizací balíků\n"
 " full-upgrade - aktualizuje systém instalací/aktualizací/odstraněním balíků\n"
@@ -1172,6 +1169,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"Automaticky zakázáno %s kvůli chybné odpovědi od serveru/proxy. (man 5 "
+"apt.conf)"
 
 #: methods/server.cc:741
 msgid "Internal error"
@@ -1410,9 +1409,9 @@ msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Pozn: vybírám „%s“ pro úlohu „%s“\n"
 
 #: apt-private/private-cacheset.cc:133
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Pozn: vybírám „%s“ pro regulární výraz „%s“\n"
+msgstr "Pozn: vybírám „%s“ pro masku „%s“\n"
 
 #: apt-private/private-cacheset.cc:139
 #, c-format
@@ -1425,9 +1424,8 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "Balík %s je virtuální balík poskytovaný:\n"
 
 #: apt-private/private-cacheset.cc:168
-#, fuzzy
 msgid " [Installed]"
-msgstr "[instalovaný]"
+msgstr " [Nainstalovaný]"
 
 #: apt-private/private-cacheset.cc:177
 msgid " [Not candidate version]"
@@ -1505,24 +1503,27 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes je zastaralé, použijte některou z voleb začínajících --allow."
 
 #: apt-private/private-install.cc:108
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
+msgstr ""
+"Nezbytné balíky byly odstraněny a -y bylo použito bez --allow-remove-"
+"essential."
 
 #: apt-private/private-install.cc:110
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
+msgstr "Balíky byly degradovány a -y bylo použito bez --allow-downgrades."
 
 #: apt-private/private-install.cc:112
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Podržené balíky byly změněny a -y bylo použito bez --allow-change-held-"
+"packages."
 
 #: apt-private/private-install.cc:128
 msgid "Internal error, Ordering didn't finish"
@@ -1721,9 +1722,8 @@ msgid "Broken packages"
 msgstr "Poškozené balíky"
 
 #: apt-private/private-install.cc:697
-#, fuzzy
 msgid "The following additional packages will be installed:"
-msgstr "Následující extra balíky budou instalovány:"
+msgstr "Následující dodatečné balíky budou instalovány:"
 
 #: apt-private/private-install.cc:786
 msgid "Suggested packages:"
@@ -1752,9 +1752,9 @@ msgstr "Přeinstalace %s není možná, protože nelze stáhnout.\n"
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc:832
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s je již nejnovější verze.\n"
+msgstr "%s je již nejnovější verze (%s).\n"
 
 #: apt-private/private-install.cc:880
 #, c-format
@@ -1784,6 +1784,8 @@ msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
 msgstr ""
+"Pro stažení nelze zahodit oprávnění, jelikož soubor „%s“ by nebyl "
+"přístupný uživateli „%s“."
 
 #: apt-private/private-download.cc:94
 msgid "WARNING: The following packages cannot be authenticated!"
@@ -1802,11 +1804,12 @@ msgid "Install these packages without verification?"
 msgstr "Instalovat tyto balíky bez ověření?"
 
 #: apt-private/private-download.cc:122
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
+msgstr ""
+"Vyskytly se neověřené balíky a -y bylo použito bez --allow-"
+"unauthenticated."
 
 #: apt-private/private-download.cc:154
 #, c-format
@@ -1841,28 +1844,28 @@ msgstr "Fulltextové hledání"
 #: apt-private/acqprogress.cc:74
 #, c-format
 msgid "Hit:%lu %s"
-msgstr "Cíl:%lu %s"
+msgstr "Mám:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
 #. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
 #: apt-private/acqprogress.cc:96
 #, c-format
 msgid "Get:%lu %s"
-msgstr "Mám:%lu %s"
+msgstr "Stahuje se:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download, but the error is ignored (compare "Err:")
 #: apt-private/acqprogress.cc:126
 #, c-format
 msgid "Ign:%lu %s"
-msgstr ""
+msgstr "Ign:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download and the error is critical (compare "Ign:")
 #: apt-private/acqprogress.cc:136
 #, c-format
 msgid "Err:%lu %s"
-msgstr ""
+msgstr "Err:%lu %s"
 
 #: apt-private/acqprogress.cc:159
 #, c-format
@@ -1874,15 +1877,15 @@ msgid " [Working]"
 msgstr " [Pracuji]"
 
 #: apt-private/acqprogress.cc:297
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press [Enter]\n"
 msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
+"Výměna média: vložte prosím disk nazvaný\n"
 " „%s“\n"
-"do mechaniky „%s“ a stiskněte enter\n"
+"do mechaniky „%s“ a stiskněte [Enter]\n"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
@@ -1941,11 +1944,10 @@ msgstr "Chybné standardní nastavení!"
 
 #: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
 #: dselect/install:106 dselect/update:45
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Pro pokračování stiskněte enter."
+msgstr "Pro pokračování stiskněte [Enter]."
 
-#: dselect/install:92
+#: Dselect/install:92
 msgid "Do you want to erase any previously downloaded .deb files?"
 msgstr "Chcete smazat všechny dříve stažené .deb soubory?"
 
@@ -2047,10 +2049,11 @@ msgid "Method %s did not start correctly"
 msgstr "Metoda %s nebyla spuštěna správně"
 
 #: apt-pkg/acquire-worker.cc:537
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte enter."
+msgstr ""
+"Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte [Enter]."
 
 #: apt-pkg/pkgcache.cc:163
 msgid "Empty package cache"
@@ -2074,9 +2077,9 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "Tato APT nepodporuje systém pro správu verzí „%s“"
 
 #: apt-pkg/pkgcache.cc:194
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "Cache balíků byla vytvořena pro jinou architekturu"
+msgstr "Cache balíků byla vytvořena pro jinou architekturu: %s vs %s"
 
 #: apt-pkg/pkgcache.cc:319
 msgid "Depends"
@@ -2206,7 +2209,7 @@ msgstr "Spuštění externího řešitele"
 
 #: apt-pkg/acquire-item.cc:116
 msgid "Use --allow-insecure-repositories to force the update"
-msgstr ""
+msgstr "Pro vynucení aktualizace použijte --allow-insecure-repositories"
 
 #: apt-pkg/acquire-item.cc:561 apt-pkg/contrib/fileutl.cc:2162
 #, c-format
@@ -2226,18 +2229,17 @@ msgid "Invalid file format"
 msgstr "Neplatná formát souboru"
 
 #: apt-pkg/acquire-item.cc:600
-#, fuzzy
 msgid "Signature error"
-msgstr "Chyba zápisu"
+msgstr "Chyba podpisu"
 
 #: apt-pkg/acquire-item.cc:789
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
 "Při ověřování podpisů se objevila chyba. Repositář není aktualizovaný, tudíž "
-"se použijí předchozí indexové soubory. Chyba GPG: %s: %s\n"
+"se použijí předchozí indexové soubory. Chyba GPG: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc:799 apt-pkg/acquire-item.cc:805
@@ -2281,6 +2283,8 @@ msgid ""
 "The data from '%s' is not signed. Packages from that repository can not be "
 "authenticated."
 msgstr ""
+"Data z „%s“ nejsou podepsaná. Balíky z tohoto repositáře nemohou být "
+"ověřeny."
 
 #: apt-pkg/acquire-item.cc:1326
 #, c-format
@@ -2288,17 +2292,21 @@ msgid ""
 "The repository '%s' does not have a Release file. This is deprecated, please "
 "contact the owner of the repository."
 msgstr ""
+"Repositář „%s“ neobsahuje soubor Release. To již není podporováno, "
+"kontaktujte prosím správce repositáře."
 
 #: apt-pkg/acquire-item.cc:1459
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "Adresář %s je odkloněn"
+msgstr "Repositář „%s“ není podepsán."
 
 #: apt-pkg/acquire-item.cc:1466
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"Toto není běžně povoleno, ale bylo to vynuceno volbou Acquire::"
+"AllowDowngradeToInsecureRepositories."
 
 #: apt-pkg/acquire-item.cc:2611
 #, c-format
@@ -2323,9 +2331,9 @@ msgstr ""
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc:2916 apt-pkg/acquire-item.cc:3058
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "Seznam změn %s (%s)"
+msgstr "Seznam změn pro %s=%s není dostupný"
 
 #: apt-pkg/acquire.cc:126 apt-pkg/acquire.cc:146 apt-pkg/cdrom.cc:833
 #, c-format
@@ -2381,16 +2389,16 @@ msgstr "Nerozumím vypíchnutí typu %s"
 #: apt-pkg/policy.cc:484
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
-msgstr ""
+msgstr "%s: Hodnota %s leží mimo rozsah platných priorit (%d až %d)"
 
 #: apt-pkg/policy.cc:491
 msgid "No priority (or zero) specified for pin"
 msgstr "Pro vypíchnutí nebyla zadána žádná (nebo nulová) priorita"
 
 #: apt-pkg/update.cc:76
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "Selhalo stažení %s  %s\n"
+msgstr "Selhalo stažení %s  %s"
 
 #: apt-pkg/update.cc:102 apt-pkg/update.cc:104
 msgid ""
@@ -2430,9 +2438,9 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Tento běh instalace si vyžádá dočasné odstranění klíčového balíku %s kvůli "
-"smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to skutečně "
-"chcete udělat, aktivujte možnost APT::Force-LoopBreak."
+"Tento běh instalace si vyžádá dočasné odstranění nezbytného balíku %s "
+"kvůli smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to "
+"skutečně chcete udělat, aktivujte možnost APT::Force-LoopBreak."
 
 #: apt-pkg/cdrom.cc:498
 #, c-format
@@ -2568,7 +2576,7 @@ msgstr "Nelze zpracovat soubor %s (%d)"
 #: apt-pkg/tagfile.cc:541 apt-pkg/tagfile.cc:544
 #, c-format
 msgid "Cannot convert %s to integer"
-msgstr ""
+msgstr "Nelze převést %s na celé číslo (integer)"
 
 #: apt-pkg/cacheset.cc:500
 #, c-format
@@ -2633,9 +2641,9 @@ msgstr ""
 #: apt-pkg/sourcelist.cc:233 apt-pkg/sourcelist.cc:235
 #: apt-pkg/sourcelist.cc:238 apt-pkg/sourcelist.cc:244
 #: apt-pkg/sourcelist.cc:251
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Zkomolený override soubor %s, řádek %llu (%s)"
+msgstr "Zkomolený řádek %u v %s souboru %s (%s)"
 
 #: apt-pkg/sourcelist.cc:355
 #, c-format
@@ -2653,9 +2661,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
 
 #: apt-pkg/sourcelist.cc:413 apt-pkg/sourcelist.cc:419
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
+msgstr "Zkomolená část %u v seznamu zdrojů %s (typ)"
 
 #: apt-pkg/sourcelist.cc:429
 #, c-format
@@ -2693,12 +2701,12 @@ msgstr "Neplatná položka „Valid-Until“ v Release souboru %s"
 #: apt-pkg/deb/debmetaindex.cc:485
 #, c-format
 msgid "Conflicting values set for option %s concerning source %s %s"
-msgstr ""
+msgstr "Pro volbu %s byly nastaveny kolidující hodnoty zdroje %s %s"
 
 #: apt-pkg/deb/debmetaindex.cc:480
 #, c-format
 msgid "Invalid value set for option %s concerning source %s %s (%s)"
-msgstr ""
+msgstr "Pro volbu %s byla nastavena kolidující hodnota zdroje %s %s (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc:110
 #, c-format
@@ -3161,19 +3169,23 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntaktická chyba %s:%u: Na konci souboru je zbytečné smetí"
 
 #: apt-pkg/contrib/cmndline.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Parametr příkazové řádky „%c“ [z %s] je neznámý"
+msgstr ""
+"Parametr příkazové řádky „%c“ [z %s] nedává v kombinaci s ostatními "
+"parametry smysl."
 
 #: apt-pkg/contrib/cmndline.cc:152 apt-pkg/contrib/cmndline.cc:161
 #: apt-pkg/contrib/cmndline.cc:169
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Nerozumím parametru %s příkazové řádky"
+msgstr ""
+"Parametr příkazové řádky %s nedává v kombinaci s ostatními parametry "
+"smysl."
 
 #: apt-pkg/contrib/cmndline.cc:174
 #, c-format
@@ -3739,9 +3751,9 @@ msgid "Failed to read the archive headers"
 msgstr "Chyba při čtení hlaviček archivu"
 
 #: apt-inst/contrib/extracttar.cc:110
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Nelze najít autentizační záznam pro: %s"
+msgstr "Nelze najít zadaný komprimační program „%s“"
 
 #: apt-inst/contrib/extracttar.cc:142 apt-inst/contrib/extracttar.cc:172
 msgid "Corrupted archive"
@@ -3809,10 +3821,6 @@ msgstr "Neznámá hlavička TARu typ %u, člen %s"
 
 #~ msgid "Collecting File Provides"
 #~ msgstr "Collecting File poskytuje"
-
-#, fuzzy
-#~ msgid "Does not start with a cleartext signature"
-#~ msgstr "Soubor %s nezačíná podpisem"
 
 #~ msgid "Unable to find hash sum for '%s' in Release file"
 #~ msgstr "V souboru Release nelze najít kontrolní součet „%s“"
