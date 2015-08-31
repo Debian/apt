@@ -303,9 +303,11 @@ class pkgAcquire
 
    /** \brief Get the head of the list of items. */
    inline ItemIterator ItemsBegin() {return Items.begin();};
+   inline ItemCIterator ItemsBegin() const {return Items.begin();};
 
    /** \brief Get the end iterator of the list of items. */
    inline ItemIterator ItemsEnd() {return Items.end();};
+   inline ItemCIterator ItemsEnd() const {return Items.end();};
    
    // Iterate over queued Item URIs
    class UriIterator;

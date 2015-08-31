@@ -629,9 +629,6 @@ static bool DoDownload(CommandLine &CmdL)
       return true;
    }
 
-   // Disable drop-privs if "_apt" can not write to the target dir
-   CheckDropPrivsMustBeDisabled(Fetcher);
-
    if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
       return false;
 
@@ -849,9 +846,6 @@ static bool DoSource(CommandLine &CmdL)
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
-
-   // Disable drop-privs if "_apt" can not write to the target dir
-   CheckDropPrivsMustBeDisabled(Fetcher);
 
    // check authentication status of the source as well
    if (UntrustedList.empty() == false && AuthPrompt(UntrustedList, false) == false)
@@ -1403,8 +1397,6 @@ static bool DoChangelog(CommandLine &CmdL)
 
    if (printOnly == false)
    {
-      // Note: CheckDropPrivsMustBeDisabled isn't needed here as the download happens in a dedicated tempdir
-
       bool Failed = false;
       if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
 	 return false;

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <pwd.h>
 #include <grp.h>
 #include <dirent.h>
@@ -446,8 +447,58 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 /* This runs the queues. It manages a select loop for all of the
    Worker tasks. The workers interact with the queues and items to
    manage the actual fetch. */
+static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
+{
+   if(getuid() != 0)
+      return;
+
+   std::string SandboxUser = _config->Find("APT::Sandbox::User");
+   if (SandboxUser.empty())
+      return;
+
+   struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+   if (pw == NULL)
+      return;
+
+   if (setegid(pw->pw_gid) != 0)
+      _error->Errno("setegid", "setegid %u failed", pw->pw_gid);
+   if (seteuid(pw->pw_uid) != 0)
+      _error->Errno("seteuid", "seteuid %u failed", pw->pw_uid);
+
+   bool dropPrivs = true;
+   for (pkgAcquire::ItemCIterator I = Fetcher.ItemsBegin();
+	I != Fetcher.ItemsEnd() && dropPrivs == true; ++I)
+   {
+      if ((*I)->DestFile.empty())
+	 continue;
+
+      // we check directory instead of file as the file might or might not
+      // exist already as a link or not which complicates everything…
+      std::string dirname = flNotFile((*I)->DestFile);
+      if (DirectoryExists(dirname))
+	 ;
+      else
+	 continue; // assume it is created correctly by the acquire system
+
+      if (faccessat(AT_FDCWD, dirname.c_str(), R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0)
+      {
+	 dropPrivs = false;
+	 _error->WarningE("pkgAcquire::Run", _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
+	       (*I)->DestFile.c_str(), SandboxUser.c_str());
+	 _config->Set("APT::Sandbox::User", "");
+	 break;
+      }
+   }
+
+   if (seteuid(0) != 0)
+      _error->Errno("seteuid", "seteuid %u failed", 0);
+   if (setegid(0) != 0)
+      _error->Errno("setegid", "setegid %u failed", 0);
+}
 pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {
+   CheckDropPrivsMustBeDisabled(*this);
+
    Running = true;
    
    for (Queue *I = Queues; I != 0; I = I->Next)

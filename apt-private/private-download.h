@@ -8,8 +8,6 @@
 
 class pkgAcquire;
 
-APT_PUBLIC bool CheckDropPrivsMustBeDisabled(pkgAcquire &Fetcher);
-
 // Check if all files in the fetcher are authenticated
 APT_PUBLIC bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser);
 

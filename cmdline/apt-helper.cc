@@ -68,9 +68,6 @@ static bool DoDownloadFile(CommandLine &CmdL)
       fileind += 3;
    }
 
-   // Disable drop-privs if "_apt" can not write to the target dir
-   CheckDropPrivsMustBeDisabled(Fetcher);
-
    bool Failed = false;
    if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
       return _error->Error(_("Download Failed"));

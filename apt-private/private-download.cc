@@ -26,55 +26,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-bool CheckDropPrivsMustBeDisabled(pkgAcquire &Fetcher)			/*{{{*/
-{
-   // no need/possibility to drop privs
-   if(getuid() != 0)
-      return true;
-
-   // the user does not want to drop privs
-   std::string SandboxUser = _config->Find("APT::Sandbox::User");
-   if (SandboxUser.empty())
-      return true;
-
-   struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-   if (pw == NULL)
-      return true;
-
-   if (seteuid(pw->pw_uid) != 0)
-      return _error->Errno("seteuid", "seteuid %u failed", pw->pw_uid);
-
-   bool res = true;
-   // check if we can write to destfile
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin();
-	I != Fetcher.ItemsEnd() && res == true; ++I)
-   {
-      if ((*I)->DestFile.empty())
-	 continue;
-      // we assume that an existing (partial) file means that we have sufficient rights
-      if (RealFileExists((*I)->DestFile))
-	 continue;
-      int fd = open((*I)->DestFile.c_str(), O_CREAT | O_EXCL | O_RDWR, 0600);
-      if (fd < 0)
-      {
-	 res = false;
-	 std::string msg;
-	 strprintf(msg, _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
-	       (*I)->DestFile.c_str(), SandboxUser.c_str());
-	 std::cerr << "W: " << msg << std::endl;
-	 _config->Set("APT::Sandbox::User", "");
-	 break;
-      }
-      unlink((*I)->DestFile.c_str());
-      close(fd);
-   }
-
-   if (seteuid(0) != 0)
-      return _error->Errno("seteuid", "seteuid %u failed", 0);
-
-   return res;
-}
-									/*}}}*/
 // CheckAuth - check if each download comes form a trusted source	/*{{{*/
 bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
 {
