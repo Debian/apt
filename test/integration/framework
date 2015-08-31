@@ -74,6 +74,9 @@ msgskip() {
 }
 msgfail() {
 	if [ -n "$MSGTEST_MSG" ]; then
+		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
+			echo "Part of the test group: $MSGTEST_GRP"
+		fi
 		echo -n "$MSGTEST_MSG"
 		unset MSGTEST_MSG
 	fi
@@ -83,6 +86,20 @@ msgfail() {
 		$SHELL
 	fi
 	EXIT_CODE=$((EXIT_CODE+1));
+}
+MSGGROUP_LEVEL=0
+msggroup() {
+	if [ -n "$1" ]; then
+		if [ $MSGGROUP_LEVEL = 0 ]; then
+			MSGTEST_GRP='NEXT'
+		fi
+		MSGGROUP_LEVEL=$((MSGGROUP_LEVEL+1));
+	else
+		MSGGROUP_LEVEL=$((MSGGROUP_LEVEL-1));
+		if [ $MSGGROUP_LEVEL = 0 ]; then
+			unset MSGTEST_GRP
+		fi
+	fi
 }
 
 # enable / disable Debugging
@@ -96,7 +113,12 @@ fi
 if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
-	msgtest() { MSGTEST_MSG="$(msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@")"; }
+	msgtest() {
+		MSGTEST_MSG="$(msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@")"
+		if [ "$MSGTEST_GRP" = 'NEXT' ]; then
+			MSGTEST_GRP="$MSGTEST_MSG"
+		fi
+	}
 	msgpass() { printf " ${CPASS}P${CNORMAL}"; }
 fi
 if [ $MSGLEVEL -le 3 ]; then
@@ -1217,6 +1239,7 @@ checkdiff() {
 }
 
 testfileequal() {
+	msggroup "$0"
 	local MSG='Test for correctness of file'
 	if [ "$1" = '--nomsg' ]; then
 		MSG=''
@@ -1241,9 +1264,11 @@ testfileequal() {
 			msgfailoutput '' "$OUTPUT"
 		fi
 	fi
+	msggroup
 }
 
 testempty() {
+	msggroup "$0"
 	msgtest "Test for no output of" "$*"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
@@ -1252,9 +1277,11 @@ testempty() {
 		msgfailoutput '' "$COMPAREFILE"
 	fi
 	aptautotest 'testempty' "$@"
+	msggroup
 }
 
 testequal() {
+	msggroup "$0"
 	local MSG='Test of equality of'
 	if [ "$1" = '--nomsg' ]; then
 		MSG=''
@@ -1275,9 +1302,11 @@ testequal() {
 		msgfailoutput '' "$OUTPUT"
 	fi
 	aptautotest 'testequal' "$@"
+	msggroup
 }
 
 testequalor2() {
+	msggroup "$0"
 	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
 	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
 	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
@@ -1299,9 +1328,11 @@ testequalor2() {
 		msgfailoutput '' "$OUTPUT"
 	fi
 	aptautotest 'testequalor2' "$@"
+	msggroup
 }
 
 testshowvirtual() {
+	msggroup "$0"
 	local VIRTUAL="N: Can't select versions from package '$1' as it is purely virtual"
 	local PACKAGE="$1"
 	shift
@@ -1323,9 +1354,11 @@ N: No packages found"
 	else
 		msgfailoutput '' "$OUTPUT"
 	fi
+	msggroup
 }
 
 testnopackage() {
+	msggroup "$0"
 	msgtest "Test for non-existent packages" "apt-cache show $*"
 	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
@@ -1335,9 +1368,11 @@ testnopackage() {
 	else
 		msgpass
 	fi
+	msggroup
 }
 
 testdpkgstatus() {
+	msggroup "$0"
 	local STATE="$1"
 	local NR="$2"
 	shift 2
@@ -1351,17 +1386,23 @@ testdpkgstatus() {
 	else
 		msgpass
 	fi
+	msggroup
 }
 
 testdpkginstalled() {
+	msggroup "$0"
 	testdpkgstatus 'ii' "$#" "$@"
+	msggroup
 }
 
 testdpkgnotinstalled() {
+	msggroup "$0"
 	testdpkgstatus 'ii' '0' "$@"
+	msggroup
 }
 
 testmarkedauto() {
+	msggroup "$0"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
@@ -1376,8 +1417,10 @@ testmarkedauto() {
 	else
 		msgfailoutput '' "$OUTPUT"
 	fi
+	msggroup
 }
 testmarkedmanual() {
+	msggroup "$0"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as manually installed' "$*"
@@ -1392,11 +1435,15 @@ testmarkedmanual() {
 	else
 		msgfailoutput '' "$OUTPUT"
 	fi
+	msggroup
 }
 
 msgfailoutput() {
 	if [ -n "$MSGTEST_MSG" ]; then
 		echo
+		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
+			echo "${CFAIL}Part of the test group: $MSGTEST_GRP"
+		fi
 		echo -n "$MSGTEST_MSG"
 		unset MSGTEST_MSG
 	fi
@@ -1431,6 +1478,7 @@ msgfailoutput() {
 }
 
 testsuccess() {
+	msggroup "$0"
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1463,8 +1511,10 @@ testsuccess() {
 		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest 'testsuccess' "$@"
+	msggroup
 }
 testwarning() {
+	msggroup "$0"
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1490,8 +1540,10 @@ testwarning() {
 		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest 'testwarning' "$@"
+	msggroup
 }
 testfailure() {
+	msggroup "$0"
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1527,28 +1579,36 @@ testfailure() {
 		fi
 	fi
 	aptautotest 'testfailure' "$@"
+	msggroup
 }
 
 testsuccessequal() {
+	msggroup "$0"
 	local CMP="$1"
 	shift
 	testsuccess "$@"
 	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$CMP"
+	msggroup
 }
 testwarningequal() {
+	msggroup "$0"
 	local CMP="$1"
 	shift
 	testwarning "$@"
 	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" "$CMP"
+	msggroup
 }
 testfailureequal() {
+	msggroup "$0"
 	local CMP="$1"
 	shift
 	testfailure "$@"
 	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
+	msggroup
 }
 
 testfailuremsg() {
+	msggroup "$0"
 	local CMP="$1"
 	shift
 	testfailure "$@"
@@ -1563,9 +1623,11 @@ testfailuremsg() {
 		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" >"$OUTPUT"
 		msgfailoutput '' "$OUTPUT"
 	fi
+	msggroup
 }
 
 testfilestats() {
+	msggroup "$0"
 	msgtest "Test that file $1 has $2 $3" "$4"
 	if [ "$4" "$3" "$(stat --format "$2" "$1")" ]; then
 		msgpass
@@ -1578,12 +1640,16 @@ testfilestats() {
 		} >"$OUTPUT" 2>&1
 		msgfailoutput '' "$OUTPUT"
 	fi
+	msggroup
 }
 testaccessrights() {
+	msggroup "$0"
 	testfilestats "$1" '%a' '=' "$2"
+	msggroup
 }
 
 testwebserverlaststatuscode() {
+	msggroup "$0"
 	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
 	local STATUS='downloaded/webserverstatus-statusfile.log'
 	rm -f "$DOWNLOG" "$STATUS"
@@ -1603,6 +1669,7 @@ testwebserverlaststatuscode() {
 		} >"$OUTPUT" 2>&1
 		msgfailoutput "Status was $(cat "$STATUS")" "$OUTPUT"
 	fi
+	msggroup
 }
 
 pause() {
