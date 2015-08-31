@@ -48,8 +48,9 @@ class ExtractTar
    
    // Fork and reap gzip
    bool StartGzip();
-   bool Done(bool Force);
-   
+   bool Done();
+   APT_DEPRECATED bool Done(bool Force); // Force is ignored – and the default behaviour
+
    public:
 
    bool Go(pkgDirStream &Stream);

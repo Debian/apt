@@ -73,18 +73,18 @@ ExtractTar::ExtractTar(FileFd &Fd,unsigned long long Max,string DecompressionPro
 ExtractTar::~ExtractTar()
 {
    // Error close
-   Done(true);
+   Done();
 }
 									/*}}}*/
 // ExtractTar::Done - Reap the gzip sub process				/*{{{*/
-// ---------------------------------------------------------------------
-/* If the force flag is given then error messages are suppressed - this
-   means we hit the end of the tar file but there was still gzip data. */
-bool ExtractTar::Done(bool Force)
+bool ExtractTar::Done(bool)
+{
+   return Done();
+}
+bool ExtractTar::Done()
 {
    return InFd.Close();
 }
-
 									/*}}}*/
 // ExtractTar::StartGzip - Startup gzip					/*{{{*/
 // ---------------------------------------------------------------------
@@ -151,7 +151,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       /* Check for a block of nulls - in this case we kill gzip, GNU tar
        	 does this.. */
       if (NewSum == ' '*sizeof(Tar->Checksum))
-	 return Done(true);
+	 return Done();
       
       if (NewSum != CheckSum)
 	 return _error->Error(_("Tar checksum failed, archive corrupted"));
@@ -306,6 +306,6 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       LastLongLink.erase();
    }
    
-   return Done(false);
+   return Done();
 }
 									/*}}}*/
