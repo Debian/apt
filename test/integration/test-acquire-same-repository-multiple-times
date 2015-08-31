@@ -26,17 +26,18 @@ mkdir $NEWMETHODS
 for METH in $(find $OLDMETHODS ! -type d); do
 	ln -s $OLDMETHODS/$(basename $METH) $NEWMETHODS
 done
-rm $NEWMETHODS/file
-cat >$NEWMETHODS/file <<EOF
+rm "${NEWMETHODS}/file" "${NEWMETHODS}/http"
+cat >"${NEWMETHODS}/file" <<EOF
 #!/bin/sh
 while read line; do
 	echo "\$line"
 	if [ -z "\$line" ]; then
 		sleep 0.5
 	fi
-done | $OLDMETHODS/file
+done | "$OLDMETHODS/\${0##*/}"
 EOF
-chmod +x $NEWMETHODS/file
+chmod +x "${NEWMETHODS}/file"
+ln -s "${NEWMETHODS}/file" "${NEWMETHODS}/http"
 
 tworepos() {
 	msgtest "Downloading the same repository twice over $1" "$3"
