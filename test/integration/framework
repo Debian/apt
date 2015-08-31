@@ -2,6 +2,20 @@
 
 EXIT_CODE=0
 
+while [ -n "$1" ]; do
+	if [ "$1" = "-q" ]; then
+		export MSGLEVEL=2
+	elif [ "$1" = "-v" ]; then
+		export MSGLEVEL=4
+	elif [ "$1" = '--color=no' ]; then
+		export MSGCOLOR='NO'
+	else
+		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
+	fi
+	shift
+done
+export MSGLEVEL="${MSGLEVEL:-3}"
+
 # we all like colorful messages
 if [ "$MSGCOLOR" != 'NO' ] && [ "$MSGCOLOR" != 'ALWAYS' ]; then
 	if [ ! -t 1 ]; then # but check that we output to a terminal
@@ -51,11 +65,19 @@ msgndebug() { msgprintf "${CDEBUG}D: %s" '%s' "${CNORMAL}" "$@"; }
 msgtest() { msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@"; }
 msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
 msgskip() {
+	if [ -n "$MSGTEST_MSG" ]; then
+		echo -n "$MSGTEST_MSG"
+		unset MSGTEST_MSG
+	fi
 	if [ $# -gt 0 ]; then printf "${CWARNING}SKIP: $*${CNORMAL}\n" >&2;
 	else printf "${CWARNING}SKIP${CNORMAL}\n" >&2; fi
 }
 msgfail() {
-	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
+	if [ -n "$MSGTEST_MSG" ]; then
+		echo -n "$MSGTEST_MSG"
+		unset MSGTEST_MSG
+	fi
+	if [ $# -gt 0 ] && [ -n "$1" ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	if [ -n "$APT_DEBUG_TESTS" ]; then
 		$SHELL
@@ -64,7 +86,6 @@ msgfail() {
 }
 
 # enable / disable Debugging
-MSGLEVEL=${MSGLEVEL:-3}
 if [ $MSGLEVEL -le 0 ]; then
 	msgdie() { true; }
 fi
@@ -75,7 +96,7 @@ fi
 if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
-	msgtest() { true; }
+	msgtest() { MSGTEST_MSG="$(msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@")"; }
 	msgpass() { printf " ${CPASS}P${CNORMAL}"; }
 fi
 if [ $MSGLEVEL -le 3 ]; then
@@ -191,7 +212,7 @@ setupenvironment() {
 	fi
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
-	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
+	msgninfo "Preparing environment for $(basename $0) in ${TMPWORKINGDIRECTORY}…"
 
 	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
 	if [ "$(id -u)" = '0' ]; then
@@ -320,7 +341,6 @@ EOF
 	export LC_ALL=C.UTF-8
 	unset LANGUAGE APT_CONFIG
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
-
 	msgdone "info"
 }
 
@@ -474,7 +494,7 @@ Dir::Bin::xz \"/does/not/exist\";" > "$CONFFILE"
 		COMPRESSOR_CMD='xz --format=lzma'
 	else
 		msgtest 'Test for availability of compressor' "${COMPRESSOR}"
-		msgfail
+		msgfail "${COMPRESSOR} not available"
 	fi
 }
 
@@ -1071,8 +1091,9 @@ webserverconfig() {
 	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass
 	else
-		cat "$DOWNLOG" "$STATUS" || true
-		msgfail
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.output"
+		cat "$DOWNLOG" "$STATUS" >"$OUTPUT" 2>&1 || true
+		msgfailoutput '' "$OUTPUT"
 	fi
 	$NOCHECK || testwebserverlaststatuscode '200'
 }
@@ -1206,10 +1227,19 @@ testfileequal() {
 	if [ -n "$MSG" ]; then
 		msgtest "$MSG" "$FILE"
 	fi
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfileequal.output"
 	if [ -z "$*" ]; then
-		echo -n "" | checkdiff - $FILE && msgpass || msgfail
+		if echo -n "" | checkdiff - $FILE >"$OUTPUT" 2>&1; then
+			msgpass
+		else
+			msgfailoutput '' "$OUTPUT"
+		fi
 	else
-		echo "$*" | checkdiff - $FILE && msgpass || msgfail
+		if echo "$*" | checkdiff - $FILE >"$OUTPUT" 2>&1; then
+			msgpass
+		else
+			msgfailoutput '' "$OUTPUT"
+		fi
 	fi
 }
 
@@ -1219,9 +1249,7 @@ testempty() {
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
 		msgpass
 	else
-		echo
-		cat $COMPAREFILE
-		msgfail
+		msgfailoutput '' "$COMPAREFILE"
 	fi
 	aptautotest 'testempty' "$@"
 }
@@ -1240,7 +1268,12 @@ testequal() {
 	if [ -n "$MSG" ]; then
 		msgtest "$MSG" "$*"
 	fi
-	"$@" 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.output"
+	if "$@" 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
+		msgpass
+	else
+		msgfailoutput '' "$OUTPUT"
+	fi
 	aptautotest 'testequal' "$@"
 }
 
@@ -1258,11 +1291,12 @@ testequalor2() {
 	then
 		msgpass
 	else
-		echo -n "\n${CINFO}Diff against OR 1${CNORMAL}"
-		checkdiff $COMPAREFILE1 $COMPAREAGAINST || true
-		echo -n "${CINFO}Diff against OR 2${CNORMAL}"
-		checkdiff $COMPAREFILE2 $COMPAREAGAINST || true
-		msgfail
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.output"
+		echo -n "\n${CINFO}Diff against OR 1${CNORMAL}" >"$OUTPUT" 2>&1
+		checkdiff "$COMPAREFILE1" "$COMPAREAGAINST" >"$OUTPUT" 2>&1 || true
+		echo -n "${CINFO}Diff against OR 2${CNORMAL}" >"$OUTPUT" 2>&1
+		checkdiff "$COMPAREFILE2" "$COMPAREAGAINST" >"$OUTPUT" 2>&1 || true
+		msgfailoutput '' "$OUTPUT"
 	fi
 	aptautotest 'testequalor2' "$@"
 }
@@ -1282,17 +1316,22 @@ N: Can't select versions from package '$1' as it is purely virtual"
 N: No packages found"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.comparefile"
 	local ARCH="$(getarchitecture 'native')"
-	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
-	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' >"$COMPAREFILE"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.output"
+	if aptcache show -q=0 "$PACKAGE" 2>&1 | checkdiff "$COMPAREFILE" - >"$OUTPUT" 2>&1; then
+		msgpass
+	else
+		msgfailoutput '' "$OUTPUT"
+	fi
 }
 
 testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
 	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
-		echo >&2
-		echo >&2 "$SHOWPKG"
-		msgfail
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testnopackage.output"
+		echo "$SHOWPKG" >"$OUTPUT"
+		msgfailoutput '' "$OUTPUT"
 	else
 		msgpass
 	fi
@@ -1305,9 +1344,10 @@ testdpkgstatus() {
 	msgtest "Test that $NR package(s) are in state $STATE with" "dpkg -l $*"
 	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep "^${STATE}" | wc -l)"
 	if [ "$PKGS" != $NR ]; then
-		echo >&2 $PKGS
-		dpkg -l "$@" | grep '^[a-z]' >&2 || true
-		msgfail
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testnopackage.output"
+		echo "$PKGS" >"$OUTPUT"
+		dpkg -l "$@" | grep '^[a-z]' >"$OUTPUT" >&2 || true
+		msgfailoutput '' "$OUTPUT"
 	else
 		msgpass
 	fi
@@ -1330,7 +1370,12 @@ testmarkedauto() {
 		msgtest 'Test for correctly marked as auto-installed' 'no package'
 		echo -n > $COMPAREFILE
 	fi
-	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.output"
+	if aptmark showauto 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
+		msgpass
+	else
+		msgfailoutput '' "$OUTPUT"
+	fi
 }
 testmarkedmanual() {
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
@@ -1341,20 +1386,31 @@ testmarkedmanual() {
 		msgtest 'Test for correctly marked as manually installed' 'no package'
 		echo -n > $COMPAREFILE
 	fi
-	aptmark showmanual 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.output"
+	if aptmark showmanual 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
+		msgpass
+	else
+		msgfailoutput '' "$OUTPUT"
+	fi
 }
 
 msgfailoutput() {
+	if [ -n "$MSGTEST_MSG" ]; then
+		echo
+		echo -n "$MSGTEST_MSG"
+		unset MSGTEST_MSG
+	fi
 	local MSG="$1"
 	local OUTPUT="$2"
 	shift 2
-	echo >&2
 	if [ "$1" = 'grep' ]; then
+		echo >&2
 		while [ -n "$2" ]; do shift; done
 		echo "#### Complete file: $1 ####"
 		cat >&2 "$1" || true
 		echo '#### grep output ####'
 	elif [ "$1" = 'test' ]; then
+		echo >&2
 		# doesn't support ! or non-file flags
 		msgfailoutputstatfile() {
 			local FILEFLAGS='^-[bcdefgGhkLOprsStuwx]$'
@@ -1431,9 +1487,7 @@ testwarning() {
 		fi
 	else
 		local EXITCODE=$?
-		echo >&2
-		cat >&2 $OUTPUT
-		msgfail "exitcode $EXITCODE"
+		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest 'testwarning' "$@"
 }
@@ -1499,13 +1553,15 @@ testfailuremsg() {
 	shift
 	testfailure "$@"
 	msgtest 'Check that the output of the previous failed command has expected' 'failures and warnings'
-	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output" 2>&1 || true
-	if echo "$CMP" | checkdiff - "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailureequal.output"; then
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailuremsg.comparefile"
+	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "$COMPAREFILE" 2>&1 || true
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailuremsg.output"
+	if echo "$CMP" | checkdiff - "${COMPAREFILE}" >"$OUTPUT" 2>&1; then
 		msgpass
 	else
-		echo '### Complete output ###'
-		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
-		msgfail
+		echo '### Complete output ###' >"$OUTPUT"
+		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" >"$OUTPUT"
+		msgfailoutput '' "$OUTPUT"
 	fi
 }
 
@@ -1514,11 +1570,13 @@ testfilestats() {
 	if [ "$4" "$3" "$(stat --format "$2" "$1")" ]; then
 		msgpass
 	else
-		echo >&2
-		ls -ld >&2 "$1" || true
-		echo -n >&2 "stat(1) reports for $2: "
-		stat --format "$2" "$1" || true
-		msgfail
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfilestats.output"
+		{
+			ls -ld "$1" || true
+			echo -n "stat(1) reports for $2: "
+			stat --format "$2" "$1" || true
+		} >"$OUTPUT" 2>&1
+		msgfailoutput '' "$OUTPUT"
 	fi
 }
 testaccessrights() {
@@ -1533,15 +1591,17 @@ testwebserverlaststatuscode() {
 	if downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then
 		msgpass
 	else
-		echo >&2
-		if [ -n "$2" ]; then
-			shift
-			echo >&2 '#### Additionally provided output files contain:'
-			cat >&2 "$@"
-		fi
-		echo >&2 '#### Download log of the status code:'
-		cat >&2 "$DOWNLOG"
-		msgfail "Status was $(cat "$STATUS")"
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwebserverlaststatuscode.output"
+		{
+			if [ -n "$2" ]; then
+				shift
+				echo >&2 '#### Additionally provided output files contain:'
+				cat >&2 "$@"
+			fi
+			echo >&2 '#### Download log of the status code:'
+			cat >&2 "$DOWNLOG"
+		} >"$OUTPUT" 2>&1
+		msgfailoutput "Status was $(cat "$STATUS")" "$OUTPUT"
 	fi
 }
 
