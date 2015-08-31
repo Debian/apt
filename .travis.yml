@@ -1,11 +1,17 @@
 language: cpp
+sudo: required
 before_install:
  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
- - sudo apt-get update -q
+ - sudo apt-get update -qq
 install:
  - sudo ./prepare-release travis-ci
  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
  - sudo apt-get -qq update
- - sudo apt-get -qq install g++-4.8
- - export CXX=g++-4.8
-script: make && make test && test/integration/run-tests
+ - sudo apt-get -qq -y install gcc-4.8 g++-4.8
+ - export CC=gcc-4.8 CXX=g++-4.8
+script:
+ - make
+ - make test
+ - ./test/integration/run-tests
+ - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
+ - sudo ./test/integration/run-tests
