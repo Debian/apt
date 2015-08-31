@@ -159,6 +159,7 @@ time_t GetModificationTime(std::string const &Path);
 bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
+std::string GetTempDir(std::string const &User);
 FileFd* GetTempFile(std::string const &Prefix = "",
                     bool ImmediateUnlink = true,
 		    FileFd * const TmpFd = NULL);

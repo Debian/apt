@@ -2999,7 +2999,8 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 
    if (DestDir.empty())
    {
-      std::string const systemTemp = GetTempDir();
+      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+      std::string const systemTemp = GetTempDir(SandboxUser);
       char tmpname[100];
       snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", systemTemp.c_str());
       if (NULL == mkdtemp(tmpname))
@@ -3010,7 +3011,6 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
       }
       DestFile = TemporaryDirectory = tmpname;
 
-      std::string SandboxUser = _config->Find("APT::Sandbox::User");
       ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
                                      SandboxUser.c_str(), "root", 0700);
    }
