@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
-#include <chrono>
+#include <time.h>
 
 #include <algorithm>
 
@@ -68,7 +68,6 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
    unsigned char *pt = answer+sizeof(HEADER)+compressed_name_len+QFIXEDSZ;
    while ((int)Result.size() < answer_count && pt < answer+answer_len)
    {
-      SrvRec rec;
       u_int16_t type, klass, priority, weight, port, dlen;
       char buf[MAXDNAME];
 
@@ -105,11 +104,7 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       pt += compressed_name_len;
 
       // add it to our class
-      rec.priority = priority;
-      rec.weight = weight;
-      rec.port = port;
-      rec.target = buf;
-      Result.push_back(rec);
+      Result.emplace_back(buf, priority, weight, port);
    }
 
    // implement load balancing as specified in RFC-2782
@@ -173,21 +168,14 @@ SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs)
 #endif
 
    // shuffle in a very simplistic way for now (equal weights)
-   std::vector<SrvRec>::iterator I, J;
-   I = J = Recs.begin();
-   for(;I != Recs.end(); ++I)
-   {
-      if(I->priority != J->priority)
-         break;
-   }
+   std::vector<SrvRec>::const_iterator I = Recs.begin();
+   std::vector<SrvRec>::const_iterator const J = std::find_if(Recs.cbegin(), Recs.cend(),
+	 [&I](SrvRec const &J) { return I->priority != J.priority; });
 
-   // FIXME: meeeeh, where to init this properly
-   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-   std::shuffle(J, I, std::default_random_engine(seed));
-
-   // meh, no pop_front() in std::vector?
-   SrvRec selected = *Recs.begin();
-   Recs.erase(Recs.begin());
+   // clock seems random enough.
+   I += clock() % std::distance(I, J);
+   SrvRec const selected = std::move(*I);
+   Recs.erase(I);
 
    if (_config->FindB("Debug::Acquire::SrvRecs", false) == true)
       std::cerr << "PopFromSrvRecs: selecting " << selected.target << std::endl;

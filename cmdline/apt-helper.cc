@@ -82,25 +82,27 @@ static bool DoDownloadFile(CommandLine &CmdL)
 static bool DoSrvLookup(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 1)
-      return _error->Error(_("Must specifc at least one srv record"));
+      return _error->Error("Must specify at least one SRV record");
 
-   std::vector<SrvRec> srv_records;
-   c1out << "# target priority weight port" << std::endl;
-   for(int i=1; CmdL.FileList[i] != NULL; i++)
+   for(size_t i = 1; CmdL.FileList[i] != NULL; ++i)
    {
-      if(GetSrvRecords(CmdL.FileList[i], srv_records) == false)
-         _error->Warning(_("GetSrvRec failed for %s"), CmdL.FileList[i]);
-      for (std::vector<SrvRec>::const_iterator I = srv_records.begin();
-           I != srv_records.end(); ++I)
+      std::vector<SrvRec> srv_records;
+      std::string const name = CmdL.FileList[i];
+      c0out << "# Target\tPriority\tWeight\tPort # for " << name << std::endl;
+      size_t const found = name.find(":");
+      if (found != std::string::npos)
       {
-         c1out << (*I).target.c_str() << " "
-               << (*I).priority << " "
-               << (*I).weight << " "
-               << (*I).port << " "
-               << std::endl;
+	 std::string const host = name.substr(0, found);
+	 size_t const port = atoi(name.c_str() + found + 1);
+	 if(GetSrvRecords(host, port, srv_records) == false)
+	    _error->Warning(_("GetSrvRec failed for %s"), name.c_str());
       }
-   }
+      else if(GetSrvRecords(name, srv_records) == false)
+	 _error->Warning(_("GetSrvRec failed for %s"), name.c_str());
 
+      for (SrvRec const &I : srv_records)
+	 c1out << I.target << "\t" << I.priority << "\t" << I.weight << "\t" << I.port << std::endl;
+   }
    return true;
 }
 
