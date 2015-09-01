@@ -13,10 +13,6 @@ test_apt_helper_download() {
     echo 'foo' > aptarchive/foo
     echo 'bar' > aptarchive/foo2
 
-    msgtest 'apt-file download-file md5sum'
-    testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo2 MD5Sum:d3b07384d113edec49eaa6238ad5ff00
-    testfileequal ./downloaded/foo2 'foo'
-
     msgtest 'apt-file download-file sha1'
     testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo1 SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15
     testfileequal ./downloaded/foo1 'foo'
@@ -30,14 +26,14 @@ test_apt_helper_download() {
     testfileequal ./downloaded/foo4 'foo'
     
     msgtest 'apt-file download-file wrong hash'
-    testfailure --nomsg apthelper -qq download-file http://localhost:8080/foo ./downloaded/foo5 MD5Sum:aabbcc
+    testfailure --nomsg apthelper -qq download-file http://localhost:8080/foo ./downloaded/foo5 SHA256:aabbcc
     testfileequal rootdir/tmp/testfailure.output 'E: Failed to fetch http://localhost:8080/foo  Hash Sum mismatch
 
 E: Download Failed'
     testfileequal ./downloaded/foo5.FAILED 'foo'
 
-    msgtest 'apt-file download-file md5sum sha1'
-    testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo6 MD5Sum:d3b07384d113edec49eaa6238ad5ff00 http://localhost:8080/foo2 ./downloaded/foo7 SHA1:e242ed3bffccdf271b7fbaf34ed72d089537b42f
+    msgtest 'apt-file download-file sha256 sha1'
+    testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo6 SHA256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c http://localhost:8080/foo2 ./downloaded/foo7 SHA1:e242ed3bffccdf271b7fbaf34ed72d089537b42f
     testfileequal ./downloaded/foo6 'foo'
     testfileequal ./downloaded/foo7 'bar'
 }

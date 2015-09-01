@@ -852,6 +852,9 @@ Architecture: $ARCH" >> $FILE
 	echo "Files:
  $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
  $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
+Checksums-Sha256:
+ $(echo -n "$DSCFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
+ $(echo -n "$TARFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
 " >> $FILE
 }
 

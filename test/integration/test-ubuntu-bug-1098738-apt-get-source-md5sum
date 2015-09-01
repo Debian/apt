@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# FIXME: this test is mostly meaningless now as we do not consider
+#        md5sum sufficient anyway. useful to test that it errors
+#        if not all hashes pass
 set -e
 
 TESTDIR=$(readlink -f $(dirname $0))
@@ -210,8 +214,8 @@ Download complete and in download only mode" aptget source --allow-unauthenticat
 	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
 }
 
-testok pkg-md5-ok
-testkeep pkg-md5-ok
+#testok pkg-md5-ok
+#testkeep pkg-md5-ok
 testok pkg-sha256-ok
 testkeep pkg-sha256-ok
 
@@ -223,7 +227,7 @@ testmismatch pkg-sha256-bad
 testok pkg-sha256-bad -o Acquire::ForceHash=MD5Sum
 
 # not having MD5 sum doesn't mean the file doesn't exist at all …
-testok pkg-no-md5
+#testok pkg-no-md5
 testok pkg-no-md5 -o Acquire::ForceHash=SHA256
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -263,7 +267,7 @@ msgtest 'Only dsc file is downloaded as the tar has hashsum mismatch' 'pkg-mixed
 testsuccess --nomsg test -e pkg-mixed-sha2-bad_1.0.dsc -a ! -e pkg-mixed-sha2-bad_1.0.tar.gz
 
 # it gets even more pathologic: multiple entries for one file, some even disagreeing!
-testok pkg-md5-agree
+#testok pkg-md5-agree
 testfailureequal 'Reading package lists...
 Building dependency tree...
 E: Error parsing checksum in Files of source package pkg-md5-disagree' aptget source -d pkg-md5-disagree

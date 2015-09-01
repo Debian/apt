@@ -68,6 +68,7 @@ class HashString
    // helper
    std::string toStr() const;                    // convert to str as "type:hash"
    bool empty() const;
+   bool usable() const;
    bool operator==(HashString const &other) const;
    bool operator!=(HashString const &other) const;
 
