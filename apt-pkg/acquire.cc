@@ -460,6 +460,8 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
    if (pw == NULL)
       return;
 
+   gid_t const old_euid = geteuid();
+   gid_t const old_egid = getegid();
    if (setegid(pw->pw_gid) != 0)
       _error->Errno("setegid", "setegid %u failed", pw->pw_gid);
    if (seteuid(pw->pw_uid) != 0)
@@ -469,31 +471,43 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
    for (pkgAcquire::ItemCIterator I = Fetcher.ItemsBegin();
 	I != Fetcher.ItemsEnd() && dropPrivs == true; ++I)
    {
-      if ((*I)->DestFile.empty())
+      std::string filename = (*I)->DestFile;
+      if (filename.empty())
+	 continue;
+
+      // no need to drop privileges for a complete file
+      if ((*I)->Complete == true)
 	 continue;
 
       // we check directory instead of file as the file might or might not
       // exist already as a link or not which complicates everything…
-      std::string dirname = flNotFile((*I)->DestFile);
+      std::string dirname = flNotFile(filename);
+      if (unlikely(dirname.empty()))
+	 continue;
+      // translate relative to absolute for DirectoryExists
+      // FIXME: What about ../ and ./../ ?
+      if (dirname.substr(0,2) == "./")
+	 dirname = SafeGetCWD() + dirname.substr(2);
+
       if (DirectoryExists(dirname))
 	 ;
       else
 	 continue; // assume it is created correctly by the acquire system
 
-      if (faccessat(AT_FDCWD, dirname.c_str(), R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0)
+      if (faccessat(-1, dirname.c_str(), R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0)
       {
 	 dropPrivs = false;
 	 _error->WarningE("pkgAcquire::Run", _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
-	       (*I)->DestFile.c_str(), SandboxUser.c_str());
+	       filename.c_str(), SandboxUser.c_str());
 	 _config->Set("APT::Sandbox::User", "");
 	 break;
       }
    }
 
-   if (seteuid(0) != 0)
-      _error->Errno("seteuid", "seteuid %u failed", 0);
-   if (setegid(0) != 0)
-      _error->Errno("setegid", "setegid %u failed", 0);
+   if (seteuid(old_euid) != 0)
+      _error->Errno("seteuid", "seteuid %u failed", old_euid);
+   if (setegid(old_egid) != 0)
+      _error->Errno("setegid", "setegid %u failed", old_egid);
 }
 pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {

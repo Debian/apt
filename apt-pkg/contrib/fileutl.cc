@@ -2141,6 +2141,8 @@ std::string GetTempDir(std::string const &User)
    if (pw == NULL)
       return GetTempDir();
 
+   gid_t const old_euid = geteuid();
+   gid_t const old_egid = getegid();
    if (setegid(pw->pw_gid) != 0)
       _error->Errno("setegid", "setegid %u failed", pw->pw_gid);
    if (seteuid(pw->pw_uid) != 0)
@@ -2148,10 +2150,10 @@ std::string GetTempDir(std::string const &User)
 
    std::string const tmp = GetTempDir();
 
-   if (seteuid(0) != 0)
-      _error->Errno("seteuid", "seteuid %u failed", 0);
-   if (setegid(0) != 0)
-      _error->Errno("setegid", "setegid %u failed", 0);
+   if (seteuid(old_euid) != 0)
+      _error->Errno("seteuid", "seteuid %u failed", old_euid);
+   if (setegid(old_egid) != 0)
+      _error->Errno("setegid", "setegid %u failed", old_egid);
 
    return tmp;
 }
