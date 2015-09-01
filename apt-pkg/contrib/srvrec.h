@@ -26,9 +26,15 @@ class SrvRec
    int random_number_range_end;
    int random_number_range_max;
 
-   bool operator<(SrvRec const &other) const { 
-      return this->priority < other.priority; 
+   bool operator<(SrvRec const &other) const {
+      return this->priority < other.priority;
    }
+
+   SrvRec(std::string const Target, u_int16_t const Priority,
+	 u_int16_t const Weight, u_int16_t const Port) :
+      target(Target), priority(Priority), weight(Weight), port(Port),
+      random_number_range_start(0), random_number_range_end(0),
+      random_number_range_max(0) {}
 };
 
 /** \brief Get SRV records from host/port (builds the query string internally) 
