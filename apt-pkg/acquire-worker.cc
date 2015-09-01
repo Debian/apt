@@ -407,7 +407,13 @@ bool pkgAcquire::Worker::RunMessages()
 	       else if (Owner->HashesRequired() == true)
 		  consideredOkay = false;
 	       else
+	       {
 		  consideredOkay = true;
+		  // even if the hashes aren't usable to declare something secure
+		  // we can at least use them to declare it an integrity failure
+		  if (ExpectedHashes.empty() == false && ReceivedHashes != ExpectedHashes && _config->Find("Acquire::ForceHash").empty())
+		     consideredOkay = false;
+	       }
 
 	       if (consideredOkay == true)
 		  consideredOkay = Owner->VerifyDone(Message, Config);
