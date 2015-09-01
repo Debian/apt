@@ -10,7 +10,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
-
+#include <apt-pkg/debversion.h>
 #include <apt-private/private-output.h>
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-package-info.h>
@@ -123,8 +123,9 @@ bool OrderByReverseAlphabetic (const PackageInfo &a, const PackageInfo &b)
 
 bool OrderByVersion (const PackageInfo &a, const PackageInfo &b)
 {
-   if(a.version() == b.version())
-      return a.name() < b.name();
+   int result = debVS.CmpVersion(a.version(),b.version());
+   if(result > 0)
+      return true;
    else
-      return a.version() > b.version();
+      return false;
 }
