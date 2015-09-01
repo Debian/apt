@@ -35,11 +35,11 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 HEADER="Reading package lists...
 Building dependency tree..."
 DOWNLOAD1="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 MD5Sum:b998e085e36cf162e6a33c2801318fef
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 MD5Sum:d46b9a02af8487cbeb49165540c88184"
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
 DOWNLOAD2="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 MD5Sum:c0de572c6f8aa576c8ff78c81132ed55
-'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 MD5Sum:e10bb487c375b2b938d27bd31c2d1f5f"
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 SHA256:0fcb803ffbeef26db884625aaf06e75f3eda5c994634980e7c20fd37ed1fc104
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a"
 testsuccessequal "$HEADER
 $DOWNLOAD2" aptget source -q --print-uris foo
 
@@ -72,8 +72,8 @@ $DOWNLOAD1" aptget source -q --print-uris foo=1.0
 # select by release with no binary package (Bug#731102) but ensure to get
 # highest version
 DOWNLOAD01="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 MD5Sum:0811a4d85238056c613ea897f49f01af
-'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 MD5Sum:fa1ecb7a1a53e8e6f6551ca7db888a61"
+'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 SHA256:72af24b0290fe1d13a3e25fddd2633e43c87ff79d249bc850009e47bcce73565
+'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585"
 testsuccessequal "$HEADER
 Selected version '0.1' (wheezy) for foo
 $DOWNLOAD01" aptget source -q --print-uris foo/wheezy
@@ -85,8 +85,8 @@ E: Unable to find a source package for foo" aptget source -q --print-uris foo=9.
 
 # version and release
 DOWNLOAD001="Need to get 0 B/29 B of source archives.
-'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 13 MD5Sum:6c819ebf0a21b1a480e1dbf6b8edfebd
-'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 16 MD5Sum:a3c7e1ac2159fc0faf522e110d6906fd"
+'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 13 SHA256:649dfe03bbb70cebdfe7c6bf9036f9f2472510b8f52e823bdf5ade362ebaa76f
+'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 16 SHA256:ab7ba789d178362ecc808e49705e2338988a7f5b9410ec11a6c9555c017de907"
 testsuccessequal "$HEADER
 $DOWNLOAD001" aptget source -q --print-uris -t unstable foo=0.0.1
 
