@@ -1,8 +1,4 @@
 #!/bin/sh
-#
-# FIXME: this test is mostly meaningless now as we do not consider
-#        md5sum sufficient anyway. useful to test that it errors
-#        if not all hashes pass
 set -e
 
 TESTDIR=$(readlink -f $(dirname $0))
@@ -50,6 +46,15 @@ Checksums-Sha1:
 Checksums-Sha256:
  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 3 pkg-sha256-bad_1.0.dsc
  bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 3 pkg-sha256-bad_1.0.tar.gz
+
+Package: pkg-md5-bad
+Binary: pkg-md5-bad
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 3 pkg-md5-bad_1.0.dsc
+ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 3 pkg-md5-bad_1.0.tar.gz
 
 Package: pkg-no-md5
 Binary: pkg-no-md5
@@ -136,12 +141,13 @@ EOF
 # create fetchable files
 for x in 'pkg-md5-ok' 'pkg-sha256-ok' 'pkg-sha256-bad' 'pkg-no-md5' \
 	 'pkg-mixed-ok' 'pkg-mixed-sha1-bad' 'pkg-mixed-sha2-bad' \
-	 'pkg-md5-agree' 'pkg-md5-disagree' 'pkg-sha256-disagree'; do
+	 'pkg-md5-agree' 'pkg-md5-disagree' 'pkg-sha256-disagree' \
+	 'pkg-md5-bad'; do
 	echo -n 'dsc' > aptarchive/${x}_1.0.dsc
 	echo -n 'tar' > aptarchive/${x}_1.0.tar.gz
 done
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver
 testsuccess aptget update
 
@@ -174,6 +180,19 @@ Download complete and in download only mode" aptget source -d "$@"
 	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
 }
 
+testnohash() {
+	#FIXME: Maybe we should fail in this case instead of skipping
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+Skipping download of file '${1}_1.0.dsc' as requested hashsum is not available for authentication
+Skipping download of file '${1}_1.0.tar.gz' as requested hashsum is not available for authentication
+Need to get 0 B of source archives.
+Download complete and in download only mode" aptget source -d "$@"
+	msgtest 'Files are not downloaded for' "$1"
+	testfailure --nomsg test -e ${1}_1.0.dsc -o -e ${1}_1.0.tar.gz
+}
+
 testmismatch() {
 	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
 	testfailureequal "Reading package lists...
@@ -193,15 +212,17 @@ E: Failed to fetch some archives." aptget source -d "$@"
 	msgtest 'Files were not download as they have hashsum mismatches for' "$1"
 	testfailure --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
 
-	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
-	testsuccessequal "Reading package lists...
+	if [ "$2" != '--allow-unauthenticated' ]; then
+		rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+		testsuccessequal "Reading package lists...
 Building dependency tree...
-Skipping download of file 'pkg-sha256-bad_1.0.dsc' as requested hashsum is not available for authentication
-Skipping download of file 'pkg-sha256-bad_1.0.tar.gz' as requested hashsum is not available for authentication
+Skipping download of file '${1}_1.0.dsc' as requested hashsum is not available for authentication
+Skipping download of file '${1}_1.0.tar.gz' as requested hashsum is not available for authentication
 Need to get 0 B of source archives.
 Download complete and in download only mode" aptget source -d "$@" -o Acquire::ForceHash=ROT26
-	msgtest 'Files were not download as hash is unavailable for' "$1"
-	testfailure --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+		msgtest 'Files were not download as hash is unavailable for' "$1"
+		testfailure --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+	fi
 
 	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
 	testsuccessequal "Reading package lists...
@@ -214,8 +235,7 @@ Download complete and in download only mode" aptget source --allow-unauthenticat
 	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
 }
 
-#testok pkg-md5-ok
-#testkeep pkg-md5-ok
+testnohash pkg-md5-ok
 testok pkg-sha256-ok
 testkeep pkg-sha256-ok
 
@@ -223,11 +243,13 @@ testkeep pkg-sha256-ok
 # checking the best available hash (as it should), this will trigger
 # a hash mismatch.
 testmismatch pkg-sha256-bad
-testmismatch pkg-sha256-bad
 testok pkg-sha256-bad -o Acquire::ForceHash=MD5Sum
 
+testnohash pkg-md5-bad
+testmismatch pkg-md5-bad --allow-unauthenticated
+
 # not having MD5 sum doesn't mean the file doesn't exist at all …
-#testok pkg-no-md5
+testok pkg-no-md5
 testok pkg-no-md5 -o Acquire::ForceHash=SHA256
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -267,7 +289,7 @@ msgtest 'Only dsc file is downloaded as the tar has hashsum mismatch' 'pkg-mixed
 testsuccess --nomsg test -e pkg-mixed-sha2-bad_1.0.dsc -a ! -e pkg-mixed-sha2-bad_1.0.tar.gz
 
 # it gets even more pathologic: multiple entries for one file, some even disagreeing!
-#testok pkg-md5-agree
+testnohash pkg-md5-agree
 testfailureequal 'Reading package lists...
 Building dependency tree...
 E: Error parsing checksum in Files of source package pkg-md5-disagree' aptget source -d pkg-md5-disagree

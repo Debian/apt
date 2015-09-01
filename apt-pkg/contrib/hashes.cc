@@ -136,6 +136,7 @@ APT_PURE bool HashString::usable() const				/*{{{*/
       (Type != "MD5Sum")
    );
 }
+									/*}}}*/
 std::string HashString::toStr() const					/*{{{*/
 {
    return Type + ":" + Hash;

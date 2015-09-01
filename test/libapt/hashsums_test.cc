@@ -306,6 +306,8 @@ TEST(HashSumsTest, HashStringList)
    EXPECT_EQ(NULL, list.find(NULL));
    EXPECT_EQ(NULL, list.find(""));
    EXPECT_EQ(NULL, list.find("MD5Sum"));
+   EXPECT_EQ(NULL, list.find("ROT26"));
+   EXPECT_EQ(NULL, list.find("SHA1"));
    EXPECT_EQ(0, list.FileSize());
 
    // empty lists aren't equal
@@ -319,6 +321,18 @@ TEST(HashSumsTest, HashStringList)
    EXPECT_FALSE(list.usable());
    EXPECT_EQ(1, list.size());
    EXPECT_EQ(29, list.FileSize());
+   list.push_back(HashString("MD5Sum", "d41d8cd98f00b204e9800998ecf8427e"));
+   EXPECT_FALSE(list.empty());
+   EXPECT_FALSE(list.usable());
+   EXPECT_EQ(2, list.size());
+   EXPECT_EQ(29, list.FileSize());
+   EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   list.push_back(HashString("SHA1", "cacecbd74968bc90ea3342767e6b94f46ddbcafc"));
+   EXPECT_TRUE(list.usable());
+   EXPECT_EQ(3, list.size());
+   EXPECT_EQ(29, list.FileSize());
+   EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   EXPECT_TRUE(NULL != list.find("SHA1"));
 
    Hashes hashes;
    hashes.Add("The quick brown fox jumps over the lazy dog");
