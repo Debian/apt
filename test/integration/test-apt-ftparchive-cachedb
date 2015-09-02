@@ -73,18 +73,16 @@ testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::Show
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testsuccess grep Misses stats-out.txt
-testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 2
- dists/test/Contents-i386: New 402 B  Misses in Cache: 0'
+testsuccessequal ' Misses in Cache: 2
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0' grep Misses stats-out.txt
 
 # generate again
 testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testsuccess grep Misses stats-out.txt
-testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 0
- dists/test/Contents-i386:  Misses in Cache: 0'
+testsuccessequal ' Misses in Cache: 0
+ dists/test/Contents-i386:  Misses in Cache: 0' grep Misses stats-out.txt
 
 # and again (with removing the Packages file)
 rm -f ./aptarchive/dists/test/main/binary-i386/*
@@ -93,9 +91,8 @@ testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::Show
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
-testsuccess grep Misses stats-out.txt
-testfileequal 'rootdir/tmp/testsuccess.output' ' Misses in Cache: 0
- dists/test/Contents-i386: New 402 B  Misses in Cache: 0'
+testsuccessequal ' Misses in Cache: 0
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0' grep Misses stats-out.txt
 
 # and clean
 rm -rf aptarchive/pool/main/*

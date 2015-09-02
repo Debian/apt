@@ -66,6 +66,9 @@ msgtest() { msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@"; }
 msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
 msgskip() {
 	if [ -n "$MSGTEST_MSG" ]; then
+		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
+			echo "Part of the test group: $MSGTEST_GRP"
+		fi
 		echo -n "$MSGTEST_MSG"
 		unset MSGTEST_MSG
 	fi
@@ -1241,6 +1244,19 @@ checkdiff() {
 	fi
 }
 
+testoutputequal() {
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testoutputequal.output"
+	local COMPAREFILE="$1"
+	shift
+	if "$@" 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
+		msgpass
+	else
+		echo "=== content of file we compared with (${COMPAREFILE}) ===" >>"${OUTPUT}"
+		cat "$COMPAREFILE" >>"${OUTPUT}"
+		msgfailoutput '' "$OUTPUT" "$@"
+	fi
+}
+
 testfileequal() {
 	msggroup "$0"
 	local MSG='Test for correctness of file'
@@ -1255,17 +1271,9 @@ testfileequal() {
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfileequal.output"
 	if [ -z "$*" ]; then
-		if echo -n "" | checkdiff - $FILE >"$OUTPUT" 2>&1; then
-			msgpass
-		else
-			msgfailoutput '' "$OUTPUT"
-		fi
+		testoutputequal "$FILE" echo -n ''
 	else
-		if echo "$*" | checkdiff - $FILE >"$OUTPUT" 2>&1; then
-			msgpass
-		else
-			msgfailoutput '' "$OUTPUT"
-		fi
+		testoutputequal "$FILE" echo "$*"
 	fi
 	msggroup
 }
@@ -1277,7 +1285,7 @@ testempty() {
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
 		msgpass
 	else
-		msgfailoutput '' "$COMPAREFILE"
+		msgfailoutput '' "$COMPAREFILE" "$@"
 	fi
 	aptautotest 'testempty' "$@"
 	msggroup
@@ -1298,12 +1306,7 @@ testequal() {
 	if [ -n "$MSG" ]; then
 		msgtest "$MSG" "$*"
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.output"
-	if "$@" 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
-		msgpass
-	else
-		msgfailoutput '' "$OUTPUT"
-	fi
+	testoutputequal "$COMPAREFILE" "$@"
 	aptautotest 'testequal' "$@"
 	msggroup
 }
@@ -1352,11 +1355,7 @@ N: No packages found"
 	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' >"$COMPAREFILE"
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.output"
-	if aptcache show -q=0 "$PACKAGE" 2>&1 | checkdiff "$COMPAREFILE" - >"$OUTPUT" 2>&1; then
-		msgpass
-	else
-		msgfailoutput '' "$OUTPUT"
-	fi
+	testoutputequal "$COMPAREFILE" aptcache show -q=0 "$PACKAGE"
 	msggroup
 }
 
@@ -1414,12 +1413,7 @@ testmarkedauto() {
 		msgtest 'Test for correctly marked as auto-installed' 'no package'
 		echo -n > $COMPAREFILE
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.output"
-	if aptmark showauto 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
-		msgpass
-	else
-		msgfailoutput '' "$OUTPUT"
-	fi
+	testoutputequal "$COMPAREFILE" aptmark showauto
 	msggroup
 }
 testmarkedmanual() {
@@ -1432,12 +1426,7 @@ testmarkedmanual() {
 		msgtest 'Test for correctly marked as manually installed' 'no package'
 		echo -n > $COMPAREFILE
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.output"
-	if aptmark showmanual 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
-		msgpass
-	else
-		msgfailoutput '' "$OUTPUT"
-	fi
+	testoutputequal "$COMPAREFILE" aptmark showmanual
 	msggroup
 }
 
@@ -1618,14 +1607,7 @@ testfailuremsg() {
 	msgtest 'Check that the output of the previous failed command has expected' 'failures and warnings'
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailuremsg.comparefile"
 	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "$COMPAREFILE" 2>&1 || true
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailuremsg.output"
-	if echo "$CMP" | checkdiff - "${COMPAREFILE}" >"$OUTPUT" 2>&1; then
-		msgpass
-	else
-		echo '### Complete output ###' >"$OUTPUT"
-		cat "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" >"$OUTPUT"
-		msgfailoutput '' "$OUTPUT"
-	fi
+	testoutputequal "$COMPAREFILE" echo "$CMP"
 	msggroup
 }
 
