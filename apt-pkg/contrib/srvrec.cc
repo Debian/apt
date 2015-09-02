@@ -168,8 +168,8 @@ SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs)
 #endif
 
    // shuffle in a very simplistic way for now (equal weights)
-   std::vector<SrvRec>::const_iterator I = Recs.begin();
-   std::vector<SrvRec>::const_iterator const J = std::find_if(Recs.cbegin(), Recs.cend(),
+   std::vector<SrvRec>::iterator I = Recs.begin();
+   std::vector<SrvRec>::iterator const J = std::find_if(Recs.begin(), Recs.end(),
 	 [&I](SrvRec const &J) { return I->priority != J.priority; });
 
    // clock seems random enough.
