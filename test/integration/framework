@@ -66,6 +66,9 @@ msgtest() { msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@"; }
 msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
 msgskip() {
 	if [ -n "$MSGTEST_MSG" ]; then
+		if [ -n "$MSGTEST_MSGMSG" ]; then
+			echo "$MSGTEST_MSGMSG"
+		fi
 		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
 			echo "Part of the test group: $MSGTEST_GRP"
 		fi
@@ -77,6 +80,9 @@ msgskip() {
 }
 msgfail() {
 	if [ -n "$MSGTEST_MSG" ]; then
+		if [ -n "$MSGTEST_MSGMSG" ]; then
+			echo "$MSGTEST_MSGMSG"
+		fi
 		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
 			echo "Part of the test group: $MSGTEST_GRP"
 		fi
@@ -114,7 +120,9 @@ if [ $MSGLEVEL -le 1 ]; then
 	msgnwarn() { true; }
 fi
 if [ $MSGLEVEL -le 2 ]; then
-	msgmsg() { true; }
+	msgmsg() {
+		MSGTEST_MSGMSG="$(msgprintf "${CMSG}%s" '%s' "${CNORMAL}" "$@")"
+	}
 	msgnmsg() { true; }
 	msgtest() {
 		MSGTEST_MSG="$(msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@")"
@@ -1433,6 +1441,9 @@ testmarkedmanual() {
 msgfailoutput() {
 	if [ -n "$MSGTEST_MSG" ]; then
 		echo
+		if [ -n "$MSGTEST_MSGMSG" ]; then
+			echo "$MSGTEST_MSGMSG"
+		fi
 		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
 			echo "${CFAIL}Part of the test group: $MSGTEST_GRP"
 		fi
