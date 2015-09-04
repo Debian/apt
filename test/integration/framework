@@ -64,31 +64,26 @@ msgninfo() { msgprintf "${CINFO}I: %s" '%s' "${CNORMAL}" "$@"; }
 msgndebug() { msgprintf "${CDEBUG}D: %s" '%s' "${CNORMAL}" "$@"; }
 msgtest() { msgprintf "${CINFO}%s" "${CCMD}%s${CINFO}" "…${CNORMAL} " "$@"; }
 msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
-msgskip() {
+msgreportheader() {
 	if [ -n "$MSGTEST_MSG" ]; then
+		test "$1" != 'msgfailoutput' || echo
 		if [ -n "$MSGTEST_MSGMSG" ]; then
 			echo "$MSGTEST_MSGMSG"
 		fi
 		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
-			echo "Part of the test group: $MSGTEST_GRP"
+			echo "${CFAIL}Part of the test group: $MSGTEST_GRP"
 		fi
 		echo -n "$MSGTEST_MSG"
 		unset MSGTEST_MSG
 	fi
+}
+msgskip() {
+	msgreportheader 'msgskip'
 	if [ $# -gt 0 ]; then printf "${CWARNING}SKIP: $*${CNORMAL}\n" >&2;
 	else printf "${CWARNING}SKIP${CNORMAL}\n" >&2; fi
 }
 msgfail() {
-	if [ -n "$MSGTEST_MSG" ]; then
-		if [ -n "$MSGTEST_MSGMSG" ]; then
-			echo "$MSGTEST_MSGMSG"
-		fi
-		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
-			echo "Part of the test group: $MSGTEST_GRP"
-		fi
-		echo -n "$MSGTEST_MSG"
-		unset MSGTEST_MSG
-	fi
+	msgreportheader 'msgfail'
 	if [ $# -gt 0 ] && [ -n "$1" ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	if [ -n "$APT_DEBUG_TESTS" ]; then
@@ -1266,7 +1261,7 @@ testoutputequal() {
 }
 
 testfileequal() {
-	msggroup "$0"
+	msggroup 'testfileequal'
 	local MSG='Test for correctness of file'
 	if [ "$1" = '--nomsg' ]; then
 		MSG=''
@@ -1287,7 +1282,7 @@ testfileequal() {
 }
 
 testempty() {
-	msggroup "$0"
+	msggroup 'testempty'
 	msgtest "Test for no output of" "$*"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
 	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
@@ -1300,7 +1295,7 @@ testempty() {
 }
 
 testequal() {
-	msggroup "$0"
+	msggroup 'testequal'
 	local MSG='Test of equality of'
 	if [ "$1" = '--nomsg' ]; then
 		MSG=''
@@ -1320,7 +1315,7 @@ testequal() {
 }
 
 testequalor2() {
-	msggroup "$0"
+	msggroup 'testequalor2'
 	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
 	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
 	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
@@ -1346,7 +1341,7 @@ testequalor2() {
 }
 
 testshowvirtual() {
-	msggroup "$0"
+	msggroup 'testshowvirtual'
 	local VIRTUAL="N: Can't select versions from package '$1' as it is purely virtual"
 	local PACKAGE="$1"
 	shift
@@ -1368,7 +1363,7 @@ N: No packages found"
 }
 
 testnopackage() {
-	msggroup "$0"
+	msggroup 'testnopackage'
 	msgtest "Test for non-existent packages" "apt-cache show $*"
 	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
@@ -1382,7 +1377,7 @@ testnopackage() {
 }
 
 testdpkgstatus() {
-	msggroup "$0"
+	msggroup 'testdpkgstatus'
 	local STATE="$1"
 	local NR="$2"
 	shift 2
@@ -1400,19 +1395,19 @@ testdpkgstatus() {
 }
 
 testdpkginstalled() {
-	msggroup "$0"
+	msggroup 'testdpkginstalled'
 	testdpkgstatus 'ii' "$#" "$@"
 	msggroup
 }
 
 testdpkgnotinstalled() {
-	msggroup "$0"
+	msggroup 'testdpkgnotinstalled'
 	testdpkgstatus 'ii' '0' "$@"
 	msggroup
 }
 
 testmarkedauto() {
-	msggroup "$0"
+	msggroup 'testmarkedauto'
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
@@ -1425,7 +1420,7 @@ testmarkedauto() {
 	msggroup
 }
 testmarkedmanual() {
-	msggroup "$0"
+	msggroup 'testmarkedmanual'
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as manually installed' "$*"
@@ -1439,17 +1434,7 @@ testmarkedmanual() {
 }
 
 msgfailoutput() {
-	if [ -n "$MSGTEST_MSG" ]; then
-		echo
-		if [ -n "$MSGTEST_MSGMSG" ]; then
-			echo "$MSGTEST_MSGMSG"
-		fi
-		if [ -n "$MSGTEST_GRP" ] && [ "$MSGTEST_GRP" != 'NEXT' ] && [ "$MSGTEST_GRP" != "$MSGTEST_MSG" ]; then
-			echo "${CFAIL}Part of the test group: $MSGTEST_GRP"
-		fi
-		echo -n "$MSGTEST_MSG"
-		unset MSGTEST_MSG
-	fi
+	msgreportheader 'msgfailoutput'
 	local MSG="$1"
 	local OUTPUT="$2"
 	shift 2
@@ -1481,7 +1466,7 @@ msgfailoutput() {
 }
 
 testsuccess() {
-	msggroup "$0"
+	msggroup 'testsuccess'
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1517,7 +1502,7 @@ testsuccess() {
 	msggroup
 }
 testwarning() {
-	msggroup "$0"
+	msggroup 'testwarning'
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1546,7 +1531,7 @@ testwarning() {
 	msggroup
 }
 testfailure() {
-	msggroup "$0"
+	msggroup 'testfailure'
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
@@ -1586,7 +1571,7 @@ testfailure() {
 }
 
 testsuccessequal() {
-	msggroup "$0"
+	msggroup 'testsuccessequal'
 	local CMP="$1"
 	shift
 	testsuccess "$@"
@@ -1594,7 +1579,7 @@ testsuccessequal() {
 	msggroup
 }
 testwarningequal() {
-	msggroup "$0"
+	msggroup 'testwarningequal'
 	local CMP="$1"
 	shift
 	testwarning "$@"
@@ -1602,7 +1587,7 @@ testwarningequal() {
 	msggroup
 }
 testfailureequal() {
-	msggroup "$0"
+	msggroup 'testfailureequal'
 	local CMP="$1"
 	shift
 	testfailure "$@"
@@ -1611,7 +1596,7 @@ testfailureequal() {
 }
 
 testfailuremsg() {
-	msggroup "$0"
+	msggroup 'testfailuremsg'
 	local CMP="$1"
 	shift
 	testfailure "$@"
@@ -1623,7 +1608,7 @@ testfailuremsg() {
 }
 
 testfilestats() {
-	msggroup "$0"
+	msggroup 'testfilestats'
 	msgtest "Test that file $1 has $2 $3" "$4"
 	if [ "$4" "$3" "$(stat --format "$2" "$1")" ]; then
 		msgpass
@@ -1639,13 +1624,13 @@ testfilestats() {
 	msggroup
 }
 testaccessrights() {
-	msggroup "$0"
+	msggroup 'testaccessrights'
 	testfilestats "$1" '%a' '=' "$2"
 	msggroup
 }
 
 testwebserverlaststatuscode() {
-	msggroup "$0"
+	msggroup 'testwebserverlaststatuscode'
 	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
 	local STATUS='downloaded/webserverstatus-statusfile.log'
 	rm -f "$DOWNLOG" "$STATUS"
