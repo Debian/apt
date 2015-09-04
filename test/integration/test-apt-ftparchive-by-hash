@@ -1,0 +1,66 @@
+#!/bin/sh
+set -e
+
+verify_by_hash() {
+    for hash_gen in SHA1:sha1sum SHA256:sha256sum SHA512:sha512sum; do
+        hash=$(echo ${hash_gen} | cut -f1 -d:)
+        gen=$(echo ${hash_gen} | cut -f2 -d:)
+        testsuccess stat aptarchive/dists/unstable/main/binary-i386/by-hash/$hash/$($gen aptarchive/dists/unstable/main/binary-i386/Packages | cut -f1 -d' ')
+        testsuccess stat aptarchive/dists/unstable/main/binary-i386/by-hash/$hash/$($gen aptarchive/dists/unstable/main/binary-i386/Packages.gz | cut -f1 -d' ')
+    done
+}
+
+#
+# main()
+#
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+configcompression 'gz' '.'
+
+# build one pacakge
+buildsimplenativepackage 'foo' 'i386' '1' 'unstable'
+buildaptarchivefromincoming
+
+# verify initial run
+verify_by_hash
+previous_hash=$(sha256sum aptarchive/dists/unstable/main/binary-i386/Packages | cut -f1 -d' ')
+
+# insert new package
+buildsimplenativepackage 'bar' 'i386' '1' 'unstable'
+# and build again
+buildaptarchivefromincoming
+
+# ensure the new package packag is there
+testsuccess zgrep "Package: bar" aptarchive/dists/unstable/main/binary-i386/Packages.gz
+
+# ensure we have the by-hash stuff
+verify_by_hash
+
+# ensure the old hash is still there
+testsuccess stat aptarchive/dists/unstable/main/binary-i386/by-hash/SHA256/$previous_hash
+
+# ensure we have it in the Release file
+testsuccess grep "Acquire-By-Hash: true" aptarchive/dists/unstable/*Release
+
+# now ensure gc work
+for i in $(seq 3); do
+    buildsimplenativepackage 'bar' 'i386' "$i" 'unstable'
+    buildaptarchivefromincoming
+done
+
+hash_count=$(ls aptarchive/dists/unstable/main/binary-i386/by-hash/SHA256/|wc -l)
+# we have 2 files (uncompressed, gz) per run, 5 runs in total
+# by default apt-ftparchive keeps three generations (current plus 2 older)
+msgtest "Check that gc for by-hash works… "
+if [ "$hash_count" = "6" ]; then
+    msgpass
+else
+    echo "Got $hash_count expected 6"
+    msgfail
+fi
+
+# ensure the current generation is still there
+verify_by_hash
+

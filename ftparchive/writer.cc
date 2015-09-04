@@ -40,11 +40,13 @@
 #include <sstream>
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 #include "apt-ftparchive.h"
 #include "writer.h"
 #include "cachedb.h"
 #include "multicompress.h"
+#include "byhash.h"
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1018,7 +1020,9 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";
-
+   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+      Fields["Acquire-By-Hash"] = "true";
+   
    for(map<string,string>::const_iterator I = Fields.begin();
        I != Fields.end();
        ++I)
@@ -1070,6 +1074,31 @@ bool ReleaseWriter::DoPackage(string FileName)
    CheckSums[NewFileName].Hashes = hs.GetHashStringList();
    fd.Close();
 
+   // FIXME: wrong layer in the code(?)
+   // FIXME2: symlink instead of create a copy
+   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+   {
+      std::string Input = FileName;
+      HashStringList hsl = hs.GetHashStringList();
+      for(HashStringList::const_iterator h = hsl.begin();
+          h != hsl.end(); ++h)
+      {
+         if (!h->usable())
+            continue;
+         std::string ByHashOutputFile = GenByHashFilename(Input, *h);
+
+         std::string ByHashOutputDir = flNotFile(ByHashOutputFile);
+         if(!CreateDirectory(flNotFile(Input), ByHashOutputDir))
+            return _error->Warning("can not create dir %s", flNotFile(ByHashOutputFile).c_str());
+
+         // write new hashes
+         FileFd In(Input, FileFd::ReadOnly);
+         FileFd Out(ByHashOutputFile, FileFd::WriteEmpty);
+         if(!CopyFile(In, Out))
+            return _error->Warning("failed to copy %s %s", Input.c_str(), ByHashOutputFile.c_str());
+      }
+   }
+
    return true;
 }
 
@@ -1107,4 +1136,40 @@ void ReleaseWriter::Finish()
       printChecksumTypeRecord(*Output, "SHA256", CheckSums);
    if ((DoHashes & Hashes::SHA512SUM) == Hashes::SHA512SUM)
       printChecksumTypeRecord(*Output, "SHA512", CheckSums);
+
+   // go by-hash cleanup
+   map<string,ReleaseWriter::CheckSum>::const_iterator prev = CheckSums.begin();
+   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+   {
+      for(map<string,ReleaseWriter::CheckSum>::const_iterator I = CheckSums.begin();
+	 I != CheckSums.end(); ++I)
+      {
+         if (I->first == "Release" || I->first == "InRelease")
+            continue;
+
+         // keep iterating until we find a new subdir
+         if(flNotFile(I->first) == flNotFile(prev->first))
+            continue;
+
+         // clean that subdir up
+         int keepFiles = _config->FindI("APT::FTPArchive::By-Hash-Keep", 3);
+         // calculate how many compressors are used (the amount of files
+         // in that subdir generated for this run)
+         keepFiles *= std::distance(prev, I);
+         prev = I;
+
+         HashStringList hsl = prev->second.Hashes;
+         for(HashStringList::const_iterator h = hsl.begin();
+             h != hsl.end(); ++h)
+         {
+
+            if (!h->usable())
+               continue;
+
+            std::string RealFilename = DirStrip+"/"+prev->first;
+            std::string ByHashOutputFile = GenByHashFilename(RealFilename, *h);
+            DeleteAllButMostRecent(flNotFile(ByHashOutputFile), keepFiles);
+         }
+      }
+   }
 }
