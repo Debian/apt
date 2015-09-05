@@ -126,7 +126,7 @@ The following packages have unmet dependencies:
 E: Unable to correct problems, you have held broken packages."
 NEEDSFOO2FOREIGN="$BADPREFIX
 The following packages have unmet dependencies:
- needsfoover2:i386 : Depends: foo:any:i386 (>= 2)
+ needsfoover2:i386 : Depends: foo:any (>= 2)
 E: Unable to correct problems, you have held broken packages."
 testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 -s
 testfailureequal "$NEEDSFOO2FOREIGN" aptget install needsfoover2:i386 -s
@@ -153,7 +153,6 @@ E: Unable to correct problems, you have held broken packages." aptget install fo
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfooany : Conflicts: foo:any
-               Conflicts: foo:any:i386
 E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfooany -s
 testsuccessequal 'Reading package lists...
 Building dependency tree...

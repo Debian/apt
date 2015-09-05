@@ -791,9 +791,14 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
 
-      if (found == string::npos || strcmp(Package.c_str() + found, ":any") == 0)
+      if (found == string::npos)
       {
 	 if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
+	    return false;
+      }
+      else if (strcmp(Package.c_str() + found, ":any") == 0)
+      {
+	 if (NewDepends(Ver,Package,"any",Version,Op,Type) == false)
 	    return false;
       }
       else
@@ -857,7 +862,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
    {
       string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
-      return NewProvidesAllArch(Ver, Package, Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
+      return NewProvides(Ver, Package, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
    }
    else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
       return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
