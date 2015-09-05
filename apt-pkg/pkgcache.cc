@@ -546,7 +546,7 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
 {
    string fullname = Name();
    if (Pretty == false ||
-       (strcmp(Arch(), "all") != 0 &&
+       (strcmp(Arch(), "all") != 0 && strcmp(Arch(), "any") != 0 &&
 	strcmp(Owner->NativeArch(), Arch()) != 0))
       return fullname.append(":").append(Arch());
    return fullname;
