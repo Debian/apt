@@ -824,13 +824,13 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 /* */
 bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 {
+   string const Arch = Ver.Arch();
    const char *Start;
    const char *Stop;
    if (Section.Find("Provides",Start,Stop) == true)
    {
       string Package;
       string Version;
-      string const Arch = Ver.Arch();
       unsigned int Op;
 
       while (1)
@@ -847,8 +847,9 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    if (NewProvides(Ver, Package, OtherArch, Version, pkgCache::Flag::ArchSpecific) == false)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
-	    if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
-	       return false;
+	    if (APT::Configuration::checkArchitecture(Arch))
+	       if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
+		  return false;
 	 } else {
 	    if (NewProvides(Ver, Package, Arch, Version, 0) == false)
 	       return false;
@@ -859,13 +860,16 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       }
    }
 
-   if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+   if (APT::Configuration::checkArchitecture(Arch))
    {
-      string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
-      return NewProvides(Ver, Package, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
+      if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+      {
+	 string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
+	 return NewProvides(Ver, Package, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
+      }
+      else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+	 return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
    }
-   else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
-      return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
 
    return true;
 }

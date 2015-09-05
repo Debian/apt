@@ -240,3 +240,38 @@ msgmsg 'switch to single architecture'
 configarchitecture 'amd64'
 
 satisfiable_in_singlearch
+
+msgmsg 'switch to multi-arch with barbarian architecture'
+
+insertinstalledpackage 'foo' 'armhf' '1.0' 'Multi-Arch: foreign'
+insertinstalledpackage 'bar' 'armhf' '1.0' 'Provides: bar-provider
+Multi-Arch: foreign'
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  foo
+The following packages will be REMOVED:
+  foo:armhf
+The following NEW packages will be installed:
+  cool-foo foo
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:armhf [1.0]
+Inst foo (1.0 unstable [amd64])
+Inst cool-foo (1.0 unstable [amd64])
+Conf foo (1.0 unstable [amd64])
+Conf cool-foo (1.0 unstable [amd64])' aptget install cool-foo -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  bar
+The following packages will be REMOVED:
+  bar:armhf
+The following NEW packages will be installed:
+  bar cool-bar
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv bar:armhf [1.0]
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar -s
