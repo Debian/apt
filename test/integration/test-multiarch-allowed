@@ -242,3 +242,52 @@ solveableinsinglearch1 'needsfoover1'
 testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 -s
 solveableinsinglearch2
 solveableinsinglearch3
+
+msgmsg 'multi-arch with barbarian archs'
+configarchitecture 'amd64' 'i386'
+insertinstalledpackage 'foo' 'armel' '1' 'Multi-Arch: allowed'
+insertinstalledpackage 'coolfoo' 'armel' '1' 'Multi-Arch:allowed
+Provides: coolbar'
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  foo
+The following packages will be REMOVED:
+  foo:armel
+The following NEW packages will be installed:
+  foo needsfooany
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:armel [1]
+Inst foo (1 unstable [amd64])
+Inst needsfooany (1 unstable [amd64])
+Conf foo (1 unstable [amd64])
+Conf needsfooany (1 unstable [amd64])' aptget install needsfooany -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  foo
+The following packages will be REMOVED:
+  foo:armel
+The following NEW packages will be installed:
+  foo needsfooany:i386
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:armel [1]
+Inst foo (1 unstable [amd64])
+Inst needsfooany:i386 (1 unstable [i386])
+Conf foo (1 unstable [amd64])
+Conf needsfooany:i386 (1 unstable [i386])' aptget install needsfooany:i386 -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  coolfoo
+The following packages will be REMOVED:
+  coolfoo:armel
+The following NEW packages will be installed:
+  coolfoo needscoolfoover0
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv coolfoo:armel [1]
+Inst coolfoo (1 unstable [amd64])
+Inst needscoolfoover0 (1 unstable [amd64])
+Conf coolfoo (1 unstable [amd64])
+Conf needscoolfoover0 (1 unstable [amd64])' aptget install needscoolfoover0 -s
