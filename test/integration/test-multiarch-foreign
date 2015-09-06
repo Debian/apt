@@ -186,39 +186,43 @@ The following packages have unmet dependencies:
 E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo -s
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
- hates-foo-x64 : Conflicts: foo
-E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo-x64 -s
-	testfailureequal "$BADPREFIX
-The following packages have unmet dependencies:
- hates-foo-x32 : Conflicts: foo:i386
-E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo-x32 -s
+ $2 : Conflicts: foo:$4
+E: Unable to correct problems, you have held broken packages." aptget install $1 $2 -s
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  $1 $3
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst $1 (1.0 unstable [$4])
+Inst $3 (1.0 unstable [amd64])
+Conf $1 (1.0 unstable [$4])
+Conf $3 (1.0 unstable [amd64])" aptget install $1 $3 -s
 }
-hatersgonnahate 'foo'
-hatersgonnahate 'foo:i386'
+hatersgonnahate 'foo' 'hates-foo-x64' 'hates-foo-x32' 'amd64'
+hatersgonnahate 'foo:i386' 'hates-foo-x32' 'hates-foo-x64' 'i386'
 
-#FIXME: do not work in single-arch as i386 isn't known at cache generation time
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  foo
+  foo:i386
 The following NEW packages will be installed:
-  cool-foo-x32 foo
+  cool-foo-x32 foo:i386
 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst foo (1.0 unstable [amd64])
+Inst foo:i386 (1.0 unstable [i386])
 Inst cool-foo-x32 (1.0 unstable [amd64])
-Conf foo (1.0 unstable [amd64])
+Conf foo:i386 (1.0 unstable [i386])
 Conf cool-foo-x32 (1.0 unstable [amd64])' aptget install cool-foo-x32 -s
 
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  bar
+  bar:i386
 The following NEW packages will be installed:
-  bar cool-bar-x32
+  bar:i386 cool-bar-x32
 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst bar (1.0 unstable [amd64])
+Inst bar:i386 (1.0 unstable [i386])
 Inst cool-bar-x32 (1.0 unstable [amd64])
-Conf bar (1.0 unstable [amd64])
+Conf bar:i386 (1.0 unstable [i386])
 Conf cool-bar-x32 (1.0 unstable [amd64])' aptget install cool-bar-x32 -s -q=0
 
 	testsuccessequal 'Reading package lists...

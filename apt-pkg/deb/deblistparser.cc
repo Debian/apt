@@ -803,13 +803,12 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       }
       else
       {
-	 string Arch = Package.substr(found+1, string::npos);
-	 Package = Package.substr(0, found);
 	 // Such dependencies are not supposed to be accepted …
 	 // … but this is probably the best thing to do anyway
-	 if (Arch == "native")
-	    Arch = _config->Find("APT::Architecture");
-	 if (NewDepends(Ver,Package,Arch,Version,Op | pkgCache::Dep::ArchSpecific,Type) == false)
+	 if (Package.substr(found + 1) == "native")
+	    Package = Package.substr(0, found) + ':' + Ver.Cache()->NativeArch();
+
+	 if (NewDepends(Ver, Package, "any", Version, Op | pkgCache::Dep::ArchSpecific, Type) == false)
 	    return false;
       }
 
@@ -824,6 +823,22 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 /* */
 bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 {
+   /* it is unlikely, but while parsing dependencies, we might have already
+      picked up multi-arch implicit provides which we do not want to duplicate here */
+   bool hasProvidesAlready = false;
+   std::string const spzName = Ver.ParentPkg().FullName(false);
+   {
+      for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+      {
+	 if (Prv.IsMultiArchImplicit() == false || (Prv->Flags & pkgCache::Flag::ArchSpecific) == 0)
+	    continue;
+	 if (spzName != Prv.OwnerPkg().FullName(false))
+	    continue;
+	 hasProvidesAlready = true;
+	 break;
+      }
+   }
+
    string const Arch = Ver.Arch();
    const char *Start;
    const char *Stop;
@@ -833,31 +848,47 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       string Version;
       unsigned int Op;
 
-      while (1)
+      do
       {
-	 Start = ParseDepends(Start,Stop,Package,Version,Op);
+	 Start = ParseDepends(Start,Stop,Package,Version,Op, false, false, false);
 	 const size_t archfound = Package.rfind(':');
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
 	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
 	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
 	 } else if (archfound != string::npos) {
-	    string OtherArch = Package.substr(archfound+1, string::npos);
-	    Package = Package.substr(0, archfound);
-	    if (NewProvides(Ver, Package, OtherArch, Version, pkgCache::Flag::ArchSpecific) == false)
+	    std::string spzArch = Package.substr(archfound + 1);
+	    if (spzArch != "any")
+	    {
+	       if (NewProvides(Ver, Package.substr(0, archfound), spzArch, Version, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+		  return false;
+	    }
+	    if (NewProvides(Ver, Package, "any", Version, pkgCache::Flag::ArchSpecific) == false)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (APT::Configuration::checkArchitecture(Arch))
 	       if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
 		  return false;
 	 } else {
+	    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+	    {
+	       if (NewProvides(Ver, Package + ":any", "any", Version, pkgCache::Flag::MultiArchImplicit) == false)
+		  return false;
+	    }
 	    if (NewProvides(Ver, Package, Arch, Version, 0) == false)
 	       return false;
 	 }
-
-	 if (Start == Stop)
-	    break;
-      }
+	 if (archfound == std::string::npos)
+	 {
+	    std::string const spzName = Package + ':' + Ver.ParentPkg().Arch();
+	    pkgCache::PkgIterator const spzPkg = Ver.Cache()->FindPkg(spzName, "any");
+	    if (spzPkg.end() == false)
+	    {
+	       if (NewProvides(Ver, spzName, "any", Version, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+		  return false;
+	    }
+	 }
+      } while (Start != Stop);
    }
 
    if (APT::Configuration::checkArchitecture(Arch))
@@ -865,12 +896,25 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
       {
 	 string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
-	 return NewProvides(Ver, Package, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
+	 if (NewProvides(Ver, Package, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit) == false)
+	    return false;
       }
       else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
-	 return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit);
+      {
+	 if (NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr(), pkgCache::Flag::MultiArchImplicit) == false)
+	    return false;
+      }
    }
 
+   if (hasProvidesAlready == false)
+   {
+      pkgCache::PkgIterator const spzPkg = Ver.Cache()->FindPkg(spzName, "any");
+      if (spzPkg.end() == false)
+      {
+	 if (NewProvides(Ver, spzName, "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+	    return false;
+      }
+   }
    return true;
 }
 									/*}}}*/

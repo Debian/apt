@@ -61,6 +61,8 @@ testsuccess aptget install --solver apt awesomecoolstuff:i386 -s
 rm -f /tmp/dump.edsp
 testfailure aptget install --solver dump awesomecoolstuff:i386 -s
 testsuccess test -s /tmp/dump.edsp
+testequal 'Install: awesomecoolstuff:i386' grep :i386 /tmp/dump.edsp
+testempty grep :amd64 /tmp/dump.edsp
 
 testsuccess aptget dist-upgrade -s
 testsuccess aptget dist-upgrade -s --solver apt

@@ -724,7 +724,6 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	       continue;
 
 	    pkgCache::PkgIterator Trg = RevDepends ? D.ParentPkg() : D.TargetPkg();
-	    bool const showNoArch = RevDepends || (D->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific;
 
 	    if((Installed && Trg->CurrentVer != 0) || !Installed)
 	      {
@@ -738,9 +737,9 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (ShowDepType == true)
 		  cout << D.DepType() << ": ";
 		if (Trg->VersionList == 0)
-		  cout << "<" << Trg.FullName(showNoArch) << ">";
+		  cout << "<" << Trg.FullName(true) << ">";
 		else
-		  cout << Trg.FullName(showNoArch);
+		  cout << Trg.FullName(true);
 		if (ShowVersion == true && D->Version != 0)
 		   cout << " (" << pkgCache::CompTypeDeb(D->CompareOp) << ' ' << D.TargetVer() << ')';
 		cout << std::endl;

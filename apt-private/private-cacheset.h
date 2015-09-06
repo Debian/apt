@@ -71,6 +71,7 @@ public:
 
    virtual pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
    virtual void canNotFindVersion(enum CacheSetHelper::VerSelector const select, APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) APT_OVERRIDE;
 
    CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE);
 };
@@ -99,6 +100,7 @@ public:
 
 	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
 	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) APT_OVERRIDE;
 
 	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
 						CacheSetHelper::VerSelector const select);
