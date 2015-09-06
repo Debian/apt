@@ -100,7 +100,7 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
 	 continue;
       if (orGroup == false)
 	 dependencies[Dep->Type].append(", ");
-      dependencies[Dep->Type].append(Dep.TargetPkg().FullName((Dep->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific));
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
       if (Dep->Version != 0)
 	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
       if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
@@ -150,7 +150,7 @@ static void WriteScenarioLimitedDependency(FILE* output,
 	 orGroup = false;
 	 continue;
       }
-      dependencies[Dep->Type].append(Dep.TargetPkg().FullName((Dep->CompareOp & pkgCache::Dep::ArchSpecific) != pkgCache::Dep::ArchSpecific));
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
       if (Dep->Version != 0)
 	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
       if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)

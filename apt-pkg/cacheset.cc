@@ -265,6 +265,7 @@ bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pc
 	if (unlikely(Cache.GetPkgCache() == 0))
 		return false;
 
+	std::string const pkgstring = pkg;
 	size_t const archfound = pkg.find_last_of(':');
 	std::string arch;
 	if (archfound != std::string::npos) {
@@ -301,7 +302,7 @@ bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pc
 		}
 	}
 
-	pkgCache::PkgIterator Pkg = canNotFindPkgName(Cache, pkg);
+	pkgCache::PkgIterator Pkg = canNotFindPkgName(Cache, pkgstring);
 	if (Pkg.end() == true)
 	   return false;
 

@@ -629,6 +629,37 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       LastPkg->NextPackage = Package;
    }
    Grp->LastPackage = Package;
+
+   // lazy-create foo (of amd64) provides foo:amd64 at the time we first need it
+   if (Arch == "any")
+   {
+      size_t const found = Name.find(':');
+      std::string const NameA = Name.substr(0, found);
+      std::string const ArchA = Name.substr(found + 1);
+      pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
+      if (PkgA.end() == false)
+      {
+	 Dynamic<pkgCache::PkgIterator> DynPkgA(PkgA);
+	 pkgCache::PrvIterator Prv = PkgA.ProvidesList();
+	 for (; Prv.end() == false; ++Prv)
+	 {
+	    if (Prv.IsMultiArchImplicit())
+	       continue;
+	    pkgCache::VerIterator V = Prv.OwnerVer();
+	    if (ArchA != V.ParentPkg().Arch())
+	       continue;
+	    if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+	       return false;
+	 }
+	 pkgCache::VerIterator V = PkgA.VersionList();
+	 Dynamic<pkgCache::VerIterator> DynV(V);
+	 for (; V.end() == false; ++V)
+	 {
+	    if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+	       return false;
+	 }
+      }
+   }
    return true;
 }
 									/*}}}*/

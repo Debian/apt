@@ -1,0 +1,64 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'foo' 'amd64' '1' 'Provides: foo-prv'
+
+insertpackage 'unstable' 'baz1' 'amd64' '1' 'Provides: foo-prv1'
+insertpackage 'unstable' 'foo1' 'amd64' '1' 'Provides: foo-prv1'
+
+insertpackage 'unstable' 'baz2' 'amd64' '1' 'Provides: foo-prv2'
+insertpackage 'unstable' 'foo2' 'amd64' '2' 'Provides: foo-prv2:amd64'
+
+insertpackage 'unstable' 'baz3' 'amd64' '1' 'Provides: foo-prv3'
+insertpackage 'unstable' 'foo3' 'i386' '2' 'Provides: foo-prv3:amd64'
+
+insertpackage 'unstable' 'baz4' 'amd64' '1' 'Provides: foo-prv4:amd64'
+insertpackage 'unstable' 'foo4' 'i386' '2' 'Provides: foo-prv4:amd64'
+
+insertpackage 'experimental' 'baz5' 'amd64' '1' 'Provides: foo-prv5:amd64'
+insertpackage 'experimental' 'foo5' 'i386' '2' 'Provides: foo-prv5:amd64'
+
+setupaptarchive
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foo' instead of 'foo-prv'
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [amd64])
+Conf foo (1 unstable [amd64])" aptget install foo-prv -s -q=0
+
+testvirtuals() {
+	testfailureequal "Reading package lists...
+Building dependency tree...
+Package $1 is a virtual package provided by:
+  $3
+  $2
+You should explicitly select one to install.
+
+E: Package '$1' has no installation candidate" aptget install $1 -s -q=0
+}
+
+testvirtuals 'foo-prv1' 'baz1 1' 'foo1 1'
+testvirtuals 'foo-prv2' 'baz2 1' 'foo2 2'
+testvirtuals 'foo-prv3' 'baz3 1' 'foo3:i386 2'
+testvirtuals 'foo-prv4' 'baz4 1' 'foo4:i386 2'
+testvirtuals 'foo-prv5' 'baz5 1' 'foo5:i386 2'
+
+echo 'Package: *
+Pin: release a=experimental
+Pin-Priority: -1' > rootdir/etc/apt/preferences.d/experimental.pref
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Package foo-prv5 is a virtual package provided by:
+  foo5:i386 2 [Not candidate version]
+  baz5 1 [Not candidate version]
+
+E: Package 'foo-prv5' has no installation candidate" aptget install foo-prv5 -s -q=0

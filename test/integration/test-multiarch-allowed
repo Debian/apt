@@ -12,7 +12,7 @@ insertpackage 'unstable' 'needsfooany' 'amd64,i386' '1' 'Depends: foo:any'
 insertpackage 'unstable' 'needsfoover1' 'amd64,i386' '1' 'Depends: foo:any (>= 1)'
 insertpackage 'unstable' 'needsfoover2' 'amd64,i386' '1' 'Depends: foo:any (>= 2)'
 insertpackage 'unstable' 'hatesfoo' 'amd64' '1' 'Conflicts: foo'
-insertpackage 'unstable' 'hatesfooany' 'amd64' '1' 'Conflicts: foo:any' # this makes no sense…
+insertpackage 'unstable' 'hatesfooany' 'amd64' '1' 'Conflicts: foo:any' # this makes no sense…?
 insertpackage 'unstable' 'hatesfoonative' 'amd64' '1' 'Conflicts: foo:amd64'
 
 insertpackage 'unstable' 'coolfoo' 'amd64' '1' 'Multi-Arch:allowed
@@ -21,10 +21,10 @@ insertpackage 'unstable' 'coolfoover' 'amd64' '1' 'Multi-Arch:allowed
 Provides: coolbar (= 2)'
 insertpackage 'unstable' 'needscoolfoo' 'amd64' '1' 'Depends: coolfoo, coolbar'
 insertpackage 'unstable' 'needscoolfooany' 'amd64' '1' 'Depends: coolfoo:any, coolbar:any'
-insertpackage 'unstable' 'needscoolfoover0' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar'
-insertpackage 'unstable' 'needscoolfoover1' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar (>= 1)'
-insertpackage 'unstable' 'needscoolfoover2' 'amd64' '1' 'Depends: coolfoo:any (>= 2), coolbar (>= 1)'
-insertpackage 'unstable' 'needscoolfoover3' 'amd64' '1' 'Depends: coolfoo:any (>= 2), coolbar (>= 3)'
+insertpackage 'unstable' 'needscoolfoover0' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar:any'
+insertpackage 'unstable' 'needscoolfoover1' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar:any (>= 1)'
+insertpackage 'unstable' 'needscoolfoover2' 'amd64' '1' 'Depends: coolfoo:any (>= 2), coolbar:any (>= 1)'
+insertpackage 'unstable' 'needscoolfoover3' 'amd64' '1' 'Depends: coolfoo:any (>= 2), coolbar:any (>= 3)'
 
 setupaptarchive
 
@@ -142,7 +142,7 @@ E: Unable to correct problems, you have held broken packages." aptget install fo
 	testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install foo hatesfooany -s
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
- hatesfoonative : Conflicts: foo but 1 is to be installed
+ hatesfoonative : Conflicts: foo:amd64
 E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoonative -s
 }
 solveableinsinglearch2
@@ -189,10 +189,17 @@ Inst needscoolfoo (1 unstable [amd64])
 Conf coolfoo (1 unstable [amd64])
 Conf coolfoover (1 unstable [amd64])
 Conf needscoolfoo (1 unstable [amd64])" aptget install needscoolfoo coolfoover -s
-	testfailureequal "$BADPREFIX
-The following packages have unmet dependencies:
- needscoolfooany : Depends: coolbar:any but it is not installable
-E: Unable to correct problems, you have held broken packages." aptget install needscoolfooany -s
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  coolfoo
+The following NEW packages will be installed:
+  coolfoo needscoolfooany
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst coolfoo (1 unstable [amd64])
+Inst needscoolfooany (1 unstable [amd64])
+Conf coolfoo (1 unstable [amd64])
+Conf needscoolfooany (1 unstable [amd64])" aptget install needscoolfooany -s
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
@@ -224,7 +231,7 @@ E: Unable to correct problems, you have held broken packages." aptget install ne
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needscoolfoover3 : Depends: coolfoo:any (>= 2)
-                    Depends: coolbar (>= 3)
+                    Depends: coolbar:any (>= 3)
 E: Unable to correct problems, you have held broken packages." aptget install needscoolfoover3 -s
 }
 solveableinsinglearch3
@@ -235,7 +242,7 @@ configarchitecture 'amd64'
 solveableinsinglearch0
 testfailureequal 'Reading package lists...
 Building dependency tree...
-E: Unable to locate package needsfoo' aptget install needsfoo:i386 -s
+E: Unable to locate package needsfoo:i386' aptget install needsfoo:i386 -s
 
 solveableinsinglearch1 'needsfooany'
 solveableinsinglearch1 'needsfoover1'

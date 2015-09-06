@@ -4,6 +4,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/progress.h>
@@ -110,6 +111,67 @@ void CacheSetHelperVirtuals::canNotFindVersion(
    if (select == NEWEST || select == CANDIDATE || select == ALL)
       virtualPkgs.insert(Pkg);
    return CacheSetHelper::canNotFindVersion(select, vci, Cache, Pkg);
+}
+static pkgCache::PkgIterator canNotFindPkgName_impl(pkgCacheFile &Cache, std::string const &str)
+{
+   std::string pkg = str;
+   size_t const archfound = pkg.find_last_of(':');
+   std::string arch;
+   if (archfound != std::string::npos) {
+      arch = pkg.substr(archfound+1);
+      pkg.erase(archfound);
+      if (arch == "all" || arch == "native")
+	 arch = _config->Find("APT::Architecture");
+   }
+
+   // If we don't find 'foo:amd64' look for 'foo:amd64:any'.
+   // Note: we prepare for an error here as if foo:amd64 does not exist,
+   // but foo:amd64:any it means that this package is only referenced in a
+   // (architecture specific) dependency. We do not add to virtualPkgs directly
+   // as we can't decide from here which error message has to be printed.
+   // FIXME: This doesn't match 'barbarian' architectures
+   pkgCache::PkgIterator Pkg(Cache, 0);
+   std::vector<std::string> const archs = APT::Configuration::getArchitectures();
+   if (archfound == std::string::npos)
+   {
+      for (auto const &a : archs)
+      {
+	 Pkg = Cache.GetPkgCache()->FindPkg(pkg + ':' + a, "any");
+	 if (Pkg.end() == false && Pkg->ProvidesList != 0)
+	    break;
+      }
+      if (Pkg.end() == true)
+	 for (auto const &a : archs)
+	 {
+	    Pkg = Cache.GetPkgCache()->FindPkg(pkg + ':' + a, "any");
+	    if (Pkg.end() == false)
+	       break;
+	 }
+   }
+   else
+   {
+      Pkg = Cache.GetPkgCache()->FindPkg(pkg + ':' + arch, "any");
+      if (Pkg.end() == true)
+      {
+	 APT::CacheFilter::PackageArchitectureMatchesSpecification pams(arch);
+	 for (auto const &a : archs)
+	 {
+	    if (pams(a.c_str()) == false)
+	       continue;
+	    Pkg = Cache.GetPkgCache()->FindPkg(pkg + ':' + a, "any");
+	    if (Pkg.end() == false)
+	       break;
+	 }
+      }
+   }
+   return Pkg;
+}
+pkgCache::PkgIterator CacheSetHelperVirtuals::canNotFindPkgName(pkgCacheFile &Cache, std::string const &str)
+{
+   pkgCache::PkgIterator const Pkg = canNotFindPkgName_impl(Cache, str);
+   if (Pkg.end())
+      return APT::CacheSetHelper::canNotFindPkgName(Cache, str);
+   return Pkg;
 }
 CacheSetHelperVirtuals::CacheSetHelperVirtuals(bool const ShowErrors, GlobalError::MsgType const &ErrorType) :
    CacheSetHelper{ShowErrors, ErrorType}
@@ -291,5 +353,12 @@ APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkg
       return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
    }
    return APT::VersionSet();
+}
+pkgCache::PkgIterator CacheSetHelperAPTGet::canNotFindPkgName(pkgCacheFile &Cache, std::string const &str)
+{
+   pkgCache::PkgIterator const Pkg = canNotFindPkgName_impl(Cache, str);
+   if (Pkg.end())
+      return APT::CacheSetHelper::canNotFindPkgName(Cache, str);
+   return Pkg;
 }
 									/*}}}*/
