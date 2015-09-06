@@ -199,10 +199,14 @@ gdb() {
 	aptmark) CMD="apt-mark";;
 	apthelper) CMD="apt-helper";;
 	aptftparchive) CMD="apt-ftparchive";;
+	dpkg) shift; runapt ${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg "$@"; return;;
 	*) CMD="$1";;
 	esac
 	shift
-	runapt command gdb --quiet -ex run "${BUILDDIRECTORY}/$CMD" --args "${BUILDDIRECTORY}/$CMD" "$@"
+	if [ "${CMD##*/}" = "$CMD" ]; then
+		CMD="${BUILDDIRECTORY}/${CMD}"
+	fi
+	runapt command gdb --quiet -ex run "$CMD" --args "$CMD" "$@"
 }
 
 exitwithstatus() {
@@ -322,11 +326,25 @@ if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
 		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
 	fi
 fi
-exec fakeroot dpkg --root="${TMPWORKINGDIRECTORY}/rootdir" \\
+exec fakeroot ${DPKG:-dpkg} --root="${TMPWORKINGDIRECTORY}/rootdir" \\
 	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
 	--force-not-root --force-bad-path "\$@"
 EOF
-	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	cat << EOF > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
+#!/bin/sh
+set -e
+if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
+	if [ -n "\$LD_PRELOAD" ]; then
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}"
+	else
+		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
+	fi
+fi
+exec fakeroot gdb --quiet -ex run "${DPKG:-dpkg}" --args "${DPKG:-dpkg}" --root="${TMPWORKINGDIRECTORY}/rootdir" \\
+	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
+	--force-not-root --force-bad-path "\$@"
+EOF
+	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
 
 	{
@@ -1285,7 +1303,7 @@ testempty() {
 	msggroup 'testempty'
 	msgtest "Test for no output of" "$*"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
-	if "$@" >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
+	if ("$@" >$COMPAREFILE 2>&1 || true) && test ! -s $COMPAREFILE; then
 		msgpass
 	else
 		msgfailoutput '' "$COMPAREFILE" "$@"
