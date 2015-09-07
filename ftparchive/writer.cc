@@ -1085,8 +1085,10 @@ bool ReleaseWriter::DoPackage(string FileName)
       {
          if (!h->usable())
             continue;
-         std::string ByHashOutputFile = GenByHashFilename(Input, *h);
+         if (flNotDir(FileName) == "Release" || flNotDir(FileName) == "InRelease")
+            continue;
 
+         std::string ByHashOutputFile = GenByHashFilename(Input, *h);
          std::string ByHashOutputDir = flNotFile(ByHashOutputFile);
          if(!CreateDirectory(flNotFile(Input), ByHashOutputDir))
             return _error->Warning("can not create dir %s", flNotFile(ByHashOutputFile).c_str());
