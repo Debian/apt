@@ -2230,11 +2230,14 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/
    {
       close(Pipe[1]);
       fd = Pipe[0];
-   } else if(Mode == FileFd::WriteOnly)
+   }
+   else if(Mode == FileFd::WriteOnly)
    {
       close(Pipe[0]);
       fd = Pipe[1];
    }
+   else
+      return _error->Error("Popen supports ReadOnly (x)or WriteOnly mode only");
    Fd.OpenDescriptor(fd, Mode, FileFd::None, true);
 
    return true;
