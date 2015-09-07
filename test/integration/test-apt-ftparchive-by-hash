@@ -19,6 +19,9 @@ setupenvironment
 configarchitecture 'i386'
 configcompression 'gz' '.'
 
+# enable by-hash in apt-ftparchive
+echo 'APT::FTPArchive::DoByHash "1";' >> aptconfig.conf
+
 # build one pacakge
 buildsimplenativepackage 'foo' 'i386' '1' 'unstable'
 buildaptarchivefromincoming
