@@ -24,7 +24,10 @@ insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
 
 setupaptarchive
 
-rm -f /tmp/dump.edsp
+testfailure aptget install --solver dump coolstuff -s
+testsuccess grep ERR_NO_FILENAME rootdir/tmp/testfailure.output
+export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/downloaded/dump.edsp"
+
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Execute external solver...
@@ -34,8 +37,8 @@ I am too dumb, i can just dump!
 Please use one of my friends instead!
 
 E: External solver failed with: I am too dumb, i can just dump!' aptget install --solver dump coolstuff -s
-testsuccess test -s /tmp/dump.edsp
-rm -f /tmp/dump.edsp
+testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
+rm -f "$APT_EDSP_DUMP_FILENAME"
 
 #FIXME: this should be unstable, but we don't support pinning yet
 testsuccessequal 'Reading package lists...
@@ -58,11 +61,11 @@ Purg cool [1]' aptget purge --solver apt cool -s
 testsuccess aptget install awesomecoolstuff:i386 -s
 testsuccess aptget install --solver apt awesomecoolstuff:i386 -s
 
-rm -f /tmp/dump.edsp
+rm -f "$APT_EDSP_DUMP_FILENAME"
 testfailure aptget install --solver dump awesomecoolstuff:i386 -s
-testsuccess test -s /tmp/dump.edsp
-testequal 'Install: awesomecoolstuff:i386' grep :i386 /tmp/dump.edsp
-testempty grep :amd64 /tmp/dump.edsp
+testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
+testequal 'Install: awesomecoolstuff:i386' grep :i386 "$APT_EDSP_DUMP_FILENAME"
+testempty grep -e ':amd64' -e 'Architecture: any' "$APT_EDSP_DUMP_FILENAME"
 
 testsuccess aptget dist-upgrade -s
 testsuccess aptget dist-upgrade -s --solver apt
@@ -76,14 +79,14 @@ testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
 
 configarchitecture 'armel'
 msgtest 'Test direct calling is okay for' 'apt-internal-solver'
-cat /tmp/dump.edsp | aptinternalsolver -q=0 > solver.result 2>&1 || true
+cat "$APT_EDSP_DUMP_FILENAME" | aptinternalsolver -q=0 > solver.result 2>&1 || true
 if [ "$(tail -n2 solver.result | head -n1 )" = "Message: Done" ]; then
 	msgpass
 else
 	cat solver.result
 	msgfail
 fi
-rm -f /tmp/dump.edsp
+rm -f "$APT_EDSP_DUMP_FILENAME"
 
 testfailure aptget install --solver apt awesomecoolstuff:i386 -s
 
