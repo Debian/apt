@@ -1020,7 +1020,7 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";
-   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+   if (_config->FindB("APT::FTPArchive::DoByHash", false) == true)
       Fields["Acquire-By-Hash"] = "true";
    
    for(map<string,string>::const_iterator I = Fields.begin();
@@ -1076,7 +1076,7 @@ bool ReleaseWriter::DoPackage(string FileName)
 
    // FIXME: wrong layer in the code(?)
    // FIXME2: symlink instead of create a copy
-   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+   if (_config->FindB("APT::FTPArchive::DoByHash", false) == true)
    {
       std::string Input = FileName;
       HashStringList hsl = hs.GetHashStringList();
@@ -1141,7 +1141,7 @@ void ReleaseWriter::Finish()
 
    // go by-hash cleanup
    map<string,ReleaseWriter::CheckSum>::const_iterator prev = CheckSums.begin();
-   if (_config->FindB("APT::FTPArchive::DoByHash", true) == true)
+   if (_config->FindB("APT::FTPArchive::DoByHash", false) == true)
    {
       for(map<string,ReleaseWriter::CheckSum>::const_iterator I = CheckSums.begin();
 	 I != CheckSums.end(); ++I)
