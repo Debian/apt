@@ -48,6 +48,7 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
    fprintf(output, "Source: %s\n", Ver.SourcePkgName());
    fprintf(output, "Architecture: %s\n", Ver.Arch());
    fprintf(output, "Version: %s\n", Ver.VerStr());
+   fprintf(output, "Source-Version: %s\n", Ver.SourceVerStr());
    if (Pkg.CurrentVer() == Ver)
       fprintf(output, "Installed: yes\n");
    if (Pkg->SelectedState == pkgCache::State::Hold ||
