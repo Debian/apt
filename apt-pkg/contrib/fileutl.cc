@@ -158,24 +158,18 @@ bool CopyFile(FileFd &From,FileFd &To)
    if (From.IsOpen() == false || To.IsOpen() == false ||
 	 From.Failed() == true || To.Failed() == true)
       return false;
-   
+
    // Buffered copy between fds
    std::unique_ptr<unsigned char[]> Buf(new unsigned char[64000]);
-   unsigned long long Size = From.Size();
-   while (Size != 0)
-   {
-      unsigned long long ToRead = Size;
-      if (Size > 64000)
-	 ToRead = 64000;
-      
-      if (From.Read(Buf.get(),ToRead) == false ||
+   constexpr unsigned long long BufSize = sizeof(Buf.get())/sizeof(Buf.get()[0]);
+   unsigned long long ToRead = 0;
+   do {
+      if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
 	  To.Write(Buf.get(),ToRead) == false)
 	 return false;
-      
-      Size -= ToRead;
-   }
+   } while (ToRead != 0);
 
-   return true;   
+   return true;
 }
 									/*}}}*/
 // GetLock - Gets a lock file						/*{{{*/
