@@ -217,26 +217,6 @@ map_id_t pkgCache::sHash(const char *Str) const
    return Hash % HeaderP->GetHashTableSize();
 }
 									/*}}}*/
-// Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
-// ---------------------------------------------------------------------
-/* Returns 0 on error, pointer to the package otherwise
-   The multiArch enabled methods will fallback to this one as it is (a bit)
-   faster for single arch environments and realworld is mostly singlearch… */
-pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
-{
-   // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->PkgHashTableP()[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
-   {
-      int const cmp = strcmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
-      if (cmp == 0)
-	 return PkgIterator(*this, Pkg);
-      else if (cmp < 0)
-	 break;
-   }
-   return PkgIterator(*this,0);
-}
-									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
@@ -245,9 +225,9 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	if (found == string::npos)
 	   return FindPkg(Name, "native");
 	string const Arch = Name.substr(found+1);
-	/* Beware: This is specialcased to handle pkg:any in dependencies as
-	   these are linked to virtual pkg:any named packages with all archs.
-	   If you want any arch from a given pkg, use FindPkg(pkg,arch) */
+	/* Beware: This is specialcased to handle pkg:any in dependencies
+	   as these are linked to virtual pkg:any named packages.
+	   If you want any arch from a pkg, use FindPkg(pkg,"any") */
 	if (Arch == "any")
 		return FindPkg(Name, "any");
 	return FindPkg(Name.substr(0, found), Arch);
@@ -344,20 +324,11 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 		return PkgIterator(*Owner, 0);
 
 	/* If we accept any package we simply return the "first"
-	   package in this group (the last one added). */
+	   package in this group */
 	if (Arch == "any")
 		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
-
-	char const* const myArch = Owner->NativeArch();
-	/* Most of the time the package for our native architecture is
-	   the one we add at first to the cache, but this would be the
-	   last one we check, so we do it now. */
-	if (Arch == "native" || Arch == myArch || Arch == "all") {
-		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
-		if (strcmp(myArch, Owner->StrP + Pkg->Arch) == 0)
-			return PkgIterator(*Owner, Pkg);
-		Arch = myArch;
-	}
+	if (Arch == "native" || Arch == "all")
+               Arch = Owner->NativeArch();
 
 	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
