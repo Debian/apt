@@ -24,10 +24,11 @@ class pkgIndexFile;
 class pkgPackageManager;
 class edspIndex;
 
+class edspSystemPrivate;
 class APT_HIDDEN edspSystem : public pkgSystem
 {
    /** \brief dpointer placeholder (for later in case we need it) */
-   void * const d;
+   edspSystemPrivate * const d;
 
    edspIndex *StatusFile;
 
