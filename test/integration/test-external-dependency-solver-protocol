@@ -8,6 +8,7 @@ configarchitecture 'amd64' 'i386'
 
 insertinstalledpackage 'cool' 'all' '1'
 insertinstalledpackage 'stuff' 'all' '1'
+insertinstalledpackage 'somestuff' 'all' '1' 'Depends: cool, stuff'
 
 insertpackage 'unstable' 'cool' 'all' '2' 'Multi-Arch: foreign'
 insertpackage 'unstable' 'stuff' 'all' '2' 'Multi-Arch: foreign'
@@ -40,7 +41,15 @@ E: External solver failed with: I am too dumb, i can just dump!' aptget install 
 testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
 rm -f "$APT_EDSP_DUMP_FILENAME"
 
-#FIXME: this should be unstable, but we don't support pinning yet
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Execute external solver...
+The following NEW packages will be installed:
+  coolstuff
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst coolstuff (2 unstable [amd64])
+Conf coolstuff (2 unstable [amd64])' aptget install --solver apt coolstuff -s
+
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 Execute external solver...
@@ -48,15 +57,39 @@ The following NEW packages will be installed:
   coolstuff
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
 Inst coolstuff (3 experimental [amd64])
-Conf coolstuff (3 experimental [amd64])' aptget install --solver apt coolstuff -s
+Conf coolstuff (3 experimental [amd64])' aptget install --solver apt coolstuff -s -t experimental
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 Execute external solver...
 The following packages will be REMOVED:
-  cool*
-0 upgraded, 0 newly installed, 1 to remove and 1 not upgraded.
-Purg cool [1]' aptget purge --solver apt cool -s
+  somestuff
+0 upgraded, 0 newly installed, 1 to remove and 2 not upgraded.
+Remv somestuff [1]' aptget autoremove --solver apt somestuff -s
+testsuccess aptmark auto cool stuff
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+Execute external solver...
+The following packages will be REMOVED:
+  cool somestuff stuff
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+Remv somestuff [1]
+Remv cool [1]
+Remv stuff [1]' aptget autoremove --solver apt somestuff -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Execute external solver...
+The following package was automatically installed and is no longer required:
+  stuff
+Use 'apt-get autoremove' to remove it.
+The following packages will be REMOVED:
+  cool* somestuff*
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Purg somestuff [1]
+Purg cool [1]" aptget purge --solver apt cool -s
 
 testsuccess aptget install awesomecoolstuff:i386 -s
 testsuccess aptget install --solver apt awesomecoolstuff:i386 -s

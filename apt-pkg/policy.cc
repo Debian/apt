@@ -409,7 +409,8 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 
    if (DirectoryExists(Dir) == false)
    {
-      _error->WarningE("DirectoryExists",_("Unable to read %s"),Dir.c_str());
+      if (Dir != "/dev/null")
+	 _error->WarningE("DirectoryExists",_("Unable to read %s"),Dir.c_str());
       return true;
    }
 

@@ -24,10 +24,11 @@
 #endif
 
 class FileFd;
+class edspListParserPrivate;
 
 class APT_HIDDEN edspListParser : public debListParser
 {
-   void * const d;
+   edspListParserPrivate * const d;
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::string Description();

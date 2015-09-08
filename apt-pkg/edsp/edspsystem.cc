@@ -17,15 +17,55 @@
 #include <apt-pkg/edspsystem.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/fileutl.h>
 
 #include <stddef.h>
+#include <unistd.h>
+
 #include <string>
 #include <vector>
 
 									/*}}}*/
 
+class edspSystemPrivate {
+   std::string tempDir;
+   std::string tempStatesFile;
+   std::string tempPrefsFile;
+
+public:
+   edspSystemPrivate() {}
+
+   void Initialize(Configuration &Cnf)
+   {
+      DeInitialize();
+      Cnf.Set("Dir::State::extended_states", "/dev/null");
+      Cnf.Set("Dir::Etc::preferences", "/dev/null");
+      std::string const tmp = GetTempDir();
+      char tmpname[100];
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-edsp-solver-XXXXXX", tmp.c_str());
+      if (NULL == mkdtemp(tmpname))
+	 return;
+      tempDir = tmpname;
+      tempStatesFile = flCombine(tempDir, "extended_states");
+      Cnf.Set("Dir::State::extended_states", tempStatesFile);
+      tempPrefsFile = flCombine(tempDir, "apt_preferences");
+      Cnf.Set("Dir::Etc::preferences", tempPrefsFile);
+   }
+
+   void DeInitialize()
+   {
+      if (tempDir.empty())
+	 return;
+
+      unlink(tempStatesFile.c_str());
+      unlink(tempPrefsFile.c_str());
+      rmdir(tempDir.c_str());
+   }
+
+   ~edspSystemPrivate() { DeInitialize(); }
+};
 // System::edspSystem - Constructor					/*{{{*/
-edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(NULL), StatusFile(NULL)
+edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(new edspSystemPrivate()), StatusFile(NULL)
 {
 }
 									/*}}}*/
@@ -33,6 +73,7 @@ edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(N
 edspSystem::~edspSystem()
 {
    delete StatusFile;
+   delete d;
 }
 									/*}}}*/
 // System::Lock - Get the lock						/*{{{*/
@@ -59,7 +100,8 @@ pkgPackageManager *edspSystem::CreatePM(pkgDepCache * /*Cache*/) const
 // System::Initialize - Setup the configuration space..			/*{{{*/
 bool edspSystem::Initialize(Configuration &Cnf)
 {
-   Cnf.Set("Dir::State::extended_states", "/dev/null");
+   d->Initialize(Cnf);
+   Cnf.Set("Dir::Etc::preferencesparts", "/dev/null");
    Cnf.Set("Dir::State::status","/dev/null");
    Cnf.Set("Dir::State::lists","/dev/null");
 
