@@ -343,7 +343,11 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 		pkgCache::VerIterator Ver(Cache.GetCache(), Cache.GetCache().VerP + VerIdx[id]);
 		Cache.SetCandidateVersion(Ver);
 		if (type == "Install")
-			Cache.MarkInstall(Ver.ParentPkg(), false, 0, false);
+		{
+			pkgCache::PkgIterator const P = Ver.ParentPkg();
+			if (Cache[P].Mode != pkgDepCache::ModeInstall)
+				Cache.MarkInstall(P, false, 0, false);
+		}
 		else if (type == "Remove")
 			Cache.MarkDelete(Ver.ParentPkg(), false);
 		else if (type == "Autoremove") {
