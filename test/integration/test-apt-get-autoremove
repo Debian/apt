@@ -95,3 +95,9 @@ testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget autoremove -s
+
+testsuccess aptget autoremove debhelper -y --allow-change-held-packages
+testdpkgnotinstalled 'po-debconf' 'debhelper'
+testmarkedauto
+testsuccess aptget install debhelper --solver apt -y -o Debug::pkgDepCache::Marker=1
+testmarkedauto 'po-debconf'

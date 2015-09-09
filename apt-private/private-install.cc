@@ -560,13 +560,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 
       if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
       {
-         for (unsigned short i = 0; order[i] != 0; ++i)
-         {
-	    if (order[i] != MOD_INSTALL)
-	       continue;
-	    InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
-	    InstallAction.doAutoInstall();
-	 }
+	 InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
+	 InstallAction.doAutoInstall();
       }
 
       if (_error->PendingError() == true)
