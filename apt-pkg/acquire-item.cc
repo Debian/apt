@@ -1699,7 +1699,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    FileFd Fd(IndexDiffFile,FileFd::ReadOnly);
    pkgTagFile TF(&Fd);
-   if (_error->PendingError() == true)
+   if (Fd.IsOpen() == false || Fd.Failed())
       return false;
 
    pkgTagSection Tags;
@@ -3236,7 +3236,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 	 _error->PushToStack();
 	 _error->Errno("pkgAcqFile::Done", "Symlinking file %s failed", DestFile.c_str());
 	 std::stringstream msg;
-	 _error->DumpErrors(msg);
+	 _error->DumpErrors(msg, GlobalError::DEBUG, false);
 	 _error->RevertToStack();
 	 ErrorText = msg.str();
 	 Status = StatError;

@@ -308,7 +308,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       return false;
 
    pkgTagFile TagFile(&Fd, Fd.Size());
-   if (_error->PendingError() == true)
+   if (Fd.IsOpen() == false || Fd.Failed())
    {
       if (ErrorText != NULL)
 	 strprintf(*ErrorText, _("Unable to parse Release file %s"),Filename.c_str());
@@ -641,8 +641,6 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
    // signature for an 'InRelease' file couldn't be checked
    if (OpenMaybeClearSignedFile(ReleaseFile, Rel) == false)
       return false;
-   if (_error->PendingError() == true)
-      return false;
 
    // Store the IMS information
    pkgCache::RlsFileIterator File = Gen.GetCurRlsFile();
@@ -656,7 +654,7 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
 
    pkgTagFile TagFile(&Rel, Rel.Size());
    pkgTagSection Section;
-   if (_error->PendingError() == true || TagFile.Step(Section) == false)
+   if (Rel.IsOpen() == false || Rel.Failed() || TagFile.Step(Section) == false)
       return false;
 
    std::string data;
@@ -665,6 +663,7 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
    if (data.empty() == false) \
    { \
       map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::TYPE, data); \
+      if (storage == 0) return false; \
       STORE = storage; \
    }
    APT_INRELEASE(MIXED, "Suite", File->Archive)
@@ -676,7 +675,7 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
    Section.FindFlag("NotAutomatic", File->Flags, pkgCache::Flag::NotAutomatic);
    Section.FindFlag("ButAutomaticUpgrades", File->Flags, pkgCache::Flag::ButAutomaticUpgrades);
 
-   return !_error->PendingError();
+   return true;
 }
 									/*}}}*/
 // ReleaseIndex::FindInCache - Find this index				/*{{{*/

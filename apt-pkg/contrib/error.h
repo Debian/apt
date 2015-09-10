@@ -333,7 +333,7 @@ private:								/*{{{*/
 	bool PendingFlag;
 
 	struct MsgStack {
-		std::list<Item> const Messages;
+		std::list<Item> Messages;
 		bool const PendingFlag;
 
 		MsgStack(std::list<Item> const &Messages, bool const &Pending) :

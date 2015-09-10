@@ -665,7 +665,7 @@ string flAbsPath(string File)
    char *p = realpath(File.c_str(), NULL);
    if (p == NULL)
    {
-      _error->Errno("realpath", "flAbsPath failed");
+      _error->Errno("realpath", "flAbsPath on %s failed", File.c_str());
       return "";
    }
    std::string AbsPath(p);

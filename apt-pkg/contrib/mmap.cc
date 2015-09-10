@@ -215,9 +215,6 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Work
 		MMap(F,Flags | NoImmMap), Fd(&F), WorkSpace(Workspace),
 		GrowFactor(Grow), Limit(Limit)
 {
-   if (_error->PendingError() == true)
-      return;
-
    // disable Moveable if we don't grow
    if (Grow == 0)
       this->Flags &= ~Moveable;
@@ -252,9 +249,6 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
 		MMap(Flags | NoImmMap | UnMapped), Fd(0), WorkSpace(WorkSpace),
 		GrowFactor(Grow), Limit(Limit)
 {
-	if (_error->PendingError() == true)
-		return;
-
 	// disable Moveable if we don't grow
 	if (Grow == 0)
 		this->Flags &= ~Moveable;
@@ -390,12 +384,15 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       const unsigned long size = 20*1024;
       I->Count = size/ItemSize;
       Pool* oldPools = Pools;
+      _error->PushToStack();
       Result = RawAllocate(size,ItemSize);
+      bool const newError = _error->PendingError();
+      _error->MergeWithStack();
       if (Pools != oldPools)
 	 I += Pools - oldPools;
 
       // Does the allocation failed ?
-      if (Result == 0 && _error->PendingError())
+      if (Result == 0 && newError)
 	 return 0;
       I->Start = Result;
    }
@@ -416,9 +413,12 @@ unsigned long DynamicMMap::WriteString(const char *String,
    if (Len == (unsigned long)-1)
       Len = strlen(String);
 
+   _error->PushToStack();
    unsigned long const Result = RawAllocate(Len+1,0);
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
 
-   if (Base == NULL || (Result == 0 && _error->PendingError()))
+   if (Base == NULL || (Result == 0 && newError))
       return 0;
 
    memcpy((char *)Base + Result,String,Len);

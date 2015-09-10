@@ -342,6 +342,7 @@ bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
    _error->PushToStack();
    std::unique_ptr<pkgCacheListParser> Parser(CreateListParser(Pkg));
    bool const newError = _error->PendingError();
+   _error->MergeWithStack();
    if (newError == false && Parser == nullptr)
       return true;
    if (Parser == NULL)

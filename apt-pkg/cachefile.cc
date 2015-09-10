@@ -63,24 +63,27 @@ pkgCacheFile::~pkgCacheFile()
 }
 									/*}}}*/
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+class APT_HIDDEN ScopedErrorMerge {
+public:
+   ScopedErrorMerge() { _error->PushToStack(); }
+   ~ScopedErrorMerge() { _error->MergeWithStack(); }
+};
 bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 {
    if (Cache != NULL)
       return true;
 
+   ScopedErrorMerge sem;
    if (_config->FindB("pkgCacheFile::Generate", true) == false)
    {
       FileFd file(_config->FindFile("Dir::Cache::pkgcache"), FileFd::ReadOnly);
+      if (file.IsOpen() == false || file.Failed())
+	 return false;
       Map = new MMap(file, MMap::Public|MMap::ReadOnly);
       Cache = new pkgCache(Map);
-      if (_error->PendingError() == true)
-         return false;
-      return true;
+      return _error->PendingError() == false;
    }
 
-   const bool ErrorWasEmpty = _error->empty();
    if (WithLock == true)
       if (_system->Lock() == false)
 	 return false;
@@ -98,7 +101,7 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
       return _error->Error(_("The package lists or status file could not be parsed or opened."));
 
    /* This sux, remove it someday */
-   if (ErrorWasEmpty == true && _error->empty() == false)
+   if (_error->PendingError() == true)
       _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
    Cache = new pkgCache(Map);

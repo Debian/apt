@@ -57,14 +57,15 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
 		     CurrentRlsFile(NULL), CurrentFile(NULL), d(NULL)
 {
-   if (_error->PendingError() == true)
-      return;
-
    if (Map.Size() == 0)
    {
       // Setup the map interface..
       Cache.HeaderP = (pkgCache::Header *)Map.Data();
-      if (Map.RawAllocate(sizeof(pkgCache::Header)) == 0 && _error->PendingError() == true)
+      _error->PushToStack();
+      Map.RawAllocate(sizeof(pkgCache::Header));
+      bool const newError = _error->PendingError();
+      _error->MergeWithStack();
+      if (newError)
 	 return;
 
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
@@ -382,7 +383,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    // Add a new version
    map_pointer_t const verindex = NewVersion(Ver, Version, Pkg.Index(), Hash, *LastVer);
-   if (verindex == 0 && _error->PendingError())
+   if (unlikely(verindex == 0))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewVersion", 1);
 
@@ -470,7 +471,7 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
 
    map_pointer_t const descindex = NewDescription(Desc, lang, CurMd5, md5idx);
-   if (unlikely(descindex == 0 && _error->PendingError()))
+   if (unlikely(descindex == 0))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 	    Ver.ParentPkg().Name(), "NewDescription", 1);
 
@@ -1274,12 +1275,18 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
 /* This just verifies that each file in the list of index files exists,
    has matching attributes with the cache and the cache does not have
    any extra files. */
+class APT_HIDDEN ScopedErrorRevert {
+public:
+   ScopedErrorRevert() { _error->PushToStack(); }
+   ~ScopedErrorRevert() { _error->RevertToStack(); }
+};
 static bool CheckValidity(const string &CacheFile,
                           pkgSourceList &List,
                           FileIterator const Start,
                           FileIterator const End,
                           MMap **OutMap = 0)
 {
+   ScopedErrorRevert ser;
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    // No file, certainly invalid
    if (CacheFile.empty() == true || FileExists(CacheFile) == false)
@@ -1300,11 +1307,10 @@ static bool CheckValidity(const string &CacheFile,
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
    std::unique_ptr<MMap> Map(new MMap(CacheF,0));
    pkgCache Cache(Map.get());
-   if (_error->PendingError() == true || Map->Size() == 0)
+   if (_error->PendingError() || Map->Size() == 0)
    {
       if (Debug == true)
 	 std::clog << "Errors are pending or Map is empty() for " << CacheFile << std::endl;
-      _error->Discard();
       return false;
    }
 
@@ -1383,12 +1389,11 @@ static bool CheckValidity(const string &CacheFile,
       if (Debug == true)
       {
 	 std::clog << "Validity failed because of pending errors:" << std::endl;
-	 _error->DumpErrors();
+	 _error->DumpErrors(std::clog, GlobalError::DEBUG, false);
       }
-      _error->Discard();
       return false;
    }
-   
+
    if (OutMap != 0)
       *OutMap = Map.release();
    return true;
@@ -1511,7 +1516,7 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
       std::string const &FileName)
 {
    FileFd SCacheF(FileName, FileFd::WriteAtomic);
-   if (_error->PendingError() == true)
+   if (SCacheF.IsOpen() == false || SCacheF.Failed())
       return false;
 
    fchmod(SCacheF.Fd(),0644);
@@ -1535,10 +1540,15 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
 {
    Map.reset(CreateDynamicMMap(NULL, 0));
    FileFd CacheF(FileName, FileFd::ReadOnly);
+   if (CacheF.IsOpen() == false || CacheF.Failed())
+      return false;
+   _error->PushToStack();
    map_pointer_t const alloc = Map->RawAllocate(CacheF.Size());
-   if ((alloc == 0 && _error->PendingError())
-	 || CacheF.Read((unsigned char *)Map->Data() + alloc,
-	    CacheF.Size()) == false)
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
+   if (alloc == 0 && newError)
+      return false;
+   if (CacheF.Read((unsigned char *)Map->Data() + alloc, CacheF.Size()) == false)
       return false;
    Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
    return true;
@@ -1691,8 +1701,11 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 }
 									/*}}}*/
 // CacheGenerator::MakeOnlyStatusCache - Build only a status files cache/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+class APT_HIDDEN ScopedErrorMerge {
+public:
+   ScopedErrorMerge() { _error->PushToStack(); }
+   ~ScopedErrorMerge() { _error->MergeWithStack(); }
+};
 APT_DEPRECATED bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
@@ -1701,12 +1714,12 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (_system->AddStatusFiles(Files) == false)
       return false;
 
+   ScopedErrorMerge sem;
    std::unique_ptr<DynamicMMap> Map(CreateDynamicMMap(NULL, 0));
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
-   
    TotalSize = ComputeSize(NULL, Files.begin(), Files.end());
-   
+
    // Build the status cache
    if (Progress != NULL)
       Progress->OverallProgress(0,1,1,_("Reading package lists"));

@@ -511,6 +511,7 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 }
 pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {
+   _error->PushToStack();
    CheckDropPrivsMustBeDisabled(*this);
 
    Running = true;
@@ -548,11 +549,9 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 	 _error->Errno("select","Select has failed");
 	 break;
       }
-	     
+
       RunFds(&RFds,&WFds);
-      if (_error->PendingError() == true)
-	 break;
-      
+
       // Timeout, notify the log class
       if (Res == 0 || (Log != 0 && Log->Update == true))
       {
@@ -577,9 +576,11 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 
    // Shut down the items
    for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
-      (*I)->Finished(); 
-   
-   if (_error->PendingError())
+      (*I)->Finished();
+
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
+   if (newError)
       return Failed;
    if (WasCancelled)
       return Cancelled;

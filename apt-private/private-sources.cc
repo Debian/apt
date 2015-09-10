@@ -54,7 +54,7 @@ bool EditSources(CommandLine &CmdL)
       _error->PushToStack();
       res = sl.Read(sourceslist);
       if (!res) {
-         _error->DumpErrors();
+         _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
          strprintf(outs, _("Failed to parse %s. Edit again? "),
                    sourceslist.c_str());
          std::cout << outs;
