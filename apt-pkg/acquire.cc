@@ -467,9 +467,8 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
    if (seteuid(pw->pw_uid) != 0)
       _error->Errno("seteuid", "seteuid %u failed", pw->pw_uid);
 
-   bool dropPrivs = true;
    for (pkgAcquire::ItemCIterator I = Fetcher.ItemsBegin();
-	I != Fetcher.ItemsEnd() && dropPrivs == true; ++I)
+	I != Fetcher.ItemsEnd(); ++I)
    {
       std::string filename = (*I)->DestFile;
       if (filename.empty())
@@ -496,7 +495,6 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 
       if (faccessat(-1, dirname.c_str(), R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0)
       {
-	 dropPrivs = false;
 	 _error->WarningE("pkgAcquire::Run", _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
 	       filename.c_str(), SandboxUser.c_str());
 	 _config->Set("APT::Sandbox::User", "");
