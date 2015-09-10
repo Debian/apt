@@ -267,9 +267,13 @@ std::string pkgDebianIndexTargetFile::GetProgressDescription() const
    return Target.Description;
 }
 
-pkgDebianIndexRealFile::pkgDebianIndexRealFile(std::string const &File, bool const Trusted) :/*{{{*/
-   pkgDebianIndexFile(Trusted), d(NULL), File(flAbsPath(File))
+pkgDebianIndexRealFile::pkgDebianIndexRealFile(std::string const &pFile, bool const Trusted) :/*{{{*/
+   pkgDebianIndexFile(Trusted), d(NULL)
 {
+   if (pFile == "/nonexistent/stdin")
+      File = pFile;
+   else
+      File = flAbsPath(pFile);
 }
 									/*}}}*/
 // IndexRealFile::Size - Return the size of the index			/*{{{*/

@@ -131,8 +131,8 @@ bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
 {
    if (StatusFile == 0)
    {
-      if (_config->Find("edsp::scenario", "") == "stdin")
-	 StatusFile = new edspIndex("stdin");
+      if (_config->Find("edsp::scenario", "") == "/nonexistent/stdin")
+	 StatusFile = new edspIndex("/nonexistent/stdin");
       else
 	 StatusFile = new edspIndex(_config->FindFile("edsp::scenario"));
    }

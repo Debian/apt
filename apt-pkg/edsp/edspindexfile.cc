@@ -47,7 +47,7 @@ uint8_t edspIndex::GetIndexFlags() const
 }
 bool edspIndex::OpenListFile(FileFd &Pkg, std::string const &FileName)
 {
-   if (FileName.empty() == false && FileName != "stdin")
+   if (FileName.empty() == false && FileName != "/nonexistent/stdin")
       return pkgDebianIndexRealFile::OpenListFile(Pkg, FileName);
    if (Pkg.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
       return _error->Error("Problem opening %s",FileName.c_str());
