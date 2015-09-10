@@ -111,7 +111,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	_config->Set("APT::System", "Debian APT solver interface");
 	_config->Set("APT::Solver", "internal");
-	_config->Set("edsp::scenario", "stdin");
+	_config->Set("edsp::scenario", "/nonexistent/stdin");
 	int input = STDIN_FILENO;
 	FILE* output = stdout;
 	SetNonBlock(input, false);
