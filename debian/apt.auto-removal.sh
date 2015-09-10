@@ -47,13 +47,33 @@ generateconfig() {
 APT::NeverAutoRemove
 {
 EOF
-	apt-config dump --no-empty --format '%v%n' 'APT::VersionedKernelPackages' | while read package; do
+	for package in $(apt-config dump --no-empty --format '%v%n' 'APT::VersionedKernelPackages'); do
 		for kernel in $kernels; do
 			echo "   \"^${package}-${kernel}$\";"
 		done
 	done
 	echo '};'
+	if [ "${APT_AUTO_REMOVAL_KERNELS_DEBUG:-true}" = 'true' ]; then
+		cat <<EOF
+/* Debug information:
+# dpkg list:
+$(dpkg -l | grep '\(linux\|kfreebsd\|gnumach\)-image-')
+# list of installed kernel packages:
+$list
+# list of different kernel versions:
+$debverlist
+# Installing kernel: $installed_version ($1)
+# Running kernel: $running_version ($unamer)
+# Last kernel: $latest_version
+# Previous kernel: $previous_version
+# Kernel versions list to keep:
+$debkernels
+# Kernel packages (version part) to protect:
+$kernels
+*/
+EOF
+	fi
 }
-generateconfig > "${config_file}.dpkg-new"
-mv "${config_file}.dpkg-new" "$config_file"
+generateconfig "$@" > "${config_file}.dpkg-new"
+mv -f "${config_file}.dpkg-new" "$config_file"
 chmod 444 "$config_file"
