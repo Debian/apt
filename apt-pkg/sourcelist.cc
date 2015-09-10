@@ -421,7 +421,7 @@ bool pkgSourceList::ParseFileDeb822(string const &File)
    // see if we can read the file
    FileFd Fd(File, FileFd::ReadOnly);
    pkgTagFile Sources(&Fd);
-   if (_error->PendingError() == true)
+   if (Fd.IsOpen() == false || Fd.Failed())
       return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
 
    // read step by step

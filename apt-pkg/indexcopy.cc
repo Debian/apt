@@ -90,7 +90,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       off_t const FileSize = Pkg.Size();
 
       pkgTagFile Parser(&Pkg);
-      if (_error->PendingError() == true)
+      if (Pkg.IsOpen() == false || Pkg.Failed())
 	 return false;
       
       // Open the output file
@@ -107,7 +107,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       } else {
          Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      if (_error->PendingError() == true)
+      if (Target.IsOpen() == false || Target.Failed())
 	 return false;
 
       // Setup the progress meter
@@ -683,7 +683,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       off_t const FileSize = Pkg.Size();
 
       pkgTagFile Parser(&Pkg);
-      if (_error->PendingError() == true)
+      if (Pkg.IsOpen() == false || Pkg.Failed())
 	 return false;
 
       // Open the output file
@@ -700,7 +700,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       } else {
 	 Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      if (_error->PendingError() == true)
+      if (Pkg.IsOpen() == false || Pkg.Failed())
 	 return false;
 
       // Setup the progress meter

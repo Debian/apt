@@ -97,6 +97,7 @@ signreleasefiles
 
 msgmsg 'expired InRelease'
 EXPECT='Hit:1 http://localhost:8080 unstable InRelease
+Reading package lists...
 E: Release file for http://localhost:8080/dists/unstable/InRelease is expired (invalid since). Updates for this repository will not be applied.'
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
@@ -107,6 +108,7 @@ msgmsg 'expired Release/Release.gpg'
 EXPECT='Ign:1 http://localhost:8080 unstable InRelease
   404  Not Found
 Hit:2 http://localhost:8080 unstable Release
+Reading package lists...
 E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied.'
 find aptarchive -name 'InRelease' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -120,6 +122,7 @@ EXPECT="Ign:1 http://localhost:8080 unstable InRelease
 Hit:2 http://localhost:8080 unstable Release
 Ign:3 http://localhost:8080 unstable Release.gpg
   404  Not Found
+Reading package lists...
 W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated.
 E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'Release.gpg' -delete

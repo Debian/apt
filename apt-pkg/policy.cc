@@ -439,7 +439,7 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    
    FileFd Fd(File,FileFd::ReadOnly);
    pkgTagFile TF(&Fd);
-   if (_error->PendingError() == true)
+   if (Fd.IsOpen() == false || Fd.Failed())
       return false;
 
    pkgUserTagSection Tags;
@@ -478,10 +478,13 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       }
       for (; Word != End && isspace(*Word) != 0; Word++);
 
-      int priority = Tags.FindI("Pin-Priority", 0);
+      _error->PushToStack();
+      int const priority = Tags.FindI("Pin-Priority", 0);
+      bool const newError = _error->PendingError();
+      _error->MergeWithStack();
       if (priority < std::numeric_limits<short>::min() ||
           priority > std::numeric_limits<short>::max() ||
-	  _error->PendingError()) {
+	  newError) {
 	 return _error->Error(_("%s: Value %s is outside the range of valid pin priorities (%d to %d)"),
 			      File.c_str(), Tags.FindS("Pin-Priority").c_str(),
 			      std::numeric_limits<short>::min(),

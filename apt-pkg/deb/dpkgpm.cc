@@ -1148,7 +1148,7 @@ void pkgDPkgPM::StartPtyMagic()
 	 free(d->slave);
 	 d->slave = NULL;
       }
-      _error->DumpErrors(std::cerr);
+      _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
    }
    _error->RevertToStack();
 }

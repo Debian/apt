@@ -39,11 +39,14 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : d(NULL), Files(0)
       for (std::vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
 	   J != Indexes->end(); ++J)
       {
-         Parser* P = (*J)->CreateSrcParser();
-	 if (_error->PendingError() == true)
-            return;
-         if (P != 0)
-            Files.push_back(P);
+	 _error->PushToStack();
+	 Parser* P = (*J)->CreateSrcParser();
+	 bool const newError = _error->PendingError();
+	 _error->MergeWithStack();
+	 if (newError)
+	    return;
+	 if (P != 0)
+	    Files.push_back(P);
       }
    }
    
@@ -93,8 +96,6 @@ const pkgSrcRecords::Parser* pkgSrcRecords::Step()
    // Step to the next record, possibly switching files
    while ((*Current)->Step() == false)
    {
-      if (_error->PendingError() == true)
-         return 0;
       ++Current;
       if (Current == Files.end())
          return 0;
@@ -114,10 +115,6 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOn
    {
       if(Step() == 0)
          return 0;
-
-      // IO error somehow
-      if (_error->PendingError() == true)
-	 return 0;
 
       // Source name hit
       if ((*Current)->Package() == Package)

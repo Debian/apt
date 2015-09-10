@@ -904,7 +904,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     if (Debug)
 		     {
 			clog << OutputInDepth(Depth) << "Avoidance unpack of " << ConflictPkg.FullName() << " failed for " << End << " ignoring:" << std::endl;
-			_error->DumpErrors(std::clog);
+			_error->DumpErrors(std::clog, GlobalError::DEBUG, false);
 		     }
 		     _error->RevertToStack();
 		     // ignorance can only happen if a) one of the offenders is already gone

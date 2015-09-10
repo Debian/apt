@@ -621,7 +621,7 @@ class RredMethod : public pkgAcqMethod {
 	    if (p.Open(patch_name, FileFd::ReadOnly, FileFd::Gzip) == false ||
 		  patch.read_diff(p, &patch_hash) == false)
 	    {
-	       _error->DumpErrors(std::cerr);
+	       _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
 	       return false;
 	    }
 	    p.Close();
