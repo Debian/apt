@@ -25,7 +25,7 @@ runtest() {
     $TEST aptget update
     if [ "$1" = 'failure' ]; then
 	# accept the outdated Release file so we can check Hit behaviour
-	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=99999999999
+	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=9999999
     fi
     listcurrentlistsdirectory > listsdir.lst
     testsuccess grep '_Packages\(\.gz\)\?$' listsdir.lst

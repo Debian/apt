@@ -4,14 +4,14 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture 'amd64'
+configarchitecture 'native'
 
 aptconfig dump --no-empty --format '%v%n' APT::Move-Autobit-Sections > move-autobit.sections
 testsuccess grep '^oldlibs$' move-autobit.sections
 
-buildsimplenativepackage 'libabc' 'amd64' '1' 'stable' '' '' 'libs'
-buildsimplenativepackage 'libabc' 'amd64' '2' 'unstable' 'Depends: libdef' '' 'oldlibs'
-buildsimplenativepackage 'libdef' 'amd64' '1' 'unstable' '' '' 'libs'
+buildsimplenativepackage 'libabc' 'native' '1' 'stable' '' '' 'libs'
+buildsimplenativepackage 'libabc' 'native' '2' 'unstable' 'Depends: libdef' '' 'oldlibs'
+buildsimplenativepackage 'libdef' 'native' '1' 'unstable' '' '' 'libs'
 setupaptarchive
 
 testmarkedauto
