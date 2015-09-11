@@ -1,3 +1,33 @@
+apt (1.1~exp12) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * sources.list and indextargets option for pdiffs
+  * auto-prefix $(SITE) for indextargets Description field
+  * implement PDiff patching for compressed files
+  * implement indextargets option 'DefaultEnabled'
+  * try xz instead of bz2 first for compressed files
+  * implement $(NATIVE_ARCHITECTURE) substvar for indextargets
+  * detect and deal with indextarget duplicates
+  * ignore for _apt inaccessible TMPDIR in pkgAcqChangelog (Closes: 797270)
+  * if file is inaccessible for _apt, disable privilege drop in acquire
+  * remove Christian Perrier from Uploaders as requested.
+    Thanks to Christian for all the l10n, code & social contributions!
+    (Closes: #783337)
+  * use unusable-for-security hashes for integrity checks
+  * use clock() as source for SRV randomness
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: 797329)
+
+  [ Michael Vogt ]
+  * Consider md5sum no longer a usable hash
+  * Add support for writing by-hash dirs in apt-ftparchive
+
+  [ Julian Andres Klode ]
+  * apt-pkg/tagfile.h: Include stdint.h, fixes rdep build failures
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 11 Sep 2015 23:31:34 +0200
+
 apt (1.1~exp11) experimental; urgency=medium
 
   [ Julian Andres Klode ]
