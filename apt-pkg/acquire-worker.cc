@@ -254,8 +254,8 @@ bool pkgAcquire::Worker::RunMessages()
 	    ItemDone();
 
 	    // Change the status so that it can be dequeued
-	    for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
-	       (*O)->Status = pkgAcquire::Item::StatIdle;
+	    for (auto const &O: Itm->Owners)
+	       O->Status = pkgAcquire::Item::StatIdle;
 	    // Mark the item as done (taking care of all queues)
 	    // and then put it in the main queue again
 	    std::vector<Item*> const ItmOwners = Itm->Owners;
