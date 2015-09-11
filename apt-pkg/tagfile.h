@@ -22,6 +22,7 @@
 #include <apt-pkg/macros.h>
 
 #include <stdio.h>
+#include <stdint.h>
 
 #include <string>
 #include <vector>
