@@ -128,7 +128,7 @@ class HttpMethod : public ServerMethod
 
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
-   virtual ServerState * CreateServerState(URI uri) APT_OVERRIDE;
+   virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    virtual void RotateDNS() APT_OVERRIDE;
 
    protected:
