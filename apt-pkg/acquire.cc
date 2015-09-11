@@ -24,6 +24,7 @@
 #include <apt-pkg/fileutl.h>
 
 #include <algorithm>
+#include <numeric>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -658,10 +659,10 @@ bool pkgAcquire::Clean(string Dir)
 /* This is the total number of bytes needed */
 APT_PURE unsigned long long pkgAcquire::TotalNeeded()
 {
-   unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
-      Total += (*I)->FileSize;
-   return Total;
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+      [](unsigned long long const T, Item const * const I) {
+	 return T + I->FileSize;
+   });
 }
 									/*}}}*/
 // Acquire::FetchNeeded - Number of bytes needed to get			/*{{{*/
@@ -669,11 +670,13 @@ APT_PURE unsigned long long pkgAcquire::TotalNeeded()
 /* This is the number of bytes that is not local */
 APT_PURE unsigned long long pkgAcquire::FetchNeeded()
 {
-   unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
-      if ((*I)->Local == false)
-	 Total += (*I)->FileSize;
-   return Total;
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+      [](unsigned long long const T, Item const * const I) {
+	 if (I->Local == false)
+	    return T + I->FileSize;
+	 else
+	    return T;
+   });
 }
 									/*}}}*/
 // Acquire::PartialPresent - Number of partial bytes we already have	/*{{{*/
@@ -681,11 +684,13 @@ APT_PURE unsigned long long pkgAcquire::FetchNeeded()
 /* This is the number of bytes that is not local */
 APT_PURE unsigned long long pkgAcquire::PartialPresent()
 {
-  unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
-      if ((*I)->Local == false)
-	 Total += (*I)->PartialSize;
-   return Total;
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+      [](unsigned long long const T, Item const * const I) {
+	 if (I->Local == false)
+	    return T + I->PartialSize;
+	 else
+	    return T;
+   });
 }
 									/*}}}*/
 // Acquire::UriBegin - Start iterator for the uri list			/*{{{*/
@@ -909,8 +914,8 @@ bool pkgAcquire::Queue::Cycle()
 	 return true;
 
       I->Worker = Workers;
-      for (QItem::owner_iterator O = I->Owners.begin(); O != I->Owners.end(); ++O)
-	 (*O)->Status = pkgAcquire::Item::StatFetching;
+      for (auto const &O: I->Owners)
+	 O->Status = pkgAcquire::Item::StatFetching;
       PipeDepth++;
       if (Workers->QueueItem(I) == false)
 	 return false;
@@ -962,11 +967,11 @@ HashStringList pkgAcquire::Queue::QItem::GetExpectedHashes() const	/*{{{*/
 APT_PURE unsigned long long pkgAcquire::Queue::QItem::GetMaximumSize() const	/*{{{*/
 {
    unsigned long long Maximum = std::numeric_limits<unsigned long long>::max();
-   for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
+   for (auto const &O: Owners)
    {
-      if ((*O)->FileSize == 0)
+      if (O->FileSize == 0)
 	 continue;
-      Maximum = std::min(Maximum, (*O)->FileSize);
+      Maximum = std::min(Maximum, O->FileSize);
    }
    if (Maximum == std::numeric_limits<unsigned long long>::max())
       return 0;
