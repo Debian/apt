@@ -416,7 +416,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          // to do anything at all
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    std::unique_ptr<Version *> VList(Cur.AllTargets());
+	    std::unique_ptr<Version *[]> VList(Cur.AllTargets());
 
 	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
@@ -466,7 +466,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          // probably due to loops.
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    std::unique_ptr<Version *> VList(Cur.AllTargets());
+	    std::unique_ptr<Version *[]> VList(Cur.AllTargets());
 
 	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
@@ -541,7 +541,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 // Search for dependencies which are unpacked but aren't configured yet (maybe loops)
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
-	    std::unique_ptr<Version *> VList(Cur.AllTargets());
+	    std::unique_ptr<Version *[]> VList(Cur.AllTargets());
 
 	    for (Version **I = VList.get(); *I != 0; ++I)
 	    {
@@ -760,7 +760,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for easy targets: packages that are already okay
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       std::unique_ptr<Version *> VList(Cur.AllTargets());
+	       std::unique_ptr<Version *[]> VList(Cur.AllTargets());
 	       for (Version **I = VList.get(); *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
