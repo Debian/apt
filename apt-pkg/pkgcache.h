@@ -578,6 +578,7 @@ struct pkgCache::DescFile
     The version list is always sorted from highest version to lowest
     version by the generator. Equal version numbers are either merged
     or handled as separate versions based on the Hash value. */
+APT_IGNORE_DEPRECATED_PUSH
 struct pkgCache::Version
 {
    /** \brief complete version string */
@@ -645,6 +646,7 @@ struct pkgCache::Version
    /** \brief parsed priority value */
    map_number_t Priority;
 };
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Description structure						/*{{{*/
 /** \brief datamember of a linked list of available description for a version */
