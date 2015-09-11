@@ -32,12 +32,15 @@ metaIndex::metaIndex(std::string const &URI, std::string const &Dist,
 
 metaIndex::~metaIndex()
 {
-   if (Indexes == 0)
-      return;
-   for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin();
-        I != (*Indexes).end(); ++I)
-      delete *I;
-   delete Indexes;
+   if (Indexes != 0)
+   {
+      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin();
+	    I != (*Indexes).end(); ++I)
+	 delete *I;
+      delete Indexes;
+   }
+   for (auto const &E: Entries)
+      delete E.second;
 }
 
 // one line Getters for public fields					/*{{{*/

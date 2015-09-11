@@ -778,9 +778,9 @@ bool HttpMethod::Configuration(string Message)
    return true;
 }
 									/*}}}*/
-ServerState * HttpMethod::CreateServerState(URI uri)			/*{{{*/
+std::unique_ptr<ServerState> HttpMethod::CreateServerState(URI const &uri)/*{{{*/
 {
-   return new HttpServerState(uri, this);
+   return std::unique_ptr<ServerState>(new HttpServerState(uri, this));
 }
 									/*}}}*/
 void HttpMethod::RotateDNS()						/*{{{*/

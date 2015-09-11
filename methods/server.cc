@@ -495,10 +495,8 @@ int ServerMethod::Loop()
       
       // Connect to the server
       if (Server == 0 || Server->Comp(Queue->Uri) == false)
-      {
-	 delete Server;
 	 Server = CreateServerState(Queue->Uri);
-      }
+
       /* If the server has explicitly said this is the last connection
          then we pre-emptively shut down the pipeline and tear down 
 	 the connection. This will speed up HTTP/1.0 servers a tad
@@ -515,8 +513,7 @@ int ServerMethod::Loop()
       if (Server->Open() == false)
       {
 	 Fail(true);
-	 delete Server;
-	 Server = 0;
+	 Server = nullptr;
 	 continue;
       }
 
@@ -748,13 +745,17 @@ int ServerMethod::Loop()
    return 0;
 }
 									/*}}}*/
-                         						/*{{{*/
-unsigned long long
-ServerMethod::FindMaximumObjectSizeInQueue() const 
+unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 {
    unsigned long long MaxSizeInQueue = 0;
    for (FetchItem *I = Queue; I != 0 && I != QueueBack; I = I->Next)
       MaxSizeInQueue = std::max(MaxSizeInQueue, I->MaximumSize);
    return MaxSizeInQueue;
+}
+									/*}}}*/
+ServerMethod::ServerMethod(const char *Ver,unsigned long Flags) :	/*{{{*/
+   pkgAcqMethod(Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
+   AllowRedirect(false), Debug(false)
+{
 }
 									/*}}}*/

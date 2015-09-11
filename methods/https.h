@@ -17,6 +17,7 @@
 #include <iostream>
 #include <stddef.h>
 #include <string>
+#include <memory>
 
 #include "server.h"
 
@@ -67,7 +68,7 @@ class HttpsMethod : public ServerMethod
 				 double ultotal, double ulnow);
    void SetupProxy();
    CURL *curl;
-   ServerState *Server;
+   std::unique_ptr<ServerState> Server;
 
    // Used by ServerMethods unused by https
    virtual void SendReq(FetchItem *) APT_OVERRIDE { exit(42); }
@@ -77,7 +78,7 @@ class HttpsMethod : public ServerMethod
    FileFd *File;
 
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
-   virtual ServerState * CreateServerState(URI uri) APT_OVERRIDE;
+   virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    using pkgAcqMethod::FetchResult;
    using pkgAcqMethod::FetchItem;
 

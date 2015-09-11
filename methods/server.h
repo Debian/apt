@@ -17,6 +17,7 @@
 #include <time.h>
 #include <iostream>
 #include <string>
+#include <memory>
 
 using std::cout;
 using std::endl;
@@ -108,7 +109,7 @@ class ServerMethod : public pkgAcqMethod
    protected:
    virtual bool Fetch(FetchItem *) APT_OVERRIDE;
 
-   ServerState *Server;
+   std::unique_ptr<ServerState> Server;
    std::string NextURI;
    FileFd *File;
 
@@ -152,10 +153,10 @@ class ServerMethod : public pkgAcqMethod
    int Loop();
 
    virtual void SendReq(FetchItem *Itm) = 0;
-   virtual ServerState * CreateServerState(URI uri) = 0;
+   virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) = 0;
    virtual void RotateDNS() = 0;
 
-   ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), Server(NULL), File(NULL), PipelineDepth(10), AllowRedirect(false), Debug(false) {};
+   ServerMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~ServerMethod() {};
 };
 
