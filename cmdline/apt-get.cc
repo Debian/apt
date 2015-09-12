@@ -78,7 +78,6 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -738,17 +737,22 @@ static bool DoSource(CommandLine &CmdL)
 	 }
 	 pos += vcs.length()+2;
 	 string::size_type epos = srec.find("\n", pos);
-	 string uri = srec.substr(pos,epos-pos).c_str();
+	 string const uri = srec.substr(pos,epos-pos);
 	 ioprintf(c1out, _("NOTICE: '%s' packaging is maintained in "
 			   "the '%s' version control system at:\n"
 			   "%s\n"),
 		  Src.c_str(), vcs.c_str(), uri.c_str());
-	 if(vcs == "Bzr") 
-	    ioprintf(c1out,_("Please use:\n"
-			     "bzr branch %s\n"
-			     "to retrieve the latest (possibly unreleased) "
-			     "updates to the package.\n"),
-		     uri.c_str());
+	 std::string vcscmd;
+	 if (vcs == "Bzr")
+	    vcscmd = "bzr branch " + uri;
+	 else if (vcs == "Git")
+	    vcscmd = "git clone " + uri;
+
+	 if (vcscmd.empty() == false)
+	    ioprintf(c1out,_("Please use:\n%s\n"
+		     "to retrieve the latest (possibly unreleased) "
+		     "updates to the package.\n"),
+		  vcscmd.c_str());
 	 break;
       }
 
@@ -936,19 +940,7 @@ static bool DoSource(CommandLine &CmdL)
       _exit(0);
    }
 
-   // Wait for the subprocess
-   int Status = 0;
-   while (waitpid(Process,&Status,0) != Process)
-   {
-      if (errno == EINTR)
-	 continue;
-      return _error->Errno("waitpid","Couldn't wait for subprocess");
-   }
-
-   if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
-      return _error->Error(_("Child process failed"));
-   
-   return true;
+   return ExecWait(Process, "dpkg-source");
 }
 									/*}}}*/
 // DoBuildDep - Install/removes packages to satisfy build dependencies  /*{{{*/

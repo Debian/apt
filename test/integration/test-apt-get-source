@@ -27,6 +27,9 @@ insertsource 'stable' 'foo' 'all' '1.0'
 insertsource 'wheezy' 'foo' 'all' '0.0.1'
 insertsource 'wheezy' 'foo' 'all' '0.1'
 
+insertsource 'stable' 'bar' 'any' '1.1' 'Vcs-Browser: https://anonscm.debian.org/cgit/bar/bar.git
+Vcs-Git: git://anonscm.debian.org/bar/bar.git -b debian/experimental'
+
 setupaptarchive
 
 APTARCHIVE=$(readlink -f ./aptarchive)
@@ -42,6 +45,8 @@ DOWNLOAD2="Need to get 0 B/25 B of source archives.
 'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a"
 testsuccessequal "$HEADER
 $DOWNLOAD2" aptget source -q --print-uris foo
+testsuccessequal "$HEADER
+$DOWNLOAD2" aptget source -q --print-uris foo foo
 
 # select by release: suite
 testsuccessequal "$HEADER
@@ -93,3 +98,17 @@ $DOWNLOAD001" aptget source -q --print-uris -t unstable foo=0.0.1
 testsuccessequal "$HEADER
 Need to get 0 B/25 B of source archives.
 Fetch source foo" aptget source -q -s foo
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Must specify at least one package to fetch source for' aptget source
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+NOTICE: 'bar' packaging is maintained in the 'Git' version control system at:
+git://anonscm.debian.org/bar/bar.git -b debian/experimental
+Please use:
+git clone git://anonscm.debian.org/bar/bar.git -b debian/experimental
+to retrieve the latest (possibly unreleased) updates to the package.
+Need to get 0 B/25 B of source archives.
+Fetch source bar" aptget source bar -s
