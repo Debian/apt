@@ -5,12 +5,15 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
-buildsimplenativepackage 'debhelper' 'i386' '7' 'stable'
-buildsimplenativepackage 'build-essential' 'i386' '1' 'stable'
+insertpackage 'stable' 'debhelper' 'i386' '7'
+insertpackage 'stable' 'build-essential' 'i386' '1'
+insertinstalledpackage 'build-conflict' 'i386' '1'
 
 setupaptarchive
+
+msgmsg 'Test with' 'unsigned dsc'
 cat > 2vcard_0.5-3.dsc <<EOF
 Format: 1.0
 Source: 2vcard
@@ -21,6 +24,7 @@ Maintainer: Martin Albisetti <argentina@gmail.com>
 Uploaders: Marcela Tiznado <mlt@debian.org>
 Standards-Version: 3.8.0
 Build-Depends: debhelper (>= 5.0.37)
+Build-Conflicts: build-conflict (<< 2)
 Checksums-Sha1: 
  b7f1ce31ec856414a3f0f1090689f91aa7456d56 9398 2vcard_0.5.orig.tar.gz
  5f9acd07ebda6ab00fa6b4fe3198c13e94090862 2036 2vcard_0.5-3.diff.gz
@@ -32,17 +36,24 @@ Files:
  1e806d32233af87437258d86b1561f57 2036 2vcard_0.5-3.diff.gz
 EOF
 
-testsuccessequal "Reading package lists...
+test2vcardbuilddep() {
+	testsuccessequal "Reading package lists...
 Building dependency tree...
 Note, using file '2vcard_0.5-3.dsc' to get the build dependencies
+The following packages will be REMOVED:
+  build-conflict
 The following NEW packages will be installed:
   build-essential debhelper
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv build-conflict [1]
 Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
 Conf debhelper (7 stable [i386])" aptget build-dep -s 2vcard_0.5-3.dsc
+}
+test2vcardbuilddep
 
+msgmsg 'Test with' 'signed dsc'
 cat > 2vcard_0.5-3.dsc <<EOF
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
@@ -56,6 +67,7 @@ Maintainer: Martin Albisetti <argentina@gmail.com>
 Uploaders: Marcela Tiznado <mlt@debian.org>
 Standards-Version: 3.8.0
 Build-Depends: debhelper (>= 5.0.37)
+Build-Conflicts: build-conflict (<< 2)
 Checksums-Sha1: 
  b7f1ce31ec856414a3f0f1090689f91aa7456d56 9398 2vcard_0.5.orig.tar.gz
  5f9acd07ebda6ab00fa6b4fe3198c13e94090862 2036 2vcard_0.5-3.diff.gz
@@ -74,20 +86,10 @@ z2UAn1oXgTai6opwhVfkxrlmJ+iRxzuc
 =4eRd
 -----END PGP SIGNATURE-----
 EOF
-
-testsuccessequal "Reading package lists...
-Building dependency tree...
-Note, using file '2vcard_0.5-3.dsc' to get the build dependencies
-The following NEW packages will be installed:
-  build-essential debhelper
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst build-essential (1 stable [i386])
-Inst debhelper (7 stable [i386])
-Conf build-essential (1 stable [i386])
-Conf debhelper (7 stable [i386])" aptget build-dep --simulate 2vcard_0.5-3.dsc
+test2vcardbuilddep
 
 
-# unpacked source dir
+msgmsg 'Test with' 'unpacked source dir'
 mkdir -p foo-1.0/debian
 cat > foo-1.0/debian/control <<'EOF'
 Source: apturl
@@ -127,3 +129,14 @@ Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
 Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./foo-1.0
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Must specify at least one package to check builddeps for' aptget build-dep
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup' aptget build-dep --simulate ./foo-1.0 -a armel
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Unable to find a source package for foo' aptget build-dep --simulate foo

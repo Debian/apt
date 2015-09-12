@@ -34,6 +34,7 @@ testempty aptcache unmet dpkg
 testsuccess aptcache stats
 cp rootdir/tmp/testsuccess.output stats.output
 testsuccess test -s stats.output
+testfailureequal 'E: apt-cache stats does not take any arguments' aptcache stats foo
 testsuccess aptcache xvcg foo
 cp rootdir/tmp/testsuccess.output xvcg.output
 testsuccess test -s xvcg.output

@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -112,32 +113,21 @@ static bool DoIt(string InFile)
    // Emit
    FileFd stdoutfd;
    stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
-   unsigned char *Buffer = new unsigned char[Largest+1];
+   auto const Buffer = std::unique_ptr<unsigned char[]>(new unsigned char[Largest+1]);
    for (vector<PkgName>::iterator I = List.begin(); I != List.end(); ++I)
    {
       // Read in the Record.
-      if (Fd.Seek(I->Offset) == false || Fd.Read(Buffer,I->Length) == false)
-      {
-	 delete [] Buffer;
+      if (Fd.Seek(I->Offset) == false || Fd.Read(Buffer.get(),I->Length) == false)
 	 return false;
-      }
 
       Buffer[I->Length] = '\n';
-      if (Section.Scan((char *)Buffer,I->Length+1) == false)
-      {
-	 delete [] Buffer;
+      if (Section.Scan((char *)Buffer.get(),I->Length+1) == false)
 	 return _error->Error("Internal error, failed to scan buffer");
-      }
 
       // Sort the section
       if (Section.Write(stdoutfd, Order) == false || stdoutfd.Write("\n", 1) == false)
-      {
-	 delete [] Buffer;
 	 return _error->Error("Internal error, failed to sort fields");
-      }
    }
-
-   delete [] Buffer;
    return true;
 }
 									/*}}}*/

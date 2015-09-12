@@ -95,14 +95,6 @@ SHA256-Download:
 	testsuccessequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
-	msgmsg "Testcase: index is already up-to-date: $*"
-	find rootdir/var/lib/apt/lists -name '*diff_Index' -type f -delete
-	testsuccess aptget update "$@"
-	testequal 'Hit:1 http://localhost:8080  InRelease
-Reading package lists...' aptget update "$@" -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Diffs=0
-	testsuccessequal "$(cat ${PKGFILE}-new)
-" aptcache show apt newstuff
-
 	msgmsg "Testcase: apply with two patches: $*"
 	cp ${PKGFILE}-new aptarchive/Packages
 	echo '

@@ -27,6 +27,9 @@ setupaptarchive
 
 testfailure aptget install --solver dump coolstuff -s
 testsuccess grep ERR_NO_FILENAME rootdir/tmp/testfailure.output
+export APT_EDSP_DUMP_FILENAME="/nonexistent/apt/edsp.dump"
+testfailure aptget install --solver dump coolstuff -s
+testsuccess grep ERR_WRITE_ERROR rootdir/tmp/testfailure.output
 export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/downloaded/dump.edsp"
 
 testfailureequal 'Reading package lists...
@@ -111,6 +114,14 @@ testfailure aptget install awesome badstuff -s --solver apt
 testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
 
 configarchitecture 'armel'
+testfailure aptget install --solver apt awesomecoolstuff:i386 -s
+msgtest 'An invalid EDSP file generates a' 'hard error'
+if echo "Request: This is a test\nFoo: bar\n\n" | aptinternalsolver -q=0 > solver.result 2>&1; then
+	cat solver.result
+	msgfail
+else
+	msgpass
+fi
 msgtest 'Test direct calling is okay for' 'apt-internal-solver'
 cat "$APT_EDSP_DUMP_FILENAME" | aptinternalsolver -q=0 > solver.result 2>&1 || true
 if [ "$(tail -n2 solver.result | head -n1 )" = "Message: Done" ]; then
@@ -120,8 +131,6 @@ else
 	msgfail
 fi
 rm -f "$APT_EDSP_DUMP_FILENAME"
-
-testfailure aptget install --solver apt awesomecoolstuff:i386 -s
 
 testsuccess aptinternalsolver scenario
 testsuccessequal 'Package: stuff

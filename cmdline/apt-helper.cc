@@ -81,7 +81,7 @@ static bool DoDownloadFile(CommandLine &CmdL)
 
 static bool DoSrvLookup(CommandLine &CmdL)
 {
-   if (CmdL.FileSize() < 1)
+   if (CmdL.FileSize() <= 1)
       return _error->Error("Must specify at least one SRV record");
 
    for(size_t i = 1; CmdL.FileList[i] != NULL; ++i)
@@ -95,10 +95,10 @@ static bool DoSrvLookup(CommandLine &CmdL)
 	 std::string const host = name.substr(0, found);
 	 size_t const port = atoi(name.c_str() + found + 1);
 	 if(GetSrvRecords(host, port, srv_records) == false)
-	    _error->Warning(_("GetSrvRec failed for %s"), name.c_str());
+	    _error->Error(_("GetSrvRec failed for %s"), name.c_str());
       }
       else if(GetSrvRecords(name, srv_records) == false)
-	 _error->Warning(_("GetSrvRec failed for %s"), name.c_str());
+	 _error->Error(_("GetSrvRec failed for %s"), name.c_str());
 
       for (SrvRec const &I : srv_records)
 	 c1out << I.target << "\t" << I.priority << "\t" << I.weight << "\t" << I.port << std::endl;

@@ -89,3 +89,6 @@ testfailureequal 'E: Invalid operation download' apthelper download
 testfailureequal 'E: Must specify at least one pair url/filename' apthelper download-file
 testfailureequal 'E: Must specify at least one pair url/filename' apthelper download-file http://example.org/
 testfailureequal 'E: Need one URL as argument' apthelper auto-detect-proxy
+testfailureequal 'E: Must specify at least one SRV record' apthelper srv-lookup
+testfailureequal 'E: GetSrvRec failed for localhost' apthelper srv-lookup localhost
+testfailureequal 'E: GetSrvRec failed for localhost:8080' apthelper srv-lookup localhost:8080
