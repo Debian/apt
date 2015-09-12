@@ -37,10 +37,9 @@ $(POTFILES) : $(PO)/%.pot :
 	cmp --silent $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot || \
 		mv $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot
 # From C/C++ source
-	cat $(PO)/domains/$*/*.srclist > $(PO)/POTFILES_$*.in
+	cat $(PO)/domains/$*/*.srclist | sort > $(PO)/POTFILES_$*.in
 	$(XGETTEXT) --default-domain=$* --directory=$(BASE) \
 	  --add-comments --foreign --keyword=_ --keyword=N_ \
-          # avoid the huge churn on each make update-pot
           --no-location \
 	  --keyword=P_:1,2 \
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot.tmp
