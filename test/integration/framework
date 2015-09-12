@@ -1592,29 +1592,30 @@ testfailure() {
 	msggroup
 }
 
-testsuccessequal() {
-	msggroup 'testsuccessequal'
-	local CMP="$1"
-	shift
-	testsuccess "$@"
-	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$CMP"
+testreturnstateequal() {
+	local STATE="$1"
+	msggroup "${STATE}equal"
+	if [ "$2" != '--nomsg' ]; then
+		local CMP="$2"
+		shift 2
+		"$STATE" "$@"
+		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+	else
+		local CMP="$3"
+		shift 3
+		"$STATE" --nomsg "$@"
+		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+	fi
 	msggroup
+}
+testsuccessequal() {
+	testreturnstateequal 'testsuccess' "$@"
 }
 testwarningequal() {
-	msggroup 'testwarningequal'
-	local CMP="$1"
-	shift
-	testwarning "$@"
-	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" "$CMP"
-	msggroup
+	testreturnstateequal 'testwarning' "$@"
 }
 testfailureequal() {
-	msggroup 'testfailureequal'
-	local CMP="$1"
-	shift
-	testfailure "$@"
-	testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
-	msggroup
+	testreturnstateequal 'testfailure' "$@"
 }
 
 testfailuremsg() {
