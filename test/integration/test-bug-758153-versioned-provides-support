@@ -42,6 +42,12 @@ insertpackage 'unstable' 'virtualnext3' 'amd64' '1' 'Multi-Arch: no
 Provides: next3 (= 2)'
 insertpackage 'unstable' 'needsnext3' 'amd64,i386' '2' 'Depends: next3 (>= 2)'
 
+insertpackage 'unstable' 'selfprov' 'amd64' '2' 'Provides: selfprov (= 1)'
+insertpackage 'unstable' 'needsselfprov1' 'amd64' '1' 'Depends: selfprov (= 1)'
+insertpackage 'unstable' 'needsselfprov2' 'amd64' '1' 'Depends: selfprov (= 2)'
+insertpackage 'unstable' 'needsselfprov12' 'amd64' '1' 'Depends: selfprov (= 1), selfprov (= 2)'
+insertpackage 'unstable' 'needsselfprov123' 'amd64' '1' 'Depends: selfprov (= 1), selfprov (= 2), selfprov (= 3)'
+
 setupaptarchive
 
 testsuccessequal 'Reading package lists...
@@ -288,3 +294,48 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  needsnext3:i386 : Depends: next3:i386 (>= 2) but it is not installable
 E: Unable to correct problems, you have held broken packages.' aptget install needsnext3:i386 -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  selfprov
+The following NEW packages will be installed:
+  needsselfprov1 selfprov
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Inst needsselfprov1 (1 unstable [amd64])
+Conf selfprov (2 unstable [amd64])
+Conf needsselfprov1 (1 unstable [amd64])' aptget install needsselfprov1 -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  selfprov
+The following NEW packages will be installed:
+  needsselfprov2 selfprov
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Inst needsselfprov2 (1 unstable [amd64])
+Conf selfprov (2 unstable [amd64])
+Conf needsselfprov2 (1 unstable [amd64])' aptget install needsselfprov2 -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  selfprov
+The following NEW packages will be installed:
+  needsselfprov12 selfprov
+0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Inst needsselfprov12 (1 unstable [amd64])
+Conf selfprov (2 unstable [amd64])
+Conf needsselfprov12 (1 unstable [amd64])' aptget install needsselfprov12 -s
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ needsselfprov123 : Depends: selfprov (= 3)
+E: Unable to correct problems, you have held broken packages.' aptget install needsselfprov123 -s

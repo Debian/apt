@@ -1070,7 +1070,8 @@ bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
 
    // We do not add self referencing provides
    if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
-	(PkgArch == "all" && strcmp((Cache.StrP + Cache.HeaderP->Architecture), Ver.ParentPkg().Arch()) == 0)))
+	(PkgArch == "all" && strcmp((Cache.StrP + Cache.HeaderP->Architecture), Ver.ParentPkg().Arch()) == 0)) &&
+	 (Version.empty() || Version == Ver.VerStr()))
       return true;
 
    // Locate the target package
