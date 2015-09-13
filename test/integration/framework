@@ -368,6 +368,7 @@ EOF
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
+	confighashes 'SHA1' # these are tests, not security best-practices
 
 	# create some files in /tmp and look at user/group to get what this means
 	TEST_DEFAULT_USER="$USER"
@@ -513,7 +514,22 @@ configcompression() {
 		shift
 	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
 }
-
+confighashes() {
+	{
+		echo 'APT::FTPArchive {'
+		{
+			while [ -n "$1" ]; do
+				printf "$1" | tr 'a-z' 'A-Z'
+				printf "\t\"true\";\n"
+				shift
+			done
+			for h in 'MD5' 'SHA1' 'SHA256' 'SHA512'; do
+				printf "$h\t\"false\";\n"
+			done
+		} | awk '!x[$1]++'
+		echo '};'
+	} >> "${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/ftparchive-hashes.conf"
+}
 forcecompressor() {
 	COMPRESSOR="$1"
 	COMPRESSOR_CMD="$1"
@@ -734,41 +750,24 @@ createaptftparchiveconfig() {
 	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
 	local COMPRESSORS="${COMPRESSORS%* }"
 	local ARCHS="$(getarchitectures)"
-	echo -n 'Dir {
-	ArchiveDir "' >> ftparchive.conf
-	echo -n $(readlink -f .) >> ftparchive.conf
-	echo -n '";
-	CacheDir "' >> ftparchive.conf
-	echo -n $(readlink -f ..) >> ftparchive.conf
-	echo -n '";
-	FileListDir "' >> ftparchive.conf
-	echo -n $(readlink -f pool/) >> ftparchive.conf
-	echo -n '";
+	cat > ftparchive.conf <<EOF
+Dir {
+	ArchiveDir "$(readlink -f .)";
+	CacheDir "$(readlink -f ..)";
+	FileListDir "$(readlink -f pool/)";
 };
 Default {
-	Packages::Compress "'"$COMPRESSORS"'";
-	Sources::Compress "'"$COMPRESSORS"'";
-	Contents::Compress "'"$COMPRESSORS"'";
-	Translation::Compress "'"$COMPRESSORS"'";
+	Packages::Compress "$COMPRESSORS";
+	Sources::Compress "$COMPRESSORS";
+	Contents::Compress "$COMPRESSORS";
+	Translation::Compress "$COMPRESSORS";
 	LongDescription "false";
 };
 TreeDefault {
 	Directory "pool/";
 	SrcDirectory "pool/";
 };
-APT {
-	FTPArchive {
-		Release {
-			Origin "joesixpack";
-			Label "apttestcases";
-			Suite "unstable";
-			Description "repository with dummy packages";
-			Architectures "' >> ftparchive.conf
-	echo -n "$ARCHS" >> ftparchive.conf
-	echo 'source";
-		};
-	};
-};' >> ftparchive.conf
+EOF
 	for DIST in $(find ./pool/ -maxdepth 1 -name '*.pkglist' -type f | cut -d'/' -f 3 | cut -d'.' -f 1 | sort | uniq); do
 		echo -n 'tree "dists/' >> ftparchive.conf
 		echo -n "$DIST" >> ftparchive.conf
@@ -968,6 +967,9 @@ getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 getoriginfromsuite() { true; }
 
+aptftparchiverelease() {
+	aptftparchive -qq release "$@" | sed -e '/0 Release$/ d' # remove the self reference
+}
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
 	# both should be given in notation date/touch can understand
@@ -988,32 +990,30 @@ generatereleasefiles() {
 			if [ -n "$ORIGIN" ]; then
 				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
 			fi
-			aptftparchive -qq release $dir \
+			aptftparchiverelease $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
 				${LABEL} \
 				${ORIGIN} \
 				${VERSION} \
-					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+				> $dir/Release
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
 				sed -i '/^Date: / a\
 NotAutomatic: yes' $dir/Release
 			fi
-			if [ -n "$1" -a "$1" != "now" ]; then
-				sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" $dir/Release
-			fi
-			if [ -n "$2" ]; then
-				sed -i "/^Date: / a\
-Valid-Until: $(date -d "$2" '+%a, %d %b %Y %H:%M:%S %Z')" $dir/Release
-			fi
 		done
 	else
-		aptftparchive -qq release ./aptarchive | sed -e '/0 Release$/ d' > aptarchive/Release # remove the self reference
+		aptftparchiverelease ./aptarchive > aptarchive/Release
 	fi
 	if [ -n "$1" -a "$1" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
+			sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" $release
 			touch -d "$1" $release
 		done
+	fi
+	if [ -n "$2" ]; then
+		sed -i "/^Date: / a\
+Valid-Until: $(date -d "$2" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
 	fi
 	msgdone "info"
 }

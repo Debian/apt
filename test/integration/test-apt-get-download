@@ -6,6 +6,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture "i386"
+confighashes 'SHA512'
 
 buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'

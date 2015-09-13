@@ -5,6 +5,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
 configarchitecture "i386"
+confighashes 'MD5' 'SHA1' 'SHA256' 'SHA512'
 
 msgtest 'Test apt-ftparchive source with missing hashes in .dsc'
 
@@ -22,14 +23,16 @@ Files:
 EOF
 
 # check for the SHA hashes
-aptftparchive sources aptarchive/ > aptarchive/Sources  2>/dev/null || msgfail
-test -n "$(grep Checksums-Sha512 aptarchive/Sources)" && msgpass || msgfail
+testsuccess aptftparchive sources aptarchive/
+cp rootdir/tmp/testsuccess.output aptarchive/Sources
+testsuccess grep Checksums-Sha512 aptarchive/Sources
 
 for hash in sha512sum sha256sum sha1sum; do
     for f in foo_1.0.tar.gz foo_1.0.dsc; do
         SUM=$($hash aptarchive/$f | cut -d' ' -f1)
-        msgtest "Test $hash hash matches for $f"
         NEEDLE="$SUM $(stat -c%s aptarchive/$f) $f"
-        test -n "$SUM" &&  test -n "$(grep "$NEEDLE" aptarchive/Sources)" && msgpass || msgfail 
+	testsuccess test -n "$SUM"
+	msgtest "Test $hash hash matches for $f"
+	testsuccess --nomsg grep "$NEEDLE" aptarchive/Sources
     done
 done

@@ -11,6 +11,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "amd64"
 configcompression 'bz2' 'gz'
+confighashes 'SHA512'
 
 insertpackage 'unstable' 'foo' 'all' '1'
 insertsource 'unstable' 'foo' 'all' '1'
