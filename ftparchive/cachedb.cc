@@ -485,10 +485,15 @@ bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
    if (GenOnly == true)
       return true;
 
-   return HashesList.push_back(HashString("MD5Sum", bytes2hex(CurStat.MD5, sizeof(CurStat.MD5)))) &&
-      HashesList.push_back(HashString("SHA1", bytes2hex(CurStat.SHA1, sizeof(CurStat.SHA1)))) &&
-      HashesList.push_back(HashString("SHA256", bytes2hex(CurStat.SHA256, sizeof(CurStat.SHA256)))) &&
-      HashesList.push_back(HashString("SHA512", bytes2hex(CurStat.SHA512, sizeof(CurStat.SHA512))));
+   bool ret = true;
+#define PUSH_BACK_HASH(FLAG, TYPE, VALUE) \
+   if ((CurStat.Flags & FLAG) == FLAG) \
+      ret &= HashesList.push_back(HashString(TYPE, bytes2hex(VALUE, sizeof(VALUE))));
+   PUSH_BACK_HASH(FlMD5, "MD5Sum", CurStat.MD5);
+   PUSH_BACK_HASH(FlSHA1, "SHA1", CurStat.SHA1);
+   PUSH_BACK_HASH(FlSHA256, "SHA256", CurStat.SHA256);
+   PUSH_BACK_HASH(FlSHA512, "SHA512", CurStat.SHA512);
+   return ret;
 }
 									/*}}}*/
 // CacheDB::Finish - Write back the cache structure			/*{{{*/
