@@ -56,7 +56,7 @@ FTWScanner *FTWScanner::Owner;
 // ConfigToDoHashes - which hashes to generate				/*{{{*/
 static void SingleConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf, unsigned int const Flag)
 {
-   if (_config->FindB(Conf, true) == true)
+   if (_config->FindB(Conf, (DoHashes & Flag) == Flag) == true)
       DoHashes |= Flag;
    else
       DoHashes &= ~Flag;
