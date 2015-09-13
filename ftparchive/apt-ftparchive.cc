@@ -1032,6 +1032,7 @@ int main(int argc, const char *argv[])
       {0,"md5","APT::FTPArchive::MD5",0},
       {0,"sha1","APT::FTPArchive::SHA1",0},
       {0,"sha256","APT::FTPArchive::SHA256",0},
+      {0,"sha512","APT::FTPArchive::SHA512",0},
       {'v',"version","version",0},
       {'d',"db","APT::FTPArchive::DB",CommandLine::HasArg},
       {'s',"source-override","APT::FTPArchive::SourceOverride",CommandLine::HasArg},

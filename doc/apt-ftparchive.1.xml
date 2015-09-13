@@ -94,8 +94,8 @@
      as well as <filename>Release</filename> and <filename>md5sum.txt</filename> files by default
      (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Additional filename patterns
      can be added by listing them in <literal>APT::FTPArchive::Release::Patterns</literal>.
-     It then writes to stdout a <filename>Release</filename> file containing an MD5, SHA1 and SHA256 digest
-     for each file.</para>
+     It then writes to stdout a <filename>Release</filename> file containing (by default) an MD5,
+     SHA1, SHA256 and SHA512 digest for each file.</para>
      <para>
      Values for the additional metadata fields in the Release file are
      taken from the corresponding variables under
@@ -501,7 +501,11 @@ for i in Sections do
    &apt-cmdblurb;
    
    <variablelist>
-     <varlistentry><term><option>--md5</option></term><term><option>--sha1</option></term><term><option>--sha256</option></term>
+      <varlistentry>
+	 <term><option>--md5</option></term>
+	 <term><option>--sha1</option></term>
+	 <term><option>--sha256</option></term>
+	 <term><option>--sha512</option></term>
      <listitem><para>
      Generate the given checksum. These options default to on, when turned off the generated
      index files will not have the checksum fields where possible.
@@ -509,7 +513,7 @@ for i in Sections do
      <literal>APT::FTPArchive::<replaceable>Index</replaceable>::<replaceable>Checksum</replaceable></literal> where
      <literal><replaceable>Index</replaceable></literal> can be <literal>Packages</literal>, <literal>Sources</literal> or
      <literal>Release</literal> and <literal><replaceable>Checksum</replaceable></literal> can be <literal>MD5</literal>,
-     <literal>SHA1</literal> or <literal>SHA256</literal>.</para></listitem>
+     <literal>SHA1</literal>, <literal>SHA256</literal> or <literal>SHA512</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-d</option></term><term><option>--db</option></term>
