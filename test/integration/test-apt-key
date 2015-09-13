@@ -47,7 +47,7 @@ APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/apt
 
 testrun() {
 	cleanplate
-	ln -sf ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	ln -sf "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
 	msgtest 'Check that paths in list output are not' 'double-slashed'
 	aptkey list 2>&1 | grep -q '//' && msgfail || msgpass
@@ -125,7 +125,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	msgtest 'Test key removal with' 'single key in softlink'
 	cleanplate
-	ln -s $(readlink -f ./keys/joesixpack.pub) rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	ln -s "$(readlink -f ./keys/joesixpack.pub)" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
 	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
@@ -133,7 +133,8 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	cleanplate
 	testsuccess aptkey --fakeroot add ./keys/joesixpack.pub
-	testsuccess aptkey --fakeroot add ./keys/marvinparanoid.pub
+	ln -sf "$(readlink -f ./keys/marvinparanoid.pub)" "./keys/marvin paránöid.pub"
+	testsuccess aptkey --fakeroot add "./keys/marvin paránöid.pub"
 	testaptkeys 'Joe Sixpack' 'Marvin Paranoid'
 	cp -a rootdir/etc/apt/trusted.gpg keys/testcase-multikey.pub # store for reuse
 
@@ -146,7 +147,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	msgtest 'Test key removal with' 'multi key in softlink'
 	cleanplate
-	ln -s $(readlink -f ./keys/testcase-multikey.pub) rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	ln -s "$(readlink -f ./keys/testcase-multikey.pub)" rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'Marvin Paranoid'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
@@ -225,13 +226,13 @@ setupgpgcommand() {
 	msgmsg 'Force tests to be run with' "$1"
 	testsuccess aptkey --readonly adv --version
 	cp rootdir/tmp/testsuccess.output aptkey.version
-	testsuccess grep "^Executing: $1 --" aptkey.version
+	testsuccess grep "^gpg (GnuPG) $2\." aptkey.version
 }
 
 # run with default (whatever this is)
 testrun
 # run with …
-setupgpgcommand 'gpg'
+setupgpgcommand 'gpg' '1'
 testrun
-setupgpgcommand 'gpg2'
+setupgpgcommand 'gpg2' '2'
 testrun
