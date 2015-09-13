@@ -18,6 +18,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'i386'
 configcompression 'gz' '.'
+confighashes 'SHA1' 'SHA256' 'SHA512'
 
 # enable by-hash in apt-ftparchive
 echo 'APT::FTPArchive::DoByHash "1";' >> aptconfig.conf
