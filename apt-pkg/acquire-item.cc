@@ -999,6 +999,10 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
+  bool metaBaseSupportsByHash = false;
+  if (TransactionManager != NULL && TransactionManager->MetaIndexParser != NULL)
+     metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
+
    for (std::vector <IndexTarget>::iterator Target = IndexTargets.begin();
         Target != IndexTargets.end();
         ++Target)
@@ -1028,6 +1032,15 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 if (types.empty() == false)
 	 {
 	    std::ostringstream os;
+	    // add the special compressiontype byhash first if supported
+	    std::string const useByHashConf = Target->Option(IndexTarget::BY_HASH);
+	    bool useByHash = false;
+	    if(useByHashConf == "force")
+	       useByHash = true;
+	    else
+	       useByHash = StringToBool(useByHashConf) == true && metaBaseSupportsByHash;
+	    if (useByHash == true)
+	       os << "by-hash ";
 	    std::copy(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "));
 	    os << *types.rbegin();
 	    Target->Options["COMPRESSIONTYPES"] = os.str();
@@ -2437,28 +2450,57 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
 }
 									/*}}}*/
 // AcqIndex::Init - defered Constructor					/*{{{*/
+static void NextCompressionExtension(std::string &CurrentCompressionExtension, std::string &CompressionExtensions, bool const preview)
+{
+   size_t const nextExt = CompressionExtensions.find(' ');
+   if (nextExt == std::string::npos)
+   {
+      CurrentCompressionExtension = CompressionExtensions;
+      if (preview == false)
+	 CompressionExtensions.clear();
+   }
+   else
+   {
+      CurrentCompressionExtension = CompressionExtensions.substr(0, nextExt);
+      if (preview == false)
+	 CompressionExtensions = CompressionExtensions.substr(nextExt+1);
+   }
+}
 void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
                        string const &ShortDesc)
 {
    Stage = STAGE_DOWNLOAD;
 
    DestFile = GetPartialFileNameFromURI(URI);
-
-   size_t const nextExt = CompressionExtensions.find(' ');
-   if (nextExt == std::string::npos)
-   {
-      CurrentCompressionExtension = CompressionExtensions;
-      CompressionExtensions.clear();
-   }
-   else
-   {
-      CurrentCompressionExtension = CompressionExtensions.substr(0, nextExt);
-      CompressionExtensions = CompressionExtensions.substr(nextExt+1);
-   }
+   NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, false);
 
    if (CurrentCompressionExtension == "uncompressed")
    {
       Desc.URI = URI;
+   }
+   else if (CurrentCompressionExtension == "by-hash")
+   {
+      NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, true);
+      if(unlikely(TransactionManager->MetaIndexParser == NULL || CurrentCompressionExtension.empty()))
+	 return;
+      if (CurrentCompressionExtension != "uncompressed")
+      {
+	 Desc.URI = URI + '.' + CurrentCompressionExtension;
+	 DestFile = DestFile + '.' + CurrentCompressionExtension;
+      }
+
+      HashStringList const Hashes = GetExpectedHashes();
+      HashString const * const TargetHash = Hashes.find(NULL);
+      if (unlikely(TargetHash == nullptr))
+	 return;
+      std::string const ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+      size_t const trailing_slash = Desc.URI.find_last_of("/");
+      if (unlikely(trailing_slash == std::string::npos))
+	 return;
+      Desc.URI = Desc.URI.replace(
+	    trailing_slash,
+	    Desc.URI.substr(trailing_slash+1).size()+1,
+	    ByHash);
    }
    else if (unlikely(CurrentCompressionExtension.empty()))
       return;
@@ -2468,40 +2510,12 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
       DestFile = DestFile + '.' + CurrentCompressionExtension;
    }
 
-   if(TransactionManager->MetaIndexParser != NULL)
-      InitByHashIfNeeded();
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
    QueueURI(Desc);
-}
-									/*}}}*/
-// AcqIndex::AdjustForByHash - modify URI for by-hash support		/*{{{*/
-void pkgAcqIndex::InitByHashIfNeeded()
-{
-   std::string const useByHash = Target.Option(IndexTarget::BY_HASH);
-   if(useByHash == "force" || (StringToBool(useByHash) == true &&
-	    TransactionManager->MetaIndexParser->GetSupportsAcquireByHash()))
-   {
-      HashStringList const Hashes = GetExpectedHashes();
-      if(Hashes.usable())
-      {
-         // FIXME: should we really use the best hash here? or a fixed one?
-         HashString const * const TargetHash = Hashes.find("");
-         std::string const ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-         size_t const trailing_slash = Desc.URI.find_last_of("/");
-         Desc.URI = Desc.URI.replace(
-            trailing_slash,
-            Desc.URI.substr(trailing_slash+1).size()+1,
-            ByHash);
-      } else {
-         _error->Warning(
-            "Fetching ByHash requested but can not find record for %s",
-            GetMetaKey().c_str());
-      }
-   }
 }
 									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
