@@ -15,7 +15,7 @@ SUBDIR=po
 include ../buildlib/defaults.mak
 
 CATALOGS := $(addsuffix .gmo, $(shell sed -e '/^\#/ d' -e '/^$$/ d' LINGUAS | tr '\n' ' '))
-DOMAINS := $(notdir $(wildcard $(PO_DOMAINS)/*))
+DOMAINS := $(sort $(notdir $(wildcard $(PO_DOMAINS)/*)))
 POTFILES := $(addsuffix .pot,$(addprefix $(PO)/,$(DOMAINS)))
 
 # Construct a list of all mo files for all domains under $(PO_DOMAINS)
