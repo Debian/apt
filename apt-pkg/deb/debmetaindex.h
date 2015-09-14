@@ -64,7 +64,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
 	 std::vector<std::string> Languages,
-	 bool const usePDiffs);
+	 bool const usePDiffs, std::string const &useByHash);
 };
 
 #endif

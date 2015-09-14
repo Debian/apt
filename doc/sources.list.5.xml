@@ -239,6 +239,22 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		<literal>yes</literal>.
 	  </para></listitem>
 
+	  <listitem><para><option>By-Hash</option> (<option>by-hash</option>)
+		can have the value "yes", "no" or "force" and controls if APT
+		should try to acquire indexes via an URI constructed from a
+		hashsum of the expected file instead of using the well-known
+		stable filename of the index. Using this can avoid hashsum
+		mismatches, but requires a supporting mirror. The value
+		"yes"/"no" activates/disables the use of this feature if this
+		source indicates support for it, while "force" will enable the
+		feature regardless of what the source indicates.
+		Defaults to the value of the option of the same name for a
+		specific index file defined in the
+		<option>Acquire::IndexTargets</option> scope, which itself
+		defaults to the value of configuration option
+		<option>Acquire::By-Hash</option> which defaults to
+		<literal>yes</literal>.
+	  </para></listitem>
 
        </itemizedlist>
 

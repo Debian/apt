@@ -347,6 +347,16 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>By-Hash</option></term>
+	 <listitem><para>Try to download indexes via an URI constructed from a
+	 hashsum of the expected file rather than downloaded via a well-known
+	 stable filename. True by default, but automatically disabled if the
+	 source indicates no support for it. Usage can be forced with the special
+	 value "force". Preferably, this can be set for specific &sources-list; entries
+	 or index files by using the <option>By-Hash</option> option there.
+	 </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>Queue-Mode</option></term>
      <listitem><para>Queuing mode; <literal>Queue-Mode</literal> can be one of <literal>host</literal> or 
      <literal>access</literal> which determines how  APT parallelizes outgoing 

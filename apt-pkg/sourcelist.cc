@@ -108,6 +108,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    mapping.insert(std::make_pair("Valid-Until-Max", std::make_pair("valid-until-max", false)));
    mapping.insert(std::make_pair("Signed-By", std::make_pair("signed-by", false)));
    mapping.insert(std::make_pair("PDiffs", std::make_pair("pdiffs", false)));
+   mapping.insert(std::make_pair("By-Hash", std::make_pair("by-hash", false)));
 
    for (std::map<char const * const, std::pair<char const * const, bool> >::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
       if (Tags.Exists(m->first))
