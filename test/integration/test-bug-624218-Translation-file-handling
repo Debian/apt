@@ -89,7 +89,7 @@ testfailure grep -q -e 'Translation' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
-touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
+touch rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_i18n_Translation-ast_DE
 
 msgtest 'Download of builtin files' 'without Index'
 testwarning --nomsg aptget update
@@ -97,7 +97,7 @@ testsuccess grep -q -e 'Translation-ast_DE' rootdir/tmp/testwarning.output
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
-touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
+touch rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_i18n_Translation-ast_DE
 
 msgtest 'Download of nothing (even builtin) if none is forced' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=none

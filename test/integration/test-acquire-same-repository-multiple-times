@@ -74,11 +74,11 @@ rm -rf rootdir/var/lib/apt/lists
 
 changetowebserver
 
-tworepos 'http' '//localhost:8080' 'no partial'
+tworepos 'http' "//localhost:${APTHTTPPORT}" 'no partial'
 testequal '10' grep -c '200%20URI%20Start' ./download.log
 testequal '10' grep -c '201%20URI%20Done' ./download.log
 testequal '6' grep -c '^ @ Queue: Action combined' ./download.log
-tworepos 'http' '//localhost:8080' 'hit'
+tworepos 'http' "//localhost:${APTHTTPPORT}" 'hit'
 testequal '2' grep -c '200%20URI%20Start' ./download.log
 testequal '4' grep -c '201%20URI%20Done' ./download.log
 testequal '0' grep -c '^ @ Queue: Action combined' ./download.log

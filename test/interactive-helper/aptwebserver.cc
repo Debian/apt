@@ -256,7 +256,10 @@ static void sendRedirect(int const client, int const httpcode, std::string const
    if (strncmp(uri.c_str(), "http://", 7) != 0 && strncmp(uri.c_str(), "https://", 8) != 0)
    {
       std::string const host = LookupTag(request, "Host");
-      if (host.find(":4433") != std::string::npos)
+      unsigned int const httpsport = _config->FindI("aptwebserver::port::https", 4433);
+      std::string hosthttpsport;
+      strprintf(hosthttpsport, ":%u", httpsport);
+      if (host.find(hosthttpsport) != std::string::npos)
 	 location.append("https://");
       else
 	 location.append("http://");
@@ -681,8 +684,11 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 }
 
 	 // deal with the request
+	 unsigned int const httpsport = _config->FindI("aptwebserver::port::https", 4433);
+	 std::string hosthttpsport;
+	 strprintf(hosthttpsport, ":%u", httpsport);
 	 if (_config->FindB("aptwebserver::support::http", true) == false &&
-	       LookupTag(*m, "Host").find(":4433") == std::string::npos)
+	       LookupTag(*m, "Host").find(hosthttpsport) == std::string::npos)
 	 {
 	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS", headers);
 	    continue;
@@ -824,7 +830,7 @@ int main(int const argc, const char * argv[])
       return 1;
    }
 
-   int const port = _config->FindI("aptwebserver::port", 8080);
+   int port = _config->FindI("aptwebserver::port", 8080);
 
    // ensure that we accept all connections: v4 or v6
    int const iponly = 0;
@@ -845,6 +851,26 @@ int main(int const argc, const char * argv[])
       _error->DumpErrors(std::cerr);
       return 2;
    }
+
+   if (port == 0)
+   {
+      struct sockaddr_in6 addr;
+      socklen_t addrlen = sizeof(sockaddr_in6);
+      if (getsockname(sock, (struct sockaddr*) &addr, &addrlen) != 0)
+	 _error->Errno("getsockname", "Could not get chosen port number");
+      else
+	 port = ntohs(addr.sin6_port);
+   }
+   std::string const portfilename = _config->Find("aptwebserver::portfile", "");
+   if (portfilename.empty() == false)
+   {
+      FileFd portfile(portfilename, FileFd::WriteOnly | FileFd::Create | FileFd::Empty);
+      std::string portcontent;
+      strprintf(portcontent, "%d", port);
+      portfile.Write(portcontent.c_str(), portcontent.size());
+      portfile.Sync();
+   }
+   _config->Set("aptwebserver::port::http", port);
 
    FileFd pidfile;
    if (_config->FindB("aptwebserver::fork", false) == true)
@@ -871,6 +897,7 @@ int main(int const argc, const char * argv[])
 	 std::string pidcontent;
 	 strprintf(pidcontent, "%d", child);
 	 pidfile.Write(pidcontent.c_str(), pidcontent.size());
+	 pidfile.Sync();
 	 if (_error->PendingError() == true)
 	 {
 	    _error->DumpErrors(std::cerr);

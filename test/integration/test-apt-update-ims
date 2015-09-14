@@ -55,18 +55,18 @@ runtest() {
 }
 
 msgmsg 'InRelease'
-EXPECT='Hit:1 http://localhost:8080 unstable InRelease
-Reading package lists...'
+EXPECT="Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
+Reading package lists..."
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 
 msgmsg 'Release/Release.gpg'
-EXPECT='Ign:1 http://localhost:8080 unstable InRelease
+EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
   404  Not Found
-Hit:2 http://localhost:8080 unstable Release
-Reading package lists...'
+Hit:2 http://localhost:${APTHTTPPORT} unstable Release
+Reading package lists..."
 find aptarchive -name 'InRelease' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
@@ -74,13 +74,13 @@ echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 
 msgmsg 'Release only'
-EXPECT="Ign:1 http://localhost:8080 unstable InRelease
+EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
   404  Not Found
-Hit:2 http://localhost:8080 unstable Release
-Ign:3 http://localhost:8080 unstable Release.gpg
+Hit:2 http://localhost:${APTHTTPPORT} unstable Release
+Ign:3 http://localhost:${APTHTTPPORT} unstable Release.gpg
   404  Not Found
 Reading package lists...
-W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated."
+W: The data from 'http://localhost:${APTHTTPPORT} unstable Release' is not signed. Packages from that repository can not be authenticated."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'warning'
@@ -96,20 +96,20 @@ Valid-Until: $(date -d '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
 signreleasefiles
 
 msgmsg 'expired InRelease'
-EXPECT='Hit:1 http://localhost:8080 unstable InRelease
+EXPECT="Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Reading package lists...
-E: Release file for http://localhost:8080/dists/unstable/InRelease is expired (invalid since). Updates for this repository will not be applied.'
+E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/InRelease is expired (invalid since). Updates for this repository will not be applied."
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
 
 msgmsg 'expired Release/Release.gpg'
-EXPECT='Ign:1 http://localhost:8080 unstable InRelease
+EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
   404  Not Found
-Hit:2 http://localhost:8080 unstable Release
+Hit:2 http://localhost:${APTHTTPPORT} unstable Release
 Reading package lists...
-E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied.'
+E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'InRelease' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
@@ -117,14 +117,14 @@ echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
 
 msgmsg 'expired Release only'
-EXPECT="Ign:1 http://localhost:8080 unstable InRelease
+EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
   404  Not Found
-Hit:2 http://localhost:8080 unstable Release
-Ign:3 http://localhost:8080 unstable Release.gpg
+Hit:2 http://localhost:${APTHTTPPORT} unstable Release
+Ign:3 http://localhost:${APTHTTPPORT} unstable Release.gpg
   404  Not Found
 Reading package lists...
-W: The data from 'http://localhost:8080 unstable Release' is not signed. Packages from that repository can not be authenticated.
-E: Release file for http://localhost:8080/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
+W: The data from 'http://localhost:${APTHTTPPORT} unstable Release' is not signed. Packages from that repository can not be authenticated.
+E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure' 'warning'
@@ -133,33 +133,33 @@ runtest 'failure' 'warning'
 
 
 msgmsg 'no Release at all'
-EXPECT="Ign:1 http://localhost:8080 unstable InRelease
+EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
   404  Not Found
-Ign:2 http://localhost:8080 unstable Release
+Ign:2 http://localhost:${APTHTTPPORT} unstable Release
   404  Not Found
-Ign:3 http://localhost:8080 unstable/main Sources
+Ign:3 http://localhost:${APTHTTPPORT} unstable/main Sources
   404  Not Found
-Ign:4 http://localhost:8080 unstable/main amd64 Packages
+Ign:4 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
   404  Not Found
-Ign:5 http://localhost:8080 unstable/main Translation-en
+Ign:5 http://localhost:${APTHTTPPORT} unstable/main Translation-en
   404  Not Found
-Ign:3 http://localhost:8080 unstable/main Sources
+Ign:3 http://localhost:${APTHTTPPORT} unstable/main Sources
   404  Not Found
-Ign:4 http://localhost:8080 unstable/main amd64 Packages
+Ign:4 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
   404  Not Found
-Ign:5 http://localhost:8080 unstable/main Translation-en
+Ign:5 http://localhost:${APTHTTPPORT} unstable/main Translation-en
   404  Not Found
-Ign:3 http://localhost:8080 unstable/main Sources
+Ign:3 http://localhost:${APTHTTPPORT} unstable/main Sources
   404  Not Found
-Ign:4 http://localhost:8080 unstable/main amd64 Packages
+Ign:4 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
   404  Not Found
-Ign:5 http://localhost:8080 unstable/main Translation-en
+Ign:5 http://localhost:${APTHTTPPORT} unstable/main Translation-en
   404  Not Found
-Hit:3 http://localhost:8080 unstable/main Sources
-Hit:4 http://localhost:8080 unstable/main amd64 Packages
-Hit:5 http://localhost:8080 unstable/main Translation-en
+Hit:3 http://localhost:${APTHTTPPORT} unstable/main Sources
+Hit:4 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
+Hit:5 http://localhost:${APTHTTPPORT} unstable/main Translation-en
 Reading package lists...
-W: The repository 'http://localhost:8080 unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository."
+W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository."
 find aptarchive -name '*Release*' -delete
 echo 'Acquire::GzipIndexes "0";
 Acquire::PDiffs "0";' > rootdir/etc/apt/apt.conf.d/02compressindex

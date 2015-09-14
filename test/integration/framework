@@ -1119,7 +1119,7 @@ redatereleasefiles() {
 }
 
 webserverconfig() {
-	local WEBSERVER="${3:-http://localhost:8080}"
+	local WEBSERVER="${3:-http://localhost:${APTHTTPPORT}}"
 	local NOCHECK=false
 	if [ "$1" = '--no-check' ]; then
 		NOCHECK=true
@@ -1128,13 +1128,14 @@ webserverconfig() {
 	local DOWNLOG='rootdir/tmp/download-testfile.log'
 	local STATUS='downloaded/webserverconfig.status'
 	rm -f "$STATUS" "$DOWNLOG"
+	# very very basic URI encoding
 	local URI
 	if [ -n "$2" ]; then
 		msgtest "Set webserver config option '${1}' to" "$2"
-		URI="${WEBSERVER}/_config/set/${1}/${2}"
+		URI="${WEBSERVER}/_config/set/$(echo "${1}" | sed -e 's/\//%2f/g')/$(echo "${2}" | sed -e 's/\//%2f/g')"
 	else
 		msgtest 'Clear webserver config option' "${1}"
-		URI="${WEBSERVER}/_config/clear/${1}"
+		URI="${WEBSERVER}/_config/clear/$(echo "${1}" | sed -e 's/\//%2f/g')"
 	fi
 	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass
@@ -1149,7 +1150,7 @@ webserverconfig() {
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#https://localhost:4433/#${1}#"
+		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:${APTHTTPPORT}/#${1}#" -e "s#https://localhost:${APTHTTPSPORT}/#${1}#"
 	done
 }
 
@@ -1168,27 +1169,36 @@ waitforpidfile() {
 }
 
 changetowebserver() {
+	local REWRITE='no'
 	if [ "$1" != '--no-rewrite' ]; then
-		rewritesourceslist 'http://localhost:8080/'
+		REWRITE='yes'
 	else
 		shift
 	fi
 	if test -x "${APTWEBSERVERBINDIR}/aptwebserver"; then
 		cd aptarchive
 		local LOG="webserver.log"
-		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
+		if ! aptwebserver --port 0 -o aptwebserver::fork=1 -o aptwebserver::portfile='aptwebserver.port' "$@" >$LOG 2>&1 ; then
 			cat $LOG
 			false
 		fi
-                waitforpidfile aptwebserver.pid
+		waitforpidfile aptwebserver.pid
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
 		fi
 		addtrap "kill $PID;"
+		waitforpidfile aptwebserver.port
+		APTHTTPPORT="$(cat aptwebserver.port)"
+		if [ -z "$APTHTTPPORT" ]; then
+			msgdie 'Could not get port for aptwebserver successfully'
+		fi
 		cd - > /dev/null
 	else
 		msgdie 'You have to build aptwerbserver or install a webserver'
+	fi
+	if [ "$REWRTE" != 'yes' ]; then
+		rewritesourceslist "http://localhost:${APTHTTPPORT}/"
 	fi
 }
 
@@ -1204,8 +1214,8 @@ cert = ${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem
 output = /dev/null
 
 [https]
-accept = 4433
-connect = 8080
+accept = 0
+connect = $APTHTTPPORT
 " > "${TMPWORKINGDIRECTORY}/stunnel.conf"
 	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
         waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
@@ -1214,7 +1224,9 @@ connect = 8080
 		msgdie 'Could not fork stunnel4 successfully'
 	fi
 	addtrap 'prefix' "kill ${PID};"
-	rewritesourceslist 'https://localhost:4433/'
+	APTHTTPSPORT="$(lsof -i | awk "/^stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
+	webserverconfig 'aptwebserver::port::https' "$APTHTTPSPORT" "https://localhost:${APTHTTPSPORT}"
+	rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
 }
 
 changetocdrom() {
@@ -1671,7 +1683,7 @@ testwebserverlaststatuscode() {
 	local STATUS='downloaded/webserverstatus-statusfile.log'
 	rm -f "$DOWNLOG" "$STATUS"
 	msgtest 'Test last status code from the webserver was' "$1"
-	if downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then
+	if downloadfile "http://localhost:${APTHTTPPORT}/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then
 		msgpass
 	else
 		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwebserverlaststatuscode.output"

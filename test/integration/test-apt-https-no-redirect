@@ -11,18 +11,18 @@ insertpackage 'stable' 'apt' 'all' '1'
 setupaptarchive --no-update
 
 echo 'alright' > aptarchive/working
-changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=http://localhost:8080/'
+changetohttpswebserver  -o "aptwebserver::redirect::replace::/redirectme/=http://localhost:${APTHTTPPORT}/"
 
 msgtest 'download of a file works via' 'http'
-testsuccess --nomsg downloadfile 'http://localhost:8080/working' httpfile
+testsuccess --nomsg downloadfile "http://localhost:${APTHTTPPORT}/working" httpfile
 testfileequal httpfile 'alright'
 
 msgtest 'download of a file works via' 'https'
-testsuccess --nomsg downloadfile 'https://localhost:4433/working' httpsfile
+testsuccess --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/working" httpsfile
 testfileequal httpsfile 'alright'
 
 msgtest 'download of a file does not work if' 'https redirected to http'
-testfailure --nomsg downloadfile 'https://localhost:4433/redirectme/working' redirectfile
+testfailure --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/redirectme/working" redirectfile
 
 msgtest 'libcurl has forbidden access in last request to' 'http resource'
 testsuccess --nomsg grep -q -E -- 'Protocol "?http"? not supported or disabled in libcurl' rootdir/tmp/testfailure.output
