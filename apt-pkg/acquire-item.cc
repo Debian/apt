@@ -1247,7 +1247,7 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    return Header;
 }
 									/*}}}*/
-bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,
+bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,		/*{{{*/
 	 pkgAcquire::MethodConfig const * const Cnf)
 {
    Item::VerifyDone(Message, Cnf);
@@ -1257,6 +1257,7 @@ bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,
 
    return true;
 }
+									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file				/*{{{*/
 void pkgAcqMetaClearSig::Done(std::string const &Message,
                               HashStringList const &Hashes,
@@ -2480,13 +2481,9 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 // AcqIndex::AdjustForByHash - modify URI for by-hash support		/*{{{*/
 void pkgAcqIndex::InitByHashIfNeeded()
 {
-   // TODO:
-   //  - (maybe?) add support for by-hash into the sources.list as flag
-   //  - make apt-ftparchive generate the hashes (and expire?)
-   std::string HostKnob = "APT::Acquire::" + ::URI(Desc.URI).Host + "::By-Hash";
-   if(_config->FindB("APT::Acquire::By-Hash", false) == true ||
-      _config->FindB(HostKnob, false) == true ||
-      TransactionManager->MetaIndexParser->GetSupportsAcquireByHash())
+   std::string const useByHash = Target.Option(IndexTarget::BY_HASH);
+   if(useByHash == "force" || (StringToBool(useByHash) == true &&
+	    TransactionManager->MetaIndexParser->GetSupportsAcquireByHash()))
    {
       HashStringList const Hashes = GetExpectedHashes();
       if(Hashes.usable())

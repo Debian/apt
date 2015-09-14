@@ -39,6 +39,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
       std::vector<std::string> Architectures;
       std::vector<std::string> Languages;
       bool UsePDiffs;
+      std::string UseByHash;
    };
 
    std::vector<debSectionEntry> DebEntries;
@@ -149,6 +150,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 bool const KeepCompressed = APT_T_CONFIG_BOOL("KeepCompressed", GzipIndex);
 	 bool const DefaultEnabled = APT_T_CONFIG_BOOL("DefaultEnabled", true);
 	 bool const UsePDiffs = APT_T_CONFIG_BOOL("PDiffs", E->UsePDiffs);
+	 std::string const UseByHash = APT_T_CONFIG_STR("By-Hash", E->UseByHash);
 	 std::string const CompressionTypes = APT_T_CONFIG_STR("CompressionTypes", DefCompressionTypes);
 #undef APT_T_CONFIG_BOOL
 #undef APT_T_CONFIG_STR
@@ -245,6 +247,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("TARGET_OF", Type));
 	       Options.insert(std::make_pair("CREATED_BY", *T));
 	       Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
+	       Options.insert(std::make_pair("BY_HASH", UseByHash));
 	       Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
 	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
 	       Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
@@ -286,12 +289,12 @@ void debReleaseIndex::AddComponent(std::string const &sourcesEntry,	/*{{{*/
 	 std::vector<std::string> const &Targets,
 	 std::vector<std::string> const &Architectures,
 	 std::vector<std::string> Languages,
-	 bool const usePDiffs)
+	 bool const usePDiffs, std::string const &useByHash)
 {
    if (Languages.empty() == true)
       Languages.push_back("none");
    debReleaseIndexPrivate::debSectionEntry const entry = {
-      sourcesEntry, Name, Targets, Architectures, Languages, usePDiffs
+      sourcesEntry, Name, Targets, Architectures, Languages, usePDiffs, useByHash
    };
    if (isSrc)
       d->DebSrcEntries.push_back(entry);
@@ -822,6 +825,17 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    UsePDiffs = StringToBool(opt->second);
       }
 
+      std::string UseByHash = _config->Find("APT::Acquire::By-Hash", "yes");
+      UseByHash = _config->Find("Acquire::By-Hash", UseByHash);
+      {
+	 std::string const host = ::URI(URI).Host;
+	 UseByHash = _config->Find("APT::Acquire::" + host + "::By-Hash", UseByHash);
+	 UseByHash = _config->Find("Acquire::" + host + "::By-Hash", UseByHash);
+	 std::map<std::string, std::string>::const_iterator const opt = Options.find("by-hash");
+	 if (opt != Options.end())
+	    UseByHash = opt->second;
+      }
+
       auto const entry = Options.find("sourceslist-entry");
       Deb->AddComponent(
 	    entry->second,
@@ -830,7 +844,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    mytargets,
 	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
 	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true)),
-	    UsePDiffs
+	    UsePDiffs,
+	    UseByHash
 	    );
 
       if (Deb->SetTrusted(GetTriStateOption(Options, "trusted")) == false ||

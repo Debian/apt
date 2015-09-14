@@ -89,6 +89,7 @@ class IndexTarget							/*{{{*/
       COMPRESSIONTYPES,
       DEFAULTENABLED,
       SOURCESENTRY,
+      BY_HASH,
    };
    std::string Option(OptionKeys const Key) const;
    bool OptionBool(OptionKeys const Key) const;
