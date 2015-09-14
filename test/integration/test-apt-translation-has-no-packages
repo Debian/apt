@@ -24,11 +24,11 @@ fi
 buildsimplenativepackage 'foo' 'all' '1.0'
 setupaptarchive
 
-APTARCHIVE=$(readlink -f ./aptarchive)
+APTARCHIVE="$(readlink -f ./aptarchive)"
 
 # corrupt the Translation-en file to look like a regular Packages file
 rm rootdir/var/cache/apt/*.bin
-cp $APTARCHIVE/dists/unstable/main/binary-amd64/Packages \
+cp "$APTARCHIVE/dists/unstable/main/binary-amd64/Packages" \
    rootdir/var/lib/apt/lists/*Translation-en
 
 # ensure that there is no Version for the package foo generated out of

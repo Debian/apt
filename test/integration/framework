@@ -187,7 +187,7 @@ dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
 dpkgcheckbuilddeps() {
-	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
+	command dpkg-checkbuilddeps --admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" "$@"
 }
 gdb() {
 	local CMD
@@ -199,7 +199,7 @@ gdb() {
 	aptmark) CMD="apt-mark";;
 	apthelper) CMD="apt-helper";;
 	aptftparchive) CMD="apt-ftparchive";;
-	dpkg) shift; runapt ${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg "$@"; return;;
+	dpkg) shift; runapt "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" "$@"; return;;
 	*) CMD="$1";;
 	esac
 	shift
@@ -242,9 +242,9 @@ setupenvironment() {
 	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
 		unset TMPDIR
 	fi
-	TMPWORKINGDIRECTORY=$(mktemp -d)
-	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
-	msgninfo "Preparing environment for $(basename $0) in ${TMPWORKINGDIRECTORY}…"
+	TMPWORKINGDIRECTORY="$(mktemp -d)"
+	addtrap "cd /; rm -rf \"$TMPWORKINGDIRECTORY\";"
+	msgninfo "Preparing environment for ${0##*/} in ${TMPWORKINGDIRECTORY}…"
 
 	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
 	if [ "$(id -u)" = '0' ]; then
@@ -254,20 +254,20 @@ setupenvironment() {
 		chown _apt:root "${TMPWORKINGDIRECTORY}/downloaded"
 	fi
 
-	TESTDIRECTORY=$(readlink -f $(dirname $0))
+	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
         # allow overriding the default BUILDDIR location
-	SOURCEDIRECTORY=${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}
-	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
-	LIBRARYPATH=${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}
-        METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
-        APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
-        APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
-        APTINTERNALSOLVER=${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}
-	APTDUMPSOLVER=${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}
+	SOURCEDIRECTORY="${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}"
+	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}"
+	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}"
+        METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}"
+        APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}"
+        APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}"
+        APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}"
+	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
-	cd $TMPWORKINGDIRECTORY
+	cd "$TMPWORKINGDIRECTORY"
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
@@ -275,7 +275,7 @@ setupenvironment() {
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
-	ln -s ${METHODSDIR} usr/lib/apt/methods
+	ln -s "${METHODSDIR}" usr/lib/apt/methods
 	if [ "$BUILDDIRECTORY" = "$LIBRARYPATH" ]; then
 		mkdir -p usr/lib/apt/solvers
 		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
@@ -284,23 +284,26 @@ setupenvironment() {
 	fi
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
-        if [ -e ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove ]; then
-	    ln -s ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove etc/apt/apt.conf.d/01autoremove
+        if [ -e "${BUILDDIRECTORY}/../../debian/apt.conf.autoremove" ]; then
+	    ln -s "${BUILDDIRECTORY}/../../debian/apt.conf.autoremove" etc/apt/apt.conf.d/01autoremove
         else
 	    ln -s /etc/apt/apt.conf.d/01autoremove etc/apt/apt.conf.d/01autoremove
         fi
 	cd ..
-	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
+	local BASENAME="${0##*/}"
+	local PACKAGESFILE="Packages-${BASENAME#*-}"
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
 		cp "${TESTDIRECTORY}/${PACKAGESFILE}" aptarchive/Packages
 	fi
-	local SOURCESSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Sources-/' -e 's/^skip-/Sources-/')
+	local SOURCESSFILE="Sources-${BASENAME#*-}"
 	if [ -f "${TESTDIRECTORY}/${SOURCESSFILE}" ]; then
 		cp "${TESTDIRECTORY}/${SOURCESSFILE}" aptarchive/Sources
 	fi
-	cp $(find $TESTDIRECTORY -name '*.pub' -o -name '*.sec') keys/
-	chmod 644 $(find keys -name '*.pub' -o -name '*.sec')
-	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	for key in $(find "$TESTDIRECTORY" -name '*.pub' -o -name '*.sec'); do
+		cp "$key" keys/
+		chmod 644 "$key"
+	done
+	ln -s "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
@@ -316,32 +319,31 @@ setupenvironment() {
 		echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	fi
 
-	cat << EOF > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
 #!/bin/sh
 set -e
 if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
-	if [ -n "\$LD_PRELOAD" ]; then
-		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}"
+	if [ -n "\$LD_LIBRARY_PATH" ]; then
+		export LD_LIBRARY_PATH="${TMPWORKINGDIRECTORY}:${LD_LIBRARY_PATH}"
 	else
-		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
+		export LD_LIBRARY_PATH="${TMPWORKINGDIRECTORY}"
+	fi
+	if [ -n "\$LD_PRELOAD" ]; then
+		export LD_PRELOAD="noopchroot.so \${LD_PRELOAD}"
+	else
+		export LD_PRELOAD="noopchroot.so"
 	fi
 fi
-exec fakeroot ${DPKG:-dpkg} --root="${TMPWORKINGDIRECTORY}/rootdir" \\
-	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
+EOF
+	cp "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
+	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
+exec fakeroot "${DPKG:-dpkg}" --root="${TMPWORKINGDIRECTORY}/rootdir" \\
+	--log="${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log" \\
 	--force-not-root --force-bad-path "\$@"
 EOF
-	cat << EOF > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
-#!/bin/sh
-set -e
-if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
-	if [ -n "\$LD_PRELOAD" ]; then
-		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}"
-	else
-		export LD_PRELOAD="${TMPWORKINGDIRECTORY}/noopchroot.so"
-	fi
-fi
+	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" <<EOF
 exec fakeroot gdb --quiet -ex run "${DPKG:-dpkg}" --args "${DPKG:-dpkg}" --root="${TMPWORKINGDIRECTORY}/rootdir" \\
-	--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log \\
+	--log="${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log" \\
 	--force-not-root --force-bad-path "\$@"
 EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
@@ -425,7 +427,8 @@ configarchitecture() {
 
 configdpkg() {
 	if [ ! -e rootdir/var/lib/dpkg/status ]; then
-		local STATUSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/status-/' -e 's/^skip-/status-/')
+		local BASENAME="${0##*/}"
+		local STATUSFILE="status-${BASENAME#*-}"
 		if [ -f "${TESTDIRECTORY}/${STATUSFILE}" ]; then
 			cp "${TESTDIRECTORY}/${STATUSFILE}" rootdir/var/lib/dpkg/status
 		else
@@ -460,7 +463,7 @@ configdpkgnoopchroot() {
 	# via execvp() as used by dpkg as we don't want our rootdir to be a fullblown
 	# chroot directory dpkg could chroot into to execute the maintainer scripts
 	msgtest 'Building library to preload to make maintainerscript work in' 'dpkg'
-	cat << EOF > noopchroot.c
+	cat > noopchroot.c << EOF
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -512,7 +515,7 @@ configcompression() {
 		*) printf "$1\t$1\t$1\n";;
 		esac
 		shift
-	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
+	done > "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf"
 }
 confighashes() {
 	{
@@ -573,10 +576,10 @@ setupsimplenativepackage() {
 
 	local SECTION="${7:-others}"
 	local DISTSECTION
-	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
+	if [ "$SECTION" = "${SECTION#*/}" ]; then
 		DISTSECTION="main"
 	else
-		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
+		DISTSECTION="${SECTION%/*}"
 	fi
 	local BUILDDIR=incoming/${NAME}-${VERSION}
 	mkdir -p ${BUILDDIR}/debian/source
@@ -629,56 +632,58 @@ buildsimplenativepackage() {
 
 	local SECTION="${7:-others}"
 	local PRIORITY="${8:-optional}"
-        local FILE_TREE="$9"
-        local COMPRESS_TYPE="${10:-gzip}"
+	local FILE_TREE="$9"
+	local COMPRESS_TYPE="${10:-gzip}"
 	local DISTSECTION
-	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
+	if [ "$SECTION" = "${SECTION#*/}" ]; then
 		DISTSECTION="main"
 	else
-		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
+		DISTSECTION="${SECTION%/*}"
 	fi
-	local BUILDDIR=${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}
+	local BUILDDIR="${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}"
 
 	msgtest "Build source package in version ${VERSION} for ${RELEASE} in ${DISTSECTION}" "$NAME"
-	mkdir -p $BUILDDIR/debian/source
-	echo "* most suckless software product ever" > ${BUILDDIR}/FEATURES
+	mkdir -p "$BUILDDIR/debian/source"
+	echo "* most suckless software product ever" > "${BUILDDIR}/FEATURES"
 	echo "#!/bin/sh
-echo '$NAME says \"Hello!\"'" > ${BUILDDIR}/${NAME}
+echo '$NAME says \"Hello!\"'" > "${BUILDDIR}/${NAME}"
 
-	echo "Copyleft by Joe Sixpack $(date +%Y)" > ${BUILDDIR}/debian/copyright
+	echo "Copyleft by Joe Sixpack $(date +%Y)" > "${BUILDDIR}/debian/copyright"
 	echo "$NAME ($VERSION) $RELEASE; urgency=low
 
   * Initial release
 
- -- Joe Sixpack <joe@example.org>  $(date -R)" > ${BUILDDIR}/debian/changelog
-	echo "Source: $NAME
+ -- Joe Sixpack <joe@example.org>  $(date -R)" > "${BUILDDIR}/debian/changelog"
+	{
+		echo "Source: $NAME
 Priority: $PRIORITY
 Maintainer: Joe Sixpack <joe@example.org>
-Standards-Version: 3.9.3" > ${BUILDDIR}/debian/control
-	if [ "$SECTION" != '<none>' ]; then
-		echo "Section: $SECTION" >> ${BUILDDIR}/debian/control
-	fi
-	local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
-	test -z "$BUILDDEPS" || echo "$BUILDDEPS" >> ${BUILDDIR}/debian/control
-	echo "
-Package: $NAME" >> ${BUILDDIR}/debian/control
+Standards-Version: 3.9.3"
+		if [ "$SECTION" != '<none>' ]; then
+			echo "Section: $SECTION"
+		fi
+		local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
+		test -z "$BUILDDEPS" || echo "$BUILDDEPS"
+		echo "
+Package: $NAME"
 
-	if [ "$ARCH" = 'all' ]; then
-		echo "Architecture: all" >> ${BUILDDIR}/debian/control
-	else
-		echo "Architecture: any" >> ${BUILDDIR}/debian/control
-	fi
-	local DEPS="$(echo "$DEPENDENCIES" | grep -v '^Build-')"
-	test -z "$DEPS" || echo "$DEPS" >> ${BUILDDIR}/debian/control
-	echo "Description: $DESCRIPTION" >> ${BUILDDIR}/debian/control
+		if [ "$ARCH" = 'all' ]; then
+			echo "Architecture: all"
+		else
+			echo "Architecture: any"
+		fi
+		local DEPS="$(echo "$DEPENDENCIES" | grep -v '^Build-')"
+		test -z "$DEPS" || echo "$DEPS"
+		echo "Description: $DESCRIPTION"
+	} > "${BUILDDIR}/debian/control"
 
-	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
-	cd ${BUILDDIR}/..
+	echo '3.0 (native)' > "${BUILDDIR}/debian/source/format"
+	cd "${BUILDDIR}/.."
 	testsuccess --nomsg dpkg-source -b ${NAME}-${VERSION}
 	cd - >/dev/null
-	sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output \
+	sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" \
 		| while read SRC; do
-		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
+		echo "pool/${SRC}" >> "${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist"
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
 #			aptkey --keyring ./keys/joesixpack.pub --secret-keyring ./keys/joesixpack.sec --quiet --readonly \
 #				adv --yes --default-key 'Joe Sixpack' \
@@ -689,26 +694,26 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 
 	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
 		msgtest "Build binary package for ${RELEASE} in ${SECTION}" "$NAME"
-		rm -rf ${BUILDDIR}/debian/tmp
-		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
-		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
-		cp ${BUILDDIR}/${NAME} ${BUILDDIR}/debian/tmp/usr/bin/${NAME}-${arch}
+		rm -rf "${BUILDDIR}/debian/tmp"
+		mkdir -p "${BUILDDIR}/debian/tmp/DEBIAN" "${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}" "${BUILDDIR}/debian/tmp/usr/bin"
+		cp "${BUILDDIR}/debian/copyright" "${BUILDDIR}/debian/changelog" "${BUILDDIR}/FEATURES" "${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}"
+		cp "${BUILDDIR}/${NAME}" "${BUILDDIR}/debian/tmp/usr/bin/${NAME}-${arch}"
                 if [ -n "$FILE_TREE" ]; then
-                    cp -ar "$FILE_TREE" ${BUILDDIR}/debian/tmp
+                    cp -ar "$FILE_TREE" "${BUILDDIR}/debian/tmp"
                 fi
 
-		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
-		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
+		(cd "${BUILDDIR}"; dpkg-gencontrol -DArchitecture=$arch)
+		(cd "${BUILDDIR}/debian/tmp"; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
 		# ensure the right permissions as dpkg-deb insists
-		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
-		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/..
-		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
+		chmod 755 "${BUILDDIR}/debian/tmp/DEBIAN"
+		testsuccess --nomsg dpkg-deb -Z${COMPRESS_TYPE} --build "${BUILDDIR}/debian/tmp" "${BUILDDIR}/.."
+		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> "${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist"
 	done
 
 	local CHANGEPATH="${BUILDDIR}/../${DISTSECTION}/${NM}/${NAME}/${NAME}_${VERSION}"
-	mkdir -p $CHANGEPATH
-	cp ${BUILDDIR}/debian/changelog $CHANGEPATH
+	mkdir -p "$CHANGEPATH"
+	cp "${BUILDDIR}/debian/changelog" "$CHANGEPATH"
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -721,20 +726,20 @@ buildpackage() {
 	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
 	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
 	msgtest "Build package for ${RELEASE} in ${SECTION}" "$PKGNAME"
-	cd $BUILDDIR
+	cd "$BUILDDIR"
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
 	testsuccess --nomsg dpkg-buildpackage -uc -us -a$ARCH
-	cp ${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output $BUILDLOG
-	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
+	cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$BUILDLOG"
+	local PKGS="$(grep '^dpkg-deb: building package' "$BUILDLOG" | cut -d'/' -f 2 | sed -e "s#'\.##")"
+	local SRCS="$(grep '^dpkg-source: info: building' "$BUILDLOG" | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
-		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
+		echo "pool/${PKG}" >> "${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist"
 	done
 	for SRC in $SRCS; do
-		echo "pool/${SRC}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.srclist
+		echo "pool/${SRC}" >> "${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.srclist"
 	done
 }
 
@@ -747,7 +752,7 @@ buildaptarchive() {
 }
 
 createaptftparchiveconfig() {
-	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
+	local COMPRESSORS="$(cut -d'	' -f 1 "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf" | tr '\n' ' ')"
 	local COMPRESSORS="${COMPRESSORS%* }"
 	local ARCHS="$(getarchitectures)"
 	cat > ftparchive.conf <<EOF
@@ -769,23 +774,15 @@ TreeDefault {
 };
 EOF
 	for DIST in $(find ./pool/ -maxdepth 1 -name '*.pkglist' -type f | cut -d'/' -f 3 | cut -d'.' -f 1 | sort | uniq); do
-		echo -n 'tree "dists/' >> ftparchive.conf
-		echo -n "$DIST" >> ftparchive.conf
-		echo -n '" {
-	Architectures "' >> ftparchive.conf
-		echo -n "$ARCHS" >> ftparchive.conf
-		echo -n 'source";
-	FileList "' >> ftparchive.conf
-		echo -n "${DIST}.\$(SECTION).pkglist" >> ftparchive.conf
-		echo -n '";
-	SourceFileList "' >> ftparchive.conf
-		echo -n "${DIST}.\$(SECTION).srclist" >> ftparchive.conf
-		echo -n '";
-	Sections "' >> ftparchive.conf
-		echo -n "$(find ./pool/ -maxdepth 1 -name "${DIST}.*.pkglist" -type f | cut -d'/' -f 3 | cut -d'.' -f 2 | sort | uniq | tr '\n' ' ')" >> ftparchive.conf
-		echo '";
-};' >> ftparchive.conf
-	done
+		cat <<EOF
+tree "dists/$DIST" {
+	Architectures "$ARCHS source";
+	FileList "${DIST}.\$(SECTION).pkglist";
+	SourceFileList "${DIST}.\$(SECTION).srclist";
+	Sections "$(find ./pool/ -maxdepth 1 -name "${DIST}.*.pkglist" -type f | cut -d'/' -f 3 | cut -d'.' -f 2 | sort | uniq | tr '\n' ' ')";
+};
+EOF
+	done >> ftparchive.conf
 }
 
 buildaptftparchivedirectorystructure() {
@@ -795,10 +792,10 @@ buildaptftparchivedirectorystructure() {
 		for SECTION in $SECTIONS; do
 			local ARCHS="$(grep -A 5 "dists/$DIST" ftparchive.conf | grep Architectures | cut -d'"' -f 2 | sed -e 's#source##')"
 			for ARCH in $ARCHS; do
-				mkdir -p dists/${DIST}/${SECTION}/binary-${ARCH}
+				mkdir -p "dists/${DIST}/${SECTION}/binary-${ARCH}"
 			done
-			mkdir -p dists/${DIST}/${SECTION}/source
-			mkdir -p dists/${DIST}/${SECTION}/i18n
+			mkdir -p "dists/${DIST}/${SECTION}/source"
+			mkdir -p "dists/${DIST}/${SECTION}/i18n"
 		done
 	done
 }
@@ -828,28 +825,29 @@ insertpackage() {
 			fi
 			for BUILDARCH in $ARCHS; do
 				local PPATH="aptarchive/dists/${RELEASE}/main/binary-${BUILDARCH}"
-				mkdir -p $PPATH
-				local FILE="${PPATH}/Packages"
-				echo "Package: $NAME
+				mkdir -p "$PPATH"
+				{
+					echo "Package: $NAME
 Priority: $PRIORITY
 Section: other
 Installed-Size: 42
-Maintainer: Joe Sixpack <joe@example.org>" >> $FILE
-				test "$arch" = 'none' || echo "Architecture: $arch" >> $FILE
-				echo "Version: $VERSION
-Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb" >> $FILE
-				test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
-				echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)" >> $FILE
-				echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)" >> $FILE
-				echo >> $FILE
+Maintainer: Joe Sixpack <joe@example.org>"
+					test "$arch" = 'none' || echo "Architecture: $arch"
+					echo "Version: $VERSION
+Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb"
+					test -z "$DEPENDENCIES" || echo "$DEPENDENCIES"
+					echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)"
+					echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)"
+					echo
+				} >> "${PPATH}/Packages"
 			done
 		done
-		mkdir -p aptarchive/dists/${RELEASE}/main/source aptarchive/dists/${RELEASE}/main/i18n
-		touch aptarchive/dists/${RELEASE}/main/source/Sources
+		mkdir -p "aptarchive/dists/${RELEASE}/main/source" "aptarchive/dists/${RELEASE}/main/i18n"
+		touch "aptarchive/dists/${RELEASE}/main/source/Sources"
 		echo "Package: $NAME
 Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)
 Description-en: $DESCRIPTION
-" >> aptarchive/dists/${RELEASE}/main/i18n/Translation-en
+" >> "aptarchive/dists/${RELEASE}/main/i18n/Translation-en"
 	done
 }
 
@@ -871,14 +869,14 @@ Binary: $BINARY
 Version: $VERSION
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
-	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
+	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
 	echo "Files:
- $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
- $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
+ $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
+ $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
 Checksums-Sha256:
- $(echo -n "$DSCFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) $DSCFILE
- $(echo -n "$TARFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) $TARFILE
-" >> $FILE
+ $(echo -n "$DSCFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
+ $(echo -n "$TARFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
+" >> "$FILE"
 }
 
 insertinstalledpackage() {
@@ -902,22 +900,22 @@ Priority: $PRIORITY
 Section: other
 Installed-Size: 42
 Maintainer: Joe Sixpack <joe@example.org>
-Version: $VERSION" >> $FILE
-		test "$arch" = 'none' || echo "Architecture: $arch" >> $FILE
-		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
-		echo "Description: $DESCRIPTION" >> $FILE
-		echo >> $FILE
+Version: $VERSION" >> "$FILE"
+		test "$arch" = 'none' || echo "Architecture: $arch" >> "$FILE"
+		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
+		echo "Description: $DESCRIPTION" >> "$FILE"
+		echo >> "$FILE"
 		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
-			echo -n > ${INFO}/${NAME}:${arch}.list
+			echo -n > "${INFO}/${NAME}:${arch}.list"
 		else
-			echo -n > ${INFO}/${NAME}.list
+			echo -n > "${INFO}/${NAME}.list"
 		fi
 	done
 }
 
 
 buildaptarchivefromincoming() {
-	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on incoming packages…"
+	msginfo "Build APT archive for ${CCMD}${0##*/}${CINFO} based on incoming packages…"
 	cd aptarchive
 	[ -e pool ] || ln -s ../incoming pool
 	[ -e ftparchive.conf ] || createaptftparchiveconfig
@@ -930,7 +928,7 @@ buildaptarchivefromincoming() {
 }
 
 buildaptarchivefromfiles() {
-	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
+	msginfo "Build APT archive for ${CCMD}${0##*/}${CINFO} based on prebuild files…"
 	local DIR='aptarchive'
 	if [ -d "${DIR}/dists" ]; then DIR="${DIR}/dists"; fi
 	find "$DIR" -name 'Packages' -o -name 'Sources' -o -name 'Translation-*' | while read line; do
@@ -942,7 +940,7 @@ buildaptarchivefromfiles() {
 }
 
 compressfile() {
-	cat ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | while read compressor extension command; do
+	cat "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf" | while read compressor extension command; do
 		if [ "$compressor" = '.' ]; then
 			if [ -n "$2" ]; then
 				touch -d "$2" "$1"
@@ -990,16 +988,16 @@ generatereleasefiles() {
 			if [ -n "$ORIGIN" ]; then
 				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
 			fi
-			aptftparchiverelease $dir \
+			aptftparchiverelease "$dir" \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
 				${LABEL} \
 				${ORIGIN} \
 				${VERSION} \
-				> $dir/Release
+				> "$dir/Release"
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
 				sed -i '/^Date: / a\
-NotAutomatic: yes' $dir/Release
+NotAutomatic: yes' "$dir/Release"
 			fi
 		done
 	else
@@ -1007,8 +1005,8 @@ NotAutomatic: yes' $dir/Release
 	fi
 	if [ -n "$1" -a "$1" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
-			sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" $release
-			touch -d "$1" $release
+			sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
+			touch -d "$1" "$release"
 		done
 	fi
 	if [ -n "$2" ]; then
@@ -1019,33 +1017,34 @@ Valid-Until: $(date -d "$2" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -n
 }
 
 setupdistsaptarchive() {
-	local APTARCHIVE=$(readlink -f ./aptarchive)
+	local APTARCHIVE="$(readlink -f ./aptarchive | sed 's# #%20#g')"
 	rm -f root/etc/apt/sources.list.d/apt-test-*-deb.list
 	rm -f root/etc/apt/sources.list.d/apt-test-*-deb-src.list
 	for DISTS in $(find ./aptarchive/dists/ -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 4); do
-		SECTIONS=$(find ./aptarchive/dists/${DISTS}/ -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 5 | tr '\n' ' ')
+		SECTIONS=$(find "./aptarchive/dists/${DISTS}/" -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 5 | tr '\n' ' ')
 		msgninfo "\tadd deb and deb-src sources.list lines for ${CCMD}${DISTS} ${SECTIONS}${CINFO}… "
-		echo "deb file://$APTARCHIVE $DISTS $SECTIONS" > rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb.list
-		echo "deb-src file://$APTARCHIVE $DISTS $SECTIONS" > rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb-src.list
+		echo "deb file://$APTARCHIVE $DISTS $SECTIONS" > "rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb.list"
+		echo "deb-src file://$APTARCHIVE $DISTS $SECTIONS" > "rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb-src.list"
 		msgdone "info"
 	done
 }
 
 setupflataptarchive() {
-	local APTARCHIVE=$(readlink -f ./aptarchive)
-	if [ -f ${APTARCHIVE}/Packages ]; then
+	local APTARCHIVE="$(readlink -f ./aptarchive)"
+	local APTARCHIVEURI="$(readlink -f ./aptarchive | sed 's# #%20#g')"
+	if [ -f "${APTARCHIVE}/Packages" ]; then
 		msgninfo "\tadd deb sources.list line… "
-		echo "deb file://$APTARCHIVE /" > rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list
-		msgdone "info"
+		echo "deb file://$APTARCHIVEURI /" > 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list'
+		msgdone 'info'
 	else
-		rm -f rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list
+		rm -f 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb.list'
 	fi
-	if [ -f ${APTARCHIVE}/Sources ]; then
+	if [ -f "${APTARCHIVE}/Sources" ]; then
 		msgninfo "\tadd deb-src sources.list line… "
-		echo "deb-src file://$APTARCHIVE /" > rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list
-		msgdone "info"
+		echo "deb-src file://$APTARCHIVEURI /" > 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list'
+		msgdone 'info'
 	else
-		rm -f rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list
+		rm -f 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list'
 	fi
 }
 
@@ -1080,41 +1079,41 @@ signreleasefiles() {
 		# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
 		# option doesn't exist anymore (and using faketime would add a new obscure dependency)
 		# therefore we 'temporary' make the key not expired and restore a backup after signing
-		cp ${REXKEY}.sec $SECEXPIREBAK
-		cp ${REXKEY}.pub $PUBEXPIREBAK
+		cp "${REXKEY}.sec" "$SECEXPIREBAK"
+		cp "${REXKEY}.pub" "$PUBEXPIREBAK"
 		local SECUNEXPIRED="${REXKEY}.sec.unexpired"
 		local PUBUNEXPIRED="${REXKEY}.pub.unexpired"
 		if [ -f "$SECUNEXPIRED" ] && [ -f "$PUBUNEXPIRED" ]; then
-			cp $SECUNEXPIRED ${REXKEY}.sec
-			cp $PUBUNEXPIRED ${REXKEY}.pub
+			cp "$SECUNEXPIRED" "${REXKEY}.sec"
+			cp "$PUBUNEXPIRED" "${REXKEY}.pub"
 		else
 			if ! printf "expire\n1w\nsave\n" | $GPG --default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
 				cat setexpire.gpg
 				exit 1
 			fi
-			cp ${REXKEY}.sec $SECUNEXPIRED
-			cp ${REXKEY}.pub $PUBUNEXPIRED
+			cp "${REXKEY}.sec" "$SECUNEXPIRED"
+			cp "${REXKEY}.pub" "$PUBUNEXPIRED"
 		fi
 	fi
-	for RELEASE in $(find ${REPODIR}/ -name Release); do
-		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
+	for RELEASE in $(find "${REPODIR}/" -name Release); do
+		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		$GPG --default-key "$SIGNER" --clearsign --output $INRELEASE $RELEASE
+		$GPG --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
 		# we might have set a specific date for the Release file, so copy it
-		touch -d "$(stat --format "%y" ${RELEASE})" ${RELEASE}.gpg ${INRELEASE}
+		touch -d "$(stat --format "%y" ${RELEASE})" "${RELEASE}.gpg" "${INRELEASE}"
 	done
 	if [ -f "$SECEXPIREBAK" ] && [ -f "$PUBEXPIREBAK" ]; then
-		mv -f $SECEXPIREBAK ${REXKEY}.sec
-		mv -f $PUBEXPIREBAK ${REXKEY}.pub
+		mv -f "$SECEXPIREBAK" "${REXKEY}.sec"
+		mv -f "$PUBEXPIREBAK" "${REXKEY}.pub"
 	fi
-	msgdone "info"
+	msgdone 'info'
 }
 
 redatereleasefiles() {
 	local DATE="$(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
 	for release in $(find aptarchive/ -name 'Release'); do
-		sed -i "s/^Date: .*$/Date: ${DATE}/" $release
-		touch -d "$DATE" $release
+		sed -i "s/^Date: .*$/Date: ${DATE}/" "$release"
+		touch -d "$DATE" "$release"
 	done
 	signreleasefiles "${2:-Joe Sixpack}"
 }
@@ -1148,7 +1147,7 @@ webserverconfig() {
 }
 
 rewritesourceslist() {
-	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
+	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
 		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#https://localhost:4433/#${1}#"
 	done
@@ -1174,7 +1173,7 @@ changetowebserver() {
 	else
 		shift
 	fi
-	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
+	if test -x "${APTWEBSERVERBINDIR}/aptwebserver"; then
 		cd aptarchive
 		local LOG="webserver.log"
 		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
@@ -1207,10 +1206,10 @@ output = /dev/null
 [https]
 accept = 4433
 connect = 8080
-" > ${TMPWORKINGDIRECTORY}/stunnel.conf
+" > "${TMPWORKINGDIRECTORY}/stunnel.conf"
 	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
         waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
-	local PID="$(cat ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid)"
+	local PID="$(cat "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid")"
         if [ -z "$PID" ]; then
 		msgdie 'Could not fork stunnel4 successfully'
 	fi
@@ -1221,22 +1220,24 @@ connect = 8080
 changetocdrom() {
 	mkdir -p rootdir/media/cdrom/.disk
 	local CD="$(readlink -f rootdir/media/cdrom)"
-	echo "acquire::cdrom::mount \"${CD}\";
-acquire::cdrom::${CD}/::mount \"mv ${CD}-unmounted ${CD}\";
-acquire::cdrom::${CD}/::umount \"mv ${CD} ${CD}-unmounted\";
-acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
-	echo -n "$1" > ${CD}/.disk/info
+	cat > rootdir/etc/apt/apt.conf.d/00cdrom <<EOF
+acquire::cdrom::mount "${CD}";
+acquire::cdrom::"${CD}/"::mount "mv ${CD}-unmounted ${CD}";
+acquire::cdrom::"${CD}/"::umount "mv ${CD} ${CD}-unmounted";
+acquire::cdrom::autodetect 0;
+EOF
+	echo -n "$1" > "${CD}/.disk/info"
 	if [ ! -d aptarchive/dists ]; then
 		msgdie 'Flat file archive cdroms can not be created currently'
 		return 1
 	fi
 	mv aptarchive/dists "$CD"
-	ln -s "$(readlink -f ./incoming)" $CD/pool
+	ln -s "$(readlink -f ./incoming)" "$CD/pool"
 	find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list' -delete
 	# start with an unmounted disk
 	mv "${CD}" "${CD}-unmounted"
 	# we don't want the disk to be modifiable
-	addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/media/cdrom/dists/ $PWD/rootdir/media/cdrom-unmounted/dists/ || true;"
+	addtrap 'prefix' "chmod -f -R +w \"$PWD/rootdir/media/cdrom/dists/\" \"$PWD/rootdir/media/cdrom-unmounted/dists/\" || true;"
 	chmod -R 555 rootdir/media/cdrom-unmounted/dists
 }
 
@@ -1269,7 +1270,7 @@ testoutputequal() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testoutputequal.output"
 	local COMPAREFILE="$1"
 	shift
-	if "$@" 2>&1 | checkdiff $COMPAREFILE - >"$OUTPUT" 2>&1; then
+	if "$@" 2>&1 | checkdiff "$COMPAREFILE" - >"$OUTPUT" 2>&1; then
 		msgpass
 	else
 		echo "=== content of file we compared with (${COMPAREFILE}) ===" >>"${OUTPUT}"
@@ -1303,12 +1304,24 @@ testempty() {
 	msggroup 'testempty'
 	msgtest "Test for no output of" "$*"
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
-	if ("$@" >$COMPAREFILE 2>&1 || true) && test ! -s $COMPAREFILE; then
+	if ("$@" >"$COMPAREFILE" 2>&1 || true) && test ! -s "$COMPAREFILE"; then
 		msgpass
 	else
 		msgfailoutput '' "$COMPAREFILE" "$@"
 	fi
 	aptautotest 'testempty' "$@"
+	msggroup
+}
+testnotempty() {
+	msggroup 'testnotempty'
+	msgtest "Test for some output of" "$*"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testnotempty.comparefile"
+	if ("$@" >"$COMPAREFILE" 2>&1 || true) && test -s "$COMPAREFILE"; then
+		msgpass
+	else
+		msgfailoutput '' "$COMPAREFILE" "$@"
+	fi
+	aptautotest 'testnotempty' "$@"
 	msggroup
 }
 
@@ -1321,7 +1334,7 @@ testequal() {
 	fi
 
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.comparefile"
-	echo "$1" > $COMPAREFILE
+	echo "$1" > "$COMPAREFILE"
 	shift
 
 	if [ -n "$MSG" ]; then
@@ -1337,13 +1350,13 @@ testequalor2() {
 	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
 	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
 	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
-	echo "$1" > $COMPAREFILE1
-	echo "$2" > $COMPAREFILE2
+	echo "$1" > "$COMPAREFILE1"
+	echo "$2" > "$COMPAREFILE2"
 	shift 2
 	msgtest "Test for equality OR of" "$*"
-	"$@" >$COMPAREAGAINST 2>&1 || true
-	if checkdiff $COMPAREFILE1 $COMPAREAGAINST >/dev/null 2>&1 || \
-		checkdiff $COMPAREFILE2 $COMPAREAGAINST >/dev/null 2>&1
+	"$@" >"$COMPAREAGAINST" 2>&1 || true
+	if checkdiff "$COMPAREFILE1" "$COMPAREAGAINST" >/dev/null 2>&1 || \
+		checkdiff "$COMPAREFILE2" "$COMPAREAGAINST" >/dev/null 2>&1
 	then
 		msgpass
 	else
@@ -1429,10 +1442,10 @@ testmarkedauto() {
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
-		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > "$COMPAREFILE"
 	else
 		msgtest 'Test for correctly marked as auto-installed' 'no package'
-		echo -n > $COMPAREFILE
+		echo -n > "$COMPAREFILE"
 	fi
 	testoutputequal "$COMPAREFILE" aptmark showauto
 	msggroup
@@ -1442,10 +1455,10 @@ testmarkedmanual() {
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedmanual.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as manually installed' "$*"
-		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > "$COMPAREFILE"
 	else
 		msgtest 'Test for correctly marked as manually installed' 'no package'
-		echo -n > $COMPAREFILE
+		echo -n > "$COMPAREFILE"
 	fi
 	testoutputequal "$COMPAREFILE" aptmark showmanual
 	msggroup
@@ -1483,7 +1496,7 @@ msgfailoutput() {
 		done
 		echo '#### test output ####'
 	fi
-	cat >&2 $OUTPUT
+	cat >&2 "$OUTPUT"
 	msgfail "$MSG"
 }
 
@@ -1495,7 +1508,7 @@ testsuccess() {
 		msgtest 'Test for successful execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
-	if "$@" >${OUTPUT} 2>&1; then
+	if "$@" >"${OUTPUT}" 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
@@ -1531,7 +1544,7 @@ testwarning() {
 		msgtest 'Test for successful execution with warnings of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output"
-	if "$@" >${OUTPUT} 2>&1; then
+	if "$@" >"${OUTPUT}" 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
@@ -1560,7 +1573,7 @@ testfailure() {
 		msgtest 'Test for failure in execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
-	if "$@" >${OUTPUT} 2>&1; then
+	if "$@" >"${OUTPUT}" 2>&1; then
 		local EXITCODE=$?
 		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	else
@@ -1718,18 +1731,18 @@ aptautotest() {
 	local TESTCALL="$1"
 	local CMD="$2"
 	local FIRSTOPT="$3"
-	local AUTOTEST="aptautotest_$(basename "$CMD" | tr -d '-')_$(echo "$FIRSTOPT" | tr -d '-')"
+	local AUTOTEST="aptautotest_$(echo "${CMD##*/}_${FIRSTOPT}" | tr -d '-')"
 	if command -v $AUTOTEST >/dev/null; then
 		shift 3
 		# save and restore the *.output files from other tests
 		# as we might otherwise override them in these automatic tests
-		rm -rf ${TMPWORKINGDIRECTORY}/rootdir/tmp-before
-		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp ${TMPWORKINGDIRECTORY}/rootdir/tmp-before
-		mkdir ${TMPWORKINGDIRECTORY}/rootdir/tmp
+		rm -rf "${TMPWORKINGDIRECTORY}/rootdir/tmp-before"
+		mv "${TMPWORKINGDIRECTORY}/rootdir/tmp" "${TMPWORKINGDIRECTORY}/rootdir/tmp-before"
+		mkdir "${TMPWORKINGDIRECTORY}/rootdir/tmp"
 		$AUTOTEST "$TESTCALL" "$@"
-		rm -rf ${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest
-		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp ${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest
-		mv ${TMPWORKINGDIRECTORY}/rootdir/tmp-before ${TMPWORKINGDIRECTORY}/rootdir/tmp
+		rm -rf "${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest"
+		mv "${TMPWORKINGDIRECTORY}/rootdir/tmp" "${TMPWORKINGDIRECTORY}/rootdir/tmp-aptautotest"
+		mv "${TMPWORKINGDIRECTORY}/rootdir/tmp-before" "${TMPWORKINGDIRECTORY}/rootdir/tmp"
 	fi
 }
 
@@ -1743,9 +1756,12 @@ aptautotest_aptget_update() {
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	# all copied files are properly chmodded
+	local backupIFS="$IFS"
+	IFS="$(printf "\n\b")"
 	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
 		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
+	IFS="$backupIFS"
 	if [ "$TESTCALL" = 'testsuccess' ]; then
 		# failure cases can retain partial files and such
 		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)

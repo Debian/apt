@@ -23,14 +23,14 @@ create_fresh_archive()
 }
 
 add_new_package() {
-    insertpackage "unstable" "new" "all" "1.0"
-    insertsource "unstable" "new" "all" "1.0"
+    insertpackage 'unstable' 'new' 'all' '1.0'
+    insertsource 'unstable' 'new' 'all' '1.0'
 
     setupaptarchive --no-update "$@"
 }
 
 break_repository_sources_index() {
-    printf 'xxx' > $APTARCHIVE/dists/unstable/main/source/Sources
+    printf 'xxx' > "$APTARCHIVE/dists/unstable/main/source/Sources"
     compressfile "$APTARCHIVE/dists/unstable/main/source/Sources" "$@"
 }
 
@@ -38,7 +38,7 @@ start_with_good_inrelease() {
     create_fresh_archive
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
-    testsuccessequal "old/unstable 1.0 all" apt list -q
+    testsuccessequal 'old/unstable 1.0 all' apt list -q
 }
 
 test_inrelease_to_new_inrelease() {
@@ -47,8 +47,8 @@ test_inrelease_to_new_inrelease() {
 
     add_new_package '+1hour'
     testsuccess aptget update -o Debug::Acquire::Transaction=1
-    testsuccessequal "new/unstable 1.0 all
-old/unstable 1.0 all" apt list -q
+    testsuccessequal 'new/unstable 1.0 all
+old/unstable 1.0 all' apt list -q
 }
 
 test_inrelease_to_broken_hash_reverts_all() {
@@ -73,8 +73,8 @@ test_inrelease_to_valid_release() {
 
     add_new_package '+1hour'
     # switch to a unsigned repo now
-    rm $APTARCHIVE/dists/unstable/InRelease
-    rm $APTARCHIVE/dists/unstable/Release.gpg
+    rm "$APTARCHIVE/dists/unstable/InRelease"
+    rm "$APTARCHIVE/dists/unstable/Release.gpg"
 
     # update fails
     testfailureequal "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed." aptget update -qq
@@ -83,8 +83,8 @@ test_inrelease_to_valid_release() {
     testfileequal lists.before "$(listcurrentlistsdirectory)"
     testsuccess aptget install old -s
     testfailure aptget install new -s
-    testsuccess ls $ROOTDIR/var/lib/apt/lists/*_InRelease
-    testfailure ls $ROOTDIR/var/lib/apt/lists/*_Release
+    testnotempty find "${ROOTDIR}/var/lib/apt/lists" -name '*_InRelease'
+    testempty find "${ROOTDIR}/var/lib/apt/lists" -name '*_Release'
 }
 
 test_inrelease_to_release_reverts_all() {
@@ -93,8 +93,8 @@ test_inrelease_to_release_reverts_all() {
 
     # switch to a unsigned repo now
     add_new_package '+1hour'
-    rm $APTARCHIVE/dists/unstable/InRelease
-    rm $APTARCHIVE/dists/unstable/Release.gpg
+    rm "$APTARCHIVE/dists/unstable/InRelease"
+    rm "$APTARCHIVE/dists/unstable/Release.gpg"
 
     # break it
     break_repository_sources_index '+1hour'
@@ -106,15 +106,15 @@ test_inrelease_to_release_reverts_all() {
     testfileequal lists.before "$(listcurrentlistsdirectory)"
     testsuccess aptget install old -s
     testfailure aptget install new -s
-    testsuccess ls $ROOTDIR/var/lib/apt/lists/*_InRelease
-    testfailure ls $ROOTDIR/var/lib/apt/lists/*_Release
+    testnotempty find "${ROOTDIR}/var/lib/apt/lists" -name '*_InRelease'
+    testempty find "${ROOTDIR}/var/lib/apt/lists" -name '*_Release'
 }
 
 test_unauthenticated_to_invalid_inrelease() {
     msgmsg 'Test UnAuthenticated to invalid InRelease reverts everything'
     create_fresh_archive
-    rm $APTARCHIVE/dists/unstable/InRelease
-    rm $APTARCHIVE/dists/unstable/Release.gpg
+    rm "$APTARCHIVE/dists/unstable/InRelease"
+    rm "$APTARCHIVE/dists/unstable/Release.gpg"
 
     testwarning aptget update --allow-insecure-repositories
     listcurrentlistsdirectory > lists.before
@@ -130,7 +130,7 @@ E: There were unauthenticated packages and -y was used without --allow-unauthent
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
-    testfailure ls rootdir/var/lib/apt/lists/*_InRelease
+    testempty find "${ROOTDIR}/var/lib/apt/lists" -maxdepth 1 -name '*_InRelease'
     testfailureequal "WARNING: The following packages cannot be authenticated!
   old
 E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y old
@@ -147,7 +147,7 @@ W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  The following sign
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
-    testsuccess ls rootdir/var/lib/apt/lists/*_InRelease
+    testnotempty find "${ROOTDIR}/var/lib/apt/lists" -name '*_InRelease'
 }
 
 test_inrelease_to_broken_gzip() {
@@ -159,10 +159,10 @@ test_inrelease_to_broken_gzip() {
     signreleasefiles
 
     # append junk at the end of the compressed file
-    echo "lala" >> $APTARCHIVE/dists/unstable/main/source/Sources.gz
-    touch -d '+2min' $APTARCHIVE/dists/unstable/main/source/Sources.gz
+    echo "lala" >> "$APTARCHIVE/dists/unstable/main/source/Sources.gz"
+    touch -d '+2min' "$APTARCHIVE/dists/unstable/main/source/Sources.gz"
     # remove uncompressed file to avoid fallback
-    rm $APTARCHIVE/dists/unstable/main/source/Sources
+    rm "$APTARCHIVE/dists/unstable/main/source/Sources"
 
     testfailure aptget update
     testsuccess grep 'Hash Sum mismatch' rootdir/tmp/testfailure.output
@@ -177,9 +177,9 @@ configarchitecture "i386"
 
 # setup the archive and ensure we have a single package that installs fine
 setupaptarchive
-APTARCHIVE=$(readlink -f ./aptarchive)
-ROOTDIR=${TMPWORKINGDIRECTORY}/rootdir
-APTARCHIVE_LISTS="$(echo $APTARCHIVE | tr "/" "_" )"
+APTARCHIVE="$(readlink -f ./aptarchive)"
+ROOTDIR="${TMPWORKINGDIRECTORY}/rootdir"
+APTARCHIVE_LISTS="$(echo "$APTARCHIVE" | tr "/" "_" )"
 
 # test the following cases:
 # - InRelease -> broken InRelease revert to previous state

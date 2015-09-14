@@ -42,12 +42,15 @@ testdpkginstalled 'apt'
 # install a slowed down file: otherwise its to fast to reproduce combining
 NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
 OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
-rm $NEWMETHODS
-mkdir $NEWMETHODS
-for METH in $(find $OLDMETHODS ! -type d); do
-	ln -s $OLDMETHODS/$(basename $METH) $NEWMETHODS
+rm "$NEWMETHODS"
+mkdir "$NEWMETHODS"
+backupIFS="$IFS"
+IFS="$(printf "\n\b")"
+for METH in $(find "$OLDMETHODS" ! -type d); do
+	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
 done
-rm $NEWMETHODS/https
+IFS="$backupIFS"
+rm "$NEWMETHODS/https"
 
 cd downloaded
 testfailureequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
@@ -56,7 +59,7 @@ testfailure test -e apt_1.0_all.deb
 cd - >/dev/null
 
 # revert to all methods
-ln -s $OLDMETHODS/https $NEWMETHODS
+ln -s "$OLDMETHODS/https" "$NEWMETHODS"
 
 # check that downgrades from https to http are not allowed
 webserverconfig 'aptwebserver::support::http' 'true'

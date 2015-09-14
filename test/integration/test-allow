@@ -4,7 +4,7 @@
 #
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
+TESTDIR="$(readlink -f "$(dirname $0)")"
 . $TESTDIR/framework
 setupenvironment
 configarchitecture 'amd64'

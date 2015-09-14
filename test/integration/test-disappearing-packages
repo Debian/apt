@@ -1,30 +1,30 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'native'
 
-buildsimplenativepackage "old-pkg" "native" "1.0" "stable"
-buildsimplenativepackage "unrelated" "all" "0.5" "unstable"
+buildsimplenativepackage 'old-pkg' 'native' '1.0' 'stable'
+buildsimplenativepackage 'unrelated' 'all' '0.5' 'unstable'
 
-setupsimplenativepackage "new-pkg" "native" "2.0" "unstable" "Provides: old-pkg
+setupsimplenativepackage 'new-pkg' 'native' '2.0' 'unstable' 'Provides: old-pkg
 Replaces: old-pkg
-Conflicts: old-pkg (<< 2.0)"
-BUILDDIR="incoming/new-pkg-2.0"
-echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/new-pkg.links
-buildpackage "$BUILDDIR" "unstable" "main"
+Conflicts: old-pkg (<< 2.0)'
+BUILDDIR='incoming/new-pkg-2.0'
+echo '/usr/share/doc/new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/new-pkg.links"
+buildpackage "$BUILDDIR" 'unstable' 'main'
 rm -rf "$BUILDDIR"
 
-setupsimplenativepackage "old-pkg" "all" "2.0" "unstable" "Depends: new-pkg"
-BUILDDIR="incoming/old-pkg-2.0"
-echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/old-pkg.links
+setupsimplenativepackage 'old-pkg' 'all' '2.0' 'unstable' 'Depends: new-pkg'
+BUILDDIR='incoming/old-pkg-2.0'
+echo '/usr/share/doc/new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/old-pkg.links"
 echo "
 override_dh_link:
 	rm -rf debian/old-pkg/usr/share/doc/old-pkg/
-	dh_link" >> ${BUILDDIR}/debian/rules
-buildpackage "$BUILDDIR" "unstable" "main"
+	dh_link" >> "${BUILDDIR}/debian/rules"
+buildpackage "$BUILDDIR" 'unstable' 'main'
 rm -rf "$BUILDDIR"
 
 setupaptarchive
@@ -33,22 +33,22 @@ testsuccess aptget install old-pkg=1.0 --trivial-only
 
 testmarkedauto # old-pkg is manual installed
 
-CMD="aptget dist-upgrade -y -q=0"
-msgtest "Test for equality of" "$CMD"
-COMPAREFILE=$(mktemp)
-echo "The following package disappeared from your system as
+CMD='aptget dist-upgrade -y -q=0'
+msgtest 'Test for equality of' "$CMD"
+COMPAREFILE="$(mktemp)"
+echo 'The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg
-Note: This is done automatically and on purpose by dpkg." > $COMPAREFILE
-$CMD 2>&1 | tail -n 4 | diff -u $COMPAREFILE - && msgpass || msgfail
-rm $COMPAREFILE
+Note: This is done automatically and on purpose by dpkg.' > "$COMPAREFILE"
+$CMD 2>&1 | tail -n 4 | diff -u "$COMPAREFILE" - && msgpass || msgfail
+rm "$COMPAREFILE"
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e "s#:$(getarchitecture 'native') #:native #"
-testfileequal "rootdir/var/log/apt/history.log" "
+testfileequal 'rootdir/var/log/apt/history.log' '
 Install: old-pkg:native (1.0)
 
 Install: new-pkg:native (2.0, automatic)
 Upgrade: old-pkg:native (1.0, 2.0)
-Disappeared: old-pkg (1.0)"
+Disappeared: old-pkg (1.0)'
 
 testmarkedauto  # new-pkg should have get the manual flag from old-pkg
