@@ -36,5 +36,5 @@ runtest() {
 	testdownload 'non-existent file via redirect fails' 'testfailure' "$1/redirectme/failing"
 }
 
-runtest 'http://localhost:8080'
-runtest 'https://localhost:4433'
+runtest "http://localhost:${APTHTTPPORT}"
+runtest "https://localhost:${APTHTTPSPORT}"

@@ -16,7 +16,7 @@ setupaptarchive
 changetowebserver -o 'aptwebserver::overwrite::.*::filename=/knights'
 
 msgtest 'Acquire test file from the webserver to check' 'overwrite'
-if downloadfile http://localhost:8080/holygrail ./knights-talking >/dev/null; then
+if downloadfile http://localhost:${APTHTTPPORT}/holygrail ./knights-talking >/dev/null; then
 	msgpass
 else
 	msgfail
@@ -45,8 +45,8 @@ partial' ls "$LISTS"
 
 # and again with pre-existing files with "valid data" which should remain
 for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
-	echo 'peng neee-wom' > "$LISTS/localhost:8080_dists_stable_${f}"
-	chmod 644 "$LISTS/localhost:8080_dists_stable_${f}"
+	echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
+	chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
 done
 
 testfailure aptget update
@@ -56,9 +56,9 @@ ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 4
 ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
 
 # and now with a pre-existing InRelease file
-echo 'peng neee-wom' > "$LISTS/localhost:8080_dists_stable_InRelease"
-chmod 644 "$LISTS/localhost:8080_dists_stable_InRelease"
-rm -f "$LISTS/localhost:8080_dists_stable_Release" "$LISTS/localhost:8080_dists_stable_Release.gpg"
+echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
+chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
+rm -f "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release" "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release.gpg"
 msgtest 'excpected failure of' 'apt-get update'
 testfailure aptget update
 testsuccess grep '^W:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output

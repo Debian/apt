@@ -83,24 +83,24 @@ password hunter2'
 }
 
 msgmsg 'server basic auth'
-rewritesourceslist 'http://localhost:8080'
-runtest 'http://localhost:8080'
-rewritesourceslist 'https://localhost:4433'
-runtest 'https://localhost:4433'
-rewritesourceslist 'http://localhost:8080'
+rewritesourceslist "http://localhost:${APTHTTPPORT}"
+runtest "http://localhost:${APTHTTPPORT}"
+rewritesourceslist "https://localhost:${APTHTTPSPORT}"
+runtest "https://localhost:${APTHTTPSPORT}"
+rewritesourceslist "http://localhost:${APTHTTPPORT}"
 
 msgmsg 'proxy to server basic auth'
 webserverconfig 'aptwebserver::request::absolute' 'uri'
-export http_proxy='http://localhost:8080'
-runtest 'http://localhost:8080'
+export http_proxy="http://localhost:${APTHTTPPORT}"
+runtest "http://localhost:${APTHTTPPORT}"
 unset http_proxy
 
 msgmsg 'proxy basic auth to server basic auth'
 webserverconfig 'aptwebserver::proxy-authorization' "$(printf 'moon:deer2' | base64)"
-export http_proxy='http://moon:deer2@localhost:8080'
-runtest 'http://localhost:8080'
+export http_proxy="http://moon:deer2@localhost:${APTHTTPPORT}"
+runtest "http://localhost:${APTHTTPPORT}"
 
 msgmsg 'proxy basic auth to server'
 authfile ''
 webserverconfig 'aptwebserver::authorization' ''
-testauthsuccess 'http://localhost:8080'
+testauthsuccess "http://localhost:${APTHTTPPORT}"

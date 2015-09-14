@@ -141,8 +141,8 @@ serverconfigs() {
 	testrun "$1"
 }
 
-serverconfigs 'http://localhost:8080'
+serverconfigs "http://localhost:${APTHTTPPORT}"
 
 changetohttpswebserver
 
-serverconfigs 'https://localhost:4433'
+serverconfigs "https://localhost:${APTHTTPSPORT}"

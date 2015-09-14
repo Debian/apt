@@ -10,14 +10,15 @@ configcompression '.' 'gz'
 buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
 
 setupaptarchive --no-update
-changetowebserver -o 'aptwebserver::redirect::replace::/redirectme/=http://0.0.0.0:8080/'
-rewritesourceslist 'http://localhost:8080/redirectme'
+changetowebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://0.0.0.0:${APTHTTPPORT}/"
+rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
 
-testsuccessequal "Get:1 http://0.0.0.0:8080 unstable InRelease [$(stat -c %s aptarchive/dists/unstable/InRelease) B]
-Get:2 http://0.0.0.0:8080 unstable/main Sources [$(stat -c %s aptarchive/dists/unstable/main/source/Sources.gz) B]
-Get:3 http://0.0.0.0:8080 unstable/main amd64 Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-amd64/Packages.gz) B]
-Get:4 http://0.0.0.0:8080 unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
+testsuccessequal "Get:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease [$(stat -c %s aptarchive/dists/unstable/InRelease) B]
+Get:2 http://0.0.0.0:${APTHTTPPORT} unstable/main Sources [$(stat -c %s aptarchive/dists/unstable/main/source/Sources.gz) B]
+Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main amd64 Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-amd64/Packages.gz) B]
+Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
 Reading package lists..." aptget update
 
-testsuccessequal 'Hit:1 http://0.0.0.0:8080 unstable InRelease
-Reading package lists...' aptget update
+testsuccessequal "Hit:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease
+Reading package lists..." aptget update

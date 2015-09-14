@@ -39,6 +39,6 @@ cp -p aptarchive/dists/unstable/main/binary-i386/saved/Packages* \
      aptarchive/dists/unstable/main/binary-i386/
 
 # ensure this raises an error
-testfailuremsg "W: Failed to fetch copy:$(readlink -f ./rootdir)/var/lib/apt/lists/localhost:8080_dists_unstable_main_binary-i386_Packages  Hash Sum mismatch
+testfailuremsg "W: Failed to fetch copy:$(readlink -f ./rootdir)/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_binary-i386_Packages  Hash Sum mismatch
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 testfileequal lists.before "$(listcurrentlistsdirectory)"

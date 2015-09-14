@@ -28,9 +28,9 @@ Reading package lists..." aptget update
 	testsuccess --nomsg aptget install unrelated --download-only -y
 }
 
-testrun 'http://localhost:8080'
+testrun "http://localhost:${APTHTTPPORT}"
 
 rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
 changetohttpswebserver
 
-testrun 'https://localhost:4433'
+testrun "https://localhost:${APTHTTPSPORT}"

@@ -33,18 +33,18 @@ releasechanger 'Label' 'Debian'
 testsuccessequal "'http://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
 'http://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
-testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0.changelog' foo.changelog
-'http://localhost:8080/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+testsuccessequal "'http://localhost:${APTHTTPPORT}/main/f/foo/foo_1.0.changelog' foo.changelog
+'http://localhost:${APTHTTPPORT}/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian="http://localhost:${APTHTTPPORT}/CHANGEPATH.changelog"
 
 sed -i '/^Origin: / a\
 Changelogs: http://example.org/CHANGEPATH-changelog' $(find rootdir/var/lib/apt/lists -name '*Release')
 rm -f rootdir/var/cache/apt/*.bin
 
 testsuccessequal "'http://example.org/main/f/foo/foo_1.0-changelog' foo.changelog
-'http://example.org/main/libb/libbar/libbar_1.0-changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+'http://example.org/main/libb/libbar/libbar_1.0-changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian="http://localhost:${APTHTTPPORT}/CHANGEPATH.changelog"
 
-testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0.changelog' foo.changelog
-'http://localhost:8080/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Override::Label::Debian='http://localhost:8080/CHANGEPATH.changelog'
+testsuccessequal "'http://localhost:${APTHTTPPORT}/main/f/foo/foo_1.0.changelog' foo.changelog
+'http://localhost:${APTHTTPPORT}/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Override::Label::Debian="http://localhost:${APTHTTPPORT}/CHANGEPATH.changelog"
 
 releasechanger 'Changelogs' 'no'
 if [ "$(id -u)" = '0' ]; then
@@ -57,12 +57,12 @@ fi
 sed -i '/^Changelogs: / d' $(find rootdir/var/lib/apt/lists -name '*Release')
 releasechanger 'Label' 'Testcases'
 
-echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/CHANGEPATH/change.txt";' > rootdir/etc/apt/apt.conf.d/changelog.conf
-testsuccessequal "'http://localhost:8080/main/f/foo/foo_1.0/change.txt' foo.changelog
-'http://localhost:8080/main/libb/libbar/libbar_1.0/change.txt' libbar.changelog" aptget changelog foo libbar --print-uris
+echo "Acquire::Changelogs::URI::Label::Testcases \"http://localhost:${APTHTTPPORT}/CHANGEPATH/change.txt\";" > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:${APTHTTPPORT}/main/f/foo/foo_1.0/change.txt' foo.changelog
+'http://localhost:${APTHTTPPORT}/main/libb/libbar/libbar_1.0/change.txt' libbar.changelog" aptget changelog foo libbar --print-uris
 
-echo 'Acquire::Changelogs::URI::Label::Testcases "http://localhost:8080/pool/CHANGEPATH/changelog";' > rootdir/etc/apt/apt.conf.d/changelog.conf
-testsuccessequal "'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo --print-uris
+echo "Acquire::Changelogs::URI::Label::Testcases \"http://localhost:${APTHTTPPORT}/pool/CHANGEPATH/changelog\";" > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo --print-uris
 
 
 testsuccess aptget changelog foo -qq
@@ -87,8 +87,8 @@ testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/chan
 rm -f libbar.changelog foo.changelog
 
 # as such bogus, but can happen with multiple binaries from the same source
-testsuccessequal "'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog
-'http://localhost:8080/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo foo --print-uris
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo foo --print-uris
 testsuccess aptget changelog foo foo -qq
 testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)
 $(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
@@ -99,9 +99,9 @@ rm -f foo.changelog
 
 # no CHANGEPATH in the URI
 testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0
-' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases='http://localhost:8080/change.txt'
+' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/change.txt"
 testfailure test -e foo.changelog
 
-testequal 'E: Failed to fetch http://localhost:8080/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
-' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases='http://localhost:8080/does/not/exist/CHANGEPATH/change.txt'
+testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
+" aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/CHANGEPATH/change.txt"
 testfailure test -e foo.changelog

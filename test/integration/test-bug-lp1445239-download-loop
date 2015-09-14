@@ -21,7 +21,7 @@ DOWNLOADLOG='rootdir/tmp/testdownloadfile.log'
 
 TARGET=./downloaded/testfile-downloaded
 dd if=/dev/zero of=$TARGET bs=99k count=1 2>/dev/null
-if ! downloadfile http://localhost:8080/testfile "$TARGET" > "$DOWNLOADLOG"; then
+if ! downloadfile http://localhost:${APTHTTPPORT}/testfile "$TARGET" > "$DOWNLOADLOG"; then
     cat >&2 "$DOWNLOADLOG"
     msgfail
 else
