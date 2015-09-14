@@ -64,7 +64,7 @@ testdownload apt_1.0_all.deb apt stable
 testdownload apt_2.0_all.deb apt
 
 DEBFILE="$(readlink -f ../aptarchive)/pool/apt_2.0_all.deb"
-testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sha512sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris
+testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s "$DEBFILE") SHA512:$(sha512sum "$DEBFILE" | cut -d' ' -f 1)" aptget download apt --print-uris
 
 # deb:677887
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms --print-uris
@@ -83,7 +83,7 @@ testsuccess test -s apt_2.0_all.deb
 
 # restore "root" rights
 cd "$OLDPWD"
-chmod -f -R +w $PWD/rootdir/var/cache/apt/archives
+chmod -f -R +w "$PWD/rootdir/var/cache/apt/archives"
 rm -rf rootdir/var/cache/apt/archives/
 
 # file: debs aren't copied to archives, so change to http which obviously are

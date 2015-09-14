@@ -9,14 +9,14 @@ set -e
 simulate_mitm_and_inject_evil_package()
 {
     redatereleasefiles '+1 hour'
-    rm -f $APTARCHIVE/dists/unstable/InRelease
-    rm -f $APTARCHIVE/dists/unstable/Release.gpg
+    rm -f "$APTARCHIVE/dists/unstable/InRelease"
+    rm -f "$APTARCHIVE/dists/unstable/Release.gpg"
     inject_evil_package
 }
 
 inject_evil_package()
 {
-    cat > $APTARCHIVE/dists/unstable/main/binary-i386/Packages <<EOF
+    cat > "$APTARCHIVE/dists/unstable/main/binary-i386/Packages" <<EOF
 Package: evil
 Installed-Size: 29
 Maintainer: Joe Sixpack <joe@example.org>
@@ -46,11 +46,7 @@ assert_repo_is_intact()
     testsuccess aptget source foo --print-uris
 
     LISTDIR=rootdir/var/lib/apt/lists
-    if ! ( ls $LISTDIR/*InRelease >/dev/null 2>&1 || 
-            ls $LISTDIR/*Release.gpg >/dev/null 2>&1 ); then
-        echo "Can not find InRelease/Release.gpg in $(ls $LISTDIR)"
-        msgfail
-    fi
+    testempty find "$LISTDIR" -name 'InRelease' -o -name 'Release.gpg'
 }
 
 setupaptarchive_with_lists_clean()
@@ -75,7 +71,7 @@ test_from_release_gpg_to_unsigned()
 {
     # setup archive with Release/Release.gpg (but no InRelease)
     setupaptarchive_with_lists_clean
-    rm $APTARCHIVE/dists/unstable/InRelease
+    rm "$APTARCHIVE/dists/unstable/InRelease"
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
 
@@ -93,7 +89,7 @@ test_from_inrelease_to_unsigned_with_override()
     # simulate moving to a unsigned but otherwise valid repo
     simulate_mitm_and_inject_evil_package
     generatereleasefiles '+2 hours'
-    find $APTARCHIVE -name '*Packages*' -exec touch -d '+2 hours' {} \;
+    find "$APTARCHIVE" -name '*Packages*' -exec touch -d '+2 hours' {} \;
 
     # and ensure we can update to it (with enough force) 
     testwarning aptget update --allow-insecure-repositories \
@@ -128,8 +124,8 @@ test_cve_2012_0214()
     listcurrentlistsdirectory > lists.before
 
     # do what CVE-2012-0214 did
-    rm $APTARCHIVE/dists/unstable/InRelease
-    rm $APTARCHIVE/dists/unstable/Release.gpg
+    rm "$APTARCHIVE/dists/unstable/InRelease"
+    rm "$APTARCHIVE/dists/unstable/Release.gpg"
     inject_evil_package
     # build valid Release file
     aptftparchive -qq release ./aptarchive > aptarchive/dists/unstable/Release 
@@ -149,7 +145,7 @@ test_subvert_inrelease()
     listcurrentlistsdirectory > lists.before
 
     # replace InRelease with something else
-    mv $APTARCHIVE/dists/unstable/Release $APTARCHIVE/dists/unstable/InRelease
+    mv "$APTARCHIVE/dists/unstable/Release" "$APTARCHIVE/dists/unstable/InRelease"
 
     testfailuremsg "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
@@ -167,7 +163,7 @@ test_inrelease_to_invalid_inrelease()
     listcurrentlistsdirectory > lists.before
 
     # now remove InRelease and subvert Release do no longer verify
-    sed -i 's/^Codename:.*/Codename: evil!/' $APTARCHIVE/dists/unstable/InRelease
+    sed -i 's/^Codename:.*/Codename: evil!/' "$APTARCHIVE/dists/unstable/InRelease"
     inject_evil_package
 
     testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
@@ -184,12 +180,12 @@ test_release_gpg_to_invalid_release_release_gpg()
 {
     # setup archive with InRelease
     setupaptarchive_with_lists_clean
-    rm $APTARCHIVE/dists/unstable/InRelease
+    rm "$APTARCHIVE/dists/unstable/InRelease"
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
 
     # now subvert Release do no longer verify
-    echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
+    echo "Some evil data" >> "$APTARCHIVE/dists/unstable/Release"
     inject_evil_package
 
     testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable Release: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
@@ -213,7 +209,7 @@ buildsimplenativepackage 'foo' 'all' '2.0'
 
 # setup the archive and ensure we have a single package that installs fine
 setupaptarchive
-APTARCHIVE=$(readlink -f ./aptarchive)
+APTARCHIVE="$(readlink -f ./aptarchive)"
 assert_repo_is_intact
 
 # test the various cases where a repo may go from signed->unsigned

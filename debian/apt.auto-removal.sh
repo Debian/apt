@@ -19,7 +19,7 @@ eval $(apt-config shell DPKG Dir::bin::dpkg/f)
 test -n "$DPKG" || DPKG="/usr/bin/dpkg"
 
 
-list="$(${DPKG} -l | awk '/^[ih][^nc][ ]+(linux|kfreebsd|gnumach)-image-[0-9]+\./ && $2 !~ /-dbg$/ && $2 !~ /-dbgsym$/ { print $2,$3; }' \
+list="$("${DPKG}" -l | awk '/^[ih][^nc][ ]+(linux|kfreebsd|gnumach)-image-[0-9]+\./ && $2 !~ /-dbg$/ && $2 !~ /-dbgsym$/ { print $2,$3; }' \
    | sed -e 's#^\(linux\|kfreebsd\|gnumach\)-image-##' -e 's#:[^:]\+ # #')"
 debverlist="$(echo "$list" | cut -d' ' -f 2 | sort --unique --reverse --version-sort)"
 

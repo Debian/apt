@@ -13,7 +13,7 @@ createfailure() {
 	setupsimplenativepackage "failure-$1" 'native' '1.0' 'unstable' 'Depends: dependee'
 	BUILDDIR="incoming/failure-$1-1.0"
 	echo '#!/bin/sh
-exit 29' > ${BUILDDIR}/debian/$1
+exit 29' > "${BUILDDIR}/debian/$1"
 	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 	rm -rf "$BUILDDIR"
 }
@@ -31,40 +31,40 @@ APTHOOK="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apthook"
 echo '#!/bin/sh
 echo "$1: START"
 echo "$1: MaiN"
-echo "$1: ENd"' > $APTHOOK
-chmod +x $APTHOOK
+echo "$1: ENd"' > "$APTHOOK"
+chmod +x "$APTHOOK"
 echo "DPKG::Pre-Invoke:: \"${APTHOOK} PRE\";
 DPKG::Post-Invoke:: \"${APTHOOK} POST\";" > rootdir/etc/apt/apt.conf.d/99apthooks
 
 testmyfailure() {
 	local PROGRESS='rootdir/tmp/progress.log'
-	exec 3> $PROGRESS
+	exec 3> "$PROGRESS"
 	testfailure "$@" -o APT::Status-Fd=3
 	msgtest 'Test for failure message of maintainerscript in' 'console log'
 	local TEST='rootdir/tmp/testfailure.output'
 	if grep -q 'exit status 29' "$TEST"; then
 		msgpass
 	else
-		cat $TEST
+		cat "$TEST"
 		msgfail
 	fi
 	msgtest 'Test for proper execution of invoke scripts in' 'console log'
-	if grep -q '^PRE: START$' $TEST &&
-		grep -q '^PRE: MaiN$' $TEST &&
-		grep -q '^PRE: ENd$' $TEST &&
-		grep -q '^POST: START$' $TEST &&
-		grep -q '^POST: MaiN$' $TEST &&
-		grep -q '^POST: ENd$' $TEST; then
+	if grep -q '^PRE: START$' "$TEST" &&
+		grep -q '^PRE: MaiN$' "$TEST" &&
+		grep -q '^PRE: ENd$' "$TEST" &&
+		grep -q '^POST: START$' "$TEST" &&
+		grep -q '^POST: MaiN$' "$TEST" &&
+		grep -q '^POST: ENd$' "$TEST"; then
 		msgpass
 	else
-		cat $TEST
+		cat "$TEST"
 		msgfail
 	fi
 	msgtest 'Test for failure message of maintainerscript in' 'progress log'
 	if grep -q '^pmerror:.\+exit status 29$' "$PROGRESS"; then
 		msgpass
 	else
-		cat $PROGRESS
+		cat "$PROGRESS"
 		msgfail
 	fi
 	testmarkedauto 'dependee'

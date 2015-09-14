@@ -29,7 +29,7 @@ testsuccess aptmark hold "${CURRENTKERNEL}-rt"
 testprotected() {
 	rm -f rootdir/etc/apt/apt.conf.d/01autoremove-kernels protected.list
 
-	testsuccess runapt sh ${TESTDIR}/../../debian/apt.auto-removal.sh "$@"
+	testsuccess runapt sh "${TESTDIR}/../../debian/apt.auto-removal.sh" "$@"
 	testfailure test -s rootdir/tmp/testsuccess.output
 
 	msgtest 'Check kernel autoremoval protection list' 'is created'

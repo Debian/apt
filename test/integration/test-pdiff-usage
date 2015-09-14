@@ -10,7 +10,7 @@ confighashes 'SHA1' 'SHA256'
 
 buildaptarchive
 setupflataptarchive
-changetowebserver
+changetowebserver -o aptwebserver::support::modified-since=false
 
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 

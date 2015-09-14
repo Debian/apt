@@ -21,11 +21,14 @@ done
 # install a slowed down file: otherwise its to fast to reproduce combining
 NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
 OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
-rm $NEWMETHODS
-mkdir $NEWMETHODS
-for METH in $(find $OLDMETHODS ! -type d); do
-	ln -s $OLDMETHODS/$(basename $METH) $NEWMETHODS
+rm "$NEWMETHODS"
+mkdir "$NEWMETHODS"
+backupIFS="$IFS"
+IFS="$(printf "\n\b")"
+for METH in $(find "$OLDMETHODS" ! -type d); do
+	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
 done
+IFS="$backupIFS"
 rm "${NEWMETHODS}/file" "${NEWMETHODS}/http"
 cat >"${NEWMETHODS}/file" <<EOF
 #!/bin/sh
@@ -45,7 +48,7 @@ tworepos() {
 	cp rootdir/tmp/testsuccess.output download.log
 	#cat download.log
 	aptget indextargets --format '$(FILENAME)' --no-release-info | sort > file.lst
-	testequal "$(find $(readlink -f ./rootdir/var/lib/apt/lists) -name '*_dists_*' \( ! -name '*InRelease' \) -type f | sort)" cat file.lst
+	testequal "$(find "$(readlink -f ./rootdir/var/lib/apt/lists)" -name '*_dists_*' \( ! -name '*InRelease' \) -type f | sort)" cat file.lst
 	testsuccess aptcache policy
 	testequal "foo:
   Installed: (none)

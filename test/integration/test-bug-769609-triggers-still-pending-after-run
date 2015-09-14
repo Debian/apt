@@ -20,13 +20,13 @@ buildtriggerpackages() {
 	local TYPE="$1"
 	setupsimplenativepackage "triggerable-$TYPE" 'all' '1.0' 'unstable' "Depends: trigdepends-$TYPE"
 	BUILDDIR="incoming/triggerable-${TYPE}-1.0"
-	cat >${BUILDDIR}/debian/postinst <<EOF
+	cat >"${BUILDDIR}/debian/postinst" <<EOF
 #!/bin/sh
 if [ "\$1" = 'triggered' ]; then
 	ls -l /proc/self/fd/
 fi
 EOF
-	echo "$TYPE /usr/share/doc" > ${BUILDDIR}/debian/triggers
+	echo "$TYPE /usr/share/doc" > "${BUILDDIR}/debian/triggers"
 	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 	rm -rf "$BUILDDIR"
 	buildsimplenativepackage "trigdepends-$TYPE" 'all' '1.0' 'unstable'

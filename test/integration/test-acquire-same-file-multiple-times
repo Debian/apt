@@ -2,19 +2,19 @@
 set -e
 
 TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'amd64'
 
 TESTFILE="$TESTDIR/framework"
-cp $TESTFILE aptarchive/foo
+cp "$TESTFILE" aptarchive/foo
 APTARCHIVE="$(readlink -f ./aptarchive)"
 
 filedown() {
 	msgtest 'Downloading the same URI twice over file' "$1"
-	testsuccess --nomsg apthelper download-file file:///$APTARCHIVE/foo ./downloaded/foo1 '' file:///$APTARCHIVE/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1
+	testsuccess --nomsg apthelper download-file "file:///$APTARCHIVE/foo" ./downloaded/foo1 '' "file:///$APTARCHIVE/foo" ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1
 	cp rootdir/tmp/testsuccess.output download.log
-	testsuccess cmp $TESTFILE ./downloaded/foo1
+	testsuccess cmp "$TESTFILE" ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2
 	testequal '1' grep -c '200%20URI%20Start' ./download.log
 	testequal '1' grep -c '201%20URI%20Done' ./download.log
@@ -23,19 +23,19 @@ filedown() {
 
 testrun() {
 	$1 'no partial'
-	cp $TESTFILE ./downloaded/foo1
+	cp "$TESTFILE" ./downloaded/foo1
 	$1 'complete partial 1'
-	cp $TESTFILE ./downloaded/foo2
+	cp "$TESTFILE" ./downloaded/foo2
 	$1 'complete partial 2'
-	cp $TESTFILE ./downloaded/foo1
-	cp $TESTFILE ./downloaded/foo2
+	cp "$TESTFILE" ./downloaded/foo1
+	cp "$TESTFILE" ./downloaded/foo2
 	$1 'complete partial 1+2'
-	dd if=$TESTFILE of=./downloaded/foo1 bs=500 count=1 2>/dev/null
+	dd if="$TESTFILE" of=./downloaded/foo1 bs=500 count=1 2>/dev/null
 	$1 'partial partial 1'
-	dd if=$TESTFILE of=./downloaded/foo2 bs=500 count=1 2>/dev/null
+	dd if="$TESTFILE" of=./downloaded/foo2 bs=500 count=1 2>/dev/null
 	$1 'partial partial 2'
-	dd if=$TESTFILE of=./downloaded/foo1 bs=500 count=1 2>/dev/null
-	dd if=$TESTFILE of=./downloaded/foo2 bs=500 count=1 2>/dev/null
+	dd if="$TESTFILE" of=./downloaded/foo1 bs=500 count=1 2>/dev/null
+	dd if="$TESTFILE" of=./downloaded/foo2 bs=500 count=1 2>/dev/null
 	$1 'partial partial 1+2'
 }
 testrun 'filedown'
@@ -46,7 +46,7 @@ httpdown() {
 	msgtest 'Downloading the same URI to different files' 'twice over http'
 	testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 	cp rootdir/tmp/testsuccess.output download.log
-	testsuccess cmp $TESTDIR/framework ./downloaded/foo1
+	testsuccess cmp "$TESTDIR/framework" ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2
 	testequal '1' grep -c '200%20URI%20Start' ./download.log
 	testequal '1' grep -c '201%20URI%20Done' ./download.log
@@ -58,7 +58,7 @@ httpredirectdown() {
 	msgtest 'Redirect leads' 'first URI to the second URI'
 	testsuccess --nomsg apthelper download-file http://localhost:8080/foo2 ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo2 '' -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 	cp rootdir/tmp/testsuccess.output download.log
-	testsuccess cmp $TESTDIR/framework ./downloaded/foo1
+	testsuccess cmp "$TESTDIR/framework" ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2
 	testequal '1' grep -c '200%20URI%20Start' ./download.log
 	testequal '1' grep -c '103%20Redirect' ./download.log
@@ -71,7 +71,7 @@ httpsamedown() {
 	msgtest 'Downloading two files via the same URI to' 'the same file'
 	testsuccess --nomsg apthelper download-file http://localhost:8080/foo ./downloaded/foo1 '' http://localhost:8080/foo ./downloaded/foo1 '' -o Debug::pkgAcquire::Worker=1
 	cp rootdir/tmp/testsuccess.output download.log
-	testsuccess cmp $TESTDIR/framework ./downloaded/foo1
+	testsuccess cmp "$TESTDIR/framework" ./downloaded/foo1
 	testequal '1' grep -c '200%20URI%20Start' ./download.log
 	testequal '1' grep -c '201%20URI%20Done' ./download.log
 	rm -f ./downloaded/foo1
