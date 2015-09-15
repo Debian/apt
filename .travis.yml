@@ -11,8 +11,8 @@ install:
  - sudo apt-get -qq -y install gcc-4.8 g++-4.8
  - sudo apt-get -qq -y -t vivid install gettext
  - export CC=gcc-4.8 CXX=g++-4.8
-script:
  - make
+script:
  - make test
  - ./test/integration/run-tests -q
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
