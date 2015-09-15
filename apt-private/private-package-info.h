@@ -35,6 +35,7 @@ public:
     void set_formated_output(const std::string& formated_output){_formated_output = formated_output;}
     void set_format(const std::string& format){_format = format;}
 
+    static SortBy getOrderByOption ();
 private:
     std::string  _name, 
             _formated_output, 
@@ -46,11 +47,9 @@ private:
     PackageStatus GetPackageStatus(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V);
 };
 
-PackageInfo::SortBy hashit (std::string inString);
 //Sort kinds
 bool OrderByStatus (const PackageInfo &a, const PackageInfo &b);
 bool OrderByVersion (const PackageInfo &a, const PackageInfo &b);
 bool OrderByAlphabetic (const PackageInfo &a, const PackageInfo &b);
-bool OrderByReverseAlphabetic (const PackageInfo &a, const PackageInfo &b);
 
 #endif

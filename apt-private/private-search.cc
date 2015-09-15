@@ -112,24 +112,23 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 	 PkgsDone[P->ID] = true;
 	 std::stringstream outs;
 	 ListSingleVersion(CacheFile, records, V, outs, format);
-	 PackageInfo pkg(CacheFile, records, V, outs.str());
-	 outputVector.push_back(pkg);
+	 outputVector.emplace_back(CacheFile, records, V, outs.str());
       }
    }
-   switch(hashit(_config->Find("APT::Cache::OrderBy","Alphabetic")))
+   switch(PackageInfo::getOrderByOption())
    {
       case PackageInfo::REVERSEALPHABETIC:
-         std::sort(outputVector.begin(), outputVector.end(), OrderByReverseAlphabetic);
-         break;
+	 std::sort(outputVector.rbegin(), outputVector.rend(), OrderByAlphabetic);
+	 break;
       case PackageInfo::STATUS:
-         std::sort(outputVector.begin(), outputVector.end(), OrderByStatus);
-         break;
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByStatus);
+	 break;
       case PackageInfo::VERSION:
-         std::sort(outputVector.begin(), outputVector.end(), OrderByVersion);
-         break;
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByVersion);
+	 break;
       default:
-         std::sort(outputVector.begin(), outputVector.end(), OrderByAlphabetic);
-         break;
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByAlphabetic);
+	 break;
    }
    APT_FREE_PATTERNS();
    progress.Done();

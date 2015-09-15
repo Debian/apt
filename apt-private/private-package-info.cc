@@ -89,10 +89,10 @@ PackageInfo::GetPackageStatus(pkgCacheFile &CacheFile,
 }
                   /*}}}*/
 
-
 PackageInfo::SortBy 
-hashit (string inString)
+PackageInfo::getOrderByOption ()
 {
+   std::string inString = _config->Find("APT::Cache::OrderBy","Alphabetic");
    std::transform(inString.begin(), inString.end(), inString.begin(), ::tolower);
    if (inString == "alphabetic") return PackageInfo::ALPHABETIC;
    else if (inString == "reverse") return PackageInfo::REVERSEALPHABETIC;
@@ -114,12 +114,6 @@ bool OrderByAlphabetic (const PackageInfo &a, const PackageInfo &b)
 {
    return a.name() < b.name();
 }
-
-bool OrderByReverseAlphabetic (const PackageInfo &a, const PackageInfo &b)
-{
-        return a.name() > b.name();
-}
-
 
 bool OrderByVersion (const PackageInfo &a, const PackageInfo &b)
 {
