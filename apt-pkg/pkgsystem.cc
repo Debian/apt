@@ -55,5 +55,13 @@ bool pkgSystem::MultiArchSupported() const				/*{{{*/
    return true;
 }
 									/*}}}*/
+std::vector<std::string> pkgSystem::ArchitecturesSupported() const	/*{{{*/
+{
+   debSystem const * const deb = dynamic_cast<debSystem const *>(this);
+   if (deb != NULL)
+      return deb->SupportedArchitectures();
+   return {};
+}
+									/*}}}*/
 
 pkgSystem::~pkgSystem() {}

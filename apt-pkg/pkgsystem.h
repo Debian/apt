@@ -104,6 +104,15 @@ class pkgSystem
     * @return \b true if the system supports MultiArch, \b false if not.
     */
    bool MultiArchSupported() const;
+   /** architectures supported by this system
+    *
+    * A MultiArch capable system might be configured to use
+    * this capability.
+    *
+    * @return a list of all architectures (native + foreign) configured
+    * for on this system (aka: which can be installed without force)
+    */
+   std::vector<std::string> ArchitecturesSupported() const;
 
    pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
    virtual ~pkgSystem();

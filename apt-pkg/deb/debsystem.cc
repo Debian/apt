@@ -304,7 +304,6 @@ void debSystem::DpkgChrootDirectory()					/*{{{*/
 									/*}}}*/
 bool debSystem::SupportsMultiArch()					/*{{{*/
 {
-   // Generate the base argument list for dpkg
    std::vector<std::string> const Args = GetDpkgBaseCommand();
    std::vector<const char *> cArgs(Args.size(), NULL);
    std::transform(Args.begin(), Args.end(), cArgs.begin(), [](std::string const &s) { return s.c_str(); });
@@ -341,5 +340,66 @@ bool debSystem::SupportsMultiArch()					/*{{{*/
 	 return true;
    }
    return false;
+}
+									/*}}}*/
+std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
+{
+   std::vector<std::string> const sArgs = GetDpkgBaseCommand();
+   std::vector<const char *> Args(sArgs.size(), NULL);
+   std::transform(sArgs.begin(), sArgs.end(), Args.begin(), [](std::string const &s) { return s.c_str(); });
+   Args.push_back("--print-foreign-architectures");
+   Args.push_back(NULL);
+
+   std::vector<std::string> archs;
+   string const arch = _config->Find("APT::Architecture");
+   if (arch.empty() == false)
+      archs.push_back(arch);
+
+   int external[2] = {-1, -1};
+   if (pipe(external) != 0)
+   {
+      _error->WarningE("getArchitecture", "Can't create IPC pipe for dpkg --print-foreign-architectures");
+      return archs;
+   }
+
+   pid_t dpkgMultiArch = ExecFork();
+   if (dpkgMultiArch == 0) {
+      close(external[0]);
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(external[1], STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      DpkgChrootDirectory();
+      execvp(Args[0], (char**) &Args[0]);
+      _error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");
+      _exit(100);
+   }
+   close(external[1]);
+
+   FILE *dpkg = fdopen(external[0], "r");
+   if(dpkg != NULL) {
+      char* buf = NULL;
+      size_t bufsize = 0;
+      while (getline(&buf, &bufsize, dpkg) != -1)
+      {
+	 char* tok_saveptr;
+	 char* arch = strtok_r(buf, " ", &tok_saveptr);
+	 while (arch != NULL) {
+	    for (; isspace(*arch) != 0; ++arch);
+	    if (arch[0] != '\0') {
+	       char const* archend = arch;
+	       for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
+	       string a(arch, (archend - arch));
+	       if (std::find(archs.begin(), archs.end(), a) == archs.end())
+		  archs.push_back(a);
+	    }
+	    arch = strtok_r(NULL, " ", &tok_saveptr);
+	 }
+      }
+      free(buf);
+      fclose(dpkg);
+   }
+   ExecWait(dpkgMultiArch, "dpkg --print-foreign-architectures", true);
+   return archs;
 }
 									/*}}}*/

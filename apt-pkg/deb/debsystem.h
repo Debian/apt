@@ -50,6 +50,7 @@ class debSystem : public pkgSystem
    APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();
    APT_HIDDEN static void DpkgChrootDirectory();
    APT_HIDDEN static bool SupportsMultiArch();
+   APT_HIDDEN static std::vector<std::string> SupportedArchitectures();
 };
 
 extern debSystem debSys;
