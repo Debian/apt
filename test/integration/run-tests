@@ -1,12 +1,7 @@
 #!/bin/sh
 set -e
 
-FAIL=0
-PASS=0
-ALL=0
-
-FAILED_TESTS=""
-DIR=$(readlink -f $(dirname $0))
+TESTTORUN=''
 while [ -n "$1" ]; do
 	if [ "$1" = "-q" ]; then
 		export MSGLEVEL=2
@@ -14,6 +9,19 @@ while [ -n "$1" ]; do
 		export MSGLEVEL=4
 	elif [ "$1" = '--color=no' ]; then
 		export MSGCOLOR='NO'
+	elif [ "$1" = '--color=yes' ]; then
+		export MSGCOLOR='YES'
+	elif [ "$1" = '--color' ]; then
+		export MSGCOLOR="$(echo "$2" | tr 'a-z' 'A-Z')"
+		shift
+	elif [ "$1" = '--level' ]; then
+		export MSGLEVEL=$2
+		shift
+	elif [ "$1" = '-j' ]; then
+		APT_TEST_JOBS=$2
+		shift
+	elif [ -x "$1" ]; then
+		TESTTORUN="$1"
 	else
 		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
 	fi
@@ -21,7 +29,7 @@ while [ -n "$1" ]; do
 done
 export MSGLEVEL="${MSGLEVEL:-3}"
 
-if [ "$MSGCOLOR" != 'NO' ]; then
+if [ "${MSGCOLOR:-YES}" = 'YES' ]; then
 	if [ ! -t 1 ]; then # but check that we output to a terminal
 		export MSGCOLOR='NO'
 	fi
@@ -36,20 +44,64 @@ else
 	CRESET=''
 fi
 
-TOTAL="$(run-parts --list $DIR | grep '/test-' | wc -l)"
-for testcase in $(run-parts --list $DIR | grep '/test-'); do
-	if [ "$MSGLEVEL" -le 2 ]; then
-		printf "($(($ALL+1))/${TOTAL}) ${CTEST}Testcase ${CHIGH}$(basename ${testcase})${CRESET}: "
+if [ -n "$TESTTORUN" ]; then
+	# collecting the output of one test to have it together
+	OUTPUT="$(mktemp)"
+	{
+		if [ "$MSGLEVEL" -le 2 ]; then
+			printf "${CTEST}Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}: "
+		else
+			printf "${CTEST}Run Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
+		fi
+		if ! "$TESTTORUN"; then
+			FAIL='yes'
+			if [ "$MSGLEVEL" -le 2 ]; then
+				printf >&2 "\n${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}"
+			else
+				echo >&2 "${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}"
+			fi
+		fi
+		if [ "$MSGLEVEL" -le 2 ]; then
+			echo
+		fi
+	} >"$OUTPUT" 2>&1
+	# without we end up getting stepped output 'randomly'
+	stty sane
+	cat >&2 "$OUTPUT"
+	stty sane
+	if [ "$FAIL" = 'yes' ]; then
+		exit 1
 	else
-		printf "${CTEST}Run Testcase ($(($ALL+1))/${TOTAL}) ${CHIGH}$(basename ${testcase})${CRESET}\n"
+		exit 0
+	fi
+fi
+
+FAIL=0
+PASS=0
+ALL=0
+FAILED_TESTS=""
+DIR="$(readlink -f "$(dirname "$0")")"
+TESTLIST="$(run-parts --list "$DIR" --regex '^test-.*$')"
+if [ -n "$APT_TEST_JOBS" ]; then
+	if [ "$MSGCOLOR" != 'NO' ]; then
+		export MSGCOLOR='ALWAYS'
+	fi
+	exec parallel -j "$APT_TEST_JOBS" "$0" -- $(echo "$TESTLIST")
+fi
+TOTAL="$(echo "$TESTLIST" | wc -l)"
+for testcase in $TESTLIST; do
+	if [ "$MSGLEVEL" -le 2 ]; then
+		printf "($(($ALL+1))/${TOTAL}) ${CTEST}Testcase ${CHIGH}${testcase##*/}${CRESET}: "
+	else
+		printf "${CTEST}Run Testcase ($(($ALL+1))/${TOTAL}) ${CHIGH}${testcase##*/}${CRESET}\n"
 	fi
 	if ! ${testcase}; then
 		FAIL=$((FAIL+1))
-		FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
+		FAILED_TESTS="$FAILED_TESTS ${testcase##*/}"
 		if [ "$MSGLEVEL" -le 2 ]; then
-			printf >&2 "\n${CHIGH}Running $(basename $testcase) -> FAILED${CRESET}"
+			printf >&2 "\n${CHIGH}Running ${testcase##*/} -> FAILED${CRESET}"
 		else
-			echo >&2 "${CHIGH}Running $(basename $testcase) -> FAILED${CRESET}"
+			echo >&2 "${CHIGH}Running ${testcase##*/} -> FAILED${CRESET}"
 		fi
 	else
 		PASS=$((PASS+1))
