@@ -12,6 +12,7 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/debsystem.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
 
@@ -44,6 +45,14 @@ APT_PURE pkgSystem *pkgSystem::GetSystem(const char *Label)
       if (strcmp(SysList[I]->Label,Label) == 0)
 	 return SysList[I];
    return 0;   
+}
+									/*}}}*/
+bool pkgSystem::MultiArchSupported() const				/*{{{*/
+{
+   debSystem const * const deb = dynamic_cast<debSystem const *>(this);
+   if (deb != NULL)
+      return deb->SupportsMultiArch();
+   return true;
 }
 									/*}}}*/
 

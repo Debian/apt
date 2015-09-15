@@ -22,6 +22,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 
+#include <algorithm>
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,6 +32,10 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -247,6 +253,93 @@ bool debSystem::FindIndex(pkgCache::PkgFileIterator File,
       return true;
    }
    
+   return false;
+}
+									/*}}}*/
+
+std::string debSystem::GetDpkgExecutable()				/*{{{*/
+{
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+   size_t dpkgChrootLen = dpkgChrootDir.length();
+   if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+   {
+      if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+         --dpkgChrootLen;
+      Tmp = Tmp.substr(dpkgChrootLen);
+   }
+   return Tmp;
+}
+									/*}}}*/
+std::vector<std::string> debSystem::GetDpkgBaseCommand()		/*{{{*/
+{
+   // Generate the base argument list for dpkg
+   std::vector<std::string> Args = { GetDpkgExecutable() };
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value);
+      }
+   }
+   return Args;
+}
+									/*}}}*/
+void debSystem::DpkgChrootDirectory()					/*{{{*/
+{
+   std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+   if (chrootDir == "/")
+      return;
+   std::cerr << "Chrooting into " << chrootDir << std::endl;
+   if (chroot(chrootDir.c_str()) != 0)
+      _exit(100);
+   if (chdir("/") != 0)
+      _exit(100);
+}
+									/*}}}*/
+bool debSystem::SupportsMultiArch()					/*{{{*/
+{
+   // Generate the base argument list for dpkg
+   std::vector<std::string> const Args = GetDpkgBaseCommand();
+   std::vector<const char *> cArgs(Args.size(), NULL);
+   std::transform(Args.begin(), Args.end(), cArgs.begin(), [](std::string const &s) { return s.c_str(); });
+
+   // we need to detect if we can qualify packages with the architecture or not
+   cArgs.push_back("--assert-multi-arch");
+   cArgs.push_back(NULL);
+
+   pid_t dpkgAssertMultiArch = ExecFork();
+   if (dpkgAssertMultiArch == 0)
+   {
+      DpkgChrootDirectory();
+      // redirect everything to the ultimate sink as we only need the exit-status
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      execvp(cArgs[0], (char**) &cArgs[0]);
+      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _exit(2);
+   }
+
+   if (dpkgAssertMultiArch > 0)
+   {
+      int Status = 0;
+      while (waitpid(dpkgAssertMultiArch, &Status, 0) != dpkgAssertMultiArch)
+      {
+	 if (errno == EINTR)
+	    continue;
+	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --assert-multi-arch");
+	 break;
+      }
+      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
+	 return true;
+   }
    return false;
 }
 									/*}}}*/

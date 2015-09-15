@@ -14,6 +14,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/dpkgpm.h>
+#include <apt-pkg/debsystem.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/install-progress.h>
@@ -161,35 +162,6 @@ ionice(int PID)
    }
    return ExecWait(Process, "ionice");
 }
-
-static std::string getDpkgExecutable()
-{
-   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
-   size_t dpkgChrootLen = dpkgChrootDir.length();
-   if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
-   {
-      if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
-         --dpkgChrootLen;
-      Tmp = Tmp.substr(dpkgChrootLen);
-   }
-   return Tmp;
-}
-
-// dpkgChrootDirectory - chrooting for dpkg if needed			/*{{{*/
-static void dpkgChrootDirectory()
-{
-   std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-   if (chrootDir == "/")
-      return;
-   std::cerr << "Chrooting into " << chrootDir << std::endl;
-   if (chroot(chrootDir.c_str()) != 0)
-      _exit(100);
-   if (chdir("/") != 0)
-      _exit(100);
-}
-									/*}}}*/
-
 
 // FindNowVersion - Helper to find a Version in "now" state	/*{{{*/
 // ---------------------------------------------------------------------
@@ -466,7 +438,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 strprintf(hookfd, "%d", InfoFD);
 	 setenv("APT_HOOK_INFO_FD", hookfd.c_str(), 1);
 
-	 dpkgChrootDirectory();
+	 debSystem::DpkgChrootDirectory();
 	 const char *Args[4];
 	 Args[0] = "/bin/sh";
 	 Args[1] = "-c";
@@ -1225,44 +1197,13 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    d->progress = progress;
 
    // Generate the base argument list for dpkg
-   unsigned long StartSize = 0;
-   std::vector<const char *> Args;
-   std::string DpkgExecutable = getDpkgExecutable();
-   Args.push_back(DpkgExecutable.c_str());
-   StartSize += DpkgExecutable.length();
-
-   // Stick in any custom dpkg options
-   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-   if (Opts != 0)
-   {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-	 Args.push_back(Opts->Value.c_str());
-	 StartSize += Opts->Value.length();
-      }
-   }
-
+   std::vector<std::string> const sArgs = debSystem::GetDpkgBaseCommand();
+   std::vector<const char *> Args(sArgs.size(), NULL);
+   std::transform(sArgs.begin(), sArgs.end(), Args.begin(),
+	 [](std::string const &s) { return s.c_str(); });
+   unsigned long long const StartSize = std::accumulate(sArgs.begin(), sArgs.end(), 0,
+	 [](unsigned long long const i, std::string const &s) { return i + s.length(); });
    size_t const BaseArgs = Args.size();
-   // we need to detect if we can qualify packages with the architecture or not
-   Args.push_back("--assert-multi-arch");
-   Args.push_back(NULL);
-
-   pid_t dpkgAssertMultiArch = ExecFork();
-   if (dpkgAssertMultiArch == 0)
-   {
-      dpkgChrootDirectory();
-      // redirect everything to the ultimate sink as we only need the exit-status
-      int const nullfd = open("/dev/null", O_RDONLY);
-      dup2(nullfd, STDIN_FILENO);
-      dup2(nullfd, STDOUT_FILENO);
-      dup2(nullfd, STDERR_FILENO);
-      execvp(Args[0], (char**) &Args[0]);
-      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
-      _exit(2);
-   }
 
    fd_set rfds;
    struct timespec tv;
@@ -1298,20 +1239,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // create log
    OpenLog();
 
-   bool dpkgMultiArch = false;
-   if (dpkgAssertMultiArch > 0)
-   {
-      int Status = 0;
-      while (waitpid(dpkgAssertMultiArch, &Status, 0) != dpkgAssertMultiArch)
-      {
-	 if (errno == EINTR)
-	    continue;
-	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --assert-multi-arch");
-	 break;
-      }
-      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
-	 dpkgMultiArch = true;
-   }
+   bool dpkgMultiArch = debSystem::SupportsMultiArch();
 
    // start pty magic before the loop
    StartPtyMagic();
@@ -1528,7 +1456,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 SetupSlavePtyMagic();
 	 close(fd[0]); // close the read end of the pipe
 
-	 dpkgChrootDirectory();
+	 debSystem::DpkgChrootDirectory();
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);

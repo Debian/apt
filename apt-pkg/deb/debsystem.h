@@ -45,6 +45,11 @@ class debSystem : public pkgSystem
 
    debSystem();
    virtual ~debSystem();
+
+   APT_HIDDEN static std::string GetDpkgExecutable();
+   APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();
+   APT_HIDDEN static void DpkgChrootDirectory();
+   APT_HIDDEN static bool SupportsMultiArch();
 };
 
 extern debSystem debSys;

@@ -92,6 +92,19 @@ class pkgSystem
       return 0;
    };
 
+   //FIXME: these methods should be virtual
+   /** does this system has support for MultiArch?
+    *
+    * Systems supporting only single arch (not systems which are single arch)
+    * are considered legacy systems and support for it will likely degrade over
+    * time.
+    *
+    * The default implementation returns always \b true.
+    *
+    * @return \b true if the system supports MultiArch, \b false if not.
+    */
+   bool MultiArchSupported() const;
+
    pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
    virtual ~pkgSystem();
    private:
