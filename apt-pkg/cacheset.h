@@ -15,6 +15,7 @@
 #if __cplusplus >= 201103L
 #include <unordered_set>
 #include <forward_list>
+#include <initializer_list>
 #endif
 #include <list>
 #include <deque>
@@ -228,6 +229,7 @@ public:
 	inline iterator_type& operator--() { --_iter;; return static_cast<iterator_type&>(*this); }
 	inline iterator_type operator--(int) { iterator_type tmp(*this); operator--(); return tmp; }
 	inline iterator_type operator-(typename container_iterator::difference_type const &n) { return iterator_type(_iter - n); }
+	inline typename container_iterator::difference_type operator-(iterator_type const &b) { return (_iter - b._iter); }
 	inline iterator_type operator-=(typename container_iterator::difference_type const &n) { _iter -= n; return static_cast<iterator_type&>(*this); }
 	inline bool operator!=(iterator_type const &i) const { return _iter != i._iter; }
 	inline bool operator==(iterator_type const &i) const { return _iter == i._iter; }
@@ -402,10 +404,13 @@ public:									/*{{{*/
 	typedef Container_const_reverse_iterator<PackageContainerInterface, Container, PackageContainer> const_reverse_iterator;
 	typedef Container_reverse_iterator<PackageContainerInterface, Container, PackageContainer> reverse_iterator;
 	typedef typename Container::value_type value_type;
+	typedef typename Container::pointer pointer;
+	typedef typename Container::const_pointer const_pointer;
 	typedef typename Container::reference reference;
 	typedef typename Container::const_reference const_reference;
 	typedef typename Container::difference_type difference_type;
 	typedef typename Container::size_type size_type;
+	typedef typename Container::allocator_type allocator_type;
 
 	bool insert(pkgCache::PkgIterator const &P) APT_OVERRIDE { if (P.end() == true) return false; _cont.insert(P); return true; }
 	template<class Cont> void insert(PackageContainer<Cont> const &pkgcont) { _cont.insert((typename Cont::const_iterator)pkgcont.begin(), (typename Cont::const_iterator)pkgcont.end()); }
@@ -440,8 +445,15 @@ public:									/*{{{*/
 	PackageContainer() : PackageContainerInterface(CacheSetHelper::UNKNOWN) {}
 	explicit PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
+	APT_DEPRECATED explicit PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
 APT_IGNORE_DEPRECATED_POP
+	template<typename Itr> PackageContainer(Itr first, Itr last) : PackageContainerInterface(CacheSetHelper::UNKNOWN), _cont(first, last) {}
+#if __cplusplus >= 201103L
+	PackageContainer(std::initializer_list<value_type> list) : PackageContainerInterface(CacheSetHelper::UNKNOWN), _cont(list) {}
+	void push_back(value_type&& P) { _cont.emplace_back(std::move(P)); }
+	template<typename... Args> void emplace_back(Args&&... args) { _cont.emplace_back(std::forward<Args>(args)...); }
+#endif
+	void push_back(const value_type& P) { _cont.push_back(P); }
 
 	/** \brief sort all included versions with given comparer
 
@@ -703,6 +715,8 @@ public:
 	};
 	typedef const_iterator iterator;
 	typedef pkgCache::PkgIterator value_type;
+	typedef typename pkgCache::PkgIterator* pointer;
+	typedef typename pkgCache::PkgIterator const* const_pointer;
 	typedef const pkgCache::PkgIterator& const_reference;
 	typedef const_reference reference;
 	typedef const_iterator::difference_type difference_type;
@@ -905,10 +919,13 @@ public:									/*{{{*/
 	typedef Container_const_reverse_iterator<VersionContainerInterface, Container, VersionContainer> const_reverse_iterator;
 	typedef Container_reverse_iterator<VersionContainerInterface, Container, VersionContainer> reverse_iterator;
 	typedef typename Container::value_type value_type;
+	typedef typename Container::pointer pointer;
+	typedef typename Container::const_pointer const_pointer;
 	typedef typename Container::reference reference;
 	typedef typename Container::const_reference const_reference;
 	typedef typename Container::difference_type difference_type;
 	typedef typename Container::size_type size_type;
+	typedef typename Container::allocator_type allocator_type;
 
 	bool insert(pkgCache::VerIterator const &V) APT_OVERRIDE { if (V.end() == true) return false; _cont.insert(V); return true; }
 	template<class Cont> void insert(VersionContainer<Cont> const &vercont) { _cont.insert((typename Cont::const_iterator)vercont.begin(), (typename Cont::const_iterator)vercont.end()); }
@@ -938,6 +955,15 @@ public:									/*{{{*/
 	reverse_iterator rbegin() { return reverse_iterator(_cont.rbegin()); }
 	reverse_iterator rend() { return reverse_iterator(_cont.rend()); }
 	const_iterator find(pkgCache::VerIterator const &V) const { return const_iterator(_cont.find(V)); }
+
+	VersionContainer() : VersionContainerInterface() {}
+	template<typename Itr> VersionContainer(Itr first, Itr last) : VersionContainerInterface(), _cont(first, last) {}
+#if __cplusplus >= 201103L
+	VersionContainer(std::initializer_list<value_type> list) : VersionContainerInterface(), _cont(list) {}
+	void push_back(value_type&& P) { _cont.emplace_back(std::move(P)); }
+	template<typename... Args> void emplace_back(Args&&... args) { _cont.emplace_back(std::forward<Args>(args)...); }
+#endif
+	void push_back(const value_type& P) { _cont.push_back(P); }
 
 	/** \brief sort all included versions with given comparer
 

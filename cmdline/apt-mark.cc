@@ -180,13 +180,13 @@ static bool DoHold(CommandLine &CmdL)
 
    bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
 
-   auto part = std::stable_partition(pkgset.begin(), pkgset.end(),
+   auto const part = std::stable_partition(pkgset.begin(), pkgset.end(),
         [](pkgCache::PkgIterator const &P) { return P->SelectedState == pkgCache::State::Hold; });
 
-   auto doneBegin = MarkHold ? pkgset.begin() : part;
-   auto doneEnd = MarkHold ? part : pkgset.end();
-   auto changeBegin = MarkHold ? part : pkgset.begin();
-   auto changeEnd = MarkHold ? pkgset.end() : part;
+   auto const doneBegin = MarkHold ? pkgset.begin() : part;
+   auto const doneEnd = MarkHold ? part : pkgset.end();
+   auto const changeBegin = MarkHold ? part : pkgset.begin();
+   auto const changeEnd = MarkHold ? pkgset.end() : part;
 
    std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::PkgIterator const &P) {
       if (MarkHold == true)
@@ -238,12 +238,8 @@ static bool DoHold(CommandLine &CmdL)
    }
 
    APT::PackageList keepoffset;
-   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-   {
-      if (Pkg->CurrentVer != 0)
-	 continue;
-      keepoffset.insert(*Pkg);
-   }
+   std::copy_if(changeBegin, changeEnd, std::back_inserter(keepoffset),
+	 [](pkgCache::PkgIterator const &P) { return P->CurrentVer == 0; });
 
    if (keepoffset.empty() == false)
    {
