@@ -174,6 +174,41 @@ static bool DoHold(CommandLine &CmdL)
    if (unlikely(Cache == NULL))
       return false;
 
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   if (pkgset.empty() == true)
+      return _error->Error(_("No packages found"));
+
+   bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
+
+   auto part = std::stable_partition(pkgset.begin(), pkgset.end(),
+        [](pkgCache::PkgIterator const &P) { return P->SelectedState == pkgCache::State::Hold; });
+
+   auto doneBegin = MarkHold ? pkgset.begin() : part;
+   auto doneEnd = MarkHold ? part : pkgset.end();
+   auto changeBegin = MarkHold ? part : pkgset.begin();
+   auto changeEnd = MarkHold ? pkgset.end() : part;
+
+   std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::PkgIterator const &P) {
+      if (MarkHold == true)
+        ioprintf(c1out, _("%s was already set on hold.\n"), P.FullName(true).c_str());
+      else
+        ioprintf(c1out, _("%s was already not hold.\n"), P.FullName(true).c_str());
+   });
+
+   if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
+      return true;
+
+   if (_config->FindB("APT::Mark::Simulate", false) == true)
+   {
+      std::for_each(changeBegin, changeEnd, [&MarkHold](pkgCache::PkgIterator const &P) {
+        if (MarkHold == false)
+           ioprintf(c1out, _("%s set on hold.\n"), P.FullName(true).c_str());
+        else
+           ioprintf(c1out, _("Canceled hold on %s.\n"), P.FullName(true).c_str());
+      });
+      return true;
+   }
+
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
    string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
@@ -201,42 +236,6 @@ static bool DoHold(CommandLine &CmdL)
 	 Args.push_back(Opts->Value.c_str());
       }
    }
-   size_t const BaseArgs = Args.size();
-
-   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
-   if (pkgset.empty() == true)
-      return _error->Error(_("No packages found"));
-
-   bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
-
-   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end();)
-   {
-      if ((Pkg->SelectedState == pkgCache::State::Hold) == MarkHold)
-      {
-	 if (MarkHold == true)
-	    ioprintf(c1out,_("%s was already set on hold.\n"), Pkg.FullName(true).c_str());
-	 else
-	    ioprintf(c1out,_("%s was already not hold.\n"), Pkg.FullName(true).c_str());
-	 Pkg = pkgset.erase(Pkg);
-      }
-      else
-	 ++Pkg;
-   }
-
-   if (pkgset.empty() == true)
-      return true;
-
-   if (_config->FindB("APT::Mark::Simulate", false) == true)
-   {
-      for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-      {
-	 if (MarkHold == false)
-	    ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
-	 else
-	    ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
-      }
-      return true;
-   }
 
    APT::PackageList keepoffset;
    for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
@@ -248,7 +247,7 @@ static bool DoHold(CommandLine &CmdL)
 
    if (keepoffset.empty() == false)
    {
-      Args.erase(Args.begin() + BaseArgs, Args.end());
+      size_t const BaseArgs = Args.size();
       Args.push_back("--merge-avail");
       // FIXME: supported only since 1.17.7 in dpkg
       Args.push_back("-");
@@ -300,9 +299,9 @@ static bool DoHold(CommandLine &CmdL)
 	 if (WIFEXITED(Status) == false || WEXITSTATUS(Status) != 0)
 	    return _error->Error(_("Executing dpkg failed. Are you root?"));
       }
+      Args.erase(Args.begin() + BaseArgs, Args.end());
    }
 
-   Args.erase(Args.begin() + BaseArgs, Args.end());
    Args.push_back("--set-selections");
    Args.push_back(NULL);
 
@@ -325,7 +324,7 @@ static bool DoHold(CommandLine &CmdL)
 
    bool const dpkgMultiArch = _system->MultiArchSupported();
    FILE* dpkg = fdopen(external[1], "w");
-   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (auto Pkg = changeBegin; Pkg != changeEnd; ++Pkg)
    {
       if (dpkgMultiArch == false)
 	 fprintf(dpkg, "%s", Pkg.FullName(true).c_str());

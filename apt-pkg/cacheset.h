@@ -212,7 +212,7 @@ private:
 };									/*}}}*/
 // Iterator templates for our Containers				/*{{{*/
 template<typename Interface, typename Master, typename iterator_type, typename container_iterator, typename container_value> class Container_iterator_base :
-   public std::iterator<typename std::iterator_traits<container_iterator>::iterator_category, container_iterator>,
+   public std::iterator<typename std::iterator_traits<container_iterator>::iterator_category, container_value>,
    public Interface::template iterator_base<iterator_type>
 {
 protected:
@@ -263,6 +263,7 @@ public:
 	operator typename Master::const_iterator() { return typename Master::const_iterator(this->_iter); }
 	inline iterator_type& operator=(iterator_type const &i) { this->_iter = i._iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type& operator=(container_iterator const &i) { this->_iter = i; return static_cast<iterator_type&>(*this); }
+	inline typename Container::iterator::reference operator*(void) const { return *this->_iter; }
 
 	inline typename Container::value_type getType(void) const { return *this->_iter; }
 };
@@ -289,6 +290,7 @@ public:
 	operator typename Master::const_iterator() { return typename Master::const_iterator(this->_iter); }
 	inline iterator_type& operator=(iterator_type const &i) { this->_iter = i._iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type& operator=(container_iterator const &i) { this->_iter = i; return static_cast<iterator_type&>(*this); }
+	inline typename Container::reverse_iterator::reference operator*(void) const { return *this->_iter; }
 
 	inline typename Container::value_type getType(void) const { return *this->_iter; }
 };
@@ -399,6 +401,11 @@ public:									/*{{{*/
 	typedef Container_iterator<PackageContainerInterface, Container, PackageContainer> iterator;
 	typedef Container_const_reverse_iterator<PackageContainerInterface, Container, PackageContainer> const_reverse_iterator;
 	typedef Container_reverse_iterator<PackageContainerInterface, Container, PackageContainer> reverse_iterator;
+	typedef typename Container::value_type value_type;
+	typedef typename Container::reference reference;
+	typedef typename Container::const_reference const_reference;
+	typedef typename Container::difference_type difference_type;
+	typedef typename Container::size_type size_type;
 
 	bool insert(pkgCache::PkgIterator const &P) APT_OVERRIDE { if (P.end() == true) return false; _cont.insert(P); return true; }
 	template<class Cont> void insert(PackageContainer<Cont> const &pkgcont) { _cont.insert((typename Cont::const_iterator)pkgcont.begin(), (typename Cont::const_iterator)pkgcont.end()); }
@@ -695,6 +702,12 @@ public:
 	   inline pkgCache::PkgIterator getType(void) const { return _iter; }
 	};
 	typedef const_iterator iterator;
+	typedef pkgCache::PkgIterator value_type;
+	typedef const pkgCache::PkgIterator& const_reference;
+	typedef const_reference reference;
+	typedef const_iterator::difference_type difference_type;
+	typedef std::make_unsigned<const_iterator::difference_type>::type size_type;
+
 
 	bool empty() const APT_OVERRIDE { return false; }
 	size_t size() const APT_OVERRIDE { return _cont->Head().PackageCount; }
@@ -886,10 +899,16 @@ template<class Container> class VersionContainer : public VersionContainerInterf
     pkgCache. */
 	Container _cont;
 public:									/*{{{*/
+
 	typedef Container_const_iterator<VersionContainerInterface, Container, VersionContainer> const_iterator;
 	typedef Container_iterator<VersionContainerInterface, Container, VersionContainer> iterator;
 	typedef Container_const_reverse_iterator<VersionContainerInterface, Container, VersionContainer> const_reverse_iterator;
 	typedef Container_reverse_iterator<VersionContainerInterface, Container, VersionContainer> reverse_iterator;
+	typedef typename Container::value_type value_type;
+	typedef typename Container::reference reference;
+	typedef typename Container::const_reference const_reference;
+	typedef typename Container::difference_type difference_type;
+	typedef typename Container::size_type size_type;
 
 	bool insert(pkgCache::VerIterator const &V) APT_OVERRIDE { if (V.end() == true) return false; _cont.insert(V); return true; }
 	template<class Cont> void insert(VersionContainer<Cont> const &vercont) { _cont.insert((typename Cont::const_iterator)vercont.begin(), (typename Cont::const_iterator)vercont.end()); }
