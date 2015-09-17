@@ -35,10 +35,10 @@ Our bugtracker as well as a general overview can be found at the [Debian Tracker
 Contributing
 ------------
 APT is maintained in git, the official repository being located at
-`git://anonscm.debian.org/apt/apt.git` ([webgit](http://anonscm.debian.org/gitweb/?p=apt/apt.git)),
+`http://anonscm.debian.org/gitweb/?p=apt/apt.git` ([webgit](http://anonscm.debian.org/gitweb/?p=apt/apt.git)),
 but also available at other locations like [GitHub](https://github.com/Debian/apt).
 
-The default branch is `debian/sid`, other branches targeted at different
+The default branch is [debian/sid](https://github.com/Debian/apt/tree/debian/sid), other branches targeted at different
 derivatives and releases being used as needed. Various topic branches in
 different stages of completion might be branched of from those, which you
 are encouraged to do as well.
