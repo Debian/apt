@@ -174,25 +174,25 @@ static bool DoHold(CommandLine &CmdL)
    if (unlikely(Cache == NULL))
       return false;
 
-   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::VersionVector pkgset = APT::VersionVector::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::INSTCAND);
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
    bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
 
    auto const part = std::stable_partition(pkgset.begin(), pkgset.end(),
-        [](pkgCache::PkgIterator const &P) { return P->SelectedState == pkgCache::State::Hold; });
+        [](pkgCache::VerIterator const &V) { return V.ParentPkg()->SelectedState == pkgCache::State::Hold; });
 
    auto const doneBegin = MarkHold ? pkgset.begin() : part;
    auto const doneEnd = MarkHold ? part : pkgset.end();
    auto const changeBegin = MarkHold ? part : pkgset.begin();
    auto const changeEnd = MarkHold ? pkgset.end() : part;
 
-   std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::PkgIterator const &P) {
+   std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::VerIterator const &V) {
       if (MarkHold == true)
-        ioprintf(c1out, _("%s was already set on hold.\n"), P.FullName(true).c_str());
+        ioprintf(c1out, _("%s was already set on hold.\n"), V.ParentPkg().FullName(true).c_str());
       else
-        ioprintf(c1out, _("%s was already not hold.\n"), P.FullName(true).c_str());
+        ioprintf(c1out, _("%s was already not hold.\n"), V.ParentPkg().FullName(true).c_str());
    });
 
    if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
@@ -200,11 +200,11 @@ static bool DoHold(CommandLine &CmdL)
 
    if (_config->FindB("APT::Mark::Simulate", false) == true)
    {
-      std::for_each(changeBegin, changeEnd, [&MarkHold](pkgCache::PkgIterator const &P) {
+      std::for_each(changeBegin, changeEnd, [&MarkHold](pkgCache::VerIterator const &V) {
         if (MarkHold == false)
-           ioprintf(c1out, _("%s set on hold.\n"), P.FullName(true).c_str());
+           ioprintf(c1out, _("%s set on hold.\n"), V.ParentPkg().FullName(true).c_str());
         else
-           ioprintf(c1out, _("Canceled hold on %s.\n"), P.FullName(true).c_str());
+           ioprintf(c1out, _("Canceled hold on %s.\n"), V.ParentPkg().FullName(true).c_str());
       });
       return true;
    }
@@ -237,9 +237,9 @@ static bool DoHold(CommandLine &CmdL)
       }
    }
 
-   APT::PackageList keepoffset;
+   APT::VersionVector keepoffset;
    std::copy_if(changeBegin, changeEnd, std::back_inserter(keepoffset),
-	 [](pkgCache::PkgIterator const &P) { return P->CurrentVer == 0; });
+	 [](pkgCache::VerIterator const &V) { return V.ParentPkg()->CurrentVer == 0; });
 
    if (keepoffset.empty() == false)
    {
@@ -269,16 +269,9 @@ static bool DoHold(CommandLine &CmdL)
       }
 
       FILE* dpkg = fdopen(external[1], "w");
-      for (APT::PackageList::iterator Pkg = keepoffset.begin(); Pkg != keepoffset.end(); ++Pkg)
-      {
-	 char const * Arch;
-	 if (Pkg->VersionList != 0)
-	    Arch = Pkg.VersionList().Arch();
-	 else
-	    Arch = Pkg.Arch();
+      for (auto const &V: keepoffset)
 	 fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
-	       "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", Pkg.Name(), Arch);
-      }
+	       "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", V.ParentPkg().Name(), V.Arch());
       fclose(dpkg);
       keepoffset.clear();
 
@@ -320,29 +313,23 @@ static bool DoHold(CommandLine &CmdL)
 
    bool const dpkgMultiArch = _system->MultiArchSupported();
    FILE* dpkg = fdopen(external[1], "w");
-   for (auto Pkg = changeBegin; Pkg != changeEnd; ++Pkg)
+   for (auto Ver = changeBegin; Ver != changeEnd; ++Ver)
    {
+      pkgCache::PkgIterator P = Ver.ParentPkg();
       if (dpkgMultiArch == false)
-	 fprintf(dpkg, "%s", Pkg.FullName(true).c_str());
+	 fprintf(dpkg, "%s", P.FullName(true).c_str());
       else
-      {
-	 if (Pkg->CurrentVer != 0)
-	    fprintf(dpkg, "%s:%s", Pkg.Name(), Pkg.CurrentVer().Arch());
-	 else if (Pkg.VersionList().end() == false)
-	    fprintf(dpkg, "%s:%s", Pkg.Name(), Pkg.VersionList().Arch());
-	 else
-	    fprintf(dpkg, "%s", Pkg.FullName(false).c_str());
-      }
+	 fprintf(dpkg, "%s:%s", P.Name(), Ver.Arch());
 
       if (MarkHold == true)
       {
 	 fprintf(dpkg, " hold\n");
-	 ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
+	 ioprintf(c1out,_("%s set on hold.\n"), P.FullName(true).c_str());
       }
       else
       {
 	 fprintf(dpkg, " install\n");
-	 ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
+	 ioprintf(c1out,_("Canceled hold on %s.\n"), P.FullName(true).c_str());
       }
    }
    fclose(dpkg);
