@@ -302,30 +302,62 @@ void debSystem::DpkgChrootDirectory()					/*{{{*/
       _exit(100);
 }
 									/*}}}*/
+static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const showStderr)/*{{{*/
+{
+   std::vector<const char *> Args(sArgs.size(), NULL);
+   std::transform(sArgs.begin(), sArgs.end(), Args.begin(), [](std::string const &s) { return s.c_str(); });
+   Args.push_back(NULL);
+
+   int external[2] = {-1, -1};
+   if (inputFd != nullptr || outputFd != nullptr)
+      if (pipe(external) != 0)
+      {
+	 _error->WarningE("dpkg", "Can't create IPC pipe for dpkg call");
+	 return -1;
+      }
+
+   pid_t const dpkg = ExecFork();
+   if (dpkg == 0) {
+      int const nullfd = open("/dev/null", O_RDONLY);
+      if (inputFd == nullptr)
+	 dup2(nullfd, STDIN_FILENO);
+      else
+      {
+	 close(external[1]);
+	 dup2(external[0], STDIN_FILENO);
+      }
+      if (outputFd == nullptr)
+	 dup2(nullfd, STDOUT_FILENO);
+      else
+      {
+	 close(external[0]);
+	 dup2(external[1], STDOUT_FILENO);
+      }
+      if (showStderr == false)
+	 dup2(nullfd, STDERR_FILENO);
+      debSystem::DpkgChrootDirectory();
+      execvp(Args[0], (char**) &Args[0]);
+      _error->WarningE("dpkg", "Can't execute dpkg!");
+      _exit(100);
+   }
+   if (outputFd != nullptr)
+   {
+      close(external[1]);
+      *outputFd = external[0];
+   }
+   else if (inputFd != nullptr)
+   {
+      close(external[0]);
+      *inputFd = external[1];
+   }
+   return dpkg;
+}
+									/*}}}*/
 bool debSystem::SupportsMultiArch()					/*{{{*/
 {
-   std::vector<std::string> const Args = GetDpkgBaseCommand();
-   std::vector<const char *> cArgs(Args.size(), NULL);
-   std::transform(Args.begin(), Args.end(), cArgs.begin(), [](std::string const &s) { return s.c_str(); });
-
-   // we need to detect if we can qualify packages with the architecture or not
-   cArgs.push_back("--assert-multi-arch");
-   cArgs.push_back(NULL);
-
-   pid_t dpkgAssertMultiArch = ExecFork();
-   if (dpkgAssertMultiArch == 0)
-   {
-      DpkgChrootDirectory();
-      // redirect everything to the ultimate sink as we only need the exit-status
-      int const nullfd = open("/dev/null", O_RDONLY);
-      dup2(nullfd, STDIN_FILENO);
-      dup2(nullfd, STDOUT_FILENO);
-      dup2(nullfd, STDERR_FILENO);
-      execvp(cArgs[0], (char**) &cArgs[0]);
-      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
-      _exit(2);
-   }
-
+   std::vector<std::string> Args = GetDpkgBaseCommand();
+   Args.push_back("--assert-multi-arch");
+   pid_t const dpkgAssertMultiArch = ExecDpkg(Args, nullptr, nullptr, false);
    if (dpkgAssertMultiArch > 0)
    {
       int Status = 0;
@@ -344,39 +376,21 @@ bool debSystem::SupportsMultiArch()					/*{{{*/
 									/*}}}*/
 std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
 {
-   std::vector<std::string> const sArgs = GetDpkgBaseCommand();
-   std::vector<const char *> Args(sArgs.size(), NULL);
-   std::transform(sArgs.begin(), sArgs.end(), Args.begin(), [](std::string const &s) { return s.c_str(); });
-   Args.push_back("--print-foreign-architectures");
-   Args.push_back(NULL);
-
    std::vector<std::string> archs;
-   string const arch = _config->Find("APT::Architecture");
-   if (arch.empty() == false)
-      archs.push_back(arch);
-
-   int external[2] = {-1, -1};
-   if (pipe(external) != 0)
    {
-      _error->WarningE("getArchitecture", "Can't create IPC pipe for dpkg --print-foreign-architectures");
+      string const arch = _config->Find("APT::Architecture");
+      if (arch.empty() == false)
+	 archs.push_back(std::move(arch));
+   }
+
+   std::vector<std::string> sArgs = GetDpkgBaseCommand();
+   sArgs.push_back("--print-foreign-architectures");
+   int outputFd = -1;
+   pid_t const dpkgMultiArch = ExecDpkg(sArgs, nullptr, &outputFd, false);
+   if (dpkgMultiArch == -1)
       return archs;
-   }
 
-   pid_t dpkgMultiArch = ExecFork();
-   if (dpkgMultiArch == 0) {
-      close(external[0]);
-      int const nullfd = open("/dev/null", O_RDONLY);
-      dup2(nullfd, STDIN_FILENO);
-      dup2(external[1], STDOUT_FILENO);
-      dup2(nullfd, STDERR_FILENO);
-      DpkgChrootDirectory();
-      execvp(Args[0], (char**) &Args[0]);
-      _error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");
-      _exit(100);
-   }
-   close(external[1]);
-
-   FILE *dpkg = fdopen(external[0], "r");
+   FILE *dpkg = fdopen(outputFd, "r");
    if(dpkg != NULL) {
       char* buf = NULL;
       size_t bufsize = 0;
