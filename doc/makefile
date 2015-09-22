@@ -61,12 +61,15 @@ po4a: manpages/subdirs docbook/subdirs
 
 update-po:
 	po4a --previous --no-backups --force --no-translations \
+		--msgmerge-opt --add-location=file \
+		--porefs noline,wrap \
 		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 
 manpages/subdirs: $(MANPAGEPOLIST)
 $(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a.conf
 	po4a --previous --no-backups --translate-only $(dir $<)apt.ent \
+		--msgmerge-opt --add-location=file \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.1.xml,%.$(subst /,,$(dir $<)).1.xml,$(wildcard *.1.xml))) \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.2.xml,%.$(subst /,,$(dir $<)).2.xml,$(wildcard *.2.xml))) \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.3.xml,%.$(subst /,,$(dir $<)).3.xml,$(wildcard *.3.xml))) \
@@ -81,6 +84,7 @@ $(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a.conf
 docbook/subdirs: $(DOCBOOKPOLIST)
 $(DOCBOOKPOLIST) :: docbook-translation-% : %/makefile po4a.conf
 	po4a --previous --no-backups --translate-only $(dir $<)apt.ent \
+		--msgmerge-opt --add-location=file \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.dbk,%.$(subst /,,$(dir $<)).dbk,$(wildcard *.dbk))) \
 		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf

@@ -40,7 +40,7 @@ $(POTFILES) : $(PO)/%.pot :
 	cat $(PO)/domains/$*/*.srclist | sort > $(PO)/POTFILES_$*.in
 	$(XGETTEXT) --default-domain=$* --directory=$(BASE) \
 	  --add-comments --foreign --keyword=_ --keyword=N_ \
-          --no-location \
+          --add-location=file \
 	  --keyword=P_:1,2 \
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot.tmp
 	cmp --silent $(PO)/domains/$*/c.pot.tmp $(PO)/domains/$*/c.pot || \
@@ -59,7 +59,7 @@ $(POTFILES) : $(PO)/%.pot :
 $(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(POTFILES)
 	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
-	$(MSGMERGE) --no-location $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
+	$(MSGMERGE) --add-location=file $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
 
 $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	printf "%s: " "Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo"
