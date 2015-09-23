@@ -59,7 +59,7 @@ testsuccessequal "foo/unstable 1.0 all
 " apt search -qq aabbcc xxyyzz
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
-" apt search -qq 'a+b+c+' 'i*xxy{0,2}zz'
+" apt search -qq --regex 'a+b+c+' 'i*xxy{0,2}zz'
 
 # search is not case-sensitive by default
 testsuccessequal "foo/unstable 1.0 all
@@ -67,7 +67,7 @@ testsuccessequal "foo/unstable 1.0 all
 " apt search -qq uppercase
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
-" apt search -qq 'up[pP]erc[Aa]se'
+" apt search -qq --regex 'up[pP]erc[Aa]se'
 
 # search is done in the long description
 testsuccessequal "foo/unstable 1.0 all
@@ -89,7 +89,7 @@ foo/unstable 1.0 all
 " apt search -qq aabbcc
 
 # output is sorted in alphabetic reverse order
-testsuccessequal "package/stable 1.5 all
+testequal "package/stable 1.5 all
   $DESCR3
 
 foo/unstable 1.0 all
@@ -100,10 +100,10 @@ baz/now 0.1 all [installed,local]
 
 bar/testing 2.0 i386
   $DESCR2
-" apt search --order-by reverse -qq "\\w"
+" apt search --order-by reverse -qq "\\w" --regex
 
 # output is sorted by version
-testsuccessequal "bar/testing 2.0 i386
+testequal "bar/testing 2.0 i386
   $DESCR2
 
 package/stable 1.5 all
@@ -114,10 +114,10 @@ foo/unstable 1.0 all
 
 baz/now 0.1 all [installed,local]
   $DESCR4
-" apt search --order-by version -qq "\\w"
+" apt search --order-by version -qq "\\w" --regex
 
 # output is sorted by status
-testsuccessequal "bar/testing 2.0 i386
+testequal "bar/testing 2.0 i386
   $DESCR2
 
 foo/unstable 1.0 all
@@ -128,10 +128,10 @@ package/stable 1.5 all
 
 baz/now 0.1 all [installed,local]
   $DESCR4
-" apt search --order-by status -qq "\\w"
+" apt search --order-by status -qq "\\w" --regex
 
 # output is sorted by default
-testsuccessequal "bar/testing 2.0 i386
+testequal "bar/testing 2.0 i386
   $DESCR2
 
 baz/now 0.1 all [installed,local]
@@ -139,7 +139,7 @@ baz/now 0.1 all [installed,local]
 " apt search --order-by some_strange_pattner -qq ba
 
 # output is sorted by Alphabetic (non case sense)
-testsuccessequal "bar/testing 2.0 i386
+testequal "bar/testing 2.0 i386
   $DESCR2
 
 baz/now 0.1 all [installed,local]
