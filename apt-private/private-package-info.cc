@@ -1,36 +1,13 @@
 // Includes                      /*{{{*/
 #include <config.h>
 
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/debversion.h>
 #include <apt-private/private-output.h>
-#include <apt-private/private-cachefile.h>
 #include <apt-private/private-package-info.h>
 
-#include <regex.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <langinfo.h>
-#include <cctype>
 #include <algorithm>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/ioctl.h>
-#include <sstream>
-
-#include <apti18n.h>
                   /*}}}*/
 
 

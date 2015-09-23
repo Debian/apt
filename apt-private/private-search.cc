@@ -2,30 +2,18 @@
 #include <config.h>
 
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/progress.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/macros.h>
-#include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cacheset.h>
-#include <apt-private/private-output.h>
 #include <apt-private/private-search.h>
 #include <apt-private/private-package-info.h>
 
-#include <string.h>
-#include <iostream>
 #include <sstream>
 #include <vector>
-#include <string>
-#include <utility>
 
-#include <apti18n.h>
 									/*}}}*/
 
 bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
