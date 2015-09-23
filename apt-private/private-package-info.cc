@@ -66,7 +66,7 @@ PackageInfo::GetPackageStatus(pkgCacheFile &CacheFile,
 }
 		  /*}}}*/
 
-PackageInfo::SortBy 
+PackageInfo::SortBy
 PackageInfo::getOrderByOption ()
 {
    std::string inString = _config->Find("APT::Cache::OrderBy","Alphabetic");

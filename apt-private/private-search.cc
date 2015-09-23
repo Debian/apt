@@ -14,10 +14,41 @@
 
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
+#define RABINKARPHASH(a, b, h, d) ((((h) - (a)*d) << 1) + (b))
 									/*}}}*/
 
-static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
+int RabinKarp(std::string StringInput, std::string Pattern) {
+   std::transform(StringInput.begin(), StringInput.end(), StringInput.begin(), ::tolower);
+   std::transform(Pattern.begin(), Pattern.end(), Pattern.begin(), ::tolower);
+   int string_length = StringInput.length();
+   int pattern_length = Pattern.length();
+
+   int mask, hash_input=0, hash_pattern=0;
+
+   /* Preprocessing */
+   /* computes mask = 2^(string_length-1) with
+      the left-shift operator */
+   mask = (1<<(string_length-1));
+
+   for (int i=0 ; i < string_length; ++i) {
+      hash_input = ((hash_input<<1) + StringInput.c_str()[i]);
+      hash_pattern = ((hash_pattern<<1) + Pattern.c_str()[i]);
+   }
+
+   /* Searching */
+   for (int i =0; i <= pattern_length-string_length; ++i) {
+      if (hash_input == hash_pattern && memcmp(StringInput.c_str(), Pattern.c_str() + i, string_length) == 0)
+	return i;
+      hash_pattern = RABINKARPHASH(Pattern.c_str()[i], Pattern.c_str()[i + string_length], hash_pattern, mask);
+   }
+
+   /* fould nothing*/
+   return -1;
+}
+
+bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -35,16 +66,17 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 
    // Compile the regex pattern
    std::vector<regex_t> Patterns;
-   for (unsigned int I = 0; I != NumPatterns; ++I)
-   {
-      regex_t pattern;
-      if (regcomp(&pattern, CmdL.FileList[I + 1], REG_EXTENDED | REG_ICASE | REG_NOSUB) != 0)
+   if (_config->FindB("APT::Cache::UsingRegex",false))
+      for (unsigned int I = 0; I != NumPatterns; ++I)
       {
-	 APT_FREE_PATTERNS();
-	 return _error->Error("Regex compilation error");
+	 regex_t pattern;
+	 if (regcomp(&pattern, CmdL.FileList[I + 1], REG_EXTENDED | REG_ICASE | REG_NOSUB) != 0)
+	 {
+	    APT_FREE_PATTERNS();
+	    return _error->Error("Regex compilation error");
+	 }
+	 Patterns.push_back(pattern);
       }
-      Patterns.push_back(pattern);
-   }
 
 
    bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly", false);
@@ -90,16 +122,33 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
       }
 
       bool all_found = true;
-      for (std::vector<regex_t>::const_iterator pattern = Patterns.begin();
-	    pattern != Patterns.end(); ++pattern)
+      if (_config->FindB("APT::Cache::UsingRegex",false))
       {
-	 if (regexec(&(*pattern), PkgName, 0, 0, 0) == 0)
-	    continue;
-	 else if (NamesOnly == false && regexec(&(*pattern), LongDesc.c_str(), 0, 0, 0) == 0)
-	    continue;
-	 // search patterns are AND, so one failing fails all
-	 all_found = false;
-	 break;
+	 for (std::vector<regex_t>::const_iterator pattern = Patterns.begin();
+	       pattern != Patterns.end(); ++pattern)
+	 {
+	    if (regexec(&(*pattern), PkgName, 0, 0, 0) == 0)
+	       continue;
+	    else if (NamesOnly == false && regexec(&(*pattern), LongDesc.c_str(), 0, 0, 0) == 0)
+	       continue;
+	    // search patterns are AND, so one failing fails all
+	    all_found = false;
+	    break;
+	 }
+      }
+      else
+      {
+	 for (unsigned int I = 0; I != NumPatterns; ++I)
+	 {
+	    if ((RabinKarp(CmdL.FileList[I + 1], P.Name()) >= 0) ) 
+	    {
+	       continue;
+	    }
+	    else if ( (NamesOnly == false) && (RabinKarp(CmdL.FileList[I + 1], LongDesc) >= 0))
+	       continue;
+	    all_found = false;
+	    break;
+	 }
       }
       if (all_found == true)
       {
@@ -124,13 +173,13 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 	 std::sort(outputVector.begin(), outputVector.end(), OrderByAlphabetic);
 	 break;
    }
-   APT_FREE_PATTERNS();
+   if (_config->FindB("APT::Cache::UsingRegex",false))
+      APT_FREE_PATTERNS();
    progress.Done();
 
    // output the sorted vector
    for(auto k:outputVector)
       std::cout << k.formated_output() << std::endl;
-
 
    return true;
 }
