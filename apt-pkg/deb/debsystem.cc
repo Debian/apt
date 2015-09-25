@@ -302,7 +302,7 @@ void debSystem::DpkgChrootDirectory()					/*{{{*/
       _exit(100);
 }
 									/*}}}*/
-static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const showStderr)/*{{{*/
+pid_t debSystem::ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const DiscardOutput)/*{{{*/
 {
    std::vector<const char *> Args(sArgs.size(), NULL);
    std::transform(sArgs.begin(), sArgs.end(), Args.begin(), [](std::string const &s) { return s.c_str(); });
@@ -333,7 +333,7 @@ static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd
 	 close(external[0]);
 	 dup2(external[1], STDOUT_FILENO);
       }
-      if (showStderr == false)
+      if (DiscardOutput == true)
 	 dup2(nullfd, STDERR_FILENO);
       debSystem::DpkgChrootDirectory();
       execvp(Args[0], (char**) &Args[0]);
@@ -357,7 +357,7 @@ bool debSystem::SupportsMultiArch()					/*{{{*/
 {
    std::vector<std::string> Args = GetDpkgBaseCommand();
    Args.push_back("--assert-multi-arch");
-   pid_t const dpkgAssertMultiArch = ExecDpkg(Args, nullptr, nullptr, false);
+   pid_t const dpkgAssertMultiArch = ExecDpkg(Args, nullptr, nullptr, true);
    if (dpkgAssertMultiArch > 0)
    {
       int Status = 0;
@@ -386,7 +386,7 @@ std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
    std::vector<std::string> sArgs = GetDpkgBaseCommand();
    sArgs.push_back("--print-foreign-architectures");
    int outputFd = -1;
-   pid_t const dpkgMultiArch = ExecDpkg(sArgs, nullptr, &outputFd, false);
+   pid_t const dpkgMultiArch = ExecDpkg(sArgs, nullptr, &outputFd, true);
    if (dpkgMultiArch == -1)
       return archs;
 

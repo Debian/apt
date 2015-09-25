@@ -15,6 +15,7 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/statechanges.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
@@ -185,8 +186,6 @@ static bool DoHold(CommandLine &CmdL)
 
    auto const doneBegin = MarkHold ? pkgset.begin() : part;
    auto const doneEnd = MarkHold ? part : pkgset.end();
-   auto const changeBegin = MarkHold ? part : pkgset.begin();
-   auto const changeEnd = MarkHold ? pkgset.end() : part;
 
    std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::VerIterator const &V) {
       if (MarkHold == true)
@@ -198,156 +197,27 @@ static bool DoHold(CommandLine &CmdL)
    if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
       return true;
 
-   if (_config->FindB("APT::Mark::Simulate", false) == true)
+   auto const changeBegin = MarkHold ? part : pkgset.begin();
+   auto const changeEnd = MarkHold ? pkgset.end() : part;
+
+   APT::StateChanges marks;
+   std::move(changeBegin, changeEnd, std::back_inserter(MarkHold ? marks.Hold() : marks.Unhold()));
+   pkgset.clear();
+
+   bool success = true;
+   if (_config->FindB("APT::Mark::Simulate", false) == false)
    {
-      std::for_each(changeBegin, changeEnd, [&MarkHold](pkgCache::VerIterator const &V) {
-        if (MarkHold == false)
-           ioprintf(c1out, _("%s set on hold.\n"), V.ParentPkg().FullName(true).c_str());
-        else
-           ioprintf(c1out, _("Canceled hold on %s.\n"), V.ParentPkg().FullName(true).c_str());
-      });
-      return true;
+      success = marks.Save();
+      if (success == false)
+	 _error->Error(_("Executing dpkg failed. Are you root?"));
    }
 
-   // Generate the base argument list for dpkg
-   std::vector<const char *> Args;
-   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   {
-      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
-      size_t dpkgChrootLen = dpkgChrootDir.length();
-      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
-      {
-	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
-	    --dpkgChrootLen;
-	 Tmp = Tmp.substr(dpkgChrootLen);
-      }
-   }
-   Args.push_back(Tmp.c_str());
+   for (auto Ver : marks.Hold())
+      ioprintf(c1out,_("%s set on hold.\n"), Ver.ParentPkg().FullName(true).c_str());
+   for (auto Ver : marks.Unhold())
+      ioprintf(c1out,_("Canceled hold on %s.\n"), Ver.ParentPkg().FullName(true).c_str());
 
-   // Stick in any custom dpkg options
-   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-   if (Opts != 0)
-   {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-	 Args.push_back(Opts->Value.c_str());
-      }
-   }
-
-   APT::VersionVector keepoffset;
-   std::copy_if(changeBegin, changeEnd, std::back_inserter(keepoffset),
-	 [](pkgCache::VerIterator const &V) { return V.ParentPkg()->CurrentVer == 0; });
-
-   if (keepoffset.empty() == false)
-   {
-      size_t const BaseArgs = Args.size();
-      Args.push_back("--merge-avail");
-      // FIXME: supported only since 1.17.7 in dpkg
-      Args.push_back("-");
-      Args.push_back(NULL);
-
-      int external[2] = {-1, -1};
-      if (pipe(external) != 0)
-	 return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --merge-avail");
-
-      pid_t dpkgMergeAvail = ExecFork();
-      if (dpkgMergeAvail == 0)
-      {
-	 close(external[1]);
-	 std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-	 if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
-	    _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --merge-avail", chrootDir.c_str());
-	 dup2(external[0], STDIN_FILENO);
-	 int const nullfd = open("/dev/null", O_RDONLY);
-	 dup2(nullfd, STDOUT_FILENO);
-	 execvp(Args[0], (char**) &Args[0]);
-	 _error->WarningE("dpkgGo", "Can't get dpkg --merge-avail running!");
-	 _exit(2);
-      }
-
-      FILE* dpkg = fdopen(external[1], "w");
-      for (auto const &V: keepoffset)
-	 fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
-	       "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", V.ParentPkg().Name(), V.Arch());
-      fclose(dpkg);
-      keepoffset.clear();
-
-      if (dpkgMergeAvail > 0)
-      {
-	 int Status = 0;
-	 while (waitpid(dpkgMergeAvail, &Status, 0) != dpkgMergeAvail)
-	 {
-	    if (errno == EINTR)
-	       continue;
-	    _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --merge-avail");
-	    break;
-	 }
-	 if (WIFEXITED(Status) == false || WEXITSTATUS(Status) != 0)
-	    return _error->Error(_("Executing dpkg failed. Are you root?"));
-      }
-      Args.erase(Args.begin() + BaseArgs, Args.end());
-   }
-
-   Args.push_back("--set-selections");
-   Args.push_back(NULL);
-
-   int external[2] = {-1, -1};
-   if (pipe(external) != 0)
-      return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --set-selections");
-
-   pid_t dpkgSelection = ExecFork();
-   if (dpkgSelection == 0)
-   {
-      close(external[1]);
-      std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
-	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
-      dup2(external[0], STDIN_FILENO);
-      execvp(Args[0], (char**) &Args[0]);
-      _error->WarningE("dpkgGo", "Can't get dpkg --set-selections running!");
-      _exit(2);
-   }
-
-   bool const dpkgMultiArch = _system->MultiArchSupported();
-   FILE* dpkg = fdopen(external[1], "w");
-   for (auto Ver = changeBegin; Ver != changeEnd; ++Ver)
-   {
-      pkgCache::PkgIterator P = Ver.ParentPkg();
-      if (dpkgMultiArch == false)
-	 fprintf(dpkg, "%s", P.FullName(true).c_str());
-      else
-	 fprintf(dpkg, "%s:%s", P.Name(), Ver.Arch());
-
-      if (MarkHold == true)
-      {
-	 fprintf(dpkg, " hold\n");
-	 ioprintf(c1out,_("%s set on hold.\n"), P.FullName(true).c_str());
-      }
-      else
-      {
-	 fprintf(dpkg, " install\n");
-	 ioprintf(c1out,_("Canceled hold on %s.\n"), P.FullName(true).c_str());
-      }
-   }
-   fclose(dpkg);
-
-   if (dpkgSelection > 0)
-   {
-      int Status = 0;
-      while (waitpid(dpkgSelection, &Status, 0) != dpkgSelection)
-      {
-	 if (errno == EINTR)
-	    continue;
-	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --set-selection");
-	 break;
-      }
-      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
-	 return true;
-   }
-   return _error->Error(_("Executing dpkg failed. Are you root?"));
+   return success;
 }
 									/*}}}*/
 /* ShowHold - show packages set on hold in dpkg status			{{{*/

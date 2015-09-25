@@ -99,3 +99,16 @@ testmarkonepkgashold 'uninstalled-native'
 
 testsuccessequal 'uninstalled set on hold.' aptmark hold uninstalled
 testsuccessequal 'uninstalled-native set on hold.' aptmark hold uninstalled-native
+#FIXME: holds on uninstalled packages are not persistent in dpkg
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  uninstalled uninstalled-native
+The following held packages will be changed:
+  uninstalled-native
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst uninstalled (1 unstable [all])
+Inst uninstalled-native (1 unstable [amd64])
+Conf uninstalled (1 unstable [all])
+Conf uninstalled-native (1 unstable [amd64])' aptget install uninstalled uninstalled-native -s

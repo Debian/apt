@@ -34,7 +34,7 @@ class debSystem : public pkgSystem
    public:
 
    virtual bool Lock() APT_OVERRIDE;
-   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE;   
+   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE;
    virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE;
    virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
    virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE;
@@ -49,6 +49,7 @@ class debSystem : public pkgSystem
    APT_HIDDEN static std::string GetDpkgExecutable();
    APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();
    APT_HIDDEN static void DpkgChrootDirectory();
+   APT_HIDDEN static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const DiscardOutput);
    APT_HIDDEN static bool SupportsMultiArch();
    APT_HIDDEN static std::vector<std::string> SupportedArchitectures();
 };

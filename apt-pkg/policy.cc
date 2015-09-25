@@ -222,8 +222,8 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 
    return Pref;
 }
-
-// Policy::GetCandidateVer - Get the candidate install version		/*{{{*/
+									/*}}}*/
+// Policy::GetCandidateVerNew - Get the candidate install version	/*{{{*/
 // ---------------------------------------------------------------------
 /* Evaluate the package pins and the default list to deteremine what the
    best package is. */
