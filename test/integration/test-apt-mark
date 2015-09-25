@@ -112,3 +112,43 @@ Inst uninstalled (1 unstable [all])
 Inst uninstalled-native (1 unstable [amd64])
 Conf uninstalled (1 unstable [all])
 Conf uninstalled-native (1 unstable [amd64])' aptget install uninstalled uninstalled-native -s
+testsuccess aptmark unhold uninstalled uninstalled-native
+
+testselections() {
+	testsuccess aptmark hold "$1"
+	testsuccessequal "$1" aptmark showholds "$1"
+	testsuccess aptmark unhold "$1"
+	testsuccessequal "$1" aptmark showinstalls "$1"
+	testsuccess aptmark hold "$1"
+	testsuccessequal "$1" aptmark showholds "$1"
+	testsuccess aptmark install "$1"
+	testsuccessequal "$1" aptmark showinstalls "$1"
+	testsuccess aptmark remove "$1"
+	testsuccessequal "$1" aptmark showremoves "$1"
+	testsuccess aptmark purge "$1"
+	testsuccessequal "$1" aptmark showpurges "$1"
+}
+testselections 'foo'
+testselections 'bar'
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  bar* foo*
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Purg bar [1]
+Purg foo [1]' aptget dselect-upgrade -s
+
+testuninstalledselections() {
+	testsuccess aptmark hold "$1"
+	testsuccessequal "$1" aptmark showholds "$1"
+	testsuccess aptmark unhold "$1"
+	testsuccessequal "$1" aptmark showremoves "$1"
+	testsuccess aptmark hold "$1"
+	testsuccessequal "$1" aptmark showholds "$1"
+	testsuccess aptmark install "$1"
+	testsuccessequal "$1" aptmark showinstalls "$1"
+}
+testuninstalledselections 'uninstalled'
+testuninstalledselections 'uninstalled-native'

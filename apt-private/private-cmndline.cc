@@ -227,19 +227,31 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
 static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("auto", "manual", "hold", "unhold", "showauto",
-	    "showmanual", "showhold", "showholds", "install",
+	    "showmanual", "showhold", "showholds",
 	    "markauto", "unmarkauto"))
+   {
+      addArg('f',"file","Dir::State::extended_states",CommandLine::HasArg);
+   }
+   else if (CmdMatches("install", "remove", "deinstall", "purge",
+	    "showinstall", "showinstalls", "showremove", "showremoves",
+	    "showdeinstall", "showdeinstalls", "showpurge", "showpurges"))
       ;
    else
       return false;
 
-   addArg('v',"verbose","APT::MarkAuto::Verbose",0);
-   addArg('s',"simulate","APT::Mark::Simulate",0);
-   addArg('s',"just-print","APT::Mark::Simulate",0);
-   addArg('s',"recon","APT::Mark::Simulate",0);
-   addArg('s',"dry-run","APT::Mark::Simulate",0);
-   addArg('s',"no-act","APT::Mark::Simulate",0);
-   addArg('f',"file","Dir::State::extended_states",CommandLine::HasArg);
+   if (CmdMatches("markauto", "unmarkauto"))
+   {
+      addArg('v',"verbose","APT::MarkAuto::Verbose",0);
+   }
+
+   if (strncmp(Cmd, "show", strlen("show")) != 0)
+   {
+      addArg('s',"simulate","APT::Mark::Simulate",0);
+      addArg('s',"just-print","APT::Mark::Simulate",0);
+      addArg('s',"recon","APT::Mark::Simulate",0);
+      addArg('s',"dry-run","APT::Mark::Simulate",0);
+      addArg('s',"no-act","APT::Mark::Simulate",0);
+   }
 
    return true;
 }

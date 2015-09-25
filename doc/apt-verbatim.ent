@@ -394,18 +394,47 @@
 </cmdsynopsis></refsynopsisdiv>">
 <!ENTITY synopsis-command-apt-mark "<refsynopsisdiv><cmdsynopsis>
 	<command>apt-mark</command>
-	<arg><option>-f=&synopsis-param-filename;</option></arg>
+	<group choice='plain'>
+		<group choice='req'>
+			<arg choice='plain'><option>-f=&synopsis-param-filename;</option></arg>
+			<arg choice='plain'>
+				<group choice='req'>
+					<arg choice='plain'>auto</arg>
+					<arg choice='plain'>manual</arg>
+				</group>
+				&synopsis-arg-pkg;
+			</arg>
+			<arg choice='plain'>
+				<group choice='req'>
+					<arg choice='plain'>showauto</arg>
+					<arg choice='plain'>showmanual</arg>
+				</group>
+				<arg choice='opt' rep='repeat'><replaceable>&synopsis-pkg;</replaceable></arg>
+			</arg>
+		</group>
+		&synopsis-help;
+	</group>
+</cmdsynopsis><cmdsynopsis><command>apt-mark</command>
 	<group choice='plain'>
 		<arg choice='plain'>
 			<group choice='req'>
-				<arg choice='plain'>auto</arg>
-				<arg choice='plain'>manual</arg>
-				<arg choice='plain'>showauto</arg>
-				<arg choice='plain'>showmanual</arg>
+				<arg choice='plain'>hold</arg>
+				<arg choice='plain'>unhold</arg>
+				<arg choice='plain'>install</arg>
+				<arg choice='plain'>remove</arg>
+				<arg choice='plain'>purge</arg>
 			</group>
 			&synopsis-arg-pkg;
 		</arg>
-		&synopsis-help;
+		<arg choice='plain'>
+			<group choice='req'>
+				<arg choice='plain'>showhold</arg>
+				<arg choice='plain'>showinstall</arg>
+				<arg choice='plain'>showremove</arg>
+				<arg choice='plain'>showpurge</arg>
+			</group>
+			<arg choice='opt' rep='repeat'><replaceable>&synopsis-pkg;</replaceable></arg>
+		</arg>
 	</group>
 </cmdsynopsis></refsynopsisdiv>">
 <!ENTITY synopsis-command-apt-sortpkgs "<refsynopsisdiv><cmdsynopsis>

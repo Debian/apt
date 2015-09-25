@@ -14,46 +14,62 @@ class StateChanges::Private
 {
 public:
    APT::VersionVector hold;
+   APT::VersionVector unhold;
    APT::VersionVector install;
+   APT::VersionVector deinstall;
+   APT::VersionVector purge;
    APT::VersionVector error;
 };
 
-void StateChanges::Hold(pkgCache::VerIterator const &Ver)
-{
-   d->hold.push_back(Ver);
+#define APT_GETTERSETTER(Name, Container) \
+void StateChanges::Name(pkgCache::VerIterator const &Ver) \
+{ \
+   Container.push_back(Ver); \
+}\
+APT::VersionVector& StateChanges::Name() \
+{ \
+   return Container; \
 }
-APT::VersionVector& StateChanges::Hold()
-{
-   return d->hold;
-}
-void StateChanges::Unhold(pkgCache::VerIterator const &Ver)
-{
-   d->install.push_back(Ver);
-}
-APT::VersionVector& StateChanges::Unhold()
-{
-   return d->install;
-}
+APT_GETTERSETTER(Hold, d->hold)
+APT_GETTERSETTER(Unhold, d->unhold)
+APT_GETTERSETTER(Install, d->install)
+APT_GETTERSETTER(Remove, d->deinstall)
+APT_GETTERSETTER(Purge, d->purge)
+#undef APT_GETTERSETTER
 APT::VersionVector& StateChanges::Error()
 {
    return d->error;
 }
 
-void StateChanges::Discard()
+void StateChanges::clear()
 {
    d->hold.clear();
+   d->unhold.clear();
    d->install.clear();
+   d->deinstall.clear();
+   d->purge.clear();
    d->error.clear();
+}
+
+bool StateChanges::empty() const
+{
+   return d->hold.empty() &&
+      d->unhold.empty() &&
+      d->install.empty() &&
+      d->deinstall.empty() &&
+      d->purge.empty() &&
+      d->error.empty();
 }
 
 bool StateChanges::Save(bool const DiscardOutput)
 {
    d->error.clear();
-   if (d->hold.empty() && d->install.empty())
+   if (d->hold.empty() && d->unhold.empty() && d->install.empty() && d->deinstall.empty() && d->purge.empty())
       return true;
 
    std::vector<std::string> Args = debSystem::GetDpkgBaseCommand();
    // ensure dpkg knows about the package so that it keeps the status we set
+   if (d->hold.empty() == false || d->install.empty() == false)
    {
       APT::VersionVector makeDpkgAvailable;
       auto const notInstalled = [](pkgCache::VerIterator const &V) { return V.ParentPkg()->CurrentVer == 0; };
@@ -94,6 +110,24 @@ bool StateChanges::Save(bool const DiscardOutput)
       else
 	 fprintf(dpkg, "%s:%s %s\n", P.Name(), V.Arch(), state.c_str());
    };
+   for (auto const &V: d->unhold)
+   {
+      if (V.ParentPkg()->CurrentVer != 0)
+	 state = "install";
+      else
+	 state = "deinstall";
+      dpkgName(V);
+   }
+   if (d->purge.empty() == false)
+   {
+      state = "purge";
+      std::for_each(d->purge.begin(), d->purge.end(), dpkgName);
+   }
+   if (d->deinstall.empty() == false)
+   {
+      state = "deinstall";
+      std::for_each(d->deinstall.begin(), d->deinstall.end(), dpkgName);
+   }
    if (d->hold.empty() == false)
    {
       state = "hold";
@@ -108,16 +142,16 @@ bool StateChanges::Save(bool const DiscardOutput)
 
    if (ExecWait(dpkgSelections, "dpkg --set-selections") == false)
    {
-      if (d->hold.empty())
-	 std::swap(d->install, d->error);
-      else if (d->install.empty())
-	 std::swap(d->hold, d->error);
-      else
-      {
-	 std::swap(d->hold, d->error);
-	 std::move(d->install.begin(), d->install.end(), std::back_inserter(d->error));
-	 d->install.clear();
-      }
+      std::move(d->purge.begin(), d->purge.end(), std::back_inserter(d->error));
+      d->purge.clear();
+      std::move(d->deinstall.begin(), d->deinstall.end(), std::back_inserter(d->error));
+      d->deinstall.clear();
+      std::move(d->hold.begin(), d->hold.end(), std::back_inserter(d->error));
+      d->hold.clear();
+      std::move(d->unhold.begin(), d->unhold.end(), std::back_inserter(d->error));
+      d->unhold.clear();
+      std::move(d->install.begin(), d->install.end(), std::back_inserter(d->error));
+      d->install.clear();
    }
    return d->error.empty();
 }

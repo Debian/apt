@@ -167,8 +167,8 @@ static bool ShowAuto(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-/* DoHold - mark packages as hold by dpkg				{{{*/
-static bool DoHold(CommandLine &CmdL)
+// DoSelection - wrapping around dpkg selections			/*{{{*/
+static bool DoSelection(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -179,29 +179,39 @@ static bool DoHold(CommandLine &CmdL)
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
-   bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
-
-   auto const part = std::stable_partition(pkgset.begin(), pkgset.end(),
-        [](pkgCache::VerIterator const &V) { return V.ParentPkg()->SelectedState == pkgCache::State::Hold; });
-
-   auto const doneBegin = MarkHold ? pkgset.begin() : part;
-   auto const doneEnd = MarkHold ? part : pkgset.end();
-
-   std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::VerIterator const &V) {
-      if (MarkHold == true)
-        ioprintf(c1out, _("%s was already set on hold.\n"), V.ParentPkg().FullName(true).c_str());
-      else
-        ioprintf(c1out, _("%s was already not hold.\n"), V.ParentPkg().FullName(true).c_str());
-   });
-
-   if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
-      return true;
-
-   auto const changeBegin = MarkHold ? part : pkgset.begin();
-   auto const changeEnd = MarkHold ? pkgset.end() : part;
-
    APT::StateChanges marks;
-   std::move(changeBegin, changeEnd, std::back_inserter(MarkHold ? marks.Hold() : marks.Unhold()));
+   if (strcasecmp(CmdL.FileList[0], "hold") == 0 || strcasecmp(CmdL.FileList[0], "unhold") == 0)
+   {
+      auto const part = std::stable_partition(pkgset.begin(), pkgset.end(),
+	    [](pkgCache::VerIterator const &V) { return V.ParentPkg()->SelectedState == pkgCache::State::Hold; });
+
+      bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
+      auto const doneBegin = MarkHold ? pkgset.begin() : part;
+      auto const doneEnd = MarkHold ? part : pkgset.end();
+      std::for_each(doneBegin, doneEnd, [&MarkHold](pkgCache::VerIterator const &V) {
+	    if (MarkHold == true)
+	    ioprintf(c1out, _("%s was already set on hold.\n"), V.ParentPkg().FullName(true).c_str());
+	    else
+	    ioprintf(c1out, _("%s was already not hold.\n"), V.ParentPkg().FullName(true).c_str());
+	    });
+
+      if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
+	 return true;
+
+      auto const changeBegin = MarkHold ? part : pkgset.begin();
+      auto const changeEnd = MarkHold ? pkgset.end() : part;
+      std::move(changeBegin, changeEnd, std::back_inserter(MarkHold ? marks.Hold() : marks.Unhold()));
+   }
+   else
+   {
+      // FIXME: Maybe show a message for unchanged states here as well?
+      if (strcasecmp(CmdL.FileList[0], "purge") == 0)
+	 std::swap(marks.Purge(), pkgset);
+      else if (strcasecmp(CmdL.FileList[0], "deinstall") == 0 || strcasecmp(CmdL.FileList[0], "remove") == 0)
+	 std::swap(marks.Remove(), pkgset);
+      else //if (strcasecmp(CmdL.FileList[0], "install") == 0)
+	 std::swap(marks.Install(), pkgset);
+   }
    pkgset.clear();
 
    bool success = true;
@@ -211,22 +221,36 @@ static bool DoHold(CommandLine &CmdL)
       if (success == false)
 	 _error->Error(_("Executing dpkg failed. Are you root?"));
    }
-
    for (auto Ver : marks.Hold())
       ioprintf(c1out,_("%s set on hold.\n"), Ver.ParentPkg().FullName(true).c_str());
    for (auto Ver : marks.Unhold())
       ioprintf(c1out,_("Canceled hold on %s.\n"), Ver.ParentPkg().FullName(true).c_str());
-
+   for (auto Ver : marks.Purge())
+      ioprintf(c1out,_("Selected %s for purge.\n"), Ver.ParentPkg().FullName(true).c_str());
+   for (auto Ver : marks.Remove())
+      ioprintf(c1out,_("Selected %s for removal.\n"), Ver.ParentPkg().FullName(true).c_str());
+   for (auto Ver : marks.Install())
+      ioprintf(c1out,_("Selected %s for installation.\n"), Ver.ParentPkg().FullName(true).c_str());
    return success;
 }
 									/*}}}*/
-/* ShowHold - show packages set on hold in dpkg status			{{{*/
-static bool ShowHold(CommandLine &CmdL)
+static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
       return false;
+
+   pkgCache::State::PkgSelectedState selector;
+   if (strncasecmp(CmdL.FileList[0], "showpurge", strlen("showpurge")) == 0)
+      selector = pkgCache::State::Purge;
+   else if (strncasecmp(CmdL.FileList[0], "showdeinstall", strlen("showdeinstall")) == 0 ||
+	 strncasecmp(CmdL.FileList[0], "showremove", strlen("showremove")) == 0)
+      selector = pkgCache::State::DeInstall;
+   else if (strncasecmp(CmdL.FileList[0], "showhold", strlen("showhold")) == 0)
+      selector = pkgCache::State::Hold;
+   else //if (strcasecmp(CmdL.FileList[0], "showinstall", strlen("showinstall")) == 0)
+      selector = pkgCache::State::Install;
 
    std::vector<string> packages;
 
@@ -234,7 +258,7 @@ static bool ShowHold(CommandLine &CmdL)
    {
       packages.reserve(50); // how many holds are realistic? I hope just a few…
       for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
-	 if (P->SelectedState == pkgCache::State::Hold)
+	 if (P->SelectedState == selector)
 	    packages.push_back(P.FullName(true));
    }
    else
@@ -243,7 +267,7 @@ static bool ShowHold(CommandLine &CmdL)
       APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
       packages.reserve(pkgset.size());
       for (APT::PackageSet::const_iterator P = pkgset.begin(); P != pkgset.end(); ++P)
-	 if (P->SelectedState == pkgCache::State::Hold)
+	 if (P->SelectedState == selector)
 	    packages.push_back(P.FullName(true));
    }
 
@@ -295,15 +319,19 @@ int main(int argc,const char *argv[])					/*{{{*/
    CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
 				   {"auto",&DoAuto},
 				   {"manual",&DoAuto},
-				   {"hold",&DoHold},
-				   {"unhold",&DoHold},
+				   {"hold",&DoSelection},
+				   {"unhold",&DoSelection},
+				   {"install",&DoSelection},
+				   {"remove",&DoSelection}, // dpkg uses deinstall, but we use remove everywhere else
+				   {"deinstall",&DoSelection},
+				   {"purge",&DoSelection},
 				   {"showauto",&ShowAuto},
 				   {"showmanual",&ShowAuto},
-				   {"showhold",&ShowHold},
-				   // be nice and forgive the typo
-				   {"showholds",&ShowHold},
-				   // be nice and forgive it as it is technical right
-				   {"install",&DoHold},
+				   {"showhold",&ShowSelection}, {"showholds",&ShowSelection},
+				   {"showinstall",&ShowSelection}, {"showinstalls",&ShowSelection},
+				   {"showdeinstall",&ShowSelection}, {"showdeinstalls",&ShowSelection},
+				   {"showremove",&ShowSelection}, {"showremoves",&ShowSelection},
+				   {"showpurge",&ShowSelection}, {"showpurges",&ShowSelection},
 				   // obsolete commands for compatibility
 				   {"markauto", &DoMarkAuto},
 				   {"unmarkauto", &DoMarkAuto},

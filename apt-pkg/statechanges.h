@@ -14,14 +14,20 @@ class APT_PUBLIC StateChanges
 {
 public:
    // getter/setter for the different states
-   APT::VersionVector& Hold();
-   void Hold(pkgCache::VerIterator const &Ver);
-   APT::VersionVector& Unhold();
-   void Unhold(pkgCache::VerIterator const &Ver);
+#define APT_GETTERSETTER(Name) \
+   APT::VersionVector& Name(); \
+   void Name(pkgCache::VerIterator const &Ver)
+   APT_GETTERSETTER(Hold);
+   APT_GETTERSETTER(Unhold);
+   APT_GETTERSETTER(Install);
+   APT_GETTERSETTER(Remove);
+   APT_GETTERSETTER(Purge);
    APT::VersionVector& Error();
+#undef APT_GETTERSETTER
 
-   // forgets all unsaved changes
-   void Discard();
+   // operate on all containers at once
+   void clear();
+   bool empty() const;
 
    /** commit the staged changes to the database(s).
     *
