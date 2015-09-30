@@ -281,7 +281,7 @@ class pkgAcquire
     *
     *  \return the result of the download.
     */
-   RunResult Run(int PulseInterval=500000);
+   RunResult Run(int PulseInterval=50000000);
 
    /** \brief Remove all items from this download process, terminate
     *  all download workers, and empty all queues.

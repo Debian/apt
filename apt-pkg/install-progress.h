@@ -42,7 +42,7 @@ namespace Progress {
 
     virtual void Pulse() {};
     virtual long GetPulseInterval() {
-         return 500000;
+         return 50000000;
     };
 
     virtual bool StatusChanged(std::string PackageName,
