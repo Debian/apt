@@ -2,29 +2,18 @@
 #include <config.h>
 
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/progress.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/macros.h>
-#include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cacheset.h>
-#include <apt-private/private-output.h>
 #include <apt-private/private-search.h>
+#include <apt-private/private-package-info.h>
 
-#include <string.h>
-#include <iostream>
 #include <sstream>
-#include <map>
-#include <string>
-#include <utility>
+#include <vector>
 
-#include <apti18n.h>
 									/*}}}*/
 
 bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
@@ -58,7 +47,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 
    bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly", false);
 
-   std::map<std::string, std::string> output_map;
+   std::vector<PackageInfo> outputVector;
 
    LocalitySortedVersionSet bag;
    OpTextProgress progress(*_config);
@@ -111,18 +100,31 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 	 PkgsDone[P->ID] = true;
 	 std::stringstream outs;
 	 ListSingleVersion(CacheFile, records, V, outs, format);
-	 output_map.insert(std::make_pair<std::string, std::string>(
-		  PkgName, outs.str()));
+	 outputVector.emplace_back(CacheFile, records, V, outs.str());
       }
+   }
+   switch(PackageInfo::getOrderByOption())
+   {
+      case PackageInfo::REVERSEALPHABETIC:
+	 std::sort(outputVector.rbegin(), outputVector.rend(), OrderByAlphabetic);
+	 break;
+      case PackageInfo::STATUS:
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByStatus);
+	 break;
+      case PackageInfo::VERSION:
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByVersion);
+	 break;
+      default:
+	 std::sort(outputVector.begin(), outputVector.end(), OrderByAlphabetic);
+	 break;
    }
    APT_FREE_PATTERNS();
    progress.Done();
 
-   // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
-   // output the sorted map
-   std::map<std::string, std::string>::const_iterator K;
-   for (K = output_map.begin(); K != output_map.end(); ++K)
-      std::cout << (*K).second << std::endl;
+   // output the sorted vector
+   for(auto k:outputVector)
+      std::cout << k.formated_output() << std::endl;
+
 
    return true;
 }
