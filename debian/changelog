@@ -1,3 +1,31 @@
+apt (1.1~exp13) experimental; urgency=medium
+
+  [ Michael Vogt ]
+  * Use xgettext --no-location in make update-pot
+  * Fix select timeout to be 50msec instead of 0.5msec (Closes: #799857)
+
+  [ David Kalnischkies ]
+  * M-A: allowed pkgs of unconfigured archs do not statisfy :any
+  * implement dpkgs vision of interpreting pkg:<arch> dependencies
+  * add Source-Version field for EDSP
+  * fix insecure use of /tmp in EDSP solver 'dump' (Closes: 795600)
+  * select kernels to protect from autoremove based on Debian version
+    (Closes: 787827)
+  * implement autobit and pinning in EDSP solver 'apt'
+  * do not discard new manual-bits while applying EDSP solutions
+  * include debug information in the autoremove-kernels file
+  * avoid using global PendingError to avoid failing too often too soon
+  * implement apt-get source msg 'Please use: $vcs' for git
+  * do not ignore differently versioned self-provides
+  * do not generate bogus hashes if hash is disabled in apt-ftparchive
+  * use APT::FTPArchive hash settings as default for APT::FPArchive::$filetype
+  * add --sha512 option + documentation for apt-ftparchive
+  * deal with spaces in path, command and filepaths in apt-key
+  * add by-hash sources.list option and document all of by-hash
+  * fallback to well-known URI if by-hash fails (Closes: 798919)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 Oct 2015 18:27:22 +0200
+
 apt (1.1~exp12) experimental; urgency=medium
 
   [ David Kalnischkies ]
