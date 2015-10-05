@@ -253,10 +253,8 @@ string Configuration::FindDir(const char *Name,const char *Default) const
 // Configuration::FindVector - Find a vector of values			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns a vector of config values under the given item */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-vector<string> Configuration::FindVector(const char *Name) const {
-   return FindVector(Name, "");
-}
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 17)
+vector<string> Configuration::FindVector(const char *Name) const { return FindVector(Name, ""); }
 #endif
 vector<string> Configuration::FindVector(const char *Name, std::string const &Default) const
 {

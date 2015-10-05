@@ -253,7 +253,8 @@ setupenvironment() {
 	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
 
 	# cleanup the environment a bit
-	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+        # prefer our apt binaries over the system apt binaries
+	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	export LC_ALL=C.UTF-8
 	unset LANGUAGE APT_CONFIG
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
@@ -508,10 +509,12 @@ echo '$NAME says \"Hello!\"'" > ${BUILDDIR}/${NAME}
 
  -- Joe Sixpack <joe@example.org>  $(date -R)" > ${BUILDDIR}/debian/changelog
 	echo "Source: $NAME
-Section: $SECTION
 Priority: $PRIORITY
 Maintainer: Joe Sixpack <joe@example.org>
 Standards-Version: 3.9.3" > ${BUILDDIR}/debian/control
+	if [ "$SECTION" != '<none>' ]; then
+		echo "Section: $SECTION" >> ${BUILDDIR}/debian/control
+	fi
 	local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
 	test -z "$BUILDDEPS" || echo "$BUILDDEPS" >> ${BUILDDIR}/debian/control
 	echo "

@@ -169,7 +169,7 @@ class pkgCacheGenerator::ListParser
     * \param Hash of the currently parsed version
     * \param Ver to compare with
     */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    virtual
 #endif
       APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);

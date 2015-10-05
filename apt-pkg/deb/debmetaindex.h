@@ -51,7 +51,7 @@ class debReleaseIndex : public metaIndex {
    std::string MetaIndexFile(const char *Types) const;
    std::string MetaIndexURI(const char *Type) const;
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    virtual std::string LocalFileName() const;
 #endif
 

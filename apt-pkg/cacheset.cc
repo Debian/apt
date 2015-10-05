@@ -212,7 +212,7 @@ PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci,
 		}
 
 		pci->insert(Pkg);
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 		helper.showFnmatchSelection(Pkg, pattern);
 #else
 		helper.showRegExSelection(Pkg, pattern);
@@ -221,7 +221,7 @@ PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci,
 	}
 
 	if (found == false) {
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 		helper.canNotFindFnmatch(pci, Cache, pattern);
 #else
                 helper.canNotFindRegEx(pci, Cache, pattern);
@@ -320,7 +320,7 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 		 FromFnmatch(pci, Cache, str, helper) == false &&
 #endif
 		 FromRegEx(pci, Cache, str, helper) == false)
@@ -608,7 +608,7 @@ void CacheSetHelper::canNotFindRegEx(PackageContainerInterface * const /*pci*/, 
 	if (ShowError == true)
 		_error->Insert(ErrorType, _("Couldn't find any package by regex '%s'"), pattern.c_str());
 }
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 // canNotFindFnmatch - handle the case no package is found by a fnmatch	/*{{{*/
 void CacheSetHelper::canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
 	if (ShowError == true)
@@ -674,7 +674,7 @@ APT_CONST void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/
 					std::string const &/*pattern*/) {
 }
 									/*}}}*/
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 // showFnmatchSelection							/*{{{*/
 APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &pkg,
                                           std::string const &pattern) {

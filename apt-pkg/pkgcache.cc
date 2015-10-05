@@ -55,7 +55,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 8;
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
    MinorVersion = 2;
 #else
    MinorVersion = 1;

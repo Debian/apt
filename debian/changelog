@@ -1,3 +1,57 @@
+apt (1.0.10.2ubuntu1) wily; urgency=medium
+
+  * merged from debian/sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 05 Oct 2015 15:21:40 +0200
+
+apt (1.0.10.2) unstable; urgency=high
+
+  * Do not parse Status fields from remote sources
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 21 Aug 2015 19:34:43 +0200
+
+apt (1.0.10.1) unstable; urgency=medium
+
+  * hide first pdiff merge failure debug message (Closes: 793444)
+  * mark again deps of pkgs in APT::Never-MarkAuto-Sections as manual.
+    Thanks to Raphaël Hertzog and Adam Conrad for detailed reports and
+    initial patches (Closes: 793360) (LP: #1479207)
+  * explicitly build-dep on g++ (>= 4:5.2) for gcc5 transition
+
+ -- David Kalnischkies <david@kalnischkies.de>  Mon, 03 Aug 2015 07:29:40 +0200
+
+apt (1.0.10) unstable; urgency=medium
+
+  [ Zhou Mo ]
+  * po: update zh_CN translation slightly
+  * po: Update Simplified Chinese programs translation
+
+  [ Mert Dirik ]
+  * Turkish translation update for apt (Closes: #789491)
+
+  [ Yuri Kozlov ]
+  * Russian program translation update (Closes: 789709)
+
+  [ Milo Casagrande ]
+  * Italian program translation update (Closes: 782122)
+
+  [ Beatrice Torracca ]
+  * Italian manpage translation update (Closes: 776702)
+
+  [ Julian Andres Klode ]
+  * ExecFork: Use /proc/self/fd to determine which files to close
+    (Closes: #764204)
+
+  [ Michael Vogt ]
+  * Prepare new 1.0.10 release with gcc5 abi transition
+
+  [ David Kalnischkies ]
+  * stop depending on copy-on-write for std::string
+  * bump next-abi check above gcc5-abi bump
+  * update symbols file to use gcc5 abi mangling
+
+ -- David Kalnischkies <david@kalnischkies.de>  Sat, 25 Jul 2015 12:11:08 +0200
+
 apt (1.0.9.10ubuntu7) wily; urgency=medium
 
   * cherry pick 353c135 to fix build failure with gcc-snapshot

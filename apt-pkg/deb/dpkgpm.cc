@@ -1057,8 +1057,18 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    ++PackagesTotal;
 }
                                                                         /*}}}*/
-
-// compat
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 17)
+bool pkgDPkgPM::Go(int StatusFd)
+{
+   APT::Progress::PackageManager *progress = NULL;
+   if (StatusFd == -1)
+      progress = APT::Progress::PackageManagerProgressFactory();
+   else
+      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
+   
+   return GoNoABIBreak(progress);
+}
+#else
 bool pkgDPkgPM::Go(int StatusFd)
 {
    APT::Progress::PackageManager *progress = NULL;
@@ -1069,6 +1079,7 @@ bool pkgDPkgPM::Go(int StatusFd)
    
    return Go(progress);
 }
+#endif
 
 void pkgDPkgPM::StartPtyMagic()
 {
@@ -1223,7 +1234,7 @@ void pkgDPkgPM::StopPtyMagic()
  * through to human readable (and i10n-able)
  * names and calculates a percentage for each step.
  */
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 17)
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 #else
 bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)

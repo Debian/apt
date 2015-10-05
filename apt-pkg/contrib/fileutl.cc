@@ -778,12 +778,26 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
-      long ScOpenMax = sysconf(_SC_OPEN_MAX);
-      // Close all of our FDs - just in case
-      for (int K = 3; K != ScOpenMax; K++)
+      DIR *dir = opendir("/proc/self/fd");
+      if (dir != NULL)
       {
-	 if(KeepFDs.find(K) == KeepFDs.end())
-	    fcntl(K,F_SETFD,FD_CLOEXEC);
+	 struct dirent *ent;
+	 while ((ent = readdir(dir)))
+	 {
+	    int fd = atoi(ent->d_name);
+	    // If fd > 0, it was a fd number and not . or ..
+	    if (fd >= 3 && KeepFDs.find(fd) == KeepFDs.end())
+	       fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 }
+	 closedir(dir);
+      } else {
+	 long ScOpenMax = sysconf(_SC_OPEN_MAX);
+	 // Close all of our FDs - just in case
+	 for (int K = 3; K != ScOpenMax; K++)
+	 {
+	    if(KeepFDs.find(K) == KeepFDs.end())
+	       fcntl(K,F_SETFD,FD_CLOEXEC);
+	 }
       }
    }
    

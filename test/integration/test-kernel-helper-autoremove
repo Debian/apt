@@ -9,7 +9,7 @@ configarchitecture 'amd64'
 # the executed script would use the installed apt-config,
 # which is outside of our control
 msgtest 'Check that the installed apt-config supports' '--no-empty'
-if apt-config dump --no-empty >/dev/null 2>&1; then
+if /usr/bin/apt-config dump --no-empty >/dev/null 2>&1; then
 	msgpass
 else
 	msgskip

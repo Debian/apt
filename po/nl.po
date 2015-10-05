@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-04-13 07:23+0200\n"
+"POT-Creation-Date: 2015-08-21 19:35+0200\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -101,10 +101,10 @@ msgstr "Totale hoeveelheid verantwoorde ruimte: "
 msgid "Package file %s is out of sync."
 msgstr "Pakketbestand %s is niet meer gesynchroniseerd."
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442
-#: cmdline/apt-cache.cc:1444 cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59
-#: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
-#: apt-private/private-show.cc:171 apt-private/private-show.cc:173
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1442 cmdline/apt-cache.cc:1444
+#: cmdline/apt-cache.cc:1521 cmdline/apt-mark.cc:59 cmdline/apt-mark.cc:106
+#: cmdline/apt-mark.cc:232 apt-private/private-show.cc:171
+#: apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "Geen pakketten gevonden"
 
@@ -339,7 +339,7 @@ msgid "Couldn't find package %s"
 msgstr "Kon pakket %s niet vinden"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:865
+#: apt-private/private-install.cc:866
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s staat ingesteld op handmatig geïnstalleerd.\n"
@@ -404,7 +404,7 @@ msgid "Skipping already downloaded file '%s'\n"
 msgstr "Reeds opgehaald bestand '%s' wordt overgeslagen\n"
 
 #: cmdline/apt-get.cc:873 cmdline/apt-get.cc:876
-#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
+#: apt-private/private-install.cc:188 apt-private/private-install.cc:191
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Kon de hoeveelheid vrije schijfruimte op %s niet bepalen"
@@ -437,7 +437,7 @@ msgstr "Ophalen bron %s\n"
 msgid "Failed to fetch some archives."
 msgstr "Ophalen van sommige archieven is mislukt."
 
-#: cmdline/apt-get.cc:929 apt-private/private-install.cc:314
+#: cmdline/apt-get.cc:929 apt-private/private-install.cc:315
 msgid "Download complete and in download only mode"
 msgstr "Ophalen klaar en alleen-ophalen-modus staat aan"
 
@@ -707,9 +707,8 @@ msgstr "%s was reeds ingesteld op tegenhouden.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s was reeds ingesteld op niet tegenhouden.\n"
 
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
-#: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1317
+#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1328
+#: apt-pkg/contrib/fileutl.cc:827 apt-pkg/contrib/gpgv.cc:219
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Er is gewacht op %s, maar die kwam niet"
@@ -919,9 +918,9 @@ msgstr "De verbinding is verlopen"
 msgid "Server closed the connection"
 msgstr "De verbinding is verbroken door de server"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1476
-#: apt-pkg/contrib/fileutl.cc:1485 apt-pkg/contrib/fileutl.cc:1490
-#: apt-pkg/contrib/fileutl.cc:1492
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1491
+#: apt-pkg/contrib/fileutl.cc:1500 apt-pkg/contrib/fileutl.cc:1505
+#: apt-pkg/contrib/fileutl.cc:1507
 msgid "Read error"
 msgstr "Leesfout"
 
@@ -933,10 +932,10 @@ msgstr "Een reactie deed de buffer overlopen."
 msgid "Protocol corruption"
 msgstr "Protocolcorruptie"
 
-#: methods/ftp.cc:462 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:872
-#: apt-pkg/contrib/fileutl.cc:1598 apt-pkg/contrib/fileutl.cc:1607
-#: apt-pkg/contrib/fileutl.cc:1612 apt-pkg/contrib/fileutl.cc:1614
-#: apt-pkg/contrib/fileutl.cc:1639
+#: methods/ftp.cc:462 methods/rsh.cc:249 apt-pkg/contrib/fileutl.cc:887
+#: apt-pkg/contrib/fileutl.cc:1613 apt-pkg/contrib/fileutl.cc:1622
+#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1629
+#: apt-pkg/contrib/fileutl.cc:1654
 msgid "Write error"
 msgstr "Schrijffout"
 
@@ -994,7 +993,7 @@ msgstr "Verbinding met de datasocket is verlopen"
 msgid "Unable to accept connection"
 msgstr "Kan de verbinding niet aanvaarden"
 
-#: methods/ftp.cc:877 methods/server.cc:357 methods/rsh.cc:319
+#: methods/ftp.cc:877 methods/server.cc:367 methods/rsh.cc:319
 msgid "Problem hashing file"
 msgstr "Probleem bij het frommelen van het bestand"
 
@@ -1175,29 +1174,37 @@ msgstr "De HTTP-server verstuurde een ongeldige 'reply'-koptekst"
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "De HTTP-server verstuurde een ongeldige 'Content-Length'-koptekst"
 
-#: methods/server.cc:193
+#: methods/server.cc:200
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "De HTTP-server verstuurde een ongeldige 'Content-Range'-koptekst"
 
-#: methods/server.cc:195
+#: methods/server.cc:202
 msgid "This HTTP server has broken range support"
 msgstr "De bereik-ondersteuning van deze HTTP-server werkt niet"
 
-#: methods/server.cc:219
+#: methods/server.cc:229
 msgid "Unknown date format"
 msgstr "Onbekend datumformaat"
 
-#: methods/server.cc:494
+#: methods/server.cc:504
 msgid "Bad header data"
 msgstr "Foute koptekstdata"
 
-#: methods/server.cc:511 methods/server.cc:567
+#: methods/server.cc:521 methods/server.cc:577
 msgid "Connection failed"
 msgstr "Verbinding mislukt"
 
-#: methods/server.cc:659
+#: methods/server.cc:669
 msgid "Internal error"
 msgstr "Interne fout"
+
+#: apt-private/private-upgrade.cc:25
+msgid "Calculating upgrade... "
+msgstr "Opwaardering wordt doorgerekend... "
+
+#: apt-private/private-upgrade.cc:28
+msgid "Done"
+msgstr "Klaar"
 
 #: apt-private/private-list.cc:129
 msgid "Listing"
@@ -1402,11 +1409,11 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "Regex-compilatiefout - %s"
 
-#: apt-private/private-update.cc:31
+#: apt-private/private-update.cc:32
 msgid "The update command takes no arguments"
 msgstr "De opdracht 'update' aanvaardt geen argumenten"
 
-#: apt-private/private-update.cc:97
+#: apt-private/private-update.cc:98
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -1418,7 +1425,7 @@ msgstr[1] ""
 "%i pakketten kunnen opgewaardeerd worden. Voer 'apt list --upgradable' uit "
 "om ze te zien.\n"
 
-#: apt-private/private-update.cc:101
+#: apt-private/private-update.cc:102
 msgid "All packages are up to date."
 msgstr "Alle pakketten zijn up-to-date."
 
@@ -1440,31 +1447,19 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr "geen echt pakket (virtueel)"
 
-#: apt-private/private-main.cc:32
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"OPMERKING: Dit is slechts een simulatie!\n"
-"    Voor daadwerkelijke uitvoering heeft apt-get beheerdersrechten nodig.\n"
-"    Houd er ook rekening mee dat vergrendeling is uitgeschakeld.\n"
-"    Steun dus niet op haar relevantie voor de huidige concrete situatie!"
-
-#: apt-private/private-install.cc:82
+#: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Interne fout. InstallPackages is aangeroepen met defecte pakketten!"
 
-#: apt-private/private-install.cc:91
+#: apt-private/private-install.cc:92
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Pakketten moeten verwijderd worden maar verwijderen is uitgeschakeld."
 
-#: apt-private/private-install.cc:110
+#: apt-private/private-install.cc:111
 msgid "Internal error, Ordering didn't finish"
 msgstr "Interne fout. Rangschikken is niet voltooid"
 
-#: apt-private/private-install.cc:148
+#: apt-private/private-install.cc:149
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Merkwaardig... De groottes kwamen niet overeen. Gelieve apt@packages.debian."
@@ -1472,52 +1467,52 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:155
+#: apt-private/private-install.cc:156
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Er moeten %sB/%sB aan archieven opgehaald worden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:160
+#: apt-private/private-install.cc:161
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Er moeten %sB aan archieven opgehaald worden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:167
+#: apt-private/private-install.cc:168
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Na deze bewerking zal er %sB extra schijfruimte gebruikt worden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:172
+#: apt-private/private-install.cc:173
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Na deze bewerking zal er %sB schijfruimte vrijkomen.\n"
 
-#: apt-private/private-install.cc:200
+#: apt-private/private-install.cc:201
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "U heeft onvoldoende vrije schijfruimte op %s."
 
-#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:211 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Er zijn problemen en -y was gebruikt zonder --force-yes"
 
-#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
+#: apt-private/private-install.cc:217 apt-private/private-install.cc:239
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "'Trivial Only' is opgegeven. Dit is echter geen triviale bewerking."
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:220
+#: apt-private/private-install.cc:221
 msgid "Yes, do as I say!"
 msgstr "Ja, doe wat ik zeg!"
 
-#: apt-private/private-install.cc:222
+#: apt-private/private-install.cc:223
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1528,19 +1523,19 @@ msgstr ""
 "Als u wilt doorgaan, dient u de zin '%s' in te typen.\n"
 " ?] "
 
-#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
+#: apt-private/private-install.cc:229 apt-private/private-install.cc:247
 msgid "Abort."
 msgstr "Afbreken."
 
-#: apt-private/private-install.cc:243
+#: apt-private/private-install.cc:244
 msgid "Do you want to continue?"
 msgstr "Wilt u doorgaan?"
 
-#: apt-private/private-install.cc:313
+#: apt-private/private-install.cc:314
 msgid "Some files failed to download"
 msgstr "Ophalen van sommige bestanden is mislukt"
 
-#: apt-private/private-install.cc:320
+#: apt-private/private-install.cc:321
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1548,19 +1543,19 @@ msgstr ""
 "Kon sommige archieven niet ophalen. Misschien kunt u 'apt-get update' "
 "uitvoeren of het met '--fix-missing' proberen?"
 
-#: apt-private/private-install.cc:324
+#: apt-private/private-install.cc:325
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing en medium wisselen wordt op dit moment niet ondersteund"
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:330
 msgid "Unable to correct missing packages."
 msgstr "Geen oplossing gevonden voor de ontbrekende pakketten."
 
-#: apt-private/private-install.cc:330
+#: apt-private/private-install.cc:331
 msgid "Aborting install."
 msgstr "Installatie wordt afgebroken."
 
-#: apt-private/private-install.cc:366
+#: apt-private/private-install.cc:367
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1574,15 +1569,15 @@ msgstr[1] ""
 "De volgende pakketten zijn van uw systeem verdwenen omdat\n"
 "alle bestanden zijn overschreven door andere pakketten:"
 
-#: apt-private/private-install.cc:370
+#: apt-private/private-install.cc:371
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Let op: dit wordt automatisch en bewust gedaan door dpkg."
 
-#: apt-private/private-install.cc:391
+#: apt-private/private-install.cc:392
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "We mogen geen dingen verwijderen, kan AutoRemover niet starten"
 
-#: apt-private/private-install.cc:499
+#: apt-private/private-install.cc:500
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1600,15 +1595,15 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
+#: apt-private/private-install.cc:503 apt-private/private-install.cc:654
 msgid "The following information may help to resolve the situation:"
 msgstr "De volgende informatie kan misschien helpen de situatie op te lossen:"
 
-#: apt-private/private-install.cc:506
+#: apt-private/private-install.cc:507
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Interne fout. AutoRemover heeft dingen stukgemaakt"
 
-#: apt-private/private-install.cc:513
+#: apt-private/private-install.cc:514
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -1620,7 +1615,7 @@ msgstr[1] ""
 "De volgende pakketten zijn automatisch geïnstalleerd en zijn niet langer "
 "nodig:"
 
-#: apt-private/private-install.cc:517
+#: apt-private/private-install.cc:518
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1629,19 +1624,19 @@ msgstr[0] "%lu pakket was automatisch geïnstalleerd en is niet langer nodig.\n"
 msgstr[1] ""
 "%lu pakketten waren automatisch geïnstalleerd en zijn niet langer nodig.\n"
 
-#: apt-private/private-install.cc:519
+#: apt-private/private-install.cc:520
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "Gebruik 'apt-get autoremove' om het te verwijderen."
 msgstr[1] "Gebruik 'apt-get autoremove' om ze te verwijderen."
 
-#: apt-private/private-install.cc:612
+#: apt-private/private-install.cc:613
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr ""
 "U wilt waarschijnlijk 'apt-get -f install' uitvoeren om de volgende zaken op "
 "te lossen:"
 
-#: apt-private/private-install.cc:614
+#: apt-private/private-install.cc:615
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1649,7 +1644,7 @@ msgstr ""
 "Er zijn niet-voldane vereisten. U kunt best 'apt-get -f install' uitvoeren "
 "zonder pakketten op te geven, (of u kunt zelf een oplossing specificeren)."
 
-#: apt-private/private-install.cc:638
+#: apt-private/private-install.cc:639
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1661,69 +1656,81 @@ msgstr ""
 "de distributie 'unstable' gebruikt, dat sommige benodigde pakketten nog "
 "gemaakt moeten worden of uit 'Incoming' verwijderd werden."
 
-#: apt-private/private-install.cc:659
+#: apt-private/private-install.cc:660
 msgid "Broken packages"
 msgstr "Niet-werkende pakketten"
 
-#: apt-private/private-install.cc:712
+#: apt-private/private-install.cc:713
 msgid "The following extra packages will be installed:"
 msgstr "De volgende extra pakketten zullen geïnstalleerd worden:"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:803
 msgid "Suggested packages:"
 msgstr "Voorgestelde pakketten:"
 
-#: apt-private/private-install.cc:803
+#: apt-private/private-install.cc:804
 msgid "Recommended packages:"
 msgstr "Aanbevolen pakketten:"
 
-#: apt-private/private-install.cc:825
+#: apt-private/private-install.cc:826
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "%s wordt overgeslagen, het is al geïnstalleerd en opwaardering is niet "
 "gevraagd.\n"
 
-#: apt-private/private-install.cc:829
+#: apt-private/private-install.cc:830
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "%s wordt overgeslagen, het is niet geïnstalleerd en er is alleen om "
 "opwaarderingen gevraagd.\n"
 
-#: apt-private/private-install.cc:841
+#: apt-private/private-install.cc:842
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr ""
 "Herinstalleren van %s is niet mogelijk omdat het niet opgehaald kan worden.\n"
 
-#: apt-private/private-install.cc:846
+#: apt-private/private-install.cc:847
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s is reeds de nieuwste versie.\n"
 
-#: apt-private/private-install.cc:894
+#: apt-private/private-install.cc:895
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Versie '%s' (%s) geselecteerd voor '%s'\n"
 
-#: apt-private/private-install.cc:899
+#: apt-private/private-install.cc:900
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Versie '%s' (%s) geselecteerd voor '%s' omwille van '%s'\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:941
+#: apt-private/private-install.cc:942
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr ""
 "Pakket '%s' is niet geïnstalleerd, en wordt dus niet verwijderd. Bedoelde u "
 "'%s'?\n"
 
-#: apt-private/private-install.cc:947
+#: apt-private/private-install.cc:948
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Pakket '%s' is niet geïnstalleerd, en wordt dus niet verwijderd\n"
+
+#: apt-private/private-main.cc:32
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"OPMERKING: Dit is slechts een simulatie!\n"
+"    Voor daadwerkelijke uitvoering heeft apt-get beheerdersrechten nodig.\n"
+"    Houd er ook rekening mee dat vergrendeling is uitgeschakeld.\n"
+"    Steun dus niet op haar relevantie voor de huidige concrete situatie!"
 
 #: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
@@ -1760,14 +1767,6 @@ msgstr "Uw bestand '%s' is gewijzigd. Voer 'apt-get update' uit."
 #: apt-private/private-search.cc:69
 msgid "Full Text Search"
 msgstr "Volledige tekst doorzoeken"
-
-#: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade... "
-msgstr "Opwaardering wordt doorgerekend... "
-
-#: apt-private/private-upgrade.cc:28
-msgid "Done"
-msgstr "Klaar"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1808,18 +1807,18 @@ msgstr ""
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:471 apt-pkg/init.cc:103
-#: apt-pkg/init.cc:111 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
-#: apt-pkg/clean.cc:43 apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381
+#: methods/mirror.cc:95 apt-pkg/init.cc:103 apt-pkg/init.cc:111
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/clean.cc:43
+#: apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
 #: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205
+#: apt-pkg/contrib/cdromutl.cc:205 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kan %s niet lezen"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:49
-#: apt-pkg/clean.cc:67 apt-pkg/clean.cc:130 apt-pkg/acquire.cc:500
-#: apt-pkg/acquire.cc:525 apt-pkg/contrib/cdromutl.cc:201
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:500
+#: apt-pkg/acquire.cc:525 apt-pkg/clean.cc:49 apt-pkg/clean.cc:67
+#: apt-pkg/clean.cc:130 apt-pkg/contrib/cdromutl.cc:201
 #: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
@@ -1899,171 +1898,6 @@ msgstr ""
 msgid "Merging available information"
 msgstr "De beschikbare informatie wordt samengevoegd"
 
-#: apt-inst/filelist.cc:380
-msgid "DropNode called on still linked node"
-msgstr "DropNode werd aangeroepen voor een nog steeds aangekoppeld punt"
-
-#: apt-inst/filelist.cc:412
-msgid "Failed to locate the hash element!"
-msgstr "Situeren van het hash-element is mislukt!"
-
-#: apt-inst/filelist.cc:459
-msgid "Failed to allocate diversion"
-msgstr "Toewijzen van de omleiding is mislukt"
-
-#: apt-inst/filelist.cc:464
-msgid "Internal error in AddDiversion"
-msgstr "Interne fout in AddDiversion"
-
-#: apt-inst/filelist.cc:477
-#, c-format
-msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr "Er wordt gepoogd om de omleiding %s -> %s en %s/%s te overschrijven"
-
-#: apt-inst/filelist.cc:506
-#, c-format
-msgid "Double add of diversion %s -> %s"
-msgstr "Dubbele toevoeging van de omleiding %s -> %s"
-
-#: apt-inst/filelist.cc:549
-#, c-format
-msgid "Duplicate conf file %s/%s"
-msgstr "Dubbel configuratiebestand %s/%s"
-
-#: apt-inst/extract.cc:101 apt-inst/extract.cc:172
-#, c-format
-msgid "The path %s is too long"
-msgstr "Het pad %s is te lang"
-
-#: apt-inst/extract.cc:132
-#, c-format
-msgid "Unpacking %s more than once"
-msgstr "%s wordt meer dan eens uitgepakt"
-
-#: apt-inst/extract.cc:142
-#, c-format
-msgid "The directory %s is diverted"
-msgstr "De map %s is al omgeleid"
-
-#: apt-inst/extract.cc:152
-#, c-format
-msgid "The package is trying to write to the diversion target %s/%s"
-msgstr "Het pakket probeert om weg te schrijven naar het omleidingsdoel %s/%s"
-
-#: apt-inst/extract.cc:162 apt-inst/extract.cc:306
-msgid "The diversion path is too long"
-msgstr "Het omleidingspad is te lang"
-
-#: apt-inst/extract.cc:186 apt-inst/extract.cc:199 apt-inst/extract.cc:216
-#: ftparchive/cachedb.cc:182
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Opvragen van de status van %s is mislukt"
-
-#: apt-inst/extract.cc:194 ftparchive/multicompress.cc:374
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Hernoemen van %s naar %s is mislukt"
-
-#: apt-inst/extract.cc:249
-#, c-format
-msgid "The directory %s is being replaced by a non-directory"
-msgstr "De map %s wordt vervangen door een niet-map"
-
-#: apt-inst/extract.cc:289
-msgid "Failed to locate node in its hash bucket"
-msgstr "Vinden van de knoop in de hash-emmer is mislukt"
-
-#: apt-inst/extract.cc:293
-msgid "The path is too long"
-msgstr "Het pad is te lang"
-
-#: apt-inst/extract.cc:421
-#, c-format
-msgid "Overwrite package match with no version for %s"
-msgstr "Pakket-overeenkomst wordt overschreven zonder een versie voor %s"
-
-#: apt-inst/extract.cc:438
-#, c-format
-msgid "File %s/%s overwrites the one in the package %s"
-msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
-
-#: apt-inst/extract.cc:498
-#, c-format
-msgid "Unable to stat %s"
-msgstr "Kan de status van %s niet opvragen"
-
-#: apt-inst/dirstream.cc:42 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:54
-#, c-format
-msgid "Failed to write file %s"
-msgstr "Wegschrijven van bestand %s is mislukt"
-
-#: apt-inst/dirstream.cc:105
-#, c-format
-msgid "Failed to close file %s"
-msgstr "Sluiten van bestand %s is mislukt"
-
-#: apt-inst/deb/debfile.cc:47 apt-inst/deb/debfile.cc:54
-#: apt-inst/deb/debfile.cc:63
-#, c-format
-msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Dit is geen geldig DEB-archief, het onderdeel '%s' mankeert"
-
-#: apt-inst/deb/debfile.cc:132
-#, c-format
-msgid "Internal error, could not locate member %s"
-msgstr "Interne fout, kon onderdeel %s niet vinden"
-
-#: apt-inst/deb/debfile.cc:227
-msgid "Unparsable control file"
-msgstr "Niet-ontleedbaar 'control'-bestand"
-
-#: apt-inst/contrib/arfile.cc:76
-msgid "Invalid archive signature"
-msgstr "Ongeldige archiefondertekening"
-
-#: apt-inst/contrib/arfile.cc:84
-msgid "Error reading archive member header"
-msgstr "Fout bij het lezen van de koptekst van het archiefonderdeel"
-
-#: apt-inst/contrib/arfile.cc:96
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Ongeldige koptekst voor archiefonderdeel %s"
-
-#: apt-inst/contrib/arfile.cc:108
-msgid "Invalid archive member header"
-msgstr "Ongeldige koptekst in archiefonderdeel"
-
-#: apt-inst/contrib/arfile.cc:137
-msgid "Archive is too short"
-msgstr "Archief is te kort"
-
-#: apt-inst/contrib/arfile.cc:141
-msgid "Failed to read the archive headers"
-msgstr "Lezen van de archiefkopteksten is mislukt"
-
-#: apt-inst/contrib/extracttar.cc:124
-msgid "Failed to create pipes"
-msgstr "Aanmaken van pijpen is mislukt"
-
-#: apt-inst/contrib/extracttar.cc:151
-msgid "Failed to exec gzip "
-msgstr "Uitvoeren van gzip is mislukt "
-
-#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
-msgid "Corrupted archive"
-msgstr "Beschadigd archief"
-
-#: apt-inst/contrib/extracttar.cc:203
-msgid "Tar checksum failed, archive corrupted"
-msgstr "Tar controlesom klopt niet, het pakket is beschadigd"
-
-#: apt-inst/contrib/extracttar.cc:308
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
-msgstr "Onbekend TAR-kopteksttype %u, onderdeel %s"
-
 #: apt-pkg/install-progress.cc:57
 #, c-format
 msgid "Progress: [%3i%%]"
@@ -2114,6 +1948,21 @@ msgstr "Kan geen authenticiteitsrecord vinden voor: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Hash-som komt niet overeen voor: %s"
 
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"De pakketlijsten of het statusbestand konden of niet ontleed, of niet "
+"geopend worden."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr ""
+"U kunt misschien 'apt-get update' uitvoeren om deze problemen te verhelpen"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "De lijst van bronnen kon niet gelezen worden."
+
 #: apt-pkg/acquire-worker.cc:116
 #, c-format
 msgid "The method driver %s could not be found."
@@ -2135,21 +1984,6 @@ msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 "Gelieve de schijf met label '%s' in het station '%s' te plaatsen en op "
 "'enter' te drukken."
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"De pakketlijsten of het statusbestand konden of niet ontleed, of niet "
-"geopend worden."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr ""
-"U kunt misschien 'apt-get update' uitvoeren om deze problemen te verhelpen"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "De lijst van bronnen kon niet gelezen worden."
 
 #: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
@@ -2176,59 +2010,59 @@ msgstr "Deze APT ondersteunt het versienummeringssysteem '%s' niet"
 msgid "The package cache was built for a different architecture"
 msgstr "De pakketcache was aangemaakt voor een andere architectuur"
 
-#: apt-pkg/pkgcache.cc:321
+#: apt-pkg/pkgcache.cc:309
 msgid "Depends"
 msgstr "Vereisten"
 
-#: apt-pkg/pkgcache.cc:321
+#: apt-pkg/pkgcache.cc:309
 msgid "PreDepends"
 msgstr "Voor-Vereisten"
 
-#: apt-pkg/pkgcache.cc:321
+#: apt-pkg/pkgcache.cc:309
 msgid "Suggests"
 msgstr "Suggesties"
 
-#: apt-pkg/pkgcache.cc:322
+#: apt-pkg/pkgcache.cc:310
 msgid "Recommends"
 msgstr "Aanbevelingen"
 
-#: apt-pkg/pkgcache.cc:322
+#: apt-pkg/pkgcache.cc:310
 msgid "Conflicts"
 msgstr "Conflicteert met"
 
-#: apt-pkg/pkgcache.cc:322
+#: apt-pkg/pkgcache.cc:310
 msgid "Replaces"
 msgstr "Vervangt"
 
-#: apt-pkg/pkgcache.cc:323
+#: apt-pkg/pkgcache.cc:311
 msgid "Obsoletes"
 msgstr "Doet in onbruik geraken"
 
-#: apt-pkg/pkgcache.cc:323
+#: apt-pkg/pkgcache.cc:311
 msgid "Breaks"
 msgstr "Breekt"
 
-#: apt-pkg/pkgcache.cc:323
+#: apt-pkg/pkgcache.cc:311
 msgid "Enhances"
 msgstr "Vult aan"
 
-#: apt-pkg/pkgcache.cc:334
+#: apt-pkg/pkgcache.cc:322
 msgid "important"
 msgstr "belangrijk"
 
-#: apt-pkg/pkgcache.cc:334
+#: apt-pkg/pkgcache.cc:322
 msgid "required"
 msgstr "noodzakelijk"
 
-#: apt-pkg/pkgcache.cc:334
+#: apt-pkg/pkgcache.cc:322
 msgid "standard"
 msgstr "standaard"
 
-#: apt-pkg/pkgcache.cc:335
+#: apt-pkg/pkgcache.cc:323
 msgid "optional"
 msgstr "optioneel"
 
-#: apt-pkg/pkgcache.cc:335
+#: apt-pkg/pkgcache.cc:323
 msgid "extra"
 msgstr "extra"
 
@@ -2236,100 +2070,6 @@ msgstr "extra"
 #, c-format
 msgid "Index file type '%s' is not supported"
 msgstr "Indexbestand van type '%s' wordt niet ondersteund"
-
-#: apt-pkg/sourcelist.cc:127
-#, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Niet juist gevormd element %lu in bronlijst %s (URI-verwerking)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s ([optie] onbegrijpelijk)"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s ([optie] te kort)"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
-"Niet juist gevormde regel %lu in bronlijst %s ([%s] is geen toekenning)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr ""
-"Niet juist gevormde regel %lu in bronlijst %s ([%s] heeft geen sleutel)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
-"Niet juist gevormde regel %lu in bronlijst %s ([%s] sleutel %s heeft geen "
-"waarde)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s (URI-verwerking)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s (absolute dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Niet juist gevormde regel %lu in bronlijst %s (ontleding van dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s wordt geopend"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Regel %u van de bronlijst %s is te lang."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Niet juist gevormde regel %u in bronlijst %s (type)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Type '%s' op regel %u in bronlijst %s is onbekend"
-
-#: apt-pkg/sourcelist.cc:416
-#, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Type '%s' van element %u in bronlijst %s is onbekend"
-
-#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Opschonen van %s wordt niet ondersteund"
-
-#: apt-pkg/clean.cc:64
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Kan de status van %s niet opvragen."
 
 #: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
@@ -2423,7 +2163,7 @@ msgstr "Externe oplosser faalde zonder passende foutmelding"
 msgid "Execute external solver"
 msgstr "Externe oplosser uitvoeren"
 
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2062
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "het hernoemen is mislukt, %s (%s -> %s)."
@@ -2440,7 +2180,7 @@ msgstr "Grootte komt niet overeen"
 msgid "Invalid file format"
 msgstr "Ongeldig bestandsformaat"
 
-#: apt-pkg/acquire-item.cc:1650
+#: apt-pkg/acquire-item.cc:1651
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -2449,17 +2189,17 @@ msgstr ""
 "Kon de verwachte regel '%s' in het Release-bestand niet vinden (Foute regel "
 "in het bestand sources.list of bestand in een ongeldig formaat)"
 
-#: apt-pkg/acquire-item.cc:1666
+#: apt-pkg/acquire-item.cc:1667
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Kon de hash-som voor '%s' niet vinden in het Release-bestand"
 
-#: apt-pkg/acquire-item.cc:1708
+#: apt-pkg/acquire-item.cc:1709
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 "Er zijn geen publieke sleutels beschikbaar voor de volgende sleutel-ID's:\n"
 
-#: apt-pkg/acquire-item.cc:1746
+#: apt-pkg/acquire-item.cc:1747
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -2468,12 +2208,12 @@ msgstr ""
 "Het Release-bestand voor %s is vervallen (ongeldig sinds %s). Bijwerkingen "
 "voor deze pakketbron zullen niet uitgevoerd worden."
 
-#: apt-pkg/acquire-item.cc:1768
+#: apt-pkg/acquire-item.cc:1769
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Conflicterende distributie: %s (verwachtte %s, maar kreeg %s)"
 
-#: apt-pkg/acquire-item.cc:1798
+#: apt-pkg/acquire-item.cc:1799
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -2484,12 +2224,12 @@ msgstr ""
 "%s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1808 apt-pkg/acquire-item.cc:1813
+#: apt-pkg/acquire-item.cc:1809 apt-pkg/acquire-item.cc:1814
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG-fout: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1936
+#: apt-pkg/acquire-item.cc:1937
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2498,12 +2238,12 @@ msgstr ""
 "Er kon geen bestand gevonden worden voor pakket %s. Dit kan betekenen dat u "
 "dit pakket handmatig moet repareren (wegens ontbrekende architectuur)"
 
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:2003
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Kan geen bron vinden om versie '%s' van '%s' op te halen"
 
-#: apt-pkg/acquire-item.cc:2060
+#: apt-pkg/acquire-item.cc:2061
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2531,6 +2271,11 @@ msgstr "Archiefmap %spartial is afwezig."
 msgid "Unable to lock directory %s"
 msgstr "Kan de map %s niet vergrendelen"
 
+#: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Opschonen van %s wordt niet ondersteund"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:902
@@ -2542,12 +2287,6 @@ msgstr "Bestand %li van %li wordt opgehaald (nog %s te gaan)"
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Bestand %li van %li wordt opgehaald"
-
-#: apt-pkg/srcrecords.cc:53
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr ""
-"Uw bronnenlijst (/etc/apt/sources.list) dient tenminste één bron-URI te "
-"bevatten"
 
 #: apt-pkg/policy.cc:83
 #, c-format
@@ -2573,7 +2312,26 @@ msgstr "Pintype %s wordt niet begrepen"
 msgid "No priority (or zero) specified for pin"
 msgstr "Er is geen prioriteit (of nul) opgegeven voor deze pin"
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:957
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"Ophalen van sommige indexbestanden is mislukt. Deze zijn of genegeerd, of er "
+"zijn oudere versies van gebruikt."
+
+#: apt-pkg/srcrecords.cc:53
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr ""
+"Uw bronnenlijst (/etc/apt/sources.list) dient tenminste één bron-URI te "
+"bevatten"
+
+#: apt-pkg/clean.cc:64
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Kan de status van %s niet opvragen."
+
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:958
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2582,12 +2340,12 @@ msgstr ""
 "Kon onmiddellijke configuratie van '%s' niet uitvoeren. Voor details zie "
 "'man 5 apt.conf', onder APT::Immediate-Configure. (%d)"
 
-#: apt-pkg/packagemanager.cc:550 apt-pkg/packagemanager.cc:580
+#: apt-pkg/packagemanager.cc:551 apt-pkg/packagemanager.cc:581
 #, c-format
 msgid "Could not configure '%s'. "
 msgstr "Kon '%s' niet configureren. "
 
-#: apt-pkg/packagemanager.cc:630
+#: apt-pkg/packagemanager.cc:631
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2599,13 +2357,10 @@ msgstr ""
 "slecht, maar als u dit echt wilt doen, dan dient u de optie APT::Force-"
 "LoopBreak te activeren."
 
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"Ophalen van sommige indexbestanden is mislukt. Deze zijn of genegeerd, of er "
-"zijn oudere versies van gebruikt."
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Regel %u van de bronlijst %s is te lang."
 
 #: apt-pkg/cdrom.cc:571
 msgid "Unmounting CD-ROM...\n"
@@ -2826,6 +2581,256 @@ msgstr "Ongeldige 'Valid-Until'-vermelding in Release-bestand %s"
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ongeldige 'Date'-vermelding in Release-bestand %s"
 
+#: apt-pkg/sourcelist.cc:127
+#, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Niet juist gevormd element %lu in bronlijst %s (URI-verwerking)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s ([optie] onbegrijpelijk)"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s ([optie] te kort)"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr ""
+"Niet juist gevormde regel %lu in bronlijst %s ([%s] is geen toekenning)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr ""
+"Niet juist gevormde regel %lu in bronlijst %s ([%s] heeft geen sleutel)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr ""
+"Niet juist gevormde regel %lu in bronlijst %s ([%s] sleutel %s heeft geen "
+"waarde)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s (URI-verwerking)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s (absolute dist)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Niet juist gevormde regel %lu in bronlijst %s (ontleding van dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s wordt geopend"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Niet juist gevormde regel %u in bronlijst %s (type)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Type '%s' op regel %u in bronlijst %s is onbekend"
+
+#: apt-pkg/sourcelist.cc:416
+#, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Type '%s' van element %u in bronlijst %s is onbekend"
+
+#: apt-pkg/deb/dpkgpm.cc:112
+#, c-format
+msgid "Installing %s"
+msgstr "%s wordt geïnstalleerd"
+
+#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
+#, c-format
+msgid "Configuring %s"
+msgstr "%s wordt geconfigureerd"
+
+#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
+#, c-format
+msgid "Removing %s"
+msgstr "%s wordt verwijderd"
+
+#: apt-pkg/deb/dpkgpm.cc:115
+#, c-format
+msgid "Completely removing %s"
+msgstr "%s wordt volledig verwijderd"
+
+#: apt-pkg/deb/dpkgpm.cc:116
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr "De verdwijning van %s wordt opgemerkt"
+
+#: apt-pkg/deb/dpkgpm.cc:117
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr "Post-installatie-trigger %s wordt uitgevoerd"
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:847
+#, c-format
+msgid "Directory '%s' missing"
+msgstr "Map '%s' ontbreekt"
+
+#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
+#, c-format
+msgid "Could not open file '%s'"
+msgstr "Kon het bestand '%s' niet openen"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing %s"
+msgstr "%s wordt voorbereid"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Unpacking %s"
+msgstr "%s wordt uitgepakt"
+
+#: apt-pkg/deb/dpkgpm.cc:1015
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "Configuratie van %s wordt voorbereid"
+
+#: apt-pkg/deb/dpkgpm.cc:1017
+#, c-format
+msgid "Installed %s"
+msgstr "%s is geïnstalleerd"
+
+#: apt-pkg/deb/dpkgpm.cc:1022
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "Verwijderen van %s wordt voorbereid"
+
+#: apt-pkg/deb/dpkgpm.cc:1024
+#, c-format
+msgid "Removed %s"
+msgstr "%s is verwijderd"
+
+#: apt-pkg/deb/dpkgpm.cc:1029
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "Volledig verwijderen van %s wordt voorbereid"
+
+#: apt-pkg/deb/dpkgpm.cc:1030
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s is volledig verwijderd"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+#, c-format
+msgid "Can not write log (%s)"
+msgstr "Kan log (%s) niet opschrijven"
+
+#: apt-pkg/deb/dpkgpm.cc:1102 apt-pkg/deb/dpkgpm.cc:1190
+msgid "Is /dev/pts mounted?"
+msgstr "Is /dev/pts aangekoppeld?"
+
+#: apt-pkg/deb/dpkgpm.cc:1681
+msgid "Operation was interrupted before it could finish"
+msgstr "Bewerking werd afgebroken vooraleer ze beëindigd was"
+
+#: apt-pkg/deb/dpkgpm.cc:1743
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat het maximum aantal verslagen "
+"(MaxReports) al is bereikt"
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1748
+msgid "dependency problems - leaving unconfigured"
+msgstr "problemen met vereisten - wordt niet geconfigureerd"
+
+#: apt-pkg/deb/dpkgpm.cc:1750
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat de foutmelding aangeeft dat de "
+"fout het gevolg is van een eerdere mislukking."
+
+#: apt-pkg/deb/dpkgpm.cc:1756
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat de foutmelding als oorzaak een "
+"volle schijf opgeeft."
+
+#: apt-pkg/deb/dpkgpm.cc:1763
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat de foutmelding als oorzaak "
+"onvoldoende-geheugen opgeeft."
+
+#: apt-pkg/deb/dpkgpm.cc:1770 apt-pkg/deb/dpkgpm.cc:1776
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat de foutmelding een probleem op "
+"het lokale systeem signaleert."
+
+#: apt-pkg/deb/dpkgpm.cc:1798
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+"Er is geen apport-verslag weggeschreven omdat de foutmelding een fout van "
+"dpkg I/O signaleert."
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+"Kan de beheersmap (%s) niet vergrendelen. Is deze in gebruik door een ander "
+"proces?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "Kan de beheersmap (%s) niet vergrendelen. Heeft u beheerdersrechten?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg werd onderbroken; voer handmatig '%s' uit om het probleem te verhelpen. "
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Niet vergrendeld"
+
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:418
 #, c-format
@@ -2902,75 +2907,75 @@ msgstr ""
 "Negeren van bestand '%s' in map '%s' omdat het een ongeldige "
 "bestandsextensie heeft"
 
-#: apt-pkg/contrib/fileutl.cc:824
+#: apt-pkg/contrib/fileutl.cc:839
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Subproces %s ontving een segmentatiefout."
 
-#: apt-pkg/contrib/fileutl.cc:826
+#: apt-pkg/contrib/fileutl.cc:841
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Subproces %s ontving signaal %u."
 
-#: apt-pkg/contrib/fileutl.cc:830 apt-pkg/contrib/gpgv.cc:239
+#: apt-pkg/contrib/fileutl.cc:845 apt-pkg/contrib/gpgv.cc:239
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Subproces %s gaf een foutcode terug (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:832 apt-pkg/contrib/gpgv.cc:232
+#: apt-pkg/contrib/fileutl.cc:847 apt-pkg/contrib/gpgv.cc:232
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Subproces %s sloot onverwacht af"
 
-#: apt-pkg/contrib/fileutl.cc:913
+#: apt-pkg/contrib/fileutl.cc:928
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Probleem bij het sluiten van het gzip-bestand %s"
 
-#: apt-pkg/contrib/fileutl.cc:1101
+#: apt-pkg/contrib/fileutl.cc:1116
 #, c-format
 msgid "Could not open file %s"
 msgstr "Kon het bestand %s niet openen"
 
-#: apt-pkg/contrib/fileutl.cc:1160 apt-pkg/contrib/fileutl.cc:1207
+#: apt-pkg/contrib/fileutl.cc:1175 apt-pkg/contrib/fileutl.cc:1222
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Kon de bestandsindicator %d niet openen"
 
-#: apt-pkg/contrib/fileutl.cc:1315
+#: apt-pkg/contrib/fileutl.cc:1330
 msgid "Failed to create subprocess IPC"
 msgstr "Aanmaken IPC-subproces is mislukt"
 
-#: apt-pkg/contrib/fileutl.cc:1373
+#: apt-pkg/contrib/fileutl.cc:1388
 msgid "Failed to exec compressor "
 msgstr "Uitvoeren van de compressor is mislukt "
 
-#: apt-pkg/contrib/fileutl.cc:1514
+#: apt-pkg/contrib/fileutl.cc:1529
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "lezen; moet er nog %lu lezen, maar er schieten er geen meer over"
 
-#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1649
+#: apt-pkg/contrib/fileutl.cc:1642 apt-pkg/contrib/fileutl.cc:1664
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "schrijven; de laatste %lu konden niet weggeschreven worden"
 
-#: apt-pkg/contrib/fileutl.cc:1915
+#: apt-pkg/contrib/fileutl.cc:1930
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Probleem bij het sluiten van het bestand %s"
 
-#: apt-pkg/contrib/fileutl.cc:1927
+#: apt-pkg/contrib/fileutl.cc:1942
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Probleem bij het hernoemen van het bestand %s naar %s"
 
-#: apt-pkg/contrib/fileutl.cc:1938
+#: apt-pkg/contrib/fileutl.cc:1953
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Probleem bij het ontkoppelen van het bestand %s"
 
-#: apt-pkg/contrib/fileutl.cc:1951
+#: apt-pkg/contrib/fileutl.cc:1966
 msgid "Problem syncing the file"
 msgstr "Probleem bij het synchroniseren van het bestand"
 
@@ -3172,177 +3177,6 @@ msgstr "Betekenis van %s wordt niet begrepen, probeer 'true' of 'false'."
 msgid "Invalid operation %s"
 msgstr "Ongeldige bewerking %s"
 
-#: apt-pkg/deb/dpkgpm.cc:112
-#, c-format
-msgid "Installing %s"
-msgstr "%s wordt geïnstalleerd"
-
-#: apt-pkg/deb/dpkgpm.cc:113 apt-pkg/deb/dpkgpm.cc:1016
-#, c-format
-msgid "Configuring %s"
-msgstr "%s wordt geconfigureerd"
-
-#: apt-pkg/deb/dpkgpm.cc:114 apt-pkg/deb/dpkgpm.cc:1023
-#, c-format
-msgid "Removing %s"
-msgstr "%s wordt verwijderd"
-
-#: apt-pkg/deb/dpkgpm.cc:115
-#, c-format
-msgid "Completely removing %s"
-msgstr "%s wordt volledig verwijderd"
-
-#: apt-pkg/deb/dpkgpm.cc:116
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr "De verdwijning van %s wordt opgemerkt"
-
-#: apt-pkg/deb/dpkgpm.cc:117
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr "Post-installatie-trigger %s wordt uitgevoerd"
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:847
-#, c-format
-msgid "Directory '%s' missing"
-msgstr "Map '%s' ontbreekt"
-
-#: apt-pkg/deb/dpkgpm.cc:862 apt-pkg/deb/dpkgpm.cc:884
-#, c-format
-msgid "Could not open file '%s'"
-msgstr "Kon het bestand '%s' niet openen"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing %s"
-msgstr "%s wordt voorbereid"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Unpacking %s"
-msgstr "%s wordt uitgepakt"
-
-#: apt-pkg/deb/dpkgpm.cc:1015
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "Configuratie van %s wordt voorbereid"
-
-#: apt-pkg/deb/dpkgpm.cc:1017
-#, c-format
-msgid "Installed %s"
-msgstr "%s is geïnstalleerd"
-
-#: apt-pkg/deb/dpkgpm.cc:1022
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "Verwijderen van %s wordt voorbereid"
-
-#: apt-pkg/deb/dpkgpm.cc:1024
-#, c-format
-msgid "Removed %s"
-msgstr "%s is verwijderd"
-
-#: apt-pkg/deb/dpkgpm.cc:1029
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "Volledig verwijderen van %s wordt voorbereid"
-
-#: apt-pkg/deb/dpkgpm.cc:1030
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s is volledig verwijderd"
-
-#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
-#, c-format
-msgid "Can not write log (%s)"
-msgstr "Kan log (%s) niet opschrijven"
-
-#: apt-pkg/deb/dpkgpm.cc:1091 apt-pkg/deb/dpkgpm.cc:1179
-msgid "Is /dev/pts mounted?"
-msgstr "Is /dev/pts aangekoppeld?"
-
-#: apt-pkg/deb/dpkgpm.cc:1670
-msgid "Operation was interrupted before it could finish"
-msgstr "Bewerking werd afgebroken vooraleer ze beëindigd was"
-
-#: apt-pkg/deb/dpkgpm.cc:1732
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat het maximum aantal verslagen "
-"(MaxReports) al is bereikt"
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1737
-msgid "dependency problems - leaving unconfigured"
-msgstr "problemen met vereisten - wordt niet geconfigureerd"
-
-#: apt-pkg/deb/dpkgpm.cc:1739
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat de foutmelding aangeeft dat de "
-"fout het gevolg is van een eerdere mislukking."
-
-#: apt-pkg/deb/dpkgpm.cc:1745
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat de foutmelding als oorzaak een "
-"volle schijf opgeeft."
-
-#: apt-pkg/deb/dpkgpm.cc:1752
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat de foutmelding als oorzaak "
-"onvoldoende-geheugen opgeeft."
-
-#: apt-pkg/deb/dpkgpm.cc:1759 apt-pkg/deb/dpkgpm.cc:1765
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat de foutmelding een probleem op "
-"het lokale systeem signaleert."
-
-#: apt-pkg/deb/dpkgpm.cc:1787
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-"Er is geen apport-verslag weggeschreven omdat de foutmelding een fout van "
-"dpkg I/O signaleert."
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-"Kan de beheersmap (%s) niet vergrendelen. Is deze in gebruik door een ander "
-"proces?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Kan de beheersmap (%s) niet vergrendelen. Heeft u beheerdersrechten?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg werd onderbroken; voer handmatig '%s' uit om het probleem te verhelpen. "
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Niet vergrendeld"
-
 #: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -3515,6 +3349,12 @@ msgstr ""
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Kan het DB-bestand %s niet openen: %s"
+
+#: ftparchive/cachedb.cc:182 apt-inst/extract.cc:186 apt-inst/extract.cc:199
+#: apt-inst/extract.cc:216
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Opvragen van de status van %s is mislukt"
 
 #: ftparchive/cachedb.cc:332
 msgid "Failed to read .dsc"
@@ -3689,6 +3529,11 @@ msgstr "Lezen tijdens het berekenen van de MD5 is mislukt"
 msgid "Problem unlinking %s"
 msgstr "Probleem bij het ontkoppelen van %s"
 
+#: ftparchive/multicompress.cc:374 apt-inst/extract.cc:194
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Hernoemen van %s naar %s is mislukt"
+
 #: cmdline/apt-internal-solver.cc:49
 msgid ""
 "Usage: apt-internal-solver\n"
@@ -3740,6 +3585,160 @@ msgstr ""
 "  -s   Sorteer bronbestanden\n"
 "  -c=? Lees dit configuratiebestand\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#: apt-inst/filelist.cc:380
+msgid "DropNode called on still linked node"
+msgstr "DropNode werd aangeroepen voor een nog steeds aangekoppeld punt"
+
+#: apt-inst/filelist.cc:412
+msgid "Failed to locate the hash element!"
+msgstr "Situeren van het hash-element is mislukt!"
+
+#: apt-inst/filelist.cc:459
+msgid "Failed to allocate diversion"
+msgstr "Toewijzen van de omleiding is mislukt"
+
+#: apt-inst/filelist.cc:464
+msgid "Internal error in AddDiversion"
+msgstr "Interne fout in AddDiversion"
+
+#: apt-inst/filelist.cc:477
+#, c-format
+msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
+msgstr "Er wordt gepoogd om de omleiding %s -> %s en %s/%s te overschrijven"
+
+#: apt-inst/filelist.cc:506
+#, c-format
+msgid "Double add of diversion %s -> %s"
+msgstr "Dubbele toevoeging van de omleiding %s -> %s"
+
+#: apt-inst/filelist.cc:549
+#, c-format
+msgid "Duplicate conf file %s/%s"
+msgstr "Dubbel configuratiebestand %s/%s"
+
+#: apt-inst/extract.cc:101 apt-inst/extract.cc:172
+#, c-format
+msgid "The path %s is too long"
+msgstr "Het pad %s is te lang"
+
+#: apt-inst/extract.cc:132
+#, c-format
+msgid "Unpacking %s more than once"
+msgstr "%s wordt meer dan eens uitgepakt"
+
+#: apt-inst/extract.cc:142
+#, c-format
+msgid "The directory %s is diverted"
+msgstr "De map %s is al omgeleid"
+
+#: apt-inst/extract.cc:152
+#, c-format
+msgid "The package is trying to write to the diversion target %s/%s"
+msgstr "Het pakket probeert om weg te schrijven naar het omleidingsdoel %s/%s"
+
+#: apt-inst/extract.cc:162 apt-inst/extract.cc:306
+msgid "The diversion path is too long"
+msgstr "Het omleidingspad is te lang"
+
+#: apt-inst/extract.cc:249
+#, c-format
+msgid "The directory %s is being replaced by a non-directory"
+msgstr "De map %s wordt vervangen door een niet-map"
+
+#: apt-inst/extract.cc:289
+msgid "Failed to locate node in its hash bucket"
+msgstr "Vinden van de knoop in de hash-emmer is mislukt"
+
+#: apt-inst/extract.cc:293
+msgid "The path is too long"
+msgstr "Het pad is te lang"
+
+#: apt-inst/extract.cc:421
+#, c-format
+msgid "Overwrite package match with no version for %s"
+msgstr "Pakket-overeenkomst wordt overschreven zonder een versie voor %s"
+
+#: apt-inst/extract.cc:438
+#, c-format
+msgid "File %s/%s overwrites the one in the package %s"
+msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
+
+#: apt-inst/extract.cc:498
+#, c-format
+msgid "Unable to stat %s"
+msgstr "Kan de status van %s niet opvragen"
+
+#: apt-inst/dirstream.cc:42 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:54
+#, c-format
+msgid "Failed to write file %s"
+msgstr "Wegschrijven van bestand %s is mislukt"
+
+#: apt-inst/dirstream.cc:105
+#, c-format
+msgid "Failed to close file %s"
+msgstr "Sluiten van bestand %s is mislukt"
+
+#: apt-inst/deb/debfile.cc:47 apt-inst/deb/debfile.cc:54
+#: apt-inst/deb/debfile.cc:63
+#, c-format
+msgid "This is not a valid DEB archive, missing '%s' member"
+msgstr "Dit is geen geldig DEB-archief, het onderdeel '%s' mankeert"
+
+#: apt-inst/deb/debfile.cc:132
+#, c-format
+msgid "Internal error, could not locate member %s"
+msgstr "Interne fout, kon onderdeel %s niet vinden"
+
+#: apt-inst/deb/debfile.cc:227
+msgid "Unparsable control file"
+msgstr "Niet-ontleedbaar 'control'-bestand"
+
+#: apt-inst/contrib/arfile.cc:76
+msgid "Invalid archive signature"
+msgstr "Ongeldige archiefondertekening"
+
+#: apt-inst/contrib/arfile.cc:84
+msgid "Error reading archive member header"
+msgstr "Fout bij het lezen van de koptekst van het archiefonderdeel"
+
+#: apt-inst/contrib/arfile.cc:96
+#, c-format
+msgid "Invalid archive member header %s"
+msgstr "Ongeldige koptekst voor archiefonderdeel %s"
+
+#: apt-inst/contrib/arfile.cc:108
+msgid "Invalid archive member header"
+msgstr "Ongeldige koptekst in archiefonderdeel"
+
+#: apt-inst/contrib/arfile.cc:137
+msgid "Archive is too short"
+msgstr "Archief is te kort"
+
+#: apt-inst/contrib/arfile.cc:141
+msgid "Failed to read the archive headers"
+msgstr "Lezen van de archiefkopteksten is mislukt"
+
+#: apt-inst/contrib/extracttar.cc:124
+msgid "Failed to create pipes"
+msgstr "Aanmaken van pijpen is mislukt"
+
+#: apt-inst/contrib/extracttar.cc:151
+msgid "Failed to exec gzip "
+msgstr "Uitvoeren van gzip is mislukt "
+
+#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
+msgid "Corrupted archive"
+msgstr "Beschadigd archief"
+
+#: apt-inst/contrib/extracttar.cc:203
+msgid "Tar checksum failed, archive corrupted"
+msgstr "Tar controlesom klopt niet, het pakket is beschadigd"
+
+#: apt-inst/contrib/extracttar.cc:308
+#, c-format
+msgid "Unknown TAR header type %u, member %s"
+msgstr "Onbekend TAR-kopteksttype %u, onderdeel %s"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "Is stdout een terminal?"
