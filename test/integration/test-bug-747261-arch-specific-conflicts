@@ -6,15 +6,10 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'amd64' 'sparc' 'armel'
 
+insertinstalledpackage 'foobar' 'armel' '1'
 msgtest 'Check that dpkg supports' 'arch-specific dependencies'
-set +e
-# this fails always, the question is just how it fails
-dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null 2>/dev/null >/dev/null
-RETURNCODE=$?
-set -e
-if [ "$RETURNCODE" != '1' ]; then
-	dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null || true
-	echo "Command had returncode: $RETURNCODE"
+if ! dpkgcheckbuilddeps -d 'foobar:armel' /dev/null 2>/dev/null >/dev/null; then
+	dpkgcheckbuilddeps -d 'foobar:armel' /dev/null || true
 	msgskip
 	exit 0
 else
