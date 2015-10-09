@@ -31,11 +31,21 @@
 class FileMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
-   
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
+
    public:
-   
+
    FileMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig | LocalOnly) {};
 };
+bool FileMethod::Configuration(std::string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
+}
 
 // FileMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
