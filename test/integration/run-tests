@@ -47,6 +47,8 @@ fi
 if [ -n "$TESTTORUN" ]; then
 	# collecting the output of one test to have it together
 	OUTPUT="$(mktemp)"
+	CURRENTTRAP="rm -f \"$OUTPUT\"; $CURRENTTRAP"
+	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	{
 		if [ "$MSGLEVEL" -le 2 ]; then
 			printf "${CTEST}Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}: "
