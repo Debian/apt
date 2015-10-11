@@ -38,7 +38,7 @@ class CopyMethod : public pkgAcqMethod
 void CopyMethod::CalculateHashes(FetchItem const * const Itm, FetchResult &Res)
 {
    Hashes Hash(Itm->ExpectedHashes);
-   FileFd Fd(Res.Filename, FileFd::ReadOnly, FileFd::Extension);
+   FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
 }
@@ -65,7 +65,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
 
    // just calc the hashes if the source and destination are identical
-   if (File == Itm->DestFile)
+   if (File == Itm->DestFile || Itm->DestFile == "/dev/null")
    {
       CalculateHashes(Itm, Res);
       URIDone(Res);

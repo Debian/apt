@@ -2619,7 +2619,18 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
    // Methods like e.g. "file:" will give us a (compressed) FileName that is
    // not the "DestFile" we set, in this case we uncompress from the local file
    if (FileName != DestFile && RealFileExists(DestFile) == false)
+   {
       Local = true;
+      if (Target.KeepCompressed == true)
+      {
+	 // but if we don't keep the uncompress we copy the compressed file first
+	 Stage = STAGE_DOWNLOAD;
+	 Desc.URI = "copy:" + FileName;
+	 QueueURI(Desc);
+	 SetActiveSubprocess("copy");
+	 return;
+      }
+   }
    else
       EraseFileName = FileName;
 
@@ -2633,18 +2644,6 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
       return;
    }
 
-   // If we want compressed indexes, just copy in place for hash verification
-   if (Target.KeepCompressed == true)
-   {
-      DestFile = GetPartialFileNameFromURI(Target.URI + '.' + CurrentCompressionExtension);
-      EraseFileName = "";
-      Stage = STAGE_DECOMPRESS_AND_VERIFY;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      SetActiveSubprocess("copy");
-      return;
-    }
-
    // get the binary name for your used compression type
    string decompProg;
    if(CurrentCompressionExtension == "uncompressed")
@@ -2657,9 +2656,16 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
       return;
    }
 
+   if (Target.KeepCompressed == true)
+   {
+      DestFile = "/dev/null";
+      EraseFileName.clear();
+   }
+   else
+      DestFile += ".decomp";
+
    // queue uri for the next stage
    Stage = STAGE_DECOMPRESS_AND_VERIFY;
-   DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
    SetActiveSubprocess(decompProg);
@@ -2670,6 +2676,9 @@ void pkgAcqIndex::StageDecompressDone(string const &,
                                       HashStringList const &,
                                       pkgAcquire::MethodConfig const * const)
 {
+   if (Target.KeepCompressed == true && DestFile == "/dev/null")
+      DestFile = GetPartialFileNameFromURI(Target.URI + '.' + CurrentCompressionExtension);
+
    // Done, queue for rename on transaction finished
    TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
    return;

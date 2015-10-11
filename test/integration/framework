@@ -1157,8 +1157,11 @@ webserverconfig() {
 
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
+	local APTARCHIVE2="copy://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:${APTHTTPPORT}/#${1}#" -e "s#https://localhost:${APTHTTPSPORT}/#${1}#"
+		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#$APTARCHIVE2#${1}#" \
+			-e "s#http://localhost:${APTHTTPPORT}/#${1}#" \
+			-e "s#https://localhost:${APTHTTPSPORT}/#${1}#"
 	done
 }
 
