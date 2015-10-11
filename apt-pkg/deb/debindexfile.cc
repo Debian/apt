@@ -249,7 +249,14 @@ pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
 
    return File;
 }
-
+std::string debDebPkgFileIndex::ArchiveInfo_impl(pkgCache::VerIterator const &Ver) const
+{
+   std::string Res = IndexFileName() + " ";
+   Res.append(Ver.ParentPkg().Name()).append(" ");
+   Res.append(Ver.Arch()).append(" ");
+   Res.append(Ver.VerStr());
+   return Res;
+}
 									/*}}}*/
 // DscFile Index - a single .dsc file as an index			/*{{{*/
 debDscFileIndex::debDscFileIndex(std::string const &DscFile)

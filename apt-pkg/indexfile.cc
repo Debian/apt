@@ -21,9 +21,10 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/macros.h>
 
-#include <apt-pkg/deblistparser.h>
+#include <apt-pkg/debindexfile.h>
 
 #include <sys/stat.h>
 
@@ -66,8 +67,11 @@ pkgIndexFile::pkgIndexFile(bool const Trusted) :			/*{{{*/
 }
 									/*}}}*/
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
-std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator const &/*Ver*/) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator const &Ver) const
 {
+   debDebPkgFileIndex const * const debfile = dynamic_cast<debDebPkgFileIndex const*>(this);
+   if (debfile != nullptr)
+      return debfile->ArchiveInfo_impl(Ver);
    return std::string();
 }
 									/*}}}*/

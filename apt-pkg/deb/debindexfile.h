@@ -144,6 +144,9 @@ public:
 
    debDebPkgFileIndex(std::string const &DebFile);
    virtual ~debDebPkgFileIndex();
+
+   //FIXME: use proper virtual-handling on next ABI break
+   APT_HIDDEN std::string ArchiveInfo_impl(pkgCache::VerIterator const &Ver) const;
 };
 
 class debDscFileIndex : public pkgDebianIndexRealFile
