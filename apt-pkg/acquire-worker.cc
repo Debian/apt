@@ -23,6 +23,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -463,15 +464,18 @@ bool pkgAcquire::Worker::RunMessages()
 	    OwnerQ->ItemDone(Itm);
 	    Itm = NULL;
 
+	    bool errTransient;
+	    {
+	       std::string const failReason = LookupTag(Message, "FailReason");
+	       std::string const reasons[] = { "Timeout", "ConnectionRefused",
+		  "ConnectionTimedOut", "ResolveFailure", "TmpResolveFailure" };
+	       errTransient = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
+	    }
+
 	    for (pkgAcquire::Queue::QItem::owner_iterator O = ItmOwners.begin(); O != ItmOwners.end(); ++O)
 	    {
-	       // set some status
-	       if(LookupTag(Message,"FailReason") == "Timeout" ||
-		     LookupTag(Message,"FailReason") == "TmpResolveFailure" ||
-		     LookupTag(Message,"FailReason") == "ResolveFailure" ||
-		     LookupTag(Message,"FailReason") == "ConnectionRefused")
+	       if (errTransient)
 		  (*O)->Status = pkgAcquire::Item::StatTransientNetworkError;
-
 	       (*O)->Failed(Message,Config);
 
 	       if (Log != 0)
