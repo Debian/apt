@@ -21,7 +21,6 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/install-progress.h>
-#include <apt-pkg/debindexfile.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -496,10 +495,15 @@ static const unsigned short MOD_INSTALL = 2;
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode)
 {
-   std::map<unsigned short, APT::VersionSet> verset;
-   return DoCacheManipulationFromCommandLine(CmdL, Cache, verset, UpgradeMode);
+   std::vector<const char*> VolatileCmdL;
+   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, UpgradeMode);
 }
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
+{
+   std::map<unsigned short, APT::VersionSet> verset;
+   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode);
+}
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode)
 {
    // Enter the special broken fixing mode if the user specified arguments
@@ -534,6 +538,20 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
    CacheSetHelperAPTGet helper(c0out);
    verset = APT::VersionSet::GroupedFromCommandLine(Cache,
 		CmdL.FileList + 1, mods, fallback, helper);
+
+   for (auto const &I: VolatileCmdL)
+   {
+      pkgCache::PkgIterator const P = Cache->FindPkg(I);
+      if (P.end())
+	 continue;
+
+      // Set any version providing the .deb as the candidate.
+      for (auto Prv = P.ProvidesList(); Prv.end() == false; Prv++)
+	 Cache.GetDepCache()->SetCandidateVersion(Prv.OwnerVer());
+
+      // via cacheset to have our usual virtual handling
+      APT::VersionContainerInterface::FromPackage(&(verset[MOD_INSTALL]), Cache, P, APT::CacheSetHelper::CANDIDATE, helper);
+   }
 
    if (_error->PendingError() == true)
    {
@@ -656,33 +674,16 @@ struct PkgIsExtraInstalled {
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   // first check for local pkgs and add them to the cache
-   for (const char **I = CmdL.FileList; *I != 0; I++)
-   {
-      if(FileExists(*I) && flExtension(*I) == "deb")
-	 Cache.GetSourceList()->AddVolatileFile(new debDebPkgFileIndex(*I));
-   }
+   std::vector<char const *> VolatileCmdL;
+   Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
 
    // then open the cache
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
-   
+
    std::map<unsigned short, APT::VersionSet> verset;
-
-   for (const char **I = CmdL.FileList; *I != 0; I++) {
-      // Check for local pkgs like in the loop above.
-      if(!FileExists(*I) || flExtension(*I) != "deb")
-	 continue;
-
-      pkgCache::PkgIterator pkg = Cache->FindPkg(*I);
-
-      // Set any version providing the .deb as the candidate.
-      for (auto Prv = pkg.ProvidesList(); Prv.end() == false; Prv++)
-	 Cache.GetDepCache()->SetCandidateVersion(Prv.OwnerVer());
-   }
-
-   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset, 0))
+   if(!DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, 0))
       return false;
 
    /* Print out a list of packages that are going to be installed extra

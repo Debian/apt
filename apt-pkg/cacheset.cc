@@ -441,14 +441,6 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 					   CacheSetHelper::VerSelector const fallback,
 					   CacheSetHelper &helper,
 					   bool const onlyFromName) {
-	PackageSet pkgset;
-	if(FileExists(pkg)) {
-		helper.PackageFrom(CacheSetHelper::STRING, &pkgset, Cache, pkg);
-		if(pkgset.empty() == true)
-			return false;
-		return VersionContainerInterface::FromPackage(vci, Cache, pkgset.begin(), fallback, helper);
-	}
-
 	std::string ver;
 	bool verIsRel = false;
 	size_t const vertag = pkg.find_last_of("/=");
@@ -457,6 +449,8 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 		verIsRel = (pkg[vertag] == '/');
 		pkg.erase(vertag);
 	}
+
+	PackageSet pkgset;
 	if (onlyFromName == false)
 		helper.PackageFrom(CacheSetHelper::STRING, &pkgset, Cache, pkg);
 	else {

@@ -19,10 +19,13 @@
 static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
 {
    CacheFile Cache;
+   std::vector<char const *> VolatileCmdL;
+   Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
+
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
-   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, UpgradeFlags))
+   if(!DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL,  Cache, UpgradeFlags))
       return false;
 
    return InstallPackages(Cache,true);

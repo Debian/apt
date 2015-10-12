@@ -11,6 +11,7 @@
 #include<config.h>
 
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
@@ -20,6 +21,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/debindexfile.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -536,7 +538,38 @@ std::vector<pkgIndexFile*> pkgSourceList::GetVolatileFiles() const	/*{{{*/
 									/*}}}*/
 void pkgSourceList::AddVolatileFile(pkgIndexFile * const File)		/*{{{*/
 {
-   if (File != NULL)
+   if (File != nullptr)
       VolatileFiles.push_back(File);
+}
+									/*}}}*/
+bool pkgSourceList::AddVolatileFile(std::string const &File)		/*{{{*/
+{
+   if (File.empty() || FileExists(File) == false)
+      return false;
+
+   if (flExtension(File) == "deb")
+      AddVolatileFile(new debDebPkgFileIndex(File));
+   else
+      return false;
+
+   return true;
+}
+									/*}}}*/
+void pkgSourceList::AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL)/*{{{*/
+{
+   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const * const I) {
+      if (I != nullptr && (I[0] == '/' || (I[0] == '.' && I[1] == '/')))
+      {
+	 if (AddVolatileFile(I))
+	 {
+	    if (VolatileCmdL != nullptr)
+	       VolatileCmdL->push_back(I);
+	 }
+	 else
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 return true;
+      }
+      return false;
+   });
 }
 									/*}}}*/

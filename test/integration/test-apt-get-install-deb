@@ -8,25 +8,21 @@ setupenvironment
 configarchitecture 'amd64' 'i386'
 
 # regression test for #754904
-testfailureequal 'E: Unable to locate package /dev/null' aptget install -qq /dev/null
+testfailureequal 'E: Unsupported file /dev/null given on commandline' aptget install -qq /dev/null
 
 # only consider .deb files
 cat > foo.rpm <<EOF
 I'm not a deb, I'm a teapot.
 EOF
-testfailureequal "E: Unable to locate package ./foo.rpm
-E: Couldn't find any package by glob './foo.rpm'
-E: Couldn't find any package by regex './foo.rpm'" aptget install -qq ./foo.rpm
+testfailureequal 'E: Unsupported file ./foo.rpm given on commandline' aptget install -qq ./foo.rpm
 
 # and ensure we fail for invalid debs
 mv foo.rpm foo.deb
-testfailure aptget install ./foo.deb
-testsuccess grep '^E: Sub-process Popen returned an error code' rootdir/tmp/testfailure.output
-testequal "E: Encountered a section with no Package: header
+testfailuremsg "E: Sub-process Popen returned an error code (2)
+E: Encountered a section with no Package: header
 E: Problem with MergeList ${TMPWORKINGDIRECTORY}/foo.deb
-E: The package lists or status file could not be parsed or opened." tail -n 3 rootdir/tmp/testfailure.output
+E: The package lists or status file could not be parsed or opened." aptget install ./foo.deb
 
-# fakeroot is currently not found, framwork needs updating
 buildsimplenativepackage 'foo' 'i386,amd64' '1.0'
 
 testfailureequal "Reading package lists...

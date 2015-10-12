@@ -46,6 +46,7 @@ class pkgTagSection;
 class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
+class CommandLine;
 
 class pkgSourceList
 {
@@ -129,6 +130,9 @@ class pkgSourceList
     *  @param File is an index file; pointer-ownership is transferred
     */
    void AddVolatileFile(pkgIndexFile * const File);
+   bool AddVolatileFile(std::string const &File);
+   void AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL);
+
    /** @return list of files registered with #AddVolatileFile */
    std::vector<pkgIndexFile*> GetVolatileFiles() const;
 
