@@ -419,10 +419,25 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_slist_free_all(headers);
 
    // cleanup
-   if (success != 0)
+   if (success != CURLE_OK)
    {
-      _error->Error("%s", curl_errorstr);
-      return false;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
+      switch (success)
+      {
+	 case CURLE_COULDNT_RESOLVE_PROXY:
+	 case CURLE_COULDNT_RESOLVE_HOST:
+	    SetFailReason("ResolveFailure");
+	    break;
+	 case CURLE_COULDNT_CONNECT:
+	    SetFailReason("ConnectionRefused");
+	    break;
+	 case CURLE_OPERATION_TIMEDOUT:
+	    SetFailReason("Timeout");
+	    break;
+      }
+#pragma GCC diagnostic pop
+      return _error->Error("%s", curl_errorstr);
    }
 
    // server says file not modified
