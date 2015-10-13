@@ -148,12 +148,41 @@ static bool BootstrapPDiffWith(std::string const &PartialFile, std::string const
 }
 									/*}}}*/
 
-static bool AllowInsecureRepositories(metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I) /*{{{*/
+static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
 {
-   if(MetaIndexParser->GetTrusted() == metaIndex::TRI_YES || _config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if (isError)
+   {
+      _error->Error("%s", msg.c_str());
+      _error->Notice("%s", _("Updating such a repository securily is impossible and therefore disabled by default."));
+   }
+   else
+   {
+      _error->Warning("%s", msg.c_str());
+      _error->Notice("%s", _("Data from such a repository can not be authenticated and is therefore potentially dangerous to use."));
+   }
+   return false;
+}
+static bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)
+{
+   std::string m;
+   strprintf(m, msg, repo.c_str());
+   return MessageInsecureRepository(isError, m);
+}
+									/*}}}*/
+static bool AllowInsecureRepositories(char const * const msg, std::string const &repo,/*{{{*/
+      metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I)
+{
+   if(MetaIndexParser->GetTrusted() == metaIndex::TRI_YES)
       return true;
 
-   _error->Error(_("Use --allow-insecure-repositories to force the update"));
+   if (_config->FindB("Acquire::AllowInsecureRepositories") == true)
+   {
+      MessageInsecureRepository(false, msg, repo);
+      return true;
+   }
+
+   MessageInsecureRepository(true, msg, repo);
+   _error->Notice(_("Use --allow-insecure-repositories to force an insecure update"));
    TransactionManager->AbortTransaction();
    I->Status = pkgAcquire::Item::StatError;
    return false;
@@ -1308,10 +1337,10 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 
    if (AuthPass == false)
    {
-      if (Status == StatAuthError)
+      if (Status == StatAuthError || Status == StatTransientNetworkError)
       {
-	 // if we expected a ClearTextSignature (InRelease) and got a file,
-	 // but it wasn't valid we end up here (see VerifyDone).
+	 // if we expected a ClearTextSignature (InRelease) but got a network
+	 // error or got a file, but it wasn't valid, we end up here (see VerifyDone).
 	 // As these is usually called by web-portals we do not try Release/Release.gpg
 	 // as this is gonna fail anyway and instead abort our try (LP#346386)
 	 TransactionManager->AbortTransaction();
@@ -1331,14 +1360,10 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
       if(CheckStopAuthentication(this, Message))
          return;
 
-      _error->Warning(_("The data from '%s' is not signed. Packages "
-                        "from that repository can not be authenticated."),
-                      ClearsignedTarget.Description.c_str());
-
       // No Release file was present, or verification failed, so fall
       // back to queueing Packages files without verification
       // only allow going further if the users explicitely wants it
-      if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+      if(AllowInsecureRepositories(_("The repository '%s' is not signed."), ClearsignedTarget.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
       {
 	 Status = StatDone;
 
@@ -1433,14 +1458,10 @@ void pkgAcqMetaIndex::Failed(string const &Message,
    pkgAcquire::Item::Failed(Message, Cnf);
    Status = StatDone;
 
-   _error->Warning(_("The repository '%s' does not have a Release file. "
-                     "This is deprecated, please contact the owner of the "
-                     "repository."), Target.Description.c_str());
-
    // No Release file was present so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
-   if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+   if(AllowInsecureRepositories(_("The repository '%s' does not have a Release file."), Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
       // ensure old Release files are removed
       TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
@@ -1578,7 +1599,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
                            "given to override it."));
          Status = StatDone;
       } else {
-         _error->Error("%s", downgrade_msg.c_str());
+	 MessageInsecureRepository(true, downgrade_msg);
 	 if (TransactionManager->IMSHit == false)
 	    Rename(MetaIndex->DestFile, MetaIndex->DestFile + ".FAILED");
 	 Item::Failed("Message: " + downgrade_msg, Cnf);
@@ -1586,16 +1607,12 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
          return;
       }
    }
-   else
-      _error->Warning(_("The data from '%s' is not signed. Packages "
-	       "from that repository can not be authenticated."),
-	    MetaIndex->Target.Description.c_str());
 
    // ensures that a Release.gpg file in the lists/ is removed by the transaction
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the users explicitely wants it
-   if(AllowInsecureRepositories(TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+   if (AllowInsecureRepositories(_("The repository '%s' is not signed."), MetaIndex->Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
       if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
       {

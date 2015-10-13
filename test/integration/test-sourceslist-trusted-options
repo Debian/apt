@@ -109,7 +109,7 @@ everythingsucceeds -t testing
 msgmsg 'Test with trusted=yes option and good and unsigned sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate 'testwarning'
+aptgetupdate
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing
@@ -187,7 +187,7 @@ everythingfails -t testing
 msgmsg 'Test with trusted=yes option and unsigned and good sources'
 cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
 sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
-aptgetupdate 'testwarning'
+aptgetupdate
 everythingsucceeds
 everythingsucceeds -t stable
 everythingsucceeds -t testing

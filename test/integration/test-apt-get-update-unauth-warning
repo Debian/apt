@@ -27,8 +27,9 @@ Get:2 file:$APTARCHIVE unstable Release
 Err:2 file:$APTARCHIVE unstable Release
   File not found
 Reading package lists...
-W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository.
-E: Use --allow-insecure-repositories to force the update" aptget update --no-allow-insecure-repositories
+E: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
+N: Updating such a repository securily is impossible and therefore disabled by default.
+N: Use --allow-insecure-repositories to force an insecure update" aptget update --no-allow-insecure-repositories -q=0
 
 # no package foo
 testsuccessequal 'Listing...' apt list foo
@@ -78,7 +79,8 @@ Get:3 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
 Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages') B]
 Get:5 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
-W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
+W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
+N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use." aptget update --allow-insecure-repositories -q=0
 # ensure we can not install the package
 testfailureequal "WARNING: The following packages cannot be authenticated!
   foo

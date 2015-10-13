@@ -1665,6 +1665,17 @@ testfailuremsg() {
 	testoutputequal "$COMPAREFILE" echo "$CMP"
 	msggroup
 }
+testwarningmsg() {
+	msggroup 'testwarningmsg'
+	local CMP="$1"
+	shift
+	testwarning "$@"
+	msgtest 'Check that the output of the previous warned command has expected' 'warnings'
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarningmsg.comparefile"
+	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" > "$COMPAREFILE" 2>&1 || true
+	testoutputequal "$COMPAREFILE" echo "$CMP"
+	msggroup
+}
 
 testfilestats() {
 	msggroup 'testfilestats'

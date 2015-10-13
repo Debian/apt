@@ -8,6 +8,7 @@ configarchitecture 'i386'
 
 buildsimplenativepackage 'cool' 'i386' '1.0' 'unstable'
 
+msgmsg 'default setup'
 setupaptarchive
 
 aptgetupdate() {
@@ -28,6 +29,7 @@ testsuccessequal "$PKGTEXT
 $DOWNLOG
 Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
+msgmsg 'sources marked trusted=no'
 sed -i -e 's#\(deb\(-src\)\?\) #\1 [trusted=no] #' $DEBFILE
 aptgetupdate 'testsuccess'
 
@@ -47,6 +49,7 @@ Download complete and in download only mode" aptget install cool:i386 --assume-n
 configarchitecture 'i386'
 
 find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
+msgmsg 'unsigned repo'
 sed -i -e 's#\(deb\(-src\)\?\) \[trusted=no\] #\1 #' $DEBFILE
 aptgetupdate
 
@@ -63,8 +66,9 @@ Authentication warning overridden.
 $DOWNLOG
 Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
+msgmsg 'sources marked trusted=yes'
 sed -i -e 's#\(deb\(-src\)\?\) #\1 [trusted=yes] #' $DEBFILE
-aptgetupdate
+aptgetupdate 'testsuccess'
 
 testsuccessequal "$PKGTEXT
 $DOWNLOG
