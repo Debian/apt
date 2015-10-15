@@ -1661,7 +1661,7 @@ testfailuremsg() {
 	testfailure "$@"
 	msgtest 'Check that the output of the previous failed command has expected' 'failures and warnings'
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailuremsg.comparefile"
-	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "$COMPAREFILE" 2>&1 || true
+	grep '^\(W\|E\|N\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" > "$COMPAREFILE" 2>&1 || true
 	testoutputequal "$COMPAREFILE" echo "$CMP"
 	msggroup
 }
@@ -1672,7 +1672,7 @@ testwarningmsg() {
 	testwarning "$@"
 	msgtest 'Check that the output of the previous warned command has expected' 'warnings'
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarningmsg.comparefile"
-	grep '^\(W\|E\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" > "$COMPAREFILE" 2>&1 || true
+	grep '^\(W\|E\|N\):' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testwarning.output" > "$COMPAREFILE" 2>&1 || true
 	testoutputequal "$COMPAREFILE" echo "$CMP"
 	msggroup
 }

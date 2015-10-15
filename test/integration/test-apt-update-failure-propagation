@@ -1,0 +1,82 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'all' '1' 'stable'
+buildsimplenativepackage 'foo' 'all' '2' 'sid'
+setupaptarchive --no-update
+
+NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
+OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
+rm "$NEWMETHODS"
+mkdir "$NEWMETHODS"
+backupIFS="$IFS"
+IFS="$(printf "\n\b")"
+for METH in $(find "$OLDMETHODS" ! -type d); do
+	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
+done
+IFS="$backupIFS"
+
+changetohttpswebserver
+for FILE in rootdir/etc/apt/sources.list.d/*-sid-* ; do
+	sed -i -e 's#https:#http:#' -e "s#:${APTHTTPSPORT}/#:${APTHTTPPORT}/#" "$FILE"
+done
+
+pretest() {
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccessequal 'N: Unable to locate package foo' aptcache policy foo -q=0
+}
+pretest
+testsuccess aptget update
+testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 2
+  Version table:
+     2 500
+        500 http://localhost:${APTHTTPPORT} sid/main amd64 Packages
+     1 500
+        500 https://localhost:${APTHTTPSPORT} stable/main amd64 Packages" aptcache policy foo
+
+pretest
+mv aptarchive/dists/stable aptarchive/dists/stable.good
+testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file." aptget update
+testfailureequal "Hit:1 http://localhost:${APTHTTPPORT} sid InRelease
+Ign:2 https://localhost:${APTHTTPSPORT} stable InRelease
+  404  Not Found
+Err:3 https://localhost:${APTHTTPSPORT} stable Release
+  404  Not Found
+Reading package lists...
+E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
+N: Updating such a repository securily is impossible and therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update -q=0
+mv aptarchive/dists/stable.good aptarchive/dists/stable
+posttest() {
+	testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 2
+  Version table:
+     2 500
+        500 http://localhost:${APTHTTPPORT} sid/main amd64 Packages" aptcache policy foo
+}
+posttest
+
+pretest
+rm "${NEWMETHODS}/https"
+testfailuremsg "E: The method driver ${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods/https could not be found.
+W: Failed to fetch https://localhost:${APTHTTPSPORT}/dists/stable/InRelease  
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
+posttest
+
+ln -s "$OLDMETHODS/https" "$NEWMETHODS"
+pretest
+for FILE in rootdir/etc/apt/sources.list.d/*-stable-* ; do
+	# lets see how many testservers run also Doom
+	sed -i -e "s#:${APTHTTPSPORT}/#:666/#" "$FILE"
+done
+testwarningmsg "W: Failed to fetch https://localhost:666/dists/stable/InRelease  Failed to connect to localhost port 666: Connection refused
+W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
+posttest

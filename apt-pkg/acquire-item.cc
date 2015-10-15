@@ -160,6 +160,7 @@ static bool MessageInsecureRepository(bool const isError, std::string const &msg
       _error->Warning("%s", msg.c_str());
       _error->Notice("%s", _("Data from such a repository can not be authenticated and is therefore potentially dangerous to use."));
    }
+   _error->Notice("%s", _("See apt-secure(8) manpage for repository creation and user configuration details."));
    return false;
 }
 static bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)
@@ -182,7 +183,6 @@ static bool AllowInsecureRepositories(char const * const msg, std::string const 
    }
 
    MessageInsecureRepository(true, msg, repo);
-   _error->Notice(_("Use --allow-insecure-repositories to force an insecure update"));
    TransactionManager->AbortTransaction();
    I->Status = pkgAcquire::Item::StatError;
    return false;

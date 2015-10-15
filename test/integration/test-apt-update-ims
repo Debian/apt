@@ -81,7 +81,8 @@ Ign:3 http://localhost:${APTHTTPPORT} unstable Release.gpg
   404  Not Found
 Reading package lists...
 W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' is not signed.
-N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use."
+N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use.
+N: See apt-secure(8) manpage for repository creation and user configuration details."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'warning'
@@ -126,6 +127,7 @@ Ign:3 http://localhost:${APTHTTPPORT} unstable Release.gpg
 Reading package lists...
 W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' is not signed.
 N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
 E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'Release.gpg' -delete
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -162,7 +164,8 @@ Hit:4 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
 Hit:5 http://localhost:${APTHTTPPORT} unstable/main Translation-en
 Reading package lists...
 W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' does not have a Release file.
-N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use."
+N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use.
+N: See apt-secure(8) manpage for repository creation and user configuration details."
 find aptarchive -name '*Release*' -delete
 echo 'Acquire::GzipIndexes "0";
 Acquire::PDiffs "0";' > rootdir/etc/apt/apt.conf.d/02compressindex

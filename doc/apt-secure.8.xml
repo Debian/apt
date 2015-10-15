@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2012-06-09T00:00:00Z</date>
+   <date>2015-10-14T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -45,32 +45,38 @@
 
  <refsect1><title>Description</title>
    <para>
-   Starting with version 0.6, <command>apt</command> contains code
-   that does signature checking of the Release file for all
-   archives. This ensures that packages in the archive can't be
-   modified by people who have no access to the Release file signing
-   key.
+   Starting with version 0.6, <command>APT</command> contains code that does
+   signature checking of the Release file for all repositories. This ensures
+   that data like packages in the archive can't be modified by people who
+   have no access to the Release file signing key.
    </para>
 
    <para>
-   If a package comes from a archive without a signature, or with a
-   signature that apt does not have a key for, that package is
-   considered untrusted, and installing it will result in a big
-   warning. <command>apt-get</command> will currently only warn
-   for unsigned archives; future releases might force all sources
-   to be verified before downloading packages from them.
+   If an archive doesn't have a signed Release file or no Release file at all
+   current APT versions will raise a warning in <command>update</command>
+   operations and frontends like <command>apt-get</command> will require
+   explicit confirmation if an installation request includes a package from
+   such an unauthenticated archive.
    </para>
 
    <para>
-   The package frontends &apt-get;, &aptitude; and &synaptic; support this new
-   authentication feature.
+   In the future APT will refuse to work with unauthenticated repositories by
+   default until support for them is removed entirely. Users have the option to
+   opt-in to this behavior already by setting the configuration option
+   <option>Acquire::AllowInsecureRepositories</option> to <literal>false</literal>.
+   </para>
+
+   <para>
+   Note: All APT-based package management frontends like &apt-get;, &aptitude;
+   and &synaptic; support this authentication feature, so this manpage uses
+   <literal>APT</literal> to refer to them all for simplicity only.
    </para>
 </refsect1>
 
- <refsect1><title>Trusted archives</title> 
+ <refsect1><title>Trusted repositories</title>
 
-   <para> 
-   The chain of trust from an apt archive to the end user is made up of
+   <para>
+   The chain of trust from an APT archive to the end user is made up of
    several steps. <command>apt-secure</command> is the last step in
    this chain; trusting an archive does not mean that you trust its
    packages not to contain malicious code, but means that you
@@ -85,13 +91,14 @@
    devscripts packages respectively).</para>
 
    <para>
-   The chain of trust in Debian starts when a maintainer uploads a new
+   The chain of trust in Debian e.g. starts when a maintainer uploads a new
    package or a new version of a package to the Debian archive. In
    order to become effective, this upload needs to be signed by a key
-   contained in the Debian Maintainers keyring (available in
+   contained in one of the Debian package maintainers keyrings (available in
    the debian-keyring package). Maintainers' keys are signed by
    other maintainers following pre-established procedures to
-   ensure the identity of the key holder.
+   ensure the identity of the key holder. Similar procedures exist in all
+   Debian-based distributions.
    </para>
 
    <para>
@@ -132,20 +139,23 @@
     </itemizedlist>
 
    <para>However, it does not defend against a compromise of the
-   Debian master server itself (which signs the packages) or against a
+   master server itself (which signs the packages) or against a
    compromise of the key used to sign the Release files. In any case,
    this mechanism can complement a per-package signature.</para>
 </refsect1>
 
  <refsect1><title>User configuration</title>
    <para>
-   <command>apt-key</command> is the program that manages the list
-   of keys used by apt. It can be used to add or remove keys, although
-   an installation of this release will automatically contain the
-   default Debian archive signing keys used in the Debian package
-   repositories.
-   </para>
-   <para>
+   <command>apt-key</command> is the program that manages the list of keys used
+   by APT to trust repositories. It can be used to add or remove keys as well
+   as list the trusted keys. Limiting which key(s) are able to sign which archive
+   is possible via the <option>Signed-By</option> in &sources-list;.
+   </para><para>
+   Note that a default installation already contains all keys to securily
+   acquire packages from the default repositories, so fiddling with
+   <command>apt-key</command> is only needed if third-party repositories are
+   added.
+   </para><para>
    In order to add a new key you need to first download it
    (you should make sure you are using a trusted communication channel
    when retrieving it), add it with <command>apt-key</command> and
@@ -171,10 +181,21 @@
       <command>gpg --clearsign -o InRelease Release</command> and
       <command>gpg -abs -o Release.gpg Release</command>.</para></listitem>
 
-      <listitem><para><emphasis>Publish the key fingerprint</emphasis>,
-      that way your users will know what key they need to import in
-      order to authenticate the files in the
-      archive.</para></listitem>
+      <listitem><para>
+      <emphasis>Publish the key fingerprint</emphasis>, that way your users
+      will know what key they need to import in order to authenticate the files
+      in the archive. It is best to ship your key in its own keyring package
+      like &keyring-distro; does with &keyring-package; to be able to
+      distribute updates and key transitions automatically later.
+      </para></listitem>
+
+      <listitem><para>
+      <emphasis>Provide instructions on how to add your archive and key</emphasis>.
+      If your users can't acquire your key securily the chain of trust described above is broken.
+      How you can help users add your key depends on your archive and target audience ranging
+      from having your keyring package included in another archive users already have configured
+      (like the default repositories of their distribution) to leverage the web of trust.
+      </para></listitem>
 
     </itemizedlist>
 
@@ -192,7 +213,7 @@
 
 <para>For more background information you might want to review the
 <ulink
-url="http://www.debian.org/doc/manuals/securing-debian-howto/ch7">Debian
+url="https://www.debian.org/doc/manuals/securing-debian-howto/ch7">Debian
 Security Infrastructure</ulink> chapter of the Securing Debian Manual
 (available also in the harden-doc package) and the
 <ulink url="http://www.cryptnet.net/fdp/crypto/strong_distro.html"
