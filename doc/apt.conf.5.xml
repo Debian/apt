@@ -54,6 +54,8 @@
 	 configuration list - in which case it will be silently ignored.</para></listitem>
       <listitem><para>the main configuration file specified by
 	 <literal>Dir::Etc::main</literal></para></listitem>
+      <listitem><para>all options set in the binary specific configuration
+	    subtree are moved into the root of the tree.</para></listitem>
       <listitem><para>the command line options are applied to override the
 	 configuration directives or to load even more configuration files.</para></listitem>
    </orderedlist>
@@ -671,6 +673,24 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
     </varlistentry>
 
    </variablelist>
+ </refsect1>
+
+ <refsect1><title>Binary specific configuration</title>
+    <para>Especially with the introduction of the <command>apt</command> binary
+       it can be useful to set certain options only for a specific binary as
+       even options which look like they would effect only a certain binary like
+       <option>APT::Get::Show-Versions</option> effect
+       <command>apt-get</command> as well as <command>apt</command>.
+    </para>
+    <para>Setting an option for a specific binary only can be achieved by
+       setting the option inside the
+       <option>Binary::<replaceable>specific-binary</replaceable></option>
+       scope. Setting the option <option>APT::Get::Show-Versions</option> for
+       the <command>apt</command> only can e.g. by done by setting
+       <option>Binary::apt::APT::Get::Show-Versions</option> instead.</para>
+    <para>Note that as seen in the DESCRIPTION section further above you can't
+       set binary-specific options on the commandline itself nor in
+       configuration files loaded via the commandline.</para>
  </refsect1>
 
  <refsect1><title>Directories</title>

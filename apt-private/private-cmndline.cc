@@ -3,6 +3,7 @@
 
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
@@ -322,8 +323,21 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, Com
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
 {
    CmdL = CommandLine(Args,_config);
-   if ((Cnf != NULL && pkgInitConfig(**Cnf) == false) ||
-       CmdL.Parse(argc,argv) == false ||
+   if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
+   {
+      _error->DumpErrors();
+      exit(100);
+   }
+
+   if (likely(argc != 0 && argv[0] != NULL))
+   {
+      std::string const binary = flNotDir(argv[0]);
+      _config->Set("Binary", binary);
+      std::string const conf = "Binary::" + binary;
+      _config->MoveSubTree(conf.c_str(), NULL);
+   }
+
+   if (CmdL.Parse(argc,argv) == false ||
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)

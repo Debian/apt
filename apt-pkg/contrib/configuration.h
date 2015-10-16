@@ -103,6 +103,8 @@ class Configuration
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;
 
+   void MoveSubTree(char const * const OldRoot, char const * const NewRoot);
+
    // clear a whole tree
    void Clear(const std::string &Name);
    void Clear();

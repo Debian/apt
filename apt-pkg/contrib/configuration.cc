@@ -485,6 +485,59 @@ void Configuration::Clear(string const &Name)
    }
 }
 									/*}}}*/
+void Configuration::MoveSubTree(char const * const OldRootName, char const * const NewRootName)/*{{{*/
+{
+   // prevent NewRoot being a subtree of OldRoot
+   if (OldRootName == nullptr)
+      return;
+   if (NewRootName != nullptr)
+   {
+      if (strcmp(OldRootName, NewRootName) == 0)
+	 return;
+      std::string const oldroot = std::string(OldRootName) + "::";
+      if (strcasestr(NewRootName, oldroot.c_str()) != NULL)
+	 return;
+   }
+
+   Item * Top;
+   Item const * const OldRoot = Top = Lookup(OldRootName, false);
+   if (Top == nullptr)
+      return;
+   std::string NewRoot;
+   if (NewRootName != nullptr)
+      NewRoot.append(NewRootName).append("::");
+
+   Top->Value.clear();
+   Item * const Stop = Top;
+   Top = Top->Child;
+   Stop->Child = 0;
+   for (; Top != 0;)
+   {
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+
+      while (Top != 0 && Top->Next == 0)
+      {
+	 Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+	 Item const * const Tmp = Top;
+	 Top = Top->Parent;
+	 delete Tmp;
+
+	 if (Top == Stop)
+	    return;
+      }
+
+      Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+      Item const * const Tmp = Top;
+      if (Top != 0)
+	 Top = Top->Next;
+      delete Tmp;
+   }
+}
+									/*}}}*/
 // Configuration::Exists - Returns true if the Name exists		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

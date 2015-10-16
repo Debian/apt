@@ -39,6 +39,17 @@ The following NEW packages will be installed:
   simple
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst simple (1 unstable [all])
+Conf simple (1 unstable [all])' aptget install simple -s --install-recommends --install-suggests
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  ccc
+Recommended packages:
+  bbb
+The following NEW packages will be installed:
+  simple
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst simple (1 unstable [all])
 Conf simple (1 unstable [all])' aptget install simple -s --no-install-recommends
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -156,3 +167,34 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst versionedor (1 unstable [all])
 Conf versionedor (1 unstable [all])' aptget install versionedor -s --no-install-recommends
+
+SHOWSUGGEST='Reading package lists...
+Building dependency tree...
+Suggested packages:
+  zzz
+Recommended packages:
+  xxx
+The following NEW packages will be installed:
+  orgroup4
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup4 (1 unstable [all])
+Conf orgroup4 (1 unstable [all])'
+INSTSUGGEST='Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  zzz
+Recommended packages:
+  xxx
+The following NEW packages will be installed:
+  orgroup4 zzz
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst orgroup4 (1 unstable [all])
+Inst zzz (1:1 unstable [all])
+Conf orgroup4 (1 unstable [all])
+Conf zzz (1:1 unstable [all])'
+testsuccessequal "$SHOWSUGGEST" aptget install orgroup4 -s
+testsuccessequal "$INSTSUGGEST" aptget install orgroup4 --install-suggests -s
+echo 'Binary::apt-get::APT::Install-Suggests "true";' > rootdir/etc/apt/apt.conf.d/99binaryspecific.conf
+testsuccessequal "$INSTSUGGEST" aptget install orgroup4 -s
+testsuccessequal "$SHOWSUGGEST" apt install orgroup4 -s
+testsuccessequal "$SHOWSUGGEST" aptget install orgroup4 -s --no-install-suggests
