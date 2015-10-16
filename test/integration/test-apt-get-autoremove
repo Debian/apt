@@ -19,6 +19,10 @@ testsuccess aptget remove debhelper -y
 testdpkgnotinstalled 'debhelper'
 testdpkginstalled 'po-debconf' 'unrelated'
 
+AUTOREMOVE='apt autoremove'
+if [ -n "$SUDO_USER" ]; then
+	AUTOREMOVE="sudo $AUTOREMOVE"
+fi
 echo 'APT::NeverAutoRemove { "^debc.*nf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -32,13 +36,13 @@ Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
   po-debconf
-Use 'apt-get autoremove' to remove it.
+Use '$AUTOREMOVE' to remove it.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 1 package was automatically installed and is no longer required.
-Use 'apt-get autoremove' to remove it.
+Use '$AUTOREMOVE' to remove it.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
 testdpkginstalled 'po-debconf'
 
@@ -81,13 +85,13 @@ Building dependency tree...
 Reading state information...
 The following packages were automatically installed and are no longer required:
   debhelper po-debconf
-Use 'apt-get autoremove' to remove them.
+Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 2 packages were automatically installed and are no longer required.
-Use 'apt-get autoremove' to remove them.
+Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
 
 testsuccess aptmark hold debhelper

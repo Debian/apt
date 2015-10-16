@@ -53,6 +53,10 @@ testprotected() {
 	testfailure --nomsg grep -e '^\^linux-image-amd64\$$' -e '^\^linux-image-686-pae\$$' -e ':i386' protected.list
 }
 
+AUTOREMOVE='apt autoremove'
+if [ -n "$SUDO_USER" ]; then
+	AUTOREMOVE="sudo $AUTOREMOVE"
+fi
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -63,7 +67,7 @@ The following packages were automatically installed and are no longer required:
    $CURRENTKERNEL (5-1)
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
-Use 'apt-get autoremove' to remove them.
+Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -76,13 +80,13 @@ The following packages were automatically installed and are no longer required:
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
    ${CURRENTKERNEL}-rt (5-1)
-Use 'apt-get autoremove' to remove them.
+Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV --ignore-hold
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 6 packages were automatically installed and are no longer required.
-Use 'apt-get autoremove' to remove them.
+Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
 testequal "Reading package lists...
 Building dependency tree...
