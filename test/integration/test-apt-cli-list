@@ -7,12 +7,6 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-if [ ! -x ${BUILDDIRECTORY}/apt ]; then
-    msgmsg "No ${BUILDDIRECTORY}/apt"
-    msgskip 
-    exit 0
-fi
-
 insertpackage 'unstable' 'foo' 'all' '1.0'
 insertinstalledpackage 'bar' 'i386' '1.0'
 
@@ -24,8 +18,6 @@ insertpackage 'testing' 'baz' 'all' '1.0'
 insertpackage 'unstable' 'baz' 'all' '2.0'
 
 setupaptarchive
-
-APTARCHIVE=$(readlink -f ./aptarchive)
 
 testsuccessequal "Listing...
 bar/now 1.0 i386 [installed,local]
@@ -69,6 +61,11 @@ conf-only/now 1.0 i386 [residual-config]" apt list conf-only
 testsuccessequal "Listing...
 baz/unstable 2.0 all [upgradable from: 0.1]
 N: There are 2 additional versions. Please use the '-a' switch to see them." apt list baz -o quiet=0
+testsuccessequal 'Listing...
+baz/unstable 2.0 all [upgradable from: 0.1]
+baz/testing 1.0 all
+baz/now 0.1 all [installed,upgradable to: 2.0]
+' apt list baz -o quiet=0 -a
 
 # test format strings for machine parseable output
 testsuccessequal 'bar - 1.0 - 1.0

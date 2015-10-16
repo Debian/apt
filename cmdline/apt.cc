@@ -71,7 +71,7 @@ int main(int argc, const char *argv[])					/*{{{*/
    CommandLine::Dispatch Cmds[] = {
                                    // query
                                    {"list",&DoList},
-                                   {"search", &FullTextSearch},
+                                   {"search", &DoSearch},
                                    {"show", &ShowPackage},
 
                                    // package stuff
@@ -113,12 +113,6 @@ int main(int argc, const char *argv[])					/*{{{*/
         _error->DumpErrors();
         return 100;
     }
-
-    // some different defaults
-   _config->CndSet("DPkg::Progress-Fancy", "1");
-   _config->CndSet("Apt::Color", "1");
-   _config->CndSet("APT::Get::Upgrade-Allow-New", true);
-   _config->CndSet("APT::Cmd::Show-Update-Stats", true);
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
