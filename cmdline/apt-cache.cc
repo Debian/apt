@@ -43,6 +43,7 @@
 
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-show.h>
 
 #include <regex.h>
 #include <stddef.h>
@@ -1214,121 +1215,6 @@ static bool Dotty(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// DisplayRecord - Displays the complete record for the package		/*{{{*/
-// ---------------------------------------------------------------------
-/* This displays the package record from the proper package index file. 
-   It is not used by DumpAvail for performance reasons. */
-
-static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const * DescP)
-{
-   char const * const TagName = "\nDescription";
-   size_t const TagLen = strlen(TagName);
-   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
-   {
-      if (DescP[1] == ' ')
-	 DescP += 2;
-      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
-	 DescP += TagLen;
-      else
-	 break;
-   }
-   if (DescP != NULL)
-      ++DescP;
-   return DescP;
-}
-static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
-{
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
-      return false;
-
-   // Find an appropriate file
-   pkgCache::VerFileIterator Vf = V.FileList();
-   for (; Vf.end() == false; ++Vf)
-      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
-	 break;
-   if (Vf.end() == true)
-      Vf = V.FileList();
-      
-   // Check and load the package list file
-   pkgCache::PkgFileIterator I = Vf.File();
-   if (I.IsOk() == false)
-      return _error->Error(_("Package file %s is out of sync."),I.FileName());
-
-   FileFd PkgF;
-   if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
-      return false;
-
-   // Read the record (and ensure that it ends with a newline and NUL)
-   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
-   Buffer[Vf->Size] = '\n';
-   Buffer[Vf->Size+1] = '\0';
-   if (PkgF.Seek(Vf->Offset) == false ||
-       PkgF.Read(Buffer,Vf->Size) == false)
-   {
-      delete [] Buffer;
-      return false;
-   }
-
-   // Get a pointer to start of Description field
-   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "\nDescription");
-   if (DescP != NULL)
-      ++DescP;
-   else
-      DescP = Buffer + Vf->Size;
-
-   // Write all but Description
-   size_t const length = DescP - Buffer;
-   if (length != 0 && FileFd::Write(STDOUT_FILENO, Buffer, length) == false)
-   {
-      delete [] Buffer;
-      return false;
-   }
-
-   // Show the right description
-   pkgRecords Recs(*Cache);
-   pkgCache::DescIterator Desc = V.TranslatedDescription();
-   if (Desc.end() == false)
-   {
-      pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-      cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
-      cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
-
-      // Find the first field after the description (if there is any)
-      DescP = skipDescriptionFields(DescP);
-   }
-   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
-
-   // write the rest of the buffer, but skip mixed in Descriptions* fields
-   while (DescP != NULL)
-   {
-      const unsigned char * const Start = DescP;
-      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
-      if (End == NULL)
-      {
-	 End = &Buffer[Vf->Size];
-	 DescP = NULL;
-      }
-      else
-      {
-	 ++End; // get the newline into the output
-	 DescP = skipDescriptionFields(End + strlen("Description"));
-      }
-      size_t const length = End - Start;
-      if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)
-      {
-	 delete [] Buffer;
-	 return false;
-      }
-   }
-
-   // write a final newline after the last field
-   cout<<endl;
-
-   delete [] Buffer;
-   return true;
-}
-									/*}}}*/
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
@@ -1480,7 +1366,7 @@ static bool Search(CommandLine &CmdL)
       if (matchedAll == true)
       {
 	 if (ShowFull == true)
-	    DisplayRecord(CacheFile, J->V);
+	    DisplayRecordV1(CacheFile, J->V, std::cout);
 	 else
 	    printf("%s - %s\n",P.Name().c_str(),P.ShortDesc().c_str());
       }
@@ -1518,30 +1404,6 @@ static bool ShowAuto(CommandLine &)
             cout << *I << "\n";
 
    _error->Notice(_("This command is deprecated. Please use 'apt-mark showauto' instead."));
-   return true;
-}
-									/*}}}*/
-// ShowPackage - Dump the package record to the screen			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowPackage(CommandLine &CmdL)
-{
-   pkgCacheFile CacheFile;
-   CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
-   APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
-   for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
-      if (DisplayRecord(CacheFile, Ver) == false)
-	 return false;
-
-   if (verset.empty() == true)
-   {
-      if (helper.virtualPkgs.empty() == true)
-        return _error->Error(_("No packages found"));
-      else
-        _error->Notice(_("No packages found"));
-   }
    return true;
 }
 									/*}}}*/

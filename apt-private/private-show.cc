@@ -29,29 +29,137 @@
 #include <apti18n.h>
 									/*}}}*/
 
-namespace APT {
-   namespace Cmd {
-
-// DisplayRecord - Displays the complete record for the package		/*{{{*/
-// ---------------------------------------------------------------------
-static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
-                   std::ostream &out)
+static bool OpenPackagesFile(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
+      FileFd &PkgF, pkgCache::VerFileIterator &Vf)
 {
-   pkgCache *Cache = CacheFile.GetPkgCache();
+   pkgCache const * const Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
-      return false;
-   pkgDepCache *depCache = CacheFile.GetDepCache();
-   if (unlikely(depCache == NULL))
       return false;
 
    // Find an appropriate file
-   pkgCache::VerFileIterator Vf = V.FileList();
+   Vf = V.FileList();
    for (; Vf.end() == false; ++Vf)
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
 	 break;
    if (Vf.end() == true)
       Vf = V.FileList();
       
+   // Check and load the package list file
+   pkgCache::PkgFileIterator I = Vf.File();
+   if (I.IsOk() == false)
+      return _error->Error(_("Package file %s is out of sync."),I.FileName());
+
+   // Read the record
+   return PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension);
+}
+									/*}}}*/
+static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const * DescP)/*{{{*/
+{
+   char const * const TagName = "\nDescription";
+   size_t const TagLen = strlen(TagName);
+   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+   {
+      if (DescP[1] == ' ')
+	 DescP += 2;
+      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
+	 DescP += TagLen;
+      else
+	 break;
+   }
+   if (DescP != NULL)
+      ++DescP;
+   return DescP;
+}
+									/*}}}*/
+bool DisplayRecordV1(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
+                   std::ostream &out)
+{
+   FileFd PkgF;
+   pkgCache::VerFileIterator Vf;
+   if (OpenPackagesFile(CacheFile, V, PkgF, Vf) == false)
+      return false;
+
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   // Read the record (and ensure that it ends with a newline and NUL)
+   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
+   Buffer[Vf->Size] = '\n';
+   Buffer[Vf->Size+1] = '\0';
+   if (PkgF.Seek(Vf->Offset) == false ||
+       PkgF.Read(Buffer,Vf->Size) == false)
+   {
+      delete [] Buffer;
+      return false;
+   }
+
+   // Get a pointer to start of Description field
+   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "\nDescription");
+   if (DescP != NULL)
+      ++DescP;
+   else
+      DescP = Buffer + Vf->Size;
+
+   // Write all but Description
+   size_t const length = DescP - Buffer;
+   if (length != 0 && FileFd::Write(STDOUT_FILENO, Buffer, length) == false)
+   {
+      delete [] Buffer;
+      return false;
+   }
+
+   // Show the right description
+   pkgRecords Recs(*Cache);
+   pkgCache::DescIterator Desc = V.TranslatedDescription();
+   if (Desc.end() == false)
+   {
+      pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
+      out << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
+      out << std::endl << "Description-md5: " << Desc.md5() << std::endl;
+
+      // Find the first field after the description (if there is any)
+      DescP = skipDescriptionFields(DescP);
+   }
+   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
+
+   // write the rest of the buffer, but skip mixed in Descriptions* fields
+   while (DescP != NULL)
+   {
+      const unsigned char * const Start = DescP;
+      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
+      if (End == NULL)
+      {
+	 End = &Buffer[Vf->Size];
+	 DescP = NULL;
+      }
+      else
+      {
+	 ++End; // get the newline into the output
+	 DescP = skipDescriptionFields(End + strlen("Description"));
+      }
+      size_t const length = End - Start;
+      if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)
+      {
+	 delete [] Buffer;
+	 return false;
+      }
+   }
+   // write a final newline after the last field
+   out << std::endl;
+
+   delete [] Buffer;
+   return true;
+}
+									/*}}}*/
+static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
+                   std::ostream &out)
+{
+   FileFd PkgF;
+   pkgCache::VerFileIterator Vf;
+   if (OpenPackagesFile(CacheFile, V, PkgF, Vf) == false)
+      return false;
+
    // Check and load the package list file
    pkgCache::PkgFileIterator I = Vf.File();
    if (I.IsOk() == false)
@@ -67,9 +175,6 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    std::string source_index_file = Index->Describe(true);
 
    // Read the record
-   FileFd PkgF;
-   if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
-      return false;
    pkgTagSection Tags;
    pkgTagFile TagF(&PkgF);
 
@@ -88,13 +193,15 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    else
       package_size = _("unknown");
 
-   pkgDepCache::StateCache &state = (*depCache)[V.ParentPkg()];
-   bool is_installed = V.ParentPkg().CurrentVer() == V;
-   const char *manual_installed;
-   if (is_installed)
+   const char *manual_installed = nullptr;
+   if (V.ParentPkg().CurrentVer() == V)
+   {
+      pkgDepCache *depCache = CacheFile.GetDepCache();
+      if (unlikely(depCache == nullptr))
+	 return false;
+      pkgDepCache::StateCache &state = (*depCache)[V.ParentPkg()];
       manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
-   else
-      manual_installed = "";
+   }
 
    // FIXME: add verbose that does not do the removal of the tags?
    std::vector<pkgTagSection::Tag> RW;
@@ -115,7 +222,8 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    RW.push_back(pkgTagSection::Tag::Remove("Size"));
    RW.push_back(pkgTagSection::Tag::Rewrite("Download-Size", package_size));
    // add
-   RW.push_back(pkgTagSection::Tag::Rewrite("APT-Manual-Installed", manual_installed));
+   if (manual_installed != nullptr)
+      RW.push_back(pkgTagSection::Tag::Rewrite("APT-Manual-Installed", manual_installed));
    RW.push_back(pkgTagSection::Tag::Rewrite("APT-Sources", source_index_file));
 
    FileFd stdoutfd;
@@ -124,6 +232,9 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
    pkgRecords Recs(*Cache);
    // FIXME: show (optionally) all available translations(?)
    pkgCache::DescIterator Desc = V.TranslatedDescription();
@@ -143,12 +254,19 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", false) ?
+   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
+   int const ShowVersion = _config->FindI("APT::Cache::Show::Version", 1);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
-      if (DisplayRecord(CacheFile, Ver, c1out) == false)
-	 return false;
+      if (ShowVersion <= 1)
+      {
+	 if (DisplayRecordV1(CacheFile, Ver, std::cout) == false)
+	    return false;
+      }
+      else
+	 if (DisplayRecordV2(CacheFile, Ver, c1out) == false)
+	    return false;
 
    if (select == APT::CacheSetHelper::CANDIDATE)
    {
@@ -158,14 +276,15 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
          _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);
    }
 
-   for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
-	Pkg != helper.virtualPkgs.end(); ++Pkg)
-   {
-       c1out << "Package: " << Pkg.FullName(true) << std::endl;
-       c1out << "State: " << _("not a real package (virtual)") << std::endl;
-       // FIXME: show providers, see private-cacheset.h
-       //        CacheSetHelperAPTGet::showVirtualPackageErrors()
-   }
+   if (_config->FindB("APT::Cache::ShowVirtuals", false) == true)
+      for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
+	    Pkg != helper.virtualPkgs.end(); ++Pkg)
+      {
+	 c1out << "Package: " << Pkg.FullName(true) << std::endl;
+	 c1out << "State: " << _("not a real package (virtual)") << std::endl;
+	 // FIXME: show providers, see private-cacheset.h
+	 //        CacheSetHelperAPTGet::showVirtualPackageErrors()
+      }
 
    if (verset.empty() == true)
    {
@@ -178,5 +297,3 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    return true;
 }
 									/*}}}*/
-} // namespace Cmd
-} // namespace APT

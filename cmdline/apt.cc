@@ -72,7 +72,7 @@ int main(int argc, const char *argv[])					/*{{{*/
                                    // query
                                    {"list",&DoList},
                                    {"search", &FullTextSearch},
-                                   {"show", &APT::Cmd::ShowPackage},
+                                   {"show", &ShowPackage},
 
                                    // package stuff
                                    {"install",&DoInstall},

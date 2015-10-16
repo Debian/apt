@@ -319,6 +319,21 @@ std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char c
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
+static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
+{
+   std::string const binary = flNotDir(Binary);
+   if (binary == "apt" || binary == "apt-config")
+   {
+      _config->CndSet("Binary::apt::APT::Cache::Show::Version", 2);
+      _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
+      _config->CndSet("Binary::apt::APT::Cache::ShowVirtuals", true);
+   }
+
+   _config->Set("Binary", binary);
+   std::string const conf = "Binary::" + binary;
+   _config->MoveSubTree(conf.c_str(), NULL);
+}
+									/*}}}*/
 void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, CommandLine::Args * const Args,/*{{{*/
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
 {
@@ -330,12 +345,7 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, Com
    }
 
    if (likely(argc != 0 && argv[0] != NULL))
-   {
-      std::string const binary = flNotDir(argv[0]);
-      _config->Set("Binary", binary);
-      std::string const conf = "Binary::" + binary;
-      _config->MoveSubTree(conf.c_str(), NULL);
-   }
+      BinarySpecificConfiguration(argv[0]);
 
    if (CmdL.Parse(argc,argv) == false ||
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
