@@ -388,12 +388,8 @@ EOF
 		TEST_DEFAULT_GROUP="$USER"
 	fi
 
-        # Acquire::AllowInsecureRepositories=false is not yet the default
-        # but we want it to be the default soon
-        configallowinsecurerepositories "false";
-
 	# cleanup the environment a bit
-        # prefer our apt binaries over the system apt binaries
+	# prefer our apt binaries over the system apt binaries
 	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	export LC_ALL=C.UTF-8
 	unset LANGUAGE APT_CONFIG
@@ -506,12 +502,6 @@ int execvp(const char *file, char *const argv[]) {
 EOF
 	testsuccess --nomsg gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
 }
-
-configallowinsecurerepositories() {
-    echo "Acquire::AllowInsecureRepositories \"$1\";" >  rootdir/etc/apt/apt.conf.d/allow-insecure-repositories.conf
-
-}
-
 configcompression() {
 	while [ -n "$1" ]; do
 		case "$1" in

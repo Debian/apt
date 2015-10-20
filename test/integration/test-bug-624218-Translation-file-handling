@@ -61,7 +61,7 @@ translationslisted 'with full Index'
 # No Release file at all, so no records about Translation files
 # (fallback to guessing)
 find aptarchive \( -name 'Release' -o -name 'InRelease' \) -delete
-configallowinsecurerepositories "true";
+echo 'Acquire::AllowInsecureRepositories "true";' >  rootdir/etc/apt/apt.conf.d/allow-insecure-repositories.conf
 
 msgtest 'Download of en as forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=en

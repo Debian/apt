@@ -13,19 +13,20 @@ setupaptarchive --no-update
 changetowebserver
 
 runtest() {
+    local APTOPT=""
     if [ -n "$1" ]; then
-	configallowinsecurerepositories 'true'
+	APTOPT='--allow-insecure-repositories'
     else
-	configallowinsecurerepositories 'false'
+	APTOPT='--no-allow-insecure-repositories'
     fi
 
     rm -rf rootdir/var/lib/apt/lists/
 
     local TEST="test${1:-success}"
-    $TEST aptget update
+    $TEST aptget update $APTOPT
     if [ "$1" = 'failure' ]; then
 	# accept the outdated Release file so we can check Hit behaviour
-	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=9999999
+	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=9999999 $APTOPT
     fi
     listcurrentlistsdirectory > listsdir.lst
     testsuccess grep '_Packages\(\.gz\)\?$' listsdir.lst
@@ -37,14 +38,14 @@ runtest() {
 
     # check that I-M-S header is kept in redirections
     echo "$EXPECT" | sed -e 's#(invalid since [^)]\+)#(invalid since)#' > expected.output
-    $TEST aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0 -q=0
+    $TEST aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0 -q=0 $APTOPT
     sed -i -e 's#(invalid since [^)]\+)#(invalid since)#' rootdir/tmp/${TEST}.output
     testequal "$(cat expected.output)" cat rootdir/tmp/${TEST}.output
     testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 
     # ensure that we still do a hash check for other files on ims hit of Release
     if grep -q '^Hit:[0-9]\+ .* InRelease$' expected.output || ! grep -q '^Ign:[0-9]\+ .* Release\(\.gpg\)\?$' expected.output; then
-	    $TEST aptget update -o Debug::Acquire::gpgv=1
+	    $TEST aptget update -o Debug::Acquire::gpgv=1 $APTOPT
 	    cp rootdir/tmp/${TEST}.output goodsign.output
 	    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 	    testsuccess grep '^Got GOODSIG, key ID:GOODSIG' goodsign.output

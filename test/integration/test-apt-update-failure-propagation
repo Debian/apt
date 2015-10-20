@@ -43,7 +43,7 @@ testsuccessequal "foo:
 
 pretest
 mv aptarchive/dists/stable aptarchive/dists/stable.good
-testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file." aptget update
+testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file." apt update
 testfailureequal "Hit:1 http://localhost:${APTHTTPPORT} sid InRelease
 Ign:2 https://localhost:${APTHTTPSPORT} stable InRelease
   404  Not Found
@@ -52,7 +52,7 @@ Err:3 https://localhost:${APTHTTPSPORT} stable Release
 Reading package lists...
 E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
 N: Updating such a repository securily is impossible and therefore disabled by default.
-N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update -q=0
+N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update -q=0 --no-allow-insecure-repositories
 mv aptarchive/dists/stable.good aptarchive/dists/stable
 posttest() {
 	testsuccessequal "foo:
