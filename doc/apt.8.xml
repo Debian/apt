@@ -31,151 +31,142 @@
  &synopsis-command-apt;
 
  <refsect1><title>Description</title>
-   <para><command>apt</command> (Advanced Package Tool) is the
-   command-line tool for handling packages. It provides a commandline
-   interface for the package management of the system.
-
-   See also &apt-get; and &apt-cache; for more low-level command options.
+   <para><command>apt</command> provides a high-level commandline interface for
+      the package management system. It is intended as an end user interface and
+      enables some options better suited for interactive usage by default
+      compared to more specialized APT tools like &apt-get; and &apt-cache;.
+   </para><para>
+   Much like <command>apt</command> itself, its manpage is intended as an end
+   user interface and as such only mentions the most used commands and options
+   partly to not duplicate information in multiple places and partly to avoid
+   overwelming readers with a cornucopia of options and details.
    </para>
 
    <variablelist>
-     <varlistentry><term><option>list</option></term>
-     <listitem><para><literal>list</literal> is used to
-     display a list of packages. It supports shell pattern for matching 
-     package names and the following options:
-       <option>--installed</option>, 
-       <option>--upgradable</option>,
-       <option>--upgradeable</option>,
-       <option>--all-versions</option>
-     are supported.
-     </para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><option>search</option></term>
-     <listitem><para><literal>search</literal> searches for the given
-     term(s) and display matching packages.
+     <varlistentry><term><option>update</option> (&apt-get;)</term>
+     <listitem><para><option>update</option> is used to download package
+	   information from all configured sources. Other commands operate on
+	   this data to e.g. perform package upgrades or search in and display
+	   details about all packages available for installation.
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>show</option></term>
-     <listitem><para><literal>show</literal> shows the package information
-     for the given package(s).
+     <varlistentry><term><option>upgrade</option> (&apt-get;)</term>
+     <listitem><para><option>upgrade</option> is used to install available
+	   upgrades of all packages currently installed on the system from the
+	   sources configured via &sources-list;. New packages will be
+	   installed if required to statisfy dependencies, but existing
+	   packages will never be removed. If an upgrade for a package requires
+	   the remove of an installed package the upgrade for this package
+	   isn't performed.
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>install</option></term>
-     <listitem>
-	 <para><literal>install</literal> is followed by one or more 
-	 package names desired for installation or upgrading. 
-	 </para>
-
-     <para>A specific version of a package can be selected for installation by 
-     following the package name with an equals and the version of the package 
-     to select. This will cause that version to be located and selected for
-     install. Alternatively a specific distribution can be selected by 
-     following the package name with a slash and the version of the 
-     distribution or the Archive name (stable, testing, unstable).</para>
-     </listitem>
+     <varlistentry><term><option>full-upgrade</option> (&apt-get;)</term>
+     <listitem><para><literal>full-upgrade</literal> performs the function of
+	   upgrade but will remove currently installed packages if this is
+	   needed to upgrade the system as a whole.
+     </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>remove</option></term>
-     <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
-	 removed instead of installed. Note that removing a package leaves its
-	 configuration files on the system. If a plus sign is appended to the package 
-     name (with no intervening space), the identified package will be 
-     installed instead of removed.</para></listitem>
+     <varlistentry><term><option>install</option>, <option>remove</option>, <option>purge</option> (&apt-get;)</term>
+     <listitem><para>Performs the requested action on one or more packages
+	   specified via &regex;, &glob; or exact match. The requested action
+	   can be overidden for specific packages by append a plus (+) to the
+	   package name to install this package or a minus (-) to remove it.
+     </para><para>
+	   A specific version of a package can be selected for installation by
+	   following the package name with an equals (=) and the version of the
+	   package to select. Alternatively the version from a specific release can be
+	   selected by following the package name with a forward slash (/) and
+	   codename (&stable-codename;, &testing-codename;, sid …) or suite name (stable,
+	   testing, unstable). This will also select versions from this release
+	   for dependencies of this package if needed to satisfy the request.
+     </para><para>
+	   Removing a package removes all packaged data, but leaves usually
+	   small (modified) user configuration files behind, in case the
+	   remove was an accident. Just issuing an installtion request for the
+	   accidently removed package will restore it funcation as before in
+	   that case. On the other hand you can get right of these leftovers
+	   via calling <command>purge</command> even on already removed
+	   packages.  Note that this does not effect any data or configuration
+	   stored in your home directory.
+     </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>autoremove</option> (and the <option>auto-remove</option> alias since 1.1)</term>
-     <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
-     installed to satisfy dependencies for other packages and are now no longer needed.</para></listitem>
+     <varlistentry><term><option>autoremove</option> (&apt-get;)</term>
+     <listitem><para>
+	   <literal>autoremove</literal> is used to remove packages that were
+	   automatically installed to satisfy dependencies for other packages
+	   and are now no longer needed as dependencies changed or the package(s)
+	   needing them were removed in the meantime.
+     </para><para>
+	   Try to ensure that the list does not include applications you have
+	   grown to like even through they there once installed just as a
+	   dependency of another package. You can mark such a package as manually
+	   installed by using &apt-mark;. Packages which you have installed explicitly
+	   via <command>install</command> are never proposed for automatic removal as well.
+     </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>edit-sources</option></term>
+     <varlistentry><term><option>search</option> (&apt-cache;)</term>
+     <listitem><para><option>search</option> can be used to search for the given
+	   &regex; term(s) in the list of the available packages and display
+	   matches.  This can e.g. be useful if you are looking for packages
+	   having a specific feature.  If you are looking for a package
+	   including a specific file try &apt-file;.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>show</option> (&apt-cache;)</term>
+     <listitem><para>Show information about the given package(s) including
+	   its dependencies, installation and download size, sources the
+	   package is available from, the description of the packages content
+	   and many more. It can e.g. be helpful to look at this information
+	   before allowing &apt; to remove a package or while searching for
+	   new packages to install.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>list</option> (work-in-progress)</term>
+     <listitem><para><option>list</option> is somewhat similar to <command>dpkg-query --list</command>
+	   in that it can display a list of packages satisfying certain
+	   criteria.  It supports &glob; patterns for matching package names as
+	   well as options to list installed (<option>--installed</option>),
+	   upgradeable (<option>--upgradeable</option>) or all available
+	   (<option>--all-versions</option>) versions.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>edit-sources</option> (work-in-progress)</term>
      <listitem><para><literal>edit-sources</literal> lets you edit
-     your sources.list file and provides basic sanity checks.
-     </para></listitem>
-     </varlistentry>
-
-     <varlistentry><term><option>update</option></term>
-     <listitem><para><literal>update</literal> is used to
-     resynchronize the package index files from their sources.
-     </para></listitem>
-     </varlistentry>
-     
-     <varlistentry><term><option>upgrade</option></term>
-     <listitem><para><literal>upgrade</literal> is used to install the
-     newest versions of all packages currently installed on the system
-     from the sources enumerated in
-     <filename>/etc/apt/sources.list</filename>. New packages will be
-     installed, but existing packages will never be removed.
-     </para></listitem>
-     </varlistentry>
-
-     <varlistentry><term><option>full-upgrade</option></term>
-     <listitem><para><literal>full-upgrade</literal> performs the
-     function of upgrade but may also remove installed packages
-     if that is required in order to resolve a package conflict.
+	   your &sources-list; files in your preferred texteditor while also
+	   providing basic sanity checks.
      </para></listitem>
      </varlistentry>
 
 
    </variablelist>
  </refsect1>
- 
- <refsect1><title>options</title>
-   &apt-cmdblurb;
 
-   <variablelist>
-
-     &apt-commonoptions;
-     
-   </variablelist>
- </refsect1>
-
- <refsect1><title>Script usage</title>
+ <refsect1><title>Script usage and Differences to other APT tools</title>
   <para>
    The &apt; commandline is designed as a end-user tool and it may
-   change the output between versions. While it tries to not break
-   backward compatibility there is no guarantee for it either.
-   All features of &apt; are available in  &apt-cache; and &apt-get;
-   via APT options. Please prefer using these commands in your scripts.
-  </para>
- </refsect1>
-
- <refsect1><title>Differences to &apt-get;</title>
- <para>The <command>apt</command> command is meant to be pleasant for
- end users and does not need to be backward compatible like
- &apt-get;. Therefore some options are different:
- 
- <itemizedlist>
-   <listitem>
-     <para>The option <literal>DPkg::Progress-Fancy</literal> is enabled.
-     </para>
-   </listitem>
-   <listitem>
-     <para>The option <literal>APT::Color</literal> is enabled.
-     </para>
-   </listitem>
-   <listitem>
-     <para>A new <literal>list</literal> command is available
-     similar to <literal>dpkg --list</literal>.
-     </para>
-   </listitem>
-   <listitem>
-     <para>The option <literal>upgrade</literal> has
-     <literal>--with-new-pkgs</literal> enabled by default.
-     </para>
-   </listitem>
-
- </itemizedlist>
- </para>
-
+   change behaviour between versions. While it tries to not break
+   backward compatibility there is no guarantee for it either if it
+   seems benefitial for interactive use.
+  </para><para>
+   All features of &apt; are available in dedicated APT tools like &apt-get;
+   and &apt-cache; as well.  &apt; just changes the default value of some
+   options (see &apt-conf; and specifically the Binary scope). So prefer using
+   these commands (potentially with some additional options enabled) in your
+   scripts as they keep backward compatibility as much as possible.
+   </para>
  </refsect1>
 
  <refsect1><title>See Also</title>
    <para>&apt-get;, &apt-cache;, &sources-list;,
-   &apt-conf;, &apt-config;, 
+   &apt-conf;, &apt-config;,
    The APT User's guide in &guidesdir;, &apt-preferences;, the APT Howto.</para>
  </refsect1>
 
