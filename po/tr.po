@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2015-10-05 18:29+0200\n"
-"PO-Revision-Date: 2015-06-21 16:54+0200\n"
+"PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
 "Language: tr\n"
@@ -17,35 +17,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n!=1;\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.5\n"
 "X-Launchpad-Export-Date: 2013-02-04 12:16+0000\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Hit:%lu %s"
-msgstr ""
+msgstr "Aynı:  %lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
 #. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Get:%lu %s"
-msgstr ""
+msgstr "İndir: %lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download, but the error is ignored (compare "Err:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Ign:%lu %s"
-msgstr ""
+msgstr "Yoksay:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download and the error is critical (compare "Ign:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Err:%lu %s"
-msgstr ""
+msgstr "Hata:  %lu %s"
 
 #: apt-private/acqprogress.cc
 #, c-format
@@ -57,7 +58,7 @@ msgid " [Working]"
 msgstr " [Çalışıyor]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
@@ -65,7 +66,7 @@ msgid ""
 msgstr ""
 "Ortam değişimi: Lütfen '%2$s' sürücüsüne\n"
 " '%1$s'\n"
-"olarak etiketlenmiş diski takın ve enter tuşuna basın\n"
+"olarak etiketlenmiş diski takın ve [Enter] tuşuna basın\n"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -104,17 +105,17 @@ msgstr "Sıralama"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Bilgi, '%2$s' görevi için '%1$s' seçiliyor\n"
+msgstr "Not, '%2$s' görevi için '%1$s' seçiliyor\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Bilgi, '%2$s' düzenli ifadesi için '%1$s' seçiliyor\n"
+msgstr "Not, '%2$s' ifadesi için '%1$s' seçiliyor\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Bilgi, '%2$s' düzenli ifadesi için '%1$s' seçiliyor\n"
+msgstr "Not, '%2$s' düzenli ifadesi için '%1$s' seçiliyor\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -122,9 +123,8 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "%s paketi sanal bir pakettir, bu paketi sağlayan:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
-msgstr "[kurulu]"
+msgstr " [Kurulu]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
@@ -175,11 +175,11 @@ msgstr "'%s' kurulu değildi, dolayısıyla kaldırılmadı\n"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Bilgi, '%2$s' yerine '%1$s' seçiliyor\n"
+msgstr "Not, '%2$s' yerine '%1$s' seçiliyor\n"
 
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "UYARI: Aşağıdaki paketler doğrulanamıyor!"
+msgstr "UYARI: Aşağıdaki paketlerin aslına uygunluğu doğrulanamıyor!"
 
 #: apt-private/private-download.cc
 msgid "Authentication warning overridden.\n"
@@ -187,7 +187,7 @@ msgstr "Kimlik denetimi uyarısı görmezden geliniyor.\n"
 
 #: apt-private/private-download.cc
 msgid "Some packages could not be authenticated"
-msgstr "Bazı paketlerin kimlik denetimi yapılamadı"
+msgstr "Bazı paketlerin aslına uygunluğu doğrulanamadı"
 
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
@@ -198,13 +198,16 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes seçeneği kullanımdan kaldırılmıştır, lütfen --allow ile başlayan "
+"seçeneklerden birini kullanın."
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Bazı sorunlar çıktı ve -y seçeneği, --force-yes olmadan kullanıldı"
+msgstr ""
+"Aslına uygunluğu doğrulanamayan paketler var ve -y seçeneği --allow-"
+"unauthenticated olmadan kullanılmış"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -232,22 +235,26 @@ msgstr ""
 "bırakılmış."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Bazı sorunlar çıktı ve -y seçeneği, --force-yes olmadan kullanıldı"
+msgstr ""
+"Temel paketler kaldırıldı ve -y seçeneği --allow-remove-essential olmadan "
+"kullanıldı."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Bazı sorunlar çıktı ve -y seçeneği, --force-yes olmadan kullanıldı"
+msgstr ""
+"Paket sürümleri düşürüldü ve -y seçeneği --allow-downgrades olmadan "
+"kullanıldı."
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Tutulan paketler değişti ve -y seçeneği --allow-change-held-packages olmadan "
+"kullanıldı."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -449,9 +456,8 @@ msgid "Broken packages"
 msgstr "Bozuk paketler"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
-msgstr "Aşağıdaki ek paketler de kurulacak:"
+msgstr "Aşağıdaki ek paketler kurulacak:"
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -480,9 +486,9 @@ msgstr ""
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s zaten en yeni sürümde.\n"
+msgstr "%s zaten en yeni sürümde (%s).\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -754,9 +760,8 @@ msgid "Package %s version %s has an unmet dep:\n"
 msgstr "%s paketinin (sürüm %s) karşılanamayan bir bağımlılığı var:\n"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "'update' komutu argüman almaz"
+msgstr "apt-cache stats komutu argüman almaz"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -854,7 +859,7 @@ msgstr "(bulunamadı)"
 #: cmdline/apt-cache.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s (öncelik: %d)\n"
 
 #: cmdline/apt-cache.cc
 msgid "  Installed: "
@@ -950,7 +955,6 @@ msgstr ""
 "atın.\n"
 
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
@@ -972,7 +976,7 @@ msgid ""
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
-"Usage: apt [seçenekler] komut\n"
+"Kullanım: apt [seçenekler] komut\n"
 "\n"
 "apt için komut satırı arayüzü.\n"
 "Temel komutlar: \n"
@@ -980,14 +984,14 @@ msgstr ""
 " search - Paket açıklamalarında arama yap\n"
 " show - Paket ayrıntılarını görüntüle\n"
 "\n"
-" update - Mevcut paket listesini güncelle\n"
+" update - Kullanılabilir paketlerin listesini güncelle\n"
 "\n"
 " install - paket kur\n"
 " remove  - paket kaldır\n"
+" autoremove - Kullanılmayan tüm paketleri otomatik olarak kaldır\n"
 "\n"
-" upgrade - sistemi yükselt (paketleri kurarak ve yükselterek)\n"
-" full-upgrade - sistemi yükselt (paketleri kurarak,yükselterek ve "
-"kaldırarak)\n"
+" upgrade - sistemi yükselt (paket kurarak ve yükselterek)\n"
+" full-upgrade - sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)\n"
 "\n"
 " edit-sources - kaynak bilgi dosyasını düzenle\n"
 
@@ -996,9 +1000,8 @@ msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Lütfen bu CD/DVD'ye bir ad verin, örneğin 'Debian 5.0.3 Disk 1'"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Lütfen sürücüye bir Disk yerleştirin ve giriş tuşuna (Enter) basın"
+msgstr "Lütfen sürücüye bir Disk yerleştirin ve [Enter] tuşuna basın"
 
 #: cmdline/apt-cdrom.cc
 #, c-format
@@ -1195,18 +1198,18 @@ msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
-"%s mimarisine uygun mimari bilgileri mevcut değil. Kurulumu için apt.conf(5) "
-"rehber sayfasındaki APT::Architectures kısmına göz atın"
+"%s mimarisinin bilgileri mevcut değil. Kurulum için apt.conf(5) rehber "
+"sayfasındaki APT::Architectures kısmına göz atın"
 
 #: cmdline/apt-get.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dizini kullanılıyor\n"
 
 #: cmdline/apt-get.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "İnşa bağımlılıklarını işleme başarısız oldu"
+msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dosyası kullanılıyor\n"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1380,10 +1383,9 @@ msgstr "İndirme Başarısız"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "%s için GetSrvRec başarısız oldu"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -1397,13 +1399,15 @@ msgid ""
 "\n"
 "                       This APT helper has Super Meep Powers.\n"
 msgstr ""
-"Usage: apt-helper [seçenekler] komut\n"
-"       apt-helper [seçenekler] download-file uri hedef-konum\n"
+"Kullanım: apt-helper [seçenekler] komut\n"
+"          apt-helper [seçenekler] download-file uri hedef-konum\n"
 "\n"
-"apt-helper apt'nin dâhilî yardımcı aracıdır\n"
+"apt-helper apt'nin bir dâhilî yardımcı aracıdır\n"
 "\n"
 "Komutlar:\n"
-"   download-file - verilen adresi hedef yola kaydet\n"
+"   download-file - verilen adresi (uri) hedef yola kaydet\n"
+"\n"
+"   srv-lookup - Bir SRV kaydına bak (örneğin _http._tcp.ftp.debian.org)\n"
 "   auto-detect-proxy - apt.conf kullanarak vekil sunucuyu algıla\n"
 "\n"
 "                    Bu APT yardımcısının Süper Meep Güçleri var.\n"
@@ -1917,6 +1921,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"Sunucudan/vekilden geçersiz yanıt alındığı için %s seçeneği otomatik olarak "
+"devre dışı bırakıldı. (man 5 apt.conf)"
 
 #: methods/server.cc
 msgid "Internal error"
@@ -1928,9 +1934,8 @@ msgstr "Geçersiz öntanımlı ayar!"
 
 #: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
 #: dselect/install:106 dselect/update:45
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Devam etmek için giriş (enter) tuşuna basın."
+msgstr "Devam etmek için [Enter] tuşuna basın."
 
 #: dselect/install:92
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -2396,9 +2401,9 @@ msgid "Failed to read the archive headers"
 msgstr "Arşiv başlıkları okunamadı"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "%s için kimlik doğrulama kaydı bulunamadı"
+msgstr "'%s' için yapılandırılmış bir sıkıştırma programı bulunmuyor"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -2541,6 +2546,8 @@ msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
 msgstr ""
+"'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için dosya "
+"indirilirken ayrıcalıklar bırakılamıyor."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -2562,6 +2569,8 @@ msgstr "Alınan dosya: %li / %li"
 #: apt-pkg/acquire-item.cc
 msgid "Use --allow-insecure-repositories to force the update"
 msgstr ""
+"Buna rağmen güncellemeyi yapmak için --allow-insecure-repositories "
+"seçeneğini kullanın"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2581,18 +2590,17 @@ msgid "Invalid file format"
 msgstr "Geçersiz dosya biçimi"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "Yazma hatası"
+msgstr "İmza hatası"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
 "İmza doğrulama sırasında bir hata meydana geldi. Depo güncel değil ve önceki "
-"indeks dosyaları kullanılacak. GPG hatası: %s:%s\n"
+"indeks dosyaları kullanılacak. GPG hatası: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -2637,6 +2645,8 @@ msgid ""
 "The data from '%s' is not signed. Packages from that repository can not be "
 "authenticated."
 msgstr ""
+"'%s' deposundan alınan veri imzalanmamış. Bu depodan gelen paketlerin aslına "
+"uygunluğu denetlenemeyecek."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2644,17 +2654,22 @@ msgid ""
 "The repository '%s' does not have a Release file. This is deprecated, please "
 "contact the owner of the repository."
 msgstr ""
+"'%s' deposunun Release dosyası yok. Bu tür depolar gelecekte kullanımdan "
+"kaldırılacaktır, lütfen depo sahibiyle iletişime geçin."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "%s dizini yönlendirilmiş"
+msgstr "'%s' deposu imzalanmamış"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"Bu duruma normalde izin verilmez, ama Acquire::"
+"AllowDowngradeToInsecureRepositories seçeneği kullanıldığı için izin "
+"veriliyor."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2678,9 +2693,9 @@ msgstr "Paket indeks dosyaları bozuk. %s paketinin 'Filename:' alanı yok."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "%s (%s) paketinin değişim günlüğü"
+msgstr "%s=%s için değişim günlüğü mevcut değil"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -2698,12 +2713,12 @@ msgid "Method %s did not start correctly"
 msgstr "%s yöntemi düzgün şekilde başlamadı"
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr ""
-"Lütfen '%s' olarak etiketlenmiş diski '%s' sürücüsüne yerleştirin ve giriş "
-"(enter) tuşuna basın."
+"Lütfen '%s' olarak etiketlenmiş diski '%s' sürücüsüne yerleştirin ve [Enter] "
+"tuşuna basın."
 
 #: apt-pkg/algorithms.cc
 #, c-format
@@ -2888,18 +2903,20 @@ msgid "Failed to stat the cdrom"
 msgstr "Cdrom durum bilgisi alınamadı"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Komut satırı seçeneği '%c' [%s içinden] tanınmıyor."
+msgstr ""
+"'%c' Komut satırı seçeneği [%s içinden] diğer seçeneklerle bir arada "
+"tanınmıyor."
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Komut satırı seçeneği %s anlaşılamadı"
+msgstr "%s komut satırı seçeneği diğer seçeneklerle bir arada anlaşılamadı"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -3223,7 +3240,7 @@ msgstr "%s seçimi bulunamadı"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "%s hedefi aynı dosyayı (%s) %s olarak %s kaynağından almak istiyor"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -3231,7 +3248,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "%s (%s) hedefi %s ve %s konumlarında birden fazla kez yapılandırılmış"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3262,17 +3279,17 @@ msgstr "'Release' dosyasında (%s) geçersiz 'Valid-Until' girdisi"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s concerning source %s %s"
-msgstr ""
+msgstr "%s seçeneği için çakışan değer kümesi (kaynak %s %s)"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s concerning source %s %s (%s)"
-msgstr ""
+msgstr "%s seçeneği için geçersiz değer kümesi (kaynak: %s %s) (%s)"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse package file %s (%d)"
-msgstr "Paket dosyası %s ayrıştırılamadı (1)"
+msgstr "Paket dosyası (%s) ayrıştırılamadı (%d)"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
@@ -3585,9 +3602,10 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "Bu APT '%s' sürümleme sistemini desteklemiyor"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "Paket önbelleği farklı bir mimarı için yapılmış"
+msgstr ""
+"Paket önbelleği farklı bir mimari için oluşturulmuş: biri %s, diğeri %s"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -3707,7 +3725,7 @@ msgstr "İğne türü %s anlaşılamadı"
 #: apt-pkg/policy.cc
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
-msgstr ""
+msgstr "%s: %s değeri geçerli iğne önceliği aralığının dışında (%d - %d arası)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -3715,9 +3733,9 @@ msgstr "İğne için öncelik belirlenmedi (ya da sıfır)"
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Hatalı geçersiz kılma %s satır %llu (%s)"
+msgstr "Hatalı girdi satır %u %s dosya %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3735,9 +3753,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "'%s' türü bilinmiyor. (Satır: %u, Kaynak Listesi: %s)"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Kaynak listesinin (%2$s) %1$u numaralı satırı hatalı (tür)"
+msgstr "%2$s kaynak listesinin %1$u kısmı hatalı (tür)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3751,12 +3769,12 @@ msgstr "'sources.list' dosyası içine bazı 'source' adresleri koymalısınız"
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer"
-msgstr ""
+msgstr "%s metni tam sayıya dönüştürülemiyor"
 
 #: apt-pkg/update.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "%s ağdan alınamadı. %s\n"
+msgstr "%s alınamadı %s"
 
 #: apt-pkg/update.cc
 msgid ""
