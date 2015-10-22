@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -406,6 +406,7 @@ msgid_plural ""
 msgstr[0] "%lu gói đã được tự động cài đặt nên không còn cần yêu cầu lại.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Hãy dùng lệnh “%s” để gỡ bỏ chúng."
@@ -672,7 +673,7 @@ msgstr "K"
 msgid "Regex compilation error - %s"
 msgstr "Lỗi biên dịch biểu thức chính quy - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "Bạn phải đưa ra ít nhất một mẫu tìm kiếm"
 
@@ -858,29 +859,25 @@ msgstr "  Bảng phiên bản:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Cách dùng: apt-cache [tùy_chọn...] lệnh\n"
+"           apt-cache [tùy_chọn...] show gói1 [gói2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache là một công cụ ở mức thấp dùng để truy vấn\n"
+"thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Các lệnh:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -891,33 +888,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Cách dùng: apt-cache [tùy_chọn...] lệnh\n"
-"           apt-cache [tùy_chọn...] showpkg gói1 [gói2 ...]\n"
-"           apt-cache [tùy_chọn...] showsrc gói1 [gói2 ...]\n"
-"(cache: bộ nhớ tạm\n"
-"showpkg: hiển thị gói nhị phân\n"
-"showsrc: hiển thị gói nguồn)\n"
-"\n"
-"apt-cache là một công cụ ở mức thấp dùng để truy vấn\n"
-"thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
-"\n"
-"Lệnh:\n"
-"   gencaches - Tạo bộ nhớ tạm cho cả gói lẫn nguồn\n"
-"   showpkg - Hiện thông tin chung về một gói riêng lẻ\n"
-"   showsrc - Hiện các bản ghi cho gói nguồn\n"
-"   stats - Hiện phần thống kê cơ bản\n"
-"   dump - Hiện toàn bộ tập tin dạng ngắn (đổ)\n"
-"   dumpavail - In ra một tập tin sẵn dùng ra thiết bị xuất chuẩn\n"
-"   unmet - Hiện các gói chưa thỏa mãn quan hệ phụ thuộc\n"
-"   search - Tìm kiếm danh sách các gói dựa trên biểu thức chính quy\n"
-"   show - Hiển thị bản ghi có thể đọc cho những gói đó\n"
-"   depends - Hiện thông tin quan hệ phụ thuộc dạng thô cho gói\n"
-"   rdepends - Hiện thông tin những gói phụ thuộc vào gói này\n"
-"   pkgnames - Liệt kê danh sách mọi gói trên hệ thống\n"
-"   dotty - Tạo ra đồ thị gói cho GraphViz (nhiều chấm)\n"
-"   xvcg - Tạo ra đồ thị gói cho xvcg\n"
-"   policy - Hiển thị các cài đặt về chính sách\n"
-"\n"
 "Tùy chọn:\n"
 "  -h   Hiển thị trợ giúp này.\n"
 "  -p=? Bộ nhớ tạm gói.\n"
@@ -929,47 +899,88 @@ msgstr ""
 "Để tìm thông tin thêm, xem hai trang hướng dẫn\n"
 "                 apt-cache(8) và apt.conf(5).\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Hiện các bản ghi cho gói nguồn"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Tìm kiếm danh sách các gói dựa trên biểu thức chính quy"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Hiện thông tin quan hệ phụ thuộc dạng thô cho gói"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Hiện thông tin những gói phụ thuộc vào gói này"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Hiển thị bản ghi có thể đọc cho những gói đó"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Liệt kê danh sách mọi gói trên hệ thống"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Hiển thị các cài đặt về chính sách"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Cách dùng: apt [các tùy chọn] lệnh\n"
 "\n"
 "CLI (giao diện dòng lệnh) dành cho apt.\n"
-"Các lệnh cơ bản:\n"
-" list - liệt kê các gói dựa trên cơ sở là tên gói\n"
-" search - tìm trong phần mô tả của gói\n"
-" show - hiển thị thông tin chi tiết về gói\n"
-"\n"
-" update - cập nhật danh sánh các gói sẵn có\n"
-"\n"
-" install - cài đặt các gói\n"
-" remove - gỡ bỏ các gói\n"
-"\n"
-" upgrade - nâng cấp các gói trong hệ thống\n"
-" full-upgrade - nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các "
-"gói\n"
-"\n"
-" edit-sources - sửa tập tin thông tin gói nguồn\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "liệt kê các gói dựa trên cơ sở là tên gói"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "tìm trong phần mô tả của gói"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "hiển thị thông tin chi tiết về gói"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "cài đặt các gói"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "gỡ bỏ các gói"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Tự động gỡ bỏ tất cả các gói không dùng"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "cập nhật danh sánh các gói sẵn có"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "nâng cấp các gói trong hệ thống"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các gói"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "sửa tập tin thông tin gói nguồn"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1002,6 +1013,41 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Hãy lặp lại tiến trình này cho các Đĩa còn lại trong bộ đĩa của bạn."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Tùy chọn:\n"
+"  -h   Trợ giúp này.\n"
+"  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công việc\n"
+"  -qq  Không xuất thông tin nào, trừ lỗi\n"
+"  -s   Không làm gì chỉ in những cái sẽ làm.\n"
+"  -f   đánh dấu đọc/ghi tự-động/thủ-công trong tập tin đã cho.\n"
+"  -c=? Đọc tập tin cấu hình này\n"
+"  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
+"Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
+"                          apt-mark(8) và apt.conf(5)"
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Các đối số không thành cặp"
@@ -1011,30 +1057,32 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
-"\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 "Cách dùng: apt-config [tùy_chọn...] lệnh\n"
 "\n"
 "(config: viết tắt cho từ configuration: cấu hình)\n"
 "\n"
 "apt-config là một công cụ đơn giản để đọc tập tin cấu hình APT.\n"
-"\n"
-"Lệnh:\n"
-"   shell - Chế độ hệ vỏ\n"
-"   dump - Hiển thị cấu hình\n"
-"\n"
+
+#: cmdline/apt-config.cc
+msgid ""
+"Options:\n"
+"  -h   This help text.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
 "Tùy chọn:\n"
 "  -h   Trợ giúp này\n"
 "  -c=? Đọc tập tin cấu hình này\n"
 "  -o=? Đặt một tùy chọn cấu hình tùy ý, ví dụ -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1268,24 +1316,22 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Cách dùng: apt-get [tùy_chọn...] lệnh\n"
+"           apt-get [tùy_chọn...] install|remove gói1 [gói2 ...]\n"
+"           apt-get [tùy_chọn...] source gói1 [gói2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
+"get:     lấy\n"
+"install: cài đặt\n"
+"remove:  gỡ bỏ\n"
+"source:  nguồn\n"
 "\n"
+"apt-get là một giao diện dòng lệnh đơn giản dùng để tải về và cài đặt gói "
+"phần mềm.\n"
+"Những lệnh được dùng thường nhất là update (cập nhật) và install (cài đặt).\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1304,37 +1350,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Cách dùng: apt-get [tùy_chọn...] lệnh\n"
-"           apt-get [tùy_chọn...] install|remove gói1 [gói2 ...]\n"
-"           apt-get [tùy_chọn...] source gói1 [gói2 ...]\n"
-"\n"
-"get:     lấy\n"
-"install: cài đặt\n"
-"remove:  gỡ bỏ\n"
-"source:  nguồn\n"
-"\n"
-"apt-get là một giao diện dòng lệnh đơn giản dùng để tải về và cài đặt gói "
-"phần mềm.\n"
-"Những lệnh được dùng thường nhất là update (cập nhật) và install (cài đặt).\n"
-"\n"
-"Lệnh:\n"
-"   update - Lấy danh sách gói mới (cập nhật cơ sở dữ liệu)\n"
-"   upgrade - Nâng cấp lên phiên bản mới hơn\n"
-"   install - Cài đặt gói mới (gói có dạng libc6 không phải libc6.deb)\n"
-"   remove - Gỡ bỏ gói phần mềm\n"
-"   autoremove - Tự động gỡ bỏ tất cả các gói không dùng\n"
-"   purge - Gỡ bỏ và tẩy xóa gói\n"
-"   source - Tải về kho nguồn\n"
-"   build-dep - Cấu hình quan hệ phụ thuộc khi biên dịch, cho gói nguồn\n"
-"   dist-upgrade - Nâng cấp hệ điều hành lên phiên bản mới hơn, hãy xem apt-"
-"get(8)\n"
-"   dselect-upgrade - Cho phép chọn dselect\n"
-"   clean - Xóa các tập tin kho đã tải về (dọn dẹp thư mục lưu trữ)\n"
-"   autoclean - Xóa các tập tin kho cũ đã tải về (tự động làm sạch)\n"
-"   check - Kiểm tra xem có quan hệ phụ thuộc bị sai không\n"
-"   changelog - Tải về và hiển thị các thay đổi cho gói đã cho\n"
-"   download - Tải về gói phần mềm vào thư mục hiện hành\n"
-"\n"
 "Tùy chọn:\n"
 "  -h  Trợ giúp này.\n"
 "  -q  Dữ liệu xuất có thể ghi nhật ký - không hiển thị tiến triển công việc\n"
@@ -1352,6 +1367,62 @@ msgstr ""
 "Để có thêm thông tin và tùy chọn thì hãy xem trang hướng dẫn\n"
 "       apt-get(8), sources.list(5) và apt.conf(5).\n"
 "                  Trình APT này có năng lực của siêu bò.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Lấy danh sách gói mới (cập nhật cơ sở dữ liệu)"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Nâng cấp lên phiên bản mới hơn"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Cài đặt gói mới (gói có dạng libc6 không phải libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Gỡ bỏ gói phần mềm"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Gỡ bỏ và tẩy xóa gói"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Nâng cấp hệ điều hành lên phiên bản mới hơn, hãy xem apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Cho phép chọn dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Cấu hình quan hệ phụ thuộc khi biên dịch, cho gói nguồn"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Xóa các tập tin kho đã tải về (dọn dẹp thư mục lưu trữ)"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Xóa các tập tin kho cũ đã tải về (tự động làm sạch)"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Kiểm tra xem có quan hệ phụ thuộc bị sai không"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Tải về kho nguồn"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Tải về gói phần mềm vào thư mục hiện hành"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Tải về và hiển thị các thay đổi cho gói đã cho"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1371,30 +1442,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Cách dùng: apt-helper [các-tùy-chọn] lệnh\n"
 "           apt-helper [các-tùy-chọn] download-file uri đường-dẫn-đích\n"
 "\n"
 "apt-helper là phần trợ giúp dành cho apt\n"
-"\n"
-"Các lệnh:\n"
-"   download-file - tải về uri đã cho về đường-dẫn-đích\n"
-"   auto-detect-proxy - dò tìm proxy dùng apt.conf\n"
-"\n"
-"     Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "tải về uri đã cho về đường-dẫn-đích"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "dò tìm proxy dùng apt.conf"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1421,11 +1494,11 @@ msgstr "%s đã sẵn được đặt là giữ lại.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s đã sẵn được đặt là không giữ lại.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Cần %s nhưng mà không thấy nó ở đây"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+"Thực thi lệnh “dpkg” gặp lỗi. Bạn có cần quyền siêu người dùng để thực thi "
+"lệnh này"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1438,10 +1511,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "Hủy bỏ nắm giữ %s.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
 msgstr ""
-"Thực thi lệnh “dpkg” gặp lỗi. Bạn có cần quyền siêu người dùng để thực thi "
-"lệnh này"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1449,16 +1531,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Cách dùng: apt-mark [tùy-chọn...] {auto|manual} gói1 [gói2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark là câu lệnh đơn giản được dùng để đánh dấu các gói là\n"
+"được cài đặt tự động hay bằng tay. Nó còn có thể liệt kê danh sách các đánh "
+"dấu.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1469,21 +1550,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Cách dùng: apt-mark [tùy-chọn...] {auto|manual} gói1 [gói2 ...]\n"
-"\n"
-"apt-mark là câu lệnh đơn giản được dùng để đánh dấu các gói là\n"
-"được cài đặt tự động hay bằng tay. Nó còn có thể liệt kê danh sách các đánh "
-"dấu.\n"
-"\n"
-"Lệnh:\n"
-"   auto - Đánh dấu các gói đưa ra là được cài đặt tự động\n"
-"   manual - Đánh dấu các gói đưa ra là được cài đặt bằng tay\n"
-"   hold - Đánh dấu một gói là giữ lại\n"
-"   unhold - Bỏ đánh dấu một gói là giữ lại\n"
-"   showauto - In ra danh sách các gói được tự động cài đặt\n"
-"   showmanual - In ra danh sách các gói được cài đặt bằng tay\n"
-"   showhold - In ra danh sách các gói được giữ lại\n"
-"\n"
 "Tùy chọn:\n"
 "  -h   Trợ giúp này.\n"
 "  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công việc\n"
@@ -1494,6 +1560,34 @@ msgstr ""
 "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
 "Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
 "                          apt-mark(8) và apt.conf(5)"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Đánh dấu các gói đưa ra là được cài đặt tự động"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Đánh dấu các gói đưa ra là được cài đặt bằng tay"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Đánh dấu một gói là giữ lại"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Bỏ đánh dấu một gói là giữ lại"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "In ra danh sách các gói được tự động cài đặt"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "In ra danh sách các gói được cài đặt bằng tay"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "In ra danh sách các gói được giữ lại"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2573,7 +2667,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Đang tải tập tin %li trong tổng số %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2644,19 +2752,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Bản phát hành xung đột: %s (cần %s nhưng lại nhận được %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Thư mục %s bị trệch hướng"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Thư mục %s bị trệch hướng"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3051,6 +3161,11 @@ msgid ""
 msgstr ""
 "Bỏ qua tập tin “%s” trong thư mục “%s” vì nó có phần đuôi mở rộng không hợp "
 "lệ"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Cần %s nhưng mà không thấy nó ở đây"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3760,6 +3875,11 @@ msgstr "Gặp dòng sai dạng %u trong danh sách nguồn %s (kiểu)."
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Không hiểu kiểu “%s” trên đoạn %u trong danh sách nguồn %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

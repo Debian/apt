@@ -37,64 +37,53 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(c1out, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    // FIXME: generate from CommandLine
-   c1out << 
+   c1out <<
     _("Usage: apt [options] command\n"
       "\n"
-      "CLI for apt.\n"
-      "Basic commands: \n"
-      " list - list packages based on package names\n"
-      " search - search in package descriptions\n"
-      " show - show package details\n"
-      "\n"
-      " update - update list of available packages\n"
-      "\n"
-      " install - install packages\n"
-      " remove  - remove packages\n"
-      " autoremove - Remove automatically all unused packages\n"
-      "\n"
-      " upgrade - upgrade the system by installing/upgrading packages\n"
-      " full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
-      "\n"
-      " edit-sources - edit the source information file\n"
-       );
-   
+      "CLI for apt.\n")
+    << std::endl
+    << _("Commands:") << std::endl;
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
    return true;
 }
 
 int main(int argc, const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {
-                                   // query
-                                   {"list",&DoList},
-                                   {"search", &DoSearch},
-                                   {"show", &ShowPackage},
+   CommandLine::DispatchWithHelp Cmds[] = {
+      // query
+      {"list", &DoList, _("list packages based on package names")},
+      {"search", &DoSearch, _("search in package descriptions")},
+      {"show", &ShowPackage, _("show package details")},
 
-                                   // package stuff
-                                   {"install",&DoInstall},
-                                   {"remove", &DoInstall},
-                                   {"autoremove", &DoInstall},
-                                   {"auto-remove", &DoInstall},
-                                   {"purge", &DoInstall},
+      // package stuff
+      {"install", &DoInstall, _("install packages")},
+      {"remove", &DoInstall, _("remove packages")},
+      {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
+      {"auto-remove", &DoInstall, nullptr},
+      {"purge", &DoInstall, nullptr},
 
-                                   // system wide stuff
-                                   {"update",&DoUpdate},
-                                   {"upgrade",&DoUpgrade},
-                                   {"full-upgrade",&DoDistUpgrade},
-                                   // for compat with muscle memory
-                                   {"dist-upgrade",&DoDistUpgrade},
+      // system wide stuff
+      {"update", &DoUpdate, _("update list of available packages")},
+      {"upgrade", &DoUpgrade, _("upgrade the system by installing/upgrading packages")},
+      {"full-upgrade", &DoDistUpgrade, _("upgrade the system by removing/installing/upgrading packages")},
+      {"dist-upgrade", &DoDistUpgrade, nullptr}, // for compat with muscle memory
 
-                                   // misc
-                                   {"edit-sources",&EditSources},
-
-                                   // helper
-                                   {"moo",&DoMoo},
-                                   {"help",&ShowHelp},
-                                   {0,0}};
+      // misc
+      {"edit-sources", &EditSources, _("edit the source information file")},
+      {"moo", &DoMoo, nullptr},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
 

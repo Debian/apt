@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -403,6 +403,7 @@ msgstr[0] ""
 "ん:\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "これを削除するには '%s' を利用してください。"
@@ -675,7 +676,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "正規表現の展開エラー - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "検索パターンはちょうど 1 つだけ指定してください"
 
@@ -863,29 +864,25 @@ msgstr "  バージョンテーブル:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"使用方法: apt-cache [オプション] コマンド\n"
+"          apt-cache [オプション] show pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache は APT のバイナリキャッシュファイルを操作したり、そこから情\n"
+"報を検索したりするための低レベルのツールです\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "コマンド:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -896,30 +893,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"使用方法: apt-cache [オプション] コマンド\n"
-"          apt-cache [オプション] showpkg pkg1 [pkg2 ...]\n"
-"          apt-cache [オプション] showsrc pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache は APT のバイナリキャッシュファイルを操作したり、そこから情\n"
-"報を検索したりするための低レベルのツールです\n"
-"\n"
-"コマンド:\n"
-"   gencaches - パッケージおよびソースキャッシュを生成する\n"
-"   showpkg - 単一パッケージの一般情報を表示する\n"
-"   showsrc - ソースレコードを表示する\n"
-"   stats - 基本ステータス情報を表示する\n"
-"   dump - すべてのファイルを簡単な形式で表示する\n"
-"   dumpavail - available ファイルを標準出力に出力する\n"
-"   unmet - 未解決の依存関係を表示する\n"
-"   search - 正規表現パターンによってパッケージ一覧を検索する\n"
-"   show - パッケージの情報を表示する\n"
-"   depends - パッケージの生の依存情報を表示する\n"
-"   rdepends - パッケージの生の逆依存情報を表示する\n"
-"   pkgnames - システム内のすべてのパッケージ名一覧を表示する\n"
-"   dotty - GraphViz 用のパッケージグラフを生成する\n"
-"   xvcg - xvcg 用のパッケージグラフを生成する\n"
-"   policy - ポリシー設定情報を表示する\n"
-"\n"
 "オプション:\n"
 "  -h   このヘルプを表示する\n"
 "  -p=? パッケージキャッシュ\n"
@@ -930,47 +903,88 @@ msgstr ""
 "  -o=? 指定した設定オプションを読み込む (例: -o dir::cache=/tmp)\n"
 "詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してください。\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "ソースレコードを表示する"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "正規表現パターンによってパッケージ一覧を検索する"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "パッケージの生の依存情報を表示する"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "パッケージの生の逆依存情報を表示する"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "パッケージの情報を表示する"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "システム内のすべてのパッケージ名一覧を表示する"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "ポリシー設定情報を表示する"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "使用法: apt [オプション] コマンド\n"
 "\n"
 "apt 用コマンドラインインターフェイス\n"
-"基本コマンド: \n"
-" list   - パッケージ名を基にパッケージの一覧を表示\n"
-" search - パッケージの説明を検索\n"
-" show   - パッケージの詳細を表示\n"
-"\n"
-" update - 利用可能パッケージの一覧を更新\n"
-"\n"
-" install - パッケージをインストール\n"
-" remove  - パッケージを削除\n"
-"\n"
-" upgrade - パッケージをインストール/更新してシステムをアップグレード\n"
-" full-upgrade - パッケージを削除/インストール/更新してシステムをアップグレー"
-"ド\n"
-"\n"
-" edit-sources - ソース情報ファイルを編集\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "パッケージ名を基にパッケージの一覧を表示"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "パッケージの説明を検索"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "パッケージの詳細を表示"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "パッケージをインストール"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "パッケージを削除"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "自動インストールされ使われていないすべてのパッケージを削除する"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "利用可能パッケージの一覧を更新"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "パッケージをインストール/更新してシステムをアップグレード"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "パッケージを削除/インストール/更新してシステムをアップグレード"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "ソース情報ファイルを編集"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1005,6 +1019,41 @@ msgid "Repeat this process for the rest of the CDs in your set."
 msgstr ""
 "あなたの持っている CD セットの残り全部に、この手順を繰り返してください。"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"オプション:\n"
+"  -h  このヘルプを表示する\n"
+"  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
+"  -qq エラー以外は表示しない\n"
+"  -s  実際には実行しない。実行シミュレーションのみ行う\n"
+"  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
+"  -c=? 指定した設定ファイルを読み込む\n"
+"  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
+"さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を参"
+"照してください。"
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "引数がペアではありません"
@@ -1014,28 +1063,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"使用方法: apt-config [オプション] コマンド\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config は APT の設定ファイルを読み込むための簡単なツールです\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"使用方法: apt-config [オプション] コマンド\n"
-"\n"
-"apt-config は APT の設定ファイルを読み込むための簡単なツールです\n"
-"\n"
-"コマンド:\n"
-"   shell - シェルモード\n"
-"   dump - 設定情報を表示する\n"
-"\n"
 "オプション:\n"
 "  -h   このヘルプを表示する\n"
 "  -c=? 指定した設定ファイルを読み込む\n"
 "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1273,24 +1324,18 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"使用法: apt-get [オプション] コマンド\n"
+"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名"
+"2 ...]\n"
+"        apt-get [オプション] source パッケージ名1 [パッケージ名2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
+"ンドラインインタフェースです。もっともよく使われるコマンドは、update \n"
+"と install です。\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1309,35 +1354,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"使用法: apt-get [オプション] コマンド\n"
-"        apt-get [オプション] install|remove パッケージ名1 [パッケージ名"
-"2 ...]\n"
-"        apt-get [オプション] source パッケージ名1 [パッケージ名2 ...]\n"
-"\n"
-"apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
-"ンドラインインタフェースです。もっともよく使われるコマンドは、update \n"
-"と install です。\n"
-"\n"
-"コマンド:\n"
-"   update - 新しいパッケージリストを取得する\n"
-"   upgrade - アップグレードを行う\n"
-"   install - 新規パッケージをインストールする (pkg は libc6.deb ではなく "
-"libc6 のように指定する)\n"
-"   remove - パッケージを削除する\n"
-"   autoremove - 自動インストールされ使われていないすべてのパッケージを削除す"
-"る\n"
-"   purge - 設定ファイルまで含めてパッケージを削除する\n"
-"   source - ソースアーカイブをダウンロードする\n"
-"   build-dep - ソースパッケージの構築依存関係を設定する\n"
-"   dist-upgrade - ディストリビューションをアップグレードする (apt-get(8) を参"
-"照)\n"
-"   dselect-upgrade - dselect の選択に従う\n"
-"   clean - ダウンロードしたアーカイブファイルを削除する\n"
-"   autoclean - ダウンロードした古いアーカイブファイルを削除する\n"
-"   check -  壊れた依存関係がないかチェックする\n"
-"   changelog - 指定のパッケージの変更履歴をダウンロードして表示する\n"
-"   download - バイナリパッケージをカレントディレクトリにダウンロードする\n"
-"\n"
 "オプション:\n"
 "  -h  このヘルプを表示する\n"
 "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
@@ -1355,6 +1371,64 @@ msgstr ""
 "さらなる情報やオプションについては、マニュアルページ\n"
 "apt-get(8)、sources.list(5)、apt.conf(5) を参照してください。\n"
 "                        この APT は Super Cow Powers 化されています。\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "新しいパッケージリストを取得する"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "アップグレードを行う"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+"新規パッケージをインストールする (pkg は libc6.deb ではなく libc6 のように指"
+"定する)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "パッケージを削除する"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "設定ファイルまで含めてパッケージを削除する"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "ディストリビューションをアップグレードする (apt-get(8) を参照)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "dselect の選択に従う"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "ソースパッケージの構築依存関係を設定する"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "ダウンロードしたアーカイブファイルを削除する"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "ダウンロードした古いアーカイブファイルを削除する"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "壊れた依存関係がないかチェックする"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "ソースアーカイブをダウンロードする"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "バイナリパッケージをカレントディレクトリにダウンロードする"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "指定のパッケージの変更履歴をダウンロードして表示する"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1374,30 +1448,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "使用法: apt-helper [オプション] コマンド\n"
 "        apt-helper [オプション] download-file uri 目標パス\n"
 "\n"
 "apt-helper は apt の内部ヘルパーです\n"
-"\n"
-"コマンド:\n"
-"   download-file - 指定した uri を目標パスにダウンロードする\n"
-"  auto-detect-proxy - apt.conf を使ってプロキシを検出する\n"
-"\n"
-"                この APT helper は Super Meep Powers 化されています。\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "この APT helper は Super Meep Powers 化されています。"
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "指定した uri を目標パスにダウンロードする"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "apt.conf を使ってプロキシを検出する"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1424,11 +1500,9 @@ msgstr "%s はすでに保留に設定されています。\n"
 msgid "%s was already not hold.\n"
 msgstr "%s はすでに保留されていません。\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s を待ちましたが、そこにはありませんでした"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "dpkg の実行に失敗しました。root 権限で実行していますか?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1441,8 +1515,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "%s の保留を解除しました。\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "dpkg の実行に失敗しました。root 権限で実行していますか?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1450,16 +1535,14 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Usage: apt-mark [オプション] {auto|manual} パッケージ1 [パッケージ2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark は、パッケージを手動または自動でインストールされたものとしてマーク\n"
+"する簡単なコマンドラインインターフェイスです。マークの一覧表示もできます。\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1470,22 +1553,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Usage: apt-mark [オプション] {auto|manual} パッケージ1 [パッケージ2 ...]\n"
-"\n"
-"apt-mark は、パッケージを手動または自動でインストールされたものとしてマーク\n"
-"する簡単なコマンドラインインターフェイスです。マークの一覧表示もできます。\n"
-"\n"
-"コマンド:\n"
-"   auto       - 指定のパッケージを自動でインストールされたものとしてマークす"
-"る\n"
-"   manual     - 指定のパッケージを手動でインストールしたものとしてマークす"
-"る\n"
-"   hold       - パッケージを保留としてマークする\n"
-"   unhold     - パッケージの保留を解除する\n"
-"   showauto   - 自動的にインストールされたパッケージの一覧を表示する\n"
-"   showmanual - 手作業でインストールしたパッケージの一覧を表示する\n"
-"   showhold   - 保留されているパッケージの一覧を表示する\n"
-"\n"
 "オプション:\n"
 "  -h  このヘルプを表示する\n"
 "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
@@ -1496,6 +1563,34 @@ msgstr ""
 "  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
 "さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を参"
 "照してください。"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "指定のパッケージを自動でインストールされたものとしてマークする"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "指定のパッケージを手動でインストールしたものとしてマークする"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "パッケージを保留としてマークする"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "パッケージの保留を解除する"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "自動的にインストールされたパッケージの一覧を表示する"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "手作業でインストールしたパッケージの一覧を表示する"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "保留されているパッケージの一覧を表示する"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2548,7 +2643,21 @@ msgid "Retrieving file %li of %li"
 msgstr "ファイルを取得しています %li/%li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2620,19 +2729,21 @@ msgstr ""
 "ディストリビューションが競合しています: %s (%s を期待していたのに %s を取得し"
 "ました)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "ディレクトリ %s は divert されています"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "ディレクトリ %s は divert されています"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3034,6 +3145,11 @@ msgid ""
 msgstr ""
 "ディレクトリ '%2$s' の '%1$s' が無効なファイル名拡張子を持っているため、無視"
 "します"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s を待ちましたが、そこにはありませんでした"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3740,6 +3856,11 @@ msgstr "ソースリスト %2$s の %1$u 行目が不正です (type)"
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "ソースリスト %3$s の %2$u 個目の節 '%1$s' は不明です"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

@@ -340,8 +340,8 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    _config->MoveSubTree(conf.c_str(), NULL);
 }
 									/*}}}*/
-void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, CommandLine::Args * const Args,/*{{{*/
-      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &CmdL))
+void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * Cmds, CommandLine::Args * const Args,/*{{{*/
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &, CommandLine::DispatchWithHelp const *))
 {
    CmdL = CommandLine(Args,_config);
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
@@ -357,21 +357,22 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::Dispatch * const Cmds, Com
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowHelp(CmdL);
+	 ShowHelp(CmdL, Cmds);
 
       _error->DumpErrors();
       exit(100);
    }
 
    // See if the help should be shown
-   if (_config->FindB("help") == true || _config->FindB("version") == true)
+   if (_config->FindB("help") == true || _config->FindB("version") == true ||
+	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowHelp(CmdL);
+      ShowHelp(CmdL, Cmds);
       exit(0);
    }
-   if (Cmds != NULL && CmdL.FileSize() == 0)
+   if (Cmds != nullptr && CmdL.FileSize() == 0)
    {
-      ShowHelp(CmdL);
+      ShowHelp(CmdL, Cmds);
       exit(1);
    }
 }

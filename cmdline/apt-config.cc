@@ -78,34 +78,40 @@ static bool DoDump(CommandLine &CmdL)
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
       return true;
 
-   cout <<
-    _("Usage: apt-config [options] command\n"
+   std::cout <<
+      _("Usage: apt-config [options] command\n"
       "\n"
-      "apt-config is a simple tool to read the APT config file\n"
-      "\n"
-      "Commands:\n"
-      "   shell - Shell mode\n"
-      "   dump - Show the configuration\n"
-      "\n"
-      "Options:\n"
-      "  -h   This help text.\n" 
-      "  -c=? Read this configuration file\n" 
+      "apt-config is a simple tool to read the APT config file\n")
+      << std::endl
+      << _("Commands:") << std::endl;
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
+   std::cout << std::endl <<
+      _("Options:\n"
+      "  -h   This help text.\n"
+      "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
    return true;
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
-                                   {"dump",&DoDump},
-				   {"help",&ShowHelp},
-                                   {0,0}};
+   CommandLine::DispatchWithHelp Cmds[] = {
+      {"shell", &DoShell, _("get configuration values via shell evaluation")},
+      {"dump", &DoDump, _("show the active configuration setting")},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt-config", CommandLine::GetCommand(Cmds, argc, argv));
 

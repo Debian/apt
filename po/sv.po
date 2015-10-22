@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -414,6 +414,7 @@ msgstr[1] ""
 "%lu paket blev installerade automatiskt och är inte längre nödvändiga.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Använd ”%s” för att ta bort det."
@@ -687,7 +688,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "Fel vid kompilering av reguljärt uttryck - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "Du måste ange minst ett sökmönster"
 
@@ -875,29 +876,25 @@ msgstr "  Versionstabell:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Användning: apt-cache [flaggor] kommando\n"
+"            apt-cache [flaggor] show paket1 [paket2 …]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache är ett lågnivåverktyg för att hämta information\n"
+"från APTs binära cachefiler\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Kommandon:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -908,30 +905,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Användning: apt-cache [flaggor] kommando\n"
-"            apt-cache [flaggor] showpkg paket1 [paket2 …]\n"
-"            apt-cache [flaggor] showsrc paket1 [paket2 …]\n"
-"\n"
-"apt-cache är ett lågnivåverktyg för att hämta information\n"
-"från APTs binära cachefiler\n"
-"\n"
-"Kommandon:\n"
-"   gencaches - Bygg både paket- och källcache\n"
-"   showpkg - Visa viss allmän information om ett enskilt paket\n"
-"   showsrc - Visa källkodsposter\n"
-"   stats - Visa viss grundläggande statistik\n"
-"   dump - Visa hela filen i koncis form\n"
-"   dumpavail - Skriv en ”available”-fil på standard ut\n"
-"   unmet - Visa otillfredsställbara beroenden\n"
-"   search - Sök i paketlistan med ett reguljärt uttryck\n"
-"   show - Visa en läsbar post för paketet\n"
-"   depends - Visa rå information om beroenden för ett paket\n"
-"   rdepends - Visa information om omvända beroenden för ett paket\n"
-"   pkgnames - Lista namnen på alla paket i systemet\n"
-"   dotty - Generera paketdiagram för GraphViz\n"
-"   xvcg - Generera paketdiagram för xvcg\n"
-"   policy - Visa policyinställningar\n"
-"\n"
 "Flaggor:\n"
 "  -h   Denna hjälptext.\n"
 "  -p=? Paketcachen.\n"
@@ -942,47 +915,88 @@ msgstr ""
 "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 "Se manualsidorna för apt-cache(8) och apt.conf(5) för mer information.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Visa källkodsposter"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Sök i paketlistan med ett reguljärt uttryck"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Visa rå information om beroenden för ett paket"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Visa information om omvända beroenden för ett paket"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Visa en läsbar post för paketet"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Lista namnen på alla paket i systemet"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Visa policyinställningar"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Användning: apt [flaggor] kommando\n"
 "\n"
 "Kommandoradsgränssnitt för apt.\n"
-"Grundläggande kommandon: \n"
-" list - lista paket baserat på paketnamn\n"
-" search - sök i paketbeskrivningar\n"
-" show - visa detaljer för paket\n"
-"\n"
-" update - uppdatera lista över tillgängliga paket\n"
-"\n"
-" install - installera paket\n"
-" remove  - ta bort paket\n"
-"\n"
-" upgrade - uppgradera systemet genom att installera/uppgradera paket\n"
-" full-upgrade - uppgradera systemet genom att ta bort/installera/uppgradera "
-"paket\n"
-"\n"
-" edit-sources - redigera källinformationsfilen\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "lista paket baserat på paketnamn"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "sök i paketbeskrivningar"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "visa detaljer för paket"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "installera paket"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "ta bort paket"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Ta automatiskt bort alla oanvända paket"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "uppdatera lista över tillgängliga paket"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "uppgradera systemet genom att installera/uppgradera paket"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "uppgradera systemet genom att ta bort/installera/uppgradera paket"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "redigera källinformationsfilen"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1015,6 +1029,41 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Upprepa proceduren för resten av cd-skivorna i din uppsättning."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Flaggor:\n"
+"  -h  Denna hjälptext.\n"
+"  -q  Loggbar utdata - ingen förloppsindikator\n"
+"  -qq Ingen utdata förutom vid fel\n"
+"  -s  Gör ingenting, simulera vad som skulle hända.\n"
+"  -f  läs/skriv markering som automatiskt/manuellt installerad i angiven "
+"fil\n"
+"  -c=? Läs denna konfigurationsfil\n"
+"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumenten gavs inte parvis"
@@ -1024,28 +1073,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Användning: apt-config [flaggor] kommando\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config är ett enkelt verktyg för att läsa APTs konfigurationsfil\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Användning: apt-config [flaggor] kommando\n"
-"\n"
-"apt-config är ett enkelt verktyg för att läsa APTs konfigurationsfil\n"
-"\n"
-"Kommandon:\n"
-"   shell - Skalläge.\n"
-"   dump - Visa konfigurationen.\n"
-"\n"
 "Flaggor:\n"
 "  -h   Denna hjälptext.\n"
 "  -c=? Läs denna konfigurationsfil.\n"
 "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1280,24 +1331,16 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Användning: apt-get [flaggor] kommando\n"
+"       apt-get [flaggor] install|remove paket1 [paket2 …]\n"
+"       apt-get [flaggor] source paket1 [paket2 …]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get är ett enkelt kommandoradsgränssnitt för att hämta och installera\n"
+"paket. De mest använda kommandona är ”update” och ”install”.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1316,30 +1359,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Användning: apt-get [flaggor] kommando\n"
-"       apt-get [flaggor] install|remove paket1 [paket2 …]\n"
-"       apt-get [flaggor] source paket1 [paket2 …]\n"
-"\n"
-"apt-get är ett enkelt kommandoradsgränssnitt för att hämta och installera\n"
-"paket. De mest använda kommandona är ”update” och ”install”.\n"
-"\n"
-"Kommandon:\n"
-"   update - Hämta nya paketlistor\n"
-"   upgrade - Genomför en uppgradering\n"
-"   install - Installera nya paket (paket är libc6, inte libc6.deb)\n"
-"   remove - Ta bort paket\n"
-"   autoremove - Ta automatiskt bort alla oanvända paket\n"
-"   purge - Ta bort paket och konfigurationsfiler\n"
-"   source - Hämta källkodsarkiv\n"
-"   build-dep - Tillfredsställ byggberoenden för källkodspaket\n"
-"   dist-upgrade - Uppgradering av distributionen, se apt-get(8)\n"
-"   dselect-upgrade - Följ valen från dselect\n"
-"   clean - Ta bort hämtade arkivfiler\n"
-"   autoclean - Ta bort gamla hämtade arkivfiler\n"
-"   check - Kontrollera att det inte finns några trasiga beroenden\n"
-"   changelog - Hämta och visa ändringslogg för det angivna paketet\n"
-"   download - Hämta det binära paketet till aktuell katalog\n"
-"\n"
 "Flaggor:\n"
 "  -h   Denna hjälptext.\n"
 "  -q   Loggbar utdata - ingen förloppsindikator.\n"
@@ -1357,6 +1376,62 @@ msgstr ""
 "Se manualsidorna för apt-get(8), sources.list(5) och apt.conf(5)\n"
 "för mer information och flaggor.\n"
 "                     Denna APT har Speciella Ko-Krafter.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Hämta nya paketlistor"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Genomför en uppgradering"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Installera nya paket (paket är libc6, inte libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Ta bort paket"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Ta bort paket och konfigurationsfiler"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Uppgradering av distributionen, se apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Följ valen från dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Tillfredsställ byggberoenden för källkodspaket"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Ta bort hämtade arkivfiler"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Ta bort gamla hämtade arkivfiler"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Kontrollera att det inte finns några trasiga beroenden"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Hämta källkodsarkiv"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Hämta det binära paketet till aktuell katalog"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Hämta och visa ändringslogg för det angivna paketet"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1376,30 +1451,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Användning: apt-helper [flaggor] kommando\n"
 "       apt-helper [flaggor] download-file uri målsökväg\n"
 "\n"
 "apt-helper är en intern hjälpare för apt\n"
-"\n"
-"Kommandon:\n"
-"   download-file - hämta angiven uri till målsökvägen\n"
-"   auto-detect-proxy - hitta proxy med hjälp av apt.conf\n"
-"\n"
-"                       Denna APT-hjälpare har speciella Meep-krafter.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Denna APT-hjälpare har speciella Meep-krafter."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "hämta angiven uri till målsökvägen"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "hitta proxy med hjälp av apt.conf"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1426,11 +1503,9 @@ msgstr "%s var redan tillbakahållet.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s var redan ej tillbakahållet.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Väntade på %s men den fanns inte där"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "Körning av dpkg misslyckades. Är du root?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1443,8 +1518,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "Avbröt tillbakahållning av %s.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "Körning av dpkg misslyckades. Är du root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1452,16 +1538,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Användning: apt-mark [flaggor] {auto|manual} paket1 [paket2 …]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark är ett enkelt kommandoradsgränssnitt för att markera\n"
+"paket som manuellt eller automatiskt installerade. Det kan också\n"
+"lista markeringar.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1472,21 +1557,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Användning: apt-mark [flaggor] {auto|manual} paket1 [paket2 …]\n"
-"\n"
-"apt-mark är ett enkelt kommandoradsgränssnitt för att markera\n"
-"paket som manuellt eller automatiskt installerade. Det kan också\n"
-"lista markeringar.\n"
-"\n"
-"Kommandon:\n"
-"   auto - Markera de angivna paketen som automatiskt installerade\n"
-"   manual - Markera de angivna paketen som manuellt installerade\n"
-"   hold - Markera ett paket som tillbakahållet\n"
-"   unhold - Avmarkera ett paket som är markerat som tillbakahållet\n"
-"   showauto - Visa listan över automatiskt installerade paket\n"
-"   showmanual - Visa listan över manuellt installerade paket\n"
-"   showhold - Visa listan över tillbakahållna paket\n"
-"\n"
 "Flaggor:\n"
 "  -h  Denna hjälptext.\n"
 "  -q  Loggbar utdata - ingen förloppsindikator\n"
@@ -1497,6 +1567,34 @@ msgstr ""
 "  -c=? Läs denna konfigurationsfil\n"
 "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 "Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Markera de angivna paketen som automatiskt installerade"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Markera de angivna paketen som manuellt installerade"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Markera ett paket som tillbakahållet"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Avmarkera ett paket som är markerat som tillbakahållet"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "Visa listan över automatiskt installerade paket"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "Visa listan över manuellt installerade paket"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "Visa listan över tillbakahållna paket"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2570,8 +2668,22 @@ msgid "Retrieving file %li of %li"
 msgstr "Hämtar fil %li av %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
-msgstr "Använd --allow-insecure-repositories för att tvinga uppdateringen"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2640,23 +2752,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konflikt i distribution: %s (förväntade %s men fick %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
-"Data från ”%s” är inte signerat. Paket från det förrådet kan inte "
-"autentiseras."
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Förrådet ”%s” är inte längre signerat."
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
-"Förrådet ”%s” har inte en Release-fil. Detta är föråldrat, kontakta "
-"förrådets ägare."
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Förrådet ”%s” är inte längre signerat."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -3053,6 +3163,11 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 "Ignorerar filen ”%s” i katalogen ”%s” eftersom den har en ogiltig filändelse"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Väntade på %s men den fanns inte där"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3764,6 +3879,11 @@ msgstr "Rad %u i källistan %s har fel format (typ)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Typen ”%s” är inte känd i post %u i källistan %s"
 
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
+
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Du måste lägga till några ”source”-URI:er i din sources.list"
@@ -3789,6 +3909,23 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Beräknar uppgradering"
+
+#~ msgid "Use --allow-insecure-repositories to force the update"
+#~ msgstr "Använd --allow-insecure-repositories för att tvinga uppdateringen"
+
+#~ msgid ""
+#~ "The data from '%s' is not signed. Packages from that repository can not "
+#~ "be authenticated."
+#~ msgstr ""
+#~ "Data från ”%s” är inte signerat. Paket från det förrådet kan inte "
+#~ "autentiseras."
+
+#~ msgid ""
+#~ "The repository '%s' does not have a Release file. This is deprecated, "
+#~ "please contact the owner of the repository."
+#~ msgstr ""
+#~ "Förrådet ”%s” har inte en Release-fil. Detta är föråldrat, kontakta "
+#~ "förrådets ägare."
 
 #~ msgid "Child process failed"
 #~ msgstr "Underprocess misslyckades"

@@ -217,7 +217,7 @@ bool DebFile::ParseInfo()
 // ShowHelp - show a short help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
 {
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -357,7 +357,7 @@ int main(int argc, const char **argv)					/*{{{*/
 	textdomain(PACKAGE);
 
 	// Parse the command line and initialize the package library
-	CommandLine::Dispatch Cmds[] = {{NULL, NULL}};
+	CommandLine::DispatchWithHelp Cmds[] = {{nullptr, nullptr, nullptr}};
 	CommandLine CmdL;
 	ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
 

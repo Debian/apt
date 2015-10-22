@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -409,7 +409,7 @@ msgstr[1] ""
 "vaadittuja:"
 
 #: apt-private/private-install.cc
-#, fuzzy
+#, fuzzy, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Poista ne komennolla \"%s\"."
@@ -675,7 +675,7 @@ msgstr ""
 msgid "Regex compilation error - %s"
 msgstr "Käännösvirhe lausekkeessa - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "On annettava täsmälleen yksi lauseke"
@@ -860,32 +860,27 @@ msgid "  Version table:"
 msgstr "  Versiotaulukko:"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Käyttö : apt-cache [valitsimet] komento\n"
+"         apt-cache [valitsimet] show pkt1 [pkt2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache on alemman tason työkalu APT:n konekielisten\n"
+"välimuistitiedostojen käsittelyyn ja tutkimiseen\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -896,31 +891,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Käyttö : apt-cache [valitsimet] komento\n"
-"       apt-cache [valitsimet] add tdsto1 [tdsto2 ...]\n"
-"       apt-cache [valitsimet] showpkg pkt1 [pkt2 ...]\n"
-"       apt-cache [valitsimet] showsrc pkt1 [pkt2 ...]\n"
-"\n"
-"apt-cache on alemman tason työkalu APT:n konekielisten\n"
-"välimuistitiedostojen käsittelyyn ja tutkimiseen\n"
-"Komennot:\n"
-"   add - Lisää paketti lähdevälimuistiin\n"
-"   gencaches - Tee sekä pakettivarasto että lähdevälimuisti\n"
-"   showpkg - Näytä joitain perustietoja yhdestä paketista\n"
-"   showsrc - Näytä lähdetietueet\n"
-"   stats - Näytä joitain perustilastoja\n"
-"   dump - Näytä koko tiedosto suppeassa muodossa\n"
-"   dumpavail - Tulosta saatavissa olevien luettelo oletustulosteeseen\n"
-"   unmet - Näytä tyydyttymättömät riippuvuudet\n"
-"   search - Etsi pakettiluettelosta säännöllisellä lausekkeella\n"
-"   show - Näytä paketin tietue luettavassa muodossa\n"
-"   depends - Näytä paketin riippuvuustiedot käsittelemättömässä muodossa\n"
-"   rdepends - Näytä paketin käänteiset riippuvuudet\n"
-"   pkgnames - Luettele järjestelmän kaikkien pakettien nimet\n"
-"   dotty - Tee paketeista graafit GraphViz-muodossa\n"
-"   xvcg - Tee paketeista graafit xvcg-muodossa\n"
-"   policy - Näytä mistä asennuspaketteja haetaan\n"
-"\n"
 "Valitsimet:\n"
 "  -h   Tämä ohje\n"
 "  -p=? Pakettivarasto\n"
@@ -931,28 +901,90 @@ msgstr ""
 "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 "Lisätietoja apt-cache(8) ja apt.conf(5) käsikirjasivuilla.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Näytä lähdetietueet"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Etsi pakettiluettelosta säännöllisellä lausekkeella"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Näytä paketin riippuvuustiedot käsittelemättömässä muodossa"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Näytä paketin käänteiset riippuvuudet"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Näytä paketin tietue luettavassa muodossa"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Luettele järjestelmän kaikkien pakettien nimet"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Näytä mistä asennuspaketteja haetaan"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Luetaan pakettiluetteloita"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Paketit joissa tunniste:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Rikkinäiset paketit"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Poista kaikki käyttämättömät paketit"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s on merkitty käyttäjän toimesta asennetuksi.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Luetaan tilatiedot"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -981,6 +1013,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Toista tämä lopuille rompuille kasassasi."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Parametrit eivät ole pareittain"
@@ -990,28 +1046,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Käyttö: apt-config [valitsimet] komento\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config on yksinkertainen työkalu APT:n asetustiedoston lukemiseen\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Käyttö: apt-config [valitsimet] komento\n"
-"\n"
-"apt-config on yksinkertainen työkalu APT:n asetustiedoston lukemiseen\n"
-"\n"
-"Komennot:\n"
-"   shell - Muista ohjelmista käytettäväksi\n"
-"   dump - Näytä asetukset\n"
-"\n"
 "Valitsimet:\n"
 "  -h   Tämä ohje\n"
 "  -c=? Lue tämä asetustiedosto\n"
 "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1225,7 +1283,6 @@ msgid "Supported modules:"
 msgstr "Tuetut moduulit:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1234,24 +1291,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Käyttö: apt-get [valitsimet] komento\n"
+"       apt-get [valitsimet] install|remove pkt1 [pkt2 ...]\n"
+"       apt-get [valitsimet] source pkt1 [pkt2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get on yksinkertainen komentorivityökalu pakettien noutamiseen\n"
+"ja asentamiseen. Useimmiten käytetyt komennot ovat update ja \n"
+"install.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1270,28 +1320,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Käyttö: apt-get [valitsimet] komento\n"
-"       apt-get [valitsimet] install|remove pkt1 [pkt2 ...]\n"
-"       apt-get [valitsimet] source pkt1 [pkt2 ...]\n"
-"\n"
-"apt-get on yksinkertainen komentorivityökalu pakettien noutamiseen\n"
-"ja asentamiseen. Useimmiten käytetyt komennot ovat update ja \n"
-"install.\n"
-"Komennot:\n"
-"   update - Nouda uusi pakettiluettelo\n"
-"   upgrade - Tee päivitys\n"
-"   install - Asenna uusia paketteja (esim. libc6 eikä libc6.deb)\n"
-"   remove - Poista paketteja\n"
-"   autoremove - Poista kaikki käyttämättömät paketit\n"
-"   purge - Poista paketit asennustiedostoineen\n"
-"   source - Nouda lähdekoodiarkistoja\n"
-"   build-dep - Määritä paketointiriippuvuudet lähdekoodipaketeille\n"
-"   dist-upgrade - Koko jakelun päivitys, katso apt-get(8)\n"
-"   dselect-upgrade - Noudata dselect:n valintoja\n"
-"   clean - Poista noudetut pakettitiedostot\n"
-"   autoclean - Poista vanhat noudetut tiedostot\n"
-"   check - Tarkasta ettei ole tyydyttämättömiä riippuvuuksia\n"
-"\n"
 "Valitsimet:\n"
 "  -h  Tämä ohje\n"
 "  -q  Lokiin sopiva tulostus - edistymisen ilmaisin jätetään pois\n"
@@ -1309,6 +1337,62 @@ msgstr ""
 "Katso apt-get(8), sources.list(5) ja apt.conf(5) käsikirjasivuilta\n"
 "lisätietoja ja lisää valitsimia.\n"
 "                       This APT has Super Cow Powers.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Nouda uusi pakettiluettelo"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Tee päivitys"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Asenna uusia paketteja (esim. libc6 eikä libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Poista paketteja"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Poista paketit asennustiedostoineen"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Koko jakelun päivitys, katso apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Noudata dselect:n valintoja"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Määritä paketointiriippuvuudet lähdekoodipaketeille"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Poista noudetut pakettitiedostot"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Poista vanhat noudetut tiedostot"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Tarkasta ettei ole tyydyttämättömiä riippuvuuksia"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Nouda lähdekoodiarkistoja"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1334,13 +1418,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1368,11 +1461,9 @@ msgstr "%s on jo uusin versio.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s on jo uusin versio.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Odotettiin %s, mutta sitä ei ollut"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1385,7 +1476,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "Tiedoston %s avaaminen ei onnistunut"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1394,16 +1496,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1413,6 +1509,38 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "%s on merkitty käyttäjän toimesta asennetuksi.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "%s on merkitty käyttäjän toimesta asennetuksi.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "%s on merkitty käyttäjän toimesta asennetuksi.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2475,7 +2603,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Noudetaan tiedosto %li / %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2540,19 +2682,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Kansio %s on korvautunut"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Kansio %s on korvautunut"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2935,6 +3079,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Odotettiin %s, mutta sitä ei ollut"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3621,6 +3770,11 @@ msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Tyyppi \"%s\" on tuntematon rivillä %u lähdeluettelossa %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

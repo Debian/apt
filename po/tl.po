@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -407,6 +407,7 @@ msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
 msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
@@ -675,7 +676,7 @@ msgstr "H"
 msgid "Regex compilation error - %s"
 msgstr "Error sa pag-compile ng regex - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "Kailangan niyong magbigay ng isa lamang na pattern"
@@ -862,32 +863,28 @@ msgid "  Version table:"
 msgstr "  Talaang Bersyon:"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Pag-gamit: apt-cache [mga option] utos\n"
+"       apt-cache [mga option] show pkt1 [pkt2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache ay isang kagamitang low-level para sa pag-manipula\n"
+"ng mga talaksan sa binary cache ng APT, at upang makakuha ng\n"
+"impormasyon mula sa kanila\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -898,34 +895,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Pag-gamit: apt-cache [mga option] utos\n"
-"       apt-cache [mga option] add talaksan1 [talaksan2 ...]\n"
-"       apt-cache [mga option] showpkg pkt1 [pkt2 ...]\n"
-"       apt-cache [mga option] showsrc pkt1 [pkt2 ...]\n"
-"\n"
-"apt-cache ay isang kagamitang low-level para sa pag-manipula\n"
-"ng mga talaksan sa binary cache ng APT, at upang makakuha ng\n"
-"impormasyon mula sa kanila\n"
-"\n"
-"Mga utos:\n"
-"   add - Magdagdag ng talaksang pakete sa source cache\n"
-"   gencaches - Buuin pareho ang cache ng pakete at source\n"
-"   showpkg - Ipakita ang impormasyon tungkol sa isang pakete\n"
-"   showsrc - Ipakita ang mga record ng source\n"
-"   stats - Ipakita ang ilang mga estadistika\n"
-"   dump - Ipakita ang buong talaksan sa anyong maikli\n"
-"   dumpavail - Ipakita ang talaksang available sa stdout\n"
-"   unmet - Ipakita ang mga kulang na mga dependensiya\n"
-"   search - Maghanap sa listahan ng mga pakete ng regex pattern\n"
-"   show - Ipakita ang nababasang record ng pakete\n"
-"   depends - Ipakita ang impormasyon tungkol sa ganap na dependensiya\n"
-"             ng pakete\n"
-"   rdepends - Ipakita ang impormasyong kabaliktarang dependensiya ng pakete\n"
-"   pkgnames - Ipakita ang listahan ng pangalan ng lahat ng mga pakete\n"
-"   dotty - Bumuo ng graph ng mga pakete para sa GraphViz\n"
-"   xvcg - Bumuo ng graph ng mga pakete para sa xvcg\n"
-"   policy - Ipakita ang pagkaayos ng mga policy\n"
-"\n"
 "Mga option:\n"
 "  -h   Itong tulong na ito.\n"
 "  -p=? Ang cache ng mga pakete.\n"
@@ -937,28 +906,90 @@ msgstr ""
 "Basahin ang pahina ng manwal ng apt-cache(8) at apt.conf(5) para sa \n"
 "karagdagang impormasyon\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Ipakita ang mga record ng source"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Maghanap sa listahan ng mga pakete ng regex pattern"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Ipakita ang impormasyon tungkol sa ganap na dependensiya ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Ipakita ang impormasyong kabaliktarang dependensiya ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Ipakita ang nababasang record ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Ipakita ang listahan ng pangalan ng lahat ng mga pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Ipakita ang pagkaayos ng mga policy"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Binabasa ang Listahan ng mga Pakete"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Mga naka-Pin na Pakete:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Sirang mga pakete"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr ""
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "ngunit ito ay birtwal na pakete"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Pinagsasama ang magagamit na impormasyon"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -987,6 +1018,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Ulitin ang prosesong ito para sa lahat ng mga CD sa inyong set."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Mga argumento ay hindi naka-pares"
@@ -996,28 +1051,31 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Pag-gamit: apt-config [mga option] utos\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos ng "
+"APT\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Pag-gamit: apt-config [mga option] utos\n"
-"\n"
-"Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos\n"
-"ng APT\n"
-"\n"
-"Mga utos:\n"
-"  shell - modong shell\n"
-"  dump - ipakita ang pagkaayos\n"
 "Mga option:\n"
 "  -h   Itong tulong na ito.\n"
 "  -c=? Basahin itong talaksang pagkaayos\n"
 "  -o=? Itakda ang isang option sa pagkaayos, hal. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1233,7 +1291,6 @@ msgid "Supported modules:"
 msgstr "Suportadong mga Module:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1242,24 +1299,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Pag-gamit: apt-get [mga option] utos\n"
+"           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
+"           apt-get [mga option] source pkt1 [pkt2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"Ang apt-get ay payak na command line interface para sa pagkuha at\n"
+"pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
+"at install.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1278,27 +1328,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Pag-gamit: apt-get [mga option] utos\n"
-"           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
-"           apt-get [mga option] source pkt1 [pkt2 ...]\n"
-"\n"
-"Ang apt-get ay payak na command line interface para sa pagkuha at\n"
-"pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
-"at install.\n"
-"\n"
-"Mga utos:\n"
-"   update - Kunin ang bagong listahan ng mga pakete\n"
-"   upgrade - Gumawa ng upgrade\n"
-"   install - Mag-instol ng bagong mga pakete (pkt ay libc6 hindi libc6.deb)\n"
-"   remove - Mag-tanggal ng mga pakete\n"
-"   source - Kumuha ng arkibong source\n"
-"   build-dep - Magsaayos ng build-dependencies para sa mga paketeng source\n"
-"   dist-upgrade - Mag-upgrade ng pamudmod, basahin ang apt-get(8)\n"
-"   dselect-upgrade - Sundan ang mga pinili sa dselect\n"
-"   clean - Burahin ang mga nakuhang mga talaksang naka-arkibo\n"
-"   autoclean - Burahin ang mga lumang naka-arkibo na nakuhang mga talaksan\n"
-"   check - Tiyakin na walang mga sirang dependensiya\n"
-"\n"
 "Mga option:\n"
 "  -h  Itong tulong na ito.\n"
 "  -q  Output na maaaring itala - walang indikator ng progreso\n"
@@ -1316,6 +1345,62 @@ msgstr ""
 "Basahin ang pahinang manwal ng apt-get(8), sources.list(5) at apt.conf(5)\n"
 "para sa karagdagang impormasyon at mga option.\n"
 "                       Ang APT na ito ay may Kapangyarihan Super Kalabaw.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Kunin ang bagong listahan ng mga pakete"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Gumawa ng upgrade"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Mag-instol ng bagong mga pakete (pkt ay libc6 hindi libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Mag-tanggal ng mga pakete"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Mag-upgrade ng pamudmod, basahin ang apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Sundan ang mga pinili sa dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Magsaayos ng build-dependencies para sa mga paketeng source"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Burahin ang mga nakuhang mga talaksang naka-arkibo"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Burahin ang mga lumang naka-arkibo na nakuhang mga talaksan"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Tiyakin na walang mga sirang dependensiya"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Kumuha ng arkibong source"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1341,13 +1426,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1375,11 +1469,9 @@ msgstr "%s ay pinakabagong bersyon na.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s ay pinakabagong bersyon na.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Naghintay, para sa %s ngunit wala nito doon"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1392,7 +1484,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "Bigo ang pagbukas ng %s"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1401,16 +1504,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1420,6 +1517,34 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2486,7 +2611,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Kinukuha ang talaksang %li ng %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2552,19 +2691,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Ang directory %s ay divertado"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Ang directory %s ay divertado"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2960,6 +3101,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Naghintay, para sa %s ngunit wala nito doon"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3650,6 +3796,11 @@ msgstr "Maling anyo ng linyang %u sa talaksang pagkukunan %s (uri)"
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Hindi kilalang uri '%s' sa linyang %u sa talaksan ng pagkukunan %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

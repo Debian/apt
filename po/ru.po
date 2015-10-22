@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -425,6 +425,7 @@ msgstr[1] "%lu пакета было установлено автоматиче
 msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Для его удаления используйте «%s»."
@@ -697,7 +698,7 @@ msgstr "Н"
 msgid "Regex compilation error - %s"
 msgstr "Ошибка компиляции регулярного выражения — %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "Вы должны задать не менее одно шаблона поиска"
 
@@ -889,29 +890,25 @@ msgstr "  Таблица версий:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Использование: apt-cache [параметры] команда\n"
+"          или: apt-cache [параметры] show пакет1 [пакет2…]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache — низкоуровневый инструмент для поиска\n"
+"информации в двоичных кэш-файлах APT\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Команды:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -922,30 +919,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Использование: apt-cache [параметры] команда\n"
-"          или: apt-cache [параметры] showpkg пакет1 [пакет2…]\n"
-"          или: apt-cache [параметры] showsrc пакет1 [пакет2…]\n"
-"\n"
-"apt-cache — низкоуровневый инструмент для поиска\n"
-"информации в двоичных кэш-файлах APT\n"
-"\n"
-"Команды:\n"
-"   gencaches - построить кэш пакетов и кэш источников\n"
-"   showpkg - показать общую информацию о конкретном пакете\n"
-"   showsrc - показать записи об источниках\n"
-"   stats - показать общую статистику\n"
-"   dump - показать весь файл в сокращённой форме\n"
-"   dumpavail - выдать на stdout файл available\n"
-"   unmet - показать неудовлетворённые зависимости\n"
-"   search - найти пакеты, имя которых удовлетворяет регулярному выражению\n"
-"   show - показать информацию о пакете в удобочитаемой форме\n"
-"   depends - показать необработанную информацию о зависимостях пакета\n"
-"   rdepends - показать информацию об обратных зависимостях пакета\n"
-"   pkgnames - показать имена всех пакетов в системе\n"
-"   dotty - генерировать граф пакетов в формате GraphVis\n"
-"   xvcg - генерировать граф пакетов в формате xvcg\n"
-"   policy - показать текущую политику выбора пакетов\n"
-"\n"
 "Параметры:\n"
 "  -h   Эта справка.\n"
 "  -p=? Кэш пакетов.\n"
@@ -956,46 +929,88 @@ msgstr ""
 "  -o=? Задать значение произвольной настройки, например, -o dir::cache=/tmp\n"
 "Подробности в справочных страницах apt-cache(8) и apt.conf(5).\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "показать записи об источниках"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "найти пакеты, имя которых удовлетворяет регулярному выражению"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "показать необработанную информацию о зависимостях пакета"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "показать информацию об обратных зависимостях пакета"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "показать информацию о пакете в удобочитаемой форме"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "показать имена всех пакетов в системе"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "показать текущую политику выбора пакетов"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Использование: apt [параметры] команда\n"
 "\n"
 "Интерфейс командной строки для apt.\n"
-"Основные команды: \n"
-" list — показать список пакетов из указанных имён пакетов\n"
-" search — искать в описаниях пакетов\n"
-" show — показать дополнительные данные о пакете\n"
-"\n"
-" update — обновить список доступных пакетов\n"
-"\n"
-" install — установить пакеты\n"
-" remove  — удалить пакеты\n"
-"\n"
-" upgrade — обновить систему, устанавливая/обновляя пакеты\n"
-" full-upgrade — обновить систему, удаляя/устанавливая/обновляя пакеты\n"
-"\n"
-" edit-sources — редактировать файл с источниками пакетов\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "показать список пакетов из указанных имён пакетов"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "искать в описаниях пакетов"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "показать дополнительные данные о пакете"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "установить пакеты"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "удалить пакеты"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "автоматически удалить все неиспользуемые пакеты"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "обновить список доступных пакетов"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "обновить систему, устанавливая/обновляя пакеты"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "редактировать файл с источниками пакетов"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1029,6 +1044,42 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Повторите этот процесс для всех имеющихся CD."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Параметры:\n"
+"  -h   эта справка\n"
+"  -q   показывать сообщения о работе, не выводить индикатор хода работы\n"
+"  -qq  показывать только сообщения об ошибках\n"
+"  -s   не выполнять действия на самом деле, только имитация работы\n"
+"  -f   читать/писать данные о пометках в заданный файл\n"
+"  -c=? читать указанный файл настройки\n"
+"  -o=? задать значение произвольному параметру настройки,\n"
+"       например, -o dir::cache=/tmp\n"
+"В справочных страницах apt-mark(8) и apt.conf(5)\n"
+"содержится дополнительная информация."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Непарные аргументы"
@@ -1038,29 +1089,31 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Использование: apt-config [параметры] команда\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config — простой инструмент для чтения файла настройки APT\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Использование: apt-config [параметры] команда\n"
-"\n"
-"apt-config — простой инструмент для чтения файла настройки APT\n"
-"\n"
-"Команды:\n"
-"   shell - режим shell\n"
-"   dump -  показать настройки\n"
-"\n"
 "Параметры:\n"
 "   -h   Этот текст.\n"
 "   -с=? Читать указанный файл настройки.\n"
 "   -o=? Задать значение произвольной настройке, например, -o dir::cache=/"
 "tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1296,24 +1349,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Использование: apt-get [параметры] команда\n"
+"               apt-get [параметры] install|remove пакет1 [пакет2…]\n"
+"               apt-get [параметры] source пакет1 [пакет2…]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get — простая программа с интерфейсом командной строки\n"
+"для скачивания и установки пакетов. Наиболее часто используемые\n"
+"команды — update и install.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1332,34 +1378,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Использование: apt-get [параметры] команда\n"
-"               apt-get [параметры] install|remove пакет1 [пакет2…]\n"
-"               apt-get [параметры] source пакет1 [пакет2…]\n"
-"\n"
-"apt-get — простая программа с интерфейсом командной строки\n"
-"для скачивания и установки пакетов. Наиболее часто используемые\n"
-"команды — update и install.\n"
-"\n"
-"Команды:\n"
-"   update -  получить новые списки пакетов\n"
-"   upgrade - выполнить обновление\n"
-"   install - установить новые пакеты (на месте пакета указывается имя "
-"пакета\n"
-"             (libc6, а не имя файла libc6.deb)\n"
-"   remove -  удалить пакеты\n"
-"   autoremove - автоматически удалить все неиспользуемые пакеты\n"
-"   purge -   удалить пакеты вместе с их файлами настройки\n"
-"   source -  скачать архивы с исходным кодом\n"
-"   build-dep - настроить всё необходимое для сборки\n"
-"               пакета из исходного кода\n"
-"   dist-upgrade - обновить всю систему, подробнее в apt-get(8)\n"
-"   dselect-upgrade - руководствоваться выбором, сделанным в dselect\n"
-"   clean -   удалить скачанные файлы архивов\n"
-"   autoclean - удалить старые скачанные файлы архивов\n"
-"   check -   проверить наличие нарушенных зависимостей\n"
-"   changelog - скачать и показать файл изменений заданного пакета\n"
-"   download - скачать двоичный пакет в текущий каталог\n"
-"\n"
 "Параметры:\n"
 "  -h   эта справка\n"
 "  -q   показывать сообщения о работе, не выводить индикатор хода работы\n"
@@ -1379,6 +1397,64 @@ msgstr ""
 "содержится подробная информация и описание параметров.\n"
 "                       В APT есть коровья СУПЕРСИЛА.\n"
 
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "получить новые списки пакетов"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "выполнить обновление"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+"установить новые пакеты (на месте пакета указывается имя пакета (libc6, а не "
+"имя файла libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "удалить пакеты"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "удалить пакеты вместе с их файлами настройки"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "обновить всю систему, подробнее в apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "руководствоваться выбором, сделанным в dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "настроить всё необходимое для сборки пакета из исходного кода"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "удалить скачанные файлы архивов"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "удалить старые скачанные файлы архивов"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "проверить наличие нарушенных зависимостей"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "скачать архивы с исходным кодом"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "скачать двоичный пакет в текущий каталог"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "скачать и показать файл изменений заданного пакета"
+
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
 msgstr "В качестве аргумента требуется URL"
@@ -1397,30 +1473,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Использование: apt-helper [параметры] команда\n"
 "       apt-helper [параметры] download-file uri target-path\n"
 "\n"
 "apt-helper — вспомогательная программа для apt\n"
-"\n"
-"Команды:\n"
-"   download-file — скачать файл по заданному uri в target-path\n"
-"   auto-detect-proxy — определять прокси с помощью apt.conf\n"
-"\n"
-"                   В этой программе есть Super Meep Powers.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "В этой программе есть Super Meep Powers."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "скачать файл по заданному uri в target-path"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "определять прокси с помощью apt.conf"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1447,11 +1525,10 @@ msgstr "%s уже помечен как зафиксированный.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s уже помечен как не зафиксированный.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Ожидалось завершение процесса %s, но он не был запущен"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+"Выполнение dpkg завершилось с ошибкой. У вас есть права суперпользователя?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1464,9 +1541,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "Отмена фиксации для %s.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
 msgstr ""
-"Выполнение dpkg завершилось с ошибкой. У вас есть права суперпользователя?"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1474,16 +1561,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2…]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark — простая программа с интерфейсом командной строки\n"
+"для отметки пакетов, что они установлены вручную или автоматически.\n"
+"Также может показывать списки помеченных пакетов.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1494,21 +1580,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2…]\n"
-"\n"
-"apt-mark — простая программа с интерфейсом командной строки\n"
-"для отметки пакетов, что они установлены вручную или автоматически.\n"
-"Также может показывать списки помеченных пакетов.\n"
-"\n"
-"Команды:\n"
-"   auto — пометить указанные пакеты, как установленные автоматически\n"
-"   manual — пометить указанные пакеты, как установленные вручную\n"
-"   hold — пометить пакет как зафиксированный\n"
-"   unhold — снять метку пакета, что он зафиксирован\n"
-"   showauto — вывести список автоматически установленных пакетов\n"
-"   showmanual — вывести список пакетов установленных вручную\n"
-"   showhold — вывести список зафиксированных пакетов\n"
-"\n"
 "Параметры:\n"
 "  -h   эта справка\n"
 "  -q   показывать сообщения о работе, не выводить индикатор хода работы\n"
@@ -1520,6 +1591,34 @@ msgstr ""
 "       например, -o dir::cache=/tmp\n"
 "В справочных страницах apt-mark(8) и apt.conf(5)\n"
 "содержится дополнительная информация."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "пометить указанные пакеты, как установленные автоматически"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "пометить указанные пакеты, как установленные вручную"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "пометить пакет как зафиксированный"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "снять метку пакета, что он зафиксирован"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "вывести список автоматически установленных пакетов"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "вывести список пакетов установленных вручную"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "вывести список зафиксированных пакетов"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2588,7 +2687,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Скачивается файл %li из %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2658,19 +2771,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Конфликт распространения: %s (ожидался %s, но получен %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Каталог %s входит в список diverted"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Каталог %s входит в список diverted"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3072,6 +3187,11 @@ msgid ""
 msgstr ""
 "Файл «%s» в каталоге «%s» игнорируется, так как он не имеет неправильное "
 "расширение"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Ожидалось завершение процесса %s, но он не был запущен"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3789,6 +3909,11 @@ msgstr "Искажённая строка %u в списке источнико�
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Неизвестный тип «%s» в строфе %u в списке источников %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

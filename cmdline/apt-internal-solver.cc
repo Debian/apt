@@ -43,7 +43,7 @@
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &) {
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *) {
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
 	std::cout <<
@@ -81,7 +81,7 @@ int main(int argc,const char *argv[])					/*{{{*/
         DropPrivileges();
 
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, NULL, Args, &_config, NULL, argc, argv, ShowHelp);
+	ParseCommandLine(CmdL, nullptr, Args, &_config, NULL, argc, argv, ShowHelp);
 
 	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
 	{

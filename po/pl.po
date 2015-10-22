@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -430,6 +430,7 @@ msgstr[2] ""
 "wymagane.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Aby go usunąć należy użyć \"%s\"."
@@ -706,7 +707,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "Błąd kompilacji wyrażenia regularnego - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "Należy podać przynajmniej jeden wzorzec"
 
@@ -895,29 +896,25 @@ msgstr "  Tabela wersji:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Użycie: apt-cache [opcje] polecenie\n"
+"        apt-cache [opcje] show pakiet1 [pakiet2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache to niskopoziomowe narzędzie służące  pobierania informacji\n"
+"z podręcznego magazynu plików binarnych APT-a.\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -928,30 +925,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Użycie: apt-cache [opcje] polecenie\n"
-"        apt-cache [opcje] showpkg pakiet1 [pakiet2 ...]\n"
-"        apt-cache [opcje] showsrc pakiet1 [pakiet2 ...]\n"
-"\n"
-"apt-cache to niskopoziomowe narzędzie służące  pobierania informacji\n"
-"z podręcznego magazynu plików binarnych APT-a.\n"
-"\n"
-"Polecenia:\n"
-"   gencaches - Buduje magazyn podręczny pakietów i źródeł\n"
-"   showpkg - Pokazuje ogólne informacje na temat pojedynczego pakietu\n"
-"   showsrc - Pokazuje informacje dla źródeł\n"
-"   stats - Pokazuje podstawowe statystyki\n"
-"   dump - Pokazuje cały plik w skrótowej formie\n"
-"   dumpavail - Wypisuje plik dostępnych pakietów na standardowe wyjście\n"
-"   unmet - Pokazuje niespełnione zależności\n"
-"   search - Przeszukuje listę pakietów według wyrażenia regularnego\n"
-"   show - Pokazuje informacje dla danego pakietu\n"
-"   depends - Pokazuje surowe informacje o zależnościach danego pakietu\n"
-"   rdepends - Pokazuje informacje o zależnościach OD danego pakietu\n"
-"   pkgnames - Pokazuje listę nazw wszystkich pakietów w systemie\n"
-"   dotty - Generuje grafy pakietów dla programu GraphViz\n"
-"   xvcg - Generuje grafy pakietów dla programu xvcg\n"
-"   policy - Pokazuje ustawienia polityki\n"
-"\n"
 "Opcje:\n"
 "  -h   Ten tekst pomocy.\n"
 "  -p=? Podręczny magazyn pakietów.\n"
@@ -963,28 +936,90 @@ msgstr ""
 "Więcej informacji można znaleźć na stronach podręcznika apt-cache(8)\n"
 "oraz apt.conf(5).\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Pokazuje informacje dla źródeł"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Przeszukuje listę pakietów według wyrażenia regularnego"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Pokazuje surowe informacje o zależnościach danego pakietu"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Pokazuje informacje o zależnościach OD danego pakietu"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Pokazuje informacje dla danego pakietu"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Pokazuje listę nazw wszystkich pakietów w systemie"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Pokazuje ustawienia polityki"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Czytanie list pakietów"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Przypięte pakiety:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Pakiety są uszkodzone"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Usuwa automatycznie wszystkie nieużywane pakiety"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "ale jest pakietem wirtualnym"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Odczyt informacji o stanie"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1012,6 +1047,42 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Należy powtórzyć ten proces dla reszty płyt."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Opcje:\n"
+"  -h  Ten tekst pomocy\n"
+"  -q   Nie pokazuje wskaźnika postępu (przydatne przy rejestrowaniu "
+"działania)\n"
+"  -qq  Nie wypisuje nic oprócz komunikatów błędów\n"
+"  -s  Symulacja - wyświetla jedynie co powinno zostać zrobione\n"
+"  -f  zapis/odczyt oznaczenia jako automatyczny/ręczny danego pliku\n"
+"  -c=? Czyta wskazany plik konfiguracyjny.\n"
+"  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
+"Proszę zapoznać się ze stronami podręcznika systemowego apt-mark(8)\n"
+"i apt.conf(5), aby uzyskać więcej informacji."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumenty nie są w parach"
@@ -1021,28 +1092,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Użycie: apt-config [opcje] polecenie\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config to proste narzędzie do czytania pliku konfiguracyjnego APT\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Użycie: apt-config [opcje] polecenie\n"
-"\n"
-"apt-config to proste narzędzie do czytania pliku konfiguracyjnego APT\n"
-"\n"
-"Polecenia:\n"
-"   shell - Tryb powłoki\n"
-"   dump - Pokazuje konfigurację\n"
-"\n"
 "Opcje:\n"
 "  -h   Ten tekst pomocy.\n"
 "  -c=? Czyta wskazany plik konfiguracyjny.\n"
 "  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1284,24 +1357,16 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Użycie: apt-get [opcje] polecenie\n"
+"        apt-get [opcje] install|remove pakiet1 [pakiet2 ...]\n"
+"        apt-get [opcje] source pakiet1 [pakiet2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get to prosty interfejs wiersza poleceń do pobierania i instalacji\n"
+"pakietów. Najczęściej używane polecenia to update i install.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1320,30 +1385,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Użycie: apt-get [opcje] polecenie\n"
-"        apt-get [opcje] install|remove pakiet1 [pakiet2 ...]\n"
-"        apt-get [opcje] source pakiet1 [pakiet2 ...]\n"
-"\n"
-"apt-get to prosty interfejs wiersza poleceń do pobierania i instalacji\n"
-"pakietów. Najczęściej używane polecenia to update i install.\n"
-"\n"
-"Polecenia:\n"
-"  update - Pobiera nowe listy pakietów\n"
-"  upgrade - Wykonuje aktualizację\n"
-"  install - Instaluje nowe pakiety (pakiet to np. libc6, nie libc6.deb)\n"
-"  remove - Usuwa pakiety\n"
-"  autoremove - Usuwa automatycznie wszystkie nieużywane pakiety\n"
-"  purge - Usuwa pakiety łącznie z plikami konfiguracyjnymi\n"
-"  source - Pobiera archiwa źródłowe\n"
-"  build-dep - Konfiguruje zależności dla budowania pakietów źródłowych\n"
-"  dist-upgrade - Aktualizacja dystrybucji, patrz apt-get(8)\n"
-"  dselect-upgrade - Instaluje według wyborów dselect\n"
-"  clean - Usuwa pobrane pliki archiwów\n"
-"  autoclean - Usuwa stare pobrane pliki archiwów\n"
-"  check - Sprawdza, czy wszystkie zależności są spełnione\n"
-"  changelog - Pobiera i wyświetla dziennika zmian wybranych pakietów\n"
-"  download - Pobiera pakiet binarny do bieżącego katalogu\n"
-"\n"
 "Opcje:\n"
 "  -h   Ten tekst pomocy\n"
 "  -q   Nie pokazuje wskaźnika postępu (przydatne przy rejestrowaniu "
@@ -1362,6 +1403,62 @@ msgstr ""
 "Więcej informacji i opcji można znaleźć na stronach podręcznika\n"
 "apt-get(8), sources.list(5) i apt.conf(5).\n"
 "                         Ten APT ma moce Super Krowy.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Pobiera nowe listy pakietów"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Wykonuje aktualizację"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Instaluje nowe pakiety (pakiet to np. libc6, nie libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Usuwa pakiety"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Usuwa pakiety łącznie z plikami konfiguracyjnymi"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Aktualizacja dystrybucji, patrz apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Instaluje według wyborów dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Konfiguruje zależności dla budowania pakietów źródłowych"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Usuwa pobrane pliki archiwów"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Usuwa stare pobrane pliki archiwów"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Sprawdza, czy wszystkie zależności są spełnione"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Pobiera archiwa źródłowe"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Pobiera pakiet binarny do bieżącego katalogu"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Pobiera i wyświetla dziennika zmian wybranych pakietów"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1389,13 +1486,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1423,11 +1529,11 @@ msgstr "%s został już zatrzymany.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s został już odznaczony jako zatrzymany.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Oczekiwano na proces %s, ale nie było go"
+# Musi pasować do su i sudo.
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+"Uruchomienie dpkg nie powiodło się. Czy użyto uprawnień administratora?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1439,11 +1545,20 @@ msgstr "%s został zatrzymany.\n"
 msgid "Canceled hold on %s.\n"
 msgstr "Odznaczono zatrzymanie %s\n"
 
-# Musi pasować do su i sudo.
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
 msgstr ""
-"Uruchomienie dpkg nie powiodło się. Czy użyto uprawnień administratora?"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy
@@ -1452,16 +1567,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Użycie: apt-mark [opcje] {auto|manual} pakiet1 [pakiet2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark jest prostym poleceniem wiersza poleceń do oznaczania pakietów\n"
+"jako zainstalowane automatycznie lub ręcznie. Może także służyć\n"
+"do wyświetlania stanu oznaczeń.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1472,16 +1586,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Użycie: apt-mark [opcje] {auto|manual} pakiet1 [pakiet2 ...]\n"
-"\n"
-"apt-mark jest prostym poleceniem wiersza poleceń do oznaczania pakietów\n"
-"jako zainstalowane automatycznie lub ręcznie. Może także służyć\n"
-"do wyświetlania stanu oznaczeń.\n"
-"\n"
-"Polecenia:\n"
-"  auto - Oznacza dany pakiet jako zainstalowany automatycznie\n"
-"  manual - Oznacza dany pakiet jako zainstalowany ręcznie\n"
-"\n"
 "Opcje:\n"
 "  -h  Ten tekst pomocy\n"
 "  -q   Nie pokazuje wskaźnika postępu (przydatne przy rejestrowaniu "
@@ -1493,6 +1597,34 @@ msgstr ""
 "  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
 "Proszę zapoznać się ze stronami podręcznika systemowego apt-mark(8)\n"
 "i apt.conf(5), aby uzyskać więcej informacji."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Oznacza dany pakiet jako zainstalowany automatycznie"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Oznacza dany pakiet jako zainstalowany ręcznie"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr ""
 
 #: methods/cdrom.cc
 #, c-format
@@ -2555,7 +2687,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Pobieranie pliku %li z %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2626,19 +2772,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Nieprawidłowa dystrybucja: %s (oczekiwano %s, a otrzymano %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Ominięcie katalogu %s"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Ominięcie katalogu %s"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3042,6 +3190,11 @@ msgid ""
 msgstr ""
 "Ignorowanie pliku \"%s\" w katalogu \"%s\", ponieważ ma on nieprawidłowe "
 "rozszerzenie pliku"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Oczekiwano na proces %s, ale nie było go"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3753,6 +3906,11 @@ msgstr "Nieprawidłowa linia %u w liście źródeł %s (typ)"
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Typ \"%s\" jest nieznany w linii %u listy źródeł %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

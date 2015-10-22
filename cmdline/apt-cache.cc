@@ -1522,41 +1522,30 @@ static bool GenCaches(CommandLine &)
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    if (_config->FindB("version") == true)
      return true;
 
-   cout << 
+   std::cout <<
     _("Usage: apt-cache [options] command\n"
-      "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-      "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+      "       apt-cache [options] show pkg1 [pkg2 ...]\n"
       "\n"
       "apt-cache is a low-level tool used to query information\n"
-      "from APT's binary cache files\n"
-      "\n"
-      "Commands:\n"
-      "   gencaches - Build both the package and source cache\n"
-      "   showpkg - Show some general information for a single package\n"
-      "   showsrc - Show source records\n"
-      "   stats - Show some basic statistics\n"
-      "   dump - Show the entire file in a terse form\n"
-      "   dumpavail - Print an available file to stdout\n"
-      "   unmet - Show unmet dependencies\n"
-      "   search - Search the package list for a regex pattern\n"
-      "   show - Show a readable record for the package\n"
-      "   depends - Show raw dependency information for a package\n"
-      "   rdepends - Show reverse dependency information for a package\n"
-      "   pkgnames - List the names of all packages in the system\n"
-      "   dotty - Generate package graphs for GraphViz\n"
-      "   xvcg - Generate package graphs for xvcg\n"
-      "   policy - Show policy settings\n"
-      "\n"
-      "Options:\n"
+      "from APT's binary cache files\n")
+    << std::endl
+    << _("Commands:") << std::endl;
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
+   std::cout << std::endl
+    << _("Options:\n"
       "  -h   This help text.\n"
       "  -p=? The package cache.\n"
       "  -s=? The source cache.\n"
@@ -1570,25 +1559,26 @@ static bool ShowHelp(CommandLine &)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] =  {{"help",&ShowHelp},
-                                    {"gencaches",&GenCaches},
-                                    {"showsrc",&ShowSrcPackage},
-                                    {"showpkg",&DumpPackage},
-                                    {"stats",&Stats},
-                                    {"dump",&Dump},
-                                    {"dumpavail",&DumpAvail},
-                                    {"unmet",&UnMet},
-                                    {"search",&DoSearch},
-                                    {"depends",&Depends},
-                                    {"rdepends",&RDepends},
-                                    {"dotty",&Dotty},
-                                    {"xvcg",&XVcg},
-                                    {"show",&ShowPackage},
-                                    {"pkgnames",&ShowPkgNames},
-                                    {"showauto",&ShowAuto},
-                                    {"policy",&Policy},
-                                    {"madison",&Madison},
-                                    {0,0}};
+   CommandLine::DispatchWithHelp Cmds[] =  {
+      {"gencaches",&GenCaches, nullptr},
+      {"showsrc",&ShowSrcPackage, _("Show source records")},
+      {"showpkg",&DumpPackage, nullptr},
+      {"stats",&Stats, nullptr},
+      {"dump",&Dump, nullptr},
+      {"dumpavail",&DumpAvail, nullptr},
+      {"unmet",&UnMet, nullptr},
+      {"search",&DoSearch, _("Search the package list for a regex pattern")},
+      {"depends",&Depends, _("Show raw dependency information for a package")},
+      {"rdepends",&RDepends, _("Show reverse dependency information for a package")},
+      {"dotty",&Dotty, nullptr},
+      {"xvcg",&XVcg, nullptr},
+      {"show",&ShowPackage, _("Show a readable record for the package")},
+      {"pkgnames",&ShowPkgNames, _("List the names of all packages in the system")},
+      {"showauto",&ShowAuto, nullptr},
+      {"policy",&Policy, _("Show policy settings")},
+      {"madison",&Madison, nullptr},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt-cache", CommandLine::GetCommand(Cmds, argc, argv));
 

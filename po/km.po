@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -402,6 +402,7 @@ msgstr[0] "កញ្ចប់​ថ្មី​ខាងក្រោម​នឹ
 msgstr[1] "កញ្ចប់​ថ្មី​ខាងក្រោម​នឹង​ត្រូវ​បាន​ដំឡើង​ ៖"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
@@ -667,7 +668,7 @@ msgstr ""
 msgid "Regex compilation error - %s"
 msgstr "Regex កំហុស​ការចងក្រង​ - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "អ្នក​ត្រូវ​តែ​ផ្ដល់​លំនាំ​មួយ​ដែល​ពិត​ប្រាកដ"
@@ -854,32 +855,27 @@ msgid "  Version table:"
 msgstr "  តារាង​កំណែ ៖"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"ការ​ប្រើប្រាស់ ៖ apt-cache [options] ពាក្យ​បញ្ជា\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache គឺ​ជា​ឧបករណ៍​កម្រិតទាប​​ដែល​ប្រើ​សម្រាប់​រៀបចំ​ប្រព័ន្ធ​គោល​ពីរ​របស់  APT\n"
+"ឯកសារ​ឃ្លាំង​សម្ងាត់ និង ​ព័ត៌មាន​សំណួរ​ពី​ពួក​វា\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -890,32 +886,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"ការ​ប្រើប្រាស់ ៖ apt-cache [options] ពាក្យ​បញ្ជា\n"
-"       apt-cache [options] add file1 [file2 ...]\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache គឺ​ជា​ឧបករណ៍​កម្រិតទាប​​ដែល​ប្រើ​សម្រាប់​រៀបចំ​ប្រព័ន្ធ​គោល​ពីរ​របស់  APT\n"
-"ឯកសារ​ឃ្លាំង​សម្ងាត់ និង ​ព័ត៌មាន​សំណួរ​ពី​ពួក​វា\n"
-"\n"
-"ពាក្យ​បញ្ជា\n"
-"   add - បន្ថែម​ឯកសារ​កញ្ចប់​ទៅ​ឃ្លាំង​សម្ងាត់​ប្រភព\n"
-"   gencaches - បង្កើត​ទាំង​​កញ្ចប់​និង​ឃ្លាំង​សម្ងាត់​ប្រភព\n"
-"   showpkg - បង្ហាញ​ព័ត៌មាន​ទូទៅ​ខ្លះ​សម្រាប់​កញ្ចប់​តែ​មួយ\n"
-"   showsrc - បង្ហាញ​កំណត់​ត្រា​ប្រភព\n"
-"   stats - បង្ហាញ​ស្ថិតិ​មូលដ្ឋាន​ខ្លះ\n"
-"   dump - បង្ហាញ​ឯកសារ​ទាំងមូល​ក្នុង​ទ្រង់ទ្រាយ​សង្ខេប\n"
-"   dumpavail - បោះពុម្ព​ឯកសារ​ដែល​មាន​ទៅ stdout\n"
-"   unmet - បង្ហាញ​ភាពអាស្រ័យ​ unmet \n"
-"   search - ស្វែងរក​កញ្ចប់​​លំនាំ regex \n"
-"   show - បង្ហាញ​កំណត់​ត្រា​កញ្ចប់​ដែល​អាច​អាន​បាន\n"
-"   depends - បង្ហាញព័ត៌មាន​​ភាពអាស្រ័យ​កញ្ចប់​មិន​ទាន់​ច្នៃ\n"
-"   rdepends - បង្ហាញ​ព័ត៌មាន​ភាពអាស្រ័យ​កញ្ចប់​បញ្ច្រាស់​\n"
-"   pkgnames - រាយ​ឈ្មោះ​កញ្ចប់​ទាំងអស់​\n"
-"   dotty - បង្កើត​កញ្ចប់​ក្រាហ្វ​សម្រាប់​ GraphViz\n"
-"   xvcg - បង្កើត​កញ្ចប់​ក្រាហ្វ​សម្រាប់​ xvcg\n"
-"   policy - បង្ហាញ ការរៀបចំ​គោលការណ៍​\n"
-"\n"
 "ជម្រើស​ ៖\n"
 "  -h   នេះ​ជា​អត្ថជំនួយ​\n"
 "  -p=? ឃ្លាំងសម្ងាត់​កញ្ចប់​ ។\n"
@@ -926,28 +896,91 @@ msgstr ""
 "  -o=? កំណត់​ជម្រើស​ការ​កំណត់​រចនា​សម្ព័ន្ធ​តាម​ចិត្ត ឧ. eg -o dir::cache=/tmp\n"
 "មើល​ apt-cache(8) និង​ apt.conf(5) សម្រាប់​ព័ត៌មាន​បន្ថែម​​មាន​ក្នុង​ទំព័រ​សៀវភៅដៃ​ ។\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "បង្ហាញ​កំណត់​ត្រា​ប្រភព"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "ស្វែងរក​កញ្ចប់​​លំនាំ regex "
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "បង្ហាញព័ត៌មាន​​ភាពអាស្រ័យ​កញ្ចប់​មិន​ទាន់​ច្នៃ"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "បង្ហាញ​ព័ត៌មាន​ភាពអាស្រ័យ​កញ្ចប់​បញ្ច្រាស់​"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "បង្ហាញ​កំណត់​ត្រា​កញ្ចប់​ដែល​អាច​អាន​បាន"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "រាយ​ឈ្មោះ​កញ្ចប់​ទាំងអស់​"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "បង្ហាញ ការរៀបចំ​គោលការណ៍​"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "កំពុង​អាន​បញ្ជី​កញ្ចប់"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "កញ្ចប់​ដែល​បាន​ខ្ទាស់ ៖"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "កញ្ចប់​ដែល​បាន​ខូច​"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+#, fuzzy
+msgid "Remove automatically all unused packages"
+msgstr "ប៉ុន្តែ​ %s នឹង​ត្រូវ​បាន​ដំឡើ​ង"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "ប៉ុន្តែ​ %s នឹង​ត្រូវ​បាន​ដំឡើ​ង"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "បញ្ចូល​​ព័ត៌មាន​ដែលមាន​ចូល​គ្នា"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -976,6 +1009,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "ធ្វើដំណើរការ​នេះ​ម្តង​ទៀត​ សម្រាប់​ស៊ីឌី​ទាំងអស់​​ក្នុង​សំណុំ​របស់​អ្នក ។"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "​អាគុយម៉ង់​មិន​មាន​គូ​ទេ"
@@ -985,28 +1042,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"ការ​ប្រើប្រាស់ ៖ ពាក្យ​បញ្ជា​ apt-config [ជម្រើស] \n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config ជា​ឧបករណ៍​សាមញ្ញ​សម្រាប់​អាន​ឯកសារ​កំណត់រចនាសម្ព័ន្ធ​ APT \n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"ការ​ប្រើប្រាស់ ៖ ពាក្យ​បញ្ជា​ apt-config [ជម្រើស] \n"
-"\n"
-"apt-config ជា​ឧបករណ៍​សាមញ្ញ​សម្រាប់​អាន​ឯកសារ​កំណត់រចនាសម្ព័ន្ធ​ APT \n"
-"\n"
-"ពាក្យ​បញ្ជា​ ៖\n"
-"   shell - របៀប​សែល​\n"
-"   dump - បង្ហាញ​ការកំណត់​រចនាសម្ព័ន្ធ​\n"
-"\n"
 "ជម្រើស​\n"
 "  -h   អត្ថនទ​ជំនួយ​នេះ​\n"
 "  -c=? អាន​ឯកសារ​ការកំណត់​រចនាសម្ព័ន្ធ​នេះ \n"
 "  -o=? កំណត់​ជម្រើស​ការ​កំណត់​រចនា​សម្ព័ន្ធ​តាម​ចិត្ត ឧ. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1214,7 +1273,6 @@ msgid "Supported modules:"
 msgstr "ម៉ូឌុល​ដែល​គាំទ្រ ៖ "
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1223,24 +1281,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"របៀបប្រើ ៖ ពាក្យបញ្ជា apt-get [options]\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] ប្រភព pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get គឺជា​ចំណុចប្រទាក់​បន្ទាត់​ពាក្យបញ្ជា​សាមញ្ញ​មួយ សម្រាប់​ធ្វើការទាញយក និង\n"
+"ដំឡើង​កញ្ចប់ ។ ជាញឹកញាប់​បំផុត គឺប្រើ​ពាក្យបញ្ជា​ដើម្បី​ធ្វើឲ្យទាន់សម័យ​\n"
+"និង ដំឡើង ។\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1259,27 +1310,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"របៀបប្រើ ៖ ពាក្យបញ្ជា apt-get [options]\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] ប្រភព pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get គឺជា​ចំណុចប្រទាក់​បន្ទាត់​ពាក្យបញ្ជា​សាមញ្ញ​មួយ សម្រាប់​ធ្វើការទាញយក និង\n"
-"ដំឡើង​កញ្ចប់ ។ ជាញឹកញាប់​បំផុត គឺប្រើ​ពាក្យបញ្ជា​ដើម្បី​ធ្វើឲ្យទាន់សម័យ​\n"
-"និង ដំឡើង ។\n"
-"\n"
-"ពាក្យ​បញ្ជា ៖\n"
-"   update - ទៅយក​បញ្ជី​កញ្ចប់​ថ្មី\n"
-"   upgrade - ធ្វើឲ្យប្រសើរ\n"
-"   install - ដំឡើង​កញ្ចប់​ថ្មី (pkg គឺ libc6 មិនមែន libc6.deb)\n"
-"   remove - យក​កញ្ចប់​ចេញ\n"
-"   source - ទាញយក​ប័ណ្ណសារ​ប្រភព\n"
-"   build-dep - កំណត់​រចនា​សម្ព័ន្ធ​ភាពអាស្រ័យ​ក្នុងការស្ថាបនា​សម្រាប់​កញ្ចប់​ប្រភព\n"
-"   dist-upgrade - ការចែកចាយ​ភាពល្អប្រសើរ សូមមើល apt-get(8)\n"
-"   dselect-upgrade - ដាក់ពីក្រោយ​ជម្រើស dselect\n"
-"   clean - លុប​ឯកសារប័ណ្ណសារ​ដែលបានទាញ​យក\n"
-"   autoclean - លុប​ឯកសារប័ណ្ណសារ​ដែលបានទាញយក​ចាស់\n"
-"   check - ផ្ទៀងផ្ទាត់​ថា​មិនមានភាព​អាស្រ័យ​ដែល​ខូចទេ\n"
-"\n"
 "ជម្រើស ៖\n"
 "  -h  អត្ថបទ​ជំនួយ​នេះ ៖\n"
 "  -q  ទិន្នផល​ដែល​អាច​ចុះកំណត់ហេតុបាន - មិនមាន​ទ្រនិចបង្ហាញ​ដំណើរការឡើយ\n"
@@ -1297,6 +1327,62 @@ msgstr ""
 "សូមមើល apt-get(8), sources.list(5) and apt.conf(5) manual\n"
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "ទៅយក​បញ្ជី​កញ្ចប់​ថ្មី"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "ធ្វើឲ្យប្រសើរ"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "ដំឡើង​កញ្ចប់​ថ្មី (pkg គឺ libc6 មិនមែន libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "យក​កញ្ចប់​ចេញ"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "ការចែកចាយ​ភាពល្អប្រសើរ សូមមើល apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "ដាក់ពីក្រោយ​ជម្រើស dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "កំណត់​រចនា​សម្ព័ន្ធ​ភាពអាស្រ័យ​ក្នុងការស្ថាបនា​សម្រាប់​កញ្ចប់​ប្រភព"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "លុប​ឯកសារប័ណ្ណសារ​ដែលបានទាញ​យក"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "លុប​ឯកសារប័ណ្ណសារ​ដែលបានទាញយក​ចាស់"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "ផ្ទៀងផ្ទាត់​ថា​មិនមានភាព​អាស្រ័យ​ដែល​ខូចទេ"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "ទាញយក​ប័ណ្ណសារ​ប្រភព"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1322,13 +1408,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1356,11 +1451,9 @@ msgstr "%s ជាកំណែ​ដែលថ្មីបំផុតរួចទ
 msgid "%s was already not hold.\n"
 msgstr "%s ជាកំណែ​ដែលថ្មីបំផុតរួចទៅហើយ ។\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "រង់ចាំប់​ %s ប៉ុន្តែ ​វា​មិន​នៅទីនោះ"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1373,7 +1466,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "បរាជ័យ​ក្នុង​ការ​បើក %s"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1382,16 +1486,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1401,6 +1499,38 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "ប៉ុន្តែ​ %s នឹង​ត្រូវ​បាន​ដំឡើ​ង"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "ពិនិត្យ​ប្រសិន​បើកញ្ចប់ 'dpkg-dev' មិន​ទាន់​បាន​ដំឡើង​ ។\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "ប៉ុន្តែ​ %s នឹង​ត្រូវ​បាន​ដំឡើ​ង"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "ប៉ុន្តែ​ %s នឹង​ត្រូវ​បាន​ដំឡើ​ង"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2453,7 +2583,21 @@ msgid "Retrieving file %li of %li"
 msgstr "កំពុង​ទៅយក​ឯកសារ %li នៃ %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2519,19 +2663,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "ថត​ %s ត្រូវបាន​បង្វែរ"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "ថត​ %s ត្រូវបាន​បង្វែរ"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2910,6 +3056,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "រង់ចាំប់​ %s ប៉ុន្តែ ​វា​មិន​នៅទីនោះ"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3596,6 +3747,11 @@ msgstr "បន្ទាត់​ Malformed  %u ក្នុង​បញ្ជី
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "ប្រភេទ​ '%s' មិន​ស្គាល់នៅលើបន្ទាត់​ %u ក្នុង​បញ្ជី​ប្រភព​ %s ឡើយ"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

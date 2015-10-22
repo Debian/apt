@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -420,6 +420,7 @@ msgstr[0] "%lu paket otomatik olarak kurulmuş ve artık gerekli değil.\n"
 msgstr[1] "%lu paket otomatik olarak kurulmuş ve artık gerekli değil.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Bu paketi kaldırmak için '%s' komutunu kullanın."
@@ -692,7 +693,7 @@ msgstr "H"
 msgid "Regex compilation error - %s"
 msgstr "Regex derleme hatası - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "En az bir arama örüntüsü vermelisiniz"
 
@@ -885,29 +886,25 @@ msgstr "  Sürüm çizelgesi:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Kullanım: apt-cache [seçenekler] komut\n"
+"          apt-cache [seçenekler] show paket1 [paket2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache APT'nin ikili paket önbelleğindeki dosyaları\n"
+"sorgulamakta kullanılan alt seviye bir araçtır.\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Komutlar:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -918,30 +915,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Kullanım: apt-cache [seçenekler] komut\n"
-"          apt-cache [seçenekler] showpkg paket1 [paket2 ...]\n"
-"          apt-cache [seçenekler] showsrc paket1 [paket2 ...]\n"
-"\n"
-"apt-cache APT'nin ikili paket önbelleğindeki dosyaları\n"
-"sorgulamakta kullanılan alt seviye bir araçtır.\n"
-"\n"
-"Komutlar:\n"
-"   gencaches - Hem paket hem de kaynak önbelleğini oluştur\n"
-"   showpkg - Tek bir paket hakkındaki genel bilgileri görüntüle\n"
-"   showsrc - Paket kayıtlarını görüntüle\n"
-"   stats - Bir takım basit istatistikleri görüntüle\n"
-"   dump - Bütün dosyayı kısa biçimde görüntüle\n"
-"   dumpavail - Uygun bir dosyayı standart çıktıya yazdır\n"
-"   unmet - Karşılanmayan bağımlılıkları görüntüle\n"
-"   search - Paket listesini bir düzenli ifade ile ara\n"
-"   show - Bir paketin okunabilir kaydını görüntüle\n"
-"   depends - Bir paketin bağımlılık bilgilerini ham haliyle görüntüle\n"
-"   rdepends - Bir paketin ters bağımlılık bilgilerini görüntüle\n"
-"   pkgnames - Sistemdeki tüm paketlerin adlarını listele\n"
-"   dotty - GraphViz için paket grafikleri üret\n"
-"   xvcg - xvcg için paket grafikleri üret\n"
-"   policy - İlke seçeneklerini görüntüle\n"
-"\n"
 "Options:\n"
 "  -h   Bu yardım metni.\n"
 "  -p=? Paket önbelleği.\n"
@@ -954,46 +927,88 @@ msgstr ""
 "Ayrıntılı bilgi için apt-cache(8) ve apt.conf(5) rehber sayfalarına göz "
 "atın.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Paket kayıtlarını görüntüle"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Paket listesini bir düzenli ifade ile ara"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Bir paketin bağımlılık bilgilerini ham haliyle görüntüle"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Bir paketin ters bağımlılık bilgilerini görüntüle"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Bir paketin okunabilir kaydını görüntüle"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Sistemdeki tüm paketlerin adlarını listele"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "İlke seçeneklerini görüntüle"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Kullanım: apt [seçenekler] komut\n"
 "\n"
 "apt için komut satırı arayüzü.\n"
-"Temel komutlar: \n"
-" list - Paketleri adlarına göre listele\n"
-" search - Paket açıklamalarında arama yap\n"
-" show - Paket ayrıntılarını görüntüle\n"
-"\n"
-" update - Kullanılabilir paketlerin listesini güncelle\n"
-"\n"
-" install - paket kur\n"
-" remove  - paket kaldır\n"
-" autoremove - Kullanılmayan tüm paketleri otomatik olarak kaldır\n"
-"\n"
-" upgrade - sistemi yükselt (paket kurarak ve yükselterek)\n"
-" full-upgrade - sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)\n"
-"\n"
-" edit-sources - kaynak bilgi dosyasını düzenle\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "Paketleri adlarına göre listele"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "Paket açıklamalarında arama yap"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "Paket ayrıntılarını görüntüle"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "paket kur"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "paket kaldır"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Kullanılmayan tüm paketleri otomatik olarak kaldır"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "Kullanılabilir paketlerin listesini güncelle"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "sistemi yükselt (paket kurarak ve yükselterek)"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "kaynak bilgi dosyasını düzenle"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1025,6 +1040,41 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Kalan CD'leriniz için bu işlemi yineleyin."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Seçenekler:\n"
+"  -h  Bu yardım metni.\n"
+"  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
+"  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
+"  -s  Bir şey yapma. Sadece ne yapılacağını söyler.\n"
+"  -f  read/write auto/manual marking in the given file\n"
+"  -c=? Belirtilen yapılandırma dosyası kullan\n"
+"  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
+"Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
+"bakabilirsiniz."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argümanlar çiftler halinde değil"
@@ -1034,29 +1084,31 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Kullanım: apt-config [seçenekler] komut\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config, APT ayar dosyasını okumaya yarayan basit bir araçtır\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Kullanım: apt-config [seçenekler] komut\n"
-"\n"
-"apt-config, APT ayar dosyasını okumaya yarayan basit bir araçtır\n"
-"\n"
-"Komutlar:\n"
-"   shell - Kabuk kipi\n"
-"   dump - Ayarları görüntüle\n"
-"\n"
 "Seçenekler:\n"
 "  -h Bu yardım dosyası.\n"
 "  -c=? Belirtilen ayar dosyasını görüntüler\n"
 "  -o=? İsteğe bağlı ayar seçeneği belirtmenizi sağlar, örneğin -o dir::"
 "cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1287,24 +1339,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Kullanım: apt-get [seçenekler] komut\n"
+"          apt-get [seçenekler] install|remove paket1 [paket2 ...]\n"
+"          apt-get [seçenekler] kaynak paket1 [paket2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get, paket indirme ve kurmada kullanılan basit bir komut satırı\n"
+"arayüzüdür. En sık kullanılan komutlar güncelleme (update) ve kurma\n"
+"(install) komutlarıdır.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1323,33 +1368,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Kullanım: apt-get [seçenekler] komut\n"
-"          apt-get [seçenekler] install|remove paket1 [paket2 ...]\n"
-"          apt-get [seçenekler] kaynak paket1 [paket2 ...]\n"
-"\n"
-"apt-get, paket indirme ve kurmada kullanılan basit bir komut satırı\n"
-"arayüzüdür. En sık kullanılan komutlar güncelleme (update) ve kurma\n"
-"(install) komutlarıdır.\n"
-"\n"
-"Komutlar:\n"
-"   update - Paket listelerini yenile\n"
-"   upgrade - Yükseltme işlemini gerçekleştir\n"
-"   install - Yeni paket kur (paket libc6.deb değil libc6 şeklinde "
-"olmalıdır)\n"
-"   remove - Paket(leri) kaldır\n"
-"   autoremove - Kullanılmayan tüm paketleri otomatik olarak kaldır\n"
-"   purge - Paketleri ve yapılandırma dosyalarını kaldır\n"
-"   source - Kaynak paket dosyalarını indir\n"
-"   build-dep - Kaynak paketlerin inşa bağımlılıklarını yapılandır\n"
-"   dist-upgrade - Dağıtım yükseltme, ayrıntılı bilgi için apt-get(8)\n"
-"   dselect-upgrade - dselect yapılandırmalarına uy\n"
-"   clean - İndirilmiş olan arşiv dosyalarını sil\n"
-"   autoclean - İndirilmiş olan eski arşiv dosyalarını sil\n"
-"   check - Eksik bağımlılık olmadığından emin ol\n"
-"   changelog - Belirtilen paketlerin değişim günlüklerini indir ve "
-"görüntüle\n"
-"   download - İkili paketleri içinde bulunulan dizine indir\n"
-"\n"
 "Seçenekler:\n"
 "  -h  Bu yardım metni.\n"
 "  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
@@ -1367,6 +1385,62 @@ msgstr ""
 "Ayrıntılı bilgi için apt-get(8), sources.list(5) ve apt.conf(5) rehber\n"
 "sayfalarına bakabilirsiniz.\n"
 "                       Bu APT'nin Süper İnek Güçleri vardır.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Paket listelerini yenile"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Yükseltme işlemini gerçekleştir"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Yeni paket kur (paket libc6.deb değil libc6 şeklinde olmalıdır)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Paket(leri) kaldır"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Paketleri ve yapılandırma dosyalarını kaldır"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Dağıtım yükseltme, ayrıntılı bilgi için apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "dselect yapılandırmalarına uy"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Kaynak paketlerin inşa bağımlılıklarını yapılandır"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "İndirilmiş olan arşiv dosyalarını sil"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "İndirilmiş olan eski arşiv dosyalarını sil"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Eksik bağımlılık olmadığından emin ol"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Kaynak paket dosyalarını indir"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "İkili paketleri içinde bulunulan dizine indir"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Belirtilen paketlerin değişim günlüklerini indir ve görüntüle"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1391,26 +1465,27 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Kullanım: apt-helper [seçenekler] komut\n"
 "          apt-helper [seçenekler] download-file uri hedef-konum\n"
 "\n"
 "apt-helper apt'nin bir dâhilî yardımcı aracıdır\n"
-"\n"
-"Komutlar:\n"
-"   download-file - verilen adresi (uri) hedef yola kaydet\n"
-"\n"
-"   srv-lookup - Bir SRV kaydına bak (örneğin _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - apt.conf kullanarak vekil sunucuyu algıla\n"
-"\n"
-"                    Bu APT yardımcısının Süper Meep Güçleri var.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Bu APT yardımcısının Süper Meep Güçleri var."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "verilen adresi (uri) hedef yola kaydet"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr "Bir SRV kaydına bak (örneğin _http._tcp.ftp.debian.org)"
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "apt.conf kullanarak vekil sunucuyu algıla"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1437,11 +1512,9 @@ msgstr "%s zaten tutulacak şekilde ayarlanmış.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s zaten tutulmayacak şekilde ayarlanmış.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s için beklenildi ama o gelmedi"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "'dpkg' çalıştırılamadı. root olduğunuzdan emin misiniz?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1454,8 +1527,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "%s paketini tutma işlemi iptal edildi.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "'dpkg' çalıştırılamadı. root olduğunuzdan emin misiniz?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1463,16 +1547,14 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Kullanım: apt-mark [seçenekler] {auto|manual} paket1 [paket2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark paketleri otomatik ya da elle kurulmuş olarak işaretlemeye\n"
+"ve mevcut işaretleri görmeye yarayan basit bir komut satırı arayüzüdür.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1483,20 +1565,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Kullanım: apt-mark [seçenekler] {auto|manual} paket1 [paket2 ...]\n"
-"\n"
-"apt-mark paketleri otomatik ya da elle kurulmuş olarak işaretlemeye\n"
-"ve mevcut işaretleri görmeye yarayan basit bir komut satırı arayüzüdür.\n"
-"\n"
-"Komutlar:\n"
-"   auto - Belirtilen paketleri otomatik kurulmuş olarak işaretle\n"
-"   manual - Belirtilen paketleri elle kurulmuş olarak işaretle\n"
-"   hold - Paketi tutulacak şekilde işaretle\n"
-"   unhold - Paketin tutuluyor işaretini kaldır\n"
-"   showauto - Otomatik olarak kurulmuş paketlerin listesini görüntüle\n"
-"   showmanual - Elle kurulmuş paketlerin listesini görüntüle\n"
-"   showhold - Tutulur durumda olan paketlerin listesini görüntüle\n"
-"\n"
 "Seçenekler:\n"
 "  -h  Bu yardım metni.\n"
 "  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
@@ -1507,6 +1575,34 @@ msgstr ""
 "  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
 "Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
 "bakabilirsiniz."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Belirtilen paketleri otomatik kurulmuş olarak işaretle"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Belirtilen paketleri elle kurulmuş olarak işaretle"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Paketi tutulacak şekilde işaretle"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Paketin tutuluyor işaretini kaldır"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "Otomatik olarak kurulmuş paketlerin listesini görüntüle"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "Elle kurulmuş paketlerin listesini görüntüle"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "Tutulur durumda olan paketlerin listesini görüntüle"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2567,10 +2663,22 @@ msgid "Retrieving file %li of %li"
 msgstr "Alınan dosya: %li / %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
 msgstr ""
-"Buna rağmen güncellemeyi yapmak için --allow-insecure-repositories "
-"seçeneğini kullanın"
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2639,23 +2747,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Dağıtım çakışması: %s (beklenen %s ama eldeki %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
-"'%s' deposundan alınan veri imzalanmamış. Bu depodan gelen paketlerin aslına "
-"uygunluğu denetlenemeyecek."
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "'%s' deposu imzalanmamış"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
-"'%s' deposunun Release dosyası yok. Bu tür depolar gelecekte kullanımdan "
-"kaldırılacaktır, lütfen depo sahibiyle iletişime geçin."
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "'%s' deposu imzalanmamış"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -3057,6 +3163,11 @@ msgid ""
 msgstr ""
 "'%2$s' dizinindeki '%1$s' dosyası geçersiz bir dosya uzantısı olduğu için "
 "yok sayılıyor"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s için beklenildi ama o gelmedi"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3762,6 +3873,11 @@ msgstr "%2$s kaynak listesinin %1$u kısmı hatalı (tür)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "'%s' türü bilinmiyor (girdi: %u, kaynak listesi: %s)"
 
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
+
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "'sources.list' dosyası içine bazı 'source' adresleri koymalısınız"
@@ -3787,6 +3903,25 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Yükseltme hesaplanıyor"
+
+#~ msgid "Use --allow-insecure-repositories to force the update"
+#~ msgstr ""
+#~ "Buna rağmen güncellemeyi yapmak için --allow-insecure-repositories "
+#~ "seçeneğini kullanın"
+
+#~ msgid ""
+#~ "The data from '%s' is not signed. Packages from that repository can not "
+#~ "be authenticated."
+#~ msgstr ""
+#~ "'%s' deposundan alınan veri imzalanmamış. Bu depodan gelen paketlerin "
+#~ "aslına uygunluğu denetlenemeyecek."
+
+#~ msgid ""
+#~ "The repository '%s' does not have a Release file. This is deprecated, "
+#~ "please contact the owner of the repository."
+#~ msgstr ""
+#~ "'%s' deposunun Release dosyası yok. Bu tür depolar gelecekte kullanımdan "
+#~ "kaldırılacaktır, lütfen depo sahibiyle iletişime geçin."
 
 #~ msgid "Child process failed"
 #~ msgstr "Alt süreç başarısız"

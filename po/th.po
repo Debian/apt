@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -394,6 +394,7 @@ msgid_plural ""
 msgstr[0] "มีแพกเกจ %lu แพกเกจถูกติดตั้งแบบอัตโนมัติไว้ และไม่ต้องใช้อีกต่อไปแล้ว\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "ใช้ '%s' เพื่อถอดถอนแพกเกจดังกล่าวได้"
@@ -658,7 +659,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "คอมไพล์นิพจน์เรกิวลาร์ไม่สำเร็จ - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "คุณต้องระบุแพตเทิร์นสำหรับค้นหาอย่างน้อยหนึ่งแพตเทิร์น"
 
@@ -842,29 +843,24 @@ msgstr "  ตารางรุ่น:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"วิธีใช้: apt-cache [ตัวเลือก] คำสั่ง\n"
+"       apt-cache [ตัวเลือก] show pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache เป็นเครื่องมือระดับล่างสำหรับสืบค้นข้อมูลจากแฟ้มแคชไบนารีของ APT\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "คำสั่ง:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -875,30 +871,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"วิธีใช้: apt-cache [ตัวเลือก] คำสั่ง\n"
-"       apt-cache [ตัวเลือก] add file1 [file2 ...]\n"
-"       apt-cache [ตัวเลือก] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [ตัวเลือก] showsrc pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache เป็นเครื่องมือระดับล่างสำหรับสืบค้นข้อมูลจากแฟ้มแคชไบนารีของ APT\n"
-"\n"
-"คำสั่ง:\n"
-"   gencaches - สร้างทั้งแคชของแพกเกจและแคชของซอร์ส\n"
-"   showpkg - แสดงข้อมูลทั่วไปของแพกเกจที่กำหนด\n"
-"   showsrc - แสดงระเบียนข้อมูลซอร์ส\n"
-"   stats - แสดงสถิติทั่วไป\n"
-"   dump - แสดงเนื้อหาแคชทั้งหมดในรูปแบบดิบ\n"
-"   dumpavail - แสดงข้อมูลแพกเกจที่มีทั้งหมดออกทางเอาต์พุตมาตรฐาน\n"
-"   unmet - แสดงความเชื่อมโยงที่ยังขาดหาย\n"
-"   search - ค้นรายชื่อแพกเกจด้วยนิพจน์เรกิวลาร์\n"
-"   show - แสดงข้อมูลของแพกเกจ\n"
-"   depends - แสดงข้อมูลแพกเกจที่ต้องใช้สำหรับแพกเกจที่กำหนด\n"
-"   rdepends - แสดงข้อมูลแพกเกจอื่นที่ต้องใช้แพกเกจที่กำหนด\n"
-"   pkgnames - แสดงรายชื่อแพกเกจทั้งหมด\n"
-"   dotty - สร้างกราฟความเชื่อมโยงของแพกเกจในรูป GraphViz\n"
-"   xvcg - สร้างกราฟความเชื่อมโยงของแพกเกจในรูป xvcg\n"
-"   policy - แสดงค่าตั้งนโยบาย\n"
-"\n"
 "ตัวเลือก:\n"
 "  -h   แสดงข้อความช่วยเหลือนี้\n"
 "  -p=? แฟ้มแคชของแพกเกจ\n"
@@ -909,46 +881,88 @@ msgstr ""
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 "กรุณาอ่านข้อมูลเพิ่มเติมจาก manual page apt-cache(8) และ apt.conf(5)\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "แสดงระเบียนข้อมูลซอร์ส"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "ค้นรายชื่อแพกเกจด้วยนิพจน์เรกิวลาร์"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "แสดงข้อมูลแพกเกจที่ต้องใช้สำหรับแพกเกจที่กำหนด"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "แสดงข้อมูลแพกเกจอื่นที่ต้องใช้แพกเกจที่กำหนด"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "แสดงข้อมูลของแพกเกจ"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "แสดงรายชื่อแพกเกจทั้งหมด"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "แสดงค่าตั้งนโยบาย"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "วิธีใช้: apt [ตัวเลือก] คำสั่ง\n"
 "\n"
 "บรรทัดคำสั่งสำหรับ apt\n"
-"คำสั่งพื้นฐาน:\n"
-" list - แสดงรายชื่อแพกเกจที่มีชื่อตรงกับรูปแบบที่กำหนด\n"
-" search - ค้นหาในคำบรรยายแพกเกจ\n"
-" show - แสดงรายละเอียดของแพกเกจ\n"
-"\n"
-" update - ปรับข้อมูลรายชื่อของแพกเกจที่มี\n"
-"\n"
-" install - ติดตั้งแพกเกจ\n"
-" remove  - ถอดถอนแพกเกจ\n"
-"\n"
-" upgrade - ปรับรุ่นระบบโดยติดตั้ง/ปรับรุ่นแพกเกจต่างๆ\n"
-" full-upgrade - ปรับรุ่นระบบโดยถอดถอน/ติดตั้ง/ปรับรุ่นแพกเกจต่างๆ\n"
-"\n"
-" edit-sources - แก้ไขแฟ้มข้อมูลแหล่งแพกเกจ\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "แสดงรายชื่อแพกเกจที่มีชื่อตรงกับรูปแบบที่กำหนด"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "ค้นหาในคำบรรยายแพกเกจ"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "แสดงรายละเอียดของแพกเกจ"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "ติดตั้งแพกเกจ"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "ถอดถอนแพกเกจ"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "ถอดถอนแพกเกจที่ไม่ใช้แล้วโดยอัตโนมัติ"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "ปรับข้อมูลรายชื่อของแพกเกจที่มี"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "ปรับรุ่นระบบโดยติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "ปรับรุ่นระบบโดยถอดถอน/ติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "แก้ไขแฟ้มข้อมูลแหล่งแพกเกจ"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -979,6 +993,40 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "ทำเช่นนี้ต่อไปกับแผ่นซีดีที่เหลือในชุด"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"ตัวเลือก:\n"
+"  -h  แสดงข้อความช่วยเหลือนี้\n"
+"  -q  แสดงผลลัพธ์แบบบันทึกลงแฟ้มได้ - ไม่ต้องแสดงความคืบหน้า\n"
+"  -qq ไม่ต้องแสดงผลลัพธ์ ยกเว้นข้อผิดพลาด\n"
+"  -s  ไม่ต้องทำจริง เพียงจำลองลำดับการทำงานเท่านั้น\n"
+"  -f  อ่าน/เขียน เครื่องหมาย อัตโนมัติ/เลือกเอง ในแฟ้มที่กำหนด\n"
+"  -c=? อ่านแฟ้มค่าตั้งนี้\n"
+"  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
+"กรุณาอ่านข้อมูลเพิ่มเติมจาก manual page apt-mark(8) และ apt.conf(5)"
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "อาร์กิวเมนต์ไม่ได้ระบุเป็นคู่ๆ"
@@ -988,28 +1036,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"วิธีใช้: apt-config [ตัวเลือก] คำสั่ง\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config เป็นเครื่องมือง่ายๆ ที่ใช้อ่านแฟ้มค่าตั้ง APT\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"วิธีใช้: apt-config [ตัวเลือก] คำสั่ง\n"
-"\n"
-"apt-config เป็นเครื่องมือง่ายๆ ที่ใช้อ่านแฟ้มค่าตั้ง APT\n"
-"\n"
-"คำสั่ง:\n"
-"   shell - โหมดเชลล์\n"
-"   dump - แสดงค่าตั้ง\n"
-"\n"
 "ตัวเลือก:\n"
 "  -h   ข้อความช่วยเหลือนี้\n"
 "  -c=? อ่านแฟ้มค่าตั้งที่กำหนด\n"
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1232,24 +1282,16 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"วิธีใช้:  apt-get [ตัวเลือก] คำสั่ง\n"
+"       apt-get [ตัวเลือก] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [ตัวเลือก] source pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get เป็นคำสั่งง่ายๆ สำหรับดาวน์โหลดและติดตั้งแพกเกจ คำสั่งที่ใช้บ่อยที่สุดก็คือ\n"
+"update และ install\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1268,30 +1310,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"วิธีใช้:  apt-get [ตัวเลือก] คำสั่ง\n"
-"       apt-get [ตัวเลือก] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [ตัวเลือก] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get เป็นคำสั่งง่ายๆ สำหรับดาวน์โหลดและติดตั้งแพกเกจ คำสั่งที่ใช้บ่อยที่สุดก็คือ\n"
-"update และ install\n"
-"\n"
-"คำสั่ง:\n"
-"   update - ดาวน์โหลดรายชื่อแพกเกจชุดใหม่\n"
-"   upgrade - ปรับรุ่นแพกเกจต่างๆ ขึ้น\n"
-"   install - ติดตั้งแพกเกจใหม่ (pkg อยู่ในรูปเช่น libc6 ไม่ใช่ libc6.deb)\n"
-"   remove - ถอดถอนแพกเกจ\n"
-"   autoremove - ถอดถอนแพกเกจที่ไม่ใช้แล้วโดยอัตโนมัติ\n"
-"   purge - ถอดถอนแพกเกจพร้อมลบค่าตั้งทั้งหมด\n"
-"   source - ดาวน์โหลดซอร์สโค้ดของแพกเกจ\n"
-"   build-dep - ติดตั้งสิ่งที่จำเป็นสำหรับการประกอบสร้างแพกเกจซอร์สโค้ด\n"
-"   dist-upgrade - ปรับรุ่นขึ้นแบบข้ามรุ่นจัดแจก ดู apt-get(8)\n"
-"   dselect-upgrade - ทำตามสิ่งที่เลือกโดย dselect\n"
-"   clean - ลบแฟ้มแพกเกจที่ดาวน์โหลดมา\n"
-"   autoclean - ลบแฟ้มแพกเกจเก่าที่ดาวน์โหลดมา\n"
-"   check - ตรวจสอบว่าไม่มีความเชื่อมโยงที่เสียระหว่างแพกเกจ\n"
-"   changelog - ดาวน์โหลดและแสดงปูมการแก้ไขของแพกเกจที่กำหนด\n"
-"   download - ดาวน์โหลดแพกเกจไบนารีลงในไดเรกทอรีปัจจุบัน\n"
-"\n"
 "ตัวเลือก:\n"
 "  -h  แสดงข้อความช่วยเหลือนี้\n"
 "  -q  แสดงผลลัพธ์แบบบันทึกลงแฟ้มได้ - ไม่ต้องแสดงความคืบหน้า\n"
@@ -1309,6 +1327,62 @@ msgstr ""
 "กรุณาอ่านข้อมูลและตัวเลือกเพิ่มเติมจาก manual page apt-get(8), sources.list(5)\n"
 "และ apt.conf(5)\n"
 "                       APT นี้มีพลังของ Super Cow\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "ดาวน์โหลดรายชื่อแพกเกจชุดใหม่"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "ปรับรุ่นแพกเกจต่างๆ ขึ้น"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "ติดตั้งแพกเกจใหม่ (pkg อยู่ในรูปเช่น libc6 ไม่ใช่ libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "ถอดถอนแพกเกจ"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "ถอดถอนแพกเกจพร้อมลบค่าตั้งทั้งหมด"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "ปรับรุ่นขึ้นแบบข้ามรุ่นจัดแจก ดู apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "ทำตามสิ่งที่เลือกโดย dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "ติดตั้งสิ่งที่จำเป็นสำหรับการประกอบสร้างแพกเกจซอร์สโค้ด"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "ลบแฟ้มแพกเกจที่ดาวน์โหลดมา"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "ลบแฟ้มแพกเกจเก่าที่ดาวน์โหลดมา"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "ตรวจสอบว่าไม่มีความเชื่อมโยงที่เสียระหว่างแพกเกจ"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "ดาวน์โหลดซอร์สโค้ดของแพกเกจ"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "ดาวน์โหลดแพกเกจไบนารีลงในไดเรกทอรีปัจจุบัน"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "ดาวน์โหลดและแสดงปูมการแก้ไขของแพกเกจที่กำหนด"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1328,30 +1402,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "วิธีใช้: apt-helper [ตัวเลือก] คำสั่ง\n"
 "      apt-helper [ตัวเลือก] download-file URI พาธปลายทาง\n"
 "\n"
 "apt-helper เป็นโปรแกรมช่วยเหลือภายในของ apt\n"
-"\n"
-"คำสั่ง:\n"
-"   download-file - ดาวน์โหลด URI ที่กำหนดลงในพาธปลายทาง\n"
-"   auto-detect-proxy - ตรวจหาพร็อกซีโดยใช้ apt.conf\n"
-"\n"
-"                       โปรแกรมช่วยเหลือของ APT นี้มีพลัง Super Meep\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "โปรแกรมช่วยเหลือของ APT นี้มีพลัง Super Meep"
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "ดาวน์โหลด URI ที่กำหนดลงในพาธปลายทาง"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "ตรวจหาพร็อกซีโดยใช้ apt.conf"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1378,11 +1454,9 @@ msgstr "%s ถูกกำหนดให้คงรุ่นอยู่ก่
 msgid "%s was already not hold.\n"
 msgstr "%s ไม่ได้คงรุ่นอยู่ก่อนแล้ว\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "รอโพรเซส %s แต่ตัวโพรเซสไม่อยู่"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "เรียกทำงาน dpkg ไม่สำเร็จ คุณเป็น root หรือเปล่า?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1395,8 +1469,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "ยกเลิกการคงรุ่นของ %s แล้ว\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "เรียกทำงาน dpkg ไม่สำเร็จ คุณเป็น root หรือเปล่า?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1404,16 +1489,14 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"วิธีใช้: apt-mark [ตัวเลือก] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark เป็นเครื่องมือบรรทัดคำสั่งอย่างง่ายสำหรับทำเครื่องหมายแพกเกจ\n"
+"ว่าเป็นการติดตั้งแบบเลือกเองหรือแบบอัตโนมัติ และสามารถแสดงการทำเครื่องหมายต่างๆ ได้ด้วย\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1424,20 +1507,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"วิธีใช้: apt-mark [ตัวเลือก] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark เป็นเครื่องมือบรรทัดคำสั่งอย่างง่ายสำหรับทำเครื่องหมายแพกเกจ\n"
-"ว่าเป็นการติดตั้งแบบเลือกเองหรือแบบอัตโนมัติ และสามารถแสดงการทำเครื่องหมายต่างๆ ได้ด้วย\n"
-"\n"
-"คำสั่ง:\n"
-"   auto - ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบอัตโนมัติ\n"
-"   manual - ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบเลือกเอง\n"
-"   hold - ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการคงรุ่น\n"
-"   unhold - ลบการทำเครื่องหมายการคงรุ่นจากแพกเกจที่กำหนด\n"
-"   showauto - แสดงรายชื่อของแพกเกจที่ติดตั้งแบบอัตโนมัติ\n"
-"   showmanual - แสดงรายชื่อของแพกเกจที่ติดตั้งแบบเลือกเอง\n"
-"   showhold - แสดงรายชื่อของแพกเกจที่คงรุ่นอยู่\n"
-"\n"
 "ตัวเลือก:\n"
 "  -h  แสดงข้อความช่วยเหลือนี้\n"
 "  -q  แสดงผลลัพธ์แบบบันทึกลงแฟ้มได้ - ไม่ต้องแสดงความคืบหน้า\n"
@@ -1447,6 +1516,34 @@ msgstr ""
 "  -c=? อ่านแฟ้มค่าตั้งนี้\n"
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 "กรุณาอ่านข้อมูลเพิ่มเติมจาก manual page apt-mark(8) และ apt.conf(5)"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบอัตโนมัติ"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบเลือกเอง"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการคงรุ่น"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "ลบการทำเครื่องหมายการคงรุ่นจากแพกเกจที่กำหนด"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "แสดงรายชื่อของแพกเกจที่ติดตั้งแบบอัตโนมัติ"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "แสดงรายชื่อของแพกเกจที่ติดตั้งแบบเลือกเอง"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "แสดงรายชื่อของแพกเกจที่คงรุ่นอยู่"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2487,7 +2584,21 @@ msgid "Retrieving file %li of %li"
 msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2557,19 +2668,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "ชุดจัดแจกขัดแย้งกัน: %s (ต้องการ %s แต่พบ %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "ไดเรกทอรี %s ถูก divert"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "ไดเรกทอรี %s ถูก divert"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2948,6 +3061,11 @@ msgstr "จะละเลย '%s' ในไดเรกทอรี '%s' เน
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr "จะละเลย '%s' ในไดเรกทอรี '%s' เนื่องจากส่วนขยายในชื่อแฟ้มไม่สามารถใช้การได้"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "รอโพรเซส %s แต่ตัวโพรเซสไม่อยู่"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3636,6 +3754,11 @@ msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล�
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

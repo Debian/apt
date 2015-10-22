@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -393,6 +393,7 @@ msgid_plural ""
 msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "使用'%s'来卸载它(它们)。"
@@ -656,7 +657,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "编译正则表达式时出错 - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "您必须明确地给出至少一个表达式"
 
@@ -840,29 +841,25 @@ msgstr "  版本列表："
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"用法： apt-cache [选项] 命令\n"
+"　　　 apt-cache [选项] show 软件包1 [软件包2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache 是一个底层的工具，它可以在 APT 的\n"
+"二进制缓存文件中查询信息\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "命令："
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -873,30 +870,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"用法： apt-cache [选项] 命令\n"
-"　　　 apt-cache [选项] showpkg 软件包1 [软件包2 ...]\n"
-"　　　 apt-cache [选项] showsrc 软件包1 [软件包2 ...]\n"
-"\n"
-"apt-cache 是一个底层的工具，它可以在 APT 的\n"
-"二进制缓存文件中查询信息\n"
-"\n"
-"命令：\n"
-"   gencaches - 同时生成软件包和源代码包的缓存\n"
-"   showpkg - 显示某个软件包的全面信息\n"
-"   showsrc - 显示源文件的各项记录\n"
-"   stats - 显示基本的统计信息\n"
-"   dump - 简要显示整个缓存文件的内容\n"
-"   dumpavail - 把所有有效的包文件列表打印到标准输出\n"
-"   unmet - 显示所有未满足的依赖关系\n"
-"   search - 根据正则表达式搜索软件包列表\n"
-"   show - 以便于阅读的格式介绍该软件包\n"
-"   depends - 显示该软件包的依赖关系信息\n"
-"   rdepends - 显示所有依赖于该软件包的软件包名字\n"
-"   pkgnames - 列出所有软件包的名字\n"
-"   dotty - 生成可用 GraphViz 处理的软件包关系图\n"
-"   xvcg - 生成可用 xvcg 处理的软件包的关系图\n"
-"   policy - 显示软件包的安装设置状态\n"
-"\n"
 "选项：\n"
 "  -h   本帮助文档。\n"
 "  -p=? 软件包的缓存。\n"
@@ -907,46 +880,88 @@ msgstr ""
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 "若要了解更多信息，您还可以查阅 apt-cache(8) 和 apt.conf(5) 参考手册。\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "显示源文件的各项记录"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "根据正则表达式搜索软件包列表"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "显示该软件包的依赖关系信息"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "显示所有依赖于该软件包的软件包名字"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "以便于阅读的格式介绍该软件包"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "列出所有软件包的名字"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "显示软件包的安装设置状态"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "用法： apt [选项] 命令\n"
 "\n"
 "apt 的命令行界面。\n"
-"基本命令：\n"
-" list - 根据名称列出软件包\n"
-" search - 搜索软件包描述\n"
-" show - 显示软件包细节\n"
-"\n"
-" update - 更新可用软件包列表\n"
-"\n"
-" install - 安装软件包\n"
-" remove  - 移除软件包\n"
-"\n"
-" upgrade - 通过 安装/升级 软件来更新系统\n"
-" full-upgrade - 通过 卸载/安装/升级 来更新系统\n"
-"\n"
-" edit-sources - 编辑软件源信息文件\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "根据名称列出软件包"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "搜索软件包描述"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "显示软件包细节"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "安装软件包"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "移除软件包"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "卸载所有自动安装且不再使用的软件包"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "更新可用软件包列表"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "通过 安装/升级 软件来更新系统"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "通过 卸载/安装/升级 来更新系统"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "编辑软件源信息文件"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -977,6 +992,40 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "请对您的盘片套件中的其它盘片重复相同的操作。"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"选项：\n"
+"  -h  显示本帮助信息\n"
+"  -q  日志型输出 - 不显示进度\n"
+"  -qq 安静模式，只输出错误信息\n"
+"  -s  无动作。只说明将要做什么。\n"
+"  -f  读取/写入 指定文件的  自动/手动 标记\n"
+"  -c=? 读取指定的配置文件\n"
+"  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
+"更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "参数不成对"
@@ -986,28 +1035,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"用法：apt-config [选项] 命令\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config 是一个用于读取APT 配置文件的简单工具\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"用法：apt-config [选项] 命令\n"
-"\n"
-"apt-config 是一个用于读取APT 配置文件的简单工具\n"
-"\n"
-"命令：\n"
-"   shell - Shell 模式\n"
-"   dump - 显示配置文件\n"
-"\n"
 "选项：\n"
 "  -h   显示本帮助文本。\n"
 "  -c=? 读取指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1230,24 +1281,16 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"用法： apt-get [选项] 命令\n"
+"　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
+"　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get 是一个用于下载和安装软件包的简易命令行界面。\n"
+"最常用命令是 update 和 install。\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1266,30 +1309,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"用法： apt-get [选项] 命令\n"
-"　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
-"　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
-"\n"
-"apt-get 是一个用于下载和安装软件包的简易命令行界面。\n"
-"最常用命令是 update 和 install。\n"
-"\n"
-"命令：\n"
-"   update - 取回更新的软件包列表信息\n"
-"   upgrade - 进行一次升级\n"
-"   install - 安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)\n"
-"   remove - 卸载软件包\n"
-"   autoremove - 卸载所有自动安装且不再使用的软件包\n"
-"   purge - 卸载并清除软件包的配置\n"
-"   source - 下载源码包文件\n"
-"   build-dep - 为源码包配置所需的编译依赖关系\n"
-"   dist-upgrade - 发布版升级，见 apt-get(8)\n"
-"   dselect-upgrade - 根据 dselect 的选择来进行升级\n"
-"   clean - 删除所有已下载的包文件\n"
-"   autoclean - 删除已下载的旧包文件\n"
-"   check - 核对以确认系统的依赖关系的完整性\n"
-"   changelog - 下载指定软件包，并显示其changelog\n"
-"   download - 下载指定的二进制包到当前目录\n"
-"\n"
 "选项：\n"
 "  -h  本帮助文档。\n"
 "  -q  让输出可作为日志 - 不显示进度\n"
@@ -1307,6 +1326,62 @@ msgstr ""
 "请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
 "以获取更多信息和选项。\n"
 "                       本 APT 具有超级牛力。\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "取回更新的软件包列表信息"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "进行一次升级"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "卸载软件包"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "卸载并清除软件包的配置"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "发布版升级，见 apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "根据 dselect 的选择来进行升级"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "为源码包配置所需的编译依赖关系"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "删除所有已下载的包文件"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "删除已下载的旧包文件"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "核对以确认系统的依赖关系的完整性"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "下载源码包文件"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "下载指定的二进制包到当前目录"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "下载指定软件包，并显示其changelog"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1326,30 +1401,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "用法： apt-helper [选项] 命令\n"
 "       apt-helper [选项] download-file URI 目标路径\n"
 "\n"
 "apt-helper 是一个 apt 的内部助手\n"
-"\n"
-"命令：\n"
-"   download-file - 将 URI 指定的文件下载到目标路径\n"
-"   auto-detect-proxy - 用 apt.conf 检测代理设置\n"
-"\n"
-"                       本 APT 助手具有超级喵力。\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "本 APT 助手具有超级喵力。"
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "将 URI 指定的文件下载到目标路径"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "用 apt.conf 检测代理设置"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1376,11 +1453,9 @@ msgstr "%s 已经设置为保留。\n"
 msgid "%s was already not hold.\n"
 msgstr "%s 已经设置为不保留。\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "等待子进程 %s 的退出，但是它并不存在"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "执行 dpkg 失败。您是 root 吗？"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1393,8 +1468,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "取消保留 %s 的设置。\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "执行 dpkg 失败。您是 root 吗？"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1402,16 +1488,14 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark 是一个可以对软件包进行 手动/自动 安装标记的简单命令行界面。\n"
+"它也能列出标记。\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1422,20 +1506,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
-"\n"
-"apt-mark 是一个可以对软件包进行 手动/自动 安装标记的简单命令行界面。\n"
-"它也能列出标记。\n"
-"\n"
-"命令：\n"
-"   auto - 标记指定软件包为自动安装\n"
-"   manual - 标记指定软件包为手动安装\n"
-"   hold - 标记指定软件包为保留(held back)\n"
-"   unhold - 取消指定软件包的保留(held back)标记\n"
-"   showauto - 列出所有自动安装的软件包\n"
-"   showmanual - 列出所有手动安装的软件包\n"
-"   showhold - 列出设为保留的软件包\n"
-"\n"
 "选项：\n"
 "  -h  显示本帮助信息\n"
 "  -q  日志型输出 - 不显示进度\n"
@@ -1445,6 +1515,34 @@ msgstr ""
 "  -c=? 读取指定的配置文件\n"
 "  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
 "更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "标记指定软件包为自动安装"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "标记指定软件包为手动安装"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "标记指定软件包为保留(held back)"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "取消指定软件包的保留(held back)标记"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "列出所有自动安装的软件包"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "列出所有手动安装的软件包"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "列出设为保留的软件包"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2488,7 +2586,21 @@ msgid "Retrieving file %li of %li"
 msgstr "正在下载第 %li 个文件，共 %li 个"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2555,19 +2667,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "冲突的发行版：%s (期望 %s 但得到 %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "目录 %s 已被转移"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "目录 %s 已被转移"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2951,6 +3065,11 @@ msgstr "忽略‘%s’(于目录‘%s’)，鉴于它没有文件扩展名"
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr "忽略‘%s’(于目录‘%s’)，鉴于它的文件扩展名无效"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "等待子进程 %s 的退出，但是它并不存在"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3636,6 +3755,11 @@ msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 节中的软件包类别“%1$s”"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

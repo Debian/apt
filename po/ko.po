@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -398,7 +398,7 @@ msgid_plural ""
 msgstr[0] "패키지 %lu개가 자동으로 설치되었지만 더 이상 필요하지 않습니다.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy
+#, fuzzy, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "이들을 지우려면 '%s'를 사용하십시오."
@@ -668,7 +668,7 @@ msgstr ""
 msgid "Regex compilation error - %s"
 msgstr "정규식 컴파일 오류 - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "최소 한 개의 검색어를 지정해야 합니다"
 
@@ -849,32 +849,27 @@ msgid "  Version table:"
 msgstr "  버전 테이블:"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"사용법: apt-cache [옵션] 명령\n"
+"        apt-cache [옵션] show 패키지1 [패키지2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache는 APT의 바이너리 캐시 파일을 처리하고, 캐시 파일에\n"
+"정보를 질의하는 저수준 도구입니다.\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -885,33 +880,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"사용법: apt-cache [옵션] 명령\n"
-"        apt-cache [옵션] add 파일1 [파일2 ...]\n"
-"        apt-cache [옵션] showpkg 패키지1 [패키지2 ...]\n"
-"        apt-cache [옵션] showsrc 패키지1 [패키지2 ...]\n"
-"\n"
-"apt-cache는 APT의 바이너리 캐시 파일을 처리하고, 캐시 파일에\n"
-"정보를 질의하는 저수준 도구입니다.\n"
-"\n"
-"명령:\n"
-"   add - 소스 캐시에 패키지 파일을 추가합니다\n"
-"   gencaches - 패키지 캐시 및 소스 캐시를 만듭니다\n"
-"   showpkg - 한 개의 패키지에 대한 일반적인 정보를 봅니다\n"
-"   showsrc - 소스 기록을 봅니다\n"
-"   stats - 기본적인 통계를 봅니다\n"
-"   dump - 전체 파일을 간략한 형태로 봅니다\n"
-"   dumpavail - 사용 가능한 파일을 표준출력에 표시합니다\n"
-"   unmet - 맞지 않는 의존성을 봅니다\n"
-"   search - 정규식 패턴에 맞는 패키지 목록을 찾습니다\n"
-"   show - 패키지에 대해 읽을 수 있는 기록을 봅니다\n"
-"   showauto - 자동으로 설치한 패키지 목록을 표시합니다\n"
-"   depends - 패키지에 대해 의존성 정보를 그대로 봅니다\n"
-"   rdepends - 패키지의 역 의존성 정보를 봅니다\n"
-"   pkgnames - 시스템에 들어 있는 패키지의 이름을 모두 봅니다\n"
-"   dotty - GraphViz용 패키지 그래프를 만듭니다\n"
-"   xvcg - xvcg용 패키지 그래프를 만듭니다\n"
-"   policy - 정책 설정을 봅니다\n"
-"\n"
 "옵션:\n"
 "  -h   이 도움말.\n"
 "  -p=? 패키지 캐시.\n"
@@ -922,28 +890,90 @@ msgstr ""
 "  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 "좀 더 자세한 정보는 apt-cache(8) 및 apt.conf(5) 매뉴얼 페이지를 보십시오.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "소스 기록을 봅니다"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "정규식 패턴에 맞는 패키지 목록을 찾습니다"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "패키지에 대해 의존성 정보를 그대로 봅니다"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "패키지의 역 의존성 정보를 봅니다"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "패키지에 대해 읽을 수 있는 기록을 봅니다"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "시스템에 들어 있는 패키지의 이름을 모두 봅니다"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "정책 설정을 봅니다"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "패키지 목록을 읽는 중입니다"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "핀 패키지:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "망가진 패키지"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "사용하지 않는 패키지를 자동으로 전부 지웁니다"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s 패키지 수동설치로 지정합니다.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "상태 정보를 읽는 중입니다"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -971,6 +1001,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "현재 갖고 있는 다른 CD에도 이 과정을 반복하십시오."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "인수가 두 개가 아닙니다"
@@ -980,28 +1034,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"사용법: apt-config [옵션] 명령\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config는 APT 설정 파일을 읽는 간단한 프로그램입니다\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"사용법: apt-config [옵션] 명령\n"
-"\n"
-"apt-config는 APT 설정 파일을 읽는 간단한 프로그램입니다\n"
-"\n"
-"명령:\n"
-"   shell - 쉘 모드\n"
-"   dump - 설정을 봅니다\n"
-"\n"
 "옵션:\n"
 "  -h   이 도움말.\n"
 "  -c=? 해당 설정 파일을 읽습니다\n"
 "  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1222,7 +1278,6 @@ msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1231,24 +1286,16 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"사용법: apt-get [옵션] 명령어\n"
+"        apt-get [옵션] install|remove 패키지1 [패키지2 ...]\n"
+"        apt-get [옵션] source 패키지1 [패키지2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get은 패키지를 내려받고 설치하는 간단한 명령행 인터페이스입니다.\n"
+"가장 자주 사용하는 명령은 update와 install입니다.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1267,30 +1314,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"사용법: apt-get [옵션] 명령어\n"
-"        apt-get [옵션] install|remove 패키지1 [패키지2 ...]\n"
-"        apt-get [옵션] source 패키지1 [패키지2 ...]\n"
-"\n"
-"apt-get은 패키지를 내려받고 설치하는 간단한 명령행 인터페이스입니다.\n"
-"가장 자주 사용하는 명령은 update와 install입니다.\n"
-"\n"
-"명령어:\n"
-"   update - 패키지 목록을 새로 가져옵니다\n"
-"   upgrade - 업그레이드를 합니다\n"
-"   install - 새 패키지를 설치합니다 (패키지는 libc6 식으로. libc6.deb 아님)\n"
-"   remove - 패키지를 지웁니다\n"
-"   autoremove - 사용하지 않는 패키지를 자동으로 전부 지웁니다\n"
-"   purge - 패키지를 완전히 지웁니다\n"
-"   source - 소스 아카이브를 다운로드합니다\n"
-"   build-dep - 소스 패키지의 빌드 의존성을 설정합니다\n"
-"   dist-upgrade - 배포판 업그레이드, apt-get(8) 참고\n"
-"   dselect-upgrade - dselect에서 선택한 걸 따릅니다\n"
-"   clean - 내려받은 아카이브 파일들을 지웁니다\n"
-"   autoclean - 과거에 내려받은 아카이브 파일들을 지웁니다\n"
-"   check - 의존성이 망가지지 않았는지 확인합니다\n"
-"   markauto - 패키지를 자동 설치로 표시합니다\n"
-"   unmarkauto - 패키지를 수동 설치로 표시합니다\n"
-"\n"
 "옵션:\n"
 "  -h  이 도움말.\n"
 "  -q  기록 가능한 출력 - 진행 상황 표시를 하지 않습니다\n"
@@ -1308,6 +1331,62 @@ msgstr ""
 "더 자세한 정보와 옵션을 보려면 apt-get(8), sources.list(5)나\n"
 "apt.conf(5) 매뉴얼 페이지를 보십시오.\n"
 "                       이 APT는 Super Cow Powers로 무장했습니다.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "패키지 목록을 새로 가져옵니다"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "업그레이드를 합니다"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "새 패키지를 설치합니다 (패키지는 libc6 식으로. libc6.deb 아님)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "패키지를 지웁니다"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "패키지를 완전히 지웁니다"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "배포판 업그레이드, apt-get(8) 참고"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "dselect에서 선택한 걸 따릅니다"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "소스 패키지의 빌드 의존성을 설정합니다"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "내려받은 아카이브 파일들을 지웁니다"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "과거에 내려받은 아카이브 파일들을 지웁니다"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "의존성이 망가지지 않았는지 확인합니다"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "소스 아카이브를 다운로드합니다"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1333,13 +1412,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1367,11 +1455,9 @@ msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s 프로세스를 기다렸지만 해당 프로세스가 없습니다"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1384,7 +1470,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "%s 파일을 여는데 실패했습니다"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1393,16 +1490,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1412,6 +1503,38 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "%s 패키지는 수동설치로 지정합니다.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "'dpkg-dev' 패키지가 설치되었는지를 확인하십시오.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "%s 패키지는 수동설치로 지정합니다.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "%s 패키지 수동설치로 지정합니다.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2467,7 +2590,21 @@ msgid "Retrieving file %li of %li"
 msgstr "파일 받아오는 중: %2$li 중 %1$li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2534,19 +2671,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "배포판 충돌: %s (예상값 %s, 실제값 %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "%s 디렉터리가 전환되었습니다"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "%s 디렉터리가 전환되었습니다"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2931,6 +3070,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s 프로세스를 기다렸지만 해당 프로세스가 없습니다"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3626,6 +3770,11 @@ msgstr "소스 리스트 %2$s의 %1$u번 줄이 잘못되었습니다 (타입)"
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "소스 목록 %3$s의 %2$u번 줄의 '%1$s' 타입을 알 수 없습니다"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -404,6 +404,7 @@ msgstr[0] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འ
 msgstr[1] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
@@ -673,7 +674,7 @@ msgstr ""
 msgid "Regex compilation error - %s"
 msgstr "རི་ཇེགསི་ཕྱོགས་སྒྲིག་འཛོལ་བ་- %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "ཁྱོད་ཀྱིས་ཏག་ཏག་སྦེ་དཔེ་གཞི་གཅིག་བྱིན་དགོ"
@@ -861,32 +862,27 @@ msgid "  Version table:"
 msgstr "ཐོན་རིམ་ཐིག་ཁྲམ།:"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
-"\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+msgstr ""
+"ལག་ལེན།: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"  apt-cacheའདི་གནས་རིམ་དམའ་དྲག་གི་ལག་ཆས་ APT's binary\n"
+"་ འདྲ་མཛོད་ཡིག་སྣོད་གཡོག་བཀོལ་དོན་ལུ་ལག་ལེན་འཐབ་ནི་དང་་དེ་ཚུ་ནང་ལས་བརྡ་དོན་འདྲི་དཔྱད་འབད་ནིའི་དོན་"
+"ལུ་ཨིན།\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -897,33 +893,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"ལག་ལེན།: apt-cache [options] command\n"
-"       apt-cache [options] add file1 [file2 ...]\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-"  apt-cacheའདི་གནས་རིམ་དམའ་དྲག་གི་ལག་ཆས་ APT's binary\n"
-"་ འདྲ་མཛོད་ཡིག་སྣོད་གཡོག་བཀོལ་དོན་ལུ་ལག་ལེན་འཐབ་ནི་དང་་དེ་ཚུ་ནང་ལས་བརྡ་དོན་འདྲི་དཔྱད་འབད་ནིའི་དོན་"
-"ལུ་ཨིན།\n"
-"cache files, and query information from them\n"
-"\n"
-"བརྡ་བཀོད:\n"
-"    add -འདི་གིས་ཐུམ་སྒྲིལ་ཡིག་སྣོད་ཅིག་འབྱུང་ཁུངས་འདྲ་མཛོད་ལུ་ཁ་སྐོང་རྐྱབས་ཨིན།\n"
-"    gencaches -འདི་གིས་ཐུམ་སྒྲིལ་དང་འབྱུང་ཁུངས་འདྲ་མཛོད་གཉིས་ཆ་རང་བཟོ་བརྩིགས་འབདཝ་ཨིན།\n"
-"    showpkg -འད་གིས་་ཐུམ་སྒྲིལ་རྐྱང་པ་ཅིག་གི་དོན་ལུ་སྤྱིར་བཏང་བརྡ་དོན་དུམ་གྲ་ཅིག་སྟོནམ་ཨིན།\n"
-"    showsrc - འདི་གིས་འབྱུང་ཁུངས་ཀྱི་དྲན་ཐོ་ཚུ་སྟོནམ་ཨིན།\n"
-"   stats -འདི་གིས་ གཞི་རིམ་ཚད་རྩིས་དུམ་གྲ་རེ་སྟོནམ་ཨིན།\n"
-"    dump -འདི་གི་ཡིག་སྣོད་ཧྲིལ་བུ་མདོར་བསྡུས་རྣམཔ་་ཅིག་ནང་སྟོནམ་ཨིན།\n"
-"   dumpavail -འདི་གིས་ཨེསི་ཊི་ཌི་ཕྱི་ཁར་ལུ་ འཐོབ་ཚུགས་པའི་ཡིག་སྣོད་ཚུ་དཔར་བསྐྲུན་འབདཝ་ཨིན།\n"
-"   unmet - འདི་གིས་མ་ཚང་བའི་ རྟེན་འབྲེལ་ཚུ་སྟོནམ་ཨིན།\n"
-"   search -འདི་གིས་ རི་ཇེགསི་དཔེ་གཞི་ཅིག་གི་དོན་ལུ་ ཐུམ་སྒྲིལ་ཐོ་ཡིག་དེ་འཚོལ་ཞིབ་འབདཝ་ཨིན།\n"
-"   show - འདི་གིས་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ ལྷག་བཏུབ་པའི་དྲན་ཐོ་ཅིག་སྟོནམ་ཨིན།\n"
-"   depends - འདི་གིས་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ རགས་པ་རྟེན་འབྲེལ་གྱི་བརྡ་དོན་ཅིག་ སྟོནམ་ཨིན།\n"
-"   rdepends - འདི་གིས་ ཐུམ་སྒྲིལ་ཅིག་གི་དོན་ལུ་ རིམ་ལོག་རྟེན་འབྲེལ་གྱི་བརྡ་དོན་དེ་སྟོནམ་ཨིན།\n"
-"   pkgnames - འདི་གིས་ཐུམ་སྒྲིལ་ཚུ་ཆ་མཉམ་གི་མིང་ཚུ་ཐོ་བཀོད་འབདཝ་ཨིན།\n"
-"   dotty - འདི་གིས་ཚད་ཁྲམ་ཝིསི་གི་དོན་ལུ་ ཐུམ་སྒྲིལ་ཚད་ཁྲམ་ཚུ་ བཟོ་བཏོན་འབདཝ་ཨིན།\n"
-"   xvcg - འདི་གིས་ ཨེགསི་ཝི་སི་ཇི་ གི་དོན་ལུ་ ཐུམ་སྒྲིལ་ཚད་ཁྲམ་ཚུ་བཟོ་བཏོད་འབདཝ་ཨིན།\n"
-"   policy - འདི་གིས་ སྲིད་བྱུས་སྒྲིག་སྟངས་ཚུ་སྟོནམ་ཨིན།\n"
-"\n"
 "གདམ་ཁ་ཚུ་:\n"
 "  -h   འདི་གིས་ཚིག་ཡིག་ལུ་ཆ་རོགས་འབདཝ་ཨིན།.\n"
 "  -p=? འདི་འབྱུང་ཁུངས་འའདྲ་མཛོད་ཨིན།.\n"
@@ -935,28 +904,91 @@ msgstr ""
 "cache=/tmp\n"
 " ཧེང་བཀལ་བརྡ་དོན་གི་དོན་ལུ་ ཨེ་apt-cache(8)དང་apt.conf(5)ལག་ཐོག་ཤོག་ལེབ་ཚུ་བལྟ།.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "འདི་གིས་འབྱུང་ཁུངས་ཀྱི་དྲན་ཐོ་ཚུ་སྟོནམ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "འདི་གིས་ རི་ཇེགསི་དཔེ་གཞི་ཅིག་གི་དོན་ལུ་ ཐུམ་སྒྲིལ་ཐོ་ཡིག་དེ་འཚོལ་ཞིབ་འབདཝ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "འདི་གིས་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ རགས་པ་རྟེན་འབྲེལ་གྱི་བརྡ་དོན་ཅིག་ སྟོནམ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་ཅིག་གི་དོན་ལུ་ རིམ་ལོག་རྟེན་འབྲེལ་གྱི་བརྡ་དོན་དེ་སྟོནམ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "འདི་གིས་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ ལྷག་བཏུབ་པའི་དྲན་ཐོ་ཅིག་སྟོནམ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "འདི་གིས་ཐུམ་སྒྲིལ་ཚུ་ཆ་མཉམ་གི་མིང་ཚུ་ཐོ་བཀོད་འབདཝ་ཨིན།"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "འདི་གིས་ སྲིད་བྱུས་སྒྲིག་སྟངས་ཚུ་སྟོནམ་ཨིན།"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "ཆད་པ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ།"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+#, fuzzy
+msgid "Remove automatically all unused packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "འཐོབ་ཚུགས་པའི་བརྡ་དོན་མཉམ་བསྡོམས་འབད་དོ།"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -985,6 +1017,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "ཁྱོད་ཀྱི་ཆ་ཚན་ནང་གི་སི་ཌི་ལྷག་ལུས་ཡོད་མི་གི་དོན་ལུ་འ་ནི་ལས་སྦྱོར་དེ་ཡང་བསྐྱར་འབད།"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "སྒྲུབས་རྟགས་ཚུ་ཟུང་ནང་མིན་འདུག"
@@ -994,28 +1050,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"ལག་ལེན:apt-config [གདམ་ཁ་ཚུ་] བརྡ་བཀོད།\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config་འདི་APT config་ཡིག་སྣོད་ལྷག་ནིའི་དོན་ལུ་འཇམ་སམ་ལག་ཆས་ཅིག་ཨིན།\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"ལག་ལེན:apt-config [གདམ་ཁ་ཚུ་] བརྡ་བཀོད།\n"
-"\n"
-"apt-config་འདི་APT config་ཡིག་སྣོད་ལྷག་ནིའི་དོན་ལུ་འཇམ་སམ་ལག་ཆས་ཅིག་ཨིན།\n"
-"\n"
-"བརྡ་བཀོད་ཚུ:\n"
-"   shell - ཤལ་གྱི་ཐབས་ལམ།\n"
-"   dump - འདི་གིས་རིམ་སྒྲིག་གི་ཐབས་ལམ་འདི་སྟོནམ་ཨིན།\n"
-"\n"
 "གདམ་ཁ་ཚུ:\n"
 "  -h   འདི་གིས་ཚིག་ཡིག་ལུ་གྲོགས་རམ་འབདཝ་ཨིན།\n"
 "  -c=? འདི་གིས་འ་ནི་རིམ་སྒྲིག་ཡིག་སྣོད་འདི་ལྷགཔ་ཨིན།\n"
 "  -o=? མཐུན་སྒྲིག་གི་རིམ་སྒྲིག་འདི་གཞི་སྒྲིག་འབདཝ་ཨིན་  དཔེར་ན་-o dir::cache=/tmp་བཟུམ།\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1225,7 +1283,6 @@ msgid "Supported modules:"
 msgstr "རྒྱབ་སྐྱོར་འབད་ཡོད་པའི་ཚད་གཞི་ཚུ:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1234,24 +1291,18 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"ལག་ལེན་:apt-get [options] command\n"
+"apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get འདི་ཐུམ་སྒྲིལ་ཚུ་ཕབ་ལེན་འབད་ནི་དང་\n"
+"གཞི་བཙུགས་འབད་ནིའི་དོན་ལུ་  འཇམ་སམ་བརྡ་བཀོད་གྲལ་ཐིག་གི་ངོས་འདྲ་བ་ཅིག་ཨིན།  མང་ཤོས་རང་་སྦེ་རང་"
+"ལག་ལེན་འཐབ་ཡོད་པའི་བརྡ་བཀོད་ཚུ་\n"
+" དུས་མཐུན་དང་གཞི་བཙུགས་འབད་ནི་དེ་ཨིན།\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1270,30 +1321,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"ལག་ལེན་:apt-get [options] command\n"
-"apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get འདི་ཐུམ་སྒྲིལ་ཚུ་ཕབ་ལེན་འབད་ནི་དང་\n"
-"གཞི་བཙུགས་འབད་ནིའི་དོན་ལུ་  འཇམ་སམ་བརྡ་བཀོད་གྲལ་ཐིག་གི་ངོས་འདྲ་བ་ཅིག་ཨིན།  མང་ཤོས་རང་་སྦེ་རང་"
-"ལག་ལེན་འཐབ་ཡོད་པའི་བརྡ་བཀོད་ཚུ་\n"
-" དུས་མཐུན་དང་གཞི་བཙུགས་འབད་ནི་དེ་ཨིན།\n"
-"\n"
-"བརྡ་བཀོད་ཚུ་:\n"
-"   update - འདི་གིས་ཐུམ་སྒྲིལ་ཚུ་གི་ཐོ་ཡིག་གསརཔ་ཚུ་སླར་འདྲེན་འབདཝ་ཨིན།\n"
-"   upgrade - འདི་གིས་ ཡར་བསྐྱེད་ཀྱི་ལཱ་འགན་ཅིག་འགྲུབ་ཨིན།\n"
-"   install - འདི་གིས་ ཐུམ་སྒྲིལ་(pkg is libc6 not libc6.deb)གསརཔ་་ཚུ་གཞི་བཙུགས་འབདཝ་"
-"ཨིན།\n"
-"   remove -འདི་གིས་ ཐུམ་སྒྲིལ་ཚུ་རྩ་བསྐྲད་གཏངམ་ཨིན།\n"
-"   source - འདི་གིས་འབྱུང་ཁུངས་ཀྱི་ཡིག་མཛོད་ཚུ་ཕབ་ལེན་འབདཝ་ཨིན།\n"
-"   build-dep - འདི་གིས་འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་ཚུ་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་ཚུ་རིམ་སྒྲིག་འབདཝ་"
-"ཨིན།\n"
-"   dist-upgrade - འདི་གིས་ བགོ་བཀྲམ་འདི་ཡར་བསྐྱེད་འབདཝ་ཨིན། apt-get(8)ལུ་བལྟ།\n"
-"   dselect-upgrade - འདི་གིས་ སེལ་འཐུ་བཤོལ་གྱི་ སེལ་འཐུ་ཚུ་འབདཝ་ཨིན།\n"
-"   clean - འདི་གིས་ ཕབ་ལེན་འབད་ཡོད་པའི་ཡིག་མཛོད་ཀྱི་ཡིག་སྣོད་ཚུ་ཀྲེག་གཏངམ་ཨིན།\n"
-"   autoclean -འདི་གིས་ ཕབ་ལེན་འབད་འབདཝ་རྙིངམ་གྱི་ཡིག་མཛོད་ཡིག་སྣོད་ཚུ་ཀྲེག་གཏངམ་ཨིན།\n"
-"   check - ཆད་པ་འགྱོ་འགྱོ་བའི་རྟེན་འབྲེལ་ཚུ་མེདཔ་སྦེ་བདེན་སྦྱོར་འབདཝ་ཨིན།\n"
-"\n"
 "གདམ་ཁ་ཚུ་:\n"
 "  -h  འདི་གིས་ཚིག་ཡིག་ལུ་གྲོགས་རམ་འབདཝ་ཨིན།\n"
 "  -q  དྲན་དེབ་འབད་བཏུབ་པའི་ཨའུཊི་པུཊི་ -ཡར་འཕེལ་གྱི་བརྡ་སྟོན་མིན་འདུག\n"
@@ -1301,17 +1328,73 @@ msgstr ""
 "  -d  ཕབ་ལེན་རྐྱངམ་ཅིག་ཨིན་-  གཞི་བཙུགས་ཡང་ན་ཡིག་མཛོད་ཚུ་སྦུང་ཚན་བཟོ་བཤོལ་མ་འབད།\n"
 "  -s  བྱ་བ་མིན་འདུག   གོ་རིམ་མཚུངས་བཟོ་གི་ལས་འགན་འགྲུབ།\n"
 "  -y  འདྲི་དཔྱད་གེ་རང་ལུ་ཨིནམ་སྦེ་ཚོད་དཔག་བཞིནམ་ལས་ནུས་སྤེལ་མ་འབད།\n"
-"  -f ཆིག་སྒྲིལ་ཞིབ་དཔྱད་འདི་འཐུས་ཤོར་བྱུང་པ་ཅིན་ འཕྲོ་མཐུད་འབད་ནི་ལུ་དཔའ་བཅམ།\n"
+"  -f  ཆིག་སྒྲིལ་ཞིབ་དཔྱད་འདི་འཐུས་ཤོར་བྱུང་པ་ཅིན་ འཕྲོ་མཐུད་འབད་ནི་ལུ་དཔའ་བཅམ།\n"
 "  -m  ཡིག་མཛོད་འདི་ཚུ་ག་ཡོད་འཚོལ་མ་ཐོབ་པ་ཅིན་འཕྲོ་མཐུད་ནི་ལུ་དཔའ་བཅམ།\n"
 "  -u  ཡར་བསྐྱེད་བཟོ་ཡོད་པའི་ཐུམ་སྒྲིལ་འདི་ཡང་་སྟོན།\n"
 "  -b  འདི་ལེན་ཚར་བའི་ཤུལ་ལས འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་འདི་བཟོ་བརྩིགས་འབད།\n"
-" -V  བརྡ་དོན་ལེ་ཤཱ་གི་འཐོན་རིམ་ཨང་གྲངས་ཚུ་སྟོན།\n"
+"  -V  བརྡ་དོན་ལེ་ཤཱ་གི་འཐོན་རིམ་ཨང་གྲངས་ཚུ་སྟོན།\n"
 "  -c=? འ་ནི་རིམ་སྒྲིག་གི་ཡིག་སྣོད་འདི་ལྷག\n"
 "  -o=? མཐུན་སྒྲིག་གདམ་ཁ་གི་རིམ་སྒྲིག་ཅིག་གཞི་བཙུགས་འབད་  དཔེན་ན་-o dir::cache=/tmp\n"
 "བརྡ་དོན་དང་གདམ་ཁ་ཚུ་ཧེང་བཀལ་གི་དོན་ལུ་ apt-get(8)་  sources.list(5) དང་apt."
 "conf(5)ལག་ཐོག་\n"
 "ཤོག་ལེབ་ཚུ་ལུ་བལྟ།\n"
 "                       འ་ནི་ ཨེ་ཊི་པི་འདི་ལུ་ཡང་དག་ ཀའུ་ ནུས་ཤུགས་ཚུ་ཡོད།\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "འདི་གིས་ཐུམ་སྒྲིལ་ཚུ་གི་ཐོ་ཡིག་གསརཔ་ཚུ་སླར་འདྲེན་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "འདི་གིས་ ཡར་བསྐྱེད་ཀྱི་ལཱ་འགན་ཅིག་འགྲུབ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་(pkg is libc6 not libc6.deb)གསརཔ་་ཚུ་གཞི་བཙུགས་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་ཚུ་རྩ་བསྐྲད་གཏངམ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "འདི་གིས་ བགོ་བཀྲམ་འདི་ཡར་བསྐྱེད་འབདཝ་ཨིན། apt-get(8)ལུ་བལྟ།"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "འདི་གིས་ སེལ་འཐུ་བཤོལ་གྱི་ སེལ་འཐུ་ཚུ་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "འདི་གིས་འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་ཚུ་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་ཚུ་རིམ་སྒྲིག་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "འདི་གིས་ ཕབ་ལེན་འབད་ཡོད་པའི་ཡིག་མཛོད་ཀྱི་ཡིག་སྣོད་ཚུ་ཀྲེག་གཏངམ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "འདི་གིས་ ཕབ་ལེན་འབད་འབདཝ་རྙིངམ་གྱི་ཡིག་མཛོད་ཡིག་སྣོད་ཚུ་ཀྲེག་གཏངམ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "ཆད་པ་འགྱོ་འགྱོ་བའི་རྟེན་འབྲེལ་ཚུ་མེདཔ་སྦེ་བདེན་སྦྱོར་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "འདི་གིས་འབྱུང་ཁུངས་ཀྱི་ཡིག་མཛོད་ཚུ་ཕབ་ལེན་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1337,13 +1420,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1371,11 +1463,9 @@ msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རི
 msgid "%s was already not hold.\n"
 msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རིམ་གསར་ཤོས་ཅིག་ཨིན།\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s་གི་དོན་ལུ་བསྒུག་སྡོད་ཅི་ འདི་འབདཝ་ད་ཕར་མིན་འདུག"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1388,7 +1478,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "%s་ག་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1397,16 +1498,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1416,6 +1511,38 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2484,7 +2611,21 @@ msgid "Retrieving file %li of %li"
 msgstr " %li་གི་བརླག་སྟོར་ཟུགསཔའི་ཡིག་སྣོད་ %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2550,19 +2691,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "སྣོད་ཐོ་%s་འདི་ཁ་ཕྱོགས་སྒྱུར་དེ་ཡོད།"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "སྣོད་ཐོ་%s་འདི་ཁ་ཕྱོགས་སྒྱུར་དེ་ཡོད།"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2945,6 +3088,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s་གི་དོན་ལུ་བསྒུག་སྡོད་ཅི་ འདི་འབདཝ་ད་ཕར་མིན་འདུག"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3634,6 +3782,11 @@ msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐི
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

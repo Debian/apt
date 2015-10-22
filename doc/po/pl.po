@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-20 19:29+0200\n"
+"POT-Creation-Date: 2015-10-22 16:34+0200\n"
 "PO-Revision-Date: 2014-07-04 02:13+0200\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: Polish <manpages-pl-list@lists.sourceforge.net>\n"
@@ -686,26 +686,68 @@ msgstr "Opis"
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
 msgid ""
-"<command>apt</command> (Advanced Package Tool) is the command-line tool for "
-"handling packages. It provides a commandline interface for the package "
-"management of the system.  See also &apt-get; and &apt-cache; for more low-"
-"level command options."
+"<command>apt</command> provides a high-level commandline interface for the "
+"package management system. It is intended as an end user interface and "
+"enables some options better suited for interactive usage by default compared "
+"to more specialized APT tools like &apt-get; and &apt-cache;."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml
+msgid ""
+"Much like <command>apt</command> itself, its manpage is intended as an end "
+"user interface and as such only mentions the most used commands and options "
+"partly to not duplicate information in multiple places and partly to avoid "
+"overwelming readers with a cornucopia of options and details."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+#, fuzzy
+#| msgid "apt-get"
+msgid "(&apt-get;)"
+msgstr "apt-get"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<option>update</option> is used to download package information from all "
+"configured sources. Other commands operate on this data to e.g. perform "
+"package upgrades or search in and display details about all packages "
+"available for installation."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
-"<literal>list</literal> is used to display a list of packages. It supports "
-"shell pattern for matching package names and the following options: "
-"<option>--installed</option>, <option>--upgradable</option>, <option>--"
-"upgradeable</option>, <option>--all-versions</option> are supported."
+"<option>upgrade</option> is used to install available upgrades of all "
+"packages currently installed on the system from the sources configured via "
+"&sources-list;. New packages will be installed if required to statisfy "
+"dependencies, but existing packages will never be removed. If an upgrade for "
+"a package requires the remove of an installed package the upgrade for this "
+"package isn't performed."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
-"<literal>search</literal> searches for the given term(s) and display "
-"matching packages."
+"<literal>full-upgrade</literal> performs the function of upgrade but will "
+"remove currently installed packages if this is needed to upgrade the system "
+"as a whole."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+msgid ","
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"Performs the requested action on one or more packages specified via &regex;, "
+"&glob; or exact match. The requested action can be overidden for specific "
+"packages by append a plus (+) to the package name to install this package or "
+"a minus (-) to remove it."
 msgstr ""
 
 #
@@ -713,32 +755,20 @@ msgstr ""
 #: apt.8.xml
 #, fuzzy
 #| msgid ""
-#| "<literal>rdepends</literal> shows a listing of each reverse dependency a "
-#| "package has."
-msgid ""
-"<literal>show</literal> shows the package information for the given "
-"package(s)."
-msgstr ""
-"<literal>rdepends</literal> pokazuje listę wszystkich odwrotnych zależności "
-"danego pakietu."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.8.xml
-msgid ""
-"<literal>install</literal> is followed by one or more package names desired "
-"for installation or upgrading."
-msgstr ""
-
-#
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.8.xml apt-get.8.xml
+#| "A specific version of a package can be selected for installation by "
+#| "following the package name with an equals and the version of the package "
+#| "to select. This will cause that version to be located and selected for "
+#| "install. Alternatively a specific distribution can be selected by "
+#| "following the package name with a slash and the version of the "
+#| "distribution or the Archive name (stable, testing, unstable)."
 msgid ""
 "A specific version of a package can be selected for installation by "
-"following the package name with an equals and the version of the package to "
-"select. This will cause that version to be located and selected for install. "
-"Alternatively a specific distribution can be selected by following the "
-"package name with a slash and the version of the distribution or the Archive "
-"name (stable, testing, unstable)."
+"following the package name with an equals (=) and the version of the package "
+"to select. Alternatively the version from a specific release can be selected "
+"by following the package name with a forward slash (/) and codename (&stable-"
+"codename;, &testing-codename;, sid …) or suite name (stable, testing, "
+"unstable). This will also select versions from this release for dependencies "
+"of this package if needed to satisfy the request."
 msgstr ""
 "Konkretna wersja pakietu może być wybrana do zainstalowania przez "
 "umieszczenie po nazwie pakietu znaku równości, a za nim wybranej wersji "
@@ -747,37 +777,30 @@ msgstr ""
 "pakietu znaku ukośnika, po którym następuje wersja dystrybucji bądź nazwa "
 "archiwum (stable, testing, unstable)."
 
-#
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.8.xml apt-get.8.xml
+#: apt.8.xml
 msgid ""
-"<literal>remove</literal> is identical to <literal>install</literal> except "
-"that packages are removed instead of installed. Note that removing a package "
-"leaves its configuration files on the system. If a plus sign is appended to "
-"the package name (with no intervening space), the identified package will be "
-"installed instead of removed."
-msgstr ""
-"<literal>remove</literal> odpowiada poleceniu <literal>install</literal> z "
-"tą różnicą, że pakiety są usuwane, a nie instalowane. Jeżeli nazwa pakietu "
-"zostanie poprzedzona znakiem plusa (bez rozdzielającej spacji), wskazany "
-"pakiet zostanie zainstalowany zamiast zostać usunięty."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml apt-get.8.xml
-msgid "(and the"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml apt-get.8.xml
-msgid "alias since 1.1)"
+"Removing a package removes all packaged data, but leaves usually small "
+"(modified) user configuration files behind, in case the remove was an "
+"accident. Just issuing an installtion request for the accidently removed "
+"package will restore it funcation as before in that case. On the other hand "
+"you can get right of these leftovers via calling <command>purge</command> "
+"even on already removed packages.  Note that this does not effect any data "
+"or configuration stored in your home directory."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.8.xml apt-get.8.xml
+#: apt.8.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>autoremove</literal> is used to remove packages that were "
+#| "automatically installed to satisfy dependencies for other packages and "
+#| "are now no longer needed."
 msgid ""
 "<literal>autoremove</literal> is used to remove packages that were "
 "automatically installed to satisfy dependencies for other packages and are "
-"now no longer needed."
+"now no longer needed as dependencies changed or the package(s)  needing them "
+"were removed in the meantime."
 msgstr ""
 "<literal>autoremove</literal> jest używane do usuwania pakietów, które  "
 "zostały zainstalowane automatycznie, żeby rozwiązać zależności w innych "
@@ -786,103 +809,85 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
-"<literal>edit-sources</literal> lets you edit your sources.list file and "
-"provides basic sanity checks."
+"Try to ensure that the list does not include applications you have grown to "
+"like even through they there once installed just as a dependency of another "
+"package. You can mark such a package as manually installed by using &apt-"
+"mark;. Packages which you have installed explicitly via <command>install</"
+"command> are never proposed for automatic removal as well."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
 #, fuzzy
-#| msgid ""
-#| "<literal>showhold</literal> is used to print a list of packages on hold "
-#| "in the same way as for the other show commands."
-msgid ""
-"<literal>update</literal> is used to resynchronize the package index files "
-"from their sources."
-msgstr ""
-"<literal>showhold</literal> jest używane do wypisania listy wszystkich "
-"pakietów wstrzymanych, w taki sam sposób jak pozostałe polecenia \"show\"."
+#| msgid "&apt-conf;"
+msgid "(&apt-cache;)"
+msgstr "&apt-conf;"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
-"<literal>upgrade</literal> is used to install the newest versions of all "
-"packages currently installed on the system from the sources enumerated in "
-"<filename>/etc/apt/sources.list</filename>. New packages will be installed, "
-"but existing packages will never be removed."
+"<option>search</option> can be used to search for the given &regex; term(s) "
+"in the list of the available packages and display matches.  This can e.g. be "
+"useful if you are looking for packages having a specific feature.  If you "
+"are looking for a package including a specific file try &apt-file;."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
-"<literal>full-upgrade</literal> performs the function of upgrade but may "
-"also remove installed packages if that is required in order to resolve a "
-"package conflict."
+"Show information about the given package(s) including its dependencies, "
+"installation and download size, sources the package is available from, the "
+"description of the packages content and many more. It can e.g. be helpful to "
+"look at this information before allowing &apt; to remove a package or while "
+"searching for new packages to install."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+msgid "(work-in-progress)"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<option>list</option> is somewhat similar to <command>dpkg-query --list</"
+"command> in that it can display a list of packages satisfying certain "
+"criteria.  It supports &glob; patterns for matching package names as well as "
+"options to list installed (<option>--installed</option>), upgradeable "
+"(<option>--upgradeable</option>) or all available (<option>--all-versions</"
+"option>) versions."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<literal>edit-sources</literal> lets you edit your &sources-list; files in "
+"your preferred texteditor while also providing basic sanity checks."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.8.xml apt-get.8.xml apt-cache.8.xml apt-mark.8.xml apt-config.8.xml
-#: apt-extracttemplates.1.xml apt-sortpkgs.1.xml apt-ftparchive.1.xml
-msgid "options"
-msgstr "opcje"
-
-#. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml
-msgid "Script usage"
+msgid "Script usage and Differences to other APT tools"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
 msgid ""
-"The &apt; commandline is designed as a end-user tool and it may change the "
-"output between versions. While it tries to not break backward compatibility "
-"there is no guarantee for it either.  All features of &apt; are available in "
-"&apt-cache; and &apt-get; via APT options. Please prefer using these "
-"commands in your scripts."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><title>
-#: apt.8.xml
-msgid "Differences to &apt-get;"
+"The &apt; commandline is designed as a end-user tool and it may change "
+"behaviour between versions. While it tries to not break backward "
+"compatibility there is no guarantee for it either if it seems benefitial for "
+"interactive use."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
 msgid ""
-"The <command>apt</command> command is meant to be pleasant for end users and "
-"does not need to be backward compatible like &apt-get;. Therefore some "
-"options are different:"
+"All features of &apt; are available in dedicated APT tools like &apt-get; "
+"and &apt-cache; as well.  &apt; just changes the default value of some "
+"options (see &apt-conf; and specifically the Binary scope). So prefer using "
+"these commands (potentially with some additional options enabled) in your "
+"scripts as they keep backward compatibility as much as possible."
 msgstr ""
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.8.xml
-#, fuzzy
-#| msgid "the <literal>Package:</literal> line"
-msgid "The option <literal>DPkg::Progress-Fancy</literal> is enabled."
-msgstr "linia <literal>Package:</literal>"
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.8.xml
-#, fuzzy
-#| msgid "the <literal>Component:</literal> line"
-msgid "The option <literal>APT::Color</literal> is enabled."
-msgstr "linia <literal>Component:</literal>"
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.8.xml
-msgid ""
-"A new <literal>list</literal> command is available similar to <literal>dpkg "
-"--list</literal>."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: apt.8.xml
-#, fuzzy
-#| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
-msgid ""
-"The option <literal>upgrade</literal> has <literal>--with-new-pkgs</literal> "
-"enabled by default."
-msgstr "linia <literal>Archive:</literal> lub <literal>Suite:</literal>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml
@@ -1095,6 +1100,24 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"A specific version of a package can be selected for installation by "
+"following the package name with an equals and the version of the package to "
+"select. This will cause that version to be located and selected for install. "
+"Alternatively a specific distribution can be selected by following the "
+"package name with a slash and the version of the distribution or the Archive "
+"name (stable, testing, unstable)."
+msgstr ""
+"Konkretna wersja pakietu może być wybrana do zainstalowania przez "
+"umieszczenie po nazwie pakietu znaku równości, a za nim wybranej wersji "
+"pakietu. Podana wersja zostanie wyszukana i wybrana do zainstalowania.  "
+"Również konkretna dystrybucja może być wybrana przez umieszczenie po nazwie "
+"pakietu znaku ukośnika, po którym następuje wersja dystrybucji bądź nazwa "
+"archiwum (stable, testing, unstable)."
+
+#
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "Both of the version selection mechanisms can downgrade packages and must be "
 "used with care."
 msgstr ""
@@ -1153,6 +1176,21 @@ msgstr ""
 "\"how-lo\", jak i do \"lowest\". Jeśli jest to niepożądane, można określić "
 "początek lub koniec dopasowania wyrażenia regularnego, używając znaków \"^| "
 "lub \"$\", można też stworzyć bardziej specyficzne wyrażenie regularne."
+
+#
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>remove</literal> is identical to <literal>install</literal> except "
+"that packages are removed instead of installed. Note that removing a package "
+"leaves its configuration files on the system. If a plus sign is appended to "
+"the package name (with no intervening space), the identified package will be "
+"installed instead of removed."
+msgstr ""
+"<literal>remove</literal> odpowiada poleceniu <literal>install</literal> z "
+"tą różnicą, że pakiety są usuwane, a nie instalowane. Jeżeli nazwa pakietu "
+"zostanie poprzedzona znakiem plusa (bez rozdzielającej spacji), wskazany "
+"pakiet zostanie zainstalowany zamiast zostać usunięty."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1303,6 +1341,16 @@ msgstr ""
 "dselect, powinny od czasu do czasu uruchamiać <literal>apt-get clean</"
 "literal>, aby zwolnić trochę miejsca na dysku."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-get.8.xml
+msgid "(and the"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-get.8.xml
+msgid "alias since 1.1)"
+msgstr ""
+
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1323,6 +1371,17 @@ msgstr ""
 "niekontrolowanego jego wzrostu.  Wyłączenie opcji konfiguracyjnej "
 "<literal>APT::Clean-Installed</literal> zapobiegnie usuwaniu plików "
 "zawierających zainstalowane pakiety."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>autoremove</literal> is used to remove packages that were "
+"automatically installed to satisfy dependencies for other packages and are "
+"now no longer needed."
+msgstr ""
+"<literal>autoremove</literal> jest używane do usuwania pakietów, które  "
+"zostały zainstalowane automatycznie, żeby rozwiązać zależności w innych "
+"pakietach, i nie są już potrzebne."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1366,6 +1425,12 @@ msgid ""
 "documentation is omitted here and can instead be found in the source tree in "
 "<literal><filename>doc/acquire-additional-files.txt</filename></literal>."
 msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-get.8.xml apt-cache.8.xml apt-config.8.xml apt-extracttemplates.1.xml
+#: apt-sortpkgs.1.xml apt-ftparchive.1.xml
+msgid "options"
+msgstr "opcje"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2731,6 +2796,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
+msgid ""
+"It is critical that keys added manually via <command>apt-key</command> are "
+"verified to belong to the owner of the repositories they claim to be for "
+"otherwise the &apt-secure; infrastructure is completely undermined."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml
 msgid "Remove a key from the list of trusted keys."
 msgstr "Usuwa klucz z listy zaufanych kluczy."
 
@@ -2757,11 +2830,11 @@ msgstr "Wyświetla listę odcisków zaufanych kluczy."
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
-"Pass advanced options to gpg. With adv --recv-key you can download the "
-"public key."
+"Pass advanced options to gpg. With <command>adv --recv-key</command> you can "
+"e.g. download key from keyservers directly into the the trusted set of keys. "
+"Note that there are <emphasis>no</emphasis> checks performed, so it is easy "
+"to completely undermine the &apt-secure; infrastructure if used without care."
 msgstr ""
-"Przekazuje zaawansowane opcje do gpg. Na przykład adv --recv-key umożliwia "
-"pobranie klucza publicznego."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2796,7 +2869,7 @@ msgstr ""
 "command>, ale APT w Ubuntu je obsługuje."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-key.8.xml apt-cdrom.8.xml
+#: apt-key.8.xml apt-mark.8.xml apt-cdrom.8.xml
 msgid "Options"
 msgstr "Opcje"
 
@@ -2863,26 +2936,42 @@ msgstr "&apt-get;, &apt-secure;"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-mark.8.xml
-msgid "mark/unmark a package as being automatically-installed"
-msgstr "Zaznaczanie/odznaczanie pakietu jako zainstalowanego automatycznie."
+msgid "show, set and unset various settings for a package"
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
 msgid ""
-"<command>apt-mark</command> will change whether a package has been marked as "
-"being automatically installed."
+"<command>apt-mark</command> can be used as a unified frontend to set various "
+"settings for a package like marking a package as being automatically/"
+"manually installed or changing <command>dpkg</command> selections such as "
+"hold, install, deinstall and purge which are respected e.g. by <command>apt-"
+"get dselect-upgrade</command> or <command>aptitude</command>."
 msgstr ""
-"<command>apt-mark</command> zmienia flagę mówiącą o tym, czy pakiet był "
-"zainstalowany automatycznie."
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-mark.8.xml
+msgid "Automatically and manually installed packages"
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "When you request that a package is installed, and as a result other "
+#| "packages are installed to satisfy its dependencies, the dependencies are "
+#| "marked as being automatically installed.  Once these automatically "
+#| "installed packages are no longer depended on by any manually installed "
+#| "packages, they will be removed by e.g.  <command>apt-get</command> or "
+#| "<command>aptitude</command>."
 msgid ""
 "When you request that a package is installed, and as a result other packages "
 "are installed to satisfy its dependencies, the dependencies are marked as "
-"being automatically installed.  Once these automatically installed packages "
-"are no longer depended on by any manually installed packages, they will be "
-"removed by e.g.  <command>apt-get</command> or <command>aptitude</command>."
+"being automatically installed, while package you installed explicitely is "
+"marked as manually installed.  Once a automatically installed package is no "
+"longer depended on by any manually installed package it is considered no "
+"longer needed and e.g. <command>apt-get</command> or <command>aptitude</"
+"command> will at least suggest removing them."
 msgstr ""
 "Kiedy użytkownik zażąda zainstalowania pakietu, to zazwyczaj instalowane są "
 "również inne pakiety, zależące od żądanego pakietu. Te zależne pakiety są "
@@ -2916,31 +3005,6 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
 msgid ""
-"<literal>hold</literal> is used to mark a package as held back, which will "
-"prevent the package from being automatically installed, upgraded or "
-"removed.  The command is only a wrapper around <command>dpkg --set-"
-"selections</command> and the state is therefore maintained by &dpkg; and not "
-"affected by the <option>--file</option> option."
-msgstr ""
-"<literal>hold</literal> jest używane do wstrzymania pakietu, co zabroni "
-"automatycznego instalowania, aktualizowania lub usuwania pakietu. Polecenie "
-"jest nakładką na <command>dpkg --set-selections</command>, stan pakietu jest "
-"zarządzany przez &dpkg;, a opcja <option>--file</option> nie wpływa na "
-"działanie tego polecenia."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-mark.8.xml
-msgid ""
-"<literal>unhold</literal> is used to cancel a previously set hold on a "
-"package to allow all actions again."
-msgstr ""
-"<literal>unhold</literal> jest używane do usunięcia stanu wstrzymania "
-"pakietu ustawionego poprzednio i pozwolenia na wykonywanie wszystkich akcji "
-"na tym pakiecie."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-mark.8.xml
-msgid ""
 "<literal>showauto</literal> is used to print a list of automatically "
 "installed packages with each package on a new line.  All automatically "
 "installed packages will be listed if no package is given.  If packages are "
@@ -2963,16 +3027,7 @@ msgstr ""
 "jak <literal>showauto</literal> z tym wyjątkiem, że wypisze listę ręcznie "
 "zainstalowanych pakietów."
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-mark.8.xml
-msgid ""
-"<literal>showhold</literal> is used to print a list of packages on hold in "
-"the same way as for the other show commands."
-msgstr ""
-"<literal>showhold</literal> jest używane do wypisania listy wszystkich "
-"pakietów wstrzymanych, w taki sam sposób jak pozostałe polecenia \"show\"."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
 msgid ""
 "Read/Write package stats from the filename given with the parameter "
@@ -2984,6 +3039,63 @@ msgstr ""
 "przekazanego w parametrze &synopsis-param-filename; zamiast z pliku "
 "domyślnego, którym jest <filename>extended_status</filename> w katalogu "
 "określonym w pliku konfiguracyjnym w pozycji<literal>Dir::State</literal>."
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-mark.8.xml
+msgid "Prevent changes for a package"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>manual</literal> is used to mark a package as being manually "
+#| "installed, which will prevent the package from being automatically "
+#| "removed if no other packages depend on it."
+msgid ""
+"<literal>hold</literal> is used to mark a package as held back, which will "
+"prevent the package from being automatically installed, upgraded or removed."
+msgstr ""
+"<literal>manual</literal> jest używane do zaznaczania pakietu jako "
+"zainstalowanego ręcznie, co go uchroni przed automatycznym usunięciem, w "
+"sytuacji gdy żaden inny pakiet nie będzie od niego zależał."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
+msgid ""
+"<literal>unhold</literal> is used to cancel a previously set hold on a "
+"package to allow all actions again."
+msgstr ""
+"<literal>unhold</literal> jest używane do usunięcia stanu wstrzymania "
+"pakietu ustawionego poprzednio i pozwolenia na wykonywanie wszystkich akcji "
+"na tym pakiecie."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
+msgid ""
+"<literal>showhold</literal> is used to print a list of packages on hold in "
+"the same way as for the other show commands."
+msgstr ""
+"<literal>showhold</literal> jest używane do wypisania listy wszystkich "
+"pakietów wstrzymanych, w taki sam sposób jak pozostałe polecenia \"show\"."
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-mark.8.xml
+msgid "Shedule packages for install, remove and purge"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-mark.8.xml
+msgid ""
+"Some frontends like <command>apt-get dselect-upgrade</command> can be used "
+"to apply previously sheduled changes to the install state of packages. Such "
+"changes can be sheduled with the <option>install</option>, <option>remove</"
+"option> (also known as <option>deinstall</option>) and <option>purge</"
+"option> commands.  Packages with a specific selection can be displayed with "
+"<option>showinstall</option>, <option>showremove</option> and "
+"<option>showpurge</option> respectively.  More information about these so "
+"called dpkg selections can be found in &dpkg;."
+msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><para>
@@ -3002,11 +3114,17 @@ msgstr "Wsparcie APT dla autentykacji archiwum."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "Starting with version 0.6, <command>apt</command> contains code that does "
+#| "signature checking of the Release file for all archives. This ensures "
+#| "that packages in the archive can't be modified by people who have no "
+#| "access to the Release file signing key."
 msgid ""
-"Starting with version 0.6, <command>apt</command> contains code that does "
-"signature checking of the Release file for all archives. This ensures that "
-"packages in the archive can't be modified by people who have no access to "
-"the Release file signing key."
+"Starting with version 0.6, <command>APT</command> contains code that does "
+"signature checking of the Release file for all repositories. This ensures "
+"that data like packages in the archive can't be modified by people who have "
+"no access to the Release file signing key."
 msgstr ""
 "Począwszy od wersji 0.6 <command>apt</command> zawiera kod sprawdzający "
 "sygnatury plików \"Release\" wszystkich archiwów. Zapewnia to, że pakiety w "
@@ -3016,37 +3134,56 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
 msgid ""
-"If a package comes from a archive without a signature, or with a signature "
-"that apt does not have a key for, that package is considered untrusted, and "
-"installing it will result in a big warning. <command>apt-get</command> will "
-"currently only warn for unsigned archives; future releases might force all "
-"sources to be verified before downloading packages from them."
+"If an archive doesn't have a signed Release file or no Release file at all "
+"current APT versions will raise a warning in <command>update</command> "
+"operations and frontends like <command>apt-get</command> will require "
+"explicit confirmation if an installation request includes a package from "
+"such an unauthenticated archive."
 msgstr ""
-"Jeśli pakiet pochodzi z archiwum niemającego sygnatury lub mającego "
-"sygnaturę, dla której APT nie ma klucza, to pakiet taki jest uznawany za "
-"niezaufany, a podczas jego instalacji zostanie wypisane ostrzeżenie. Obecnie "
-"<command>apt-get</command> tylko wypisuje ostrzeżenia o niepodpisanych "
-"archiwach, przyszłe wydania mogą wymuszać, by wszystkie źródła były "
-"zweryfikowane, zanim w ogóle APT spróbuje z nich pobrać pakiety."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
 msgid ""
-"The package frontends &apt-get;, &aptitude; and &synaptic; support this new "
-"authentication feature."
+"In the future APT will refuse to work with unauthenticated repositories by "
+"default until support for them is removed entirely. Users have the option to "
+"opt-in to this behavior already by setting the configuration option "
+"<option>Acquire::AllowInsecureRepositories</option> to <literal>false</"
+"literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "The package frontends &apt-get;, &aptitude; and &synaptic; support this "
+#| "new authentication feature."
+msgid ""
+"Note: All APT-based package management frontends like &apt-get;, &aptitude; "
+"and &synaptic; support this authentication feature, so this manpage uses "
+"<literal>APT</literal> to refer to them all for simplicity only."
 msgstr ""
 "Nakładki na APT typu &apt-get;, &aptitude; i &synaptic; obsługują ten nowy "
 "sposób autoryzacji pakietów."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-msgid "Trusted archives"
+#, fuzzy
+#| msgid "Trusted archives"
+msgid "Trusted repositories"
 msgstr "Zaufane archiwa"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "The chain of trust from an apt archive to the end user is made up of "
+#| "several steps. <command>apt-secure</command> is the last step in this "
+#| "chain; trusting an archive does not mean that you trust its packages not "
+#| "to contain malicious code, but means that you trust the archive "
+#| "maintainer. It's the archive maintainer's responsibility to ensure that "
+#| "the archive's integrity is preserved."
 msgid ""
-"The chain of trust from an apt archive to the end user is made up of several "
+"The chain of trust from an APT archive to the end user is made up of several "
 "steps. <command>apt-secure</command> is the last step in this chain; "
 "trusting an archive does not mean that you trust its packages not to contain "
 "malicious code, but means that you trust the archive maintainer. It's the "
@@ -3074,13 +3211,22 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "The chain of trust in Debian starts when a maintainer uploads a new "
+#| "package or a new version of a package to the Debian archive. In order to "
+#| "become effective, this upload needs to be signed by a key contained in "
+#| "the Debian Maintainers keyring (available in the debian-keyring package). "
+#| "Maintainers' keys are signed by other maintainers following pre-"
+#| "established procedures to ensure the identity of the key holder."
 msgid ""
-"The chain of trust in Debian starts when a maintainer uploads a new package "
-"or a new version of a package to the Debian archive. In order to become "
-"effective, this upload needs to be signed by a key contained in the Debian "
-"Maintainers keyring (available in the debian-keyring package). Maintainers' "
-"keys are signed by other maintainers following pre-established procedures to "
-"ensure the identity of the key holder."
+"The chain of trust in Debian e.g. starts when a maintainer uploads a new "
+"package or a new version of a package to the Debian archive. In order to "
+"become effective, this upload needs to be signed by a key contained in one "
+"of the Debian package maintainers keyrings (available in the debian-keyring "
+"package). Maintainers' keys are signed by other maintainers following pre-"
+"established procedures to ensure the identity of the key holder. Similar "
+"procedures exist in all Debian-based distributions."
 msgstr ""
 "Łańcuch zaufania w Debianie zaczyna się od wgrania nowego pakietu lub nowej "
 "wersji pakietu przez jego opiekuna do archiwum Debiana. Dostarczony przez "
@@ -3165,11 +3311,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "However, it does not defend against a compromise of the Debian master "
+#| "server itself (which signs the packages) or against a compromise of the "
+#| "key used to sign the Release files. In any case, this mechanism can "
+#| "complement a per-package signature."
 msgid ""
-"However, it does not defend against a compromise of the Debian master server "
-"itself (which signs the packages) or against a compromise of the key used to "
-"sign the Release files. In any case, this mechanism can complement a per-"
-"package signature."
+"However, it does not defend against a compromise of the master server itself "
+"(which signs the packages) or against a compromise of the key used to sign "
+"the Release files. In any case, this mechanism can complement a per-package "
+"signature."
 msgstr ""
 "Jednakże nie chroni przed złamaniem zabezpieczeń głównego serwera Debiana "
 "(używanego do podpisywania pakietów) lub złamaniem zabezpieczeń klucza "
@@ -3183,17 +3335,32 @@ msgstr "Konfiguracja użytkownika"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "<command>apt-key</command> is the program that manages the list of keys "
+#| "used by apt. It can be used to add or remove keys, although an "
+#| "installation of this release will automatically contain the default "
+#| "Debian archive signing keys used in the Debian package repositories."
 msgid ""
 "<command>apt-key</command> is the program that manages the list of keys used "
-"by apt. It can be used to add or remove keys, although an installation of "
-"this release will automatically contain the default Debian archive signing "
-"keys used in the Debian package repositories."
+"by APT to trust repositories. It can be used to add or remove keys as well "
+"as list the trusted keys. Limiting which key(s) are able to sign which "
+"archive is possible via the <option>Signed-By</option> in &sources-list;."
 msgstr ""
 "<command>apt-key</command> jest programem służącym do zarządzania listą "
 "kluczy używanych przez APT. Można go użyć do dodania lub usunięcia klucza, "
 "chociaż zainstalowanie bieżącego wydania automatycznie dostarczy domyślny "
 "klucz używany w repozytoriach pakietów Debiana do podpisywania archiwów "
 "Debiana."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"Note that a default installation already contains all keys to securily "
+"acquire packages from the default repositories, so fiddling with "
+"<command>apt-key</command> is only needed if third-party repositories are "
+"added."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3247,14 +3414,32 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "<emphasis>Publish the key fingerprint</emphasis>, that way your users "
+#| "will know what key they need to import in order to authenticate the files "
+#| "in the archive."
 msgid ""
 "<emphasis>Publish the key fingerprint</emphasis>, that way your users will "
 "know what key they need to import in order to authenticate the files in the "
-"archive."
+"archive. It is best to ship your key in its own keyring package like "
+"&keyring-distro; does with &keyring-package; to be able to distribute "
+"updates and key transitions automatically later."
 msgstr ""
 "<emphasis>Opublikować odcisk klucza (ang. \"key fingerprint\")</emphasis>, "
 "tak żeby użytkownicy wiedzieli, który klucz zaimportować, żeby móc "
 "autoryzować plików w archiwum."
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-secure.8.xml
+msgid ""
+"<emphasis>Provide instructions on how to add your archive and key</"
+"emphasis>.  If your users can't acquire your key securily the chain of trust "
+"described above is broken.  How you can help users add your key depends on "
+"your archive and target audience ranging from having your keyring package "
+"included in another archive users already have configured (like the default "
+"repositories of their distribution) to leverage the web of trust."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3277,9 +3462,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "For more background information you might want to review the <ulink url="
+#| "\"http://www.debian.org/doc/manuals/securing-debian-howto/ch7\">Debian "
+#| "Security Infrastructure</ulink> chapter of the Securing Debian Manual "
+#| "(available also in the harden-doc package) and the <ulink url=\"http://"
+#| "www.cryptnet.net/fdp/crypto/strong_distro.html\" >Strong Distribution "
+#| "HOWTO</ulink> by V. Alex Brennen."
 msgid ""
 "For more background information you might want to review the <ulink url="
-"\"http://www.debian.org/doc/manuals/securing-debian-howto/ch7\">Debian "
+"\"https://www.debian.org/doc/manuals/securing-debian-howto/ch7\">Debian "
 "Security Infrastructure</ulink> chapter of the Securing Debian Manual "
 "(available also in the harden-doc package) and the <ulink url=\"http://www."
 "cryptnet.net/fdp/crypto/strong_distro.html\" >Strong Distribution HOWTO</"
@@ -3684,6 +3877,13 @@ msgid ""
 "the main configuration file specified by <literal>Dir::Etc::main</literal>"
 msgstr ""
 "główny plik konfiguracyjny określony przez <literal>Dir::Etc::main</literal>."
+
+#. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"all options set in the binary specific configuration subtree are moved into "
+"the root of the tree."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
 #: apt.conf.5.xml
@@ -4520,6 +4720,41 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
+#, fuzzy
+#| msgid "User configuration"
+msgid "Binary specific configuration"
+msgstr "Konfiguracja użytkownika"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.conf.5.xml
+msgid ""
+"Especially with the introduction of the <command>apt</command> binary it can "
+"be useful to set certain options only for a specific binary as even options "
+"which look like they would effect only a certain binary like <option>APT::"
+"Get::Show-Versions</option> effect <command>apt-get</command> as well as "
+"<command>apt</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.conf.5.xml
+msgid ""
+"Setting an option for a specific binary only can be achieved by setting the "
+"option inside the <option>Binary::<replaceable>specific-binary</"
+"replaceable></option> scope. Setting the option <option>APT::Get::Show-"
+"Versions</option> for the <command>apt</command> only can e.g. by done by "
+"setting <option>Binary::apt::APT::Get::Show-Versions</option> instead."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.conf.5.xml
+msgid ""
+"Note that as seen in the DESCRIPTION section further above you can't set "
+"binary-specific options on the commandline itself nor in configuration files "
+"loaded via the commandline."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.conf.5.xml
 msgid "Directories"
 msgstr ""
 
@@ -5164,8 +5399,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml apt_preferences.5.xml sources.list.5.xml
-#: apt-ftparchive.1.xml
+#: apt.conf.5.xml apt_preferences.5.xml sources.list.5.xml apt-ftparchive.1.xml
 msgid "Examples"
 msgstr "Przykłady"
 
@@ -7046,6 +7280,22 @@ msgid ""
 "sources with the same URI and Suite, so they have to be set on all such "
 "entries and can not be varied between different components. APT will try to "
 "detect and error out on such anomalies."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Trusted</option> (<option>trusted</option>)  is a tri-state value "
+"which defaults to APT deciding if a source is considered trusted or if "
+"warnings should be raised before e.g.  packages are installed from this "
+"source. This option can be used to override this decision either with the "
+"value <literal>yes</literal>, which lets APT consider this source always as "
+"a trusted source even if it has no or fails authentication checks by "
+"disabling parts of &apt-secure; and should therefore only be used in a local "
+"and trusted context (if at all) as otherwise security is breached. The "
+"opposite can be achieved with the value no, which causes the source to be "
+"handled as untrusted even if the authentication checks passed successfully.  "
+"The default value can't be set explicitly."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
@@ -9989,6 +10239,92 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Które użyje pobranych uprzednio archiwów z dysku."
+
+#
+#, fuzzy
+#~| msgid ""
+#~| "<literal>rdepends</literal> shows a listing of each reverse dependency a "
+#~| "package has."
+#~ msgid ""
+#~ "<literal>show</literal> shows the package information for the given "
+#~ "package(s)."
+#~ msgstr ""
+#~ "<literal>rdepends</literal> pokazuje listę wszystkich odwrotnych "
+#~ "zależności danego pakietu."
+
+#, fuzzy
+#~| msgid ""
+#~| "<literal>showhold</literal> is used to print a list of packages on hold "
+#~| "in the same way as for the other show commands."
+#~ msgid ""
+#~ "<literal>update</literal> is used to resynchronize the package index "
+#~ "files from their sources."
+#~ msgstr ""
+#~ "<literal>showhold</literal> jest używane do wypisania listy wszystkich "
+#~ "pakietów wstrzymanych, w taki sam sposób jak pozostałe polecenia \"show\"."
+
+#, fuzzy
+#~| msgid "the <literal>Package:</literal> line"
+#~ msgid "The option <literal>DPkg::Progress-Fancy</literal> is enabled."
+#~ msgstr "linia <literal>Package:</literal>"
+
+#, fuzzy
+#~| msgid "the <literal>Component:</literal> line"
+#~ msgid "The option <literal>APT::Color</literal> is enabled."
+#~ msgstr "linia <literal>Component:</literal>"
+
+#, fuzzy
+#~| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
+#~ msgid ""
+#~ "The option <literal>upgrade</literal> has <literal>--with-new-pkgs</"
+#~ "literal> enabled by default."
+#~ msgstr "linia <literal>Archive:</literal> lub <literal>Suite:</literal>"
+
+#~ msgid ""
+#~ "Pass advanced options to gpg. With adv --recv-key you can download the "
+#~ "public key."
+#~ msgstr ""
+#~ "Przekazuje zaawansowane opcje do gpg. Na przykład adv --recv-key "
+#~ "umożliwia pobranie klucza publicznego."
+
+#~ msgid "mark/unmark a package as being automatically-installed"
+#~ msgstr "Zaznaczanie/odznaczanie pakietu jako zainstalowanego automatycznie."
+
+#~ msgid ""
+#~ "<command>apt-mark</command> will change whether a package has been marked "
+#~ "as being automatically installed."
+#~ msgstr ""
+#~ "<command>apt-mark</command> zmienia flagę mówiącą o tym, czy pakiet był "
+#~ "zainstalowany automatycznie."
+
+#~ msgid ""
+#~ "<literal>hold</literal> is used to mark a package as held back, which "
+#~ "will prevent the package from being automatically installed, upgraded or "
+#~ "removed.  The command is only a wrapper around <command>dpkg --set-"
+#~ "selections</command> and the state is therefore maintained by &dpkg; and "
+#~ "not affected by the <option>--file</option> option."
+#~ msgstr ""
+#~ "<literal>hold</literal> jest używane do wstrzymania pakietu, co zabroni "
+#~ "automatycznego instalowania, aktualizowania lub usuwania pakietu. "
+#~ "Polecenie jest nakładką na <command>dpkg --set-selections</command>, stan "
+#~ "pakietu jest zarządzany przez &dpkg;, a opcja <option>--file</option> nie "
+#~ "wpływa na działanie tego polecenia."
+
+#~ msgid ""
+#~ "If a package comes from a archive without a signature, or with a "
+#~ "signature that apt does not have a key for, that package is considered "
+#~ "untrusted, and installing it will result in a big warning. <command>apt-"
+#~ "get</command> will currently only warn for unsigned archives; future "
+#~ "releases might force all sources to be verified before downloading "
+#~ "packages from them."
+#~ msgstr ""
+#~ "Jeśli pakiet pochodzi z archiwum niemającego sygnatury lub mającego "
+#~ "sygnaturę, dla której APT nie ma klucza, to pakiet taki jest uznawany za "
+#~ "niezaufany, a podczas jego instalacji zostanie wypisane ostrzeżenie. "
+#~ "Obecnie <command>apt-get</command> tylko wypisuje ostrzeżenia o "
+#~ "niepodpisanych archiwach, przyszłe wydania mogą wymuszać, by wszystkie "
+#~ "źródła były zweryfikowane, zanim w ogóle APT spróbuje z nich pobrać "
+#~ "pakiety."
 
 #
 #~ msgid ""

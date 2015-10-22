@@ -280,28 +280,27 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
-   cout <<
+   std::cout <<
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
       "\n"
       "apt-mark is a simple command line interface for marking packages\n"
-      "as manually or automatically installed. It can also list marks.\n"
-      "\n"
-      "Commands:\n"
-      "   auto - Mark the given packages as automatically installed\n"
-      "   manual - Mark the given packages as manually installed\n"
-      "   hold - Mark a package as held back\n"
-      "   unhold - Unset a package set as held back\n"
-      "   showauto - Print the list of automatically installed packages\n"
-      "   showmanual - Print the list of manually installed packages\n"
-      "   showhold - Print the list of package on hold\n"
-      "\n"
-      "Options:\n"
+      "as manually or automatically installed. It can also list marks.\n")
+    << std::endl
+    << _("Commands:") << std::endl;
+
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "   " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
+   std::cout << std::endl
+   << _("Options:\n"
       "  -h  This help text.\n"
       "  -q  Loggable output - no progress indicator\n"
       "  -qq No output except for errors\n"
@@ -316,26 +315,27 @@ static bool ShowHelp(CommandLine &)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
-				   {"auto",&DoAuto},
-				   {"manual",&DoAuto},
-				   {"hold",&DoSelection},
-				   {"unhold",&DoSelection},
-				   {"install",&DoSelection},
-				   {"remove",&DoSelection}, // dpkg uses deinstall, but we use remove everywhere else
-				   {"deinstall",&DoSelection},
-				   {"purge",&DoSelection},
-				   {"showauto",&ShowAuto},
-				   {"showmanual",&ShowAuto},
-				   {"showhold",&ShowSelection}, {"showholds",&ShowSelection},
-				   {"showinstall",&ShowSelection}, {"showinstalls",&ShowSelection},
-				   {"showdeinstall",&ShowSelection}, {"showdeinstalls",&ShowSelection},
-				   {"showremove",&ShowSelection}, {"showremoves",&ShowSelection},
-				   {"showpurge",&ShowSelection}, {"showpurges",&ShowSelection},
-				   // obsolete commands for compatibility
-				   {"markauto", &DoMarkAuto},
-				   {"unmarkauto", &DoMarkAuto},
-                                   {0,0}};
+   CommandLine::DispatchWithHelp Cmds[] = {
+      {"auto",&DoAuto, _("Mark the given packages as automatically installed")},
+      {"manual",&DoAuto, _("Mark the given packages as manually installed")},
+      {"hold",&DoSelection, _("Mark a package as held back")},
+      {"unhold",&DoSelection, _("Unset a package set as held back")},
+      {"install",&DoSelection, nullptr},
+      {"remove",&DoSelection, nullptr}, // dpkg uses deinstall, but we use remove everywhere else
+      {"deinstall",&DoSelection, nullptr},
+      {"purge",&DoSelection, nullptr},
+      {"showauto",&ShowAuto, _("Print the list of automatically installed packages")},
+      {"showmanual",&ShowAuto, _("Print the list of manually installed packages")},
+      {"showhold",&ShowSelection, _("Print the list of package on hold")}, {"showholds",&ShowSelection, nullptr},
+      {"showinstall",&ShowSelection, nullptr}, {"showinstalls",&ShowSelection, nullptr},
+      {"showdeinstall",&ShowSelection, nullptr}, {"showdeinstalls",&ShowSelection, nullptr},
+      {"showremove",&ShowSelection, nullptr}, {"showremoves",&ShowSelection, nullptr},
+      {"showpurge",&ShowSelection, nullptr}, {"showpurges",&ShowSelection, nullptr},
+      // obsolete commands for compatibility
+      {"markauto", &DoMarkAuto, nullptr},
+      {"unmarkauto", &DoMarkAuto, nullptr},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt-mark", CommandLine::GetCommand(Cmds, argc, argv));
 

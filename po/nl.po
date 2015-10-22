@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -413,6 +413,7 @@ msgstr[1] ""
 "%lu pakketten waren automatisch geïnstalleerd en zijn niet langer nodig.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Gebruik '%s' om het te verwijderen."
@@ -688,7 +689,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "Regex-compilatiefout - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "U dient minstens één zoekpatroon op te geven"
 
@@ -882,29 +883,25 @@ msgstr "  Versietabel:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Gebruik: apt-cache [opties] opdracht\n"
+"         apt-cache [opties] show pakket1 [pakket2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache is een basaal hulpmiddel waarmee u informatie kunt\n"
+"opvragen uit de binaire cachebestanden van APT\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Opdrachten:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -915,30 +912,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Gebruik: apt-cache [opties] opdracht\n"
-"         apt-cache [opties] showpkg pakket1 [pakket2 ...]\n"
-"         apt-cache [opties] showsrc pakket1 [pakket2 ...]\n"
-"\n"
-"apt-cache is een basaal hulpmiddel waarmee u informatie kunt\n"
-"opvragen uit de binaire cachebestanden van APT\n"
-"\n"
-"Opdrachten:\n"
-"   gencaches - Bouw zowel de pakket- als de broncache\n"
-"   showpkg - Toon algemene informatie over een enkel pakket\n"
-"   showsrc - Toon een rapport over de broncode\n"
-"   stats - Toon enkele basisstatistieken\n"
-"   dump - Toon het gehele bestand in een compacte vorm\n"
-"   dumpavail - Print lijst met beschikbare pakketten op de standaarduitvoer\n"
-"   unmet - Toon niet-voldane vereisten\n"
-"   search - Doorzoek pakkettenlijst a.d.h.v. een regex-patroon\n"
-"   show - Toon een leesbaar rapport over het pakket\n"
-"   depends - Toon de afhankelijkheden van een pakket\n"
-"   rdepends - Toon de pakketten die afhankelijk zijn van een pakket\n"
-"   pkgnames - Toon de namen van alle pakketten op het systeem\n"
-"   dotty - Genereer pakketschema's voor GraphViz\n"
-"   xvcg - Genereer pakketschema's voor xvcg\n"
-"   policy - Toon beleidsinstellingen\n"
-"\n"
 "Opties:\n"
 "  -h   Deze hulptekst.\n"
 "  -p=? De pakketcache.\n"
@@ -950,48 +923,90 @@ msgstr ""
 "Raadpleeg de man-pagina's van apt-cache(8) en apt.conf(5) voor meer "
 "informatie.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Toon een rapport over de broncode"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Doorzoek pakkettenlijst a.d.h.v. een regex-patroon"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Toon de afhankelijkheden van een pakket"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Toon de pakketten die afhankelijk zijn van een pakket"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Toon een leesbaar rapport over het pakket"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Toon de namen van alle pakketten op het systeem"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Toon beleidsinstellingen"
+
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Gebruik: apt [opties] opdracht\n"
 "\n"
 "CLI voor apt.\n"
-"Basisopdrachten: \n"
-" list - geef een lijst van pakketten op basis van hun naam\n"
-" search - zoek in de pakketbeschrijvingen\n"
-" show - toon gedetailleerde informatie over het pakket\n"
-"\n"
-" update - werk de lijst van beschikbare pakketten bij\n"
-"\n"
-" install - installeer pakketten\n"
-" remove  - verwijder pakketten\n"
-"\n"
-" upgrade - waardeer het systeem op door pakketten te installeren/op te "
-"waarderen\n"
-" full-upgrade - waardeer het systeem op door pakketten te verwijderen/te "
-"installeren/op te waarderen\n"
-"\n"
-" edit-sources - bewerk het bestand met informatie over de bron\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "geef een lijst van pakketten op basis van hun naam"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "zoek in de pakketbeschrijvingen"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "toon gedetailleerde informatie over het pakket"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "installeer pakketten"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "verwijder pakketten"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Verwijder automatisch alle ongebruikte pakketten"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "werk de lijst van beschikbare pakketten bij"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "waardeer het systeem op door pakketten te installeren/op te waarderen"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+"waardeer het systeem op door pakketten te verwijderen/te installeren/op te "
+"waarderen"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "bewerk het bestand met informatie over de bron"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1027,6 +1042,40 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Dit proces dient herhaald te worden voor alle cd's in uw set."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Opties:\n"
+"  -h  Deze hulptekst\n"
+"  -q  Logbare uitvoer - geen voortgangsindicator\n"
+"  -qq Geen uitvoer behalve van foutmeldingen\n"
+"  -s  Doe-niets. Toont alleen wat gedaan zou worden.\n"
+"  -f  lees/schrijf auto/manueel markeringen in het vermelde bestand\n"
+"  -c=? Lees dit configuratiebestand\n"
+"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+"Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumenten niet in paren"
@@ -1036,29 +1085,31 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
-"\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
 "Gebruik: apt-config [opties] opdracht\n"
 "\n"
 "apt-config is een eenvoudig hulpmiddel om het APT-configuratiebestand te "
 "lezen\n"
-"\n"
-"Opdrachten:\n"
-"   shell - Shell modus\n"
-"   dump - Toon de configuratie\n"
-"\n"
+
+#: cmdline/apt-config.cc
+msgid ""
+"Options:\n"
+"  -h   This help text.\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+msgstr ""
 "Opties:\n"
 "  -h   Deze hulptekst.\n"
 "  -c=? Lees dit configuratiebestand\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1296,24 +1347,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Gebruik: apt-get [opties] opdracht\n"
+"         apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
+"         apt-get [opties] source pakket1 [pakket2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get is een eenvoudige commandoregel-interface voor het ophalen en\n"
+"installeren van pakketten. De meest gebruikte opdrachten zijn\n"
+"'update' en 'install'.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1332,34 +1376,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Gebruik: apt-get [opties] opdracht\n"
-"         apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
-"         apt-get [opties] source pakket1 [pakket2 ...]\n"
-"\n"
-"apt-get is een eenvoudige commandoregel-interface voor het ophalen en\n"
-"installeren van pakketten. De meest gebruikte opdrachten zijn\n"
-"'update' en 'install'.\n"
-"\n"
-"Opdrachten:\n"
-"   update - Haal een nieuwe lijst van pakketten op\n"
-"   upgrade - Voer een opwaardering uit\n"
-"   install - Installeer nieuwe pakketten (pakket is b.v. libc6, niet libc6."
-"deb)\n"
-"   remove - Verwijder pakketten\n"
-"   autoremove - Verwijder automatisch alle ongebruikte pakketten\n"
-"   purge - Verwijder pakketten en hun configuratiebestanden\n"
-"   source - Haal bronarchieven op\n"
-"   build-dep - Installeer de pakketten vereist voor het bouwen van een "
-"bronpakket\n"
-"   dist-upgrade - Opwaardering van de distributie, zie apt-get(8)\n"
-"   dselect-upgrade - Opwaardering volgens dselect-selecties\n"
-"   clean - Verwijder opgehaalde archiefbestanden\n"
-"   autoclean - Verwijder verouderde opgehaalde archiefbestanden\n"
-"   check - Controleer onvoldane vereisten\n"
-"   changelog - Haal log op van wijzigingen aan een bepaald pakket en toon "
-"die\n"
-"   download - Haal het binaire pakket op en plaats het in de werkmap\n"
-"\n"
 "Opties:\n"
 "  -h   Deze hulptekst\n"
 "  -q   Logbare uitvoer - geen voortgangsindicator\n"
@@ -1377,6 +1393,62 @@ msgstr ""
 "Raadpleeg de man-pagina's apt-get(8), sources.list(5) en apt.conf(5)\n"
 "voor meer informatie en opties.\n"
 "                       Deze APT heeft Super Koekracht.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Haal een nieuwe lijst van pakketten op"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Voer een opwaardering uit"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Installeer nieuwe pakketten (pakket is b.v. libc6, niet libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Verwijder pakketten"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Verwijder pakketten en hun configuratiebestanden"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Opwaardering van de distributie, zie apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Opwaardering volgens dselect-selecties"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Installeer de pakketten vereist voor het bouwen van een bronpakket"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Verwijder opgehaalde archiefbestanden"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Verwijder verouderde opgehaalde archiefbestanden"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Controleer onvoldane vereisten"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Haal bronarchieven op"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Haal het binaire pakket op en plaats het in de werkmap"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Haal log op van wijzigingen aan een bepaald pakket en toon die"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1396,30 +1468,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Gebruik: apt-helper [opties] opdracht\n"
 "         apt-helper [opties] download-file uri doelpad\n"
 "\n"
 "apt-helper is een intern hulpmiddel voor apt\n"
-"\n"
-"Opdrachten:\n"
-"   download-file - haal opgegeven uri op en plaats in doelpad\n"
-"   auto-detect-proxy - proxy opzoeken met behulp van apt.conf\n"
-"\n"
-"                       Deze APT-helper heeft Super Koekracht.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Deze APT-helper heeft Super Koekracht."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "haal opgegeven uri op en plaats in doelpad"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "proxy opzoeken met behulp van apt.conf"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1446,11 +1520,9 @@ msgstr "%s was reeds ingesteld op tegenhouden.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s was reeds ingesteld op niet tegenhouden.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Er is gewacht op %s, maar die kwam niet"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "Het uitvoeren van dpkg mislukte. Bent u systeembeheerder?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1463,8 +1535,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "Tegenhouden van %s werd geannuleerd.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "Het uitvoeren van dpkg mislukte. Bent u systeembeheerder?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1472,16 +1555,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Gebruik: apt-mark [opties] {auto|manual} pakket1 [pakket2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark is een eenvoudige commandolijn-interface voor het markeren\n"
+"van pakketten als zijnde handmatig of automatisch geïnstalleerd.\n"
+"Het kan ook een lijst met markeringen weergeven.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1492,21 +1574,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Gebruik: apt-mark [opties] {auto|manual} pakket1 [pakket2 ...]\n"
-"\n"
-"apt-mark is een eenvoudige commandolijn-interface voor het markeren\n"
-"van pakketten als zijnde handmatig of automatisch geïnstalleerd.\n"
-"Het kan ook een lijst met markeringen weergeven.\n"
-"\n"
-"Opdrachten:\n"
-"   auto - Markeer het vermelde pakket als automatisch geïnstalleerd\n"
-"   manual - Markeer het vermelde pakket als manueel geïnstalleerd\n"
-"   hold - Markeer een pakket als tegengehouden\n"
-"   unhold - Markeer een pakket niet langer als tegengehouden\n"
-"   showauto - Toon de lijst van automatisch geïnstalleerde pakketten\n"
-"   showmanual - Toon de lijst van manueel geïnstalleerde pakketten\n"
-"   showhold - Toon de lijst van tegengehouden pakketten\n"
-"\n"
 "Opties:\n"
 "  -h  Deze hulptekst\n"
 "  -q  Logbare uitvoer - geen voortgangsindicator\n"
@@ -1516,6 +1583,34 @@ msgstr ""
 "  -c=? Lees dit configuratiebestand\n"
 "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 "Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Markeer het vermelde pakket als automatisch geïnstalleerd"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Markeer het vermelde pakket als manueel geïnstalleerd"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Markeer een pakket als tegengehouden"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Markeer een pakket niet langer als tegengehouden"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "Toon de lijst van automatisch geïnstalleerde pakketten"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "Toon de lijst van manueel geïnstalleerde pakketten"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "Toon de lijst van tegengehouden pakketten"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2584,7 +2679,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Bestand %li van %li wordt opgehaald"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2656,19 +2765,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Conflicterende distributie: %s (verwachtte %s, maar kreeg %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "De map %s is al omgeleid"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "De map %s is al omgeleid"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3080,6 +3191,11 @@ msgid ""
 msgstr ""
 "Negeren van bestand '%s' in map '%s' omdat het een ongeldige "
 "bestandsextensie heeft"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Er is gewacht op %s, maar die kwam niet"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3796,6 +3912,11 @@ msgstr "Niet juist gevormde regel %u in bronlijst %s (type)"
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Type '%s' van element %u in bronlijst %s is onbekend"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

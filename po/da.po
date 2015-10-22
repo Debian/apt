@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2014-07-06 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -407,6 +407,7 @@ msgstr[1] ""
 "Pakkerne %lu blev installeret automatisk, og behøves ikke længere.\n"
 
 #: apt-private/private-install.cc
+#, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Brug »%s« til at fjerne den."
@@ -680,7 +681,7 @@ msgstr "N"
 msgid "Regex compilation error - %s"
 msgstr "Fejl ved tolkning af regulært udtryk - %s"
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 msgid "You must give at least one search pattern"
 msgstr "Du skal angive mindst ét søgemønster"
 
@@ -872,29 +873,25 @@ msgstr "  Versionstabel:"
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"Brug: apt-cache [tilvalg] kommando\n"
+"      apt-cache [tilvalg] show pakke1 [pakke2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"apt-cache er et lavniveauværktøj, brugt til at manipulere APTs\n"
+"binære mellemlagerfiler og hente oplysninger fra dem.\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr "Kommandoer:"
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -905,30 +902,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Brug: apt-cache [tilvalg] kommando\n"
-"      apt-cache [tilvalg] showpkg pakke1 [pakke2 ...]\n"
-"      apt-cache [tilvalg] showsrc pakke1 [pakke2 ...]\n"
-"\n"
-"apt-cache er et lavniveauværktøj, brugt til at manipulere APTs\n"
-"binære mellemlagerfiler og hente oplysninger fra dem.\n"
-"\n"
-"Kommandoer:\n"
-"   gencaches - Opbyg både pakke- og kildemellemlageret\n"
-"   showpkg - Vis generelle oplysninger om en enkelt pakke\n"
-"   showsrc - Vis kildetekstposter\n"
-"   stats - Vis nogle grundlæggende statistikker\n"
-"   dump - Vis hele filen i kort form\n"
-"   dumpavail - Udlæs en »available«-fil til standard-ud\n"
-"   unmet - Vis uopfyldte afhængigheder\n"
-"   search - Gennemsøg pakkelisten med et regulært udtryk\n"
-"   show - Vis en læsbar post for pakken\n"
-"   depends - Vis de rå afhængighedsoplysninger for en pakke\n"
-"   rdepends - Vis omvendte afhængighedsoplysninger for en pakke\n"
-"   pkgnames - Vis navnene på alle pakker\n"
-"   dotty - Generér pakkegrafer til GraphViz\n"
-"   xvcg - Generér pakkegrafer til xvcg\n"
-"   policy - Vis policy-indstillinger\n"
-"\n"
 "Tilvalg:\n"
 "  -h   Denne hjælpetekst.\n"
 "  -p=? Pakkemellemlageret.\n"
@@ -939,47 +912,90 @@ msgstr ""
 "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
 "Se manualsiderne for apt-cache(8) og apt.conf(5) for flere oplysninger.\n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Vis kildetekstposter"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Gennemsøg pakkelisten med et regulært udtryk"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Vis de rå afhængighedsoplysninger for en pakke"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Vis omvendte afhængighedsoplysninger for en pakke"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Vis en læsbar post for pakken"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Vis navnene på alle pakker"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Vis policy-indstillinger"
+
 #: cmdline/apt.cc
 #, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
 "Brug: apt [tilvalg] kommando\n"
 "\n"
 "CLI for apt.\n"
-"Kommandoer: \n"
-" list - vis pakker baseret på pakkenavn\n"
-" search - søg i pakkebeskrivelser\n"
-" show - vis pakkedetaljer\n"
-"\n"
-" update - opdater listen over tilgængelige pakker\n"
-"\n"
-" install - installer pakker\n"
-" remove - fjern pakker\n"
-"\n"
-" upgrade - opgradere systemet ved at installere/opgradere pakker\n"
-" full-upgrade - opgradere systemet ved at fjerne/installere/opgradere "
-"pakker\n"
-"\n"
-" edit-sources - rediger source-informationsfilen (kildefilen)\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "vis pakker baseret på pakkenavn"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "søg i pakkebeskrivelser"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "vis pakkedetaljer"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "installer pakker"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "fjern pakker"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "Afinstaller automatisk alle ubrugte pakker"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "opdater listen over tilgængelige pakker"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "opgradere systemet ved at installere/opgradere pakker"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+"full-upgrade - opgradere systemet ved at fjerne/installere/opgradere pakker"
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "rediger source-informationsfilen (kildefilen)"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1012,6 +1028,41 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Gentag processen for resten af cd'erne i dit sæt."
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+"Tilvalg:\n"
+"  -h  Denne hjælpetekst.\n"
+"  -q  Logbar uddata - ingen statusindikator\n"
+"  -qq Ingen uddata undtagen for fejl\n"
+"  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
+"  -f  læs/skriv auto/manuel markering i den givne fil\n"
+"  -c=? Læs denne konfigurationsfil\n"
+"  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
+"tmp\n"
+"Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Parametre ikke angivet i par"
@@ -1021,28 +1072,30 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
+msgstr ""
+"Brug: apt-config [tilvalg] kommando\n"
 "\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+"apt-config er et simpelt værktøj til at læse APTs opsætningsfil\n"
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Brug: apt-config [tilvalg] kommando\n"
-"\n"
-"apt-config er et simpelt værktøj til at læse APTs opsætningsfil\n"
-"\n"
-"Kommandoer:\n"
-"   shell - Skal-tilstand\n"
-"   dump - Vis opsætningen\n"
-"\n"
 "Tilvalg:\n"
 "  -h   Denne hjælpetekst.\n"
 "  -c=? Læs denne opsætningsfil\n"
 "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1273,24 +1326,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"Brug: apt-get [tilvalg] kommando\n"
+"      apt-get [tilvalg] install|remove pakke1 [pakke2 ...]\n"
+"      apt-get [tilvalg] source pakke1 [pakke2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get er en simpel kommandolinjegrænseflade til at hente og\n"
+"installere pakker. De hyppigst brugte kommandoer er update og\n"
+"install.\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1309,31 +1355,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Brug: apt-get [tilvalg] kommando\n"
-"      apt-get [tilvalg] install|remove pakke1 [pakke2 ...]\n"
-"      apt-get [tilvalg] source pakke1 [pakke2 ...]\n"
-"\n"
-"apt-get er en simpel kommandolinjegrænseflade til at hente og\n"
-"installere pakker. De hyppigst brugte kommandoer er update og\n"
-"install.\n"
-"\n"
-"Kommandoer:\n"
-"   update - Hent nye lister over pakker\n"
-"   upgrade - Udfør en opgradering\n"
-"   install - Installer nye pakker (pakke er libc6, ikke libc6.deb)\n"
-"   remove - Afinstaller pakker\n"
-"   autoremove - Afinstaller automatisk alle ubrugte pakker\n"
-"   purge - Fjern pakker og konfigurationsfiler\n"
-"   source - Hent kildetekstarkiver\n"
-"   build-dep - Sæt opbygningsafhængigheder op for kildetekstpakker\n"
-"   dist-upgrade - Distributionsopgradering, se apt-get(8)\n"
-"   dselect-upgrade - Følg valgene fra dselect\n"
-"   clean - Slet hentede arkivfiler\n"
-"   autoclean - Slet gamle hentede arkivfiler\n"
-"   check - Tjek at der ikke er uopfyldte afhængigheder\n"
-"   changelog - Hent og vis ændringsloggen for den angivne pakke\n"
-"   download - Hent den binære pakke til den aktuelle mappe\n"
-"\n"
 "Tilvalg:\n"
 "  -h  Denne hjælpetekst.\n"
 "  -q  Uddata, der kan logges - ingen fremgangsindikator\n"
@@ -1351,6 +1372,62 @@ msgstr ""
 "Se manualsiderne for apt-get(8), sources.list(5) og apt.conf(5)\n"
 "for flere oplysninger og tilvalg.\n"
 "                       Denne APT har »Super Cow Powers«.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Hent nye lister over pakker"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Udfør en opgradering"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Installer nye pakker (pakke er libc6, ikke libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Afinstaller pakker"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Fjern pakker og konfigurationsfiler"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Distributionsopgradering, se apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Følg valgene fra dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Sæt opbygningsafhængigheder op for kildetekstpakker"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Slet hentede arkivfiler"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Slet gamle hentede arkivfiler"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Tjek at der ikke er uopfyldte afhængigheder"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Hent kildetekstarkiver"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Hent den binære pakke til den aktuelle mappe"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Hent og vis ændringsloggen for den angivne pakke"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1370,29 +1447,32 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Brug: apt-helper [tilvalg] kommando\n"
 "      apt-helper [tilvalg] download-file uri target-path\n"
 "\n"
 "apt-helper er et internt hjælpeprogram for apt\n"
-"\n"
-"Kommandoer:\n"
-"   download-file - hent den angivne uri til mål-sti\n"
-"\n"
-"                       Dette APT-hjælpeprogram har Super Meep Powers.\n"
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Dette APT-hjælpeprogram har Super Meep Powers."
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "hent den angivne uri til mål-sti"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1419,11 +1499,9 @@ msgstr "%s var allerede sat i bero.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s var allerede ikke i bero.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Ventede på %s, men den var der ikke"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "Kørsel af dpkg fejlede. Er du root (administrator)?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -1436,8 +1514,19 @@ msgid "Canceled hold on %s.\n"
 msgstr "Afbrød i bero for %s.\n"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "Kørsel af dpkg fejlede. Er du root (administrator)?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1445,16 +1534,15 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
+msgstr ""
+"Brug: apt-mark [tilvalg] {auto|manual} pakke1 [pakke2 ...]\n"
 "\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+"apt-mark er en simpel kommandolinjegrænseflade for markering af pakker\n"
+"som manuelt eller automatisk installeret. Programmet kan også vise\n"
+"markeringerne.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1465,21 +1553,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
-"Brug: apt-mark [tilvalg] {auto|manual} pakke1 [pakke2 ...]\n"
-"\n"
-"apt-mark er en simpel kommandolinjegrænseflade for markering af pakker\n"
-"som manuelt eller automatisk installeret. Programmet kan også vise\n"
-"markeringerne.\n"
-"\n"
-"Kommandoer:\n"
-"   auto - Marker de givne pakker som automatisk installeret\n"
-"   manual - Marker de givne pakker som manuelt installeret\n"
-"   hold - Marker en pakke som tilbageholdt\n"
-"   unhold - Fjern tilbageholdelse på pakke\n"
-"   showauto - Vis listen over automatisk installerede pakker\n"
-"   showmanual - Vis listen over manuelt installerede pakker\n"
-"   showhold - Vis listen over tilbageholdte pakker\n"
-"\n"
 "Tilvalg:\n"
 "  -h  Denne hjælpetekst.\n"
 "  -q  Logbar uddata - ingen statusindikator\n"
@@ -1490,6 +1563,34 @@ msgstr ""
 "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
 "tmp\n"
 "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Marker de givne pakker som automatisk installeret"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Marker de givne pakker som manuelt installeret"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Marker en pakke som tilbageholdt"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Fjern tilbageholdelse på pakke"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "Vis listen over automatisk installerede pakker"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "Vis listen over manuelt installerede pakker"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "Vis listen over tilbageholdte pakker"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2550,7 +2651,21 @@ msgid "Retrieving file %li of %li"
 msgstr "Henter fil %li ud af %li"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2621,19 +2736,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konfliktdistribution: %s (forventede %s men fik %s)"
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "Mappen %s er omrokeret"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "Mappen %s er omrokeret"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -3021,6 +3138,11 @@ msgstr "Ignorerer fil »%s« i mappe »%s« da den ikke har en filendelse"
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr "Ignorerer fil »%s« i mappe »%s« da den har en ugyldig filendelse"
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Ventede på %s, men den var der ikke"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3723,6 +3845,11 @@ msgstr "Ugyldig linje %u i kildelisten %s (type)"
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Typen »%s« er ukendt på stanza %u i kildelisten %s"
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

@@ -1536,7 +1536,7 @@ static bool DoIndexTargets(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -1581,34 +1581,26 @@ static bool ShowHelp(CommandLine &)
       
       return true;
    }
-   
-   cout << 
+
+   std::cout <<
     _("Usage: apt-get [options] command\n"
       "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
       "       apt-get [options] source pkg1 [pkg2 ...]\n"
       "\n"
       "apt-get is a simple command line interface for downloading and\n"
       "installing packages. The most frequently used commands are update\n"
-      "and install.\n"   
-      "\n"
-      "Commands:\n"
-      "   update - Retrieve new lists of packages\n"
-      "   upgrade - Perform an upgrade\n"
-      "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-      "   remove - Remove packages\n"
-      "   autoremove - Remove automatically all unused packages\n"
-      "   purge - Remove packages and config files\n"
-      "   source - Download source archives\n"
-      "   build-dep - Configure build-dependencies for source packages\n"
-      "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-      "   dselect-upgrade - Follow dselect selections\n"
-      "   clean - Erase downloaded archive files\n"
-      "   autoclean - Erase old downloaded archive files\n"
-      "   check - Verify that there are no broken dependencies\n"
-      "   changelog - Download and display the changelog for the given package\n"
-      "   download - Download the binary package into the current directory\n"
-      "\n"
-      "Options:\n"
+      "and install.\n")
+      << std::endl
+      << _("Commands:") << std::endl;
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
+   std::cout << std::endl <<
+      _("Options:\n"
       "  -h  This help text.\n"
       "  -q  Loggable output - no progress indicator\n"
       "  -qq No output except for errors\n"
@@ -1630,30 +1622,31 @@ static bool ShowHelp(CommandLine &)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
-                                   {"upgrade",&DoUpgrade},
-                                   {"install",&DoInstall},
-                                   {"remove",&DoInstall},
-                                   {"purge",&DoInstall},
-				   {"autoremove",&DoInstall},
-				   {"auto-remove",&DoInstall},
-				   {"markauto",&DoMarkAuto},
-				   {"unmarkauto",&DoMarkAuto},
-                                   {"dist-upgrade",&DoDistUpgrade},
-                                   {"full-upgrade",&DoDistUpgrade},
-                                   {"dselect-upgrade",&DoDSelectUpgrade},
-				   {"build-dep",&DoBuildDep},
-                                   {"clean",&DoClean},
-                                   {"autoclean",&DoAutoClean},
-                                   {"auto-clean",&DoAutoClean},
-                                   {"check",&DoCheck},
-				   {"source",&DoSource},
-                                   {"download",&DoDownload},
-                                   {"changelog",&DoChangelog},
-				   {"indextargets",&DoIndexTargets},
-				   {"moo",&DoMoo},
-				   {"help",&ShowHelp},
-                                   {0,0}};
+   CommandLine::DispatchWithHelp Cmds[] = {
+      {"update", &DoUpdate, _("Retrieve new lists of packages")},
+      {"upgrade", &DoUpgrade, _("Perform an upgrade")},
+      {"install", &DoInstall, _("Install new packages (pkg is libc6 not libc6.deb)")},
+      {"remove", &DoInstall, _("Remove packages")},
+      {"purge", &DoInstall, _("Remove packages and config files")},
+      {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
+      {"auto-remove", &DoInstall, nullptr},
+      {"markauto", &DoMarkAuto, nullptr},
+      {"unmarkauto", &DoMarkAuto, nullptr},
+      {"dist-upgrade", &DoDistUpgrade, _("Distribution upgrade, see apt-get(8)")},
+      {"full-upgrade", &DoDistUpgrade, nullptr},
+      {"dselect-upgrade", &DoDSelectUpgrade, _("Follow dselect selections")},
+      {"build-dep", &DoBuildDep, _("Configure build-dependencies for source packages")},
+      {"clean", &DoClean, _("Erase downloaded archive files")},
+      {"autoclean", &DoAutoClean, _("Erase old downloaded archive files")},
+      {"auto-clean", &DoAutoClean, nullptr},
+      {"check", &DoCheck, _("Verify that there are no broken dependencies")},
+      {"source", &DoSource, _("Download source archives")},
+      {"download", &DoDownload, _("Download the binary package into the current directory")},
+      {"changelog", &DoChangelog, _("Download and display the changelog for the given package")},
+      {"indextargets", &DoIndexTargets, nullptr},
+      {"moo", &DoMoo, nullptr},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", CommandLine::GetCommand(Cmds, argc, argv));
 

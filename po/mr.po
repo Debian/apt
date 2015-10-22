@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-05 18:29+0200\n"
+"POT-Creation-Date: 2015-10-24 00:07+0200\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -400,7 +400,7 @@ msgstr[0] "खालील नवीन पॅकेजेस स्वयंच
 msgstr[1] "खालील नवीन पॅकेजेस स्वयंचलितपणे संस्थापित झाली होती व आता आवश्यक नाहीत:"
 
 #: apt-private/private-install.cc
-#, fuzzy
+#, fuzzy, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "ती काढून टाकण्यासाठी '%s' वापरा."
@@ -669,7 +669,7 @@ msgstr ""
 msgid "Regex compilation error - %s"
 msgstr "रिजेक्स कंपायलेशन त्रुटी -%s "
 
-#: apt-private/private-search.cc cmdline/apt-cache.cc
+#: apt-private/private-search.cc
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "तुम्हाला फक्त एकच नमुना द्यावा लागेल"
@@ -857,29 +857,25 @@ msgstr "आवृत्ती कोष्टक:"
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache is a low-level tool used to query information\n"
 "from APT's binary cache files\n"
+msgstr ""
+"वापर:  apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   gencaches - Build both the package and source cache\n"
-"   showpkg - Show some general information for a single package\n"
-"   showsrc - Show source records\n"
-"   stats - Show some basic statistics\n"
-"   dump - Show the entire file in a terse form\n"
-"   dumpavail - Print an available file to stdout\n"
-"   unmet - Show unmet dependencies\n"
-"   search - Search the package list for a regex pattern\n"
-"   show - Show a readable record for the package\n"
-"   depends - Show raw dependency information for a package\n"
-"   rdepends - Show reverse dependency information for a package\n"
-"   pkgnames - List the names of all packages in the system\n"
-"   dotty - Generate package graphs for GraphViz\n"
-"   xvcg - Generate package graphs for xvcg\n"
-"   policy - Show policy settings\n"
-"\n"
+"ऍप्टच्या द्वयंक कॅश संचिका कौशल्याने हाताळण्यासाठी, व त्यांमधील माहितीची विचारणा "
+"करण्यासाठी ऍप्ट -कॅश हे निम्नस्तरीय साधन आहे।\n"
+
+#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
+#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
+#: cmdline/apt-mark.cc
+msgid "Commands:"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -p=? The package cache.\n"
@@ -890,32 +886,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"वापर:  apt-cache [options] command\n"
-"       apt-cache [options] add file1 [file2 ...]\n"
-"       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-"       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-"\n"
-"ऍप्टच्या द्वयंक कॅश संचिका कौशल्याने हाताळण्यासाठी, व त्यांमधील माहितीची विचारणा "
-"करण्यासाठी ऍप्ट -कॅश हे निम्नस्तरीय साधन आहे।\n"
-"\n"
-"आज्ञावली\n"
-"  add - उगमस्थान कॅशमध्ये एक पॅकेज संचिका मिळवा \n"
-"  gencaches - पॅकेज व उगमस्थान कॅश या दोघांची बांधणी करा\n"
-"  showpkg - एकमेव पॅकेजसाठी काही सामान्य माहिती दाखवा\n"
-"  showsrc -उगमस्थानाचा माहितीसंच दाखवा\n"
-"  stats - काही पायाभूत आकडेवारी दाखवा\n"
-"  dump - संपूर्ण संचिका थोडक्यात दाखवा\n"
-"  dumpavail - उपलब्ध संचिका stdout मधे छापा\n"
-"  unmet - पुरी न झालेली परावलंबने दाखवा\n"
-"  search - regex नमुन्यासाठी पॅकेजची यादी शोधा\n"
-"  show - पॅकेजसाठी वाचनीय माहितीसंच दाखवा\n"
-"  depends -पॅकेजसाठी संस्करणपूर्व परावलंबन माहिती दाखवा\n"
-"  rdepends -पॅकेजसाठी अतिपरावलंबन माहिती दाखवा\n"
-"  pkgnames - सर्व पॅकेजेससाठी यादी तयार करा\n"
-"  dotty - GraphViz साठी पॅकेज आलेख निर्माण करा\n"
-"  xvcg-xvcg साठी पॅकेज आलेख निर्माण करा\n"
-"  policy - धोरण निर्धारणे दाखवा\n"
-"\n"
 "पर्याय : \n"
 "-h -हा साह्याकारी मजकूर\n"
 "-p=? पॅकेज कॅश \n"
@@ -926,28 +896,90 @@ msgstr ""
 "-o=? एखादा अहेतूक संरचना पर्याय निर्धारित करा उदा --o dir::cache=/tmp\n"
 "अधिक माहितीसाठी apt-cache(8) and apt.conf(5) ची मॅन्युअल पृष्ठे पहा \n"
 
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "उगमस्थानाचा माहितीसंच दाखवा"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "regex नमुन्यासाठी पॅकेजची यादी शोधा"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "पॅकेजसाठी संस्करणपूर्व परावलंबन माहिती दाखवा"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "पॅकेजसाठी अतिपरावलंबन माहिती दाखवा"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "पॅकेजसाठी वाचनीय माहितीसंच दाखवा"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "सर्व पॅकेजेससाठी यादी तयार करा"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "धोरण निर्धारणे दाखवा"
+
 #: cmdline/apt.cc
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-" autoremove - Remove automatically all unused packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
 msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "पॅकेज याद्या वाचत आहोत"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "एकत्रित पॅकेजेस:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "तुटलेली पॅकेजेस"
+
+#: cmdline/apt.cc cmdline/apt-get.cc
+msgid "Remove automatically all unused packages"
+msgstr "वापरात नसलेली सर्व पॅकेजेस स्वयंचलितपणे कायमची काढा"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. for compat with muscle memory
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "स्थिती माहिती वाचत आहे"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -976,6 +1008,30 @@ msgstr ""
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "तुमच्या संचामधील सर्व सीडीजसाठी याच कृतीची पुनरावृत्ती करा(हीच कृती करा)"
 
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
+"CDROM mount point and device information is taken from apt.conf,\n"
+"udev and /etc/fstab.\n"
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Options:\n"
+"  -h   This help text\n"
+"  -d   CD-ROM mount point\n"
+"  -r   Rename a recognized CD-ROM\n"
+"  -m   No mounting\n"
+"  -f   Fast mode, don't check package files\n"
+"  -a   Thorough scan mode\n"
+"  --no-auto-detect Do not try to auto detect drive and mount point\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See fstab(5)\n"
+msgstr ""
+
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "चलितमूल्य जोडीने नाहीत"
@@ -985,28 +1041,23 @@ msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is a simple tool to read the APT config file\n"
-"\n"
-"Commands:\n"
-"   shell - Shell mode\n"
-"   dump - Show the configuration\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid ""
 "Options:\n"
 "  -h   This help text.\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"उपयोग : ऍप्ट-कॉन्फिग(पर्याय) आज्ञा \n"
-"\n"
-"ऍप्ट कन्फिग संचिता वाचण्यासाठी ऍप्ट-कन्फिग हे एक साधन आहे\n"
-"\n"
-"आज्ञावली : \n"
-"शेल - शेल मोड \n"
-"डंप - संरचना दाखवा \n"
-"\n"
-"पर्याय : \n"
-" -h    हा साह्याकारी मजकूर \n"
-" -c= ?  ही संरचना संचिका वाचा \n"
-" -o=?  एखदा अहेतुक संरचना पर्याय निर्धारित करा, उदा।eg -o dir::cache=/tmp\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
 
 #: cmdline/apt-get.cc
 #, fuzzy, c-format
@@ -1214,7 +1265,6 @@ msgid "Supported modules:"
 msgstr "प्रोग्राम गटाला तांत्रिक मदत दिली:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1223,24 +1273,17 @@ msgid ""
 "apt-get is a simple command line interface for downloading and\n"
 "installing packages. The most frequently used commands are update\n"
 "and install.\n"
+msgstr ""
+"वापर: apt-get [options] command\n"
+"      apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"      apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
+"apt-get हा पॅकेज डाऊनलोड आणि संस्थापित करण्यासाठी साधा आदेश रेखित\n"
+" संवादमंच आहे. नेहमी वापरले जाणारे आदेश म्हणजे अपडेट\n"
+"आणि संस्थापित करा\n"
+
+#: cmdline/apt-get.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1259,29 +1302,6 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"वापर: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get हा पॅकेज डाऊनलोड आणि संस्थापित करण्यासाठी साधा आदेश रेखित\n"
-" संवादमंच आहे. नेहमी वापरले जाणारे आदेश म्हणजे अपडेट\n"
-"आणि संस्थापित करा\n"
-"\n"
-"आदेश:\n"
-"   update -पॅकेजच्या नव्या याद्यां प्राप्त करा\n"
-"   upgrade -आवृत्त्यांचे श्रेणिवर्धन करा\n"
-"   install -नवीन पॅकेजेस संस्थापित करा(pkg हे libc6 आहे आणि libc6.deb नव्हे)\n"
-"   remove -पॅकेजेस कायमची काढा\n"
-"   autoremove - वापरात नसलेली सर्व पॅकेजेस स्वयंचलितपणे कायमची काढा\n"
-"   purge - पॅकेजेस कायमची काढा व साफ करा\n"
-"   source -उगमस्थान अर्काईव्हज डाऊनलोड करा\n"
-"   build-dep - उगमस्थान पॅकेजेससाठी बांधणी-डिपेंडन्सी संरचित करा।\n"
-"   dist-upgrade - वितरण श्रेणिवर्धन, पहा apt-get(8)\n"
-"   dselect-upgrade -निवडी रहित करा\n"
-"   clean - डाऊनलोड केलेल्या अर्काईव्हज फाईल्स खोडून टाका\n"
-"   autoclean - डाऊनलोड केलेल्या जुन्या अर्काईव्हज फाईल्स खोडून टाका\n"
-"   check  -  डिपेन्डन्सीज तुटलेल्या नाहीत याची खात्री करा\n"
-"\n"
 "पर्याय:\n"
 "   -h     हा मदत मजकूर.\n"
 "   -q     नोंद करण्यासारखे आऊटपुट-प्रगती निदर्शक नाही\n"
@@ -1299,6 +1319,62 @@ msgstr ""
 "अधिक माहिती व पर्यायांसाठी apt-get(8), sources.list(5),आणि\n"
 " apt.conf(5)  पुस्तिका पाने पहा.\n"
 "         ह्या APT ला सुपर काऊ पॉवर्स आहेत\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "पॅकेजच्या नव्या याद्यां प्राप्त करा"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "आवृत्त्यांचे श्रेणिवर्धन करा"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "नवीन पॅकेजेस संस्थापित करा(pkg हे libc6 आहे आणि libc6.deb नव्हे)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "पॅकेजेस कायमची काढा"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "पॅकेजेस कायमची काढा व साफ करा"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "वितरण श्रेणिवर्धन, पहा apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "निवडी रहित करा"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "उगमस्थान पॅकेजेससाठी बांधणी-डिपेंडन्सी संरचित करा।"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "डाऊनलोड केलेल्या अर्काईव्हज फाईल्स खोडून टाका"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "डाऊनलोड केलेल्या जुन्या अर्काईव्हज फाईल्स खोडून टाका"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "डिपेन्डन्सीज तुटलेल्या नाहीत याची खात्री करा"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "उगमस्थान अर्काईव्हज डाऊनलोड करा"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1324,13 +1400,22 @@ msgid ""
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
 "apt-helper is a internal helper for apt\n"
-"\n"
-"Commands:\n"
-"   download-file - download the given uri to the target-path\n"
-"   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-"   auto-detect-proxy - detect proxy using apt.conf\n"
-"\n"
-"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1358,11 +1443,9 @@ msgstr "%s ही आधीच नविन आवृत्ती आहे.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s ही आधीच नविन आवृत्ती आहे.\n"
 
-#: cmdline/apt-mark.cc apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s साठी थांबलो पण ते तेथे नव्हते"
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1375,7 +1458,18 @@ msgid "Canceled hold on %s.\n"
 msgstr "%s उघडण्यास असमर्थ"
 
 #: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1384,16 +1478,10 @@ msgid ""
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
 "as manually or automatically installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"   hold - Mark a package as held back\n"
-"   unhold - Unset a package set as held back\n"
-"   showauto - Print the list of automatically installed packages\n"
-"   showmanual - Print the list of manually installed packages\n"
-"   showhold - Print the list of package on hold\n"
-"\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
 "Options:\n"
 "  -h  This help text.\n"
 "  -q  Loggable output - no progress indicator\n"
@@ -1403,6 +1491,38 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "'dpkg-dev' पॅकेज संस्थापित केले आहे का ते पडताळून पहा.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
 msgstr ""
 
 #: methods/cdrom.cc
@@ -2459,7 +2579,21 @@ msgid "Retrieving file %li of %li"
 msgstr "%li ची %li संचिका पुन:प्राप्त करीत आहे"
 
 #: apt-pkg/acquire-item.cc
-msgid "Use --allow-insecure-repositories to force the update"
+msgid ""
+"Updating such a repository securily is impossible and therefore disabled by "
+"default."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"Data from such a repository can not be authenticated and is therefore "
+"potentially dangerous to use."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"See apt-secure(8) manpage for repository creation and user configuration "
+"details."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
@@ -2524,19 +2658,21 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
+#. No Release file was present, or verification failed, so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The data from '%s' is not signed. Packages from that repository can not be "
-"authenticated."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' is not signed."
+msgstr "%s संचिका डायव्हर्ट केली आहे/वळवली आहे"
 
+#. No Release file was present so fall
+#. back to queueing Packages files without verification
+#. only allow going further if the users explicitely wants it
 #: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The repository '%s' does not have a Release file. This is deprecated, please "
-"contact the owner of the repository."
-msgstr ""
+#, fuzzy, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "%s संचिका डायव्हर्ट केली आहे/वळवली आहे"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2919,6 +3055,11 @@ msgstr ""
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s साठी थांबलो पण ते तेथे नव्हते"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3607,6 +3748,11 @@ msgstr "स्त्रोत सुची %2$s (प्रकार) मध्�
 #, fuzzy, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "%s स्त्रोत सुचीमध्ये %u रेषेवर '%s' प्रकार माहित नाही "
+
+#: apt-pkg/sourcelist.cc
+#, c-format
+msgid "Unsupported file %s given on commandline"
+msgstr ""
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"

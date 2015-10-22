@@ -106,7 +106,7 @@ static bool DoSrvLookup(CommandLine &CmdL)
    return true;
 }
 
-static bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -117,28 +117,34 @@ static bool ShowHelp(CommandLine &)
     _("Usage: apt-helper [options] command\n"
       "       apt-helper [options] download-file uri target-path\n"
       "\n"
-      "apt-helper is a internal helper for apt\n"
-      "\n"
-      "Commands:\n"
-      "   download-file - download the given uri to the target-path\n"
-      "   srv-lookup - lookup a SRV record (e.g. _http._tcp.ftp.debian.org)\n"
-      "   auto-detect-proxy - detect proxy using apt.conf\n"
-      "\n"
-      "                       This APT helper has Super Meep Powers.\n");
+      "apt-helper is a internal helper for apt\n")
+    << std::endl
+    << _("Commands:") << std::endl;
+
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+
+   std::cout << std::endl <<
+      _("This APT helper has Super Meep Powers.") << std::endl;
    return true;
 }
 
 
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
-				   {"download-file", &DoDownloadFile},
-				   {"srv-lookup", &DoSrvLookup},
-				   {"auto-detect-proxy", &DoAutoDetectProxy},
-                                   {0,0}};
+   CommandLine::DispatchWithHelp Cmds[] = {
+      {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
+      {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
+      {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
+      {nullptr, nullptr, nullptr}
+   };
 
    std::vector<CommandLine::Args> Args = getCommandArgs(
-      "apt-download", CommandLine::GetCommand(Cmds, argc, argv));
+      "apt-helper", CommandLine::GetCommand(Cmds, argc, argv));
 
    // Set up gettext support
    setlocale(LC_ALL,"");
