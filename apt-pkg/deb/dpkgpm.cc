@@ -1839,7 +1839,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    fprintf(report, "ProblemType: Package\n");
    fprintf(report, "Architecture: %s\n", arch.c_str());
    time_t now = time(NULL);
-   fprintf(report, "Date: %s" , ctime(&now));
+   char ctime_buf[26];	// need at least 26 bytes according to ctime(3)
+   fprintf(report, "Date: %s" , ctime_r(&now, ctime_buf));
    fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
    fprintf(report, "SourcePackage: %s\n", Ver.SourcePkgName());
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
