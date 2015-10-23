@@ -74,12 +74,11 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
 #include <iostream>
 									/*}}}*/
 
 using namespace std;
-
-pkgOrderList *pkgOrderList::Me = 0;
 
 // OrderList::pkgOrderList - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -186,8 +185,7 @@ bool pkgOrderList::OrderCritical()
    LoopCount = 0;
 
    // Sort
-   Me = this;
-   qsort(List,End - List,sizeof(*List),&OrderCompareB);
+   std::sort(List,End, [this](Package *a, Package *b) { return OrderCompareB(a, b) < 0; } );
 
    if (DoRun() == false)
       return false;
@@ -239,8 +237,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    LoopCount = -1;
 
    // Sort
-   Me = this;
-   qsort(List,End - List,sizeof(*List),&OrderCompareA);
+   std::sort(List,End, [this](Package *a, Package *b) { return OrderCompareA(a, b) < 0; });
 
    if (Debug == true)
       clog << "** Pass A" << endl;
@@ -382,21 +379,21 @@ static int BoolCompare(bool A,bool B)
 // ---------------------------------------------------------------------
 /* This provides a first-pass sort of the list and gives a decent starting
     point for further complete ordering. It is used by OrderUnpack only */
-int pkgOrderList::OrderCompareA(const void *a, const void *b)
+int pkgOrderList::OrderCompareA(Package *a, Package *b)
 {
-   PkgIterator A(Me->Cache,*(Package **)a);
-   PkgIterator B(Me->Cache,*(Package **)b);
+   PkgIterator A(Cache,a);
+   PkgIterator B(Cache,b);
 
    // We order packages with a set state toward the front
    int Res;
-   if ((Res = BoolCompare(Me->IsNow(A),Me->IsNow(B))) != 0)
+   if ((Res = BoolCompare(IsNow(A),IsNow(B))) != 0)
       return -1*Res;
    
    // We order missing files to toward the end
-/*   if (Me->FileList != 0)
+/*   if (FileList != 0)
    {
-      if ((Res = BoolCompare(Me->IsMissing(A),
-			     Me->IsMissing(B))) != 0)
+      if ((Res = BoolCompare(IsMissing(A),
+			     IsMissing(B))) != 0)
 	 return Res;
    }*/
    
@@ -408,8 +405,8 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
        B.State() != pkgCache::PkgIterator::NeedsNothing)
       return 1;
    
-   int ScoreA = Me->Score(A);
-   int ScoreB = Me->Score(B);
+   int ScoreA = Score(A);
+   int ScoreB = Score(B);
 
    if (ScoreA > ScoreB)
       return -1;
@@ -424,10 +421,10 @@ int pkgOrderList::OrderCompareA(const void *a, const void *b)
 // ---------------------------------------------------------------------
 /* This orders by installation source. This is useful to handle
    inter-source breaks */
-int pkgOrderList::OrderCompareB(const void *a, const void *b)
+int pkgOrderList::OrderCompareB(Package *a, Package *b)
 {
-   PkgIterator A(Me->Cache,*(Package **)a);
-   PkgIterator B(Me->Cache,*(Package **)b);
+   PkgIterator A(Cache,a);
+   PkgIterator B(Cache,b);
 
    if (A.State() != pkgCache::PkgIterator::NeedsNothing && 
        B.State() == pkgCache::PkgIterator::NeedsNothing)
@@ -437,7 +434,7 @@ int pkgOrderList::OrderCompareB(const void *a, const void *b)
        B.State() != pkgCache::PkgIterator::NeedsNothing)
       return 1;
    
-   int F = Me->FileCmp(A,B);
+   int F = FileCmp(A,B);
    if (F != 0)
    {
       if (F > 0)
@@ -445,8 +442,8 @@ int pkgOrderList::OrderCompareB(const void *a, const void *b)
       return 1;
    }
    
-   int ScoreA = Me->Score(A);
-   int ScoreB = Me->Score(B);
+   int ScoreA = Score(A);
+   int ScoreB = Score(B);
 
    if (ScoreA > ScoreB)
       return -1;

@@ -69,9 +69,8 @@ class pkgOrderList : protected pkgCache::Namespace
    bool DoRun();
    
    // For pre sorting
-   static pkgOrderList *Me;
-   static int OrderCompareA(const void *a, const void *b) APT_PURE;
-   static int OrderCompareB(const void *a, const void *b) APT_PURE;
+   int OrderCompareA(Package *a, Package *b) APT_PURE;
+   int OrderCompareB(Package *a, Package *b) APT_PURE;
    int FileCmp(PkgIterator A,PkgIterator B) APT_PURE;
    
    public:
