@@ -382,8 +382,9 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 		FILE *dpkg = fdopen(external[0], "r");
 		if(dpkg != NULL) {
 			char buf[1024];
+			char *tok_buf;
 			while (fgets(buf, sizeof(buf), dpkg) != NULL) {
-				char* arch = strtok(buf, " ");
+				char* arch = strtok_r(buf, " ", &tok_buf);
 				while (arch != NULL) {
 					for (; isspace(*arch) != 0; ++arch);
 					if (arch[0] != '\0') {
@@ -393,7 +394,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 						if (std::find(archs.begin(), archs.end(), a) == archs.end())
 							archs.push_back(a);
 					}
-					arch = strtok(NULL, " ");
+					arch = strtok_r(NULL, " ", &tok_buf);
 				}
 			}
 			fclose(dpkg);
