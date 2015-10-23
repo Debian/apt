@@ -50,7 +50,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
-   static bool GrabWord(std::string Word,WordList *List,unsigned char &Out);
+   static bool GrabWord(std::string Word,const WordList *List,unsigned char &Out);
    APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
 
    public:

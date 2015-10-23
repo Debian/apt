@@ -35,7 +35,7 @@
 
 using std::string;
 
-static debListParser::WordList PrioList[] = {
+static const debListParser::WordList PrioList[] = {
    {"required",pkgCache::State::Required},
    {"important",pkgCache::State::Important},
    {"standard",pkgCache::State::Standard},
@@ -921,7 +921,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 // ListParser::GrabWord - Matches a word and returns			/*{{{*/
 // ---------------------------------------------------------------------
 /* Looks for a word in a list of words - for ParseStatus */
-bool debListParser::GrabWord(string Word,WordList *List,unsigned char &Out)
+bool debListParser::GrabWord(string Word,const WordList *List,unsigned char &Out)
 {
    for (unsigned int C = 0; List[C].Str != 0; C++)
    {
