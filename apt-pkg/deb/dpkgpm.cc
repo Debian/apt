@@ -840,7 +840,8 @@ bool pkgDPkgPM::OpenLog()
    // get current time
    char timestr[200];
    time_t const t = time(NULL);
-   struct tm const * const tmp = localtime(&t);
+   struct tm tm_buf;
+   struct tm const * const tmp = localtime_r(&t, &tm_buf);
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
    // open terminal log
@@ -927,7 +928,8 @@ bool pkgDPkgPM::CloseLog()
 {
    char timestr[200];
    time_t t = time(NULL);
-   struct tm *tmp = localtime(&t);
+   struct tm tm_buf;
+   struct tm *tmp = localtime_r(&t, &tm_buf);
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
    if(d->term_out)
