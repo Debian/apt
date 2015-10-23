@@ -1082,8 +1082,13 @@ void pkgDPkgPM::StartPtyMagic()
       _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
    else
    {
+#ifdef HAVE_PTS_NAME_R
+      char slave_name[64];	// 64 is used by bionic
+      if (ptsname_r(d->master, slave_name, sizeof(slave_name)) != 0)
+#else
       char const * const slave_name = ptsname(d->master);
       if (slave_name == NULL)
+#endif
 	 _error->Errno("ptsname", "Getting name for slave of master fd %d failed!", d->master);
       else
       {
