@@ -113,8 +113,7 @@ class pkgProblemResolver						/*{{{*/
    bool Debug;
    
    // Sort stuff
-   static pkgProblemResolver *This;
-   APT_HIDDEN static int ScoreSort(const void *a,const void *b) APT_PURE;
+   APT_HIDDEN int ScoreSort(Package const *A, Package const *B) APT_PURE;
 
    struct PackageKill
    {

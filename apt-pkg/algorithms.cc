@@ -34,8 +34,6 @@
 									/*}}}*/
 using namespace std;
 
-pkgProblemResolver *pkgProblemResolver::This = 0;
-
 // Simulate::Simulate - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The legacy translations here of input Pkg iterators is obsolete, 
@@ -360,13 +358,11 @@ pkgProblemResolver::~pkgProblemResolver()
 // ProblemResolver::ScoreSort - Sort the list by score			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int pkgProblemResolver::ScoreSort(const void *a,const void *b)
+int pkgProblemResolver::ScoreSort(Package const *A,Package const *B)
 {
-   Package const **A = (Package const **)a;
-   Package const **B = (Package const **)b;
-   if (This->Scores[(*A)->ID] > This->Scores[(*B)->ID])
+   if (Scores[A->ID] > Scores[B->ID])
       return -1;
-   if (This->Scores[(*A)->ID] < This->Scores[(*B)->ID])
+   if (Scores[A->ID] < Scores[B->ID])
       return 1;
    return 0;
 }
@@ -704,8 +700,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    pkgCache::Package **PEnd = PList.get();
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       *PEnd++ = I;
-   This = this;
-   qsort(PList.get(),PEnd - PList.get(),sizeof(PList[0]),&ScoreSort);
+
+   std::sort(PList.get(), PEnd, [this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
    {
@@ -1163,8 +1159,9 @@ bool pkgProblemResolver::ResolveByKeepInternal()
    pkgCache::Package **PEnd = PList;
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       *PEnd++ = I;
-   This = this;
-   qsort(PList,PEnd - PList,sizeof(*PList),&ScoreSort);
+
+   std::sort(PList,PEnd,[this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
+
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
    {
@@ -1314,36 +1311,46 @@ void pkgProblemResolver::InstallProtect()
 // ---------------------------------------------------------------------
 /* This is ment to be used in conjunction with AllTargets to get a list 
    of versions ordered by preference. */
-static pkgCache *PrioCache;
-static int PrioComp(const void *A,const void *B)
-{
-   pkgCache::VerIterator L(*PrioCache,*(pkgCache::Version **)A);
-   pkgCache::VerIterator R(*PrioCache,*(pkgCache::Version **)B);
-   
-   if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential &&
-       (R.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
-     return 1;
-   if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
-       (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-     return -1;
 
-   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
-       (R.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
-     return 1;
-   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important &&
-       (R.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
-     return -1;
-   
-   if (L->Priority != R->Priority)
-      return R->Priority - L->Priority;
-   return strcmp(L.ParentPkg().Name(),R.ParentPkg().Name());
-}
+struct PrioComp {
+   pkgCache &PrioCache;
+
+   PrioComp(pkgCache &PrioCache) : PrioCache(PrioCache) {
+   }
+
+   bool operator() (pkgCache::Version * const &A, pkgCache::Version * const &B) {
+      return compare(A, B) < 0;
+   }
+
+   int compare(pkgCache::Version * const &A, pkgCache::Version * const &B) {
+      pkgCache::VerIterator L(PrioCache,A);
+      pkgCache::VerIterator R(PrioCache,B);
+
+      if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential &&
+	  (R.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
+	return 1;
+      if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
+	  (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	return -1;
+
+      if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
+	  (R.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
+	return 1;
+      if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important &&
+	  (R.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+	return -1;
+
+      if (L->Priority != R->Priority)
+	 return R->Priority - L->Priority;
+      return strcmp(L.ParentPkg().Name(),R.ParentPkg().Name());
+   }
+};
+
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
 {
    unsigned long Count = 0;
-   PrioCache = &Cache;
    for (pkgCache::Version **I = List; *I != 0; I++)
       Count++;
-   qsort(List,Count,sizeof(*List),PrioComp);
+   std::sort(List,List+Count,PrioComp(Cache));
 }
 									/*}}}*/
