@@ -85,7 +85,7 @@ class CommandLine
    void ShowHelp();
    unsigned int FileSize() const APT_PURE;
    bool DispatchArg(Dispatch *List,bool NoMatch = true);
-   bool DispatchArg(DispatchWithHelp *List,bool NoMatch = true);
+   bool DispatchArg(DispatchWithHelp const * const List,bool NoMatch = true);
       
    static char const * GetCommand(Dispatch const * const Map,
 	 unsigned int const argc, char const * const * const argv) APT_PURE;

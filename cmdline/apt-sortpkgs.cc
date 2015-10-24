@@ -24,6 +24,7 @@
 #include <apt-pkg/pkgsystem.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 
 #include <vector>
 #include <algorithm>
@@ -157,36 +158,18 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {'v',"version","version",0},
-      {'s',"source","APT::SortPkgs::Source",0},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,0,0,0}};
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
+   InitLocale();
 
    // Parse the command line and initialize the package library
    CommandLine::DispatchWithHelp Cmds[] = {{nullptr, nullptr, nullptr}};
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-sortpkgs", &_config, &_system, argc, argv, ShowHelp);
 
    // Match the operation
    for (unsigned int I = 0; I != CmdL.FileSize(); I++)
       if (DoIt(CmdL.FileList[I]) == false)
 	 break;
-   
-   // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
-      _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-   
-   return 0;   
+
+   return DispatchCommandLine(CmdL, nullptr);
 }
 									/*}}}*/

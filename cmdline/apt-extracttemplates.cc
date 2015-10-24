@@ -34,6 +34,7 @@
 #include <apt-pkg/mmap.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -344,34 +345,15 @@ static bool Go(CommandLine &CmdL)
 									/*}}}*/
 int main(int argc, const char **argv)					/*{{{*/
 {
-	CommandLine::Args Args[] = {
-		{'h',"help","help",0},
-		{'v',"version","version",0},
-		{'t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg},
-		{'c',"config-file",0,CommandLine::ConfigFile},
-		{'o',"option",0,CommandLine::ArbItem},
-		{0,0,0,0}};
-
-	// Set up gettext support
-	setlocale(LC_ALL,"");
-	textdomain(PACKAGE);
+	InitLocale();
 
 	// Parse the command line and initialize the package library
 	CommandLine::DispatchWithHelp Cmds[] = {{nullptr, nullptr, nullptr}};
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, Cmds, Args, &_config, &_system, argc, argv, ShowHelp);
+	ParseCommandLine(CmdL, Cmds, "apt-extracttemplates", &_config, &_system, argc, argv, ShowHelp);
 
 	Go(CmdL);
 
-	// Print any errors or warnings found during operation
-	if (_error->empty() == false)
-	{
-		// This goes to stderr..
-		bool Errors = _error->PendingError();
-		_error->DumpErrors();
-		return Errors == true?100:0;
-	}
-	
-	return 0;
+	return DispatchCommandLine(CmdL, nullptr);
 }
 									/*}}}*/

@@ -27,6 +27,7 @@
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 
 #include <string.h>
 #include <iostream>
@@ -68,20 +69,13 @@ APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-	CommandLine::Args Args[] = {
-		{'h',"help","help",0},
-		{'v',"version","version",0},
-		{'q',"quiet","quiet",CommandLine::IntLevel},
-		{'q',"silent","quiet",CommandLine::IntLevel},
-		{'c',"config-file",0,CommandLine::ConfigFile},
-		{'o',"option",0,CommandLine::ArbItem},
-		{0,0,0,0}};
+	InitLocale();
 
-        // we really don't need anything
-        DropPrivileges();
+	// we really don't need anything
+	DropPrivileges();
 
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, nullptr, Args, &_config, NULL, argc, argv, ShowHelp);
+	ParseCommandLine(CmdL, nullptr, "apt-internal-solver", &_config, NULL, argc, argv, ShowHelp);
 
 	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
 	{
@@ -188,11 +182,6 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(100, "Done", output);
 
-	bool const Errors = _error->PendingError();
-	if (_config->FindI("quiet",0) > 0)
-		_error->DumpErrors(std::cerr);
-	else
-		_error->DumpErrors(std::cerr, GlobalError::DEBUG);
-	return Errors == true ? 100 : 0;
+	return DispatchCommandLine(CmdL, nullptr);
 }
 									/*}}}*/

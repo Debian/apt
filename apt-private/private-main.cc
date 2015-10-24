@@ -2,6 +2,7 @@
 
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 
 #include <apt-private/private-main.h>
 
@@ -13,14 +14,18 @@
 #include <apti18n.h>
 
 
-void InitSignals()
+void InitLocale()							/*{{{*/
 {
-   // Setup the signals
+   setlocale(LC_ALL,"");
+   textdomain(PACKAGE);
+}
+									/*}}}*/
+void InitSignals()							/*{{{*/
+{
    signal(SIGPIPE,SIG_IGN);
 }
-
-
-void CheckSimulateMode(CommandLine &CmdL)
+									/*}}}*/
+void CheckIfSimulateMode(CommandLine &CmdL)				/*{{{*/
 {
    // disable locking in simulation, but show the message only for users
    // as root hasn't the same problems like unreadable files which can heavily
@@ -39,3 +44,20 @@ void CheckSimulateMode(CommandLine &CmdL)
       _config->Set("Debug::NoLocking",true);
    }
 }
+									/*}}}*/
+void CheckIfCalledByScript(int argc, const char *argv[])		/*{{{*/
+{
+   if (unlikely(argc < 1)) return;
+
+   if(!isatty(STDOUT_FILENO) &&
+      _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
+   {
+      std::cerr << std::endl
+                << "WARNING: " << flNotDir(argv[0]) << " "
+                << "does not have a stable CLI interface. "
+                << "Use with caution in scripts."
+                << std::endl
+                << std::endl;
+   }
+}
+									/*}}}*/

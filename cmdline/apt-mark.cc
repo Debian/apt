@@ -24,6 +24,7 @@
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-main.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -315,6 +316,8 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] = {
       {"auto",&DoAuto, _("Mark the given packages as automatically installed")},
       {"manual",&DoAuto, _("Mark the given packages as manually installed")},
@@ -337,26 +340,11 @@ int main(int argc,const char *argv[])					/*{{{*/
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-mark", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-mark", &_config, &_system, argc, argv, ShowHelp);
 
    InitOutput();
 
-   // Match the operation
-   CmdL.DispatchArg(Cmds);
-
-   // Print any errors or warnings found during parsing
-   bool const Errors = _error->PendingError();
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors();
-   else
-      _error->DumpErrors(GlobalError::DEBUG);
-   return Errors == true ? 100 : 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/

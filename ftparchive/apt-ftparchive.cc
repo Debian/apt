@@ -21,6 +21,7 @@
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-main.h>
 
 #include <algorithm>
 #include <climits>
@@ -1026,25 +1027,7 @@ static bool Clean(CommandLine &CmdL)
 
 int main(int argc, const char *argv[])
 {
-   setlocale(LC_ALL, "");
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {0,"md5","APT::FTPArchive::MD5",0},
-      {0,"sha1","APT::FTPArchive::SHA1",0},
-      {0,"sha256","APT::FTPArchive::SHA256",0},
-      {0,"sha512","APT::FTPArchive::SHA512",0},
-      {'v',"version","version",0},
-      {'d',"db","APT::FTPArchive::DB",CommandLine::HasArg},
-      {'s',"source-override","APT::FTPArchive::SourceOverride",CommandLine::HasArg},
-      {'q',"quiet","quiet",CommandLine::IntLevel},
-      {'q',"silent","quiet",CommandLine::IntLevel},
-      {0,"delink","APT::FTPArchive::DeLinkAct",0},
-      {0,"readonly","APT::FTPArchive::ReadOnlyDB",0},
-      {0,"contents","APT::FTPArchive::Contents",0},
-      {'a',"arch","APT::FTPArchive::Architecture",CommandLine::HasArg},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,0,0,0}};
+   InitLocale();
 
    CommandLine::DispatchWithHelp Cmds[] = {
       {"packages",&SimpleGenPackages, nullptr},
@@ -1057,21 +1040,12 @@ int main(int argc, const char *argv[])
    };
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
-   ParseCommandLine(CmdL, Cmds, Args, &_config, NULL, argc, argv, ShowHelp);
+   CommandLine CmdL;
+   ParseCommandLine(CmdL, Cmds, "apt-ftparchive", &_config, NULL, argc, argv, ShowHelp);
 
    _config->CndSet("quiet",0);
    Quiet = _config->FindI("quiet",0);
    InitOutput(clog.rdbuf());
 
-   // Match the operation
-   CmdL.DispatchArg(Cmds);
-   
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
-      _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-   return 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }

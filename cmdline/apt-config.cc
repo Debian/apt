@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -107,21 +108,17 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] = {
       {"shell", &DoShell, _("get configuration values via shell evaluation")},
       {"dump", &DoDump, _("show the active configuration setting")},
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-config", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-config", &_config, &_system, argc, argv, ShowHelp);
 
    std::vector<std::string> const langs = APT::Configuration::getLanguages(true);
    _config->Clear("Acquire::Languages");
@@ -154,17 +151,6 @@ int main(int argc,const char *argv[])					/*{{{*/
    for (std::vector<std::string>::const_iterator p = profiles.begin(); p != profiles.end(); ++p)
       _config->Set("APT::Build-Profiles::", *p);
 
-   // Match the operation
-   CmdL.DispatchArg(Cmds);
-   
-   // Print any errors or warnings found during parsing
-   if (_error->empty() == false)
-   {
-      bool Errors = _error->PendingError();
-      _error->DumpErrors();
-      return Errors == true?100:0;
-   }
-   
-   return 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/

@@ -411,7 +411,7 @@ unsigned int CommandLine::FileSize() const
 }
 									/*}}}*/
 // CommandLine::DispatchArg - Do something with the first arg		/*{{{*/
-bool CommandLine::DispatchArg(DispatchWithHelp *Map,bool NoMatch)
+bool CommandLine::DispatchArg(DispatchWithHelp const * const Map,bool NoMatch)
 {
    int I;
    for (I = 0; Map[I].Match != 0; I++)

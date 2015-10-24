@@ -32,6 +32,7 @@
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-main.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -242,31 +243,20 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] = {
       {"add", &DoAdd, "Add a CDROM"},
       {"ident", &DoIdent, "Report the identity of a CDROM"},
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cdrom", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-cdrom", &_config, &_system, argc, argv, ShowHelp);
 
    InitOutput();
 
-   // Match the operation
-   bool returned = CmdL.DispatchArg(Cmds);
-
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors();
-   else
-      _error->DumpErrors(GlobalError::DEBUG);
-   return returned == true ? 0 : 100;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/

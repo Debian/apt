@@ -60,6 +60,8 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 
 int main(int argc, const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] = {
       // query
       {"list", &DoList, _("list packages based on package names")},
@@ -85,51 +87,16 @@ int main(int argc, const char *argv[])					/*{{{*/
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Init the signals
+   // FIXME: Those ignore commandline configuration like -q
    InitSignals();
-
-   // Init the output
    InitOutput();
 
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
-    if(pkgInitConfig(*_config) == false) 
-    {
-        _error->DumpErrors();
-        return 100;
-    }
-
-   // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), NULL, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt", &_config, &_system, argc, argv, ShowHelp);
 
-   if(!isatty(STDOUT_FILENO) &&
-      _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
-   {
-      std::cerr << std::endl
-                << "WARNING: " << argv[0] << " "
-                << "does not have a stable CLI interface yet. "
-                << "Use with caution in scripts."
-                << std::endl
-                << std::endl;
-   }
+   CheckIfCalledByScript(argc, argv);
+   CheckIfSimulateMode(CmdL);
 
-   // see if we are in simulate mode
-   CheckSimulateMode(CmdL);
-
-   // parse args
-   CmdL.DispatchArg(Cmds);
-
-   // Print any errors or warnings found during parsing
-   bool const Errors = _error->PendingError();
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors();
-   else
-      _error->DumpErrors(GlobalError::DEBUG);
-   return Errors == true ? 100 : 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/

@@ -22,6 +22,7 @@
 #include <apt-private/private-output.h>
 #include <apt-private/private-download.h>
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 #include <apt-pkg/srvrec.h>
 
 #include <iostream>
@@ -136,6 +137,8 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)
 
 int main(int argc,const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] = {
       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
       {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
@@ -143,28 +146,12 @@ int main(int argc,const char *argv[])					/*{{{*/
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs(
-      "apt-helper", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-helper", &_config, &_system, argc, argv, ShowHelp);
 
    InitOutput();
 
-   // Match the operation
-   CmdL.DispatchArg(Cmds);
-
-   // Print any errors or warnings found during parsing
-   bool const Errors = _error->PendingError();
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors();
-   else
-      _error->DumpErrors(GlobalError::DEBUG);
-   return Errors == true ? 100 : 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/

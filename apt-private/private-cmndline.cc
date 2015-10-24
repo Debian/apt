@@ -127,6 +127,32 @@ static bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char con
    return true;
 }
 									/*}}}*/
+static bool addArgumentsAPTExtractTemplates(std::vector<CommandLine::Args> &Args, char const * const)/*{{{*/
+{
+   addArg('t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg);
+   return true;
+}
+									/*}}}*/
+static bool addArgumentsAPTFTPArchive(std::vector<CommandLine::Args> &Args, char const * const)/*{{{*/
+{
+   addArg(0,"md5","APT::FTPArchive::MD5",0);
+   addArg(0,"sha1","APT::FTPArchive::SHA1",0);
+   addArg(0,"sha256","APT::FTPArchive::SHA256",0);
+   addArg(0,"sha512","APT::FTPArchive::SHA512",0);
+   addArg('d',"db","APT::FTPArchive::DB",CommandLine::HasArg);
+   addArg('s',"source-override","APT::FTPArchive::SourceOverride",CommandLine::HasArg);
+   addArg(0,"delink","APT::FTPArchive::DeLinkAct",0);
+   addArg(0,"readonly","APT::FTPArchive::ReadOnlyDB",0);
+   addArg(0,"contents","APT::FTPArchive::Contents",0);
+   addArg('a',"arch","APT::FTPArchive::Architecture",CommandLine::HasArg);
+   return true;
+}
+									/*}}}*/
+static bool addArgumentsAPTInternalSolver(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+{
+   return true;
+}
+									/*}}}*/
 static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
@@ -257,6 +283,12 @@ static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const
    return true;
 }
 									/*}}}*/
+static bool addArgumentsAPTSortPkgs(std::vector<CommandLine::Args> &Args, char const * const)/*{{{*/
+{
+   addArg('s',"source","APT::SortPkgs::Source",0);
+   return true;
+}
+									/*}}}*/
 static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("list"))
@@ -299,8 +331,16 @@ std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char c
       addArgumentsAPTCDROM(Args, Cmd);
    else if (strcmp(Program, "apt-config") == 0)
       addArgumentsAPTConfig(Args, Cmd);
+   else if (strcmp(Program, "apt-extracttemplates") == 0)
+      addArgumentsAPTExtractTemplates(Args, Cmd);
+   else if (strcmp(Program, "apt-ftparchive") == 0)
+      addArgumentsAPTFTPArchive(Args, Cmd);
+   else if (strcmp(Program, "apt-internal-solver") == 0)
+      addArgumentsAPTInternalSolver(Args, Cmd);
    else if (strcmp(Program, "apt-mark") == 0)
       addArgumentsAPTMark(Args, Cmd);
+   else if (strcmp(Program, "apt-sortpkg") == 0)
+      addArgumentsAPTSortPkgs(Args, Cmd);
    else if (strcmp(Program, "apt") == 0)
       addArgumentsAPT(Args, Cmd);
 
@@ -340,10 +380,19 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    _config->MoveSubTree(conf.c_str(), NULL);
 }
 									/*}}}*/
-void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * Cmds, CommandLine::Args * const Args,/*{{{*/
+void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * Cmds, char const * const Binary,/*{{{*/
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &, CommandLine::DispatchWithHelp const *))
 {
-   CmdL = CommandLine(Args,_config);
+   // Args running out of scope invalidates the pointer stored in CmdL,
+   // but we don't use the pointer after this function, so we ignore
+   // this problem for now and figure something out if we have to.
+   std::vector<CommandLine::Args> Args;
+   if (Cmds != nullptr && Cmds[0].Handler != nullptr)
+      Args = getCommandArgs(Binary, CommandLine::GetCommand(Cmds, argc, argv));
+   else
+      Args = getCommandArgs(Binary, Binary);
+   CmdL = CommandLine(Args.data(), _config);
+
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
    {
       _error->DumpErrors();
@@ -375,5 +424,21 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * C
       ShowHelp(CmdL, Cmds);
       exit(1);
    }
+}
+									/*}}}*/
+unsigned short DispatchCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * const Cmds)	/*{{{*/
+{
+   // Match the operation
+   bool const returned = (Cmds != nullptr) ? CmdL.DispatchArg(Cmds) : true;
+
+   // Print any errors or warnings found during parsing
+   bool const Errors = _error->PendingError();
+   if (_config->FindI("quiet",0) > 0)
+      _error->DumpErrors();
+   else
+      _error->DumpErrors(GlobalError::DEBUG);
+   if (returned == false)
+      return 100;
+   return Errors == true ? 100 : 0;
 }
 									/*}}}*/

@@ -45,6 +45,7 @@
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-show.h>
 #include <apt-private/private-search.h>
+#include <apt-private/private-main.h>
 
 #include <regex.h>
 #include <stddef.h>
@@ -1559,6 +1560,8 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
+   InitLocale();
+
    CommandLine::DispatchWithHelp Cmds[] =  {
       {"gencaches",&GenCaches, nullptr},
       {"showsrc",&ShowSrcPackage, _("Show source records")},
@@ -1580,30 +1583,15 @@ int main(int argc,const char *argv[])					/*{{{*/
       {nullptr, nullptr, nullptr}
    };
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cache", CommandLine::GetCommand(Cmds, argc, argv));
-
-   // Set up gettext support
-   setlocale(LC_ALL,"");
-   textdomain(PACKAGE);
-
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, Args.data(), &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, Cmds, "apt-cache", &_config, &_system, argc, argv, ShowHelp);
 
    InitOutput();
 
    if (_config->Exists("APT::Cache::Generate") == true)
       _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));
 
-   // Match the operation
-   CmdL.DispatchArg(Cmds);
-
-   // Print any errors or warnings found during parsing
-   bool const Errors = _error->PendingError();
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors();
-   else
-      _error->DumpErrors(GlobalError::DEBUG);
-   return Errors == true ? 100 : 0;
+   return DispatchCommandLine(CmdL, Cmds);
 }
 									/*}}}*/
