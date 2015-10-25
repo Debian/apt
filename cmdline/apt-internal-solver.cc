@@ -42,9 +42,7 @@
 									/*}}}*/
 
 // ShowHelp - Show a help screen					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *) {
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *) {
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
 	std::cout <<
@@ -67,6 +65,11 @@ APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
 	exit(EXIT_FAILURE);
 }
 									/*}}}*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+{
+   return {};
+}
+									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
 	InitLocale();
@@ -75,7 +78,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	DropPrivileges();
 
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, nullptr, "apt-internal-solver", &_config, NULL, argc, argv, ShowHelp);
+	ParseCommandLine(CmdL, APT_CMD::APT_INTERNAL_SOLVER, &_config, NULL, argc, argv);
 
 	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
 	{
@@ -182,6 +185,6 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(100, "Done", output);
 
-	return DispatchCommandLine(CmdL, nullptr);
+	return DispatchCommandLine(CmdL, {});
 }
 									/*}}}*/

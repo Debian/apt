@@ -1527,9 +1527,7 @@ static bool DoIndexTargets(CommandLine &CmdL)
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -1613,11 +1611,9 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-int main(int argc,const char *argv[])					/*{{{*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       {"update", &DoUpdate, _("Retrieve new lists of packages")},
       {"upgrade", &DoUpgrade, _("Perform an upgrade")},
       {"install", &DoInstall, _("Install new packages (pkg is libc6 not libc6.deb)")},
@@ -1642,10 +1638,15 @@ int main(int argc,const char *argv[])					/*{{{*/
       {"moo", &DoMoo, nullptr},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-get", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_GET, &_config, &_system, argc, argv);
 
    InitSignals();
    InitOutput();

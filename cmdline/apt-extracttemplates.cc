@@ -216,9 +216,7 @@ bool DebFile::ParseInfo()
 }
 									/*}}}*/
 // ShowHelp - show a short help text					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
 {
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -343,17 +341,22 @@ static bool Go(CommandLine &CmdL)
 	return !_error->PendingError();
 }
 									/*}}}*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+{
+   return {
+	{nullptr, nullptr, nullptr}
+   };
+}
+									/*}}}*/
 int main(int argc, const char **argv)					/*{{{*/
 {
 	InitLocale();
 
-	// Parse the command line and initialize the package library
-	CommandLine::DispatchWithHelp Cmds[] = {{nullptr, nullptr, nullptr}};
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, Cmds, "apt-extracttemplates", &_config, &_system, argc, argv, ShowHelp);
+	auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_EXTRACTTEMPLATES, &_config, &_system, argc, argv);
 
 	Go(CmdL);
 
-	return DispatchCommandLine(CmdL, nullptr);
+	return DispatchCommandLine(CmdL, {});
 }
 									/*}}}*/

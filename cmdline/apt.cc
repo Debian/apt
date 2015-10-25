@@ -37,7 +37,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)/*{{{*/
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -57,12 +57,10 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 
    return true;
 }
-
-int main(int argc, const char *argv[])					/*{{{*/
+									/*}}}*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       // query
       {"list", &DoList, _("list packages based on package names")},
       {"search", &DoSearch, _("search in package descriptions")},
@@ -86,9 +84,14 @@ int main(int argc, const char *argv[])					/*{{{*/
       {"moo", &DoMoo, nullptr},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc, const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT, &_config, &_system, argc, argv);
 
    int const quiet = _config->FindI("quiet", 0);
    if (quiet == 2)

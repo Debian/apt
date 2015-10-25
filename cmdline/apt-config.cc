@@ -77,9 +77,7 @@ static bool DoDump(CommandLine &CmdL)
 }
 									/*}}}*/
 // ShowHelp - Show the help screen					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
@@ -106,19 +104,22 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-int main(int argc,const char *argv[])					/*{{{*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       {"shell", &DoShell, _("get configuration values via shell evaluation")},
       {"dump", &DoDump, _("show the active configuration setting")},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-config", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_CONFIG, &_config, &_system, argc, argv);
 
    std::vector<std::string> const langs = APT::Configuration::getLanguages(true);
    _config->Clear("Acquire::Languages");

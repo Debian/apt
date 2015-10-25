@@ -32,7 +32,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static bool DoAutoDetectProxy(CommandLine &CmdL)
+static bool DoAutoDetectProxy(CommandLine &CmdL)			/*{{{*/
 {
    if (CmdL.FileSize() != 2)
       return _error->Error(_("Need one URL as argument"));
@@ -44,8 +44,8 @@ static bool DoAutoDetectProxy(CommandLine &CmdL)
 
    return true;
 }
-
-static bool DoDownloadFile(CommandLine &CmdL)
+									/*}}}*/
+static bool DoDownloadFile(CommandLine &CmdL)				/*{{{*/
 {
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
@@ -77,8 +77,8 @@ static bool DoDownloadFile(CommandLine &CmdL)
 
    return true;
 }
-
-static bool DoSrvLookup(CommandLine &CmdL)
+									/*}}}*/
+static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
 {
    if (CmdL.FileSize() <= 1)
       return _error->Error("Must specify at least one SRV record");
@@ -104,8 +104,8 @@ static bool DoSrvLookup(CommandLine &CmdL)
    }
    return true;
 }
-
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)
+									/*}}}*/
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)/*{{{*/
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -131,22 +131,23 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)
       _("This APT helper has Super Meep Powers.") << std::endl;
    return true;
 }
-
-
-int main(int argc,const char *argv[])					/*{{{*/
+									/*}}}*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
       {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
       {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
-   // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-helper", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_HELPER, &_config, &_system, argc, argv);
 
    InitOutput();
 

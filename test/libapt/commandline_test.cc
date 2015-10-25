@@ -96,7 +96,7 @@ TEST(CommandLineTest,GetCommand)
    char const * argv[] = { "apt-get", "-t", "unstable", "remove", "-d", "foo" };
    char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
    EXPECT_STREQ("remove", com);
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs(APT_CMD::APT_GET, com);
    ::Configuration c;
    CommandLine CmdL(Args.data(), &c);
    ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
@@ -110,7 +110,7 @@ TEST(CommandLineTest,GetCommand)
    char const * argv[] = {"apt-get", "-t", "unstable", "remove", "--", "-d", "foo" };
    char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
    EXPECT_STREQ("remove", com);
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs(APT_CMD::APT_GET, com);
    ::Configuration c;
    CommandLine CmdL(Args.data(), &c);
    ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
@@ -125,7 +125,7 @@ TEST(CommandLineTest,GetCommand)
    char const * argv[] = {"apt-get", "-t", "unstable", "--", "remove", "-d", "foo" };
    char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
    EXPECT_STREQ("remove", com);
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs(APT_CMD::APT_GET, com);
    ::Configuration c;
    CommandLine CmdL(Args.data(), &c);
    ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
@@ -140,7 +140,7 @@ TEST(CommandLineTest,GetCommand)
    char const * argv[] = {"apt-get", "install", "-t", "unstable", "--", "remove", "-d", "foo" };
    char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
    EXPECT_STREQ("install", com);
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs(APT_CMD::APT_GET, com);
    ::Configuration c;
    CommandLine CmdL(Args.data(), &c);
    ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));

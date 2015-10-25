@@ -1523,7 +1523,7 @@ static bool GenCaches(CommandLine &)
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -1558,11 +1558,9 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-int main(int argc,const char *argv[])					/*{{{*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] =  {
+   return {
       {"gencaches",&GenCaches, nullptr},
       {"showsrc",&ShowSrcPackage, _("Show source records")},
       {"showpkg",&DumpPackage, nullptr},
@@ -1582,10 +1580,15 @@ int main(int argc,const char *argv[])					/*{{{*/
       {"madison",&Madison, nullptr},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-cache", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_CACHE, &_config, &_system, argc, argv);
 
    InitOutput();
 

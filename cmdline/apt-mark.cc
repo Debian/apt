@@ -281,7 +281,7 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
 }
 									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -314,11 +314,9 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-int main(int argc,const char *argv[])					/*{{{*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       {"auto",&DoAuto, _("Mark the given packages as automatically installed")},
       {"manual",&DoAuto, _("Mark the given packages as manually installed")},
       {"hold",&DoSelection, _("Mark a package as held back")},
@@ -339,9 +337,14 @@ int main(int argc,const char *argv[])					/*{{{*/
       {"unmarkauto", &DoMarkAuto, nullptr},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-mark", &_config, &_system, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_MARK, &_config, &_system, argc, argv);
 
    InitOutput();
 

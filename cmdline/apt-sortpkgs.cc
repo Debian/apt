@@ -133,9 +133,7 @@ static bool DoIt(string InFile)
 }
 									/*}}}*/
 // ShowHelp - Show the help text					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
@@ -156,20 +154,25 @@ static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
    return true;
 }
 									/*}}}*/
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+{
+   return {
+      {nullptr, nullptr, nullptr}
+   };
+}
+									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    InitLocale();
 
-   // Parse the command line and initialize the package library
-   CommandLine::DispatchWithHelp Cmds[] = {{nullptr, nullptr, nullptr}};
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-sortpkgs", &_config, &_system, argc, argv, ShowHelp);
+   ParseCommandLine(CmdL, APT_CMD::APT_SORTPKG, &_config, &_system, argc, argv);
 
    // Match the operation
    for (unsigned int I = 0; I != CmdL.FileSize(); I++)
       if (DoIt(CmdL.FileList[I]) == false)
 	 break;
 
-   return DispatchCommandLine(CmdL, nullptr);
+   return DispatchCommandLine(CmdL, {});
 }
 									/*}}}*/

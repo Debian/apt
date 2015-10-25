@@ -153,6 +153,11 @@ static bool addArgumentsAPTInternalSolver(std::vector<CommandLine::Args> &, char
    return true;
 }
 									/*}}}*/
+static bool addArgumentsAPTHelper(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+{
+   return true;
+}
+									/*}}}*/
 static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
@@ -315,34 +320,32 @@ static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * c
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::Args> getCommandArgs(char const * const Program, char const * const Cmd)/*{{{*/
+std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const * const Cmd)/*{{{*/
 {
    std::vector<CommandLine::Args> Args;
    Args.reserve(50);
-   if (Program == NULL || Cmd == NULL)
-      ; // FIXME: Invalid command supplied
+   if (Cmd == nullptr)
+   {
+      if (Program == APT_CMD::APT_EXTRACTTEMPLATES)
+	 addArgumentsAPTExtractTemplates(Args, Cmd);
+   }
    else if (strcmp(Cmd, "help") == 0)
       ; // no options for help so no need to implement it in each
-   else if (strcmp(Program, "apt-get") == 0)
-      addArgumentsAPTGet(Args, Cmd);
-   else if (strcmp(Program, "apt-cache") == 0)
-      addArgumentsAPTCache(Args, Cmd);
-   else if (strcmp(Program, "apt-cdrom") == 0)
-      addArgumentsAPTCDROM(Args, Cmd);
-   else if (strcmp(Program, "apt-config") == 0)
-      addArgumentsAPTConfig(Args, Cmd);
-   else if (strcmp(Program, "apt-extracttemplates") == 0)
-      addArgumentsAPTExtractTemplates(Args, Cmd);
-   else if (strcmp(Program, "apt-ftparchive") == 0)
-      addArgumentsAPTFTPArchive(Args, Cmd);
-   else if (strcmp(Program, "apt-internal-solver") == 0)
-      addArgumentsAPTInternalSolver(Args, Cmd);
-   else if (strcmp(Program, "apt-mark") == 0)
-      addArgumentsAPTMark(Args, Cmd);
-   else if (strcmp(Program, "apt-sortpkg") == 0)
-      addArgumentsAPTSortPkgs(Args, Cmd);
-   else if (strcmp(Program, "apt") == 0)
-      addArgumentsAPT(Args, Cmd);
+   else
+      switch (Program)
+      {
+	 case APT_CMD::APT: addArgumentsAPT(Args, Cmd); break;
+	 case APT_CMD::APT_GET: addArgumentsAPTGet(Args, Cmd); break;
+	 case APT_CMD::APT_CACHE: addArgumentsAPTCache(Args, Cmd); break;
+	 case APT_CMD::APT_CDROM: addArgumentsAPTCDROM(Args, Cmd); break;
+	 case APT_CMD::APT_CONFIG: addArgumentsAPTConfig(Args, Cmd); break;
+	 case APT_CMD::APT_EXTRACTTEMPLATES: addArgumentsAPTExtractTemplates(Args, Cmd); break;
+	 case APT_CMD::APT_FTPARCHIVE: addArgumentsAPTFTPArchive(Args, Cmd); break;
+	 case APT_CMD::APT_HELPER: addArgumentsAPTHelper(Args, Cmd); break;
+	 case APT_CMD::APT_INTERNAL_SOLVER: addArgumentsAPTInternalSolver(Args, Cmd); break;
+	 case APT_CMD::APT_MARK: addArgumentsAPTMark(Args, Cmd); break;
+	 case APT_CMD::APT_SORTPKG: addArgumentsAPTSortPkgs(Args, Cmd); break;
+      }
 
    // options without a command
    addArg('h', "help", "help", 0);
@@ -380,19 +383,9 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    _config->MoveSubTree(conf.c_str(), NULL);
 }
 									/*}}}*/
-void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * Cmds, char const * const Binary,/*{{{*/
-      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[], bool(*ShowHelp)(CommandLine &, CommandLine::DispatchWithHelp const *))
+std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[])
 {
-   // Args running out of scope invalidates the pointer stored in CmdL,
-   // but we don't use the pointer after this function, so we ignore
-   // this problem for now and figure something out if we have to.
-   std::vector<CommandLine::Args> Args;
-   if (Cmds != nullptr && Cmds[0].Handler != nullptr)
-      Args = getCommandArgs(Binary, CommandLine::GetCommand(Cmds, argc, argv));
-   else
-      Args = getCommandArgs(Binary, Binary);
-   CmdL = CommandLine(Args.data(), _config);
-
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
    {
       _error->DumpErrors();
@@ -402,11 +395,22 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * C
    if (likely(argc != 0 && argv[0] != NULL))
       BinarySpecificConfiguration(argv[0]);
 
+   std::vector<CommandLine::DispatchWithHelp> const Cmds = GetCommands();
+   // Args running out of scope invalidates the pointer stored in CmdL,
+   // but we don't use the pointer after this function, so we ignore
+   // this problem for now and figure something out if we have to.
+   std::vector<CommandLine::Args> Args;
+   if (Cmds.empty() == false && Cmds[0].Handler != nullptr)
+      Args = getCommandArgs(Binary, CommandLine::GetCommand(Cmds.data(), argc, argv));
+   else
+      Args = getCommandArgs(Binary, nullptr);
+   CmdL = CommandLine(Args.data(), _config);
+
    if (CmdL.Parse(argc,argv) == false ||
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowHelp(CmdL, Cmds);
+	 ShowHelp(CmdL, Cmds.data());
 
       _error->DumpErrors();
       exit(100);
@@ -416,20 +420,21 @@ void ParseCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * C
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowHelp(CmdL, Cmds);
+      ShowHelp(CmdL, Cmds.data());
       exit(0);
    }
-   if (Cmds != nullptr && CmdL.FileSize() == 0)
+   if (Cmds.empty() == false && CmdL.FileSize() == 0)
    {
-      ShowHelp(CmdL, Cmds);
+      ShowHelp(CmdL, Cmds.data());
       exit(1);
    }
+   return Cmds;
 }
 									/*}}}*/
-unsigned short DispatchCommandLine(CommandLine &CmdL, CommandLine::DispatchWithHelp const * const Cmds)	/*{{{*/
+unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::DispatchWithHelp> const &Cmds)	/*{{{*/
 {
    // Match the operation
-   bool const returned = (Cmds != nullptr) ? CmdL.DispatchArg(Cmds) : true;
+   bool const returned = Cmds.empty() ? true : CmdL.DispatchArg(Cmds.data());
 
    // Print any errors or warnings found during parsing
    bool const Errors = _error->PendingError();

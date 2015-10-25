@@ -605,9 +605,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 									/*}}}*/
 
 // ShowHelp - Show the help text					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
+bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
@@ -1025,11 +1023,9 @@ static bool Clean(CommandLine &CmdL)
 }
 									/*}}}*/
 
-int main(int argc, const char *argv[])
+std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
 {
-   InitLocale();
-
-   CommandLine::DispatchWithHelp Cmds[] = {
+   return {
       {"packages",&SimpleGenPackages, nullptr},
       {"contents",&SimpleGenContents, nullptr},
       {"sources",&SimpleGenSources, nullptr},
@@ -1038,10 +1034,15 @@ int main(int argc, const char *argv[])
       {"clean",&Clean, nullptr},
       {nullptr, nullptr, nullptr}
    };
+}
+									/*}}}*/
+int main(int argc, const char *argv[])					/*{{{*/
+{
+   InitLocale();
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   ParseCommandLine(CmdL, Cmds, "apt-ftparchive", &_config, NULL, argc, argv, ShowHelp);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_FTPARCHIVE, &_config, NULL, argc, argv);
 
    _config->CndSet("quiet",0);
    Quiet = _config->FindI("quiet",0);
@@ -1049,3 +1050,4 @@ int main(int argc, const char *argv[])
 
    return DispatchCommandLine(CmdL, Cmds);
 }
+									/*}}}*/
