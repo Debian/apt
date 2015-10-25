@@ -42,7 +42,7 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 assert_repo_is_intact()
 {
-    testsuccessequal "foo/unstable 2.0 all" apt list -q
+    testsuccessequal "foo/unstable 2.0 all" apt list -qq
     testsuccess aptget install -y -s foo
     testfailure aptget install -y evil
     testsuccess aptget source foo --print-uris

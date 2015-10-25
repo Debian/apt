@@ -595,14 +595,12 @@ static bool DoDownload(CommandLine &CmdL)
    if (verset.empty() == true)
       return false;
 
-   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-   pkgAcquire Fetcher(&Stat);
-
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
 
    // reuse the usual acquire methods for deb files, but don't drop them into
    // the usual directories - keep everything in the current directory
+   aptAcquireWithTextStatus Fetcher;
    std::vector<std::string> storefile(verset.size());
    std::string const cwd = SafeGetCWD();
    _config->Set("Dir::Cache::Archives", cwd);
@@ -693,10 +691,6 @@ static bool DoSource(CommandLine &CmdL)
    if (_error->PendingError() == true)
       return false;
 
-   // Create the download object
-   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-   pkgAcquire Fetcher(&Stat);
-
    std::unique_ptr<DscFile[]> Dsc(new DscFile[CmdL.FileSize()]);
    
    // insert all downloaded uris into this set to avoid downloading them
@@ -711,6 +705,7 @@ static bool DoSource(CommandLine &CmdL)
    bool const dscOnly = _config->FindB("APT::Get::Dsc-Only", false);
 
    // Load the requestd sources into the fetcher
+   aptAcquireWithTextStatus Fetcher;
    unsigned J = 0;
    std::vector<std::string> UntrustedList;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
@@ -1368,13 +1363,11 @@ static bool DoChangelog(CommandLine &CmdL)
 		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
-   pkgAcquire Fetcher;
-   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-   Fetcher.SetLog(&Stat);
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
    bool const printOnly = _config->FindB("APT::Get::Print-URIs", false);
 
+   aptAcquireWithTextStatus Fetcher;
    for (APT::VersionList::const_iterator Ver = verset.begin();
         Ver != verset.end();
         ++Ver)

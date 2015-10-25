@@ -39,10 +39,10 @@
 
 static bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
 {
-   ioprintf(c1out, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
+   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
    // FIXME: generate from CommandLine
-   c1out <<
+   std::cout <<
     _("Usage: apt [options] command\n"
       "\n"
       "CLI for apt.\n")
@@ -87,12 +87,18 @@ int main(int argc, const char *argv[])					/*{{{*/
       {nullptr, nullptr, nullptr}
    };
 
-   // FIXME: Those ignore commandline configuration like -q
-   InitSignals();
-   InitOutput();
-
    CommandLine CmdL;
    ParseCommandLine(CmdL, Cmds, "apt", &_config, &_system, argc, argv, ShowHelp);
+
+   int const quiet = _config->FindI("quiet", 0);
+   if (quiet == 2)
+   {
+      _config->CndSet("quiet::NoProgress", true);
+      _config->Set("quiet", 1);
+   }
+
+   InitSignals();
+   InitOutput();
 
    CheckIfCalledByScript(argc, argv);
    CheckIfSimulateMode(CmdL);

@@ -13,6 +13,7 @@
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>
+#include <apt-private/private-download.h>
 #include <apt-private/private-output.h>
 #include <apt-private/private-update.h>
 
@@ -37,20 +38,15 @@ bool DoUpdate(CommandLine &CmdL)
       return false;
    pkgSourceList *List = Cache.GetSourceList();
 
-   // Create the progress
-   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       // force a hashsum for compatibility reasons
       _config->CndSet("Acquire::ForceHash", "md5sum");
 
-      // get a fetcher
-      pkgAcquire Fetcher(&Stat);
-
-      // Populate it with the source selection and get all Indexes 
+      // Populate it with the source selection and get all Indexes
       // (GetAll=true)
+      aptAcquireWithTextStatus Fetcher;
       if (List->GetIndexes(&Fetcher,true) == false)
 	 return false;
 
@@ -70,7 +66,10 @@ bool DoUpdate(CommandLine &CmdL)
 
    // do the work
    if (_config->FindB("APT::Get::Download",true) == true)
-       ListUpdate(Stat, *List);
+   {
+      AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
+      ListUpdate(Stat, *List);
+   }
 
    // Rebuild the cache.
    if (_config->FindB("pkgCacheFile::Generate", true) == true)

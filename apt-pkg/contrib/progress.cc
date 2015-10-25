@@ -132,7 +132,7 @@ OpTextProgress::OpTextProgress(Configuration &Config) :
 {
    if (Config.FindI("quiet",0) >= 1 || Config.FindB("quiet::NoUpdate", false) == true)
       NoUpdate = true;
-   if (Config.FindI("quiet",0) >= 2)
+   if (Config.FindI("quiet",0) >= 2 || Config.FindB("quiet::NoProgress", false) == true)
       NoDisplay = true;
 }
 									/*}}}*/

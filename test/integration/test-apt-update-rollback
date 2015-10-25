@@ -38,7 +38,7 @@ start_with_good_inrelease() {
     create_fresh_archive
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
-    testsuccessequal 'old/unstable 1.0 all' apt list -q
+    testsuccessequal 'old/unstable 1.0 all' apt list -qq
 }
 
 test_inrelease_to_new_inrelease() {
@@ -48,7 +48,7 @@ test_inrelease_to_new_inrelease() {
     add_new_package '+1hour'
     testsuccess aptget update -o Debug::Acquire::Transaction=1
     testsuccessequal 'new/unstable 1.0 all
-old/unstable 1.0 all' apt list -q
+old/unstable 1.0 all' apt list -qq
 }
 
 test_inrelease_to_broken_hash_reverts_all() {

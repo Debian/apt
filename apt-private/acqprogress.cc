@@ -37,6 +37,8 @@ AcqTextStatus::AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsign
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
       this->Quiet = 1;
+   if (Quiet < 2 && _config->FindB("quiet::NoProgress", false) == true)
+      this->Quiet = 2;
 }
 									/*}}}*/
 // AcqTextStatus::Start - Downloading has started			/*{{{*/

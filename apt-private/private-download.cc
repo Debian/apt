@@ -10,6 +10,7 @@
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-download.h>
+#include <apt-private/acqprogress.h>
 
 #include <fstream>
 #include <string>
@@ -39,8 +40,8 @@ bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
 
    return AuthPrompt(UntrustedList, PromptUser);
 }
-
-bool AuthPrompt(std::vector<std::string> const &UntrustedList, bool const PromptUser)
+									/*}}}*/
+bool AuthPrompt(std::vector<std::string> const &UntrustedList, bool const PromptUser)/*{{{*/
 {
    ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"), UntrustedList,
 	 [](std::string const&) { return true; },
@@ -148,3 +149,9 @@ bool CheckFreeSpaceBeforeDownload(std::string const &Dir, unsigned long long Fet
    return true;
 }
 									/*}}}*/
+
+aptAcquireWithTextStatus::aptAcquireWithTextStatus() : pkgAcquire::pkgAcquire(),
+   Stat(std::cout, ScreenWidth, _config->FindI("quiet",0))
+{
+   SetLog(&Stat);
+}

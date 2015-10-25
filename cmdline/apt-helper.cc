@@ -50,9 +50,7 @@ static bool DoDownloadFile(CommandLine &CmdL)
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
 
-   AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-   pkgAcquire Fetcher(&Stat);
-
+   aptAcquireWithTextStatus Fetcher;
    size_t fileind = 0;
    std::vector<std::string> targetfiles;
    while (fileind + 2 <= CmdL.FileSize())
