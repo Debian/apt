@@ -391,6 +391,8 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
       _config->CndSet("Binary::apt::APT::Cache::ShowVirtuals", true);
       _config->CndSet("Binary::apt::APT::Cache::Search::Version", 2);
+      _config->CndSet("Binary::apt::APT::Cache::ShowDependencyType", true);
+      _config->CndSet("Binary::apt::APT::Cache::ShowVersion", true);
       _config->CndSet("Binary::apt::APT::Get::Upgrade-Allow-New", true);
       _config->CndSet("Binary::apt::APT::Cmd::Show-Update-Stats", true);
       _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
