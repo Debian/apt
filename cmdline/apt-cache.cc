@@ -1524,26 +1524,14 @@ static bool GenCaches(CommandLine &)
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
-   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
-   if (_config->FindB("version") == true)
-     return true;
-
    std::cout <<
     _("Usage: apt-cache [options] command\n"
       "       apt-cache [options] show pkg1 [pkg2 ...]\n"
       "\n"
       "apt-cache is a low-level tool used to query information\n"
       "from APT's binary cache files\n")
-    << std::endl
-    << _("Commands:") << std::endl;
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+    << std::endl;
+   ShowHelpListCommands(Cmds);
    std::cout << std::endl
     << _("Options:\n"
       "  -h   This help text.\n"

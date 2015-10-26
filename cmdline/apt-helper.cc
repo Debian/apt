@@ -107,26 +107,13 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const  * Cmds)		/*{{{*/
 {
-   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
-   if (_config->FindB("version") == true)
-     return true;
-
    std::cout <<
     _("Usage: apt-helper [options] command\n"
       "       apt-helper [options] download-file uri target-path\n"
       "\n"
       "apt-helper is a internal helper for apt\n")
-    << std::endl
-    << _("Commands:") << std::endl;
-
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+    << std::endl;
+   ShowHelpListCommands(Cmds);
    std::cout << std::endl <<
       _("This APT helper has Super Meep Powers.") << std::endl;
    return true;

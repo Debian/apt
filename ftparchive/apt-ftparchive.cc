@@ -606,11 +606,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
-   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-   if (_config->FindB("version") == true)
-      return true;
-
-   cout << 
+   std::cout <<
     _("Usage: apt-ftparchive [options] command\n"
       "Commands: packages binarypath [overridefile [pathprefix]]\n"
       "          sources srcpath [overridefile [pathprefix]]\n"
@@ -649,7 +645,6 @@ bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
       "  --contents  Control contents file generation\n"
       "  -c=?  Read this configuration file\n"
       "  -o=?  Set an arbitrary configuration option") << endl;
-   
    return true;
 }
 									/*}}}*/

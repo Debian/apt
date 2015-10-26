@@ -217,11 +217,6 @@ bool DebFile::ParseInfo()
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
-	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
-	if (_config->FindB("version") == true)
-		return true;
-
 	cout <<
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
 		"\n"

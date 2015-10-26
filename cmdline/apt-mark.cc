@@ -282,23 +282,13 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
-   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
    std::cout <<
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
       "\n"
       "apt-mark is a simple command line interface for marking packages\n"
       "as manually or automatically installed. It can also list marks.\n")
-    << std::endl
-    << _("Commands:") << std::endl;
-
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "   " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+    << std::endl;
+   ShowHelpListCommands(Cmds);
    std::cout << std::endl
    << _("Options:\n"
       "  -h  This help text.\n"

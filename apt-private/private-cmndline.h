@@ -32,6 +32,7 @@ struct aptDispatchWithHelp
 std::vector<aptDispatchWithHelp> GetCommands();
 bool ShowHelp(CommandLine &CmdL, aptDispatchWithHelp const * Cmds);
 
+APT_PUBLIC void ShowHelpListCommands(aptDispatchWithHelp const * Cmds);
 APT_PUBLIC std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char * argv[]);
 APT_PUBLIC unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::Dispatch> const &Cmds);

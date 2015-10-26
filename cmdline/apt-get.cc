@@ -1528,8 +1528,6 @@ static bool DoIndexTargets(CommandLine &CmdL)
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
-   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
    if (_config->FindB("version") == true)
    {
       cout << _("Supported modules:") << endl;
@@ -1580,15 +1578,8 @@ bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
       "apt-get is a simple command line interface for downloading and\n"
       "installing packages. The most frequently used commands are update\n"
       "and install.\n")
-      << std::endl
-      << _("Commands:") << std::endl;
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+      << std::endl;
+   ShowHelpListCommands(Cmds);
    std::cout << std::endl <<
       _("Options:\n"
       "  -h  This help text.\n"

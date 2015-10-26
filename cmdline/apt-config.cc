@@ -78,23 +78,12 @@ static bool DoDump(CommandLine &CmdL)
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
-   ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-   if (_config->FindB("version") == true)
-      return true;
-
    std::cout <<
       _("Usage: apt-config [options] command\n"
       "\n"
       "apt-config is a simple tool to read the APT config file\n")
-      << std::endl
-      << _("Commands:") << std::endl;
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+      << std::endl;
+   ShowHelpListCommands(Cmds);
    std::cout << std::endl <<
       _("Options:\n"
       "  -h   This help text.\n"

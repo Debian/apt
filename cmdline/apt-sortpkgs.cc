@@ -134,11 +134,7 @@ static bool DoIt(string InFile)
 									/*}}}*/
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
-   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-   if (_config->FindB("version") == true)
-      return true;
-   
-   cout <<
+   std::cout <<
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
       "\n"
       "apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
@@ -149,7 +145,6 @@ bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
       "  -s   Use source file sorting\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
-
    return true;
 }
 									/*}}}*/

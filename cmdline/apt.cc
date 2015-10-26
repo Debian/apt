@@ -39,22 +39,12 @@
 
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
-   ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
-   // FIXME: generate from CommandLine
    std::cout <<
     _("Usage: apt [options] command\n"
       "\n"
       "CLI for apt.\n")
-    << std::endl
-    << _("Commands:") << std::endl;
-   for (; Cmds->Handler != nullptr; ++Cmds)
-   {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
-   }
-
+    << std::endl;
+   ShowHelpListCommands(Cmds);
    return true;
 }
 									/*}}}*/

@@ -43,8 +43,6 @@
 
 bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
-	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
-
 	std::cout <<
 		_("Usage: apt-internal-solver\n"
 		"\n"

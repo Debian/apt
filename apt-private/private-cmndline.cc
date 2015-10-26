@@ -362,6 +362,25 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
+static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, aptDispatchWithHelp const * Cmds)/*{{{*/
+{
+   std::cout << PACKAGE << " " << PACKAGE_VERSION << " (" << COMMON_ARCH << ")" << std::endl;
+   if (_config->FindB("version") == true && Binary != APT_CMD::APT_GET)
+      return true;
+   return ShowHelp(CmdL, Cmds);
+}
+									/*}}}*/
+void ShowHelpListCommands(aptDispatchWithHelp const * Cmds)		/*{{{*/
+{
+   std::cout << _("Commands:") << std::endl;
+   for (; Cmds->Handler != nullptr; ++Cmds)
+   {
+      if (Cmds->Help == nullptr)
+	 continue;
+      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+   }
+}
+									/*}}}*/
 static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 {
    std::string const binary = flNotDir(Binary);
@@ -397,6 +416,11 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
 
    std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
    std::vector<CommandLine::Dispatch> Cmds;
+   if (CmdsWithHelp.empty() == false)
+   {
+      CommandLine::Dispatch const help = { "help", [](CommandLine &){return false;} };
+      Cmds.push_back(std::move(help));
+   }
    for (auto const& cmd : CmdsWithHelp)
       Cmds.push_back({cmd.Match, cmd.Handler});
 
@@ -414,7 +438,7 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowHelp(CmdL, CmdsWithHelp.data());
+	 ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
 
       _error->DumpErrors();
       exit(100);
@@ -424,12 +448,12 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowHelp(CmdL, CmdsWithHelp.data());
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
       exit(0);
    }
    if (Cmds.empty() == false && CmdL.FileSize() == 0)
    {
-      ShowHelp(CmdL, CmdsWithHelp.data());
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
       exit(1);
    }
    return Cmds;
