@@ -17,18 +17,22 @@ class CLT: public CommandLine {
       }
 };
 
-#define EXPECT_CMD(x, ...) { const char * const argv[] = { __VA_ARGS__ }; EXPECT_EQ(x, CLT::AsString(argv, sizeof(argv)/sizeof(argv[0]))); }
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const *) {return false;}
+std::vector<aptDispatchWithHelp> GetCommands() {return {};}
+
 
 TEST(CommandLineTest,SaveInConfig)
 {
-   EXPECT_CMD("apt-get install -sf",
+#define APT_EXPECT_CMD(x, ...) { const char * const argv[] = { __VA_ARGS__ }; EXPECT_EQ(x, CLT::AsString(argv, sizeof(argv)/sizeof(argv[0]))); }
+   APT_EXPECT_CMD("apt-get install -sf",
 	 "apt-get", "install", "-sf");
-   EXPECT_CMD("apt-cache -s apt -so Debug::test=Test",
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test=Test",
 	 "apt-cache", "-s", "apt", "-so", "Debug::test=Test");
-   EXPECT_CMD("apt-cache -s apt -so Debug::test=\"Das ist ein Test\"",
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test=\"Das ist ein Test\"",
 	 "apt-cache", "-s", "apt", "-so", "Debug::test=Das ist ein Test");
-   EXPECT_CMD("apt-cache -s apt --hallo test=1.0",
+   APT_EXPECT_CMD("apt-cache -s apt --hallo test=1.0",
 	 "apt-cache", "-s", "apt", "--hallo", "test=1.0");
+#undef APT_EXPECT_CMD
 }
 TEST(CommandLineTest,Parsing)
 {

@@ -23,12 +23,18 @@ enum class APT_CMD {
    APT_SORTPKG,
 };
 
-bool ShowHelp(CommandLine &CmdL, CommandLine::DispatchWithHelp const * Cmds);
-std::vector<CommandLine::DispatchWithHelp> GetCommands();
+struct aptDispatchWithHelp
+{
+   const char *Match;
+   bool (*Handler)(CommandLine &);
+   const char *Help;
+};
+std::vector<aptDispatchWithHelp> GetCommands();
+bool ShowHelp(CommandLine &CmdL, aptDispatchWithHelp const * Cmds);
 
-APT_PUBLIC std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,
+APT_PUBLIC std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char * argv[]);
-APT_PUBLIC unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::DispatchWithHelp> const &Cmds);
+APT_PUBLIC unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::Dispatch> const &Cmds);
 
 APT_PUBLIC std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const * const Cmd);
 

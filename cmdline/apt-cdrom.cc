@@ -203,8 +203,7 @@ static bool DoIdent(CommandLine &)
    return AddOrIdent(false);
 }
 									/*}}}*/
-// ShowHelp - Show the help screen					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -241,7 +240,7 @@ bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       {"add", &DoAdd, "Add a CDROM"},

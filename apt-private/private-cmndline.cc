@@ -383,7 +383,7 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    _config->MoveSubTree(conf.c_str(), NULL);
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
+std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[])
 {
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
@@ -395,7 +395,11 @@ std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, A
    if (likely(argc != 0 && argv[0] != NULL))
       BinarySpecificConfiguration(argv[0]);
 
-   std::vector<CommandLine::DispatchWithHelp> const Cmds = GetCommands();
+   std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
+   std::vector<CommandLine::Dispatch> Cmds;
+   for (auto const& cmd : CmdsWithHelp)
+      Cmds.push_back({cmd.Match, cmd.Handler});
+
    // Args running out of scope invalidates the pointer stored in CmdL,
    // but we don't use the pointer after this function, so we ignore
    // this problem for now and figure something out if we have to.
@@ -410,7 +414,7 @@ std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, A
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowHelp(CmdL, Cmds.data());
+	 ShowHelp(CmdL, CmdsWithHelp.data());
 
       _error->DumpErrors();
       exit(100);
@@ -420,18 +424,18 @@ std::vector<CommandLine::DispatchWithHelp> ParseCommandLine(CommandLine &CmdL, A
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowHelp(CmdL, Cmds.data());
+      ShowHelp(CmdL, CmdsWithHelp.data());
       exit(0);
    }
    if (Cmds.empty() == false && CmdL.FileSize() == 0)
    {
-      ShowHelp(CmdL, Cmds.data());
+      ShowHelp(CmdL, CmdsWithHelp.data());
       exit(1);
    }
    return Cmds;
 }
 									/*}}}*/
-unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::DispatchWithHelp> const &Cmds)	/*{{{*/
+unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::Dispatch> const &Cmds)	/*{{{*/
 {
    // Match the operation
    bool const returned = Cmds.empty() ? true : CmdL.DispatchArg(Cmds.data());

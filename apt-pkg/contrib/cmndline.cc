@@ -84,43 +84,6 @@ char const * CommandLine::GetCommand(Dispatch const * const Map,
    }
    return NULL;
 }
-char const * CommandLine::GetCommand(DispatchWithHelp const * const Map,
-      unsigned int const argc, char const * const * const argv)
-{
-   // if there is a -- on the line there must be the word we search for either
-   // before it (as -- marks the end of the options) or right after it (as we can't
-   // decide if the command is actually an option, given that in theory, you could
-   // have parameters named like commands)
-   for (size_t i = 1; i < argc; ++i)
-   {
-      if (strcmp(argv[i], "--") != 0)
-	 continue;
-      // check if command is before --
-      for (size_t k = 1; k < i; ++k)
-	 for (size_t j = 0; Map[j].Match != NULL; ++j)
-	    if (strcmp(argv[k], Map[j].Match) == 0)
-	       return Map[j].Match;
-      // see if the next token after -- is the command
-      ++i;
-      if (i < argc)
-	 for (size_t j = 0; Map[j].Match != NULL; ++j)
-	    if (strcmp(argv[i], Map[j].Match) == 0)
-	       return Map[j].Match;
-      // we found a --, but not a command
-      return NULL;
-   }
-   // no --, so search for the first word matching a command
-   // FIXME: How like is it that an option parameter will be also a valid Match ?
-   for (size_t i = 1; i < argc; ++i)
-   {
-      if (*(argv[i]) == '-')
-	 continue;
-      for (size_t j = 0; Map[j].Match != NULL; ++j)
-	 if (strcmp(argv[i], Map[j].Match) == 0)
-	    return Map[j].Match;
-   }
-   return NULL;
-}
 									/*}}}*/
 // CommandLine::Parse - Main action member				/*{{{*/
 // ---------------------------------------------------------------------
@@ -411,7 +374,7 @@ unsigned int CommandLine::FileSize() const
 }
 									/*}}}*/
 // CommandLine::DispatchArg - Do something with the first arg		/*{{{*/
-bool CommandLine::DispatchArg(DispatchWithHelp const * const Map,bool NoMatch)
+bool CommandLine::DispatchArg(Dispatch const * const Map,bool NoMatch)
 {
    int I;
    for (I = 0; Map[I].Match != 0; I++)
@@ -436,26 +399,8 @@ bool CommandLine::DispatchArg(DispatchWithHelp const * const Map,bool NoMatch)
 }
 bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
 {
-   int I;
-   for (I = 0; Map[I].Match != 0; I++)
-   {
-      if (strcmp(FileList[0],Map[I].Match) == 0)
-      {
-	 bool Res = Map[I].Handler(*this);
-	 if (Res == false && _error->PendingError() == false)
-	    _error->Error("Handler silently failed");
-	 return Res;
-      }
-   }
-   
-   // No matching name
-   if (Map[I].Match == 0)
-   {
-      if (NoMatch == true)
-	 _error->Error(_("Invalid operation %s"),FileList[0]);
-   }
-   
-   return false;
+   Dispatch const * const Map2 = Map;
+   return DispatchArg(Map2, NoMatch);
 }
 									/*}}}*/
 // CommandLine::SaveInConfig - for output later in a logfile or so	/*{{{*/

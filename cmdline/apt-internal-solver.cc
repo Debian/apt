@@ -41,8 +41,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
-// ShowHelp - Show a help screen					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *) {
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
+{
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
 	std::cout <<
@@ -65,7 +65,7 @@ APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
 	exit(EXIT_FAILURE);
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {};
 }

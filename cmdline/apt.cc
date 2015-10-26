@@ -37,7 +37,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)/*{{{*/
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -58,7 +58,7 @@ bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       // query

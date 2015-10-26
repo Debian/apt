@@ -604,8 +604,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 }
 									/*}}}*/
 
-// ShowHelp - Show the help text					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
@@ -1023,7 +1022,7 @@ static bool Clean(CommandLine &CmdL)
 }
 									/*}}}*/
 
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       {"packages",&SimpleGenPackages, nullptr},

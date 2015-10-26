@@ -76,8 +76,7 @@ static bool DoDump(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// ShowHelp - Show the help screen					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
    if (_config->FindB("version") == true)
@@ -104,7 +103,7 @@ bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       {"shell", &DoShell, _("get configuration values via shell evaluation")},

@@ -1,10 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <apt-pkg/error.h>
-#include <apt-pkg/cmndline.h>
-
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *) {return false;}
-std::vector<CommandLine::DispatchWithHelp> GetCommands() {return {};}
 
 int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);

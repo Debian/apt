@@ -105,7 +105,7 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)/*{{{*/
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const  * Cmds)		/*{{{*/
 {
    ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -132,7 +132,7 @@ bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const  * Cmds)/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},

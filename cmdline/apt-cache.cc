@@ -1522,8 +1522,7 @@ static bool GenCaches(CommandLine &)
    return CacheFile.BuildCaches(&Progress, true);
 }
 									/*}}}*/
-// ShowHelp - Show a help screen					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 {
    ioprintf(cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -1558,7 +1557,7 @@ bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const * Cmds)
    return true;
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
       {"gencaches",&GenCaches, nullptr},

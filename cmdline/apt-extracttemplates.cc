@@ -215,8 +215,7 @@ bool DebFile::ParseInfo()
 	return true;
 }
 									/*}}}*/
-// ShowHelp - show a short help text					/*{{{*/
-bool ShowHelp(CommandLine &, CommandLine::DispatchWithHelp const *)
+bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 {
 	ioprintf(std::cout, "%s %s (%s)\n", PACKAGE, PACKAGE_VERSION, COMMON_ARCH);
 
@@ -341,7 +340,7 @@ static bool Go(CommandLine &CmdL)
 	return !_error->PendingError();
 }
 									/*}}}*/
-std::vector<CommandLine::DispatchWithHelp> GetCommands()		/*{{{*/
+std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
 {
    return {
 	{nullptr, nullptr, nullptr}
