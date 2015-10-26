@@ -3,13 +3,18 @@
 
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/cacheset.h>
+#include <apt-pkg/cmndline.h>
+#include <apt-pkg/clean.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
-#include <apt-private/private-output.h>
+#include <apt-private/private-cachefile.h>
 #include <apt-private/private-download.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-utils.h>
 #include <apt-private/acqprogress.h>
 
 #include <fstream>
@@ -155,3 +160,199 @@ aptAcquireWithTextStatus::aptAcquireWithTextStatus() : pkgAcquire::pkgAcquire(),
 {
    SetLog(&Stat);
 }
+
+// DoDownload - download a binary					/*{{{*/
+bool DoDownload(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+
+   APT::CacheSetHelper helper;
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
+
+   if (verset.empty() == true)
+      return false;
+
+   pkgRecords Recs(Cache);
+   pkgSourceList *SrcList = Cache.GetSourceList();
+
+   // reuse the usual acquire methods for deb files, but don't drop them into
+   // the usual directories - keep everything in the current directory
+   aptAcquireWithTextStatus Fetcher;
+   std::vector<std::string> storefile(verset.size());
+   std::string const cwd = SafeGetCWD();
+   _config->Set("Dir::Cache::Archives", cwd);
+   int i = 0;
+   for (APT::VersionSet::const_iterator Ver = verset.begin();
+	 Ver != verset.end(); ++Ver, ++i)
+   {
+      pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
+      if (storefile[i].empty())
+	 continue;
+      std::string const filename = cwd + flNotDir(storefile[i]);
+      storefile[i].assign(filename);
+      I->DestFile.assign(filename);
+   }
+
+   // Just print out the uris and exit if the --print-uris flag was used
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); ++I)
+	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile)  << ' ' <<
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+      return true;
+   }
+
+   if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
+      return false;
+
+   bool Failed = false;
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false)
+      return false;
+
+   // copy files in local sources to the current directory
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+   {
+      std::string const filename = cwd + flNotDir((*I)->DestFile);
+      if ((*I)->Local == true &&
+          filename != (*I)->DestFile &&
+          (*I)->Status == pkgAcquire::Item::StatDone)
+      {
+	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
+	 std::ofstream dst(filename.c_str(), std::ios::binary);
+	 dst << src.rdbuf();
+      }
+   }
+   return Failed == false;
+}
+									/*}}}*/
+// DoChangelog - Get changelog from the command line			/*{{{*/
+bool DoChangelog(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+
+   APT::CacheSetHelper helper;
+   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
+   if (verset.empty() == true)
+      return false;
+
+   bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
+   bool const printOnly = _config->FindB("APT::Get::Print-URIs", false);
+
+   aptAcquireWithTextStatus Fetcher;
+   for (APT::VersionList::const_iterator Ver = verset.begin();
+        Ver != verset.end();
+        ++Ver)
+   {
+      if (printOnly)
+	 new pkgAcqChangelog(&Fetcher, Ver, "/dev/null");
+      else if (downOnly)
+	 new pkgAcqChangelog(&Fetcher, Ver, ".");
+      else
+	 new pkgAcqChangelog(&Fetcher, Ver);
+   }
+
+   if (printOnly == false)
+   {
+      bool Failed = false;
+      if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
+	 return false;
+   }
+
+   if (downOnly == false || printOnly == true)
+   {
+      bool Failed = false;
+      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+      {
+	 if (printOnly)
+	 {
+	    if ((*I)->ErrorText.empty() == false)
+	    {
+	       Failed = true;
+	       _error->Error("%s", (*I)->ErrorText.c_str());
+	    }
+	    else
+	       std::cout << '\'' << (*I)->DescURI() << "' " << flNotDir((*I)->DestFile)  << std::endl;
+	 }
+	 else
+	    DisplayFileInPager((*I)->DestFile);
+      }
+      return Failed == false;
+   }
+
+   return true;
+}
+									/*}}}*/
+
+// DoClean - Remove download archives					/*{{{*/
+bool DoClean(CommandLine &)
+{
+   std::string const archivedir = _config->FindDir("Dir::Cache::archives");
+   std::string const listsdir = _config->FindDir("Dir::state::lists");
+
+   if (_config->FindB("APT::Get::Simulate") == true)
+   {
+      std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+      std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+      std::cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< std::endl
+	   << "Del " << listsdir << "partial/*" << std::endl
+	   << "Del " << pkgcache << " " << srcpkgcache << std::endl;
+      return true;
+   }
+
+   pkgAcquire Fetcher;
+   Fetcher.GetLock(archivedir);
+   Fetcher.Clean(archivedir);
+   Fetcher.Clean(archivedir + "partial/");
+
+   Fetcher.GetLock(listsdir);
+   Fetcher.Clean(listsdir + "partial/");
+
+   pkgCacheFile::RemoveCaches();
+
+   return true;
+}
+									/*}}}*/
+// DoAutoClean - Smartly remove downloaded archives			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is similar to clean but it only purges things that cannot be 
+   downloaded, that is old versions of cached packages. */
+ class LogCleaner : public pkgArchiveCleaner
+{
+   protected:
+      virtual void Erase(const char *File, std::string Pkg, std::string Ver,struct stat &St) APT_OVERRIDE
+      {
+	 c1out << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << std::endl;
+
+	 if (_config->FindB("APT::Get::Simulate") == false)
+	    unlink(File);
+      };
+};
+bool DoAutoClean(CommandLine &)
+{
+   // Lock the archive directory
+   FileFd Lock;
+   if (_config->FindB("Debug::NoLocking",false) == false)
+   {
+      int lock_fd = GetLock(_config->FindDir("Dir::Cache::Archives") + "lock");
+      if (lock_fd < 0)
+	 return _error->Error(_("Unable to lock the download directory"));
+      Lock.Fd(lock_fd);
+   }
+
+   CacheFile Cache;
+   if (Cache.Open() == false)
+      return false;
+
+   LogCleaner Cleaner;
+
+   return Cleaner.Go(_config->FindDir("Dir::Cache::archives"),*Cache) &&
+      Cleaner.Go(_config->FindDir("Dir::Cache::archives") + "partial/",*Cache);
+}
+									/*}}}*/

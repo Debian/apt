@@ -17,6 +17,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/policy.h>
 
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-output.h>
@@ -294,6 +295,186 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
         _error->Notice(_("No packages found"));
    }
 
+   return true;
+}
+									/*}}}*/
+bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
+{
+   pkgCacheFile CacheFile;
+   pkgSourceList *List = CacheFile.GetSourceList();
+   if (unlikely(List == NULL))
+      return false;
+
+   // Create the text record parsers
+   pkgSrcRecords SrcRecs(*List);
+   if (_error->PendingError() == true)
+      return false;
+
+   bool found = false;
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   {
+      SrcRecs.Restart();
+
+      pkgSrcRecords::Parser *Parse;
+      bool found_this = false;
+      while ((Parse = SrcRecs.Find(*I,false)) != 0) {
+	 // SrcRecs.Find() will find both binary and source names
+	 if (_config->FindB("APT::Cache::Only-Source", false) == true)
+	    if (Parse->Package() != *I)
+	       continue;
+	 std::cout << Parse->AsStr() << std::endl;;
+	 found = true;
+	 found_this = true;
+      }
+      if (found_this == false) {
+	 _error->Warning(_("Unable to locate package %s"),*I);
+	 continue;
+      }
+   }
+   if (found == false)
+      _error->Notice(_("No packages found"));
+   return true;
+}
+									/*}}}*/
+// Policy - Show the results of the preferences file			/*{{{*/
+bool Policy(CommandLine &CmdL)
+{
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   pkgPolicy *Plcy = CacheFile.GetPolicy();
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+   if (unlikely(Cache == NULL || Plcy == NULL || SrcList == NULL))
+      return false;
+
+   bool OldPolicy = _config->FindI("APT::Policy", 1) < 1;
+
+   // Print out all of the package files
+   if (CmdL.FileList[1] == 0)
+   {
+      std::cout << _("Package files:") << std::endl;
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
+      {
+	 if (F.Flagged(pkgCache::Flag::NoPackages))
+	    continue;
+	 // Locate the associated index files so we can derive a description
+	 pkgIndexFile *Indx;
+	 if (SrcList->FindIndex(F,Indx) == false &&
+	       _system->FindIndex(F,Indx) == false)
+	    return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
+
+	 printf("%4i %s\n",
+	       Plcy->GetPriority(F),Indx->Describe(true).c_str());
+
+	 // Print the reference information for the package
+	 std::string Str = F.RelStr();
+	 if (Str.empty() == false)
+	    printf("     release %s\n",F.RelStr().c_str());
+	 if (F.Site() != 0 && F.Site()[0] != 0)
+	    printf("     origin %s\n",F.Site());
+      }
+
+      // Show any packages have explicit pins
+      std::cout << _("Pinned packages:") << std::endl;
+      pkgCache::PkgIterator I = Cache->PkgBegin();
+      for (;I.end() != true; ++I)
+      {
+	 // Old code for debugging
+	 if (OldPolicy)
+	 {
+	    if (Plcy->GetPriority(I) == 0)
+	       continue;
+
+	    // Print the package name and the version we are forcing to
+	    std::cout << "     " << I.FullName(true) << " -> ";
+
+	    pkgCache::VerIterator V = Plcy->GetMatch(I);
+	    if (V.end() == true)
+	       std::cout << _("(not found)") << std::endl;
+	    else
+	       std::cout << V.VerStr() << std::endl;
+
+	    continue;
+	 }
+	 // New code
+	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); V++) {
+	    auto Prio = Plcy->GetPriority(V, false);
+	    if (Prio == 0)
+	       continue;
+
+	    std::cout << "     ";
+	    // Print the package name and the version we are forcing to
+	    ioprintf(std::cout, _("%s -> %s with priority %d\n"), I.FullName(true).c_str(), V.VerStr(), Prio);
+	 }
+      }
+      return true;
+   }
+
+   char const * const msgInstalled = _("  Installed: ");
+   char const * const msgCandidate = _("  Candidate: ");
+   short const InstalledLessCandidate =
+      mbstowcs(NULL, msgInstalled, 0) - mbstowcs(NULL, msgCandidate, 0);
+   short const deepInstalled =
+      (InstalledLessCandidate < 0 ? (InstalledLessCandidate*-1) : 0) - 1;
+   short const deepCandidate =
+      (InstalledLessCandidate > 0 ? (InstalledLessCandidate) : 0) - 1;
+
+   // Print out detailed information for each package
+   APT::CacheSetHelper helper(true, GlobalError::NOTICE);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
+      std::cout << Pkg.FullName(true) << ":" << std::endl;
+
+      // Installed version
+      std::cout << msgInstalled << OutputInDepth(deepInstalled, " ");
+      if (Pkg->CurrentVer == 0)
+	 std::cout << _("(none)") << std::endl;
+      else
+	 std::cout << Pkg.CurrentVer().VerStr() << std::endl;
+
+      // Candidate Version 
+      std::cout << msgCandidate << OutputInDepth(deepCandidate, " ");
+      pkgCache::VerIterator V = Plcy->GetCandidateVer(Pkg);
+      if (V.end() == true)
+	 std::cout << _("(none)") << std::endl;
+      else
+	 std::cout << V.VerStr() << std::endl;
+
+      // Pinned version
+      if (OldPolicy && Plcy->GetPriority(Pkg) != 0)
+      {
+	 std::cout << _("  Package pin: ");
+	 V = Plcy->GetMatch(Pkg);
+	 if (V.end() == true)
+	    std::cout << _("(not found)") << std::endl;
+	 else
+	    std::cout << V.VerStr() << std::endl;
+      }
+
+      // Show the priority tables
+      std::cout << _("  Version table:") << std::endl;
+      for (V = Pkg.VersionList(); V.end() == false; ++V)
+      {
+	 if (Pkg.CurrentVer() == V)
+	    std::cout << " *** " << V.VerStr();
+	 else
+	    std::cout << "     " << V.VerStr();
+	 if (_config->FindI("APT::Policy", 1) < 1)
+	    std::cout << " " << Plcy->GetPriority(Pkg) << std::endl;
+	 else
+	    std::cout << " " << Plcy->GetPriority(V) << std::endl;
+	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
+	 {
+	    // Locate the associated index files so we can derive a description
+	    pkgIndexFile *Indx;
+	    if (SrcList->FindIndex(VF.File(),Indx) == false &&
+		  _system->FindIndex(VF.File(),Indx) == false)
+	       return _error->Error(_("Cache is out of sync, can't x-ref a package file"));
+	    printf("       %4i %s\n",Plcy->GetPriority(VF.File()),
+		  Indx->Describe(true).c_str());
+	 }
+      }
+   }
    return true;
 }
 									/*}}}*/

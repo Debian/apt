@@ -29,6 +29,9 @@
 #include <apt-private/private-show.h>
 #include <apt-private/private-main.h>
 #include <apt-private/private-sources.h>
+#include <apt-private/private-source.h>
+#include <apt-private/private-depends.h>
+#include <apt-private/private-download.h>
 
 #include <unistd.h>
 #include <iostream>
@@ -67,11 +70,25 @@ std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
       {"update", &DoUpdate, _("update list of available packages")},
       {"upgrade", &DoUpgrade, _("upgrade the system by installing/upgrading packages")},
       {"full-upgrade", &DoDistUpgrade, _("upgrade the system by removing/installing/upgrading packages")},
-      {"dist-upgrade", &DoDistUpgrade, nullptr}, // for compat with muscle memory
 
       // misc
       {"edit-sources", &EditSources, _("edit the source information file")},
       {"moo", &DoMoo, nullptr},
+
+      // for compat with muscle memory
+      {"dist-upgrade", &DoDistUpgrade, nullptr},
+      {"showsrc",&ShowSrcPackage, nullptr},
+      {"depends",&Depends, nullptr},
+      {"rdepends",&RDepends, nullptr},
+      {"policy",&Policy, nullptr},
+      {"build-dep", &DoBuildDep,nullptr},
+      {"clean", &DoClean, nullptr},
+      {"autoclean", &DoAutoClean, nullptr},
+      {"auto-clean", &DoAutoClean, nullptr},
+      {"source", &DoSource, nullptr},
+      {"download", &DoDownload, nullptr},
+      {"changelog", &DoChangelog, nullptr},
+
       {nullptr, nullptr, nullptr}
    };
 }
