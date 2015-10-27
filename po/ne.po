@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -171,6 +171,36 @@ msgstr "प्याकेज %s स्थापना भएन, त्यस�
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "द्रष्टब्य, %s को सट्टा  %s चयन भइरहेछ\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "APT संग सुपर काउ शक्तिहरू छ ।"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "कुनै प्याकेजहरू फेला परेन"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "चेतावनी: निम्न प्याकलेजहरू प्रणाणीकरण हुन सक्दैन! "
@@ -215,6 +245,10 @@ msgstr " %s मा खाली ठाऊँ निर्धारण गर्�
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "तपाईँ संग %s मा पर्याप्त खाली ठाऊँ छैन ।"
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "डाउनलोड डाइरेक्ट्री ताल्चा मार्न असक्षम"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -312,7 +346,7 @@ msgstr "के तपाईँ निरन्तरता दिन चाह�
 msgid "Some files failed to download"
 msgstr "केही फाइलहरू डाउनलोड गर्न असफल भयो"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "डाउनलोड समाप्त भयो र डाउनलोडमा मोड मात्रै छ"
 
@@ -692,9 +726,231 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "कुनै प्याकेजहरू फेला परेन"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "प्याकेज %s तोक्न असक्षम भयो"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "प्याकेज फाइलहरू:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "क्यास sync  भन्दा बाहिर छ, प्याकेज फाइल x-ref गर्न सक्दैन"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "पिन गरिएका प्याकेजहरू:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(फेला परेन)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  स्थापना भयो:"
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  उमेद्वार:"
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(कुनै पनि होइन)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "प्याकेज पिन:"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  संस्करण तालिका:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "प्याकेज फेला पार्न सकिएन  %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "प्याकेज फेला पार्न सकिएन  %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "प्याकेज फेला पार्न सकिएन  %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "स्रोत प्याकेज सूची %s स्थिर गर्न सकिएन "
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "को लागि स्रोत तान्न कम्तिमा एउटा प्याकेज निर्दिष्ट गर्नुपर्छ"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "%s को लागि स्रोत प्याकेज फेला पार्न असफल भयो"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "पहिल्यै डाउनलोड भएका फाइलहरु फड्काइदैछ '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "स्रोत संग्रहहरुको %sB/%sB प्राप्त गर्न आवश्यक छ ।\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "स्रोत संग्रहहरुको %sB प्राप्त गर्न आवश्यक छ ।\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "स्रोत फड्काउनुहोस् %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "केही संग्रह फड्काउन असफल भयो ।"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr " %s मा पहिल्यै अनप्याक गरिएका स्रोतको अनप्याक फड्काइदैछ\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "अनप्याक आदेश '%s' असफल भयो ।\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "जाँच्नुहोस् यदि 'dpkg-dev' प्याकेज स्थापना भयो ।\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "निर्माण आदेश '%s' असफल भयो ।\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "को लागि builddeps जाँच्न कम्तिमा एउटा प्याकेज निर्दष्ट गर्नुपर्छ"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "निर्माण निर्भरताहरू प्रक्रिया गर्न असफल"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "%s को लागि निर्माण-निर्भरता सूचना प्राप्त गर्न असक्षम भयो"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s कुनै निर्माणमा आधारित हुदैन ।\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "%s को लागि %s निर्भरता सन्तुष्ट पार्न असफल भयो: स्थापित प्याकेज %s अति नयाँ छ"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"%sको लागि %s निर्भरता सन्तुष्ट हुन सकेन किन भने प्याकेज %s को कुनै उपलब्ध संस्करणले संस्करण "
+"आवश्यकताहरुलाई सन्तुष्ट पार्न सकेन "
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "%s को लागि %s निर्भरता सन्तुष्ट गर्न असफल: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "%s को लागि निर्माण निर्भरताहरू सन्तुष्ट गर्न सकिएन । "
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "निर्माण निर्भरताहरू प्रक्रिया गर्न असफल"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -803,99 +1059,18 @@ msgstr "को लागि कूल खाली ठाऊँ लेखां�
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "प्याकेज %s तोक्न असक्षम भयो"
-
 #: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "प्याकेज फाइलहरू:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "क्यास sync  भन्दा बाहिर छ, प्याकेज फाइल x-ref गर्न सक्दैन"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "पिन गरिएका प्याकेजहरू:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(फेला परेन)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  स्थापना भयो:"
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  उमेद्वार:"
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(कुनै पनि होइन)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "प्याकेज पिन:"
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  संस्करण तालिका:"
-
-#: cmdline/apt-cache.cc
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"उपयोग: apt-cache [विकल्पहरू] आदेश\n"
-"       apt-cache [विकल्पहरू] फाइल १ थप्नुहोस् [फाइल २ ...]\n"
-"       apt-cache [विकल्पहरू] pkg pkg1 देखाउनुहोस् [pkg2 ...]\n"
-"       apt-cache [विकल्पहरू] src pkg1 देखाउनुहोस् [pkg2 ...]\n"
-"\n"
-"तिनीहरुबाट APT's बिनारी क्यास फाइलहरू, र क्वेरी सूचना मिलाउन प्रयोग गरिने apt-cache "
-"कम-स्तरको उपकरण हो\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"विकल्पहरू:\n"
-"  -h   यो मद्दत पाठ ।\n"
-"  -p=? प्याकेज क्यास ।\n"
-"  -s=? स्रोत क्यास ।\n"
-"  -q   प्रगति सूचक अक्षम गर्नुहोस् ।\n"
-"  -i   नभेटिएको आदेशको लागि महत्वपूर्ण deps देखाउनुहोस् ।\n"
-"  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
-"  -o=? एउटा स्वेच्छाचारी कनफिगरेसन फाइल सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
-"धेरै जानकारीकोप लागि apt-cache(8) र apt.conf(5) म्यानुल पृष्टहरू हेर्नुहोस्  ।\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -929,7 +1104,11 @@ msgstr "नीति सेटिङ्गहरू देखाउनुहो�
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -976,7 +1155,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1014,24 +1192,9 @@ msgstr "तपाईँको सेटमा बाँकी सि डि ह�
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
 
 #: cmdline/apt-config.cc
@@ -1042,23 +1205,9 @@ msgstr "तर्कहरू जोडामा छैन"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"उपयग: apt-config [विकल्पहरू] आदेश\n"
-"\n"
-" APT कनफिग फाइल पढ्नको लागि apt-config साधारण उपकरण हो\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"विकल्पहरू:\n"
-"  -h   यो मद्दत पाठ ।\n"
-"  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
-"  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1066,31 +1215,6 @@ msgstr ""
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "प्याकेज फेला पार्न सकिएन  %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "प्याकेज फेला पार्न सकिएन  %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "प्याकेज फेला पार्न सकिएन  %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "स्रोत प्याकेज सूची %s स्थिर गर्न सकिएन "
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
 msgstr ""
 
 #: cmdline/apt-get.cc
@@ -1114,174 +1238,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "आन्तरिक त्रुटि,समस्या हलकर्ताले उत्तम गुण भाँच्यो "
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "डाउनलोड डाइरेक्ट्री ताल्चा मार्न असक्षम"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "को लागि स्रोत तान्न कम्तिमा एउटा प्याकेज निर्दिष्ट गर्नुपर्छ"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "%s को लागि स्रोत प्याकेज फेला पार्न असफल भयो"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "पहिल्यै डाउनलोड भएका फाइलहरु फड्काइदैछ '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "स्रोत संग्रहहरुको %sB/%sB प्राप्त गर्न आवश्यक छ ।\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "स्रोत संग्रहहरुको %sB प्राप्त गर्न आवश्यक छ ।\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "स्रोत फड्काउनुहोस् %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "केही संग्रह फड्काउन असफल भयो ।"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr " %s मा पहिल्यै अनप्याक गरिएका स्रोतको अनप्याक फड्काइदैछ\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "अनप्याक आदेश '%s' असफल भयो ।\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "जाँच्नुहोस् यदि 'dpkg-dev' प्याकेज स्थापना भयो ।\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "निर्माण आदेश '%s' असफल भयो ।\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "को लागि builddeps जाँच्न कम्तिमा एउटा प्याकेज निर्दष्ट गर्नुपर्छ"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "निर्माण निर्भरताहरू प्रक्रिया गर्न असफल"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "%s को लागि निर्माण-निर्भरता सूचना प्राप्त गर्न असक्षम भयो"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s कुनै निर्माणमा आधारित हुदैन ।\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "%s को लागि %s निर्भरता सन्तुष्ट पार्न असफल भयो: स्थापित प्याकेज %s अति नयाँ छ"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%sको लागि %s निर्भरता सन्तुष्ट हुन सकेन किन भने प्याकेज %s को कुनै उपलब्ध संस्करणले संस्करण "
-"आवश्यकताहरुलाई सन्तुष्ट पार्न सकेन "
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "%s को लागि %s निर्भरता सन्तुष्ट हुन सकेन किनभने प्याकेज %s फेला पार्न सकिएन"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%s को लागि %s निर्भरता सन्तुष्ट गर्न असफल: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s को लागि निर्माण निर्भरताहरू सन्तुष्ट गर्न सकिएन । "
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "निर्माण निर्भरताहरू प्रक्रिया गर्न असफल"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "समर्थित मोड्युलहरू:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "उपयोग: apt-get [विकल्पहरू] आदेश\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1289,44 +1259,6 @@ msgstr ""
 "\n"
 "apt-get डाउनलोड गर्न र प्याकेजहरू स्थापना गर्नको लागि साधारण आदेश लाइन इन्टरफेस हो ।\n"
 "बारम्बार प्रयोग भइरहने आदेशहरू अद्यावधिक र स्थापना हुन् ।\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"विकल्पहरू:\n"
-"  -h  यो मद्दत पाठ.\n"
-"  -q  लगयोग्य निर्गात - कुनै प्रगति सूचि छैन\n"
-"  -qq त्रुटिहरुको लागि निर्गात बाहेक केही छैन\n"
-"  -d  डाउनलोड मात्र - संग्रहहरू स्थापना वा अनप्याक नगर्नुहोस्\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  सबै क्वेरीहरुलाई हो मान्नुहोस् र दूषित नबनाउनुहोस्\n"
-"  -f  यदि पूर्णरुपले जाँच असफल भयो भने निरन्तरता दिने प्रयत्न गर्नुहोस्\n"
-"  -m  यदि संग्रहहरु स्थानियकरण योग्य छैन भने निरन्तरता दिने प्रयत्न दिनुहोस्\n"
-"  -u  स्तर वृद्धि प्याकेजहरुको सूचि राम्रो संग देखाउनुहोस्\n"
-"  -b  यसलाई तानिसके पछि स्रोत प्याकेज निर्माण गर्नुहोस्\n"
-"  -V  भरबोस संस्करण नम्बरहरू देखाउनुहोस्\n"
-"  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
-"  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
-"धेरै सूचना र विकल्पको लागि apt-get(8), sources.list(5) र apt.conf(5) manual\n"
-"pages हेर्नुहोस् ।\n"
-"                       APT संग सुपर काउ शक्तिहरू छ ।\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1407,11 +1339,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1485,20 +1414,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -1990,17 +1908,13 @@ msgid "Merging available information"
 msgstr "उपलब्ध सूचना गाँभिदैछ"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "उपयोग: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2033,13 +1947,7 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "उपयोग: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2060,25 +1968,10 @@ msgstr "अज्ञात प्याकेज रेकर्ड!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"उपयोग: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs प्याकेज फाइलहरू क्रमबद्ध गर्ने साधारण उपकरण हो । -s विकल्प कस्तो खालको "
-"फाइल हो भनी इंकित गर्न प्रयोग गरिन्छ ।\n"
-"\n"
-"विकल्पहरू:\n"
-"  -h   यो मद्दत पाठ\n"
-"  -s   क्रमबद्ध स्रोत फाइल प्रयोग गर्नुहोस्\n"
-"  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
-"  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3781,6 +3674,87 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "स्तर वृद्धि गणना गरिदैछ"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "उपयोग: apt-cache [विकल्पहरू] आदेश\n"
+#~ "       apt-cache [विकल्पहरू] फाइल १ थप्नुहोस् [फाइल २ ...]\n"
+#~ "       apt-cache [विकल्पहरू] pkg pkg1 देखाउनुहोस् [pkg2 ...]\n"
+#~ "       apt-cache [विकल्पहरू] src pkg1 देखाउनुहोस् [pkg2 ...]\n"
+#~ "\n"
+#~ "तिनीहरुबाट APT's बिनारी क्यास फाइलहरू, र क्वेरी सूचना मिलाउन प्रयोग गरिने apt-"
+#~ "cache कम-स्तरको उपकरण हो\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "विकल्पहरू:\n"
+#~ "  -h   यो मद्दत पाठ ।\n"
+#~ "  -p=? प्याकेज क्यास ।\n"
+#~ "  -s=? स्रोत क्यास ।\n"
+#~ "  -q   प्रगति सूचक अक्षम गर्नुहोस् ।\n"
+#~ "  -i   नभेटिएको आदेशको लागि महत्वपूर्ण deps देखाउनुहोस् ।\n"
+#~ "  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
+#~ "  -o=? एउटा स्वेच्छाचारी कनफिगरेसन फाइल सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
+#~ "धेरै जानकारीकोप लागि apt-cache(8) र apt.conf(5) म्यानुल पृष्टहरू हेर्नुहोस्  ।\n"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "उपयग: apt-config [विकल्पहरू] आदेश\n"
+#~ "\n"
+#~ " APT कनफिग फाइल पढ्नको लागि apt-config साधारण उपकरण हो\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "विकल्पहरू:\n"
+#~ "  -h   यो मद्दत पाठ ।\n"
+#~ "  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
+#~ "  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "उपयोग: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs प्याकेज फाइलहरू क्रमबद्ध गर्ने साधारण उपकरण हो । -s विकल्प कस्तो "
+#~ "खालको फाइल हो भनी इंकित गर्न प्रयोग गरिन्छ ।\n"
+#~ "\n"
+#~ "विकल्पहरू:\n"
+#~ "  -h   यो मद्दत पाठ\n"
+#~ "  -s   क्रमबद्ध स्रोत फाइल प्रयोग गर्नुहोस्\n"
+#~ "  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
+#~ "  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "शाखा प्रक्रिया असफल भयो"

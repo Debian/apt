@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -172,6 +172,36 @@ msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Huomautus, valitaan %s eikä %s\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Yhtään pakettia ei löytynyt"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VAROITUS: Seuraavian pakettien alkuperää ei voi varmistaa!"
@@ -215,6 +245,10 @@ msgstr "Kansion %s vapaan tilan määrä ei selvinnyt"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Noutokansiota ei saatu lukittua"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -313,7 +347,7 @@ msgstr "Haluatko jatkaa?"
 msgid "Some files failed to download"
 msgstr "Joidenkin tiedostojen nouto ei onnistunut"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Nouto on valmis ja määrätty vain nouto"
 
@@ -701,9 +735,237 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Yhtään pakettia ei löytynyt"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Pakettia %s ei löydy"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Pakettitiedostot:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Varasto ei ole ajan tasalla, pakettitiedostoa ei löydy kansiosta"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Paketit joissa tunniste:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(ei löydy)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Asennettu: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Ehdokas: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(ei mitään)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Paketin tunnistenumero: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Versiotaulukko:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Pakettia %s ei löytynyt"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Pakettia %s ei löytynyt"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Pakettia %s ei löytynyt"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "stat ei toiminut lähdepakettiluettelolle %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Ohitetaan jo noudettu tiedosto \"%s\"\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "On noudettava %st/%st lähdekoodiarkistoja.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "On noudettava %st lähdekoodiarkistoja.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Nouda lähdekoodi %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Joidenkin arkistojen noutaminen ei onnistunut."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Purkukomento \"%s\" ei onnistunut.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Paketille %s ei ole saatavilla riippuvuustietoja"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "Paketille %s ei ole määritetty paketointiriippuvuuksia.\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
+"uusi"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
+"ei vastaa versioriippuvuuksia"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -810,96 +1072,18 @@ msgstr "Käytetty tila yhteensä: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Pakettia %s ei löydy"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Pakettitiedostot:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Varasto ei ole ajan tasalla, pakettitiedostoa ei löydy kansiosta"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Paketit joissa tunniste:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(ei löydy)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Asennettu: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Ehdokas: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(ei mitään)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Paketin tunnistenumero: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Versiotaulukko:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Käyttö : apt-cache [valitsimet] komento\n"
-"         apt-cache [valitsimet] show pkt1 [pkt2 ...]\n"
-"\n"
-"apt-cache on alemman tason työkalu APT:n konekielisten\n"
-"välimuistitiedostojen käsittelyyn ja tutkimiseen\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Valitsimet:\n"
-"  -h   Tämä ohje\n"
-"  -p=? Pakettivarasto\n"
-"  -s=? Lähdevälimuisti\n"
-"  -q   Poista edistymisen ilmaisin\n"
-"  -i   Näytä vain tärkeät riippuvuudet unmet-komennossa\n"
-"  -c=? Lue tämä asetustiedosto\n"
-"  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
-"Lisätietoja apt-cache(8) ja apt.conf(5) käsikirjasivuilla.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -933,7 +1117,11 @@ msgstr "Näytä mistä asennuspaketteja haetaan"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -979,7 +1167,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1017,24 +1204,9 @@ msgstr "Toista tämä lopuille rompuille kasassasi."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
 
 #: cmdline/apt-config.cc
@@ -1045,23 +1217,9 @@ msgstr "Parametrit eivät ole pareittain"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Käyttö: apt-config [valitsimet] komento\n"
-"\n"
-"apt-config on yksinkertainen työkalu APT:n asetustiedoston lukemiseen\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Valitsimet:\n"
-"  -h   Tämä ohje\n"
-"  -c=? Lue tämä asetustiedosto\n"
-"  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1069,31 +1227,6 @@ msgstr ""
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Pakettia %s ei löytynyt"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Pakettia %s ei löytynyt"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Pakettia %s ei löytynyt"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "stat ei toiminut lähdepakettiluettelolle %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
 msgstr ""
 
 #: cmdline/apt-get.cc
@@ -1117,180 +1250,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Sisäinen virhe, resolver rikkoi jotain"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Noutokansiota ei saatu lukittua"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Ohitetaan jo noudettu tiedosto \"%s\"\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "On noudettava %st/%st lähdekoodiarkistoja.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "On noudettava %st lähdekoodiarkistoja.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Nouda lähdekoodi %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Joidenkin arkistojen noutaminen ei onnistunut."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Purkukomento \"%s\" ei onnistunut.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Paketille %s ei ole saatavilla riippuvuustietoja"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "Paketille %s ei ole määritetty paketointiriippuvuuksia.\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
-"uusi"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
-"ei vastaa versioriippuvuuksia"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Tuetut moduulit:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Käyttö: apt-get [valitsimet] komento\n"
 "       apt-get [valitsimet] install|remove pkt1 [pkt2 ...]\n"
@@ -1299,44 +1272,6 @@ msgstr ""
 "apt-get on yksinkertainen komentorivityökalu pakettien noutamiseen\n"
 "ja asentamiseen. Useimmiten käytetyt komennot ovat update ja \n"
 "install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Valitsimet:\n"
-"  -h  Tämä ohje\n"
-"  -q  Lokiin sopiva tulostus - edistymisen ilmaisin jätetään pois\n"
-"  -qq Ei lainkaan tulostusta paitsi virheistä\n"
-"  -d  Vain nouto - paketteja EI asenneta tai pureta\n"
-"  -s  Älä tee mitään. Oikean toiminnan simulaatio\n"
-"  -y  Vastataan Kyllä kaikkiin kysymyksiin eikä kehoitetta näytetä\n"
-"  -f  Yritä jatkaa jos eheystarkastus löysi virheen\n"
-"  -m  Yritä jatkaa jos arkistojen sijainti ei selviä\n"
-"  -u  Näytä luettelo myös päivitetyistä paketeista\n"
-"  -b  Käännä lähdekoodipaketti noudon jälkeen\n"
-"  -V  Näytä pitkät versionumerot\n"
-"  -c=? Lue tämä asetustiedosto\n"
-"  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
-"Katso apt-get(8), sources.list(5) ja apt.conf(5) käsikirjasivuilta\n"
-"lisätietoja ja lisää valitsimia.\n"
-"                       This APT has Super Cow Powers.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1417,11 +1352,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1495,20 +1427,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -2005,17 +1926,13 @@ msgid "Merging available information"
 msgstr "Yhdistetään saatavuustiedot"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Käyttö: apt-extracttemplates tdsto1 [tdsto2 ...]\n"
 "\n"
@@ -2048,13 +1965,7 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Käyttö: apt-extracttemplates tdsto1 [tdsto2 ...]\n"
 "\n"
@@ -2075,25 +1986,10 @@ msgstr "Tuntematon pakettitietue!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Käyttö: apt-sortpkgs [valitsimet] tdsto1 [tdsto2 ...]\n"
-"\n"
-"apt-sortpkgs on yksinkertainen työkalu pakettitiedostojen lajitteluun.\n"
-"Valitsimella -s ilmaistaan minkälainen tiedosto on.\n"
-"\n"
-"Valitsimet:\n"
-"  -h   Tämä ohje\n"
-"  -s   Käytä lähdetiedostolajittelua\n"
-"  -c=? Lue tämä asetustiedosto\n"
-"  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3802,6 +3698,121 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Käsitellään päivitystä"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Käyttö : apt-cache [valitsimet] komento\n"
+#~ "         apt-cache [valitsimet] show pkt1 [pkt2 ...]\n"
+#~ "\n"
+#~ "apt-cache on alemman tason työkalu APT:n konekielisten\n"
+#~ "välimuistitiedostojen käsittelyyn ja tutkimiseen\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Valitsimet:\n"
+#~ "  -h   Tämä ohje\n"
+#~ "  -p=? Pakettivarasto\n"
+#~ "  -s=? Lähdevälimuisti\n"
+#~ "  -q   Poista edistymisen ilmaisin\n"
+#~ "  -i   Näytä vain tärkeät riippuvuudet unmet-komennossa\n"
+#~ "  -c=? Lue tämä asetustiedosto\n"
+#~ "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
+#~ "Lisätietoja apt-cache(8) ja apt.conf(5) käsikirjasivuilla.\n"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Käyttö: apt-config [valitsimet] komento\n"
+#~ "\n"
+#~ "apt-config on yksinkertainen työkalu APT:n asetustiedoston lukemiseen\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Valitsimet:\n"
+#~ "  -h   Tämä ohje\n"
+#~ "  -c=? Lue tämä asetustiedosto\n"
+#~ "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -d  Download only - do NOT install or unpack archives\n"
+#~ "  -s  No-act. Perform ordering simulation\n"
+#~ "  -y  Assume Yes to all queries and do not prompt\n"
+#~ "  -f  Attempt to correct a system with broken dependencies in place\n"
+#~ "  -m  Attempt to continue if archives are unlocatable\n"
+#~ "  -u  Show a list of upgraded packages as well\n"
+#~ "  -b  Build the source package after fetching it\n"
+#~ "  -V  Show verbose version numbers\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+#~ "pages for more information and options.\n"
+#~ "                       This APT has Super Cow Powers.\n"
+#~ msgstr ""
+#~ "Valitsimet:\n"
+#~ "  -h  Tämä ohje\n"
+#~ "  -q  Lokiin sopiva tulostus - edistymisen ilmaisin jätetään pois\n"
+#~ "  -qq Ei lainkaan tulostusta paitsi virheistä\n"
+#~ "  -d  Vain nouto - paketteja EI asenneta tai pureta\n"
+#~ "  -s  Älä tee mitään. Oikean toiminnan simulaatio\n"
+#~ "  -y  Vastataan Kyllä kaikkiin kysymyksiin eikä kehoitetta näytetä\n"
+#~ "  -f  Yritä jatkaa jos eheystarkastus löysi virheen\n"
+#~ "  -m  Yritä jatkaa jos arkistojen sijainti ei selviä\n"
+#~ "  -u  Näytä luettelo myös päivitetyistä paketeista\n"
+#~ "  -b  Käännä lähdekoodipaketti noudon jälkeen\n"
+#~ "  -V  Näytä pitkät versionumerot\n"
+#~ "  -c=? Lue tämä asetustiedosto\n"
+#~ "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
+#~ "Katso apt-get(8), sources.list(5) ja apt.conf(5) käsikirjasivuilta\n"
+#~ "lisätietoja ja lisää valitsimia.\n"
+#~ "                       This APT has Super Cow Powers.\n"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Käyttö: apt-sortpkgs [valitsimet] tdsto1 [tdsto2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs on yksinkertainen työkalu pakettitiedostojen lajitteluun.\n"
+#~ "Valitsimella -s ilmaistaan minkälainen tiedosto on.\n"
+#~ "\n"
+#~ "Valitsimet:\n"
+#~ "  -h   Tämä ohje\n"
+#~ "  -s   Käytä lähdetiedostolajittelua\n"
+#~ "  -c=? Lue tämä asetustiedosto\n"
+#~ "  -o=? Aseta mikä asetusvalitsin tahansa, esim. -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Lapsiprosessi kaatui"

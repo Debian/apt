@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -174,6 +174,36 @@ msgstr "パッケージ '%s' はインストールされていないため、削
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "'%2$s' の代わりに '%1$s' をソースパッケージとして選出しています\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "この APT は Super Cow Powers 化されています。"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "この APT helper は Super Meep Powers 化されています。"
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "パッケージが見つかりません"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "警告: 以下のパッケージは認証されていません!"
@@ -217,6 +247,10 @@ msgstr "%s の空き領域を測定できません"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "%s に充分な空きスペースがありません。"
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "ダウンロードディレクトリをロックできません"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -314,7 +348,7 @@ msgstr "続行しますか?"
 msgid "Some files failed to download"
 msgstr "いくつかのファイルの取得に失敗しました"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "ダウンロードオンリーモードでパッケージのダウンロードが完了しました"
 
@@ -701,9 +735,251 @@ msgstr[0] ""
 msgid "not a real package (virtual)"
 msgstr "実際のパッケージではありません (仮想)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "パッケージが見つかりません"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "パッケージ %s が見つかりません"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "パッケージファイル:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "キャッシュが同期しておらず、パッケージファイルを相互参照できません"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Pin されたパッケージ:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(見つかりません)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  インストールされているバージョン: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  候補: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(なし)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  パッケージ Pin: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  バージョンテーブル:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "アーキテクチャ '%s' 用のパッケージは見つかりませんでした"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "パッケージ '%s' のバージョン '%s' は見つかりませんでした"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "リリース '%2$s' にはパッケージ '%1$s' は見つかりませんでした"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "'%2$s' の代わりに '%1$s' をソースパッケージとして選出しています\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "パッケージ '%2$s' のバージョン '%1$s' は見つかりませんでした"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"ソースを取得するには少なくとも 1 つのパッケージ名を指定する必要があります"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "%s のソースパッケージが見つかりません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"注意: '%s' パッケージは以下の場所の '%s' バージョン制御システムで保守されてい"
+"ます:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"パッケージの最新の (まだリリースされていないかもしれない) 更新を取得するに"
+"は、\n"
+"%s\n"
+"を使用してください。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "すでにダウンロードされたファイル '%s' をスキップします\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "%2$sB 中 %1$sB のソースアーカイブを取得する必要があります。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "%sB のソースアーカイブを取得する必要があります。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "ソース %s を取得\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "いくつかのアーカイブの取得に失敗しました。"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "すでに %s に展開されたソースがあるため、展開をスキップします\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "展開コマンド '%s' が失敗しました。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr ""
+"'dpkg-dev' パッケージがインストールされていることを確認してください。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "ビルドコマンド '%s' が失敗しました。\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"ビルド依存関係をチェックするパッケージを少なくとも 1 つ指定する必要があります"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"%s に利用可能なアーキテクチャ情報がありません。セットアップのために apt."
+"conf(5) の APT::Architectures を参照してください。"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "ビルド依存関係の処理に失敗しました"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "%s のビルド依存情報を取得できません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s にはビルド依存情報が指定されていません。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"パッケージ %3$s が '%4$s' パッケージで許されていないため、%2$s に対する %1$s "
+"の依存関係を満たすことができません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすこと"
+"ができません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッ"
+"ケージは新しすぎます"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"パッケージ %3$s の候補バージョンはバージョンについての要求を満たせないた"
+"め、%2$s に対する %1$s の依存関係を満たすことができません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"パッケージ %3$s の候補バージョンが存在しないため、%2$s に対する %1$s の依存関"
+"係を満たすことができません"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "%s のビルド依存関係を満たすことができませんでした。"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "ビルド依存関係の処理に失敗しました"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -812,96 +1088,18 @@ msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 "このコマンドは時代遅れです。'apt-mark showauto' を代わりに使用してください。"
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "パッケージ %s が見つかりません"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "パッケージファイル:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "キャッシュが同期しておらず、パッケージファイルを相互参照できません"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Pin されたパッケージ:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(見つかりません)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  インストールされているバージョン: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  候補: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(なし)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  パッケージ Pin: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  バージョンテーブル:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"使用方法: apt-cache [オプション] コマンド\n"
-"          apt-cache [オプション] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache は APT のバイナリキャッシュファイルを操作したり、そこから情\n"
-"報を検索したりするための低レベルのツールです\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "コマンド:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"オプション:\n"
-"  -h   このヘルプを表示する\n"
-"  -p=? パッケージキャッシュ\n"
-"  -s=? ソースキャッシュ\n"
-"  -q   プログレス表示をしない\n"
-"  -i   umnet コマンドで重要な依存情報のみを表示する\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを読み込む (例: -o dir::cache=/tmp)\n"
-"詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してください。\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -935,11 +1133,12 @@ msgstr "ポリシー設定情報を表示する"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"使用法: apt [オプション] コマンド\n"
-"\n"
-"apt 用コマンドラインインターフェイス\n"
 
 #. query
 #: cmdline/apt.cc
@@ -980,7 +1179,6 @@ msgstr "パッケージをインストール/更新してシステムをアッ�
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "パッケージを削除/インストール/更新してシステムをアップグレード"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1023,36 +1221,10 @@ msgstr ""
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"オプション:\n"
-"  -h  このヘルプを表示する\n"
-"  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-"  -qq エラー以外は表示しない\n"
-"  -s  実際には実行しない。実行シミュレーションのみ行う\n"
-"  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
-"さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を参"
-"照してください。"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1062,23 +1234,9 @@ msgstr "引数がペアではありません"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"使用方法: apt-config [オプション] コマンド\n"
-"\n"
-"apt-config は APT の設定ファイルを読み込むための簡単なツールです\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"オプション:\n"
-"  -h   このヘルプを表示する\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1087,31 +1245,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "アーキテクチャ '%s' 用のパッケージは見つかりませんでした"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "パッケージ '%s' のバージョン '%s' は見つかりませんでした"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "リリース '%2$s' にはパッケージ '%1$s' は見つかりませんでした"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "'%2$s' の代わりに '%1$s' をソースパッケージとして選出しています\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "パッケージ '%2$s' のバージョン '%1$s' は見つかりませんでした"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1136,194 +1269,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "内部エラー、問題リゾルバが何かを破壊しました"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "ダウンロードディレクトリをロックできません"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"ソースを取得するには少なくとも 1 つのパッケージ名を指定する必要があります"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "%s のソースパッケージが見つかりません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"注意: '%s' パッケージは以下の場所の '%s' バージョン制御システムで保守されてい"
-"ます:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"パッケージの最新の (まだリリースされていないかもしれない) 更新を取得するに"
-"は、\n"
-"%s\n"
-"を使用してください。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "すでにダウンロードされたファイル '%s' をスキップします\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "%2$sB 中 %1$sB のソースアーカイブを取得する必要があります。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "%sB のソースアーカイブを取得する必要があります。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "ソース %s を取得\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "いくつかのアーカイブの取得に失敗しました。"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "すでに %s に展開されたソースがあるため、展開をスキップします\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "展開コマンド '%s' が失敗しました。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr ""
-"'dpkg-dev' パッケージがインストールされていることを確認してください。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "ビルドコマンド '%s' が失敗しました。\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"ビルド依存関係をチェックするパッケージを少なくとも 1 つ指定する必要があります"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"%s に利用可能なアーキテクチャ情報がありません。セットアップのために apt."
-"conf(5) の APT::Architectures を参照してください。"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "ビルド依存関係の処理に失敗しました"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "%s のビルド依存情報を取得できません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s にはビルド依存情報が指定されていません。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"パッケージ %3$s が '%4$s' パッケージで許されていないため、%2$s に対する %1$s "
-"の依存関係を満たすことができません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすこと"
-"ができません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッ"
-"ケージは新しすぎます"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"パッケージ %3$s の候補バージョンはバージョンについての要求を満たせないた"
-"め、%2$s に対する %1$s の依存関係を満たすことができません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"パッケージ %3$s の候補バージョンが存在しないため、%2$s に対する %1$s の依存関"
-"係を満たすことができません"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s のビルド依存関係を満たすことができませんでした。"
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "ビルド依存関係の処理に失敗しました"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "使用法: apt-get [オプション] コマンド\n"
 "        apt-get [オプション] install|remove パッケージ名1 [パッケージ名"
@@ -1333,44 +1292,6 @@ msgstr ""
 "apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
 "ンドラインインタフェースです。もっともよく使われるコマンドは、update \n"
 "と install です。\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"オプション:\n"
-"  -h  このヘルプを表示する\n"
-"  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-"  -qq エラー以外は表示しない\n"
-"  -d  ダウンロードのみ行う - アーカイブのインストールや展開は行わない\n"
-"  -s  実際には実行しない。実行シミュレーションのみ行う\n"
-"  -y  すべての問い合わせに Yes で答え、プロンプトは返さない\n"
-"  -f  整合性チェックで失敗しても処理を続行する\n"
-"  -m  アーカイブが存在しない場合も続行する\n"
-"  -u  アップグレードされるパッケージも表示する\n"
-"  -b  ソースパッケージを取得し、ビルドを行う\n"
-"  -V  冗長なバージョンナンバを表示する\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
-"さらなる情報やオプションについては、マニュアルページ\n"
-"apt-get(8)、sources.list(5)、apt.conf(5) を参照してください。\n"
-"                        この APT は Super Cow Powers 化されています。\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1448,20 +1369,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "使用法: apt-helper [オプション] コマンド\n"
 "        apt-helper [オプション] download-file uri 目標パス\n"
 "\n"
 "apt-helper は apt の内部ヘルパーです\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "この APT helper は Super Meep Powers 化されています。"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1530,39 +1449,19 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Usage: apt-mark [オプション] {auto|manual} パッケージ1 [パッケージ2 ...]\n"
 "\n"
 "apt-mark は、パッケージを手動または自動でインストールされたものとしてマーク\n"
 "する簡単なコマンドラインインターフェイスです。マークの一覧表示もできます。\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"オプション:\n"
-"  -h  このヘルプを表示する\n"
-"  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-"  -qq エラー以外は表示しない\n"
-"  -s  実際には実行しない。実行シミュレーションのみ行う\n"
-"  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
-"さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を参"
-"照してください。"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2048,17 +1947,13 @@ msgid "Merging available information"
 msgstr "入手可能情報をマージしています"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "使用方法: apt-extracttemplates ファイル名1 [ファイル名2 ...]\n"
 "\n"
@@ -2087,17 +1982,12 @@ msgstr ""
 "debconf のバージョンを取得できません。debconf はインストールされていますか?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "使用方法: apt-internal-solver\n"
 "\n"
@@ -2118,25 +2008,10 @@ msgstr "不明なパッケージレコードです!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"使用方法: apt-sortpkgs [オプション] ファイル名1 [ファイル名2 ...]\n"
-"\n"
-"apt-sortpkgs はパッケージファイルをソートするための簡単なツールです。\n"
-"-s オプションはファイルの種類を示すために使用されます。\n"
-"\n"
-"オプション:\n"
-"  -h   このヘルプを表示する\n"
-"  -s   ソースファイルソートを使用する\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3887,6 +3762,144 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "アップグレードパッケージを検出しています"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "使用方法: apt-cache [オプション] コマンド\n"
+#~ "          apt-cache [オプション] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache は APT のバイナリキャッシュファイルを操作したり、そこから情\n"
+#~ "報を検索したりするための低レベルのツールです\n"
+
+#~ msgid "Commands:"
+#~ msgstr "コマンド:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "オプション:\n"
+#~ "  -h   このヘルプを表示する\n"
+#~ "  -p=? パッケージキャッシュ\n"
+#~ "  -s=? ソースキャッシュ\n"
+#~ "  -q   プログレス表示をしない\n"
+#~ "  -i   umnet コマンドで重要な依存情報のみを表示する\n"
+#~ "  -c=? 指定した設定ファイルを読み込む\n"
+#~ "  -o=? 指定した設定オプションを読み込む (例: -o dir::cache=/tmp)\n"
+#~ "詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してくださ"
+#~ "い。\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "使用法: apt [オプション] コマンド\n"
+#~ "\n"
+#~ "apt 用コマンドラインインターフェイス\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "オプション:\n"
+#~ "  -h  このヘルプを表示する\n"
+#~ "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
+#~ "  -qq エラー以外は表示しない\n"
+#~ "  -s  実際には実行しない。実行シミュレーションのみ行う\n"
+#~ "  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
+#~ "  -c=? 指定した設定ファイルを読み込む\n"
+#~ "  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
+#~ "さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を"
+#~ "参照してください。"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "使用方法: apt-config [オプション] コマンド\n"
+#~ "\n"
+#~ "apt-config は APT の設定ファイルを読み込むための簡単なツールです\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "オプション:\n"
+#~ "  -h   このヘルプを表示する\n"
+#~ "  -c=? 指定した設定ファイルを読み込む\n"
+#~ "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "オプション:\n"
+#~ "  -h  このヘルプを表示する\n"
+#~ "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
+#~ "  -qq エラー以外は表示しない\n"
+#~ "  -s  実際には実行しない。実行シミュレーションのみ行う\n"
+#~ "  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
+#~ "  -c=? 指定した設定ファイルを読み込む\n"
+#~ "  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
+#~ "さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を"
+#~ "参照してください。"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "使用方法: apt-sortpkgs [オプション] ファイル名1 [ファイル名2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs はパッケージファイルをソートするための簡単なツールです。\n"
+#~ "-s オプションはファイルの種類を示すために使用されます。\n"
+#~ "\n"
+#~ "オプション:\n"
+#~ "  -h   このヘルプを表示する\n"
+#~ "  -s   ソースファイルソートを使用する\n"
+#~ "  -c=? 指定した設定ファイルを読み込む\n"
+#~ "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "子プロセスが失敗しました"

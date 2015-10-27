@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -174,6 +174,36 @@ msgstr "Paket '%s' ni nameščen, zato ni bil odstranjen\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Izbiranje '%s' namesto '%s'\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Ta APT ima moči super krav."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Noben paket ni bil najden"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "POZOR: Naslednjih paketov ni bilo mogoče overiti!"
@@ -217,6 +247,10 @@ msgstr "Ni mogoče določiti prostega prostora v %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Na %s je premalo prostora."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Ni mogoče zakleniti mape prejemov"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -315,7 +349,7 @@ msgstr "Ali želite nadaljevati?"
 msgid "Some files failed to download"
 msgstr "Prejem nekaterih datotek ni uspel"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Prejem je dokončan in uporabljen je način samo prejema"
 
@@ -721,9 +755,245 @@ msgstr[3] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Noben paket ni bil najden"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Ni mogoče najti paketa %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Datoteke paketa:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Predpomnilnik ni usklajen, x-ref datoteke paketa ni mogoč"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Pripeti paketi:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(ni najdeno)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Nameščen: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidat: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(brez)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Bucika paketa: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Preglednica različic:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Izbiranje '%s' kot vir paketa namesto '%s'\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Prezri nerazpoložljivo različico '%s' paketa '%s'"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"Potrebno je navesti vsaj en paket, za katerega želite dobiti izvorno kodo"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Izvornega paketa za %s ni mogoče najti"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"OPOMBA: pakiranje '%s' vzdrževano v sistemu nadzora različice '%s' na:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Uporabite:\n"
+"%s\n"
+"za pridobitev zadnjih (morda še neizdanih) posodobitev paketa.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Preskok že prejete datoteke '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Potrebno je dobiti %sB/%sB izvornih arhivov.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Potrebno je dobiti %sB izvornih arhivov.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Dobi vir %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Nekaterih arhivov ni mogoče pridobiti."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Odpakiranje že odpakiranih izvornih paketov v %s je bilo preskočeno\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Ukaz gradnje '%s' ni uspel.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
+"za gradnjo"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Za %s ni bilo mogoče najti podatkov o arhitekturi. Za nastavitev si oglejte "
+"apt.conf(5) APT::Architectures"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Obdelava odvisnosti za gradnjo je spodletela"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Ni mogoče dobiti podrobnosti o odvisnostih za gradnjo za %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s nima odvisnosti za gradnjo.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker %s ni dovoljen na paketih '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Ni mogoče zadostiti %s odvisnosti za %s. Nameščen paket %s je preveč nov"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
+"%s ne more zadostiti zahtev različice"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
+"%s nima različice kandidata"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Ni mogoče zadostiti %s odvisnosti za %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Odvisnosti za gradnjo %s ni bilo mogoče zadostiti."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Obdelava odvisnosti za gradnjo je spodletela"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -831,97 +1101,18 @@ msgstr "Celotna velikost, izračunana za: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Ta ukaz je zastarel. Namesto njega uporabite 'apt-mark showauto'."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Ni mogoče najti paketa %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Datoteke paketa:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Predpomnilnik ni usklajen, x-ref datoteke paketa ni mogoč"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Pripeti paketi:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(ni najdeno)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Nameščen: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidat: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(brez)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Bucika paketa: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Preglednica različic:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Uporaba: apt-cache [možnosti] ukaz\n"
-"       apt-cache [možnosti] show paket1 [paket2 ...]\n"
-"\n"
-"apt-cache je orodje nizke ravni za poizvedbo podatkov\n"
-"iz binarni datotek predpomnilnika APT\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Možnosti:\n"
-"  -h To besedilo pomoči.\n"
-"  -p=? Predpomnilnik paketov.\n"
-"  -s=? Predpomnilnik izvorne kode.\n"
-"  -q Onemogoči kazalnik napredka.\n"
-"  -i Pokaže le pomembne odvisnosti za neujemajoč ukaz.\n"
-"  -c=? Prebere to nastavitveno datoteko\n"
-"  -o=? Nastavi poljubno možnost nastavitve, na primer -o dir::cache=/tmp\n"
-"Za več podrobnosti si oglejte strani priročnikov apt-cache(8) in apt."
-"conf(5).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -955,7 +1146,11 @@ msgstr "Prikaže nastavitve pravil"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -1001,7 +1196,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1038,35 +1232,10 @@ msgstr "Ponovi to opravilo za preostanek CD-jev v vaši zbirki."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Možnosti:\n"
-"  -h To besedilo pomoči.\n"
-"  -q Izhod se beleži - brez kazalnika napredka\n"
-"  -qq Brez izhoda razen napak\n"
-"  -s Ne naredi ničesar. Samo napiše kaj bi bilo narejeno.\n"
-"  -f Prebere/zapiše oznako ročno/samodejno za dano datoteko\n"
-"  -c=? Prebere to nastavitveno datoteko\n"
-"  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/tmp\n"
-"Za več podrobnosti si oglejte strani priročnika apt-mark(8) in apt-conf(5)."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1076,23 +1245,9 @@ msgstr "Argumenti niso v parih"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Uporaba: apt-config [možnosti] ukaz\n"
-"\n"
-"apt-config je preprosto orodje za branje nastavitvene datoteke APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Možnosti:\n"
-"  -h   To besedilo pomoči.\n"
-"  -c=? Prebere podano datoteko z nastavitvami\n"
-"  -o=? Nastavi poljubno nastavitveno možnost, na primer. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1101,31 +1256,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Izbiranje '%s' kot vir paketa namesto '%s'\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Prezri nerazpoložljivo različico '%s' paketa '%s'"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1150,188 +1280,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Notranja napaka, reševalnik težav je pokvaril stvari"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Ni mogoče zakleniti mape prejemov"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Potrebno je navesti vsaj en paket, za katerega želite dobiti izvorno kodo"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Izvornega paketa za %s ni mogoče najti"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"OPOMBA: pakiranje '%s' vzdrževano v sistemu nadzora različice '%s' na:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Uporabite:\n"
-"%s\n"
-"za pridobitev zadnjih (morda še neizdanih) posodobitev paketa.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Preskok že prejete datoteke '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Potrebno je dobiti %sB/%sB izvornih arhivov.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Potrebno je dobiti %sB izvornih arhivov.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Dobi vir %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Nekaterih arhivov ni mogoče pridobiti."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Odpakiranje že odpakiranih izvornih paketov v %s je bilo preskočeno\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Ukaz gradnje '%s' ni uspel.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
-"za gradnjo"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Za %s ni bilo mogoče najti podatkov o arhitekturi. Za nastavitev si oglejte "
-"apt.conf(5) APT::Architectures"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Obdelava odvisnosti za gradnjo je spodletela"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Ni mogoče dobiti podrobnosti o odvisnostih za gradnjo za %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s nima odvisnosti za gradnjo.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"odvisnosti %s za %s ni mogoče zadovoljiti, ker %s ni dovoljen na paketih '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Ni mogoče zadostiti %s odvisnosti za %s. Nameščen paket %s je preveč nov"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
-"%s ne more zadostiti zahtev različice"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
-"%s nima različice kandidata"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Ni mogoče zadostiti %s odvisnosti za %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Odvisnosti za gradnjo %s ni bilo mogoče zadostiti."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Obdelava odvisnosti za gradnjo je spodletela"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Podprti moduli:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Uporaba: apt-get [možnosti] ukaz\n"
 "       apt-get [možnosti] install|remove paket1 [paket2 ...]\n"
@@ -1339,44 +1301,6 @@ msgstr ""
 "\n"
 "apt-get je enostaven vmesnik ukazne vrstice za prejem in nameščanje\n"
 "paketov. Najbolj pogosto uporabljana ukaza sta update in install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Možnosti:\n"
-"  -h To besedilo pomoči.\n"
-"  -q Izhod se beleži - brez kazalnika napredka\n"
-"  -qq Ni izhoda razen napak\n"
-"  -d Le prejmi - NE nameščaj ali odpakiraj arhivov\n"
-"  -s Ne naredi ničesar. Izvedi simulacijo ukaza\n"
-"  -y Predpostavi Da vsem poizvedbam in ne pozivaj\n"
-"  -f Poskusi popraviti sistem s pokvarjenimi odvisnostmi\n"
-"  -m Poskusi nadaljevati, če arhivov ni mogoče najti\n"
-"  -u Pokaži tudi seznam nadgrajenih paketov\n"
-"  -b Po pridobitvi izgradi izvorni paket\n"
-"  -V Pokaži podrobne številke različic\n"
-"  -c=? Preberi to nastavitveno datoteko\n"
-"  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/tmp\n"
-"Za več podrobnosti in možnosti si oglejte strani priročnikov apt-get(8),\n"
-" sources.list(5) in apt.conf(5). \n"
-"                       Ta APT ima moči super krav.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1458,11 +1382,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1532,38 +1453,19 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Uporaba: apt-mark [možnosti] {auto|manual} paket1 [paket2 ...]\n"
 "\n"
 "apt-mark je enostaven vmesnik ukazne vrstice za označevanje paketov\n"
 "kot ročno ali samodejno nameščenih. Oznake lahko tudi izpiše.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Možnosti:\n"
-"  -h To besedilo pomoči.\n"
-"  -q Izhod se beleži - brez kazalnika napredka\n"
-"  -qq Brez izhoda razen napak\n"
-"  -s Ne naredi ničesar. Samo napiše kaj bi bilo narejeno.\n"
-"  -f Prebere/zapiše oznako ročno/samodejno za dano datoteko\n"
-"  -c=? Prebere to nastavitveno datoteko\n"
-"  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/tmp\n"
-"Za več podrobnosti si oglejte strani priročnika apt-mark(8) in apt-conf(5)."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2051,17 +1953,13 @@ msgid "Merging available information"
 msgstr "Združevanje razpoložljivih podaktov"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Uporaba: apt-extracttemplates dat1 [dat2 ...]\n"
 "\n"
@@ -2089,17 +1987,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Ni mogoče ugotoviti različice debconfa. Je sploh nameščen?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Uporaba: apt-internal-solver\n"
 "\n"
@@ -2121,26 +2014,10 @@ msgstr "Neznan zapis paketa!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Uporaba: apt-sortpkgs [možnosti] dat1 [dat2 ...]\n"
-"\n"
-"apt-sortpkgs je preprosto orodje za razvrščanje paketnih datotek. Možnost -"
-"s\n"
-"določa vrsto datoteke.\n"
-"\n"
-"Možnosti:\n"
-"  -h   to besedilo pomoči\n"
-"  -s   uporabi razvrščanje izvornih datotek\n"
-"  -c=? Prebere podano datoteko z nastavitvami\n"
-"  -o=? Nastavi poljubno nastavitveno možnost, npr. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3874,6 +3751,136 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Preračunavanje nadgradnje"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Uporaba: apt-cache [možnosti] ukaz\n"
+#~ "       apt-cache [možnosti] show paket1 [paket2 ...]\n"
+#~ "\n"
+#~ "apt-cache je orodje nizke ravni za poizvedbo podatkov\n"
+#~ "iz binarni datotek predpomnilnika APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Možnosti:\n"
+#~ "  -h To besedilo pomoči.\n"
+#~ "  -p=? Predpomnilnik paketov.\n"
+#~ "  -s=? Predpomnilnik izvorne kode.\n"
+#~ "  -q Onemogoči kazalnik napredka.\n"
+#~ "  -i Pokaže le pomembne odvisnosti za neujemajoč ukaz.\n"
+#~ "  -c=? Prebere to nastavitveno datoteko\n"
+#~ "  -o=? Nastavi poljubno možnost nastavitve, na primer -o dir::cache=/tmp\n"
+#~ "Za več podrobnosti si oglejte strani priročnikov apt-cache(8) in apt."
+#~ "conf(5).\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Možnosti:\n"
+#~ "  -h To besedilo pomoči.\n"
+#~ "  -q Izhod se beleži - brez kazalnika napredka\n"
+#~ "  -qq Brez izhoda razen napak\n"
+#~ "  -s Ne naredi ničesar. Samo napiše kaj bi bilo narejeno.\n"
+#~ "  -f Prebere/zapiše oznako ročno/samodejno za dano datoteko\n"
+#~ "  -c=? Prebere to nastavitveno datoteko\n"
+#~ "  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/"
+#~ "tmp\n"
+#~ "Za več podrobnosti si oglejte strani priročnika apt-mark(8) in apt-"
+#~ "conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Uporaba: apt-config [možnosti] ukaz\n"
+#~ "\n"
+#~ "apt-config je preprosto orodje za branje nastavitvene datoteke APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Možnosti:\n"
+#~ "  -h   To besedilo pomoči.\n"
+#~ "  -c=? Prebere podano datoteko z nastavitvami\n"
+#~ "  -o=? Nastavi poljubno nastavitveno možnost, na primer. -o dir::cache=/"
+#~ "tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Možnosti:\n"
+#~ "  -h To besedilo pomoči.\n"
+#~ "  -q Izhod se beleži - brez kazalnika napredka\n"
+#~ "  -qq Brez izhoda razen napak\n"
+#~ "  -s Ne naredi ničesar. Samo napiše kaj bi bilo narejeno.\n"
+#~ "  -f Prebere/zapiše oznako ročno/samodejno za dano datoteko\n"
+#~ "  -c=? Prebere to nastavitveno datoteko\n"
+#~ "  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/"
+#~ "tmp\n"
+#~ "Za več podrobnosti si oglejte strani priročnika apt-mark(8) in apt-"
+#~ "conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Uporaba: apt-sortpkgs [možnosti] dat1 [dat2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs je preprosto orodje za razvrščanje paketnih datotek. Možnost "
+#~ "-s\n"
+#~ "določa vrsto datoteke.\n"
+#~ "\n"
+#~ "Možnosti:\n"
+#~ "  -h   to besedilo pomoči\n"
+#~ "  -s   uporabi razvrščanje izvornih datotek\n"
+#~ "  -c=? Prebere podano datoteko z nastavitvami\n"
+#~ "  -o=? Nastavi poljubno nastavitveno možnost, npr. -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Podrejeno opravilo ni uspelo"

@@ -280,26 +280,15 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
       "\n"
       "apt-mark is a simple command line interface for marking packages\n"
-      "as manually or automatically installed. It can also list marks.\n")
-    << std::endl;
-   ShowHelpListCommands(Cmds);
-   std::cout << std::endl
-   << _("Options:\n"
-      "  -h  This help text.\n"
-      "  -q  Loggable output - no progress indicator\n"
-      "  -qq No output except for errors\n"
-      "  -s  No-act. Just prints what would be done.\n"
-      "  -f  read/write auto/manual marking in the given file\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-      "See the apt-mark(8) and apt.conf(5) manual pages for more information.")
-      << std::endl;
+      "as manually or automatically installed. It is also possible to\n"
+      "manipulate the dpkg(1) selection states of packages with it.\n"
+      "It can also list all packages with or without a certain marking.\n");
    return true;
 }
 									/*}}}*/

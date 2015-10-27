@@ -7,13 +7,16 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cmndline.h>
 
-#include <vector>
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <vector>
+#include <iomanip>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -362,23 +365,57 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 									/*}}}*/
 #undef CmdMatches
 #undef addArg
-static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, aptDispatchWithHelp const * Cmds)/*{{{*/
+static void ShowHelpListCommands(std::vector<aptDispatchWithHelp> const &Cmds)/*{{{*/
+{
+   if (Cmds.empty() || Cmds[0].Match == nullptr)
+      return;
+   std::cout << std::endl << _("Most used commands:") << std::endl;
+   for (auto const &c: Cmds)
+   {
+      if (c.Help == nullptr)
+	 continue;
+      std::cout << "  " << c.Match << " - " << c.Help << std::endl;
+   }
+}
+									/*}}}*/
+static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<aptDispatchWithHelp> const &Cmds)/*{{{*/
 {
    std::cout << PACKAGE << " " << PACKAGE_VERSION << " (" << COMMON_ARCH << ")" << std::endl;
    if (_config->FindB("version") == true && Binary != APT_CMD::APT_GET)
       return true;
-   return ShowHelp(CmdL, Cmds);
-}
-									/*}}}*/
-void ShowHelpListCommands(aptDispatchWithHelp const * Cmds)		/*{{{*/
-{
-   std::cout << _("Commands:") << std::endl;
-   for (; Cmds->Handler != nullptr; ++Cmds)
+   if (ShowHelp(CmdL) == false)
+      return false;
+   if (_config->FindB("version") == true || Binary == APT_CMD::APT_FTPARCHIVE)
+      return true;
+   ShowHelpListCommands(Cmds);
+   std::cout << std::endl;
+   char const * cmd = nullptr;
+   switch (Binary)
    {
-      if (Cmds->Help == nullptr)
-	 continue;
-      std::cout << "  " << Cmds->Match << " - " << Cmds->Help << std::endl;
+      case APT_CMD::APT: cmd = "apt(8)"; break;
+      case APT_CMD::APT_CACHE: cmd = "apt-cache(8)"; break;
+      case APT_CMD::APT_CDROM: cmd = "apt-cdrom(8)"; break;
+      case APT_CMD::APT_CONFIG: cmd = "apt-config(8)"; break;
+      case APT_CMD::APT_EXTRACTTEMPLATES: cmd = "apt-extracttemplates(1)"; break;
+      case APT_CMD::APT_FTPARCHIVE: cmd = "apt-ftparchive(1)"; break;
+      case APT_CMD::APT_GET: cmd = "apt-get(8)"; break;
+      case APT_CMD::APT_HELPER: cmd = nullptr; break;
+      case APT_CMD::APT_INTERNAL_SOLVER: cmd = nullptr; break;
+      case APT_CMD::APT_MARK: cmd = "apt-mark(8)"; break;
+      case APT_CMD::APT_SORTPKG: cmd = "apt-sortpkgs(1)"; break;
    }
+   if (cmd != nullptr)
+      ioprintf(std::cout, _("See %s for more information about the available commands."), cmd);
+   std::cout << std::endl <<
+      _("Configuration options and syntax is detailed in apt.conf(5).\n"
+	    "Information about how to configure sources can be found in sources.list(5).\n"
+	    "Package and version choices can be expressed via apt_preferences(5).\n"
+	    "Security details are available in apt-secure(8).\n");
+   if (Binary == APT_CMD::APT_GET || Binary == APT_CMD::APT)
+      std::cout << std::right << std::setw(70) << _("This APT has Super Cow Powers.") << std::endl;
+   else if (Binary == APT_CMD::APT_HELPER)
+      std::cout << std::right << std::setw(70) << _("This APT helper has Super Meep Powers.") << std::endl;
+   return true;
 }
 									/*}}}*/
 static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
@@ -440,7 +477,7 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
+	 ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
 
       _error->DumpErrors();
       exit(100);
@@ -450,12 +487,12 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
       exit(0);
    }
    if (Cmds.empty() == false && CmdL.FileSize() == 0)
    {
-      ShowCommonHelp(Binary, CmdL, CmdsWithHelp.data());
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
       exit(1);
    }
    return Cmds;

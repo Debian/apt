@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -181,6 +181,36 @@ msgstr "Пакунок '%s' не встановлений, тому не вид�
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Помітьте, вибирається '%s' замість '%s'\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Цей APT має Супер-Коров'ячу Силу."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Не знайдено жодного пакунка"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "УВАГА: Наступні пакунки неможливо автентифікувати!"
@@ -224,6 +254,10 @@ msgstr "Не вдалося визначити кількість вільног
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Недостатньо вільного місця в %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Неможливо заблокувати директорію для завантаження"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -325,7 +359,7 @@ msgstr "Бажаєте продовжити?"
 msgid "Some files failed to download"
 msgstr "Деякі файли не вдалося завантажити"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Завантаження завершено в режимі \"тільки завантаження\""
 
@@ -725,9 +759,250 @@ msgstr[2] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Не знайдено жодного пакунка"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Не можу знайти пакунок %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Переліки пакунків:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Кеш не синхронізований, неможливо знайти посилання на перелік пакунків"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Зафіксовані пакунки:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(не знайдено)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Встановлено: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Кандидат: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(відсутній)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Фіксатор(pin) пакунка: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Таблиця версій:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Обираю '%s' як пакунок вихідних текстів, замість '%s'\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Ігнорувати недоступну версію '%s' пакунку '%s'"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"Вкажіть як мінімум один пакунок, для якого необхідно завантажити вихідні "
+"тексти"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Неможливо знайти пакунок з вихідними текстами для %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"УВАГА: Пакування '%s' відбувається в системі контролю версій '%s' на:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Будь-ласка використовуйте:\n"
+"%s\n"
+"щоб отримати найновіші (потенційно не випущені) оновлення до пакунку.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Пропускаємо вже завантажений файл '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Необхідно завантажити %sB/%sB з архівів вихідних текстів.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Потрібно завантажити %sB архівів з вихідними текстами.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Завантаження вихідних текстів %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Деякі архіви не вдалося завантажити."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr ""
+"Пропускається розпакування вихідних текстів, тому що вже розпаковано в %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Команда розпакування '%s' завершилася невдало.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Перевірте, чи встановлений пакунок 'dpkg-dev'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Команда побудови '%s' закінчилася невдало.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Для перевірки залежностей для побудови необхідно вказати як мінімум один "
+"пакунок"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Відсутня інформація про архітектуру для %s. Дивись apt.conf(5) APT::"
+"Архітектури для налащтування"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Обробка залежностей для побудови закінчилася невдало"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Неможливо одержати інформацію про залежності для побудови %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s не має залежностей для побудови.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"Залежність типу %s для %s не може бути задоволена, бо %s не є дозволеним на "
+"'%s' пакунках"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Залежність типу %s для %s не може бути задоволена, бо пакунок %s не знайдено"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Не вдалося задовольнити залежність типу %s для %s: Встановлений пакунок %s "
+"новіше, аніж треба"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"Залежність типу %s для %s не може бути задоволена, бо версія пакунку-"
+"кандидата %s не задовольняє умови по версіям"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"Залежність типу %s для %s не може бути задоволена, бо немає пакунку-"
+"кандидата %s потрібної версії"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Неможливо задовольнити залежність типу %s для пакунка %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Залежності для побудови %s не можуть бути задоволені."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Обробка залежностей для побудови закінчилася невдало"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -836,96 +1111,18 @@ msgstr "Загальний простір полічений для: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Ця команда є застарілою. Будь-ласка використовуйте 'apt-mark showauto'"
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Не можу знайти пакунок %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Переліки пакунків:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Кеш не синхронізований, неможливо знайти посилання на перелік пакунків"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Зафіксовані пакунки:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(не знайдено)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Встановлено: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Кандидат: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(відсутній)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Фіксатор(pin) пакунка: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Таблиця версій:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Використання: apt-cache [опції] команда\n"
-"              apt-cache [опції] show пакунок1 [пкн2 ...]\n"
-"\n"
-"apt-cache - низькорівневий інструмент, що використовується для запиту\n"
-"інформації з двійкових кеш-файлів APT\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Опції:\n"
-"  -h   Цей текст допомоги.\n"
-"  -p=? Кеш пакунків.\n"
-"  -s=? Кеш вихідних текстів.\n"
-"  -q   Не показувати індикатор прогресу.\n"
-"  -i   Показувати тільки важливі залежності для команди unmet.\n"
-"  -c=? Читати зазначений файл конфігурації.\n"
-"  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/tmp\n"
-"Дивіться подробиці на man-сторінках apt-cache(8) і apt.conf(5).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -959,7 +1156,11 @@ msgstr "показати поточну політику"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -1005,7 +1206,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1042,35 +1242,10 @@ msgstr "Повторіть цей процес для решти CD з вашо�
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Опції:\n"
-"  -h   Цей текст допомоги.\n"
-"  -q   Не показувати індикатор прогресу.\n"
-"  -qq Виводити тільки повідомлення про помилки\n"
-"  -s  Не виконувати реальних дій. Імітація роботи\n"
-"  -f   Читати/писати позначки авто/вручну у вказаному файлі\n"
-"  -c=? Читати зазначений файл конфігурації.\n"
-"  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/tmp\n"
-"Для докладної інформації дивіться керівництва для apt-mark(8) і apt.conf(5)."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1080,23 +1255,9 @@ msgstr "Аргументи не в парах"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Використання: apt-config [опції] команда\n"
-"\n"
-"apt-config - простий інструмент для зчитування конфігураційного файла APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Опції:\n"
-"   -h   Цей текст допомоги.\n"
-"   -с=? Читати зазначений конфігураційний файл.\n"
-"   -o=? Встановити умовну опцію, наприклад, -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1105,31 +1266,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Неможливо знайти ніякий пакунок через рег.вираз '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Обираю '%s' як пакунок вихідних текстів, замість '%s'\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Ігнорувати недоступну версію '%s' пакунку '%s'"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1154,193 +1290,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Внутрішня помилка, вирішувач проблем щось поламав"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Неможливо заблокувати директорію для завантаження"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Вкажіть як мінімум один пакунок, для якого необхідно завантажити вихідні "
-"тексти"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Неможливо знайти пакунок з вихідними текстами для %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"УВАГА: Пакування '%s' відбувається в системі контролю версій '%s' на:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Будь-ласка використовуйте:\n"
-"%s\n"
-"щоб отримати найновіші (потенційно не випущені) оновлення до пакунку.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Пропускаємо вже завантажений файл '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Необхідно завантажити %sB/%sB з архівів вихідних текстів.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Потрібно завантажити %sB архівів з вихідними текстами.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Завантаження вихідних текстів %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Деякі архіви не вдалося завантажити."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr ""
-"Пропускається розпакування вихідних текстів, тому що вже розпаковано в %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Команда розпакування '%s' завершилася невдало.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Перевірте, чи встановлений пакунок 'dpkg-dev'.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Команда побудови '%s' закінчилася невдало.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Для перевірки залежностей для побудови необхідно вказати як мінімум один "
-"пакунок"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Відсутня інформація про архітектуру для %s. Дивись apt.conf(5) APT::"
-"Архітектури для налащтування"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Обробка залежностей для побудови закінчилася невдало"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Неможливо одержати інформацію про залежності для побудови %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s не має залежностей для побудови.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Залежність типу %s для %s не може бути задоволена, бо %s не є дозволеним на "
-"'%s' пакунках"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Залежність типу %s для %s не може бути задоволена, бо пакунок %s не знайдено"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Не вдалося задовольнити залежність типу %s для %s: Встановлений пакунок %s "
-"новіше, аніж треба"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Залежність типу %s для %s не може бути задоволена, бо версія пакунку-"
-"кандидата %s не задовольняє умови по версіям"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Залежність типу %s для %s не може бути задоволена, бо немає пакунку-"
-"кандидата %s потрібної версії"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Неможливо задовольнити залежність типу %s для пакунка %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Залежності для побудови %s не можуть бути задоволені."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Обробка залежностей для побудови закінчилася невдало"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Підтримувані модулі:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Використання: apt-get [опції] команда\n"
 "               apt-get [опції] install|remove пакунок1 [пкн2 ...]\n"
@@ -1349,46 +1312,6 @@ msgstr ""
 "apt-get - простий інтерфейс командного рядка для завантаження й\n"
 "встановлення пакунків. Найбільш часто використовувані команди - update\n"
 "і install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Опції:\n"
-"  -h  Цей текст допомоги.\n"
-"  -q  Виводити повідомлення, придатні для запису у файл журналу.\n"
-"      Не виводити індикатор прогресу\n"
-"  -qq Виводити тільки повідомлення про помилки\n"
-"  -d  Тільки завантажити - не встановлювати й не розпаковувати архіви\n"
-"  -s  Не виконувати реальних дій. Імітація роботи\n"
-"  -y  Відповідати 'Так' на всі запитання. Самі запитання при цьому не\n"
-"      виводяться\n"
-"  -f  Спробувати виправити систему зі зламаними залежностями\n"
-"  -m  Продовжувати, навіть якщо місце розташування архівів невідомо\n"
-"  -u  Показувати список оновлюваних пакунків\n"
-"  -b  Компілювати пакунок з вихідними текстами після завантаження\n"
-"  -V  Показувати докладну інформацію про версії пакунків\n"
-"  -c=? Читати зазначений файл конфігурації\n"
-"  -o=? Встановити умовну опцію, наприклад, -o dir::cache=/tmp\n"
-"Сторінки керівництв apt-get(8), sources.list(5) і apt.conf(5)\n"
-"містять більше інформації і опцій.\n"
-"                       Цей APT має Супер-Коров'ячу Силу.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1473,11 +1396,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1547,39 +1467,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Використання: apt-mark [опції] {auto|manual} пакунок1 [пакунок2 ...]\n"
 "\n"
 "apt-mark - це простий інтерфейс командного рядка для позначення\n"
 "пакунків як встановлені вручну, або автоматично. Він також уміє\n"
 "показувати позначки.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Опції:\n"
-"  -h   Цей текст допомоги.\n"
-"  -q   Не показувати індикатор прогресу.\n"
-"  -qq Виводити тільки повідомлення про помилки\n"
-"  -s  Не виконувати реальних дій. Імітація роботи\n"
-"  -f   Читати/писати позначки авто/вручну у вказаному файлі\n"
-"  -c=? Читати зазначений файл конфігурації.\n"
-"  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/tmp\n"
-"Для докладної інформації дивіться керівництва для apt-mark(8) і apt.conf(5)."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2073,17 +1974,13 @@ msgid "Merging available information"
 msgstr "Об'єднання доступної інформації"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Використання: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2111,17 +2008,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Неможливо визначити версію debconf. Він встановлений?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Використання: apt-internal-solver\n"
 "\n"
@@ -2144,26 +2036,10 @@ msgstr "Невідомий запис про пакунок!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Використання: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs - простий інструмент для сортування переліків пакунків. Опція -"
-"s\n"
-"використається, щоб вказати тип списку.\n"
-"\n"
-"Опції:\n"
-"  -h   цей текст\n"
-"  -s   сортувати список файлів з вихідними текстами\n"
-"  -c=? читати зазначений файл конфігурації\n"
-"  -o=? встановити довільну опцію, наприклад, -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3932,6 +3808,136 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Обчислення оновлень"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Використання: apt-cache [опції] команда\n"
+#~ "              apt-cache [опції] show пакунок1 [пкн2 ...]\n"
+#~ "\n"
+#~ "apt-cache - низькорівневий інструмент, що використовується для запиту\n"
+#~ "інформації з двійкових кеш-файлів APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Опції:\n"
+#~ "  -h   Цей текст допомоги.\n"
+#~ "  -p=? Кеш пакунків.\n"
+#~ "  -s=? Кеш вихідних текстів.\n"
+#~ "  -q   Не показувати індикатор прогресу.\n"
+#~ "  -i   Показувати тільки важливі залежності для команди unmet.\n"
+#~ "  -c=? Читати зазначений файл конфігурації.\n"
+#~ "  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/"
+#~ "tmp\n"
+#~ "Дивіться подробиці на man-сторінках apt-cache(8) і apt.conf(5).\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Опції:\n"
+#~ "  -h   Цей текст допомоги.\n"
+#~ "  -q   Не показувати індикатор прогресу.\n"
+#~ "  -qq Виводити тільки повідомлення про помилки\n"
+#~ "  -s  Не виконувати реальних дій. Імітація роботи\n"
+#~ "  -f   Читати/писати позначки авто/вручну у вказаному файлі\n"
+#~ "  -c=? Читати зазначений файл конфігурації.\n"
+#~ "  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/"
+#~ "tmp\n"
+#~ "Для докладної інформації дивіться керівництва для apt-mark(8) і apt."
+#~ "conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Використання: apt-config [опції] команда\n"
+#~ "\n"
+#~ "apt-config - простий інструмент для зчитування конфігураційного файла "
+#~ "APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Опції:\n"
+#~ "   -h   Цей текст допомоги.\n"
+#~ "   -с=? Читати зазначений конфігураційний файл.\n"
+#~ "   -o=? Встановити умовну опцію, наприклад, -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Опції:\n"
+#~ "  -h   Цей текст допомоги.\n"
+#~ "  -q   Не показувати індикатор прогресу.\n"
+#~ "  -qq Виводити тільки повідомлення про помилки\n"
+#~ "  -s  Не виконувати реальних дій. Імітація роботи\n"
+#~ "  -f   Читати/писати позначки авто/вручну у вказаному файлі\n"
+#~ "  -c=? Читати зазначений файл конфігурації.\n"
+#~ "  -o=? Встановити умовну опцію конфігурації, наприклад, -o dir::cache=/"
+#~ "tmp\n"
+#~ "Для докладної інформації дивіться керівництва для apt-mark(8) і apt."
+#~ "conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Використання: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs - простий інструмент для сортування переліків пакунків. "
+#~ "Опція -s\n"
+#~ "використається, щоб вказати тип списку.\n"
+#~ "\n"
+#~ "Опції:\n"
+#~ "  -h   цей текст\n"
+#~ "  -s   сортувати список файлів з вихідними текстами\n"
+#~ "  -c=? читати зазначений файл конфігурації\n"
+#~ "  -o=? встановити довільну опцію, наприклад, -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Породжений процес завершився невдало"

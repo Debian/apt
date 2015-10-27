@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -170,6 +170,36 @@ msgstr "Balík „%s“ není nainstalován, nelze tedy odstranit\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Pozn: Vybírám „%s“ místo „%s“\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Tato APT má schopnosti svaté krávy."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Tento APT pomocník má schopnosti svatého čehokoliv."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Nebyly nalezeny žádné balíky"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
@@ -214,6 +244,10 @@ msgstr "Nelze určit volné místo v %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "V %s nemáte dostatek volného místa."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Nelze zamknout adresář pro stahování"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -313,7 +347,7 @@ msgstr "Chcete pokračovat?"
 msgid "Some files failed to download"
 msgstr "Některé soubory nemohly být staženy"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Stahování dokončeno v režimu pouze stáhnout"
 
@@ -706,9 +740,245 @@ msgstr[2] "Existuje %i dalších záznamů. Zobrazíte je přepínačem „-a“
 msgid "not a real package (virtual)"
 msgstr "není skutečný balík (virtuální)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Nebyly nalezeny žádné balíky"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Nelze najít balík %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Soubory balíku:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Cache není synchronizovaná, nelze se odkázat na soubor balíku"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Vypíchnuté balíky:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(nenalezeno)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr "%s -> %s s prioritou %d\n"
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Instalovaná verze: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidát: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(žádná)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Vypíchnutý balík: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Tabulka verzí:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Nelze najít balík pro architekturu „%s“"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Nelze najít balík „%s“ s verzí „%s“"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Nelze najít balík „%s“ z vydání „%s“"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Vybírám „%s“ jako zdrojový balík místo „%s“\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Nelze najít verzi „%s“ balíku „%s“"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Musíte zadat aspoň jeden balík, pro který se stáhnou zdrojové texty"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Nelze najít zdrojový balík pro %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"INFO: Balík „%s“ je spravován v systému pro správu verzí „%s“ na:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Pro stažení nejnovějších (možná dosud nevydaných) aktualizací balíku prosím "
+"použijte:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Přeskakuje se dříve stažený soubor „%s“\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Nutno stáhnout %sB/%sB zdrojových archivů.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Nutno stáhnout %sB zdrojových archivů.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Stažení zdroje %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Stažení některých archivů selhalo."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Přeskakuje se rozbalení již rozbaleného zdroje v %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Příkaz pro rozbalení „%s“ selhal.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Zkontrolujte, zda je nainstalován balík „dpkg-dev“.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Příkaz pro sestavení „%s“ selhal.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Musíte zadat alespoň jeden balík, pro který budou kontrolovány závislosti "
+"pro sestavení"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"O architektuře %s nejsou známy žádné informace. Pro nastavení si přečtěte "
+"část APT::Architectures v manuálové stránce apt.conf(5)"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr "Pro získání závislostí pro sestavení se používá adresář „%s“\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Pro získání závislostí pro sestavení se používá soubor „%s“\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Nelze získat závislosti pro sestavení %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s nemá žádné závislosti pro sestavení.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"závislost %s pro %s nemůže být splněna, protože %s není na balících „%s“ "
+"dovolena"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "závislost %s pro %s nemůže být splněna, protože balík %s nebyl nalezen"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Selhalo splnění závislosti %s pro %s: Instalovaný balík %s je příliš nový"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"závislost %s pro %s nemůže být splněna, protože kandidátská verze balíku %s "
+"nesplňuje požadavek na verzi"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"závislost %s pro %s nemůže být splněna, protože balík %s nemá kandidátskou "
+"verzi"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Selhalo splnění závislosti %s pro %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Závislosti pro sestavení %s nemohly být splněny."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Chyba při zpracování závislostí pro sestavení"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -817,95 +1087,18 @@ msgstr "Celkem přiřazeného místa: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Tento příkaz je zastaralý, použijte místo něj „apt-mark showauto“."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Nelze najít balík %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Soubory balíku:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Cache není synchronizovaná, nelze se odkázat na soubor balíku"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Vypíchnuté balíky:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(nenalezeno)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr "%s -> %s s prioritou %d\n"
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Instalovaná verze: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidát: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(žádná)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Vypíchnutý balík: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Tabulka verzí:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Použití: apt-cache [volby] příkaz\n"
-"         apt-cache [volby] show balík1 [balík2 …]\n"
-"\n"
-"apt-cache je nízkoúrovňový nástroj pro získávání informací o balících.\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Příkazy:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -p=? Vyrovnávací paměť balíků.\n"
-"  -s=? Vyrovnávací paměť zdrojů.\n"
-"  -q   Nezobrazí indikátor postupu.\n"
-"  -i   U příkazu unmet zobrazí pouze důležité závislosti.\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
-"Více informací viz manuálové stránky apt-cache(8) a apt.conf(5).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -939,11 +1132,12 @@ msgstr "Zobrazí nastavenou politiku"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Použití: apt [volby] příkaz\n"
-"\n"
-"Řádkové rozhraní pro apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -984,7 +1178,6 @@ msgstr "aktualizuje systém instalací/aktualizací balíků"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "aktualizuje systém instalací/aktualizací/odstraněním balíků"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1022,35 +1215,10 @@ msgstr "Tento proces opakujte pro všechna zbývající média."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
-"  -qq  Nezobrazí nic než chyby\n"
-"  -s   Pouze simuluje prováděné akce\n"
-"  -f   Přečte/zapíše ruční/automatické značky z/do daného souboru\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
-"Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1060,23 +1228,9 @@ msgstr "Argumenty nejsou v párech"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Použití: apt-config [volby] příkaz\n"
-"\n"
-"apt-config je jednoduchý nástroj pro čtení konfiguračního souboru APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -c=? Načte tento konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1085,31 +1239,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Nelze najít balík pro architekturu „%s“"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Nelze najít balík „%s“ s verzí „%s“"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Nelze najít balík „%s“ z vydání „%s“"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Vybírám „%s“ jako zdrojový balík místo „%s“\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Nelze najít verzi „%s“ balíku „%s“"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1134,188 +1263,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Vnitřní chyba, řešitel problémů pokazil věci"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Nelze zamknout adresář pro stahování"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Musíte zadat aspoň jeden balík, pro který se stáhnou zdrojové texty"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Nelze najít zdrojový balík pro %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"INFO: Balík „%s“ je spravován v systému pro správu verzí „%s“ na:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Pro stažení nejnovějších (možná dosud nevydaných) aktualizací balíku prosím "
-"použijte:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Přeskakuje se dříve stažený soubor „%s“\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Nutno stáhnout %sB/%sB zdrojových archivů.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Nutno stáhnout %sB zdrojových archivů.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Stažení zdroje %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Stažení některých archivů selhalo."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Přeskakuje se rozbalení již rozbaleného zdroje v %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Příkaz pro rozbalení „%s“ selhal.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Zkontrolujte, zda je nainstalován balík „dpkg-dev“.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Příkaz pro sestavení „%s“ selhal.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Musíte zadat alespoň jeden balík, pro který budou kontrolovány závislosti "
-"pro sestavení"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"O architektuře %s nejsou známy žádné informace. Pro nastavení si přečtěte "
-"část APT::Architectures v manuálové stránce apt.conf(5)"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr "Pro získání závislostí pro sestavení se používá adresář „%s“\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Pro získání závislostí pro sestavení se používá soubor „%s“\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Nelze získat závislosti pro sestavení %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s nemá žádné závislosti pro sestavení.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"závislost %s pro %s nemůže být splněna, protože %s není na balících „%s“ "
-"dovolena"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "závislost %s pro %s nemůže být splněna, protože balík %s nebyl nalezen"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Selhalo splnění závislosti %s pro %s: Instalovaný balík %s je příliš nový"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"závislost %s pro %s nemůže být splněna, protože kandidátská verze balíku %s "
-"nesplňuje požadavek na verzi"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"závislost %s pro %s nemůže být splněna, protože balík %s nemá kandidátskou "
-"verzi"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Selhalo splnění závislosti %s pro %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Závislosti pro sestavení %s nemohly být splněny."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Chyba při zpracování závislostí pro sestavení"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Použití: apt-get [volby] příkaz\n"
 "         apt-get [volby] install|remove balík1 [balík2 …]\n"
@@ -1323,44 +1284,6 @@ msgstr ""
 "\n"
 "apt-get je jednoduché řádkové rozhraní pro stahování a instalování\n"
 "balíků. Nejpoužívanější příkazy jsou update a install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Volby:\n"
-"  -h   Tato nápověda\n"
-"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
-"  -qq  Nezobrazí nic než chyby\n"
-"  -d   Pouze stáhne - neinstaluje ani nerozbaluje archivy\n"
-"  -s   Pouze simuluje prováděné akce\n"
-"  -y   Na všechny otázky odpovídá automaticky Ano\n"
-"  -f   Zkusí opravit systém s porušenými závislostmi\n"
-"  -m   Zkusí pokračovat, i když se nepodaří najít archivy\n"
-"  -u   Zobrazí také seznam aktualizovaných balíků\n"
-"  -b   Po stažení zdrojového balíku jej i zkompiluje\n"
-"  -V   Zobrazí podrobná čísla verzí\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
-"Více voleb naleznete v manuálových stránkách apt-get(8), sources.list(5)\n"
-"a apt.conf(5).\n"
-"                       Tato APT má schopnosti svaté krávy.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1436,20 +1359,18 @@ msgid "GetSrvRec failed for %s"
 msgstr "GetSrvRec %s selhalo"
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Použití: apt-helper [volby] příkaz\n"
 "         apt-helper [volby] download-file uri cílová_cesta\n"
 "\n"
 "apt-helper je interní pomocník pro apt\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Tento APT pomocník má schopnosti svatého čehokoliv."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1518,38 +1439,19 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Použití: apt-mark [volby] {auto|manual} balík1 [balík2 …]\n"
 "\n"
 "apt-mark je jednoduché řádkové rozhraní pro označování balíků jako\n"
 "instalovaných ručně nebo automaticky. Také umí tyto značky vypsat.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
-"  -qq  Nezobrazí nic než chyby\n"
-"  -s   Pouze simuluje prováděné akce\n"
-"  -f   Přečte/zapíše ruční/automatické značky z/do daného souboru\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
-"Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2036,17 +1938,13 @@ msgid "Merging available information"
 msgstr "Slučují se dostupné informace"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Použití: apt-extracttemplates soubor1 [soubor2 …]\n"
 "\n"
@@ -2073,17 +1971,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nelze určit verzi programu debconf. Je debconf nainstalován?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Použití: apt-internal-solver\n"
 "\n"
@@ -2104,25 +1997,10 @@ msgstr "Neznámý záznam o balíku!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Použití: apt-sortpkgs [volby] soubor1 [soubor2 …]\n"
-"\n"
-"apt-sortpkgs je jednoduchý nástroj pro setřídění souborů Packages.\n"
-"Volbou -s volíte typ souboru.\n"
-"\n"
-"Volby:\n"
-"  -h   Tato nápověda\n"
-"  -s   Setřídí zdrojový soubor\n"
-"  -c=? Načte tento konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3855,6 +3733,140 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Propočítává se aktualizace"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Použití: apt-cache [volby] příkaz\n"
+#~ "         apt-cache [volby] show balík1 [balík2 …]\n"
+#~ "\n"
+#~ "apt-cache je nízkoúrovňový nástroj pro získávání informací o balících.\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Příkazy:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Volby:\n"
+#~ "  -h   Tato nápověda.\n"
+#~ "  -p=? Vyrovnávací paměť balíků.\n"
+#~ "  -s=? Vyrovnávací paměť zdrojů.\n"
+#~ "  -q   Nezobrazí indikátor postupu.\n"
+#~ "  -i   U příkazu unmet zobrazí pouze důležité závislosti.\n"
+#~ "  -c=? Načte daný konfigurační soubor\n"
+#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+#~ "Více informací viz manuálové stránky apt-cache(8) a apt.conf(5).\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Použití: apt [volby] příkaz\n"
+#~ "\n"
+#~ "Řádkové rozhraní pro apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Volby:\n"
+#~ "  -h   Tato nápověda.\n"
+#~ "  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
+#~ "  -qq  Nezobrazí nic než chyby\n"
+#~ "  -s   Pouze simuluje prováděné akce\n"
+#~ "  -f   Přečte/zapíše ruční/automatické značky z/do daného souboru\n"
+#~ "  -c=? Načte daný konfigurační soubor\n"
+#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+#~ "Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Použití: apt-config [volby] příkaz\n"
+#~ "\n"
+#~ "apt-config je jednoduchý nástroj pro čtení konfiguračního souboru APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Volby:\n"
+#~ "  -h   Tato nápověda.\n"
+#~ "  -c=? Načte tento konfigurační soubor\n"
+#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Volby:\n"
+#~ "  -h   Tato nápověda.\n"
+#~ "  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
+#~ "  -qq  Nezobrazí nic než chyby\n"
+#~ "  -s   Pouze simuluje prováděné akce\n"
+#~ "  -f   Přečte/zapíše ruční/automatické značky z/do daného souboru\n"
+#~ "  -c=? Načte daný konfigurační soubor\n"
+#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+#~ "Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Použití: apt-sortpkgs [volby] soubor1 [soubor2 …]\n"
+#~ "\n"
+#~ "apt-sortpkgs je jednoduchý nástroj pro setřídění souborů Packages.\n"
+#~ "Volbou -s volíte typ souboru.\n"
+#~ "\n"
+#~ "Volby:\n"
+#~ "  -h   Tato nápověda\n"
+#~ "  -s   Setřídí zdrojový soubor\n"
+#~ "  -c=? Načte tento konfigurační soubor\n"
+#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #~ msgid "Use --allow-insecure-repositories to force the update"
 #~ msgstr "Pro vynucení aktualizace použijte --allow-insecure-repositories"

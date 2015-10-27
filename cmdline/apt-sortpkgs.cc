@@ -132,19 +132,14 @@ static bool DoIt(string InFile)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
       "\n"
-      "apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-      "to indicate what kind of file it is.\n"
-      "\n"
-      "Options:\n"
-      "  -h   This help text\n"
-      "  -s   Use source file sorting\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
+      "apt-sortpkgs is a simple tool to sort package information files.\n"
+      "It sorts by default by binary package information, but the -s option\n"
+      "can be used to switch to source package ordering instead.\n");
    return true;
 }
 									/*}}}*/

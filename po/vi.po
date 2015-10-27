@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -175,6 +175,36 @@ msgstr "Gói %s chưa được cài đặt, thế nên không thể gỡ bỏ n�
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Ghi chú: đang chọn “%s” thay cho “%s”\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Trình APT này có năng lực của siêu bò."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Không tìm thấy gói"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "CẢNH BÁO: Không thể xác thực những gói sau đây!"
@@ -218,6 +248,10 @@ msgstr "Không thể tìm được chỗ trống trong %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Bạn không có đủ dung lượng đĩa còn trống trong %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Không thể khoá thư mục tải về"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -318,7 +352,7 @@ msgstr "Bạn có muốn tiếp tục không?"
 msgid "Some files failed to download"
 msgstr "Một số tập tin không tải về được"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Hoàn tất việc tải về và trong chế độ chỉ tải về"
 
@@ -697,9 +731,248 @@ msgstr[0] "Ở đây có %i bản ghi phụ thêm. Hãy dùng tùy chọn “-a�
 msgid "not a real package (virtual)"
 msgstr "không là gói thật (ảo)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Không tìm thấy gói"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Không thể định vị gói %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Tập tin gói:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr ""
+"Bộ nhớ tạm không đồng bộ được nên không thể tham chiếu chéo tập tin gói"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Các gói đã ghim:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(không tìm thấy)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Đã cài đặt: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Ứng cử: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(không)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Ghim gói: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Bảng phiên bản:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Không tìm thấy gói cho kiến trúc “%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Không tìm thấy gói “%s” với phiên bản “%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Không tìm thấy gói “%s” với số phát hành “%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Đang chọn “%s” làm gói nguồn, thay thế cho “%s”\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Không tìm thấy phiên bản “%s” của gói “%s”"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Phải chỉ định ít nhất một gói để mà lấy mã nguồn về cho nó"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Không tìm thấy gói nguồn cho %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"GHI CHÚ: việc đóng gói “%s” được bảo trì trong hệ thống quản lý mã nguồn "
+"“%s” tại:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Hãy dùng lệnh:\n"
+"%s\n"
+"để lấy các gói mới nhất (có thể là chưa phát hành).\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Đang bỏ qua tập tin đã được tải về “%s”\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Cần phải lấy %sB/%sB kho nguồn.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Cần phải lấy %sB từ kho nguồn.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Lấy mã nguồn %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Gặp lỗi khi lấy một số kho."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Đang bỏ qua giải nén nguồn đã giải nén trong %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Lệnh giải nén “%s” bị lỗi.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Hãy kiểm tra xem gói “dpkg-dev” đã được cài đặt chưa.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Lệnh biên dịch “%s” bị lỗi.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Phải chỉ ra ít nhất một gói cần kiểm tra các phần phụ thuộc cần khi biên dịch"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Không có thông tin kiến trúc sẵn sàng cho %s. Xem apt.conf(5) APT::"
+"Architectures để cài đặt"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Gặp lỗi khi xử lý các quan hệ phụ thuộc khi biên dịch"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Không thể lấy thông tin về các phần phụ thuộc khi biên dịch cho %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s không phụ thuộc vào gì khi biên dịch.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"Phần phụ thuộc %s cho %s không ổn thỏa bởi vì %s không được cho phép trên "
+"gói “%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Phần phụ thuộc %s cho %s không thể được thỏa mãn vì không tìm thấy gói %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Việc cố thỏa mãn quan hệ phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s là "
+"quá mới"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"phần phụ thuộc %s cho %s không thể được thỏa mãn phiên bản ứng cử của gói %s "
+"có thể thỏa mãn điều kiện phiên bản"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"phần phụ thuộc %s cho %s không thể được thỏa mãn bởi vì gói %s không có bản "
+"ứng cử"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Không thể thỏa mãn quan hệ phụ thuộc khi biên dịch cho %s."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Gặp lỗi khi xử lý các quan hệ phụ thuộc khi biên dịch"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -806,98 +1079,18 @@ msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 "Lệnh này đã lỗi thời. Xin hãy dùng lệnh “apt-mark showauto” để thay thế."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Không thể định vị gói %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Tập tin gói:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr ""
-"Bộ nhớ tạm không đồng bộ được nên không thể tham chiếu chéo tập tin gói"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Các gói đã ghim:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(không tìm thấy)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Đã cài đặt: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Ứng cử: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(không)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Ghim gói: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Bảng phiên bản:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Cách dùng: apt-cache [tùy_chọn...] lệnh\n"
-"           apt-cache [tùy_chọn...] show gói1 [gói2 ...]\n"
-"\n"
-"apt-cache là một công cụ ở mức thấp dùng để truy vấn\n"
-"thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Các lệnh:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Tùy chọn:\n"
-"  -h   Hiển thị trợ giúp này.\n"
-"  -p=? Bộ nhớ tạm gói.\n"
-"  -s=? Bộ nhớ tạm nguồn.\n"
-"  -q   Không hiển thị diễn tiến công việc.\n"
-"  -i   Chỉ hiển thị những phụ thuộc quan trọng cho lệnh unmet.\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
-"Để tìm thông tin thêm, xem hai trang hướng dẫn\n"
-"                 apt-cache(8) và apt.conf(5).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -931,11 +1124,12 @@ msgstr "Hiển thị các cài đặt về chính sách"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Cách dùng: apt [các tùy chọn] lệnh\n"
-"\n"
-"CLI (giao diện dòng lệnh) dành cho apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -976,7 +1170,6 @@ msgstr "nâng cấp các gói trong hệ thống"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các gói"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1017,36 +1210,10 @@ msgstr "Hãy lặp lại tiến trình này cho các Đĩa còn lại trong bộ
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Tùy chọn:\n"
-"  -h   Trợ giúp này.\n"
-"  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công việc\n"
-"  -qq  Không xuất thông tin nào, trừ lỗi\n"
-"  -s   Không làm gì chỉ in những cái sẽ làm.\n"
-"  -f   đánh dấu đọc/ghi tự-động/thủ-công trong tập tin đã cho.\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
-"Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
-"                          apt-mark(8) và apt.conf(5)"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1056,25 +1223,9 @@ msgstr "Các đối số không thành cặp"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Cách dùng: apt-config [tùy_chọn...] lệnh\n"
-"\n"
-"(config: viết tắt cho từ configuration: cấu hình)\n"
-"\n"
-"apt-config là một công cụ đơn giản để đọc tập tin cấu hình APT.\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Tùy chọn:\n"
-"  -h   Trợ giúp này\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt một tùy chọn cấu hình tùy ý, ví dụ -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1083,31 +1234,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Không tìm thấy gói cho kiến trúc “%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Không tìm thấy gói “%s” với phiên bản “%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Không tìm thấy gói “%s” với số phát hành “%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Đang chọn “%s” làm gói nguồn, thay thế cho “%s”\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Không tìm thấy phiên bản “%s” của gói “%s”"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1132,190 +1258,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Lỗi nội bộ: bộ tháo gỡ vấn đề đã ngắt gì"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Không thể khoá thư mục tải về"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Phải chỉ định ít nhất một gói để mà lấy mã nguồn về cho nó"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Không tìm thấy gói nguồn cho %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"GHI CHÚ: việc đóng gói “%s” được bảo trì trong hệ thống quản lý mã nguồn "
-"“%s” tại:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Hãy dùng lệnh:\n"
-"%s\n"
-"để lấy các gói mới nhất (có thể là chưa phát hành).\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Đang bỏ qua tập tin đã được tải về “%s”\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Cần phải lấy %sB/%sB kho nguồn.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Cần phải lấy %sB từ kho nguồn.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Lấy mã nguồn %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Gặp lỗi khi lấy một số kho."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Đang bỏ qua giải nén nguồn đã giải nén trong %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Lệnh giải nén “%s” bị lỗi.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Hãy kiểm tra xem gói “dpkg-dev” đã được cài đặt chưa.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Lệnh biên dịch “%s” bị lỗi.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Phải chỉ ra ít nhất một gói cần kiểm tra các phần phụ thuộc cần khi biên dịch"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Không có thông tin kiến trúc sẵn sàng cho %s. Xem apt.conf(5) APT::"
-"Architectures để cài đặt"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Gặp lỗi khi xử lý các quan hệ phụ thuộc khi biên dịch"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Không thể lấy thông tin về các phần phụ thuộc khi biên dịch cho %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s không phụ thuộc vào gì khi biên dịch.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Phần phụ thuộc %s cho %s không ổn thỏa bởi vì %s không được cho phép trên "
-"gói “%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Phần phụ thuộc %s cho %s không thể được thỏa mãn vì không tìm thấy gói %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Việc cố thỏa mãn quan hệ phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s là "
-"quá mới"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"phần phụ thuộc %s cho %s không thể được thỏa mãn phiên bản ứng cử của gói %s "
-"có thể thỏa mãn điều kiện phiên bản"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"phần phụ thuộc %s cho %s không thể được thỏa mãn bởi vì gói %s không có bản "
-"ứng cử"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Không thể thỏa mãn quan hệ phụ thuộc khi biên dịch cho %s."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Gặp lỗi khi xử lý các quan hệ phụ thuộc khi biên dịch"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Hỗ trợ các mô-đun:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Cách dùng: apt-get [tùy_chọn...] lệnh\n"
 "           apt-get [tùy_chọn...] install|remove gói1 [gói2 ...]\n"
@@ -1329,44 +1285,6 @@ msgstr ""
 "apt-get là một giao diện dòng lệnh đơn giản dùng để tải về và cài đặt gói "
 "phần mềm.\n"
 "Những lệnh được dùng thường nhất là update (cập nhật) và install (cài đặt).\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Tùy chọn:\n"
-"  -h  Trợ giúp này.\n"
-"  -q  Dữ liệu xuất có thể ghi nhật ký - không hiển thị tiến triển công việc\n"
-"  -qq Không xuất thông tin nào, trừ lỗi\n"
-"  -d  Chỉ tải về, KHÔNG cài đặt hay giải nén kho\n"
-"  -s  Không làm gì cả. Chỉ mô phỏng\n"
-"  -y  Trả lời Có (yes) mọi khi gặp câu hỏi\n"
-"  -f  Thử sửa chữa một hệ thống có quan hệ phụ thuộc bị sai hỏng\n"
-"  -m  Thử tiếp tục lại nếu không thể xác định vị trí từ kho\n"
-"  -u  Hiển thị danh sách các gói đã nâng cấp\n"
-"  -b  Biên dịch gói nguồn sau khi lấy nó về\n"
-"  -V  Hiển thị số thứ tự phiên bản dạng chi tiết\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
-"Để có thêm thông tin và tùy chọn thì hãy xem trang hướng dẫn\n"
-"       apt-get(8), sources.list(5) và apt.conf(5).\n"
-"                  Trình APT này có năng lực của siêu bò.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1442,20 +1360,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Cách dùng: apt-helper [các-tùy-chọn] lệnh\n"
 "           apt-helper [các-tùy-chọn] download-file uri đường-dẫn-đích\n"
 "\n"
 "apt-helper là phần trợ giúp dành cho apt\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1526,40 +1442,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Cách dùng: apt-mark [tùy-chọn...] {auto|manual} gói1 [gói2 ...]\n"
 "\n"
 "apt-mark là câu lệnh đơn giản được dùng để đánh dấu các gói là\n"
 "được cài đặt tự động hay bằng tay. Nó còn có thể liệt kê danh sách các đánh "
 "dấu.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Tùy chọn:\n"
-"  -h   Trợ giúp này.\n"
-"  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công việc\n"
-"  -qq  Không xuất thông tin nào, trừ lỗi\n"
-"  -s   Không làm gì chỉ in những cái sẽ làm.\n"
-"  -f   đánh dấu đọc/ghi tự-động/thủ-công trong tập tin đã cho.\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
-"Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
-"                          apt-mark(8) và apt.conf(5)"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2052,17 +1948,13 @@ msgid "Merging available information"
 msgstr "Đang hòa trộn các thông tin sẵn có..."
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Cách dùng: apt-extracttemplates tập_tin1 [tập_tin2 ...]\n"
 "\n"
@@ -2094,17 +1986,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Không thể lấy phiên bản debconf. Debconf có được cài đặt chưa?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Cách dùng: apt-internal-solver\n"
 "\n"
@@ -2126,27 +2013,10 @@ msgstr "Không hiểu bản ghi gói!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Cách dùng: apt-sortpkgs [tùy_chọn...] tập_tin1 [tập_tin2 ...]\n"
-"\n"
-"[sortpkgs: sort packages: sắp xếp các gói]\n"
-"\n"
-"apt-sortpkgs là một công cụ đơn giản để sắp xếp tập tin gói.\n"
-"Tùy chọn “-s” dùng để ngầm chỉ kiểu tập tin là gì.\n"
-"\n"
-"Tùy chọn:\n"
-"  -h   Trợ giúp_ này\n"
-"  -s   Sắp xếp những tập tin _nguồn_\n"
-"  -c=? Đọc tập tin cấu hình này\n"
-"  -o=? Đặt tùy chọn cấu hình tùy ý, v.d. “-o dir::cache=/tmp”\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3907,6 +3777,150 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Đang tính toán nâng cấp"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Cách dùng: apt-cache [tùy_chọn...] lệnh\n"
+#~ "           apt-cache [tùy_chọn...] show gói1 [gói2 ...]\n"
+#~ "\n"
+#~ "apt-cache là một công cụ ở mức thấp dùng để truy vấn\n"
+#~ "thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Các lệnh:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Tùy chọn:\n"
+#~ "  -h   Hiển thị trợ giúp này.\n"
+#~ "  -p=? Bộ nhớ tạm gói.\n"
+#~ "  -s=? Bộ nhớ tạm nguồn.\n"
+#~ "  -q   Không hiển thị diễn tiến công việc.\n"
+#~ "  -i   Chỉ hiển thị những phụ thuộc quan trọng cho lệnh unmet.\n"
+#~ "  -c=? Đọc tập tin cấu hình này\n"
+#~ "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
+#~ "Để tìm thông tin thêm, xem hai trang hướng dẫn\n"
+#~ "                 apt-cache(8) và apt.conf(5).\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Cách dùng: apt [các tùy chọn] lệnh\n"
+#~ "\n"
+#~ "CLI (giao diện dòng lệnh) dành cho apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Tùy chọn:\n"
+#~ "  -h   Trợ giúp này.\n"
+#~ "  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công "
+#~ "việc\n"
+#~ "  -qq  Không xuất thông tin nào, trừ lỗi\n"
+#~ "  -s   Không làm gì chỉ in những cái sẽ làm.\n"
+#~ "  -f   đánh dấu đọc/ghi tự-động/thủ-công trong tập tin đã cho.\n"
+#~ "  -c=? Đọc tập tin cấu hình này\n"
+#~ "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
+#~ "Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
+#~ "                          apt-mark(8) và apt.conf(5)"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Cách dùng: apt-config [tùy_chọn...] lệnh\n"
+#~ "\n"
+#~ "(config: viết tắt cho từ configuration: cấu hình)\n"
+#~ "\n"
+#~ "apt-config là một công cụ đơn giản để đọc tập tin cấu hình APT.\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Tùy chọn:\n"
+#~ "  -h   Trợ giúp này\n"
+#~ "  -c=? Đọc tập tin cấu hình này\n"
+#~ "  -o=? Đặt một tùy chọn cấu hình tùy ý, ví dụ -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Tùy chọn:\n"
+#~ "  -h   Trợ giúp này.\n"
+#~ "  -q   Dữ liệu xuất có thể ghi nhật ký - không hiển thị diễn biến công "
+#~ "việc\n"
+#~ "  -qq  Không xuất thông tin nào, trừ lỗi\n"
+#~ "  -s   Không làm gì chỉ in những cái sẽ làm.\n"
+#~ "  -f   đánh dấu đọc/ghi tự-động/thủ-công trong tập tin đã cho.\n"
+#~ "  -c=? Đọc tập tin cấu hình này\n"
+#~ "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
+#~ "Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
+#~ "                          apt-mark(8) và apt.conf(5)"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Cách dùng: apt-sortpkgs [tùy_chọn...] tập_tin1 [tập_tin2 ...]\n"
+#~ "\n"
+#~ "[sortpkgs: sort packages: sắp xếp các gói]\n"
+#~ "\n"
+#~ "apt-sortpkgs là một công cụ đơn giản để sắp xếp tập tin gói.\n"
+#~ "Tùy chọn “-s” dùng để ngầm chỉ kiểu tập tin là gì.\n"
+#~ "\n"
+#~ "Tùy chọn:\n"
+#~ "  -h   Trợ giúp_ này\n"
+#~ "  -s   Sắp xếp những tập tin _nguồn_\n"
+#~ "  -c=? Đọc tập tin cấu hình này\n"
+#~ "  -o=? Đặt tùy chọn cấu hình tùy ý, v.d. “-o dir::cache=/tmp”\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Tiến trình con bị lỗi"

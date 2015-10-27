@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2014-07-06 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -172,6 +172,36 @@ msgstr "Pakke »%s« er ikke installeret, så blev ikke fjernet\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Vælger »%s« som kildepakke fremfor »%s«\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Denne APT har »Super Cow Powers«."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Dette APT-hjælpeprogram har Super Meep Powers."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Fandt ingen pakker"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "ADVARSEL: Følgende pakkers autenticitet kunne ikke verificeres!"
@@ -215,6 +245,10 @@ msgstr "Kunne ikke bestemme ledig plads i %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Du har ikke nok ledig plads i %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Kunne ikke låse nedhentningsmappen"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -312,7 +346,7 @@ msgstr "Vil du fortsætte?"
 msgid "Some files failed to download"
 msgstr "Nedhentningen af filer mislykkedes"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Nedhentning afsluttet i »hent-kun«-tilstand"
 
@@ -708,9 +742,246 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr "ikke en reel pakke (virtuel)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Fandt ingen pakker"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Kunne ikke lokalisere pakken %s"
+
+# Overskriften til apt-cache policy,
+# forkorter "Package" væk. CH
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Pakkefiler:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Mellemlageret er ude af trit, kan ikke krydsreferere en pakkefil"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "»Pinned« pakker:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(ikke fundet)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Installeret: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidat: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(ingen)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Pakke-pin: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Versionstabel:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Kan ikke finde en pakke for arkitektur »%s«"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Kan ikke finde en pakke »%s« med version »%s«"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Kan ikke finde en pakke »%s« med udgivelse »%s«"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Vælger »%s« som kildepakke fremfor »%s«\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Kan ikke finde version »%s« for pakke »%s«"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Du skal angive mindst én pakke at hente kildeteksten til"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Kunne ikke finde kildetekstpakken for %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"BEMÆRK: Pakning af »%s« vedligeholdes i versionskontrolsystemet »%s« på:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Brug venligst:\n"
+"%s\n"
+"for at hente de seneste (muligvis ikke udgivet) opdateringer til pakken.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Overspringer allerede hentet fil »%s«\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "%sB/%sB skal hentes fra kildetekst-arkiverne.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "%sB skal hentes fra kildetekst-arkiverne.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Henter kildetekst %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Nogle arkiver kunne ikke hentes."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Overspringer udpakning af allerede udpakket kildetekst i %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Udpakningskommandoen »%s« fejlede.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Tjek om pakken »dpkg-dev« er installeret.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Opbygningskommandoen »%s« fejlede.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Skal angive mindst én pakke at tjekke opbygningsafhængigheder for"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Ingen arkitekturinformation tilgængelig for %s. Se apt.conf(5) APT::"
+"Architectures for opsætning"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Kunne ikke behandler opbygningsafhængighederne"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Kunne ikke hente oplysninger om opbygningsafhængigheder for %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s har ingen opbygningsafhængigheder.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"Afhængigheden %s for %s kan ikke opfyldes, da %s ikke er tilladt på »%s«"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Afhængigheden %s for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Kunne ikke opfylde %s-afhængigheden for %s: Den installerede pakke %s er for "
+"ny"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"Afhængigheden %s for %s kan ikke opfyldes, da ingen af de tilgængelige "
+"kandidater for pakken %s kan tilfredsstille versionskravene"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke har en "
+"kandidatversion"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Kunne ikke opfylde %s-afhængigheden for %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Opbygningsafhængigheden for %s kunne ikke opfyldes."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Kunne ikke behandler opbygningsafhængighederne"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -819,98 +1090,18 @@ msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 "Denne kommando er forældet. Brug venligst »apt-mark showauto« i stedet for."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Kunne ikke lokalisere pakken %s"
-
-# Overskriften til apt-cache policy,
-# forkorter "Package" væk. CH
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Pakkefiler:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Mellemlageret er ude af trit, kan ikke krydsreferere en pakkefil"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "»Pinned« pakker:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(ikke fundet)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Installeret: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidat: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(ingen)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Pakke-pin: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Versionstabel:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Brug: apt-cache [tilvalg] kommando\n"
-"      apt-cache [tilvalg] show pakke1 [pakke2 ...]\n"
-"\n"
-"apt-cache er et lavniveauværktøj, brugt til at manipulere APTs\n"
-"binære mellemlagerfiler og hente oplysninger fra dem.\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Kommandoer:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Tilvalg:\n"
-"  -h   Denne hjælpetekst.\n"
-"  -p=? Pakkemellemlageret.\n"
-"  -s=? Kildemellemlageret.\n"
-"  -q   Deaktiver fremgangsindikatoren.\n"
-"  -i   Vis kun vigtige afhængigheder for kommandoen »unmet«.\n"
-"  -c=? Læs denne opsætningsfil\n"
-"  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
-"Se manualsiderne for apt-cache(8) og apt.conf(5) for flere oplysninger.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -941,15 +1132,15 @@ msgid "Show policy settings"
 msgstr "Vis policy-indstillinger"
 
 #: cmdline/apt.cc
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Brug: apt [tilvalg] kommando\n"
-"\n"
-"CLI for apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -991,7 +1182,6 @@ msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 "full-upgrade - opgradere systemet ved at fjerne/installere/opgradere pakker"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1032,36 +1222,10 @@ msgstr "Gentag processen for resten af cd'erne i dit sæt."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Tilvalg:\n"
-"  -h  Denne hjælpetekst.\n"
-"  -q  Logbar uddata - ingen statusindikator\n"
-"  -qq Ingen uddata undtagen for fejl\n"
-"  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
-"  -f  læs/skriv auto/manuel markering i den givne fil\n"
-"  -c=? Læs denne konfigurationsfil\n"
-"  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
-"tmp\n"
-"Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1071,23 +1235,9 @@ msgstr "Parametre ikke angivet i par"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Brug: apt-config [tilvalg] kommando\n"
-"\n"
-"apt-config er et simpelt værktøj til at læse APTs opsætningsfil\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Tilvalg:\n"
-"  -h   Denne hjælpetekst.\n"
-"  -c=? Læs denne opsætningsfil\n"
-"  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1096,31 +1246,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Kan ikke finde en pakke for arkitektur »%s«"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Kan ikke finde en pakke »%s« med version »%s«"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Kan ikke finde en pakke »%s« med udgivelse »%s«"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Vælger »%s« som kildepakke fremfor »%s«\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Kan ikke finde version »%s« for pakke »%s«"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1145,187 +1270,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Intern fejl. Problemløseren ødelagde noget"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Kunne ikke låse nedhentningsmappen"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Du skal angive mindst én pakke at hente kildeteksten til"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Kunne ikke finde kildetekstpakken for %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"BEMÆRK: Pakning af »%s« vedligeholdes i versionskontrolsystemet »%s« på:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Brug venligst:\n"
-"%s\n"
-"for at hente de seneste (muligvis ikke udgivet) opdateringer til pakken.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Overspringer allerede hentet fil »%s«\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "%sB/%sB skal hentes fra kildetekst-arkiverne.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "%sB skal hentes fra kildetekst-arkiverne.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Henter kildetekst %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Nogle arkiver kunne ikke hentes."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Overspringer udpakning af allerede udpakket kildetekst i %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Udpakningskommandoen »%s« fejlede.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Tjek om pakken »dpkg-dev« er installeret.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Opbygningskommandoen »%s« fejlede.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "Skal angive mindst én pakke at tjekke opbygningsafhængigheder for"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Ingen arkitekturinformation tilgængelig for %s. Se apt.conf(5) APT::"
-"Architectures for opsætning"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Kunne ikke behandler opbygningsafhængighederne"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Kunne ikke hente oplysninger om opbygningsafhængigheder for %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s har ingen opbygningsafhængigheder.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Afhængigheden %s for %s kan ikke opfyldes, da %s ikke er tilladt på »%s«"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Afhængigheden %s for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Kunne ikke opfylde %s-afhængigheden for %s: Den installerede pakke %s er for "
-"ny"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Afhængigheden %s for %s kan ikke opfyldes, da ingen af de tilgængelige "
-"kandidater for pakken %s kan tilfredsstille versionskravene"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke har en "
-"kandidatversion"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Kunne ikke opfylde %s-afhængigheden for %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Opbygningsafhængigheden for %s kunne ikke opfyldes."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Kunne ikke behandler opbygningsafhængighederne"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Understøttede moduler:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Brug: apt-get [tilvalg] kommando\n"
 "      apt-get [tilvalg] install|remove pakke1 [pakke2 ...]\n"
@@ -1334,44 +1292,6 @@ msgstr ""
 "apt-get er en simpel kommandolinjegrænseflade til at hente og\n"
 "installere pakker. De hyppigst brugte kommandoer er update og\n"
 "install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Tilvalg:\n"
-"  -h  Denne hjælpetekst.\n"
-"  -q  Uddata, der kan logges - ingen fremgangsindikator\n"
-"  -qq Ingen uddata, kun fejl\n"
-"  -d  Hent kun - installér eller udpak IKKE arkiverne\n"
-"  -s  Gør intet. Simulér handlingen\n"
-"  -y  Antag »ja«-svar til alle spørgsmål uden at spørge\n"
-"  -f  Forsøg at fortsætte selvom integritetstjek fejler\n"
-"  -m  Forsøg at fortsætte selvom arkiverne ikke kan findes\n"
-"  -u  Vis også en liste over opgraderede pakker\n"
-"  -b  Byg kildetekstpakken efter at have hentet den\n"
-"  -V  Vis detaljerede versionsnumre\n"
-"  -c=? Læs denne opsætningsfil\n"
-"  -o=? Angiv et arbitrært opsætningsvalg. F.eks. -o dir::cache=/tmp\n"
-"Se manualsiderne for apt-get(8), sources.list(5) og apt.conf(5)\n"
-"for flere oplysninger og tilvalg.\n"
-"                       Denne APT har »Super Cow Powers«.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1447,20 +1367,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Brug: apt-helper [tilvalg] kommando\n"
 "      apt-helper [tilvalg] download-file uri target-path\n"
 "\n"
 "apt-helper er et internt hjælpeprogram for apt\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Dette APT-hjælpeprogram har Super Meep Powers."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1529,40 +1447,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Brug: apt-mark [tilvalg] {auto|manual} pakke1 [pakke2 ...]\n"
 "\n"
 "apt-mark er en simpel kommandolinjegrænseflade for markering af pakker\n"
 "som manuelt eller automatisk installeret. Programmet kan også vise\n"
 "markeringerne.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Tilvalg:\n"
-"  -h  Denne hjælpetekst.\n"
-"  -q  Logbar uddata - ingen statusindikator\n"
-"  -qq Ingen uddata undtagen for fejl\n"
-"  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
-"  -f  læs/skriv auto/manuel markering i den givne fil\n"
-"  -c=? Læs denne konfigurationsfil\n"
-"  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
-"tmp\n"
-"Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2057,17 +1955,13 @@ msgid "Merging available information"
 msgstr "Sammenfletter tilgængelighedsoplysninger"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Brug: apt-extracttemplates fil1 [fil2 ...]\n"
 "\n"
@@ -2095,17 +1989,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan ikke finde debconfs version. Er debconf installeret?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Brug: apt-internal-solver\n"
 "\n"
@@ -2127,25 +2016,10 @@ msgstr "Ukendt pakkeindgang!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Brug: apt-sortpkgs [tilvalg] fil1 [fil2 ...]\n"
-"\n"
-"apt-sortpkgs er et simpelt værktøj til at sortere pakkefiler. Tilvalget -s\n"
-"bruges til at angive filens type.\n"
-"\n"
-"Tilvalg:\n"
-"  -h   Denne hjælpetekst\n"
-"  -s   Benyt kildefils-sortering\n"
-"  -c=? Læs denne opsætningsfil\n"
-"  -o=? Angiv en opsætningsindstilling. F.eks. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3876,6 +3750,145 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Beregner opgraderingen"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Brug: apt-cache [tilvalg] kommando\n"
+#~ "      apt-cache [tilvalg] show pakke1 [pakke2 ...]\n"
+#~ "\n"
+#~ "apt-cache er et lavniveauværktøj, brugt til at manipulere APTs\n"
+#~ "binære mellemlagerfiler og hente oplysninger fra dem.\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Kommandoer:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Tilvalg:\n"
+#~ "  -h   Denne hjælpetekst.\n"
+#~ "  -p=? Pakkemellemlageret.\n"
+#~ "  -s=? Kildemellemlageret.\n"
+#~ "  -q   Deaktiver fremgangsindikatoren.\n"
+#~ "  -i   Vis kun vigtige afhængigheder for kommandoen »unmet«.\n"
+#~ "  -c=? Læs denne opsætningsfil\n"
+#~ "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
+#~ "Se manualsiderne for apt-cache(8) og apt.conf(5) for flere oplysninger.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Brug: apt [tilvalg] kommando\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Tilvalg:\n"
+#~ "  -h  Denne hjælpetekst.\n"
+#~ "  -q  Logbar uddata - ingen statusindikator\n"
+#~ "  -qq Ingen uddata undtagen for fejl\n"
+#~ "  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
+#~ "  -f  læs/skriv auto/manuel markering i den givne fil\n"
+#~ "  -c=? Læs denne konfigurationsfil\n"
+#~ "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
+#~ "tmp\n"
+#~ "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Brug: apt-config [tilvalg] kommando\n"
+#~ "\n"
+#~ "apt-config er et simpelt værktøj til at læse APTs opsætningsfil\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Tilvalg:\n"
+#~ "  -h   Denne hjælpetekst.\n"
+#~ "  -c=? Læs denne opsætningsfil\n"
+#~ "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Tilvalg:\n"
+#~ "  -h  Denne hjælpetekst.\n"
+#~ "  -q  Logbar uddata - ingen statusindikator\n"
+#~ "  -qq Ingen uddata undtagen for fejl\n"
+#~ "  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
+#~ "  -f  læs/skriv auto/manuel markering i den givne fil\n"
+#~ "  -c=? Læs denne konfigurationsfil\n"
+#~ "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
+#~ "tmp\n"
+#~ "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Brug: apt-sortpkgs [tilvalg] fil1 [fil2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs er et simpelt værktøj til at sortere pakkefiler. Tilvalget -"
+#~ "s\n"
+#~ "bruges til at angive filens type.\n"
+#~ "\n"
+#~ "Tilvalg:\n"
+#~ "  -h   Denne hjælpetekst\n"
+#~ "  -s   Benyt kildefils-sortering\n"
+#~ "  -c=? Læs denne opsætningsfil\n"
+#~ "  -o=? Angiv en opsætningsindstilling. F.eks. -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Barneprocessen fejlede"

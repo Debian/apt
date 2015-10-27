@@ -40,14 +40,16 @@
 #include <apti18n.h>
 									/*}}}*/
 
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
-    _("Usage: apt [options] command\n"
-      "\n"
-      "CLI for apt.\n")
-    << std::endl;
-   ShowHelpListCommands(Cmds);
+      _("Usage: apt [options] command\n"
+	    "\n"
+	    "apt is a commandline package manager and provides commands for\n"
+	    "searching and managing as well as querying information about packages.\n"
+	    "It provides the same functionality as the specialized APT tools,\n"
+	    "like apt-get and apt-cache, but enables options more suitable for\n"
+	    "interactive use by default.\n");
    return true;
 }
 									/*}}}*/

@@ -41,19 +41,13 @@
 #include <apti18n.h>
 									/*}}}*/
 
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
 	std::cout <<
 		_("Usage: apt-internal-solver\n"
 		"\n"
 		"apt-internal-solver is an interface to use the current internal\n"
-		"like an external resolver for the APT family for debugging or alike\n"
-		"\n"
-		"Options:\n"
-		"  -h  This help text.\n"
-		"  -q  Loggable output - no progress indicator\n"
-		"  -c=? Read this configuration file\n"
-		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
+		"like an external resolver for the APT family for debugging or alike.\n");
 	return true;
 }
 									/*}}}*/

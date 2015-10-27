@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -173,6 +173,36 @@ msgstr "软件包 %s 还未安装，因而不会被卸载\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "注意，选取 %s 而非 %s\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "本 APT 具有超级牛力。"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "本 APT 助手具有超级喵力。"
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "没有发现匹配的软件包"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "【警告】：下列软件包不能通过验证！"
@@ -216,6 +246,10 @@ msgstr "无法获知您在 %s 上的可用空间"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "您在 %s 上没有足够的可用空间。"
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "无法锁定下载目录"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -312,7 +346,7 @@ msgstr "您希望继续执行吗？"
 msgid "Some files failed to download"
 msgstr "有一些文件无法下载"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "下载完毕，目前是“仅下载”模式"
 
@@ -681,9 +715,238 @@ msgstr[0] "有 %i 条附加记录。请加上 ‘-a’ 参数来查看它们"
 msgid "not a real package (virtual)"
 msgstr "不是一个实包(虚包)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "没有发现匹配的软件包"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "无法定位软件包 %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "软件包文件："
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "缓存尚未同步，无法交差引证(x-ref)一个软件包文件"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "被锁定的软件包："
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(没有找到)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  已安装："
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  候选："
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(无)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  软件包锁："
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  版本列表："
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "找不到‘%s’体系结构下的软件包"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "找不到软件包‘%s’的‘%s’版本"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "找不到软件包‘%s’的‘%s’发行"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "选择 %s 作为源代码包而非 %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "找不到 %2$s 软件包的 %1$s 版本"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "要下载源代码，必须指定至少一个对应的软件包"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "无法找到与 %s 对应的源代码包"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"提示：%s 的打包工作被维护于以下位置的 %s 版本控制系统中：\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"请使用：\n"
+"%s\n"
+"获得该软件包的最近更新(可能尚未正式发布)。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "忽略已下载的文件“%s”\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "需要下载 %sB/%sB 的源代码包。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "需要下载 %sB 的源代码包。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "下载源代码 %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "有一些包文件无法下载。"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "忽略已经被解包到 %s 目录的源代码包\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "运行解包的命令“%s”出错。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "执行构造软件包命令“%s”失败。\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "要检查生成软件包的构建依赖关系，必须指定至少一个软件包"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"找不到关于 %s 的有效体系结构信息。请参见 apt.conf(5) APT::Architectures for "
+"setup"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "无法处理构建依赖关系"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "无法获得 %s 的构建依赖关系信息"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr " %s 没有构建依赖关系信息。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"由于 %3$s 不被软件包 %4$s 所允许，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"软件包 %3$s 的候选版本不能满足版本要求，因此 %2$s 软件包的 %1$s 依赖无法满足"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr "软件包 %3$s 没有可用的候选版本，因此 %2$s 的 %1$s 依赖无法满足"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "无法处理构建依赖关系"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -789,96 +1052,18 @@ msgstr "总占用空间："
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "该命令已废弃。请使用‘apt-mark showauto’。"
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "无法定位软件包 %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "软件包文件："
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "缓存尚未同步，无法交差引证(x-ref)一个软件包文件"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "被锁定的软件包："
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(没有找到)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  已安装："
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  候选："
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(无)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  软件包锁："
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  版本列表："
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"用法： apt-cache [选项] 命令\n"
-"　　　 apt-cache [选项] show 软件包1 [软件包2 ...]\n"
-"\n"
-"apt-cache 是一个底层的工具，它可以在 APT 的\n"
-"二进制缓存文件中查询信息\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "命令："
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"选项：\n"
-"  -h   本帮助文档。\n"
-"  -p=? 软件包的缓存。\n"
-"  -s=? 源代码包的缓存。\n"
-"  -q   关闭进度显示。\n"
-"  -i   仅为 unmet 命令显示重要的依赖关系。\n"
-"  -c=? 读取指定配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-"若要了解更多信息，您还可以查阅 apt-cache(8) 和 apt.conf(5) 参考手册。\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -912,11 +1097,12 @@ msgstr "显示软件包的安装设置状态"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"用法： apt [选项] 命令\n"
-"\n"
-"apt 的命令行界面。\n"
 
 #. query
 #: cmdline/apt.cc
@@ -957,7 +1143,6 @@ msgstr "通过 安装/升级 软件来更新系统"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "通过 卸载/安装/升级 来更新系统"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -996,35 +1181,10 @@ msgstr "请对您的盘片套件中的其它盘片重复相同的操作。"
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"选项：\n"
-"  -h  显示本帮助信息\n"
-"  -q  日志型输出 - 不显示进度\n"
-"  -qq 安静模式，只输出错误信息\n"
-"  -s  无动作。只说明将要做什么。\n"
-"  -f  读取/写入 指定文件的  自动/手动 标记\n"
-"  -c=? 读取指定的配置文件\n"
-"  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
-"更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1034,23 +1194,9 @@ msgstr "参数不成对"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"用法：apt-config [选项] 命令\n"
-"\n"
-"apt-config 是一个用于读取APT 配置文件的简单工具\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"选项：\n"
-"  -h   显示本帮助文本。\n"
-"  -c=? 读取指定的配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1059,31 +1205,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "找不到‘%s’体系结构下的软件包"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "找不到软件包‘%s’的‘%s’版本"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "找不到软件包‘%s’的‘%s’发行"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "选择 %s 作为源代码包而非 %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "找不到 %2$s 软件包的 %1$s 版本"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1106,181 +1227,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "内部错误，问题解决工具坏事了"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "无法锁定下载目录"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "要下载源代码，必须指定至少一个对应的软件包"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "无法找到与 %s 对应的源代码包"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"提示：%s 的打包工作被维护于以下位置的 %s 版本控制系统中：\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"请使用：\n"
-"%s\n"
-"获得该软件包的最近更新(可能尚未正式发布)。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "忽略已下载的文件“%s”\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "需要下载 %sB/%sB 的源代码包。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "需要下载 %sB 的源代码包。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "下载源代码 %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "有一些包文件无法下载。"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "忽略已经被解包到 %s 目录的源代码包\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "运行解包的命令“%s”出错。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "执行构造软件包命令“%s”失败。\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "要检查生成软件包的构建依赖关系，必须指定至少一个软件包"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"找不到关于 %s 的有效体系结构信息。请参见 apt.conf(5) APT::Architectures for "
-"setup"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "无法处理构建依赖关系"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "无法获得 %s 的构建依赖关系信息"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr " %s 没有构建依赖关系信息。\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"由于 %3$s 不被软件包 %4$s 所允许，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"软件包 %3$s 的候选版本不能满足版本要求，因此 %2$s 软件包的 %1$s 依赖无法满足"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "软件包 %3$s 没有可用的候选版本，因此 %2$s 的 %1$s 依赖无法满足"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "无法处理构建依赖关系"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "支持的模块："
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "用法： apt-get [选项] 命令\n"
 "　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
@@ -1288,44 +1248,6 @@ msgstr ""
 "\n"
 "apt-get 是一个用于下载和安装软件包的简易命令行界面。\n"
 "最常用命令是 update 和 install。\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"选项：\n"
-"  -h  本帮助文档。\n"
-"  -q  让输出可作为日志 - 不显示进度\n"
-"  -qq 除了错误外，什么都不输出\n"
-"  -d  仅仅下载 - 【不】安装或解开包文件\n"
-"  -s  不作实际操作。只是依次模拟执行命令\n"
-"  -y  对所有询问都回答是(Yes)，同时不作任何提示\n"
-"  -f  当出现破损的依赖关系时，程序将尝试修正系统\n"
-"  -m  当有包文件无法找到时，程序仍尝试继续执行\n"
-"  -u  显示已升级的软件包列表\n"
-"  -b  在下载完源码包后，编译生成相应的软件包\n"
-"  -V  显示详尽的版本号\n"
-"  -c=? 读取指定配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-"请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
-"以获取更多信息和选项。\n"
-"                       本 APT 具有超级牛力。\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1401,20 +1323,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "用法： apt-helper [选项] 命令\n"
 "       apt-helper [选项] download-file URI 目标路径\n"
 "\n"
 "apt-helper 是一个 apt 的内部助手\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "本 APT 助手具有超级喵力。"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1483,38 +1403,19 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
 "\n"
 "apt-mark 是一个可以对软件包进行 手动/自动 安装标记的简单命令行界面。\n"
 "它也能列出标记。\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"选项：\n"
-"  -h  显示本帮助信息\n"
-"  -q  日志型输出 - 不显示进度\n"
-"  -qq 安静模式，只输出错误信息\n"
-"  -s  无动作。只说明将要做什么。\n"
-"  -f  读取/写入 指定文件的  自动/手动 标记\n"
-"  -c=? 读取指定的配置文件\n"
-"  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
-"更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -1995,17 +1896,13 @@ msgid "Merging available information"
 msgstr "正在合并可用信息"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "用法： apt-extracttemplates 文件甲 [文件乙 ...]\n"
 "\n"
@@ -2033,17 +1930,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "用法： apt-internal-solver\n"
 "\n"
@@ -2064,25 +1956,10 @@ msgstr "未知的软件包记录！"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"用法： apt-sortpkgs [选项] 文件甲 [文件乙 ...]\n"
-"\n"
-"apt-sortpkgs 是对软件包索引文件内容进行排序的简单工具。-s 选项\n"
-"是用来指出后面参数所示文件是哪种文件。\n"
-"\n"
-"选项：\n"
-"  -h   本帮助文档\n"
-"  -s   根据源文件排序\n"
-"  -c=? 读取指定配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3784,6 +3661,141 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "正在对升级进行计算"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "用法： apt-cache [选项] 命令\n"
+#~ "　　　 apt-cache [选项] show 软件包1 [软件包2 ...]\n"
+#~ "\n"
+#~ "apt-cache 是一个底层的工具，它可以在 APT 的\n"
+#~ "二进制缓存文件中查询信息\n"
+
+#~ msgid "Commands:"
+#~ msgstr "命令："
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "选项：\n"
+#~ "  -h   本帮助文档。\n"
+#~ "  -p=? 软件包的缓存。\n"
+#~ "  -s=? 源代码包的缓存。\n"
+#~ "  -q   关闭进度显示。\n"
+#~ "  -i   仅为 unmet 命令显示重要的依赖关系。\n"
+#~ "  -c=? 读取指定配置文件\n"
+#~ "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+#~ "若要了解更多信息，您还可以查阅 apt-cache(8) 和 apt.conf(5) 参考手册。\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "用法： apt [选项] 命令\n"
+#~ "\n"
+#~ "apt 的命令行界面。\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "选项：\n"
+#~ "  -h  显示本帮助信息\n"
+#~ "  -q  日志型输出 - 不显示进度\n"
+#~ "  -qq 安静模式，只输出错误信息\n"
+#~ "  -s  无动作。只说明将要做什么。\n"
+#~ "  -f  读取/写入 指定文件的  自动/手动 标记\n"
+#~ "  -c=? 读取指定的配置文件\n"
+#~ "  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
+#~ "更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "用法：apt-config [选项] 命令\n"
+#~ "\n"
+#~ "apt-config 是一个用于读取APT 配置文件的简单工具\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "选项：\n"
+#~ "  -h   显示本帮助文本。\n"
+#~ "  -c=? 读取指定的配置文件\n"
+#~ "  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "选项：\n"
+#~ "  -h  显示本帮助信息\n"
+#~ "  -q  日志型输出 - 不显示进度\n"
+#~ "  -qq 安静模式，只输出错误信息\n"
+#~ "  -s  无动作。只说明将要做什么。\n"
+#~ "  -f  读取/写入 指定文件的  自动/手动 标记\n"
+#~ "  -c=? 读取指定的配置文件\n"
+#~ "  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
+#~ "更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "用法： apt-sortpkgs [选项] 文件甲 [文件乙 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs 是对软件包索引文件内容进行排序的简单工具。-s 选项\n"
+#~ "是用来指出后面参数所示文件是哪种文件。\n"
+#~ "\n"
+#~ "选项：\n"
+#~ "  -h   本帮助文档\n"
+#~ "  -s   根据源文件排序\n"
+#~ "  -c=? 读取指定配置文件\n"
+#~ "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "子进程出错"

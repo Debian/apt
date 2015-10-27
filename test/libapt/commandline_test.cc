@@ -17,7 +17,7 @@ class CLT: public CommandLine {
       }
 };
 
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const *) {return false;}
+bool ShowHelp(CommandLine &) {return false;}
 std::vector<aptDispatchWithHelp> GetCommands() {return {};}
 
 

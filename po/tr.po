@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -177,6 +177,36 @@ msgstr "'%s' kurulu değildi, dolayısıyla kaldırılmadı\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Not, '%2$s' yerine '%1$s' seçiliyor\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Bu APT'nin Süper İnek Güçleri vardır."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Bu APT yardımcısının Süper Meep Güçleri var."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Hiç paket bulunamadı"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "UYARI: Aşağıdaki paketlerin aslına uygunluğu doğrulanamıyor!"
@@ -223,6 +253,10 @@ msgstr "%s içindeki boş alan miktarı belirlenemedi"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "%s içinde yeterli boş alanınız yok."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "İndirme dizini kilitlenemiyor"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -327,7 +361,7 @@ msgstr "Devam etmek istiyor musunuz?"
 msgid "Some files failed to download"
 msgstr "Bazı dosyalar indirilemedi"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "İndirme işlemi tamamlandı ve sadece indirme kipinde"
 
@@ -721,9 +755,244 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr "gerçek bir paket değil (sanal)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Hiç paket bulunamadı"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "%s paketi bulunamadı"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Paket dosyaları:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Önbellek eşzamanlı değil, paket dosyası 'x-ref' yapılamıyor"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Sabitlenmiş paketler:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(bulunamadı)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr "%s -> %s (öncelik: %d)\n"
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Kurulu: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Aday: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(hiçbiri)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Paket sabitleme: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Sürüm çizelgesi:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "'%s' mimarisi için bir paket bulunamadı"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "'%s' paketinin '%s' sürümü bulunamadı"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "'%s' paketi '%s' dağıtım sürümünde bulunamadı"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Kaynak paket olarak '%s' yerine '%s' kullanılacak\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "'%2$s' paketinin '%1$s' sürümünü bulunamadı"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Kaynağının indirileceği en az bir paket seçilmeli"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "%s paketinin kaynak paketi bulunamadı"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"NOT: '%s' paketlemesi '%s' sürüm kontrol sistemiyle aşağıdaki adreste "
+"yapılmaktadır:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Bu paketin en son (ve muhtemelen henüz yayımlanmamış olan)\n"
+"sürümünü edinmek için lütfen:\n"
+"%s\n"
+"komutunu kullanın.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Zaten indirilmiş olan '%s' dosyası atlanıyor\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "%sB/%sB kaynak arşivi indirilecek.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "%sB kaynak arşivi indirilecek.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "%s kaynağını al\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Bazı arşivler alınamadı."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "%s için zaten açılmış bazı paketlerin açılması atlanıyor\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Paket açma komutu '%s' başarısız.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "'dpkg-dev' paketinin kurulu olduğundan emin olun.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "İnşa komutu '%s' başarısız oldu.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "İnşa bağımlılıklarının denetleneceği en az bir paket belirtilmelidir"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"%s mimarisinin bilgileri mevcut değil. Kurulum için apt.conf(5) rehber "
+"sayfasındaki APT::Architectures kısmına göz atın"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dizini kullanılıyor\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dosyası kullanılıyor\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "%s paketinin inşa-bağımlılığı bilgisi alınamıyor"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s paketinin hiç inşa bağımlılığı yok.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"'%4$s' paketlerinde %3$s paketine izin verilmediği için %2$s kaynağının %1$s "
+"bağımlılığı karşılanamıyor"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"%2$s için %1$s bağımlılığı, %3$s paketi bulunamadığı için karşılanamadı"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "%2$s için %1$s bağımlılığı karşılanamadı: Kurulu %3$s paketi çok yeni"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü "
+"gerekli sürüm şartlarını karşılamıyor"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü yok"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "%2$s için %1$s bağımlılığı karşılanamadı: %3$s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "%s için inşa bağımlılıkları karşılanamadı."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "İnşa bağımlılıklarını işleme başarısız oldu"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -834,98 +1103,18 @@ msgstr ""
 "Bu komutun kullanımı bırakılmıştır. Lütfen bunun yerine 'apt-mark showauto' "
 "komutunu kullanın."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "%s paketi bulunamadı"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Paket dosyaları:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Önbellek eşzamanlı değil, paket dosyası 'x-ref' yapılamıyor"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Sabitlenmiş paketler:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(bulunamadı)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr "%s -> %s (öncelik: %d)\n"
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Kurulu: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Aday: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(hiçbiri)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Paket sabitleme: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Sürüm çizelgesi:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Kullanım: apt-cache [seçenekler] komut\n"
-"          apt-cache [seçenekler] show paket1 [paket2 ...]\n"
-"\n"
-"apt-cache APT'nin ikili paket önbelleğindeki dosyaları\n"
-"sorgulamakta kullanılan alt seviye bir araçtır.\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Komutlar:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Options:\n"
-"  -h   Bu yardım metni.\n"
-"  -p=? Paket önbelleği.\n"
-"  -s=? Kaynak önbelleği.\n"
-"  -q   İlerleme göstergesini kapat.\n"
-"  -i   unmet komutunda sadece önemli bağımlılıkları görüntüle.\n"
-"  -c=? Belirtilen yapılandırma dosyasını kullan\n"
-"  -o=? Herhangi bir yapılandırma seçeneğini ayarla, örneğin -o dir::cache=/"
-"tmp\n"
-"Ayrıntılı bilgi için apt-cache(8) ve apt.conf(5) rehber sayfalarına göz "
-"atın.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -959,11 +1148,12 @@ msgstr "İlke seçeneklerini görüntüle"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Kullanım: apt [seçenekler] komut\n"
-"\n"
-"apt için komut satırı arayüzü.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1004,7 +1194,6 @@ msgstr "sistemi yükselt (paket kurarak ve yükselterek)"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1044,36 +1233,10 @@ msgstr "Kalan CD'leriniz için bu işlemi yineleyin."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Seçenekler:\n"
-"  -h  Bu yardım metni.\n"
-"  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
-"  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
-"  -s  Bir şey yapma. Sadece ne yapılacağını söyler.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Belirtilen yapılandırma dosyası kullan\n"
-"  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
-"Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
-"bakabilirsiniz."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1083,24 +1246,9 @@ msgstr "Argümanlar çiftler halinde değil"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Kullanım: apt-config [seçenekler] komut\n"
-"\n"
-"apt-config, APT ayar dosyasını okumaya yarayan basit bir araçtır\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Seçenekler:\n"
-"  -h Bu yardım dosyası.\n"
-"  -c=? Belirtilen ayar dosyasını görüntüler\n"
-"  -o=? İsteğe bağlı ayar seçeneği belirtmenizi sağlar, örneğin -o dir::"
-"cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1109,31 +1257,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "'%s' mimarisi için bir paket bulunamadı"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "'%s' paketinin '%s' sürümü bulunamadı"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "'%s' paketi '%s' dağıtım sürümünde bulunamadı"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Kaynak paket olarak '%s' yerine '%s' kullanılacak\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "'%2$s' paketinin '%1$s' sürümünü bulunamadı"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1158,187 +1281,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "İç hata, sorun çözücü nesneyi bozdu"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "İndirme dizini kilitlenemiyor"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Kaynağının indirileceği en az bir paket seçilmeli"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "%s paketinin kaynak paketi bulunamadı"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"NOT: '%s' paketlemesi '%s' sürüm kontrol sistemiyle aşağıdaki adreste "
-"yapılmaktadır:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Bu paketin en son (ve muhtemelen henüz yayımlanmamış olan)\n"
-"sürümünü edinmek için lütfen:\n"
-"%s\n"
-"komutunu kullanın.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Zaten indirilmiş olan '%s' dosyası atlanıyor\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "%sB/%sB kaynak arşivi indirilecek.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "%sB kaynak arşivi indirilecek.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "%s kaynağını al\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Bazı arşivler alınamadı."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "%s için zaten açılmış bazı paketlerin açılması atlanıyor\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Paket açma komutu '%s' başarısız.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "'dpkg-dev' paketinin kurulu olduğundan emin olun.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "İnşa komutu '%s' başarısız oldu.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "İnşa bağımlılıklarının denetleneceği en az bir paket belirtilmelidir"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"%s mimarisinin bilgileri mevcut değil. Kurulum için apt.conf(5) rehber "
-"sayfasındaki APT::Architectures kısmına göz atın"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dizini kullanılıyor\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Not, inşa bağımlılıklarını indirmek için '%s' dosyası kullanılıyor\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "%s paketinin inşa-bağımlılığı bilgisi alınamıyor"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s paketinin hiç inşa bağımlılığı yok.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"'%4$s' paketlerinde %3$s paketine izin verilmediği için %2$s kaynağının %1$s "
-"bağımlılığı karşılanamıyor"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%2$s için %1$s bağımlılığı, %3$s paketi bulunamadığı için karşılanamadı"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "%2$s için %1$s bağımlılığı karşılanamadı: Kurulu %3$s paketi çok yeni"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü "
-"gerekli sürüm şartlarını karşılamıyor"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü yok"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%2$s için %1$s bağımlılığı karşılanamadı: %3$s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s için inşa bağımlılıkları karşılanamadı."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "İnşa bağımlılıklarını işleme başarısız oldu"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Desteklenen birimler:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Kullanım: apt-get [seçenekler] komut\n"
 "          apt-get [seçenekler] install|remove paket1 [paket2 ...]\n"
@@ -1347,44 +1303,6 @@ msgstr ""
 "apt-get, paket indirme ve kurmada kullanılan basit bir komut satırı\n"
 "arayüzüdür. En sık kullanılan komutlar güncelleme (update) ve kurma\n"
 "(install) komutlarıdır.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Seçenekler:\n"
-"  -h  Bu yardım metni.\n"
-"  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
-"  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
-"  -d  Sadece indir - Paketleri açmaz ve kurmaz\n"
-"  -s  Bir şey yapma. Simülasyon kipinde çalış\n"
-"  -y  Tüm sorulara Evet yanıtını ver ve soru sorma\n"
-"  -f  Eksik bağımlılıklara sahip bir sistemi onarmaya çalış\n"
-"  -m  Eksik paketleri görmezden gel ve işleme devam et\n"
-"  -u  Yükseltilen paketlerin listesini de görüntüle\n"
-"  -b  Kaynak paketi indirdikten sonra inşa et\n"
-"  -V  Sürüm numaralarını daha ayrıntılı göster\n"
-"  -c=? Belirtilen yapılandırma dosyası kullan\n"
-"  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
-"Ayrıntılı bilgi için apt-get(8), sources.list(5) ve apt.conf(5) rehber\n"
-"sayfalarına bakabilirsiniz.\n"
-"                       Bu APT'nin Süper İnek Güçleri vardır.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1460,20 +1378,18 @@ msgid "GetSrvRec failed for %s"
 msgstr "%s için GetSrvRec başarısız oldu"
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Kullanım: apt-helper [seçenekler] komut\n"
 "          apt-helper [seçenekler] download-file uri hedef-konum\n"
 "\n"
 "apt-helper apt'nin bir dâhilî yardımcı aracıdır\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Bu APT yardımcısının Süper Meep Güçleri var."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1542,39 +1458,19 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Kullanım: apt-mark [seçenekler] {auto|manual} paket1 [paket2 ...]\n"
 "\n"
 "apt-mark paketleri otomatik ya da elle kurulmuş olarak işaretlemeye\n"
 "ve mevcut işaretleri görmeye yarayan basit bir komut satırı arayüzüdür.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Seçenekler:\n"
-"  -h  Bu yardım metni.\n"
-"  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
-"  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
-"  -s  Bir şey yapma. Sadece ne yapılacağını söyler.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Belirtilen yapılandırma dosyası kullan\n"
-"  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
-"Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
-"bakabilirsiniz."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2064,17 +1960,13 @@ msgid "Merging available information"
 msgstr "Kullanılabilir bilgiler birleştiriliyor"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Kullanım: apt-extracttemplates dosya1 [dosya2 ...]\n"
 "\n"
@@ -2102,17 +1994,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf sürümü alınamıyor. debconf kurulu mu?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Kullanım: apt-internal-solver\n"
 "\n"
@@ -2134,26 +2021,10 @@ msgstr "Bilinmeyen paket kaydı!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Kullanım: apt-sortpkgs [seçenekler] dosya1 [dosya2 ...]\n"
-"\n"
-"apt-sortpkgs, paket dosyalarını sıralayan basit bir araçtır.\n"
-"-s seçeneği ne tür bir dosya olduğunu göstermekte kullanılır.\n"
-"\n"
-"Seçenekler:\n"
-"  -h Bu yardım metni\n"
-"  -s Kaynak dosyası sıralamayı kullan\n"
-"  -c=? Belirtilen yapılandırma dosyasını oku\n"
-"  -o=? Herhangi bir yapılandırma seçeneği ayarla, örneğin -o dir::cache=/"
-"tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3903,6 +3774,147 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Yükseltme hesaplanıyor"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Kullanım: apt-cache [seçenekler] komut\n"
+#~ "          apt-cache [seçenekler] show paket1 [paket2 ...]\n"
+#~ "\n"
+#~ "apt-cache APT'nin ikili paket önbelleğindeki dosyaları\n"
+#~ "sorgulamakta kullanılan alt seviye bir araçtır.\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Komutlar:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Options:\n"
+#~ "  -h   Bu yardım metni.\n"
+#~ "  -p=? Paket önbelleği.\n"
+#~ "  -s=? Kaynak önbelleği.\n"
+#~ "  -q   İlerleme göstergesini kapat.\n"
+#~ "  -i   unmet komutunda sadece önemli bağımlılıkları görüntüle.\n"
+#~ "  -c=? Belirtilen yapılandırma dosyasını kullan\n"
+#~ "  -o=? Herhangi bir yapılandırma seçeneğini ayarla, örneğin -o dir::"
+#~ "cache=/tmp\n"
+#~ "Ayrıntılı bilgi için apt-cache(8) ve apt.conf(5) rehber sayfalarına göz "
+#~ "atın.\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Kullanım: apt [seçenekler] komut\n"
+#~ "\n"
+#~ "apt için komut satırı arayüzü.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Seçenekler:\n"
+#~ "  -h  Bu yardım metni.\n"
+#~ "  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
+#~ "  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
+#~ "  -s  Bir şey yapma. Sadece ne yapılacağını söyler.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Belirtilen yapılandırma dosyası kullan\n"
+#~ "  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
+#~ "Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
+#~ "bakabilirsiniz."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Kullanım: apt-config [seçenekler] komut\n"
+#~ "\n"
+#~ "apt-config, APT ayar dosyasını okumaya yarayan basit bir araçtır\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Seçenekler:\n"
+#~ "  -h Bu yardım dosyası.\n"
+#~ "  -c=? Belirtilen ayar dosyasını görüntüler\n"
+#~ "  -o=? İsteğe bağlı ayar seçeneği belirtmenizi sağlar, örneğin -o dir::"
+#~ "cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Seçenekler:\n"
+#~ "  -h  Bu yardım metni.\n"
+#~ "  -q  Günlük tutmaya uygun çıktı - İlerleme göstergesi yok\n"
+#~ "  -qq Hata olmadığı müddetçe çıktıya bir şey yazma\n"
+#~ "  -s  Bir şey yapma. Sadece ne yapılacağını söyler.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Belirtilen yapılandırma dosyası kullan\n"
+#~ "  -o=? Yapılandırma seçeneği ayarla, örneğin -o dir::cache=/tmp\n"
+#~ "Ayrıntılı bilgi için apt-mark(8) ve apt.conf(5) rehber sayfalarına\n"
+#~ "bakabilirsiniz."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Kullanım: apt-sortpkgs [seçenekler] dosya1 [dosya2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs, paket dosyalarını sıralayan basit bir araçtır.\n"
+#~ "-s seçeneği ne tür bir dosya olduğunu göstermekte kullanılır.\n"
+#~ "\n"
+#~ "Seçenekler:\n"
+#~ "  -h Bu yardım metni\n"
+#~ "  -s Kaynak dosyası sıralamayı kullan\n"
+#~ "  -c=? Belirtilen yapılandırma dosyasını oku\n"
+#~ "  -o=? Herhangi bir yapılandırma seçeneği ayarla, örneğin -o dir::cache=/"
+#~ "tmp\n"
 
 #~ msgid "Use --allow-insecure-repositories to force the update"
 #~ msgstr ""

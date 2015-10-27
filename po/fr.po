@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2013-12-15 16:45+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -176,6 +176,36 @@ msgstr "Le paquet « %s » n'est pas installé, et ne peut donc être supprim�
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Note : sélection de « %s » au lieu de « %s »\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Cet APT a les « Super Cow Powers »"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Aucun paquet n'a été trouvé"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "ATTENTION : les paquets suivants n'ont pas été authentifiés."
@@ -219,6 +249,10 @@ msgstr "Impossible de déterminer l'espace disponible sur %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Pas assez d'espace disponible sur %s"
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Impossible de verrouiller le répertoire de téléchargement"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -324,7 +358,7 @@ msgstr "Souhaitez-vous continuer ?"
 msgid "Some files failed to download"
 msgstr "Certains fichiers n'ont pu être téléchargés."
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Téléchargement achevé et dans le mode téléchargement uniquement"
 
@@ -725,9 +759,254 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr "pas un véritable paquet (virtuel)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Aucun paquet n'a été trouvé"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Impossible de trouver le paquet %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Fichiers du paquet :"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Le cache est désynchronisé, impossible de référencer un fichier"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Paquets épinglés :"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(non trouvé)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Installé : "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Candidat : "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(aucun)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Épinglage de paquet : "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr " Table de version :"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Impossible de trouver de paquet correspondant à l'architecture « %s »"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr ""
+"Impossible de trouver de paquet «%s » correspondant à la version « %s »"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr ""
+"Impossible de trouver de paquet « %s » correspondant à la publication « %s »"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Choix de « %s » comme paquet source à la place de « %s »\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Impossible de trouver la version « %s » du paquet « %s »"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Vous devez spécifier au moins un paquet source"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Impossible de trouver une source de paquet pour %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"Note : la maintenance du paquet de « %s » est réalisée dans le système de "
+"suivi de versions « %s » à l'adresse :\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Veuillez utiliser la commande :\n"
+"%s\n"
+"pour récupérer les dernières mises à jour (éventuellement non encore "
+"publiées) du paquet.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Nécessité de prendre %so/%so dans les sources.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Nécessité de prendre %so dans les sources.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Récupération des sources %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Échec lors de la récupération de quelques archives."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Saut du décompactage des paquets sources déjà décompactés dans %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "La commande de décompactage « %s » a échoué.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Veuillez vérifier si le paquet dpkg-dev est installé.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "La commande de construction « %s » a échoué.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Il faut spécifier au moins un paquet pour vérifier les dépendances de "
+"construction"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Aucune information sur l'architecture n'est disponible pour %s. Veuillez "
+"consulter la section à propos de APT::Architectures dans la page de manuel "
+"apt.conf(5)."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Impossible d'activer les dépendances de construction"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Impossible d'obtenir les dépendances de construction pour %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s n'a pas de dépendance de construction.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car %s n'est pas "
+"autorisé avec les paquets « %s »."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
+"peut être trouvé"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Impossible de satisfaire la dépendance %s pour %s : le paquet installé %s "
+"est trop récent"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
+"disponible du paquet %s ne peut satisfaire les prérequis de version."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s "
+"n'a pas de version disponible."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr ""
+"Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Impossible d'activer les dépendances de construction"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -833,99 +1112,18 @@ msgstr "Total de l'espace attribué : "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Cette commande est obsolète. Veuillez utiliser « apt-mark showauto »."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Impossible de trouver le paquet %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Fichiers du paquet :"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Le cache est désynchronisé, impossible de référencer un fichier"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Paquets épinglés :"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(non trouvé)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Installé : "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Candidat : "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(aucun)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Épinglage de paquet : "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr " Table de version :"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Usage : apt-cache [options] commande\n"
-"        apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache est un outil de bas niveau pour obtenir des informations\n"
-"des fichiers de cache binaires d'APT.\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Options :\n"
-"  -h    Ce texte d'aide\n"
-"  -p=?  Le cache des paquets\n"
-"  -s=?  Le cache des sources\n"
-"  -q    Enlève l'indicateur de progression\n"
-"  -i    Affiche seulement les dépendances importantes pour la commande "
-"« unmet »\n"
-"  -c=?  Lit ce fichier de configuration\n"
-"  -o=?  Spécifie une option de configuration, p. ex. -o dir::cache=/tmp\n"
-"Veuillez consulter les pages de manuel de apt-cache(8) et apt.conf(5) pour "
-"plus\n"
-"d'informations.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -959,11 +1157,12 @@ msgstr "Affiche l'épinglage (Pin) en vigueur"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Utilisation : apt [options] commande\n"
-"\n"
-"Interface Ligne de Commande (CLI) pour apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1004,7 +1203,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1049,38 +1247,10 @@ msgstr ""
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Options:\n"
-"  -h  Affiche la présente aide.\n"
-"  -q  Affichage journalisable - pas de barre de progression\n"
-"  -qq Pas d'affichage à part les erreurs\n"
-"  -s  Mode simulation : aucune action effectuée.\n"
-"      Affiche simplement ce qui serait effectué.\n"
-"  -f  lecture/écriture des états dans le fichier indiqué\n"
-"  -c=? lecture du fichier de configuration indiqué\n"
-"  -o=? utilisation d'une option de configuration,\n"
-"       p. ex. -o dir::cache=/tmp\n"
-"Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
-"pour plus d'informations."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1090,23 +1260,9 @@ msgstr "Les paramètres ne sont pas appariés"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Usage : apt-config [options] commande\n"
-"\n"
-"apt-config est un outil simple pour lire le fichier de configuration d'APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Options :\n"
-"   -h   Ce texte d'aide\n"
-"   -c=? Lit ce fichier de configuration\n"
-"   -o=? Spécifie une option de configuration, p. ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1115,33 +1271,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Impossible de trouver de paquet correspondant à l'architecture « %s »"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr ""
-"Impossible de trouver de paquet «%s » correspondant à la version « %s »"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr ""
-"Impossible de trouver de paquet « %s » correspondant à la publication « %s »"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Choix de « %s » comme paquet source à la place de « %s »\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Impossible de trouver la version « %s » du paquet « %s »"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1168,195 +1297,20 @@ msgstr ""
 "parties"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Impossible de verrouiller le répertoire de téléchargement"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Vous devez spécifier au moins un paquet source"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Impossible de trouver une source de paquet pour %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"Note : la maintenance du paquet de « %s » est réalisée dans le système de "
-"suivi de versions « %s » à l'adresse :\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Veuillez utiliser la commande :\n"
-"%s\n"
-"pour récupérer les dernières mises à jour (éventuellement non encore "
-"publiées) du paquet.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Nécessité de prendre %so/%so dans les sources.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Nécessité de prendre %so dans les sources.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Récupération des sources %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Échec lors de la récupération de quelques archives."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Saut du décompactage des paquets sources déjà décompactés dans %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "La commande de décompactage « %s » a échoué.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Veuillez vérifier si le paquet dpkg-dev est installé.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "La commande de construction « %s » a échoué.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Il faut spécifier au moins un paquet pour vérifier les dépendances de "
-"construction"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Aucune information sur l'architecture n'est disponible pour %s. Veuillez "
-"consulter la section à propos de APT::Architectures dans la page de manuel "
-"apt.conf(5)."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Impossible d'activer les dépendances de construction"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Impossible d'obtenir les dépendances de construction pour %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s n'a pas de dépendance de construction.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car %s n'est pas "
-"autorisé avec les paquets « %s »."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
-"peut être trouvé"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Impossible de satisfaire la dépendance %s pour %s : le paquet installé %s "
-"est trop récent"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
-"disponible du paquet %s ne peut satisfaire les prérequis de version."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s "
-"n'a pas de version disponible."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
-"Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Impossible d'activer les dépendances de construction"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Modules reconnus :"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Usage : apt-get [options] commandes\n"
 "        apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1365,45 +1319,6 @@ msgstr ""
 "apt-get est une interface simple en ligne de commande servant à\n"
 "télécharger et à installer des paquets. Les commandes les plus\n"
 "fréquemment employées sont update et install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Options :\n"
-"  -h Ce texte d'aide\n"
-"  -q Message de sortie enregistrable - aucun indicateur de progression\n"
-"  -qq Aucun message de sortie, exceptés les messages d'erreur\n"
-"  -d Simple téléchargement - n'installe pas ou ne décompacte pas les "
-"archives\n"
-"  -s N'agit pas. Réalise uniquement une simulation de commande\n"
-"  -y Répond oui à toutes les questions et n'interroge pas l'utilisateur\n"
-"  -f Tente de poursuivre si le contrôle d'intégrité échoue\n"
-"  -m Tente de poursuivre si les archives ne sont pas localisables\n"
-"  -u Affiche une liste des paquets mis à jour\n"
-"  -b Compile le paquet source après l'avoir récupéré\n"
-"  -V Affiche les numéros des versions de façon détaillée\n"
-"  -c=? Lit ce fichier de configuration\n"
-"  -o=? Place une option de configuration arbitraire, ex. -o dir::cache=/tmp\n"
-"Reportez-vous aux pages de manuels d'apt-get(8), sources.list(5) et\n"
-"apt.conf(5) pour plus d'informations et d'options.\n"
-"                      Cet APT a les « Super Cow Powers »\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1486,11 +1401,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1562,42 +1474,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Utilisation: apt-mark [options] {auto|manual} paquet 1 [paquet2 ...]\n"
 "\n"
 "apt-mark est une interface simple, en ligne de commande, qui permet\n"
 "de marquer des paquets comme installés manuellement ou automatiquement.\n"
 "Cette commande permet également d'afficher cet état.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Options:\n"
-"  -h  Affiche la présente aide.\n"
-"  -q  Affichage journalisable - pas de barre de progression\n"
-"  -qq Pas d'affichage à part les erreurs\n"
-"  -s  Mode simulation : aucune action effectuée.\n"
-"      Affiche simplement ce qui serait effectué.\n"
-"  -f  lecture/écriture des états dans le fichier indiqué\n"
-"  -c=? lecture du fichier de configuration indiqué\n"
-"  -o=? utilisation d'une option de configuration,\n"
-"       p. ex. -o dir::cache=/tmp\n"
-"Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
-"pour plus d'informations."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2098,17 +1988,13 @@ msgid "Merging available information"
 msgstr "Fusion des informations disponibles"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Usage : apt-extracttemplates fichier1 [fichier2 ...]\n"
 "\n"
@@ -2137,17 +2023,12 @@ msgstr ""
 "Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Utilisation: apt-internal-solver\n"
 "\n"
@@ -2171,26 +2052,10 @@ msgstr "Enregistrement de paquet inconnu !"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Usage : apt-sortpkgs [options] fichier1 [fichier2 ...]\n"
-"\n"
-"apt-sortpkgs est un outil simple pour trier les paquets. L'option -s est\n"
-"employée pour indiquer le type de fichier dont il s'agit.\n"
-"\n"
-"Options :\n"
-"  -h   Ce texte d'aide\n"
-"  -s   Trie le fichier source\n"
-"  -c=? Lit ce fichier de configuration\n"
-"  -o=? Place une option de configuration arbitraire, p. ex. -o dir::cache=/"
-"tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3982,6 +3847,149 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Calcul de la mise à jour"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Usage : apt-cache [options] commande\n"
+#~ "        apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache est un outil de bas niveau pour obtenir des informations\n"
+#~ "des fichiers de cache binaires d'APT.\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Options :\n"
+#~ "  -h    Ce texte d'aide\n"
+#~ "  -p=?  Le cache des paquets\n"
+#~ "  -s=?  Le cache des sources\n"
+#~ "  -q    Enlève l'indicateur de progression\n"
+#~ "  -i    Affiche seulement les dépendances importantes pour la commande "
+#~ "« unmet »\n"
+#~ "  -c=?  Lit ce fichier de configuration\n"
+#~ "  -o=?  Spécifie une option de configuration, p. ex. -o dir::cache=/tmp\n"
+#~ "Veuillez consulter les pages de manuel de apt-cache(8) et apt.conf(5) "
+#~ "pour plus\n"
+#~ "d'informations.\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Utilisation : apt [options] commande\n"
+#~ "\n"
+#~ "Interface Ligne de Commande (CLI) pour apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Options:\n"
+#~ "  -h  Affiche la présente aide.\n"
+#~ "  -q  Affichage journalisable - pas de barre de progression\n"
+#~ "  -qq Pas d'affichage à part les erreurs\n"
+#~ "  -s  Mode simulation : aucune action effectuée.\n"
+#~ "      Affiche simplement ce qui serait effectué.\n"
+#~ "  -f  lecture/écriture des états dans le fichier indiqué\n"
+#~ "  -c=? lecture du fichier de configuration indiqué\n"
+#~ "  -o=? utilisation d'une option de configuration,\n"
+#~ "       p. ex. -o dir::cache=/tmp\n"
+#~ "Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
+#~ "pour plus d'informations."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Usage : apt-config [options] commande\n"
+#~ "\n"
+#~ "apt-config est un outil simple pour lire le fichier de configuration "
+#~ "d'APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Options :\n"
+#~ "   -h   Ce texte d'aide\n"
+#~ "   -c=? Lit ce fichier de configuration\n"
+#~ "   -o=? Spécifie une option de configuration, p. ex. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Options:\n"
+#~ "  -h  Affiche la présente aide.\n"
+#~ "  -q  Affichage journalisable - pas de barre de progression\n"
+#~ "  -qq Pas d'affichage à part les erreurs\n"
+#~ "  -s  Mode simulation : aucune action effectuée.\n"
+#~ "      Affiche simplement ce qui serait effectué.\n"
+#~ "  -f  lecture/écriture des états dans le fichier indiqué\n"
+#~ "  -c=? lecture du fichier de configuration indiqué\n"
+#~ "  -o=? utilisation d'une option de configuration,\n"
+#~ "       p. ex. -o dir::cache=/tmp\n"
+#~ "Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
+#~ "pour plus d'informations."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Usage : apt-sortpkgs [options] fichier1 [fichier2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs est un outil simple pour trier les paquets. L'option -s est\n"
+#~ "employée pour indiquer le type de fichier dont il s'agit.\n"
+#~ "\n"
+#~ "Options :\n"
+#~ "  -h   Ce texte d'aide\n"
+#~ "  -s   Trie le fichier source\n"
+#~ "  -c=? Lit ce fichier de configuration\n"
+#~ "  -o=? Place une option de configuration arbitraire, p. ex. -o dir::"
+#~ "cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Échec du processus fils"

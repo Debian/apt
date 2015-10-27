@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -177,6 +177,36 @@ msgstr "Pakket '%s' is niet geïnstalleerd, en wordt dus niet verwijderd\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Let op, '%s' wordt geselecteerd in plaats van '%s'\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Deze APT heeft Super Koekracht."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Deze APT-helper heeft Super Koekracht."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Geen pakketten gevonden"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr ""
@@ -221,6 +251,10 @@ msgstr "Kon de hoeveelheid vrije schijfruimte op %s niet bepalen"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "U heeft onvoldoende vrije schijfruimte op %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Kon de ophaalmap niet vergrendelen"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -319,7 +353,7 @@ msgstr "Wilt u doorgaan?"
 msgid "Some files failed to download"
 msgstr "Ophalen van sommige bestanden is mislukt"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Ophalen klaar en alleen-ophalen-modus staat aan"
 
@@ -716,9 +750,252 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr "geen echt pakket (virtueel)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Geen pakketten gevonden"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Kan pakket %s niet vinden"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Pakketbestanden:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr ""
+"Cache loopt niet synchroon, kruisverwijzing naar pakketbestand lukt niet"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Vastgepinde pakketten:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(niet gevonden)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Geïnstalleerd: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidaat: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(geen)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Pakketpin: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Versietabel:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Kan geen pakket vinden voor architectuur '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Kan geen pakket '%s' vinden met versienummer '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Kan geen pakket '%s' vinden uit de uitgave '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "'%s' wordt als bronpakket genomen in plaats van '%s'\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Kan versie '%s' van pakket '%s' niet vinden"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"U dient minstens 1 pakket op te geven waarvan de broncode opgehaald moet "
+"worden"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Kan geen bronpakket vinden voor %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"MERK OP: Het verpakken van '%s' wordt bijgehouden in het versiebeheersysteem "
+"'%s' op:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Gebruik:\n"
+"%s\n"
+"om de nieuwste (mogelijk nog niet uitgebrachte) bijwerkingen van het pakket "
+"op te halen.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Reeds opgehaald bestand '%s' wordt overgeslagen\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Moet %sB aan bronarchieven ophalen.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Ophalen bron %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Ophalen van sommige archieven is mislukt."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Uitpakopdracht '%s' is mislukt.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Gelieve na te gaan of het pakket 'dpkg-dev' geïnstalleerd is.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Bouwopdracht '%s' is mislukt.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"U dient tenminste één pakket op te geven om er de bouwvereisten van te "
+"controleren"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Er is geen architectuurinformatie beschikbaar voor %s. Raadpleeg apt.conf(5) "
+"APT::Architectures om dit te configureren"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Verwerken van de bouwvereisten is mislukt"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Kan de informatie over de bouwvereisten voor %s niet ophalen"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s heeft geen bouwvereisten.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"De vereiste %s van %s kan niet voldaan worden omdat %s niet toegestaan is "
+"voor de pakketten van '%s'"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"De vereiste %s van %s kan niet voldaan worden omdat pakket %s onvindbaar is"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Voldoen van vereiste %s van %s is mislukt: geïnstalleerd pakket %s is te "
+"nieuw"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"De vereiste %s van %s kan niet voldaan worden omdat de beschikbare versie "
+"van pakket %s niet aan de versievereisten voldoet"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"De vereiste %s van %s kan niet voldaan worden omdat er geen geschikte versie "
+"is van pakket %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Voldoen van de vereiste %s van %s is mislukt: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Bouwvereisten voor %s konden niet voldaan worden."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Verwerken van de bouwvereisten is mislukt"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -830,98 +1107,18 @@ msgstr ""
 "Dit commando is verouderd. Gelieve in de plaats 'apt-mark showauto' te "
 "gebruiken."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Kan pakket %s niet vinden"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Pakketbestanden:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr ""
-"Cache loopt niet synchroon, kruisverwijzing naar pakketbestand lukt niet"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Vastgepinde pakketten:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(niet gevonden)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Geïnstalleerd: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidaat: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(geen)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Pakketpin: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Versietabel:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Gebruik: apt-cache [opties] opdracht\n"
-"         apt-cache [opties] show pakket1 [pakket2 ...]\n"
-"\n"
-"apt-cache is een basaal hulpmiddel waarmee u informatie kunt\n"
-"opvragen uit de binaire cachebestanden van APT\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Opdrachten:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Opties:\n"
-"  -h   Deze hulptekst.\n"
-"  -p=? De pakketcache.\n"
-"  -s=? De broncache.\n"
-"  -q   Voortgangsindicator uitschakelen.\n"
-"  -i   Toon alleen belangrijke vereisten voor de 'unmet'-opdracht.\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-"Raadpleeg de man-pagina's van apt-cache(8) en apt.conf(5) voor meer "
-"informatie.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -955,11 +1152,12 @@ msgstr "Toon beleidsinstellingen"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Gebruik: apt [opties] opdracht\n"
-"\n"
-"CLI voor apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1002,7 +1200,6 @@ msgstr ""
 "waardeer het systeem op door pakketten te verwijderen/te installeren/op te "
 "waarderen"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1046,35 +1243,10 @@ msgstr "Dit proces dient herhaald te worden voor alle cd's in uw set."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Opties:\n"
-"  -h  Deze hulptekst\n"
-"  -q  Logbare uitvoer - geen voortgangsindicator\n"
-"  -qq Geen uitvoer behalve van foutmeldingen\n"
-"  -s  Doe-niets. Toont alleen wat gedaan zou worden.\n"
-"  -f  lees/schrijf auto/manueel markeringen in het vermelde bestand\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-"Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1084,24 +1256,9 @@ msgstr "Argumenten niet in paren"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Gebruik: apt-config [opties] opdracht\n"
-"\n"
-"apt-config is een eenvoudig hulpmiddel om het APT-configuratiebestand te "
-"lezen\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Opties:\n"
-"  -h   Deze hulptekst.\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1110,31 +1267,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Kan geen pakket vinden voor architectuur '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Kan geen pakket '%s' vinden met versienummer '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Kan geen pakket '%s' vinden uit de uitgave '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "'%s' wordt als bronpakket genomen in plaats van '%s'\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Kan versie '%s' van pakket '%s' niet vinden"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1159,194 +1291,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Interne fout, probleemoplosser heeft dingen stukgemaakt"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Kon de ophaalmap niet vergrendelen"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"U dient minstens 1 pakket op te geven waarvan de broncode opgehaald moet "
-"worden"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Kan geen bronpakket vinden voor %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"MERK OP: Het verpakken van '%s' wordt bijgehouden in het versiebeheersysteem "
-"'%s' op:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Gebruik:\n"
-"%s\n"
-"om de nieuwste (mogelijk nog niet uitgebrachte) bijwerkingen van het pakket "
-"op te halen.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Reeds opgehaald bestand '%s' wordt overgeslagen\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Moet %sB aan bronarchieven ophalen.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Ophalen bron %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Ophalen van sommige archieven is mislukt."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Uitpakopdracht '%s' is mislukt.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Gelieve na te gaan of het pakket 'dpkg-dev' geïnstalleerd is.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Bouwopdracht '%s' is mislukt.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"U dient tenminste één pakket op te geven om er de bouwvereisten van te "
-"controleren"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Er is geen architectuurinformatie beschikbaar voor %s. Raadpleeg apt.conf(5) "
-"APT::Architectures om dit te configureren"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Verwerken van de bouwvereisten is mislukt"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Kan de informatie over de bouwvereisten voor %s niet ophalen"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s heeft geen bouwvereisten.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat %s niet toegestaan is "
-"voor de pakketten van '%s'"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat pakket %s onvindbaar is"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Voldoen van vereiste %s van %s is mislukt: geïnstalleerd pakket %s is te "
-"nieuw"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat de beschikbare versie "
-"van pakket %s niet aan de versievereisten voldoet"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat er geen geschikte versie "
-"is van pakket %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Voldoen van de vereiste %s van %s is mislukt: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Bouwvereisten voor %s konden niet voldaan worden."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Verwerken van de bouwvereisten is mislukt"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Ondersteunde modules:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Gebruik: apt-get [opties] opdracht\n"
 "         apt-get [opties] install|remove pakket1 [pakket2 ...]\n"
@@ -1355,44 +1313,6 @@ msgstr ""
 "apt-get is een eenvoudige commandoregel-interface voor het ophalen en\n"
 "installeren van pakketten. De meest gebruikte opdrachten zijn\n"
 "'update' en 'install'.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Opties:\n"
-"  -h   Deze hulptekst\n"
-"  -q   Logbare uitvoer - geen voortgangsindicator\n"
-"  -qq  Geen uitvoer behalve van foutmeldingen\n"
-"  -d   Alleen ophalen - archieven NIET installeren of uitpakken\n"
-"  -s   Doe-niets. Doe alleen sorteersimulatie\n"
-"  -y   Antwoord \"ja\" op alle vragen zonder ze te stellen\n"
-"  -f   Probeer een systeem met onvoldane afhankelijkheden te corrigeren\n"
-"  -m   Probeer door te gaan als archieven niet gevonden kunnen worden\n"
-"  -u   Toon ook een lijst van bijgewerkte pakketten\n"
-"  -b   Bouw het bronpakket nadat het is opgehaald\n"
-"  -V   Toon uitgebreide versienummers\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-"Raadpleeg de man-pagina's apt-get(8), sources.list(5) en apt.conf(5)\n"
-"voor meer informatie en opties.\n"
-"                       Deze APT heeft Super Koekracht.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1468,20 +1388,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Gebruik: apt-helper [opties] opdracht\n"
 "         apt-helper [opties] download-file uri doelpad\n"
 "\n"
 "apt-helper is een intern hulpmiddel voor apt\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Deze APT-helper heeft Super Koekracht."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1550,39 +1468,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Gebruik: apt-mark [opties] {auto|manual} pakket1 [pakket2 ...]\n"
 "\n"
 "apt-mark is een eenvoudige commandolijn-interface voor het markeren\n"
 "van pakketten als zijnde handmatig of automatisch geïnstalleerd.\n"
 "Het kan ook een lijst met markeringen weergeven.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Opties:\n"
-"  -h  Deze hulptekst\n"
-"  -q  Logbare uitvoer - geen voortgangsindicator\n"
-"  -qq Geen uitvoer behalve van foutmeldingen\n"
-"  -s  Doe-niets. Toont alleen wat gedaan zou worden.\n"
-"  -f  lees/schrijf auto/manueel markeringen in het vermelde bestand\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
-"Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2083,17 +1982,13 @@ msgid "Merging available information"
 msgstr "De beschikbare informatie wordt samengevoegd"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
 "\n"
@@ -2121,17 +2016,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan versie van debconf niet bepalen. Is debconf geïnstalleerd?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Gebruik: apt-internal-solver\n"
 "\n"
@@ -2152,25 +2042,10 @@ msgstr "Onbekend pakketrecord!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Gebruik: apt-sortpkgs [opties] bestand1 [bestand2 ...]\n"
-"\n"
-"apt-sortpkgs is een simpel hulpmiddel om pakketbestanden te sorteren.\n"
-"De -s optie wordt gebruikt om aan te geven om welk soort bestand het gaat.\n"
-"\n"
-"Opties:\n"
-"  -h   Deze hulptekst\n"
-"  -s   Sorteer bronbestanden\n"
-"  -c=? Lees dit configuratiebestand\n"
-"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3945,6 +3820,144 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Opwaardering wordt doorgerekend"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Gebruik: apt-cache [opties] opdracht\n"
+#~ "         apt-cache [opties] show pakket1 [pakket2 ...]\n"
+#~ "\n"
+#~ "apt-cache is een basaal hulpmiddel waarmee u informatie kunt\n"
+#~ "opvragen uit de binaire cachebestanden van APT\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Opdrachten:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Opties:\n"
+#~ "  -h   Deze hulptekst.\n"
+#~ "  -p=? De pakketcache.\n"
+#~ "  -s=? De broncache.\n"
+#~ "  -q   Voortgangsindicator uitschakelen.\n"
+#~ "  -i   Toon alleen belangrijke vereisten voor de 'unmet'-opdracht.\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+#~ "Raadpleeg de man-pagina's van apt-cache(8) en apt.conf(5) voor meer "
+#~ "informatie.\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Gebruik: apt [opties] opdracht\n"
+#~ "\n"
+#~ "CLI voor apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Opties:\n"
+#~ "  -h  Deze hulptekst\n"
+#~ "  -q  Logbare uitvoer - geen voortgangsindicator\n"
+#~ "  -qq Geen uitvoer behalve van foutmeldingen\n"
+#~ "  -s  Doe-niets. Toont alleen wat gedaan zou worden.\n"
+#~ "  -f  lees/schrijf auto/manueel markeringen in het vermelde bestand\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+#~ "Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Gebruik: apt-config [opties] opdracht\n"
+#~ "\n"
+#~ "apt-config is een eenvoudig hulpmiddel om het APT-configuratiebestand te "
+#~ "lezen\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Opties:\n"
+#~ "  -h   Deze hulptekst.\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Opties:\n"
+#~ "  -h  Deze hulptekst\n"
+#~ "  -q  Logbare uitvoer - geen voortgangsindicator\n"
+#~ "  -qq Geen uitvoer behalve van foutmeldingen\n"
+#~ "  -s  Doe-niets. Toont alleen wat gedaan zou worden.\n"
+#~ "  -f  lees/schrijf auto/manueel markeringen in het vermelde bestand\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
+#~ "Raadpleeg de man-pagina's apt-mark(8) en apt.conf(5) voor meer informatie."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Gebruik: apt-sortpkgs [opties] bestand1 [bestand2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is een simpel hulpmiddel om pakketbestanden te sorteren.\n"
+#~ "De -s optie wordt gebruikt om aan te geven om welk soort bestand het "
+#~ "gaat.\n"
+#~ "\n"
+#~ "Opties:\n"
+#~ "  -h   Deze hulptekst\n"
+#~ "  -s   Sorteer bronbestanden\n"
+#~ "  -c=? Lees dit configuratiebestand\n"
+#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Dochterproces is mislukt"

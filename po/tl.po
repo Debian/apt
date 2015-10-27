@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -174,6 +174,36 @@ msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Paunawa, pinili ang %s imbes na %s\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Ang APT na ito ay may Kapangyarihan Super Kalabaw."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Walang nahanap na mga pakete"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr ""
@@ -219,6 +249,10 @@ msgstr "Hindi matantsa ang libreng puwang sa %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Kulang kayo ng libreng puwang sa %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Hindi maaldaba ang directory ng download"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -320,7 +354,7 @@ msgstr "Nais niyo bang magpatuloy?"
 msgid "Some files failed to download"
 msgstr "May mga talaksang hindi nakuha"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Kumpleto ang pagkakuha ng mga talaksan sa modong pagkuha lamang"
 
@@ -702,9 +736,239 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Walang nahanap na mga pakete"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Talaksang Pakete:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Wala sa sync ang cache, hindi ma-x-ref ang talaksang pakete"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Mga naka-Pin na Pakete:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(hindi nahanap)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Nakaluklok: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidato: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(wala)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Naka-Pin na Pakete: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Talaang Bersyon:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Hindi mahanap ang paketeng source para sa %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Linaktawan ang nakuha na na talaksan '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Kailangang kumuha ng %sB/%sB ng arkibong source.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Kailangang kumuha ng %sB ng arkibong source.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Kunin ang Source %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Bigo sa pagkuha ng ilang mga arkibo."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Linaktawan ang pagbuklat ng nabuklat na na source sa %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Bigo ang utos ng pagbuklat '%s'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Utos na build '%s' ay bigo.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Kailangang magtakda ng kahit isang pakete na susuriin ang builddeps"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Bigo sa pagproseso ng build dependencies"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Hindi makuha ang impormasyong build-dependency para sa %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "Walang build depends ang %s.\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
+"mahanap"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
+"mahanap"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Bigo sa pagbuo ng dependensiyang %s para sa %s: Ang naka-instol na paketeng "
+"%s ay bagong-bago pa lamang."
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na bersyon "
+"ng paketeng %s na tumutugon sa kinakailangang bersyon"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
+"mahanap"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Bigo sa pagbuo ng dependensiyang %s para sa %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Hindi mabuo ang build-dependencies para sa %s."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Bigo sa pagproseso ng build dependencies"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -813,98 +1077,18 @@ msgstr "Kabuuan ng puwang na napag-tuosan: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Talaksang Pakete:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Wala sa sync ang cache, hindi ma-x-ref ang talaksang pakete"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Mga naka-Pin na Pakete:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(hindi nahanap)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Nakaluklok: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidato: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(wala)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Naka-Pin na Pakete: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Talaang Bersyon:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Pag-gamit: apt-cache [mga option] utos\n"
-"       apt-cache [mga option] show pkt1 [pkt2 ...]\n"
-"\n"
-"apt-cache ay isang kagamitang low-level para sa pag-manipula\n"
-"ng mga talaksan sa binary cache ng APT, at upang makakuha ng\n"
-"impormasyon mula sa kanila\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Mga option:\n"
-"  -h   Itong tulong na ito.\n"
-"  -p=? Ang cache ng mga pakete.\n"
-"  -s=? Ang cache ng mga source.\n"
-"  -q   Huwag ipakita ang hudyat ng progreso.\n"
-"  -i   Ipakita lamang ang importanteng mga dep para sa utos na unmet\n"
-"  -c=? Basahin ang talaksang pagkaayos na ito\n"
-"  -o=? Magtakda ng isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
-"Basahin ang pahina ng manwal ng apt-cache(8) at apt.conf(5) para sa \n"
-"karagdagang impormasyon\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -938,7 +1122,11 @@ msgstr "Ipakita ang pagkaayos ng mga policy"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -984,7 +1172,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1022,24 +1209,9 @@ msgstr "Ulitin ang prosesong ito para sa lahat ng mga CD sa inyong set."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
 
 #: cmdline/apt-config.cc
@@ -1050,24 +1222,9 @@ msgstr "Mga argumento ay hindi naka-pares"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Pag-gamit: apt-config [mga option] utos\n"
-"\n"
-"Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos ng "
-"APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Mga option:\n"
-"  -h   Itong tulong na ito.\n"
-"  -c=? Basahin itong talaksang pagkaayos\n"
-"  -o=? Itakda ang isang option sa pagkaayos, hal. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1075,31 +1232,6 @@ msgstr ""
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
 msgstr ""
 
 #: cmdline/apt-get.cc
@@ -1123,182 +1255,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Error na internal, may nasira ang problem resolver"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Hindi maaldaba ang directory ng download"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Hindi mahanap ang paketeng source para sa %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Linaktawan ang nakuha na na talaksan '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Kailangang kumuha ng %sB/%sB ng arkibong source.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Kailangang kumuha ng %sB ng arkibong source.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Kunin ang Source %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Bigo sa pagkuha ng ilang mga arkibo."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Linaktawan ang pagbuklat ng nabuklat na na source sa %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Bigo ang utos ng pagbuklat '%s'.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Utos na build '%s' ay bigo.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "Kailangang magtakda ng kahit isang pakete na susuriin ang builddeps"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Bigo sa pagproseso ng build dependencies"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Hindi makuha ang impormasyong build-dependency para sa %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "Walang build depends ang %s.\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Bigo sa pagbuo ng dependensiyang %s para sa %s: Ang naka-instol na paketeng "
-"%s ay bagong-bago pa lamang."
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na bersyon "
-"ng paketeng %s na tumutugon sa kinakailangang bersyon"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Bigo sa pagbuo ng dependensiyang %s para sa %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Hindi mabuo ang build-dependencies para sa %s."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Bigo sa pagproseso ng build dependencies"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Suportadong mga Module:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Pag-gamit: apt-get [mga option] utos\n"
 "           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
@@ -1307,44 +1277,6 @@ msgstr ""
 "Ang apt-get ay payak na command line interface para sa pagkuha at\n"
 "pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
 "at install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Mga option:\n"
-"  -h  Itong tulong na ito.\n"
-"  -q  Output na maaaring itala - walang indikator ng progreso\n"
-"  -qq Walang output maliban sa mga error\n"
-"  -d  Kunin lamang - HINDI mag-instol o mag-buklat ng mga arkibo\n"
-"  -s  Walang gagawin. Mag-simulate lamang ang pagkasunod-sunod.\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Subukang magpatuloy kung bigo ang pagsuri ng integridad\n"
-"  -m  Subukang magpatuloy kung hindi mahanap ang mga arkibo\n"
-"  -u  Ipakita rin ang listahan ng mga paketeng i-upgrade\n"
-"  -b  Ibuo ang paketeng source matapos kunin ito\n"
-"  -V  Ipakita ng buo ang bilang ng bersyon\n"
-"  -c=? Basahin itong talaksang pagkaayos\n"
-"  -o=? Itakda ang isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
-"Basahin ang pahinang manwal ng apt-get(8), sources.list(5) at apt.conf(5)\n"
-"para sa karagdagang impormasyon at mga option.\n"
-"                       Ang APT na ito ay may Kapangyarihan Super Kalabaw.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1425,11 +1357,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1503,20 +1432,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -2010,17 +1928,13 @@ msgid "Merging available information"
 msgstr "Pinagsasama ang magagamit na impormasyon"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
 "\n"
@@ -2053,13 +1967,7 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
 "\n"
@@ -2080,26 +1988,10 @@ msgstr "Di kilalang record ng pakete!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Pag-gamit: apt-sortpkgs [mga option] talaksan1 [talaksan2 ...]\n"
-"\n"
-"Ang apt-sortpkgs ay payak na kagamitan upang makapag-sort ng talaksang "
-"pakete.\n"
-"Ang option -s ay ginagamit upang ipaalam kung anong klaseng talaksan ito.\n"
-"\n"
-"Mga option:\n"
-"  -h   Itong tulong na ito\n"
-"  -s   Gamitin ang pag-sort ng talaksang source\n"
-"  -c=? Basahin ang talaksang pagkaayos na ito\n"
-"  -o=? Itakda ang isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3828,6 +3720,89 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Sinusuri ang pag-upgrade"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Pag-gamit: apt-cache [mga option] utos\n"
+#~ "       apt-cache [mga option] show pkt1 [pkt2 ...]\n"
+#~ "\n"
+#~ "apt-cache ay isang kagamitang low-level para sa pag-manipula\n"
+#~ "ng mga talaksan sa binary cache ng APT, at upang makakuha ng\n"
+#~ "impormasyon mula sa kanila\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Mga option:\n"
+#~ "  -h   Itong tulong na ito.\n"
+#~ "  -p=? Ang cache ng mga pakete.\n"
+#~ "  -s=? Ang cache ng mga source.\n"
+#~ "  -q   Huwag ipakita ang hudyat ng progreso.\n"
+#~ "  -i   Ipakita lamang ang importanteng mga dep para sa utos na unmet\n"
+#~ "  -c=? Basahin ang talaksang pagkaayos na ito\n"
+#~ "  -o=? Magtakda ng isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
+#~ "Basahin ang pahina ng manwal ng apt-cache(8) at apt.conf(5) para sa \n"
+#~ "karagdagang impormasyon\n"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Pag-gamit: apt-config [mga option] utos\n"
+#~ "\n"
+#~ "Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos ng "
+#~ "APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Mga option:\n"
+#~ "  -h   Itong tulong na ito.\n"
+#~ "  -c=? Basahin itong talaksang pagkaayos\n"
+#~ "  -o=? Itakda ang isang option sa pagkaayos, hal. -o dir::cache=/tmp\n"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Pag-gamit: apt-sortpkgs [mga option] talaksan1 [talaksan2 ...]\n"
+#~ "\n"
+#~ "Ang apt-sortpkgs ay payak na kagamitan upang makapag-sort ng talaksang "
+#~ "pakete.\n"
+#~ "Ang option -s ay ginagamit upang ipaalam kung anong klaseng talaksan "
+#~ "ito.\n"
+#~ "\n"
+#~ "Mga option:\n"
+#~ "  -h   Itong tulong na ito\n"
+#~ "  -s   Gamitin ang pag-sort ng talaksang source\n"
+#~ "  -c=? Basahin ang talaksang pagkaayos na ito\n"
+#~ "  -o=? Itakda ang isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Bigo ang prosesong anak"

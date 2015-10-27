@@ -604,7 +604,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 }
 									/*}}}*/
 
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
     _("Usage: apt-ftparchive [options] command\n"
@@ -654,7 +654,7 @@ bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
 static bool SimpleGenPackages(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
    
    string Override;
    if (CmdL.FileSize() >= 3)
@@ -686,7 +686,7 @@ static bool SimpleGenPackages(CommandLine &CmdL)
 static bool SimpleGenContents(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
    
    // Create a package writer object.
    ContentsWriter Contents(NULL, _config->Find("APT::FTPArchive::DB"), _config->Find("APT::FTPArchive::Architecture"));
@@ -708,7 +708,7 @@ static bool SimpleGenContents(CommandLine &CmdL)
 static bool SimpleGenSources(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
    
    string Override;
    if (CmdL.FileSize() >= 3)
@@ -745,7 +745,7 @@ static bool SimpleGenSources(CommandLine &CmdL)
 static bool SimpleGenRelease(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
 
    string Dir = CmdL.FileList[1];
 
@@ -913,7 +913,7 @@ static bool Generate(CommandLine &CmdL)
 {
    struct CacheDB::Stats SrcStats;
    if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
 
    struct timeval StartTime;
    gettimeofday(&StartTime,0);
@@ -971,7 +971,7 @@ static bool Generate(CommandLine &CmdL)
 static bool Clean(CommandLine &CmdL)
 {
    if (CmdL.FileSize() != 2)
-      return ShowHelp(CmdL, nullptr);
+      return ShowHelp(CmdL);
 
    // Read the configuration file.
    Configuration Setup;

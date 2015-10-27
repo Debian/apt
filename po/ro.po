@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -173,6 +173,36 @@ msgstr "Pachetul %s nu este instalat, așa încât nu este șters\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Notă, se selectează %s în locul lui %s\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Acest APT are puterile unei Super Vaci."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Nu s-au găsit pachete"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "AVERTISMENT: Următoarele pachete nu pot fi autentificate!"
@@ -216,6 +246,10 @@ msgstr "N-am putut determina spațiul disponibil în %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Nu aveți suficient spațiu în %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Nu s-a putut bloca directorul de descărcare"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -314,7 +348,7 @@ msgstr "Vreți să continuați?"
 msgid "Some files failed to download"
 msgstr "Descărcarea unor fișiere a eșuat"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Descărcare completă și în modul doar descărcare"
 
@@ -709,9 +743,242 @@ msgstr[2] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Nu s-au găsit pachete"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Nu s-a putut localiza pachetul %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Fișiere pachet: "
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr ""
+"Cache-ul este desincronizat, nu se poate executa x-ref pe un fișier pachet"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Pachete alese special:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(negăsit)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Instalat: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Candidează: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(niciunul)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Pachet ales special: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Tabela de versiuni:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Nu pot găsi pachetul %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Nu pot găsi pachetul %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Nu pot găsi pachetul %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Nu pot determina starea listei surse de pachete %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Trebuie specificat cel puțin un pachet pentru a-i aduce sursa"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Nu s-a putut găsi o sursă pachet pentru %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Sar peste fișierul deja descărcat '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Este nevoie să descărcați %sB/%sB din arhivele surselor.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Este nevoie să descărcați %sB din arhivele surselor.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Aducere sursa %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Eșec la aducerea unor arhive."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Sar peste despachetarea sursei deja despachetate în %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Comanda de despachetare '%s' eșuată.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Verificați dacă pachetul 'dpkg-dev' este instalat.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Comanda de construire '%s' eșuată.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Trebuie specificat cel puțin un pachet pentru a-i verifica dependențele "
+"înglobate"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Eșec la prelucrarea dependențelor de compilare"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Nu pot prelua informațiile despre dependențele înglobate ale lui %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s nu are dependențe înglobate.\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+"poate fi găsit"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+"poate fi găsit"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Eșec la satisfacerea dependenței %s pentru %s: Pachetul instalat %s este "
+"prea nou"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"Dependența lui %s de %s nu poate fi satisfăcută deoarece nici o versiune "
+"disponibilă a pachetului %s nu poate satisface versiunile cerute"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+"poate fi găsit"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Eșec la satisfacerea dependenței %s pentru %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Dependențele înglobate pentru %s nu pot fi satisfăcute."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Eșec la prelucrarea dependențelor de compilare"
 
 #: apt-private/private-sources.cc
 #, fuzzy, c-format
@@ -819,97 +1086,18 @@ msgstr "Total spațiu contorizat pentru: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Nu s-a putut localiza pachetul %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "Fișiere pachet: "
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr ""
-"Cache-ul este desincronizat, nu se poate executa x-ref pe un fișier pachet"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Pachete alese special:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(negăsit)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Instalat: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Candidează: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(niciunul)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Pachet ales special: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Tabela de versiuni:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Utilizare: apt-cache [opțiuni] comanda\n"
-"       apt-cache [opțiuni] show pachet1 [pachet2 ...]\n"
-"\n"
-"apt-cache este o unealtă de nivel scăzut pentru manipularea fișierelor\n"
-"binare din cache-ul APT, și de interogare a informațiilor din ele\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Opțiuni:\n"
-"  -h   Acest text de ajutor.\n"
-"  -p=? Cache-ul de pachete.\n"
-"  -s=? Cache-ul de surse.\n"
-"  -q   Dezactivează indicatorul de progres.\n"
-"  -i   Arată doar dependențele importante pentru comanda „unmet”.\n"
-"  -c=? Citește acest fișier de configurare\n"
-"  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
-"Vedeți manualele apt-cache(8) și apt.conf(5) pentru mai multe informații.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -943,7 +1131,11 @@ msgstr "Arată configurațiile de politici"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
 
 #. query
@@ -989,7 +1181,6 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -1027,24 +1218,9 @@ msgstr "Repetați această procedură pentru restul CD-urilor din set."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
 
 #: cmdline/apt-config.cc
@@ -1055,24 +1231,9 @@ msgstr "Argumentele nu sunt perechi"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Utilizare: apt-config [opțiuni] comanda\n"
-"\n"
-"apt-config este o unealtă simplă pentru citirea fișierului de configurare "
-"APT\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Opțiuni:\n"
-"  -h   Acest text de ajutor.\n"
-"  -c=? Citește acest fișier de configurare\n"
-"  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1080,31 +1241,6 @@ msgstr ""
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Nu pot găsi pachetul %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Nu pot găsi pachetul %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Nu pot găsi pachetul %s"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Nu pot determina starea listei surse de pachete %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
 msgstr ""
 
 #: cmdline/apt-get.cc
@@ -1129,184 +1265,20 @@ msgstr ""
 "Eroare internă, rezolvatorul de probleme a deteriorat diverse chestiuni"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Nu s-a putut bloca directorul de descărcare"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Trebuie specificat cel puțin un pachet pentru a-i aduce sursa"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Nu s-a putut găsi o sursă pachet pentru %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Sar peste fișierul deja descărcat '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Este nevoie să descărcați %sB/%sB din arhivele surselor.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Este nevoie să descărcați %sB din arhivele surselor.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Aducere sursa %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Eșec la aducerea unor arhive."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Sar peste despachetarea sursei deja despachetate în %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Comanda de despachetare '%s' eșuată.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Verificați dacă pachetul 'dpkg-dev' este instalat.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Comanda de construire '%s' eșuată.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Trebuie specificat cel puțin un pachet pentru a-i verifica dependențele "
-"înglobate"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Eșec la prelucrarea dependențelor de compilare"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Nu pot prelua informațiile despre dependențele înglobate ale lui %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s nu are dependențe înglobate.\n"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Eșec la satisfacerea dependenței %s pentru %s: Pachetul instalat %s este "
-"prea nou"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece nici o versiune "
-"disponibilă a pachetului %s nu poate satisface versiunile cerute"
-
-#: cmdline/apt-get.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Eșec la satisfacerea dependenței %s pentru %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Dependențele înglobate pentru %s nu pot fi satisfăcute."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Eșec la prelucrarea dependențelor de compilare"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Module suportate:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Utilizare: apt-get [opțiuni] comanda\n"
 "           apt-get [opțiuni] install|remove pachet1 [pachet2 ...]\n"
@@ -1315,45 +1287,6 @@ msgstr ""
 "apt-get este o simplă interfață în linie de comandă pentru descărcarea și\n"
 "instalarea pachetelor. Cele mai frecvent folosite comenzi sunt update\n"
 "și install.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Opțiuni:\n"
-"  -h  Acest text de ajutor.\n"
-"  -q  Afișare jurnalizabilă - fără indicator de progres\n"
-"  -qq Fără afișare, cu excepția erorilor\n"
-"  -d  Doar descărcare - NU instala sau despacheta arhive\n"
-"  -s  Fără acțiune. Realizează o simulare\n"
-"  -y  Presupune DA ca răspuns la toate întrebările și nu\n"
-"      solicita răspuns\n"
-"  -f  Încearcă corectarea unui sistem cu dependențe corupte\n"
-"  -m  Încearcă continuarea dacă arhivele nu pot fi găsite\n"
-"  -u  Arată o listă de pachete ce pot fi înnoite\n"
-"  -b  Construiește sursa pachetului după aducere\n"
-"  -V  Arată versiunile în mod logoreic\n"
-"  -c=? Citește acest fișier de configurare\n"
-"  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
-"Vedeți manualele apt-get(8), sources.list(5) și apt.conf(5)\n"
-"pentru mai multe informații și opțiuni.\n"
-"                       Acest APT are puterile unei Super Vaci.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1434,11 +1367,8 @@ msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 
 #: cmdline/apt-helper.cc
@@ -1512,20 +1442,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -2028,17 +1947,13 @@ msgid "Merging available information"
 msgstr "Se combină informațiile disponibile"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Utilizare: apt-extracttemplates fișier1 [fișier2 ...]\n"
 "\n"
@@ -2071,13 +1986,7 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Utilizare: apt-extracttemplates fișier1 [fișier2 ...]\n"
 "\n"
@@ -2098,26 +2007,10 @@ msgstr "Înregistrare de pachet necunoscut!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Utilizare: apt-sortpkgs [opțiuni] fișier1 [fișier2 ...]\n"
-"\n"
-"apt-sortpkgs este o unealtă simplă pentru sortarea fișierelor pachete. \n"
-"Opțiunea -s este folosită pentru a indica ce fel de fișier este.\n"
-"\n"
-"Opțiuni:\n"
-"  -h   Acest text de ajutor\n"
-"  -s   Folosește sortarea de fișiere-sursă\n"
-"  -c=? Citește acest fișier de configurare\n"
-"  -o=? Ajustează o opțiune de configurare arbitrară, ex.: -o dir::cache=/"
-"tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3848,6 +3741,89 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Calculez înnoirea"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Utilizare: apt-cache [opțiuni] comanda\n"
+#~ "       apt-cache [opțiuni] show pachet1 [pachet2 ...]\n"
+#~ "\n"
+#~ "apt-cache este o unealtă de nivel scăzut pentru manipularea fișierelor\n"
+#~ "binare din cache-ul APT, și de interogare a informațiilor din ele\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Opțiuni:\n"
+#~ "  -h   Acest text de ajutor.\n"
+#~ "  -p=? Cache-ul de pachete.\n"
+#~ "  -s=? Cache-ul de surse.\n"
+#~ "  -q   Dezactivează indicatorul de progres.\n"
+#~ "  -i   Arată doar dependențele importante pentru comanda „unmet”.\n"
+#~ "  -c=? Citește acest fișier de configurare\n"
+#~ "  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/"
+#~ "tmp\n"
+#~ "Vedeți manualele apt-cache(8) și apt.conf(5) pentru mai multe "
+#~ "informații.\n"
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Utilizare: apt-config [opțiuni] comanda\n"
+#~ "\n"
+#~ "apt-config este o unealtă simplă pentru citirea fișierului de configurare "
+#~ "APT\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Opțiuni:\n"
+#~ "  -h   Acest text de ajutor.\n"
+#~ "  -c=? Citește acest fișier de configurare\n"
+#~ "  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/"
+#~ "tmp\n"
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Utilizare: apt-sortpkgs [opțiuni] fișier1 [fișier2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs este o unealtă simplă pentru sortarea fișierelor pachete. \n"
+#~ "Opțiunea -s este folosită pentru a indica ce fel de fișier este.\n"
+#~ "\n"
+#~ "Opțiuni:\n"
+#~ "  -h   Acest text de ajutor\n"
+#~ "  -s   Folosește sortarea de fișiere-sursă\n"
+#~ "  -c=? Citește acest fișier de configurare\n"
+#~ "  -o=? Ajustează o opțiune de configurare arbitrară, ex.: -o dir::cache=/"
+#~ "tmp\n"
 
 #~ msgid "Child process failed"
 #~ msgstr "Procesul copil a eșuat"

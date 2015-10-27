@@ -215,19 +215,14 @@ bool DebFile::ParseInfo()
 	return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const *)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
 	cout <<
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
 		"\n"
-		"apt-extracttemplates is a tool to extract config and template info\n"
-		"from debian packages\n"
-		"\n"
-		"Options:\n"
-	        "  -h   This help text\n"
-		"  -t   Set the temp dir\n"
-		"  -c=? Read this configuration file\n"
-		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
+		"apt-extracttemplates is used to extract config and template files\n"
+		"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+		"configuration questions before installation of packages.\n");
 	return true;
 }
 									/*}}}*/

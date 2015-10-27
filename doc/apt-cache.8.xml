@@ -32,10 +32,16 @@
  &synopsis-command-apt-cache;
 
  <refsect1><title>Description</title>
-   <para><command>apt-cache</command> performs a variety of operations on APT's package 
-   cache. <command>apt-cache</command> does not manipulate the state of the system 
-   but does provide operations to search and generate interesting output 
-   from the package metadata.</para>
+    <para>
+       <command>apt-cache</command> performs a variety of operations on APT's
+       package cache. <command>apt-cache</command> does not manipulate the
+       state of the system but does provide operations to search and generate
+       interesting output from the package metadata. The metadata is acquired
+       and updated via the 'update' command of e.g. <command>apt-get</command>,
+       so that it can be outdated if the last update is too long ago, but in
+       exchange <command>apt-cache</command> works independently of the
+       availability of the configured sources (e.g. offline).
+    </para>
 
    <para>Unless the <option>-h</option>, or <option>--help</option> option is given, one of the
    commands below must be present.</para>

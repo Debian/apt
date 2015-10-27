@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-24 00:07+0200\n"
+"POT-Creation-Date: 2015-10-27 10:30+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -175,6 +175,36 @@ msgstr "Paketet ”%s” är inte installerat, så det tas inte bort\n"
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Observera, väljer \"%s\" istället för \"%s\"\n"
 
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Denna APT har Speciella Ko-Krafter."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Denna APT-hjälpare har speciella Meep-krafter."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Inga paket hittades"
+
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VARNING: Följande paket kunde inte autentiseras!"
@@ -218,6 +248,10 @@ msgstr "Kunde inte fastställa ledigt utrymme i %s"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Du har inte tillräckligt mycket ledigt utrymme i %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Kunde inte låsa hämtningskatalogen"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -319,7 +353,7 @@ msgstr "Vill du fortsätta?"
 msgid "Some files failed to download"
 msgstr "Misslyckades med att hämta vissa filer"
 
-#: apt-private/private-install.cc cmdline/apt-get.cc
+#: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "Hämtningen färdig i ”endast-hämta”-läge"
 
@@ -713,9 +747,248 @@ msgstr[1] "Det finns %i ytterligare poster. Använd växeln ”-a” för att se
 msgid "not a real package (virtual)"
 msgstr "inte ett riktigt paket (virtuellt)"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Inga paket hittades"
+#: apt-private/private-show.cc apt-pkg/cacheset.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Kunde inte hitta paketet %s"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "”Package”-filer:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Cachen är inte synkroniserad, kan inte korsreferera en paketfil"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Fastnålade paket:"
+
+#: apt-private/private-show.cc
+msgid "(not found)"
+msgstr "(hittades inte)"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Installerad: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidat: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(ingen)"
+
+#: apt-private/private-show.cc
+msgid "  Package pin: "
+msgstr "  Paketnålning: "
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Versionstabell:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Kan inte hitta något paket för arkitekturen ”%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Kan inte hitta något paket ”%s” med versionen ”%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Kunde inte hitta något paket ”%s” med utgåvan ”%s”"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Väljer ”%s” som källkodspaket istället för ”%s”\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Kan inte hitta versionen ”%s” av paketet ”%s”"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Du måste ange minst ett paket att hämta källkod för"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Kunde inte hitta något källkodspaket för %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"OBSERVERA: paketering av ”%s” hanteras i versionshanteringssystemet ”%s” "
+"på:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Använd:\n"
+"%s\n"
+"för att hämta de senaste (möjligen inte utgivna) uppdateringarna av "
+"paketet.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Hoppar över redan hämtade filen ”%s”\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Behöver hämta %sB/%sB källkodsarkiv.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Behöver hämta %sB källkodsarkiv.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Hämtar källkoden %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Misslyckades med att hämta vissa arkiv."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Packar inte upp redan uppackad källkod i %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Uppackningskommandot ”%s” misslyckades.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Försäkra dig om att paketet ”dpkg-dev” är installerat.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Byggkommandot ”%s” misslyckades.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Du måste ange minst ett paket att kontrollera byggberoenden för"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Ingen arkitekturinformation tillgänglig för %s. Se apt.conf(5) APT::"
+"Architectures för inställning"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr "Observera, använder katalogen ”%s” för att få byggberoendena\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Observera, använder filen ”%s” för att få byggberoendena\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Kunde inte hämta information om byggberoenden för %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s har inga byggberoenden.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr ""
+"%s-beroendet på %s kan inte tillfredsställas eftersom %s inte är tillåtet på "
+"”%s”-paket"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr ""
+"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
+"hittas"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr ""
+"Misslyckades med att tillfredsställa %s-beroendet för %s: Det installerade "
+"paketet %s är för nytt"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"%s-beroendet på %s kan inte tillfredsställas eftersom kandidatversionen av "
+"paketet %s inte tillfredsställer versionskraven"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr ""
+"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte har "
+"någon kandidatversion"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "Byggberoenden för %s kunde inte tillfredsställas."
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Misslyckades med att behandla byggberoenden"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -824,96 +1097,18 @@ msgstr "Totalt utrymme som kan redogöras för: "
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Detta kommando är föråldrat. Använd ”apt-mark showauto” istället."
 
-#: cmdline/apt-cache.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Kunde inte hitta paketet %s"
-
-#: cmdline/apt-cache.cc
-msgid "Package files:"
-msgstr "”Package”-filer:"
-
-#: cmdline/apt-cache.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Cachen är inte synkroniserad, kan inte korsreferera en paketfil"
-
-#. Show any packages have explicit pins
-#: cmdline/apt-cache.cc
-msgid "Pinned packages:"
-msgstr "Fastnålade paket:"
-
-#: cmdline/apt-cache.cc
-msgid "(not found)"
-msgstr "(hittades inte)"
-
-#. Print the package name and the version we are forcing to
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "  Installed: "
-msgstr "  Installerad: "
-
-#: cmdline/apt-cache.cc
-msgid "  Candidate: "
-msgstr "  Kandidat: "
-
-#: cmdline/apt-cache.cc
-msgid "(none)"
-msgstr "(ingen)"
-
-#: cmdline/apt-cache.cc
-msgid "  Package pin: "
-msgstr "  Paketnålning: "
-
-#. Show the priority tables
-#: cmdline/apt-cache.cc
-msgid "  Version table:"
-msgstr "  Versionstabell:"
-
 #: cmdline/apt-cache.cc
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache queries and displays available information about installed\n"
+"as well as installable packages. It works exclusively on the data\n"
+"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+"The displayed information can therefore be outdated if the last update\n"
+"is too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
 msgstr ""
-"Användning: apt-cache [flaggor] kommando\n"
-"            apt-cache [flaggor] show paket1 [paket2 …]\n"
-"\n"
-"apt-cache är ett lågnivåverktyg för att hämta information\n"
-"från APTs binära cachefiler\n"
-
-#: cmdline/apt-cache.cc cmdline/apt.cc cmdline/apt-cdrom.cc
-#: cmdline/apt-config.cc cmdline/apt-get.cc cmdline/apt-helper.cc
-#: cmdline/apt-mark.cc
-msgid "Commands:"
-msgstr "Kommandon:"
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -p=? The package cache.\n"
-"  -s=? The source cache.\n"
-"  -q   Disable progress indicator.\n"
-"  -i   Show only important deps for the unmet command.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-msgstr ""
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -p=? Paketcachen.\n"
-"  -s=? Källcachen.\n"
-"  -q   Inaktivera förloppsindikatorn.\n"
-"  -i   Visa endast viktiga beroenden för ”unmet”-kommandot.\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
-"Se manualsidorna för apt-cache(8) och apt.conf(5) för mer information.\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -947,11 +1142,12 @@ msgstr "Visa policyinställningar"
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
-"CLI for apt.\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
 msgstr ""
-"Användning: apt [flaggor] kommando\n"
-"\n"
-"Kommandoradsgränssnitt för apt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -992,7 +1188,6 @@ msgstr "uppgradera systemet genom att installera/uppgradera paket"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "uppgradera systemet genom att ta bort/installera/uppgradera paket"
 
-#. for compat with muscle memory
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -1033,36 +1228,10 @@ msgstr "Upprepa proceduren för resten av cd-skivorna i din uppsättning."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-"CDROM mount point and device information is taken from apt.conf,\n"
-"udev and /etc/fstab.\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid ""
-"Options:\n"
-"  -h   This help text\n"
-"  -d   CD-ROM mount point\n"
-"  -r   Rename a recognized CD-ROM\n"
-"  -m   No mounting\n"
-"  -f   Fast mode, don't check package files\n"
-"  -a   Thorough scan mode\n"
-"  --no-auto-detect Do not try to auto detect drive and mount point\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See fstab(5)\n"
-msgstr ""
-"Flaggor:\n"
-"  -h  Denna hjälptext.\n"
-"  -q  Loggbar utdata - ingen förloppsindikator\n"
-"  -qq Ingen utdata förutom vid fel\n"
-"  -s  Gör ingenting, simulera vad som skulle hända.\n"
-"  -f  läs/skriv markering som automatiskt/manuellt installerad i angiven "
-"fil\n"
-"  -c=? Läs denna konfigurationsfil\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
-"Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1072,23 +1241,9 @@ msgstr "Argumenten gavs inte parvis"
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
-"apt-config is a simple tool to read the APT config file\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools to be used mainly in debugging and shell scripting.\n"
 msgstr ""
-"Användning: apt-config [flaggor] kommando\n"
-"\n"
-"apt-config är ett enkelt verktyg för att läsa APTs konfigurationsfil\n"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Options:\n"
-"  -h   This help text.\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-msgstr ""
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1097,31 +1252,6 @@ msgstr ""
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
 msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Kan inte hitta något paket för arkitekturen ”%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Kan inte hitta något paket ”%s” med versionen ”%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Kunde inte hitta något paket ”%s” med utgåvan ”%s”"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Väljer ”%s” som källkodspaket istället för ”%s”\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Kan inte hitta versionen ”%s” av paketet ”%s”"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1146,191 +1276,20 @@ msgid "Internal error, problem resolver broke stuff"
 msgstr "Internt fel, problemlösaren förstörde någonting"
 
 #: cmdline/apt-get.cc
-msgid "Unable to lock the download directory"
-msgstr "Kunde inte låsa hämtningskatalogen"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Du måste ange minst ett paket att hämta källkod för"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Kunde inte hitta något källkodspaket för %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"OBSERVERA: paketering av ”%s” hanteras i versionshanteringssystemet ”%s” "
-"på:\n"
-"%s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Använd:\n"
-"%s\n"
-"för att hämta de senaste (möjligen inte utgivna) uppdateringarna av "
-"paketet.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Hoppar över redan hämtade filen ”%s”\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Behöver hämta %sB/%sB källkodsarkiv.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Behöver hämta %sB källkodsarkiv.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Hämtar källkoden %s\n"
-
-#: cmdline/apt-get.cc
-msgid "Failed to fetch some archives."
-msgstr "Misslyckades med att hämta vissa arkiv."
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Packar inte upp redan uppackad källkod i %s\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Uppackningskommandot ”%s” misslyckades.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Försäkra dig om att paketet ”dpkg-dev” är installerat.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Byggkommandot ”%s” misslyckades.\n"
-
-#: cmdline/apt-get.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "Du måste ange minst ett paket att kontrollera byggberoenden för"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Ingen arkitekturinformation tillgänglig för %s. Se apt.conf(5) APT::"
-"Architectures för inställning"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr "Observera, använder katalogen ”%s” för att få byggberoendena\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Observera, använder filen ”%s” för att få byggberoendena\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Kunde inte hämta information om byggberoenden för %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s har inga byggberoenden.\n"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom %s inte är tillåtet på "
-"”%s”-paket"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
-"hittas"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Misslyckades med att tillfredsställa %s-beroendet för %s: Det installerade "
-"paketet %s är för nytt"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom kandidatversionen av "
-"paketet %s inte tillfredsställer versionskraven"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte har "
-"någon kandidatversion"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Byggberoenden för %s kunde inte tillfredsställas."
-
-#: cmdline/apt-get.cc
-msgid "Failed to process build dependencies"
-msgstr "Misslyckades med att behandla byggberoenden"
-
-#: cmdline/apt-get.cc
 msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
 #: cmdline/apt-get.cc
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
 "       apt-get [options] source pkg1 [pkg2 ...]\n"
 "\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
 msgstr ""
 "Användning: apt-get [flaggor] kommando\n"
 "       apt-get [flaggor] install|remove paket1 [paket2 …]\n"
@@ -1338,44 +1297,6 @@ msgstr ""
 "\n"
 "apt-get är ett enkelt kommandoradsgränssnitt för att hämta och installera\n"
 "paket. De mest använda kommandona är ”update” och ”install”.\n"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -q   Loggbar utdata - ingen förloppsindikator.\n"
-"  -qq  Ingen utdata förutom vid fel.\n"
-"  -d   Bara hämta - VARKEN installera eller packa upp arkiven.\n"
-"  -s   Gör ingenting, simulera vad som skulle hända.\n"
-"  -y   Antag ja på alla frågor utan att fråga.\n"
-"  -f   Försök rätta ett system med otillfredsställda beroenden.\n"
-"  -m   Försök fortsätta även om arkiven inte kan hittas.\n"
-"  -u   Visa även en lista över uppgraderade paket.\n"
-"  -b   Bygg källkodspaketet när det hämtats.\n"
-"  -V   Visa pratsamma versionsnummer.\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
-"Se manualsidorna för apt-get(8), sources.list(5) och apt.conf(5)\n"
-"för mer information och flaggor.\n"
-"                     Denna APT har Speciella Ko-Krafter.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1451,20 +1372,18 @@ msgid "GetSrvRec failed for %s"
 msgstr ""
 
 #: cmdline/apt-helper.cc
+#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper is a internal helper for apt\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would do.\n"
 msgstr ""
 "Användning: apt-helper [flaggor] kommando\n"
 "       apt-helper [flaggor] download-file uri målsökväg\n"
 "\n"
 "apt-helper är en intern hjälpare för apt\n"
-
-#: cmdline/apt-helper.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Denna APT-hjälpare har speciella Meep-krafter."
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1533,40 +1452,20 @@ msgid "Selected %s for installation.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also list marks.\n"
+"as manually or automatically installed. It is also possible to\n"
+"manipulate the dpkg(1) selection states of packages with it.\n"
+"It can also list all packages with or without a certain marking.\n"
 msgstr ""
 "Användning: apt-mark [flaggor] {auto|manual} paket1 [paket2 …]\n"
 "\n"
 "apt-mark är ett enkelt kommandoradsgränssnitt för att markera\n"
 "paket som manuellt eller automatiskt installerade. Det kan också\n"
 "lista markeringar.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
-msgstr ""
-"Flaggor:\n"
-"  -h  Denna hjälptext.\n"
-"  -q  Loggbar utdata - ingen förloppsindikator\n"
-"  -qq Ingen utdata förutom vid fel\n"
-"  -s  Gör ingenting, simulera vad som skulle hända.\n"
-"  -f  läs/skriv markering som automatiskt/manuellt installerad i angiven "
-"fil\n"
-"  -c=? Läs denna konfigurationsfil\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
-"Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -2065,17 +1964,13 @@ msgid "Merging available information"
 msgstr "Sammanfogar tillgänglig information"
 
 #: cmdline/apt-extracttemplates.cc
+#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
-"apt-extracttemplates is a tool to extract config and template info\n"
-"from debian packages\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -t   Set the temp dir\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
 msgstr ""
 "Användning: apt-extracttemplates fil1 [fil2 …]\n"
 "\n"
@@ -2103,17 +1998,12 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan inte ta reda på debconf-version. Är debconf installerat?"
 
 #: cmdline/apt-internal-solver.cc
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"like an external resolver for the APT family for debugging or alike.\n"
 msgstr ""
 "Användning: apt-internal-solver\n"
 "\n"
@@ -2135,25 +2025,10 @@ msgstr "Okänd paketpost!"
 msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
-"apt-sortpkgs is a simple tool to sort package files. The -s option is used\n"
-"to indicate what kind of file it is.\n"
-"\n"
-"Options:\n"
-"  -h   This help text\n"
-"  -s   Use source file sorting\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"It sorts by default by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Användning: apt-sortpkgs [flaggor] fil1 [fil2 …]\n"
-"\n"
-"apt-sortpkgs är ett enkelt verktyg för att sortera paketfiler. Flaggan\n"
-"-s anges för att ange filens typ.\n"
-"\n"
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -s   Använd källkodsfilssortering.\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -3909,6 +3784,148 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Beräknar uppgradering"
+
+#~ msgid ""
+#~ "Usage: apt-cache [options] command\n"
+#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-cache is a low-level tool used to query information\n"
+#~ "from APT's binary cache files\n"
+#~ msgstr ""
+#~ "Användning: apt-cache [flaggor] kommando\n"
+#~ "            apt-cache [flaggor] show paket1 [paket2 …]\n"
+#~ "\n"
+#~ "apt-cache är ett lågnivåverktyg för att hämta information\n"
+#~ "från APTs binära cachefiler\n"
+
+#~ msgid "Commands:"
+#~ msgstr "Kommandon:"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -p=? The package cache.\n"
+#~ "  -s=? The source cache.\n"
+#~ "  -q   Disable progress indicator.\n"
+#~ "  -i   Show only important deps for the unmet command.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ msgstr ""
+#~ "Flaggor:\n"
+#~ "  -h   Denna hjälptext.\n"
+#~ "  -p=? Paketcachen.\n"
+#~ "  -s=? Källcachen.\n"
+#~ "  -q   Inaktivera förloppsindikatorn.\n"
+#~ "  -i   Visa endast viktiga beroenden för ”unmet”-kommandot.\n"
+#~ "  -c=? Läs denna konfigurationsfil.\n"
+#~ "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/"
+#~ "tmp\n"
+#~ "Se manualsidorna för apt-cache(8) och apt.conf(5) för mer information.\n"
+
+#~ msgid ""
+#~ "Usage: apt [options] command\n"
+#~ "\n"
+#~ "CLI for apt.\n"
+#~ msgstr ""
+#~ "Användning: apt [flaggor] kommando\n"
+#~ "\n"
+#~ "Kommandoradsgränssnitt för apt.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -d   CD-ROM mount point\n"
+#~ "  -r   Rename a recognized CD-ROM\n"
+#~ "  -m   No mounting\n"
+#~ "  -f   Fast mode, don't check package files\n"
+#~ "  -a   Thorough scan mode\n"
+#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See fstab(5)\n"
+#~ msgstr ""
+#~ "Flaggor:\n"
+#~ "  -h  Denna hjälptext.\n"
+#~ "  -q  Loggbar utdata - ingen förloppsindikator\n"
+#~ "  -qq Ingen utdata förutom vid fel\n"
+#~ "  -s  Gör ingenting, simulera vad som skulle hända.\n"
+#~ "  -f  läs/skriv markering som automatiskt/manuellt installerad i angiven "
+#~ "fil\n"
+#~ "  -c=? Läs denna konfigurationsfil\n"
+#~ "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/"
+#~ "tmp\n"
+#~ "Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
+
+#~ msgid ""
+#~ "Usage: apt-config [options] command\n"
+#~ "\n"
+#~ "apt-config is a simple tool to read the APT config file\n"
+#~ msgstr ""
+#~ "Användning: apt-config [flaggor] kommando\n"
+#~ "\n"
+#~ "apt-config är ett enkelt verktyg för att läsa APTs konfigurationsfil\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h   This help text.\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Flaggor:\n"
+#~ "  -h   Denna hjälptext.\n"
+#~ "  -c=? Läs denna konfigurationsfil.\n"
+#~ "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/"
+#~ "tmp\n"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Flaggor:\n"
+#~ "  -h  Denna hjälptext.\n"
+#~ "  -q  Loggbar utdata - ingen förloppsindikator\n"
+#~ "  -qq Ingen utdata förutom vid fel\n"
+#~ "  -s  Gör ingenting, simulera vad som skulle hända.\n"
+#~ "  -f  läs/skriv markering som automatiskt/manuellt installerad i angiven "
+#~ "fil\n"
+#~ "  -c=? Läs denna konfigurationsfil\n"
+#~ "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/"
+#~ "tmp\n"
+#~ "Se manualsidorna för apt-mark(8) och apt.conf(5) för mer information."
+
+#~ msgid ""
+#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+#~ "\n"
+#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
+#~ "used\n"
+#~ "to indicate what kind of file it is.\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h   This help text\n"
+#~ "  -s   Use source file sorting\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Användning: apt-sortpkgs [flaggor] fil1 [fil2 …]\n"
+#~ "\n"
+#~ "apt-sortpkgs är ett enkelt verktyg för att sortera paketfiler. Flaggan\n"
+#~ "-s anges för att ange filens typ.\n"
+#~ "\n"
+#~ "Flaggor:\n"
+#~ "  -h   Denna hjälptext.\n"
+#~ "  -s   Använd källkodsfilssortering.\n"
+#~ "  -c=? Läs denna konfigurationsfil.\n"
+#~ "  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/"
+#~ "tmp\n"
 
 #~ msgid "Use --allow-insecure-repositories to force the update"
 #~ msgstr "Använd --allow-insecure-repositories för att tvinga uppdateringen"

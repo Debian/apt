@@ -76,19 +76,13 @@ static bool DoDump(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
       _("Usage: apt-config [options] command\n"
       "\n"
-      "apt-config is a simple tool to read the APT config file\n")
-      << std::endl;
-   ShowHelpListCommands(Cmds);
-   std::cout << std::endl <<
-      _("Options:\n"
-      "  -h   This help text.\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
+      "apt-config is an interface to the configuration settings used by\n"
+      "all APT tools to be used mainly in debugging and shell scripting.\n");
    return true;
 }
 									/*}}}*/

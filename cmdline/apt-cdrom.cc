@@ -203,28 +203,14 @@ static bool DoIdent(CommandLine &)
    return AddOrIdent(false);
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
       _("Usage: apt-cdrom [options] command\n"
       "\n"
-      "apt-cdrom is a tool to add CDROM's to APT's source list. The\n"
-      "CDROM mount point and device information is taken from apt.conf,\n"
-      "udev and /etc/fstab.\n")
-      << std::endl;
-   ShowHelpListCommands(Cmds);
-   std::cout << std::endl <<
-      _("Options:\n"
-      "  -h   This help text\n"
-      "  -d   CD-ROM mount point\n"
-      "  -r   Rename a recognized CD-ROM\n"
-      "  -m   No mounting\n"
-      "  -f   Fast mode, don't check package files\n"
-      "  -a   Thorough scan mode\n"
-      "  --no-auto-detect Do not try to auto detect drive and mount point\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-      "See fstab(5)\n");
+      "apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+      "media types as package sources to APT. The mount point and device\n"
+      "information is taken from apt.conf(5), udev(7) and fstab(5).\n");
    return true;
 }
 									/*}}}*/

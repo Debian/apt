@@ -343,7 +343,7 @@ static bool DoIndexTargets(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    if (_config->FindB("version") == true)
    {
@@ -371,50 +371,31 @@ bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
 	       cout << "Pkg:  " << Sys->Label << " (Priority " << Sys->Score(*_config) << ")" << endl;
 	 }
       }
-      
+
       for (unsigned I = 0; I != pkgSourceList::Type::GlobalListLen; I++)
       {
 	 pkgSourceList::Type *Type = pkgSourceList::Type::GlobalList[I];
 	 cout << " S.L: '" << Type->Name << "' " << Type->Label << endl;
-      }      
-      
+      }
+
       for (unsigned I = 0; I != pkgIndexFile::Type::GlobalListLen; I++)
       {
 	 pkgIndexFile::Type *Type = pkgIndexFile::Type::GlobalList[I];
 	 cout << " Idx: " << Type->Label << endl;
-      }      
-      
+      }
+
       return true;
    }
 
    std::cout <<
-    _("Usage: apt-get [options] command\n"
-      "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-      "       apt-get [options] source pkg1 [pkg2 ...]\n"
-      "\n"
-      "apt-get is a simple command line interface for downloading and\n"
-      "installing packages. The most frequently used commands are update\n"
-      "and install.\n")
-      << std::endl;
-   ShowHelpListCommands(Cmds);
-   std::cout << std::endl <<
-      _("Options:\n"
-      "  -h  This help text.\n"
-      "  -q  Loggable output - no progress indicator\n"
-      "  -qq No output except for errors\n"
-      "  -d  Download only - do NOT install or unpack archives\n"
-      "  -s  No-act. Perform ordering simulation\n"
-      "  -y  Assume Yes to all queries and do not prompt\n"
-      "  -f  Attempt to correct a system with broken dependencies in place\n"
-      "  -m  Attempt to continue if archives are unlocatable\n"
-      "  -u  Show a list of upgraded packages as well\n"
-      "  -b  Build the source package after fetching it\n"
-      "  -V  Show verbose version numbers\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-      "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-      "pages for more information and options.\n"
-      "                       This APT has Super Cow Powers.\n");
+      _("Usage: apt-get [options] command\n"
+	    "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+	    "       apt-get [options] source pkg1 [pkg2 ...]\n"
+	    "\n"
+	    "apt-get is a command line interface for retrieval of packages\n"
+	    "and information about them from authenticated sources and\n"
+	    "for installation, upgrade and removal of packages together\n"
+	    "with their dependencies.\n");
    return true;
 }
 									/*}}}*/

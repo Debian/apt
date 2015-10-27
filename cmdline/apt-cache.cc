@@ -1202,26 +1202,18 @@ static bool GenCaches(CommandLine &)
    return CacheFile.BuildCaches(&Progress, true);
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &, aptDispatchWithHelp const * Cmds)		/*{{{*/
+bool ShowHelp(CommandLine &)						/*{{{*/
 {
    std::cout <<
     _("Usage: apt-cache [options] command\n"
       "       apt-cache [options] show pkg1 [pkg2 ...]\n"
       "\n"
-      "apt-cache is a low-level tool used to query information\n"
-      "from APT's binary cache files\n")
-    << std::endl;
-   ShowHelpListCommands(Cmds);
-   std::cout << std::endl
-    << _("Options:\n"
-      "  -h   This help text.\n"
-      "  -p=? The package cache.\n"
-      "  -s=? The source cache.\n"
-      "  -q   Disable progress indicator.\n"
-      "  -i   Show only important deps for the unmet command.\n"
-      "  -c=? Read this configuration file\n"
-      "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-      "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n");
+      "apt-cache queries and displays available information about installed\n"
+      "as well as installable packages. It works exclusively on the data\n"
+      "acquired via the 'update' command of e.g. apt-get to the local cache.\n"
+      "The displayed information can therefore be outdated if the last update\n"
+      "is too long ago, but in exchange apt-cache works independently of the\n"
+      "availability of the configured sources (e.g. offline).\n");
    return true;
 }
 									/*}}}*/
