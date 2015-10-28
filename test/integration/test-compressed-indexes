@@ -31,10 +31,12 @@ testrun() {
 	local F
 	msgtest 'Check if all index files are' "${1:-uncompressed}"
 	if [ "$1" = 'compressed' ]; then
-		! test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+		! test -e rootdir/var/lib/apt/lists/*i386_Packages || F=1
+		! test -e rootdir/var/lib/apt/lists/*all_Packages || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
-		test -e rootdir/var/lib/apt/lists/*_Packages.${COMPRESS} || F=1
+		test -e rootdir/var/lib/apt/lists/*i386_Packages.${COMPRESS} || F=1
+		test -e rootdir/var/lib/apt/lists/*all_Packages.${COMPRESS} || F=1
 		test -e rootdir/var/lib/apt/lists/*_Sources.${COMPRESS} || F=1
 		test -e rootdir/var/lib/apt/lists/*_Translation-en.${COMPRESS} || F=1
 		# there is no point in trying pdiff if we have compressed indexes
@@ -43,10 +45,12 @@ testrun() {
 	else
 		# clear the faked pdiff indexes so the glob below works
 		rm -f rootdir/var/lib/apt/lists/*diff_Index
-		test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+		test -e rootdir/var/lib/apt/lists/*i386_Packages || F=1
+		test -e rootdir/var/lib/apt/lists/*all_Packages || F=1
 		test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
-		! test -e rootdir/var/lib/apt/lists/*_Packages.* || F=1
+		! test -e rootdir/var/lib/apt/lists/*i386_Packages.* || F=1
+		! test -e rootdir/var/lib/apt/lists/*all_Packages.* || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Sources.* || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en.* || F=1
 	fi

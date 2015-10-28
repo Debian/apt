@@ -101,11 +101,11 @@ testequalpolicycoolstuff() {
 	local BPO2ARCHIVE=""
 	if [ ! "$7" = "2.0~bpo2" ]; then
 		BPO1PIN="$AB"
-		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
+		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main all Packages"
 	else
 		BPO2ARCHIVE="
      2.0~bpo2 $AB
-        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main i386 Packages"
+        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main all Packages"
 		SB="$(echo "$SB" | tail -n 1)"
 		shift
 	fi
@@ -117,7 +117,7 @@ testequalpolicycoolstuff() {
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
  $IS 1.0 $AS
-        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main i386 Packages$SS" \
+        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main all Packages$SS" \
 		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
 }
 

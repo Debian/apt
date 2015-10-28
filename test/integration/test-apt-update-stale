@@ -12,7 +12,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-insertpackage 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'foo' 'i386' '1.0'
 
 setupaptarchive --no-update
 changetowebserver
@@ -25,7 +25,7 @@ listcurrentlistsdirectory > lists.before
 mkdir aptarchive/dists/unstable/main/binary-i386/saved
 cp -p aptarchive/dists/unstable/main/binary-i386/Packages* \
      aptarchive/dists/unstable/main/binary-i386/saved
-insertpackage 'unstable' 'foo' 'all' '2.0'
+insertpackage 'unstable' 'foo' 'i386' '2.0'
 touch -d '+1 hour' aptarchive/dists/unstable/main/binary-i386/Packages
 compressfile aptarchive/dists/unstable/main/binary-i386/Packages
 # ensure that we do not get a I-M-S hit for the Release file

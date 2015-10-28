@@ -71,7 +71,8 @@ static void ConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf)
 									/*}}}*/
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
-FTWScanner::FTWScanner(FileFd * const GivenOutput, string const &Arch): Arch(Arch), DoHashes(~0)
+FTWScanner::FTWScanner(FileFd * const GivenOutput, string const &Arch, bool const IncludeArchAll)
+   : Arch(Arch), IncludeArchAll(IncludeArchAll), DoHashes(~0)
 {
    if (GivenOutput == NULL)
    {
@@ -329,14 +330,40 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
    return true;
 }
 									/*}}}*/
+// FTWScanner::SetExts - Set extensions to support                      /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FTWScanner::SetExts(string const &Vals)
+{
+   ClearPatterns();
+   string::size_type Start = 0;
+   while (Start <= Vals.length()-1)
+   {
+      string::size_type const Space = Vals.find(' ',Start);
+      string::size_type const Length = ((Space == string::npos) ? Vals.length() : Space) - Start;
+      if ( Arch.empty() == false )
+      {
+	 AddPattern(string("*_") + Arch + Vals.substr(Start, Length));
+	 if (IncludeArchAll == true && Arch != "all")
+	    AddPattern(string("*_all") + Vals.substr(Start, Length));
+      }
+      else
+	 AddPattern(string("*") + Vals.substr(Start, Length));
+
+      Start += Length + 1;
+   }
+
+   return true;
+}
+									/*}}}*/
 
 // PackagesWriter::PackagesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * const transWriter,
       string const &DB,string const &Overrides,string const &ExtOverrides,
-      string const &Arch) :
-   FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats), TransWriter(transWriter)
+      string const &Arch, bool const IncludeArchAll) :
+   FTWScanner(GivenOutput, Arch, IncludeArchAll), Db(DB), Stats(Db.Stats), TransWriter(transWriter)
 {
    SetExts(".deb .udeb");
    DeLinkLimit = 0;
@@ -363,31 +390,6 @@ PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * c
    _error->DumpErrors();
 }
                                                                         /*}}}*/
-// FTWScanner::SetExts - Set extensions to support                      /*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool FTWScanner::SetExts(string const &Vals)
-{
-   ClearPatterns();
-   string::size_type Start = 0;
-   while (Start <= Vals.length()-1)
-   {
-      string::size_type const Space = Vals.find(' ',Start);
-      string::size_type const Length = ((Space == string::npos) ? Vals.length() : Space) - Start;
-      if ( Arch.empty() == false )
-      {
-	 AddPattern(string("*_") + Arch + Vals.substr(Start, Length));
-	 AddPattern(string("*_all") + Vals.substr(Start, Length));
-      }
-      else
-	 AddPattern(string("*") + Vals.substr(Start, Length));
-
-      Start += Length + 1;
-   }
-
-   return true;
-}
-									/*}}}*/
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This method takes a package and gets its control information and 
@@ -879,8 +881,9 @@ bool SourcesWriter::DoPackage(string FileName)
 // ContentsWriter::ContentsWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ContentsWriter::ContentsWriter(FileFd * const GivenOutput, string const &DB, string const &Arch) :
-		    FTWScanner(GivenOutput, Arch), Db(DB), Stats(Db.Stats)
+ContentsWriter::ContentsWriter(FileFd * const GivenOutput, string const &DB,
+      string const &Arch, bool const IncludeArchAll) :
+		    FTWScanner(GivenOutput, Arch, IncludeArchAll), Db(DB), Stats(Db.Stats)
 
 {
    SetExts(".deb");

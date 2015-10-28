@@ -30,38 +30,41 @@ msgcleantest 'Test sources.list' 'old style'
 echo "deb http://ftp.debian.org/debian stable main" > $LISTS
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style with tabs'
 echo "deb	http://ftp.debian.org/debian	stable main" > $LISTS
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style with forgotten end for options'
 echo "deb [trusted=yes arch+=armel,powerpc http://ftp.debian.org/debian stable main" > $LISTS
-testfailureequal "E: Malformed entry 1 in list file $ABSLISTS ([option] not assignment)
+testfailureequal --nomsg "E: Malformed entry 1 in list file $ABSLISTS ([option] not assignment)
 E: The list of sources could not be read." aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style with stray ] instead of options'
 echo "deb ] http://ftp.debian.org/debian stable main" > $LISTS
-testfailureequal "E: Malformed entry 1 in list file $ABSLISTS (URI parse)
+testfailureequal --nomsg "E: Malformed entry 1 in list file $ABSLISTS (URI parse)
 E: The list of sources could not be read." aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style options no key'
 echo "deb [=test] http://ftp.debian.org/debian stable main" > $LISTS
-testfailureequal "E: Malformed entry 1 in list file $ABSLISTS ([option] no key)
+testfailureequal --nomsg "E: Malformed entry 1 in list file $ABSLISTS ([option] no key)
 E: The list of sources could not be read." aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style options no value'
 echo "deb [test=] http://ftp.debian.org/debian stable main" > $LISTS
-testfailureequal "E: Malformed entry 1 in list file $ABSLISTS ([option] no value)
+testfailureequal --nomsg "E: Malformed entry 1 in list file $ABSLISTS ([option] no value)
 E: The list of sources could not be read." aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style with options'
 echo "deb [trusted=yes arch+=armel,powerpc] http://ftp.debian.org/debian stable main" > $LISTS
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-powerpc_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
@@ -70,18 +73,21 @@ msgcleantest 'Test sources.list' 'old style with comments'
 echo "deb http://ftp.debian.org/debian stable main # non-free" > $LISTS
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'old style with option comments'
 echo "deb [trusted=yes#yeahreally] http://ftp.debian.org/debian stable main # non-free" > $LISTS
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test sources.list' 'simple deb822'
 echo "$BASE"  > $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test deb822 with' 'two entries'
@@ -91,9 +97,11 @@ echo "" >> $SOURCES
 echo "$BASE" | sed  s/stable/unstable/  >> $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
 'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/unstable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 # two suite entries
@@ -101,9 +109,11 @@ msgcleantest 'Test deb822 with' 'two Suite entries'
 echo "$BASE"  | sed -e "s/stable/stable unstable/" > $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
 'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/unstable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test deb822' 'architecture option'
@@ -112,6 +122,7 @@ echo "Architectures: amd64 armel" >> $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 msgcleantest 'Test old-style' 'suite arch variable'
@@ -150,9 +161,11 @@ msgcleantest 'Test deb822 sources.list file which has' 'Multiple URIs work'
 echo "$BASE"  | sed -e 's#http://ftp.debian.org/debian#http://ftp.debian.org/debian http://ftp.de.debian.org/debian#' > $SOURCES
 testsuccessequal --nomsg  "'http://ftp.de.debian.org/debian/dists/stable/InRelease' ftp.de.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.de.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.de.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.de.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.de.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.de.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.de.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 # multiple Type in one field
@@ -161,6 +174,7 @@ echo "$BASE"  | sed -e 's#Types: deb#Types: deb deb-src#' > $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/source/Sources.xz' ftp.debian.org_debian_dists_stable_main_source_Sources 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
 # a Suite

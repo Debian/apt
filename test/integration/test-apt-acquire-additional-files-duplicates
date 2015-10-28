@@ -38,9 +38,11 @@ testsuccessequal "${APTLISTS}/example.org_debian_dists_stable_main_source_Source
 ${APTLISTS}/example.org_debian_dists_stable_rocks_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_main_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_i18n_Translation-en
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_rocks_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_i18n_Translation-en" aptget indextargets --no-release-info --format '$(FILENAME)'
 
 cat >> rootdir/etc/apt/sources.list <<EOF
@@ -50,15 +52,19 @@ testwarningequal "${APTLISTS}/example.org_debian_dists_stable_main_source_Source
 ${APTLISTS}/example.org_debian_dists_stable_rocks_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_main_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_i18n_Translation-en
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_rocks_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_i18n_Translation-en
 W: Target Packages (main/binary-amd64/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (main/binary-i386/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
+W: Target Packages (main/binary-all/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Translations (main/i18n/Translation-en) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (rocks/binary-amd64/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (rocks/binary-i386/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
+W: Target Packages (rocks/binary-all/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Translations (rocks/i18n/Translation-en) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3" aptget indextargets --no-release-info --format '$(FILENAME)'
 
 cat >> rootdir/etc/apt/sources.list <<EOF
@@ -69,18 +75,27 @@ testwarningequal "${APTLISTS}/example.org_debian_dists_stable_main_source_Source
 ${APTLISTS}/example.org_debian_dists_stable_rocks_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_main_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_main_i18n_Translation-en
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-amd64_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_binary-i386_Packages
+${APTLISTS}/example.org_debian_dists_stable_rocks_binary-all_Packages
 ${APTLISTS}/example.org_debian_dists_stable_rocks_i18n_Translation-en
 ${APTLISTS}/example.org_debian_dists_stable_main_Contents-amd64
+${APTLISTS}/example.org_debian_dists_stable_main_Contents-all
 ${APTLISTS}/example.org_debian_dists_stable_Contents-amd64
+${APTLISTS}/example.org_debian_dists_stable_Contents-all
 ${APTLISTS}/example.org_debian_dists_stable_rocks_Contents-amd64
+${APTLISTS}/example.org_debian_dists_stable_rocks_Contents-all
 W: Target Packages (main/binary-amd64/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (main/binary-i386/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
+W: Target Packages (main/binary-all/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Translations (main/i18n/Translation-en) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (rocks/binary-amd64/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Packages (rocks/binary-i386/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
+W: Target Packages (rocks/binary-all/Packages) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Translations (rocks/i18n/Translation-en) is configured multiple times in ${APTETC}/sources.list:1 and ${APTETC}/sources.list:3
 W: Target Contents2 wants to acquire the same file (main/Contents-amd64) as Contents1 from source ${APTETC}/sources.list:4
-W: Target Contents2 wants to acquire the same file (rocks/Contents-amd64) as Contents1 from source ${APTETC}/sources.list:4" aptget indextargets --no-release-info --format '$(FILENAME)'
+W: Target Contents2 wants to acquire the same file (main/Contents-all) as Contents1 from source ${APTETC}/sources.list:4
+W: Target Contents2 wants to acquire the same file (rocks/Contents-amd64) as Contents1 from source ${APTETC}/sources.list:4
+W: Target Contents2 wants to acquire the same file (rocks/Contents-all) as Contents1 from source ${APTETC}/sources.list:4" aptget indextargets --no-release-info --format '$(FILENAME)'

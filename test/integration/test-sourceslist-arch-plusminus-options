@@ -18,68 +18,74 @@ testbinaries() {
 }
 
 echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'default & native' 'amd64'
+testbinaries 'default & native' 'amd64' 'all'
 configarchitecture 'amd64' 'i386'
-testbinaries 'default & native + foreign' 'amd64' 'i386'
+testbinaries 'default & native + foreign' 'amd64' 'i386' 'all'
 configarchitecture 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
-testbinaries 'default & native + many foreigns' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'default & native + many foreigns' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=native' 'amd64'
+testbinaries 'arch=native' 'amd64' 'all'
 
 echo 'deb [arch=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=foreign' 'mips'
+testbinaries 'arch=foreign' 'mips' 'all'
 
 echo 'deb [arch=kfreebsd-armel] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=unknown' 'kfreebsd-armel'
+testbinaries 'arch=unknown' 'kfreebsd-armel' 'all'
 
 echo 'deb [arch=amd64,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=native,foreign' 'amd64' 'i386'
+testbinaries 'arch=native,foreign' 'amd64' 'i386' 'all'
 
 echo 'deb [arch=mips,armhf] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=foreign,foreign' 'mips' 'armhf'
+testbinaries 'arch=foreign,foreign' 'mips' 'armhf' 'all'
 
 echo 'deb [arch=kfreebsd-armel,hurd-powerpc,mipsel,armel] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch=unknown,unknown,foreign,foreign' 'kfreebsd-armel' 'hurd-powerpc' 'mipsel' 'armel'
+testbinaries 'arch=unknown,unknown,foreign,foreign' 'kfreebsd-armel' 'hurd-powerpc' 'mipsel' 'armel' 'all'
 
 echo 'deb [arch+=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch+=native' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'arch+=native' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch+=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch+=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'arch+=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch+=mips,armhf,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch+=foreign,foreign,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'arch+=foreign,foreign,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch+=hurd-powerpc] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch+=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc'
+testbinaries 'arch+=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc' 'all'
 
 echo 'deb [arch+=mips,hurd-powerpc,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch+=foreign,unknown,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc'
+testbinaries 'arch+=foreign,unknown,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc' 'all'
 
 echo 'deb [arch-=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch-=native' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'arch-=native' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch-=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mipsel'
+testbinaries 'arch-=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mipsel' 'all'
 
 echo 'deb [arch-=mips,armhf,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch-=foreign,foreign,foreign' 'amd64' 'armel' 'mipsel'
+testbinaries 'arch-=foreign,foreign,foreign' 'amd64' 'armel' 'mipsel' 'all'
 
 echo 'deb [arch-=hurd-powerpc] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch-=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'arch-=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'all'
 
 echo 'deb [arch-=mips,hurd-powerpc,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'arch-=foreign,unknown,foreign' 'amd64' 'armel' 'armhf' 'mipsel'
+testbinaries 'arch-=foreign,unknown,foreign' 'amd64' 'armel' 'armhf' 'mipsel' 'all'
 
 echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'substract from a arch-set' 'i386'
+testbinaries 'substract from a arch-set' 'i386' 'all'
 
 echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'useless subtract from a arch-set' 'i386'
+testbinaries 'useless subtract from a arch-set' 'i386' 'all'
 
 echo 'deb [arch=mips,i386 arch+=armhf] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'addition to a arch-set' 'i386' 'mips' 'armhf'
+testbinaries 'addition to a arch-set' 'i386' 'mips' 'armhf' 'all'
 
 echo 'deb [arch=mips,i386 arch+=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'useless addition to a arch-set' 'i386' 'mips'
+testbinaries 'useless addition to a arch-set' 'i386' 'mips' 'all'
+
+echo 'deb [arch=i386 arch-=all] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'substract all from arch-set' 'i386'
+
+echo 'deb [arch=i386 arch+=all] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'useless addition of all' 'i386' 'all'

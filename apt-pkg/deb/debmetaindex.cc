@@ -49,6 +49,8 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    time_t ValidUntilMin;
    time_t ValidUntilMax;
 
+   std::vector<std::string> Architectures;
+
    debReleaseIndexPrivate() : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0) {}
 };
 									/*}}}*/
@@ -252,12 +254,20 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
 	       Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
 
+	       bool IsOpt = IsOptional;
+	       if (IsOpt == false)
+	       {
+		  auto const arch = Options.find("ARCHITECTURE");
+		  if (arch != Options.end() && arch->second == "all")
+		     IsOpt = true;
+	       }
+
 	       IndexTarget Target(
 		     MetaKey,
 		     ShortDesc,
 		     LongDesc,
 		     Options.find("BASE_URI")->second + MetaKey,
-		     IsOptional,
+		     IsOpt,
 		     KeepCompressed,
 		     Options
 		     );
@@ -331,6 +341,11 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
+   {
+      std::string const archs = Section.FindS("Architectures");
+      if (archs.empty() == false)
+	 d->Architectures = VectorizeString(archs, ' ');
+   }
 
    bool FoundHashSum = false;
    for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
@@ -591,6 +606,13 @@ bool debReleaseIndex::IsTrusted() const
    return FileExists(MetaIndexFile("InRelease"));
 }
 									/*}}}*/
+bool debReleaseIndex::IsArchitectureSupported(std::string const &arch) const/*{{{*/
+{
+   if (d->Architectures.empty())
+      return true;
+   return std::find(d->Architectures.begin(), d->Architectures.end(), arch) != d->Architectures.end();
+}
+									/*}}}*/
 std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/
 {
    if (Indexes != NULL)
@@ -728,6 +750,10 @@ static std::vector<std::string> parsePlusMinusOptions(std::string const &Name, /
       Values = VectorizeString(val->second, ',');
    else
       Values = defaultValues;
+
+   // all is a very special architecture users shouldn't be concerned with explicitly
+   if (Name == "arch" && std::find(Values.begin(), Values.end(), "all") == Values.end())
+      Values.push_back("all");
 
    if ((val = Options.find(Name + "+")) != Options.end())
    {

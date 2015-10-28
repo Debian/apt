@@ -10,6 +10,7 @@ confighashes 'SHA512'
 configcompression '.' 'gz'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'bar' 'i386' '1.0'
 
 setupaptarchive --no-update
 
@@ -22,6 +23,7 @@ makebyhashonly() {
 	ln -s "${BYHASH}/${2}.gz" "${BYHASH}/$(sha512sum "${BYHASH}/${2}.gz" | cut -f1 -d' ')"
 }
 makebyhashonly 'binary-i386' 'Packages'
+makebyhashonly 'binary-all' 'Packages'
 makebyhashonly 'source' 'Sources'
 
 ensureitsbroken() {
@@ -46,6 +48,8 @@ ensureitworks() {
 	testsuccess grep '^Ign' rootdir/tmp/aptupdate.output
 	testsuccessequal "Inst foo (1.0 unstable [all])
 Conf foo (1.0 unstable [all])" aptget install -qq -s foo
+	testsuccessequal "Inst bar (1.0 unstable [i386])
+Conf bar (1.0 unstable [i386])" aptget install -qq -s bar
 }
 msgmsg 'Test by-hash via' 'config option'
 ensureitworks -o Acquire::By-Hash=force

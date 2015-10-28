@@ -10,8 +10,8 @@ setupenvironment
 configarchitecture 'i386'
 configcompression '.' 'gz'
 
-insertpackage 'unstable' 'foo' 'all' '1.0'
-insertsource 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'foo' 'i386' '1.0'
+insertsource 'unstable' 'foo' 'i386' '1.0'
 
 setupaptarchive --no-update
 
@@ -31,8 +31,8 @@ restorefile() {
 testrun() {
 	rm -rf aptarchive/dists.good
 	cp -a aptarchive/dists aptarchive/dists.good
-	insertpackage 'unstable' 'bar' 'all' '1.0'
-	insertsource 'unstable' 'bar' 'all' '1.0'
+	insertpackage 'unstable' 'bar' 'i386' '1.0'
+	insertsource 'unstable' 'bar' 'i386' '1.0'
 	buildaptarchivefromfiles '+1 hour'
 
 	# produce an unsigned repository

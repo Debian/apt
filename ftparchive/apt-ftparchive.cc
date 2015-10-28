@@ -68,6 +68,7 @@ struct PackageMap
 
    // We generate for this given arch
    string Arch;
+   bool IncludeArchAll;
    
    // Stuff for the Source File
    string SrcFile;
@@ -122,9 +123,9 @@ struct PackageMap
 		    vector<PackageMap>::iterator End,
 		    unsigned long &Left);
    
-   PackageMap() : LongDesc(true), TransWriter(NULL), DeLinkLimit(0), Permissions(1),
-		  ContentsDone(false), PkgDone(false), SrcDone(false),
-		  ContentsMTime(0) {};
+   PackageMap() : IncludeArchAll(true), LongDesc(true), TransWriter(NULL),
+		  DeLinkLimit(0), Permissions(1), ContentsDone(false),
+		  PkgDone(false), SrcDone(false), ContentsMTime(0) {};
 };
 									/*}}}*/
 
@@ -184,7 +185,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    PackagesWriter Packages(&Comp.Input, TransWriter, flCombine(CacheDir,BinCacheDB),
 			   flCombine(OverrideDir,BinOverride),
 			   flCombine(OverrideDir,ExtraOverride),
-			   Arch);
+			   Arch, IncludeArchAll);
    if (PkgExt.empty() == false && Packages.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
@@ -364,7 +365,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    MultiCompress Comp(flCombine(ArchiveDir,this->Contents),
 		      CntCompress,Permissions);
    Comp.UpdateMTime = Setup.FindI("Default::ContentsAge",10)*24*60*60;
-   ContentsWriter Contents(&Comp.Input, "", Arch);
+   ContentsWriter Contents(&Comp.Input, "", Arch, IncludeArchAll);
    if (PkgExt.empty() == false && Contents.SetExts(PkgExt) == false)
       return _error->Error(_("Package extension list is too long"));
    if (_error->PendingError() == true)
@@ -487,6 +488,8 @@ static void LoadTree(vector<PackageMap> &PkgList, std::vector<TranslationWriter*
    bool const LongDescription = Setup.FindB("Default::LongDescription",
 					_config->FindB("APT::FTPArchive::LongDescription", true));
    string const TranslationCompress = Setup.Find("Default::Translation::Compress",". gzip").c_str();
+   bool const ConfIncludeArchAllExists = _config->Exists("APT::FTPArchive::IncludeArchitectureAll");
+   bool const ConfIncludeArchAll = _config->FindB("APT::FTPArchive::IncludeArchitectureAll", true);
 
    // Process 'tree' type sections
    const Configuration::Item *Top = Setup.Tree("tree");
@@ -501,25 +504,32 @@ static void LoadTree(vector<PackageMap> &PkgList, std::vector<TranslationWriter*
       string Section;
       while (ParseQuoteWord(Sections,Section) == true)
       {
-	 string Arch;
-	 struct SubstVar const Vars[] = {{"$(DIST)",&Dist},
+	 struct SubstVar Vars[] = {{"$(DIST)",&Dist},
 					 {"$(SECTION)",&Section},
-					 {"$(ARCH)",&Arch},
-					 {NULL, NULL}};
+					 {"$(ARCH)",nullptr},
+					 {nullptr, nullptr}};
 	 mode_t const Perms = Block.FindI("FileMode", Permissions);
 	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
-	 TranslationWriter *TransWriter = NULL;
+	 TranslationWriter *TransWriter = nullptr;
 
-	 string const Tmp2 = Block.Find("Architectures");
-	 const char *Archs = Tmp2.c_str();
-	 while (ParseQuoteWord(Archs,Arch) == true)
+	 std::string Tmp2 = Block.Find("Architectures");
+	 std::transform(Tmp2.begin(), Tmp2.end(), Tmp2.begin(), ::tolower);
+	 std::vector<std::string> const Archs = VectorizeString(Tmp2, ' ');
+	 bool IncludeArchAll;
+	 if (ConfIncludeArchAllExists == true)
+	    IncludeArchAll = ConfIncludeArchAll;
+	 else
+	    IncludeArchAll = std::find(Archs.begin(), Archs.end(), "all") == Archs.end();
+	 for (auto const& Arch: Archs)
 	 {
+	    if (Arch.empty()) continue;
+	    Vars[2].Contents = &Arch;
 	    PackageMap Itm;
 	    Itm.Permissions = Perms;
 	    Itm.BinOverride = SubstVar(Block.Find("BinOverride"),Vars);
 	    Itm.InternalPrefix = SubstVar(Block.Find("InternalPrefix",DIPrfx.c_str()),Vars);
 
-	    if (stringcasecmp(Arch,"source") == 0)
+	    if (Arch == "source")
 	    {
 	       Itm.SrcOverride = SubstVar(Block.Find("SrcOverride"),Vars);
 	       Itm.BaseDir = SubstVar(Block.Find("SrcDirectory",DSDir.c_str()),Vars);
@@ -536,6 +546,7 @@ static void LoadTree(vector<PackageMap> &PkgList, std::vector<TranslationWriter*
 	       Itm.PkgFile = SubstVar(Block.Find("Packages",DPkg.c_str()),Vars);
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/$(ARCH)",Vars);
 	       Itm.Arch = Arch;
+	       Itm.IncludeArchAll = IncludeArchAll;
 	       Itm.LongDesc = LongDesc;
 	       if (TransWriter == NULL && DTrans.empty() == false && LongDesc == false && DTrans != "/dev/null")
 	       {
@@ -662,7 +673,8 @@ static bool SimpleGenPackages(CommandLine &CmdL)
    
    // Create a package writer object.
    PackagesWriter Packages(NULL, NULL, _config->Find("APT::FTPArchive::DB"),
-			   Override, "", _config->Find("APT::FTPArchive::Architecture"));
+			   Override, "", _config->Find("APT::FTPArchive::Architecture"),
+			   _config->FindB("APT::FTPArchive::IncludeArchitectureAll", true));
    if (_error->PendingError() == true)
       return false;
    

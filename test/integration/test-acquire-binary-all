@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo-1' 'all' '2' 'unstable'
+buildsimplenativepackage 'foo-2' 'amd64' '2' 'unstable'
+setupaptarchive --no-update
+
+msgmsg 'Releasefile with Architectures field and all included'
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep '^Get.* all Packages ' aptupdate.output
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-
+
+listcurrentlistsdirectory > lists.before
+testsuccess grep '_binary-all_Packages' lists.before
+
+configarchitecture 'amd64' 'i386'
+testsuccessequal "All packages are up to date.
+N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' doesn't support architecture 'i386'" apt update -q=0 -o quiet::NoProgress=1
+testfileequal lists.before "$(listcurrentlistsdirectory)"
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-
+
+rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile with Architectures field but without all'
+getarchitecturesfromreleasefile() { echo "$(getarchitectures)"; }
+generatereleasefiles
+signreleasefiles
+testsuccessequal "All packages are up to date.
+N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' doesn't support architecture 'i386'" apt update -q=0 -o quiet::NoProgress=1
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testfailure grep '^Get.* all Packages ' aptupdate.output
+testequal 'foo-2' aptcache pkgnames foo-
+
+configarchitecture 'amd64'
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testfailure grep '^Get.* all Packages ' aptupdate.output
+testequal 'foo-2' aptcache pkgnames foo-
+
+rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile without Architectures field'
+getarchitecturesfromreleasefile() { echo -n ''; }
+generatereleasefiles
+signreleasefiles
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep '^Get.* all Packages ' aptupdate.output
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-
+
+# apt doesn't know supported archs, so missing a configured arch is a failure
+configarchitecture 'amd64' 'i386'
+testfailure apt update -q=0
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-
+
+msgmsg 'No Releasefile'
+rm -rf rootdir/var/lib/apt/lists
+find aptarchive -name '*Release*' -delete
+configarchitecture 'amd64'
+testfailure apt update
+testwarning apt update --allow-insecure-repositories
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-

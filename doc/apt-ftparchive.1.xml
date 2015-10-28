@@ -368,9 +368,13 @@ for i in Sections do
       
       <varlistentry><term><option>Architectures</option></term>
       <listitem><para>
-      This is a space separated list of all the 
-      architectures that appear under search section. The special architecture 
-      'source' is used to indicate that this tree has a source archive.</para></listitem>
+      This is a space separated list of all the architectures that appear under
+      search section. The special architecture 'source' is used to indicate
+      that this tree has a source archive.  The architecture 'all' signals that
+      architecture specific files like <filename>Packages</filename> should not
+      include information about architecture <literal>all</literal> packages in
+      all files as they will be available in a dedicated file.
+      </para></listitem>
       </varlistentry>
 
       <varlistentry><term><option>LongDescription</option></term>
@@ -589,7 +593,7 @@ for i in Sections do
      </varlistentry>
 
      &apt-commonoptions;
-     
+
    </variablelist>
  </refsect1>
 

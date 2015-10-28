@@ -1050,6 +1050,16 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
         Target != IndexTargets.end();
         ++Target)
    {
+      // all is an implementation detail. Users shouldn't use this as arch
+      // We need this support trickery here as e.g. Debian has binary-all files already,
+      // but arch:all packages are still in the arch:any files, so we would waste precious
+      // download time, bandwidth and diskspace for nothing, BUT Debian doesn't feature all
+      // in the set of supported architectures, so we can filter based on this property rather
+      // than invent an entirely new flag we would need to carry for all of eternity.
+      if (Target->Option(IndexTarget::ARCHITECTURE) == "all" &&
+	    TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false)
+	 continue;
+
       bool trypdiff = Target->OptionBool(IndexTarget::PDIFFS);
       if (verify == true)
       {
@@ -1058,6 +1068,22 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	    // optional targets that we do not have in the Release file are skipped
 	    if (Target->IsOptional)
 	       continue;
+
+	    std::string const &arch = Target->Option(IndexTarget::ARCHITECTURE);
+	    if (arch.empty() == false)
+	    {
+	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported(arch) == false)
+	       {
+		  _error->Notice(_("Skipping acquire of configured file '%s' as repository '%s' doesn't support architecture '%s'"),
+			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str(), arch.c_str());
+		  continue;
+	       }
+	       // if the architecture is officially supported but currently no packages for it available,
+	       // ignore silently as this is pretty much the same as just shipping an empty file.
+	       // if we don't know which architectures are supported, we do NOT ignore it to notify user about this
+	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported("*undefined*") == false)
+		  continue;
+	    }
 
 	    Status = StatAuthError;
 	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target->MetaKey.c_str());

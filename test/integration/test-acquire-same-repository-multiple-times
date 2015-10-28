@@ -55,17 +55,17 @@ tworepos() {
   Candidate: 1.0
   Version table:
      1.0 500
-        500 $1:$2 jessie/main amd64 Packages
-        500 $1:$2 stable/main amd64 Packages" aptcache policy foo
+        500 $1:$2 jessie/main all Packages
+        500 $1:$2 stable/main all Packages" aptcache policy foo
 	testfailure aptcache show foo/unstable
 	testsuccess aptcache show foo/stable
 	testsuccess aptcache show foo/jessie
 }
 
 tworepos 'file' "$APTARCHIVE" 'no partial'
-testequal '12' grep -c '200%20URI%20Start' ./download.log
-testequal '12' grep -c '201%20URI%20Done' ./download.log
-testequal '6' grep -c '^ @ Queue: Action combined' ./download.log
+testequal '14' grep -c '200%20URI%20Start' ./download.log
+testequal '14' grep -c '201%20URI%20Done' ./download.log
+testequal '8' grep -c '^ @ Queue: Action combined' ./download.log
 tworepos 'file' "$APTARCHIVE" 'hit'
 testequal '6' grep -c '200%20URI%20Start' ./download.log
 testequal '6' grep -c '201%20URI%20Done' ./download.log
@@ -75,9 +75,9 @@ rm -rf rootdir/var/lib/apt/lists
 changetowebserver
 
 tworepos 'http' "//localhost:${APTHTTPPORT}" 'no partial'
-testequal '10' grep -c '200%20URI%20Start' ./download.log
-testequal '10' grep -c '201%20URI%20Done' ./download.log
-testequal '6' grep -c '^ @ Queue: Action combined' ./download.log
+testequal '12' grep -c '200%20URI%20Start' ./download.log
+testequal '12' grep -c '201%20URI%20Done' ./download.log
+testequal '8' grep -c '^ @ Queue: Action combined' ./download.log
 tworepos 'http' "//localhost:${APTHTTPPORT}" 'hit'
 testequal '2' grep -c '200%20URI%20Start' ./download.log
 testequal '4' grep -c '201%20URI%20Done' ./download.log

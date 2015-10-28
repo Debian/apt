@@ -40,6 +40,7 @@ class FTWScanner
    protected:
    vector<string> Patterns;
    string Arch;
+   bool IncludeArchAll;
    const char *OriginalPath;
    bool ErrorPrinted;
 
@@ -79,7 +80,7 @@ class FTWScanner
    void AddPatterns(std::vector<std::string> const &patterns) { Patterns.insert(Patterns.end(), patterns.begin(), patterns.end()); };
    bool SetExts(string const &Vals);
 
-   FTWScanner(FileFd * const Output, string const &Arch = string());
+   FTWScanner(FileFd * const Output, string const &Arch = string(), bool const IncludeArchAll = true);
    virtual ~FTWScanner();
 };
 
@@ -125,7 +126,8 @@ class PackagesWriter : public FTWScanner
    PackagesWriter(FileFd * const Output, TranslationWriter * const TransWriter, string const &DB,
                   string const &Overrides,
                   string const &ExtOverrides = "",
-		  string const &Arch = "");
+		  string const &Arch = "",
+		  bool const IncludeArchAll = true);
    virtual ~PackagesWriter();
 };
 
@@ -149,7 +151,8 @@ class ContentsWriter : public FTWScanner
    void Finish() {Gen.Print(*Output);};
    inline bool ReadyDB(string const &DB) {return Db.ReadyDB(DB);};
 
-   ContentsWriter(FileFd * const Output, string const &DB, string const &Arch = string());
+   ContentsWriter(FileFd * const Output, string const &DB, string const &Arch = string(),
+	 bool const IncludeArchAll = true);
    virtual ~ContentsWriter() {};
 };
 

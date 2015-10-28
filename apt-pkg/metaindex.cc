@@ -3,6 +3,8 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 
+#include <apt-pkg/debmetaindex.h>
+
 #include <string>
 #include <vector>
                                                                        /*}}}*/
@@ -98,5 +100,14 @@ void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
    std::swap(ValidUntil, OldMetaIndex->ValidUntil);
    std::swap(SupportsAcquireByHash, OldMetaIndex->SupportsAcquireByHash);
    std::swap(LoadedSuccessfully, OldMetaIndex->LoadedSuccessfully);
+}
+									/*}}}*/
+
+bool metaIndex::IsArchitectureSupported(std::string const &arch) const	/*{{{*/
+{
+   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
+   if (deb != NULL)
+      return deb->IsArchitectureSupported(arch);
+   return true;
 }
 									/*}}}*/

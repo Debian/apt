@@ -19,8 +19,8 @@ insertsource 'unstable' 'foo' 'all' '1'
 setupaptarchive --no-update
 
 # ensure the archive is not writable
-addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-amd64;'
-chmod 550 aptarchive/dists/unstable/main/binary-amd64
+addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-all;'
+chmod 550 aptarchive/dists/unstable/main/binary-all
 
 testsuccess aptget update
 
@@ -31,7 +31,7 @@ redatereleasefiles '+1 hour'
 testsuccess aptget update -o Debug::pkgAcquire::Auth=1
 # file:/ isn't shown in the log, so see if it was downloaded anyhow
 cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
-canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
+canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-all/Packages.bz2 | sha512sum |cut -f1 -d' ')"
 testfailure grep -- "$canary" rootdir/tmp/update.output
 
 testfoo() {
@@ -49,7 +49,7 @@ find rootdir/var/lib/apt/lists -name '*_Packages*' -delete
 testsuccess aptget update -o Debug::pkgAcquire::Auth=1
 # file:/ isn't shown in the log, so see if it was downloaded anyhow
 cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
-canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
+canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-all/Packages.bz2 | sha512sum |cut -f1 -d' ')"
 testsuccess grep -- "$canary" rootdir/tmp/update.output
 
 testfoo

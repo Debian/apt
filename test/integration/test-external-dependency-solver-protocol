@@ -159,12 +159,38 @@ testsuccess aptinternalsolver scenario
 testsuccessequal 'Package: stuff
 Source: stuff
 Architecture: all
+Version: 3
+Source-Version: 3
+APT-ID: 1
+Priority: optional
+Section: other
+Multi-Arch: foreign
+APT-Release:
+ a=experimental,n=experimental,c=main,b=all
+APT-Pin: 1
+
+Package: stuff
+Source: stuff
+Architecture: all
+Version: 2
+Source-Version: 2
+APT-ID: 3
+Priority: optional
+Section: other
+Multi-Arch: foreign
+APT-Release:
+ a=unstable,n=sid,c=main,b=all
+APT-Pin: 500
+APT-Candidate: yes
+
+Package: stuff
+Source: stuff
+Architecture: all
 Version: 1
 Source-Version: 1
 Installed: yes
-APT-ID: 2
+APT-ID: 8
 Priority: optional
 Section: other
 APT-Pin: 100
-APT-Candidate: yes
 ' aptinternalsolver scenario stuff

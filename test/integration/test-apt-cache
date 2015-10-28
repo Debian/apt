@@ -55,8 +55,7 @@ testsuccessequal 'bar' aptcache pkgnames bar
 testsuccessequal 'fancy
 foo' aptcache pkgnames f
 
-testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive unstable/main amd64 Packages
-       foo |          1 | file:$(readlink -f .)/aptarchive unstable/main i386 Packages" aptcache madison foo
+testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive unstable/main all Packages" aptcache madison foo
 
 ### depends
 

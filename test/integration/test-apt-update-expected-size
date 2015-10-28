@@ -7,7 +7,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-insertpackage 'unstable' 'apt' 'all' '1.0'
+insertpackage 'unstable' 'apt' 'i386' '1.0'
 
 setupaptarchive --no-update
 cp -a aptarchive/dists aptarchive/dists.good
@@ -26,7 +26,7 @@ test_inreleasetoobig() {
 }
 
 test_packagestoobig() {
-	insertpackage 'unstable' 'foo' 'all' '1.0'
+	insertpackage 'unstable' 'foo' 'i386' '1.0'
 	buildaptarchivefromfiles '+1 hour'
 	signreleasefiles
 	# append junk at the end of the Packages.gz/Packages

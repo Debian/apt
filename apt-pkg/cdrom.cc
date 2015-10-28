@@ -156,10 +156,7 @@ bool pkgCdrom::FindPackages(string CD,
       // Skip some files..
       if (strcmp(Dir->d_name,".") == 0 ||
 	  strcmp(Dir->d_name,"..") == 0 ||
-	  //strcmp(Dir->d_name,"source") == 0 ||
 	  strcmp(Dir->d_name,".disk") == 0 ||
-	  strcmp(Dir->d_name,"experimental") == 0 ||
-	  strcmp(Dir->d_name,"binary-all") == 0 ||
           strcmp(Dir->d_name,"debian-installer") == 0)
 	 continue;
 

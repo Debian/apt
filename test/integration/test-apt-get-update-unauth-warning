@@ -37,7 +37,9 @@ testequal 'lock
 partial' ls rootdir/var/lib/apt/lists
 
 filesize() {
-	stat -c%s "$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $1" | cut -d'/' -f 3- ).gz"
+	local CREATEDBY="$1"
+	shift
+	stat -c%s "$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $CREATEDBY" "$@" | cut -d'/' -f 3- ).gz"
 }
 # allow override
 #aptget update --allow-insecure-repositories -o Debug::pkgAcquire::worker=1
@@ -54,8 +56,11 @@ Ign:3 file:$APTARCHIVE unstable/main Sources
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
   File not found
-Get:5 file:$APTARCHIVE unstable/main Translation-en
-Ign:5 file:$APTARCHIVE unstable/main Translation-en
+Get:5 file:$APTARCHIVE unstable/main all Packages
+Ign:5 file:$APTARCHIVE unstable/main all Packages
+  File not found
+Get:6 file:$APTARCHIVE unstable/main Translation-en
+Ign:6 file:$APTARCHIVE unstable/main Translation-en
   File not found
 Get:3 file:$APTARCHIVE unstable/main Sources
 Ign:3 file:$APTARCHIVE unstable/main Sources
@@ -63,8 +68,11 @@ Ign:3 file:$APTARCHIVE unstable/main Sources
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
   File not found
-Get:5 file:$APTARCHIVE unstable/main Translation-en
-Ign:5 file:$APTARCHIVE unstable/main Translation-en
+Get:5 file:$APTARCHIVE unstable/main all Packages
+Ign:5 file:$APTARCHIVE unstable/main all Packages
+  File not found
+Get:6 file:$APTARCHIVE unstable/main Translation-en
+Ign:6 file:$APTARCHIVE unstable/main Translation-en
   File not found
 Get:3 file:$APTARCHIVE unstable/main Sources
 Ign:3 file:$APTARCHIVE unstable/main Sources
@@ -72,12 +80,16 @@ Ign:3 file:$APTARCHIVE unstable/main Sources
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
   File not found
-Get:5 file:$APTARCHIVE unstable/main Translation-en
-Ign:5 file:$APTARCHIVE unstable/main Translation-en
+Get:5 file:$APTARCHIVE unstable/main all Packages
+Ign:5 file:$APTARCHIVE unstable/main all Packages
+  File not found
+Get:6 file:$APTARCHIVE unstable/main Translation-en
+Ign:6 file:$APTARCHIVE unstable/main Translation-en
   File not found
 Get:3 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
-Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages') B]
-Get:5 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
+Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages' 'Architecture: i386') B]
+Get:5 file:$APTARCHIVE unstable/main all Packages [$(filesize 'Packages' 'Architecture: all') B]
+Get:6 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
 W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
 N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use.

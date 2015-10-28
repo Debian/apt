@@ -107,6 +107,9 @@ public:
    metaIndex(std::string const &URI, std::string const &Dist,
              char const * const Type);
    virtual ~metaIndex();
+
+   // FIXME: make virtual on next abi break
+   bool IsArchitectureSupported(std::string const &arch) const;
 };
 
 #endif

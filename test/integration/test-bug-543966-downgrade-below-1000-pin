@@ -22,7 +22,7 @@ testsuccessequal "base-files:
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 500
-        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=0
+        500 file:${APTARCHIVE} unstable/main all Packages" aptcache policy base-files -o apt::pin=0
 
 writepin() {
 	echo "Package: $1
@@ -47,7 +47,7 @@ testpinning() {
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-99}
-       ${REPPINPRIO:-  99} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=99
+       ${REPPINPRIO:-  99} file:${APTARCHIVE} unstable/main all Packages" aptcache policy base-files -o apt::pin=99
 
 	writepin "$1" '100'
 	testsuccessequal "base-files:
@@ -57,7 +57,7 @@ testpinning() {
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-100}
-       ${REPPINPRIO:- 100} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=100
+       ${REPPINPRIO:- 100} file:${APTARCHIVE} unstable/main all Packages" aptcache policy base-files -o apt::pin=100
 
 	writepin "$1" '999'
 	testsuccessequal "base-files:
@@ -67,7 +67,7 @@ testpinning() {
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-999}
-       ${REPPINPRIO:- 999} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=999
+       ${REPPINPRIO:- 999} file:${APTARCHIVE} unstable/main all Packages" aptcache policy base-files -o apt::pin=999
 
 	writepin "$1" '1000'
 	testsuccessequal "base-files:
@@ -77,7 +77,7 @@ testpinning() {
  *** 5.0.0-1 100
         100 $STATUS
      5.0.0 ${PKGPINPRIO:-1000}
-       ${REPPINPRIO:-1000} file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=1000
+       ${REPPINPRIO:-1000} file:${APTARCHIVE} unstable/main all Packages" aptcache policy base-files -o apt::pin=1000
 }
 
 msgmsg 'Tests with generic-form pin'

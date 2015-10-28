@@ -774,7 +774,7 @@ EOF
 	for DIST in $(find ./pool/ -maxdepth 1 -name '*.pkglist' -type f | cut -d'/' -f 3 | cut -d'.' -f 1 | sort | uniq); do
 		cat <<EOF
 tree "dists/$DIST" {
-	Architectures "$ARCHS source";
+	Architectures "$ARCHS all source";
 	FileList "${DIST}.\$(SECTION).pkglist";
 	SourceFileList "${DIST}.\$(SECTION).srclist";
 	Sections "$(find ./pool/ -maxdepth 1 -name "${DIST}.*.pkglist" -type f | cut -d'/' -f 3 | cut -d'.' -f 2 | sort | uniq | tr '\n' ' ')";
@@ -816,7 +816,7 @@ insertpackage() {
 			continue
 		fi
 		for arch in $(getarchitecturesfromcommalist "$ARCH"); do
-			if [ "$arch" = 'all' -o "$arch" = 'none' ]; then
+			if [ "$arch" = 'none' ]; then
 				ARCHS="$(getarchitectures)"
 			else
 				ARCHS="$arch"
@@ -962,6 +962,7 @@ getcodenamefromsuite() {
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 getoriginfromsuite() { true; }
+getarchitecturesfromreleasefile() { echo "all $(getarchitectures)"; }
 
 aptftparchiverelease() {
 	aptftparchive -qq release "$@" | sed -e '/0 Release$/ d' # remove the self reference
@@ -969,9 +970,12 @@ aptftparchiverelease() {
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
 	# both should be given in notation date/touch can understand
+	local DATE="$1"
+	local VALIDUNTIL="$2"
 	msgninfo "\tGenerate Release files… "
 	if [ -e aptarchive/dists ]; then
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
+			local ARCHITECTURES="$(getarchitecturesfromreleasefile "$dir")"
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
@@ -986,9 +990,13 @@ generatereleasefiles() {
 			if [ -n "$ORIGIN" ]; then
 				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
 			fi
+			if [ -n "$ARCHITECTURES" ]; then
+				ARCHITECTURES="-o APT::FTPArchive::Release::Architectures=${ARCHITECTURES}"
+			fi
 			aptftparchiverelease "$dir" \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
+				${ARCHITECTURES} \
 				${LABEL} \
 				${ORIGIN} \
 				${VERSION} \
@@ -1001,15 +1009,15 @@ NotAutomatic: yes' "$dir/Release"
 	else
 		aptftparchiverelease ./aptarchive > aptarchive/Release
 	fi
-	if [ -n "$1" -a "$1" != "now" ]; then
+	if [ -n "$DATE" -a "$DATE" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
-			sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
-			touch -d "$1" "$release"
+			sed -i "s/^Date: .*$/Date: $(date -d "$DATE" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
+			touch -d "$DATE" "$release"
 		done
 	fi
-	if [ -n "$2" ]; then
+	if [ -n "$VALIDUNTIL" ]; then
 		sed -i "/^Date: / a\
-Valid-Until: $(date -d "$2" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
+Valid-Until: $(date -d "$VALIDUNTIL" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
 	fi
 	msgdone "info"
 }
