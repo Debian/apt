@@ -43,7 +43,13 @@ foo/unstable 1.0 all
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq xxyyzz
-testempty apt search -qq --names-only xxyyzz
+
+#empty results
+testsuccessequal "None package fould. Maybe you are looking for one of those:" apt search -qq --names-only xxyyzz
+testsuccessequal "None package fould. Maybe you are looking for one of those:
+baz/now 0.1 all [installed,local]
+  $DESCR4
+" apt search -qq --names-only bez
 
 # search name
 testsuccessequal "foo/unstable 1.0 all
