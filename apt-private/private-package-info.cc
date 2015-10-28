@@ -14,7 +14,7 @@
 using namespace std;
 
 PackageInfo::PackageInfo(pkgCacheFile &CacheFile, pkgRecords &records,
-		       pkgCache::VerIterator const &V, std::string formated_output)
+			pkgCache::VerIterator const &V, std::string formated_output)
 {
    _formated_output = formated_output;
 
@@ -99,4 +99,9 @@ bool OrderByVersion (const PackageInfo &a, const PackageInfo &b)
       return true;
    else
       return false;
+}
+
+bool OrderByDistance (const PackageInfo &a, const PackageInfo &b)
+{
+   return a.distance < b.distance;
 }

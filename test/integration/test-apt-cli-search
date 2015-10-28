@@ -37,7 +37,13 @@ foo/unstable 1.0 all
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq xxyyzz
-testempty apt search -qq --names-only xxyyzz
+
+#empty results
+testsuccessequal "None package fould. Maybe you are looking for one of those:" apt search -qq --names-only xxyyzz
+testsuccessequal "None package fould. Maybe you are looking for one of those:
+baz/now 0.1 all [installed,local]
+  $DESCR4
+" apt search -qq --names-only bez
 
 # search name
 testsuccessequal "foo/unstable 1.0 all
@@ -53,7 +59,7 @@ testsuccessequal "foo/unstable 1.0 all
 " apt search -qq aabbcc xxyyzz
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
-" apt search -qq --regex 'a+b+c+' 'i*xxy{0,2}zz'
+" apt search -qq --using-regex 'a+b+c+' 'i*xxy{0,2}zz'
 
 # search is not case-sensitive by default
 testsuccessequal "foo/unstable 1.0 all
@@ -61,7 +67,12 @@ testsuccessequal "foo/unstable 1.0 all
 " apt search -qq uppercase
 testsuccessequal "foo/unstable 1.0 all
   $DESCR
-" apt search -qq --regex 'up[pP]erc[Aa]se'
+" apt search -qq --using-regex 'up[pP]erc[Aa]se'
+
+# search using regex without the force flag
+testsuccessequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'up[pP]erc[Aa]se'
 
 # search is done in the long description
 testsuccessequal "foo/unstable 1.0 all
@@ -94,7 +105,7 @@ baz/now 0.1 all [installed,local]
 
 bar/testing 2.0 i386
   $DESCR2
-" apt search --order-by reverse -qq "\\w" --regex
+" apt search --order-by reverse -qq "\\w" --using-regex
 
 # output is sorted by version
 testequal "bar/testing 2.0 i386
@@ -108,7 +119,7 @@ foo/unstable 1.0 all
 
 baz/now 0.1 all [installed,local]
   $DESCR4
-" apt search --order-by version -qq "\\w" --regex
+" apt search --order-by version -qq "\\w" --using-regex
 
 # output is sorted by status
 testequal "bar/testing 2.0 i386
@@ -122,7 +133,7 @@ package/stable 1.5 all
 
 baz/now 0.1 all [installed,local]
   $DESCR4
-" apt search --order-by status -qq "\\w" --regex
+" apt search --order-by status -qq "\\w" --using-regex
 
 # output is sorted by default
 testequal "bar/testing 2.0 i386
