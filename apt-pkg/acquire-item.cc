@@ -1114,6 +1114,9 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 if (filename.empty() == false)
 	 {
 	    new NoActionItem(Owner, *Target, filename);
+	    std::string const idxfilename = GetFinalFileNameFromURI(Target->URI + ".diff/Index");
+	    if (FileExists(idxfilename))
+	       new NoActionItem(Owner, *Target, idxfilename);
 	    continue;
 	 }
 
