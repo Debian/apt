@@ -147,6 +147,20 @@ static bool BootstrapPDiffWith(std::string const &PartialFile, std::string const
    return typeItr != types.cend();
 }
 									/*}}}*/
+static bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
+{
+   if (FileName == "/dev/null")
+      return true;
+   errno = 0;
+   if (unlink(FileName.c_str()) != 0)
+   {
+      if (errno == ENOENT)
+	 return true;
+      return _error->WarningE(Function, "Removal of file %s failed", FileName.c_str());
+   }
+   return true;
+}
+									/*}}}*/
 
 static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
 {
@@ -397,7 +411,7 @@ bool pkgAcqTransactionItem::TransactionState(TransactionStates const state)
 	 } else {
 	    if(Debug == true)
 	       std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
-	    unlink(DestFile.c_str());
+	    RemoveFile("TransactionCommit", DestFile);
 	 }
 	 break;
    }
@@ -423,12 +437,12 @@ bool pkgAcqIndex::TransactionState(TransactionStates const state)
 	    // keep the compressed file, but drop the decompressed
 	    EraseFileName.clear();
 	    if (PartialFile.empty() == false && flExtension(PartialFile) == "decomp")
-	       unlink(PartialFile.c_str());
+	       RemoveFile("TransactionAbort", PartialFile);
 	 }
 	 break;
       case TransactionCommit:
 	 if (EraseFileName.empty() == false)
-	    unlink(EraseFileName.c_str());
+	    RemoveFile("TransactionCommit", EraseFileName);
 	 break;
    }
    return true;
@@ -444,7 +458,7 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
 	 break;
       case TransactionAbort:
 	 std::string const Partial = GetPartialFileNameFromURI(Target.URI);
-	 unlink(Partial.c_str());
+	 RemoveFile("TransactionAbort", Partial);
 	 break;
    }
 
@@ -938,7 +952,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
       if (RealFileExists(FinalFile) && Hashes.VerifyFile(FinalFile) == true)
       {
 	 IMSHit = true;
-	 unlink(I->DestFile.c_str());
+	 RemoveFile("CheckDownloadDone", I->DestFile);
       }
    }
 
@@ -1219,7 +1233,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
 	 TransactionManager->LastMetaIndexParser->GetDate() > TransactionManager->MetaIndexParser->GetDate())
    {
       TransactionManager->IMSHit = true;
-      unlink(DestFile.c_str());
+      RemoveFile("VerifyVendor", DestFile);
       PartialFile = DestFile = GetFinalFilename();
       // load the 'old' file in the 'new' one instead of flipping pointers as
       // the new one isn't owned by us, while the old one is so cleanup would be confused.
@@ -1502,7 +1516,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire * const Owner,
    // remove any partial downloaded sig-file in partial/.
    // it may confuse proxies and is too small to warrant a
    // partial download anyway
-   unlink(DestFile.c_str());
+   RemoveFile("pkgAcqMetaSig", DestFile);
 
    // set the TransactionManager
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -2272,7 +2286,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
    {
       // remove the just applied patch
       available_patches.erase(available_patches.begin());
-      unlink(PatchFile.c_str());
+      RemoveFile("pkgAcqIndexDiffs::Done", PatchFile);
 
       // move into place
       if(Debug)
@@ -2424,9 +2438,9 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
       {
 	 std::string const PartialFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
 	 std::string const patch = GetMergeDiffsPatchFileName(PartialFile, (*I)->patch.file);
-	 unlink(patch.c_str());
+	 RemoveFile("pkgAcqIndexMergeDiffs::Done", patch);
       }
-      unlink(FinalFile.c_str());
+      RemoveFile("pkgAcqIndexMergeDiffs::Done", FinalFile);
 
       // all set and done
       Complete = true;
@@ -2853,7 +2867,7 @@ bool pkgAcqArchive::QueueNext()
 	 
 	 /* Hmm, we have a file and its size does not match, this means it is
 	    an old style mismatched arch */
-	 unlink(FinalFile.c_str());
+	 RemoveFile("pkgAcqArchive::QueueNext", FinalFile);
       }
 
       // Check it again using the new style output filenames
@@ -2872,7 +2886,7 @@ bool pkgAcqArchive::QueueNext()
 	 
 	 /* Hmm, we have a file and its size does not match, this shouldn't
 	    happen.. */
-	 unlink(FinalFile.c_str());
+	 RemoveFile("pkgAcqArchive::QueueNext", FinalFile);
       }
 
       DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
@@ -2882,7 +2896,7 @@ bool pkgAcqArchive::QueueNext()
       {
 	 // Hmm, the partial file is too big, erase it
 	 if ((unsigned long long)Buf.st_size > Version->Size)
-	    unlink(DestFile.c_str());
+	    RemoveFile("pkgAcqArchive::QueueNext", DestFile);
 	 else
 	    PartialSize = Buf.st_size;
       }
@@ -3192,7 +3206,7 @@ pkgAcqChangelog::~pkgAcqChangelog()					/*{{{*/
 {
    if (TemporaryDirectory.empty() == false)
    {
-      unlink(DestFile.c_str());
+      RemoveFile("~pkgAcqChangelog", DestFile);
       rmdir(TemporaryDirectory.c_str());
    }
 }
@@ -3229,7 +3243,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire * const Owner,string const &URI, HashStringLis
    {
       // Hmm, the partial file is too big, erase it
       if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
-	 unlink(DestFile.c_str());
+	 RemoveFile("pkgAcqFile", DestFile);
       else
 	 PartialSize = Buf.st_size;
    }
@@ -3267,7 +3281,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
       if (lstat(DestFile.c_str(),&St) == 0)
       {
 	 if (S_ISLNK(St.st_mode) != 0)
-	    unlink(DestFile.c_str());
+	    RemoveFile("pkgAcqFile::Done", DestFile);
       }
 
       // Symlink the file
