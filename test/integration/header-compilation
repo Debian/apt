@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+
+(for i in $TESTDIR/../../build/include/apt-pkg/*.h; do echo "#include \"$i\""; done) > include.h
+
+
+testone() {
+    local cxx=$1
+    shift
+
+    if type $cxx 2>&1 1>/dev/null; then
+        testsuccess $cxx -c -o /dev/null include.h
+        testsuccess $cxx -c -o /dev/null -std=c++98 include.h
+        testsuccess $cxx -c -o /dev/null -std=c++11 include.h
+    else
+        msgskip "Compile $cxx is not installed"
+    fi
+}
+
+testone clang++
+testone g++
+testone g++-4.8

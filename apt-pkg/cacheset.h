@@ -644,7 +644,7 @@ template<> inline void PackageContainer<std::vector<pkgCache::PkgIterator> >::in
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
 }
-#if __cplusplus < 201103L
+#if APT_GCC_VERSION < 0x409
 template<> inline PackageContainer<std::set<pkgCache::PkgIterator> >::iterator PackageContainer<std::set<pkgCache::PkgIterator> >::erase(iterator i) {
 	_cont.erase(i._iter);
 	return end();
@@ -897,7 +897,7 @@ public:									/*{{{*/
 	bool empty() const APT_OVERRIDE { return _cont.empty(); }
 	void clear() APT_OVERRIDE { return _cont.clear(); }
 	size_t size() const APT_OVERRIDE { return _cont.size(); }
-#if __GNUC__ >= 5 || (__GNUC_MINOR__ >= 9 && __GNUC__ >= 4)
+#if APT_GCC_VERSION >= 0x409
 	iterator erase( const_iterator pos ) { return iterator(_cont.erase(pos._iter)); }
 	iterator erase( const_iterator first, const_iterator last ) { return iterator(_cont.erase(first._iter, last._iter)); }
 #else
@@ -1148,7 +1148,7 @@ template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::in
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
 }
-#if __cplusplus < 201103L
+#if APT_GCC_VERSION < 0x409
 template<> inline VersionContainer<std::set<pkgCache::VerIterator> >::iterator VersionContainer<std::set<pkgCache::VerIterator> >::erase(iterator i) {
 	_cont.erase(i._iter);
 	return end();
