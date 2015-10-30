@@ -153,7 +153,7 @@ bool pkgDepCache::Init(OpProgress * const Prog)
       State.iFlags = 0;
 
       // Figure out the install version
-      State.CandidateVer = GetCandidateVer(I);
+      State.CandidateVer = LocalPolicy->GetCandidateVer(I);
       State.InstallVer = I.CurrentVer();
       State.Mode = ModeKeep;
 
@@ -1465,6 +1465,11 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
       AddStates(Pkg);
       AddSizes(Pkg);
    }
+}
+									/*}}}*/
+pkgCache::VerIterator pkgDepCache::GetCandidateVersion(PkgIterator const &Pkg)/*{{{*/
+{
+   return PkgState[Pkg->ID].CandidateVerIter(*this);
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/

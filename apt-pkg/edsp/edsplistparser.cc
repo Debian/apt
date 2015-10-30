@@ -111,6 +111,15 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 	 return false;
    }
 
+   // FIXME: Using an overriding pin is wrong.
+   if (Section.FindB("APT-Candidate", false))
+   {
+      std::string out;
+      strprintf(out, "Package: %s\nPin: version %s\nPin-Priority: 9999\n\n", Pkg.FullName().c_str(), Ver.VerStr());
+      if (d->preferences.Write(out.c_str(), out.length()) == false)
+	 return false;
+   }
+
    signed short const pinvalue = Section.FindI("APT-Pin", 500);
    if (pinvalue != 500)
    {

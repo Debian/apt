@@ -84,7 +84,7 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
 	   fprintf(output, " %s\n", R->c_str());
    }
    fprintf(output, "APT-Pin: %d\n", Pin);
-   if (Cache.GetCandidateVer(Pkg) == Ver)
+   if (Cache.GetCandidateVersion(Pkg) == Ver)
       fprintf(output, "APT-Candidate: yes\n");
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
       fprintf(output, "APT-Automatic: yes\n");
@@ -510,9 +510,10 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
       }
       else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
       {
-	 fprintf(output, "Install: %d\n", Cache.GetCandidateVer(Pkg)->ID);
+	 pkgCache::VerIterator const CandVer = Cache.GetCandidateVersion(Pkg);
+	 fprintf(output, "Install: %d\n", CandVer->ID);
 	 if (Debug == true)
-	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Cache.GetCandidateVer(Pkg).VerStr());
+	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), CandVer.VerStr());
       }
       else if (Cache[Pkg].Garbage == true)
       {

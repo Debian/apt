@@ -360,9 +360,10 @@ class pkgDepCache : protected pkgCache::Namespace
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
-   
+
    // Policy implementation
-   inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return LocalPolicy->GetCandidateVer(Pkg);};
+   APT_DEPRECATED inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return /* GetCandidateVersion(Pkg); but for API compat: */ LocalPolicy->GetCandidateVer(Pkg);};
+
    inline bool IsImportantDep(DepIterator Dep) const {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};
    
@@ -413,6 +414,16 @@ class pkgDepCache : protected pkgCache::Namespace
    void MarkProtected(PkgIterator const &Pkg) { PkgState[Pkg->ID].iFlags |= Protected; };
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
+
+   /** @return 'the' candidate version of a package
+    *
+    * The version returned is the version previously set explicitly via
+    * SetCandidate* methods like #SetCandidateVersion or if there wasn't one
+    * set the version as choosen via #Policy.
+    *
+    * @param Pkg is the package to return the candidate for
+    */
+   pkgCache::VerIterator GetCandidateVersion(pkgCache::PkgIterator const &Pkg);
    void SetCandidateVersion(VerIterator TargetVer);
    bool SetCandidateRelease(pkgCache::VerIterator TargetVer,
 				std::string const &TargetRel);

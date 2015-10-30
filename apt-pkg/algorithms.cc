@@ -933,7 +933,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 				 Start.TargetPkg()->CurrentVer == 0 &&
 				 Cache[Start.TargetPkg()].Delete() == false &&
 				 (Flags[Start.TargetPkg()->ID] & ToRemove) != ToRemove &&
-				 Cache.GetCandidateVer(Start.TargetPkg()).end() == false)
+				 Cache.GetCandidateVersion(Start.TargetPkg()).end() == false)
 			{
 			   /* Before removing or keeping the package with the broken dependency
 			      try instead to install the first not previously installed package

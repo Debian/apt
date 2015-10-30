@@ -245,8 +245,8 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	 // choose a good candidate and proceed with that.
 	 // Maybe we will find a source later on with the right VerTag
 	 // or RelTag
-	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
-	 if (Ver.end() == false) 
+	 pkgCache::VerIterator const Ver = Cache->GetCandidateVersion(Pkg);
+	 if (Ver.end() == false)
 	 {
 	    if (strcmp(Ver.SourcePkgName(),Ver.ParentPkg().Name()) != 0)
 	       Src = Ver.SourcePkgName();

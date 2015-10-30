@@ -1718,11 +1718,11 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    if(pos != string::npos)
       pkgname = pkgname.substr(0, pos);
 
-   // find the package versin and source package name
+   // find the package version and source package name
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
    if (Pkg.end() == true)
       return;
-   pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+   pkgCache::VerIterator Ver = Cache.GetCandidateVersion(Pkg);
    if (Ver.end() == true)
       return;
    pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
