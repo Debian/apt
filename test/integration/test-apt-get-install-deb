@@ -74,3 +74,32 @@ The following NEW packages will be installed:
 Remv foo:i386 [1.0]
 Inst foo (1.0 local-deb [amd64])
 Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0
+
+createpkg() {
+	local PKG="pkg-$1"
+	mkdir -p ./incoming/$PKG/DEBIAN
+	if [ -n "$2" ]; then
+		echo -n "$2" >> ./incoming/$PKG/DEBIAN/control
+	fi
+	echo "Package: $PKG
+Version: 0
+Priority: extra
+Maintainer: No Body <no@example.org>
+Architecture: all
+Description: test package" >> ./incoming/$PKG/DEBIAN/control
+	if [ -n "$3" ]; then
+		echo -n "$3" >> ./incoming/$PKG/DEBIAN/control
+	fi
+	testsuccess dpkg-deb --build ./incoming/$PKG/ ./incoming
+	#dpkg-deb -I ./incoming/${PKG}_0_all.deb control
+}
+createpkg 'as-it-should-be'
+createpkg 'leading-newline' '
+
+'
+createpkg 'trailing-newline' '' '
+'
+
+testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
+testsuccess aptget install ./incoming/pkg-leading-newline_0_all.deb
+testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb

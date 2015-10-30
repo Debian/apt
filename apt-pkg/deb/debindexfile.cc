@@ -181,6 +181,9 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
    if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("Popen failed");
 
+   content << "Filename: " << debfile << "\n";
+   content << "Size: " << Buf.st_size << "\n";
+   bool first_line_seen = false;
    char buffer[1024];
    do {
       unsigned long long actual = 0;
@@ -189,12 +192,18 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
       if (actual == 0)
 	 break;
       buffer[actual] = '\0';
-      content << buffer;
+      char const * b = buffer;
+      if (first_line_seen == false)
+      {
+	 for (; *b != '\0' && (*b == '\n' || *b == '\r'); ++b)
+	    /* skip over leading newlines */;
+	 if (*b == '\0')
+	    continue;
+	 first_line_seen = true;
+      }
+      content << b;
    } while(true);
    ExecWait(Child, "Popen");
-
-   content << "Filename: " << debfile << "\n";
-   content << "Size: " << Buf.st_size << "\n";
 
    return true;
 }
