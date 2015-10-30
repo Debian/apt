@@ -48,9 +48,8 @@ void DeleteAllButMostRecent(std::string dir, int KeepFiles)
 
 // Takes a input filename (e.g. binary-i386/Packages) and a hashstring
 // of the Input data and transforms it into a suitable by-hash filename
-std::string GenByHashFilename(std::string Input, HashString h)
+std::string GenByHashFilename(std::string ByHashOutputFile, HashString const &h)
 {
-   std::string ByHashOutputFile = Input;
    std::string const ByHash = "/by-hash/" + h.HashType() + "/" + h.HashValue();
    size_t trailing_slash = ByHashOutputFile.find_last_of("/");
    if (trailing_slash == std::string::npos)

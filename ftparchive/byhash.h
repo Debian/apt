@@ -11,6 +11,8 @@
 #ifndef BYHASH_H
 #define BYHASH_H
 
+#include <string>
+
 class HashString;
 
 // Delete all files in "dir" except for the number specified in "KeepFiles"
@@ -18,6 +20,6 @@ class HashString;
 void DeleteAllButMostRecent(std::string dir, int KeepFiles);
 
 // takes a regular input filename
-std::string GenByHashFilename(std::string Input, HashString h);
+std::string GenByHashFilename(std::string Input, HashString const &h);
 
 #endif
