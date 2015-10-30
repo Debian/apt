@@ -12,7 +12,6 @@
 #include <arpa/nameser.h>
 #include <vector>
 #include <string>
-#include <tuple>
 
 class SrvRec
 {
@@ -30,9 +29,7 @@ class SrvRec
    bool operator<(SrvRec const &other) const {
       return this->priority < other.priority;
    }
-   bool operator==(SrvRec const &other) const {
-      return std::tie(target, priority, weight, port) == std::tie(other.target, other.priority, other.weight, other.port);
-   }
+   bool operator==(SrvRec const &other) const;
 
    SrvRec(std::string const Target, u_int16_t const Priority,
 	 u_int16_t const Weight, u_int16_t const Port) :

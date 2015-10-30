@@ -16,6 +16,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <tuple>
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -24,6 +25,12 @@
 
 #include "srvrec.h"
 
+
+bool SrvRec::operator==(SrvRec const &other) const
+{
+   return (std::tie(target, priority, weight, port) ==
+           std::tie(other.target, other.priority, other.weight, other.port));
+}
 
 bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result)
 {
