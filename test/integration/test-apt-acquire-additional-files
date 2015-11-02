@@ -31,6 +31,7 @@ Reading package lists..." aptget update
 
 testempty find rootdir/var/lib/apt/lists -name '*Contents*'
 
+msgmsg "Normal Contents file"
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
 Acquire::IndexTargets::deb::Contents {
 	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
@@ -78,6 +79,7 @@ rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Cont
 testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 # if we asked for keeping it compressed, keep it
+msgmsg "Normal Contents file with KeepCompressed"
 echo 'Acquire::IndexTargets::deb::Contents::KeepCompressed "true";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
 testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
@@ -94,6 +96,7 @@ rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Cont
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
 testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
+msgmsg "Compressed Contents file"
 # and no automatic uncompress based on the name please,
 # only if we downloaded a compressed file, but target was uncompressed
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
@@ -125,6 +128,7 @@ testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstab
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" 'aptarchive/dists/unstable/main/Contents-all.gz'
 
 rm -f rootdir/etc/apt/apt.conf.d/content-target.conf
+msgmsg "No Contents file"
 
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 

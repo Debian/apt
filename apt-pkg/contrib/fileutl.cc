@@ -1124,16 +1124,20 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if ((Mode & ReadWrite) == 0)
       return FileFdError("No openmode provided in FileFd::Open for %s", FileName.c_str());
 
-   if ((Mode & Atomic) == Atomic)
+   unsigned int OpenMode = Mode;
+   if (FileName == "/dev/null")
+      OpenMode = OpenMode & ~(Atomic | Exclusive | Create | Empty);
+
+   if ((OpenMode & Atomic) == Atomic)
    {
       Flags |= Replace;
    }
-   else if ((Mode & (Exclusive | Create)) == (Exclusive | Create))
+   else if ((OpenMode & (Exclusive | Create)) == (Exclusive | Create))
    {
       // for atomic, this will be done by rename in Close()
       unlink(FileName.c_str());
    }
-   if ((Mode & Empty) == Empty)
+   if ((OpenMode & Empty) == Empty)
    {
       struct stat Buf;
       if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
@@ -1141,7 +1145,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    }
 
    int fileflags = 0;
-   #define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
+   #define if_FLAGGED_SET(FLAG, MODE) if ((OpenMode & FLAG) == FLAG) fileflags |= MODE
    if_FLAGGED_SET(ReadWrite, O_RDWR);
    else if_FLAGGED_SET(ReadOnly, O_RDONLY);
    else if_FLAGGED_SET(WriteOnly, O_WRONLY);
@@ -1151,7 +1155,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Exclusive, O_EXCL);
    #undef if_FLAGGED_SET
 
-   if ((Mode & Atomic) == Atomic)
+   if ((OpenMode & Atomic) == Atomic)
    {
       char *name = strdup((FileName + ".XXXXXX").c_str());
 
@@ -1178,7 +1182,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
       iFd = open(FileName.c_str(), fileflags, AccessMode);
 
    this->FileName = FileName;
-   if (iFd == -1 || OpenInternDescriptor(Mode, compressor) == false)
+   if (iFd == -1 || OpenInternDescriptor(OpenMode, compressor) == false)
    {
       if (iFd != -1)
       {

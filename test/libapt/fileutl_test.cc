@@ -298,3 +298,33 @@ TEST(FileUtlTest, flAbsPath)
    res = chdir(cwd.c_str());
    EXPECT_EQ(res, 0);
 }
+
+static void TestDevNullFileFd(unsigned int const filemode)
+{
+   FileFd f("/dev/null", filemode);
+   EXPECT_FALSE(f.Failed());
+   EXPECT_TRUE(f.IsOpen());
+   EXPECT_TRUE(f.IsOpen());
+
+   std::string test = "This is a test!\n";
+   EXPECT_TRUE(f.Write(test.c_str(), test.size()));
+   EXPECT_TRUE(f.IsOpen());
+   EXPECT_FALSE(f.Failed());
+
+   f.Close();
+   EXPECT_FALSE(f.IsOpen());
+   EXPECT_FALSE(f.Failed());
+}
+TEST(FileUtlTest, WorkingWithDevNull)
+{
+   TestDevNullFileFd(FileFd::WriteOnly | FileFd::Create);
+   TestDevNullFileFd(FileFd::WriteOnly | FileFd::Create | FileFd::Empty);
+   TestDevNullFileFd(FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive);
+   TestDevNullFileFd(FileFd::WriteOnly | FileFd::Atomic);
+   TestDevNullFileFd(FileFd::WriteOnly | FileFd::Create | FileFd::Atomic);
+   // short-hands for ReadWrite with these modes
+   TestDevNullFileFd(FileFd::WriteEmpty);
+   TestDevNullFileFd(FileFd::WriteAny);
+   TestDevNullFileFd(FileFd::WriteTemp);
+   TestDevNullFileFd(FileFd::WriteAtomic);
+}
