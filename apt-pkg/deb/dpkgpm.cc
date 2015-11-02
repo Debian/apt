@@ -1597,7 +1597,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    {
       std::string const oldpkgcache = _config->FindFile("Dir::cache::pkgcache");
       if (oldpkgcache.empty() == false && RealFileExists(oldpkgcache) == true &&
-	  unlink(oldpkgcache.c_str()) == 0)
+	  RemoveFile("pkgDPkgPM::Go", oldpkgcache))
       {
 	 std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
 	 if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)

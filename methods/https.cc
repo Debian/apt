@@ -443,7 +443,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // server says file not modified
    if (Server->Result == 304 || curl_condition_unmet == 1)
    {
-      unlink(File->Name().c_str());
+      RemoveFile("https", File->Name());
       Res.IMSHit = true;
       Res.LastModified = Itm->LastModified;
       Res.Size = 0;
@@ -461,14 +461,14 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       SetFailReason(err);
       _error->Error("%i %s", Server->Result, Server->Code);
       // unlink, no need keep 401/404 page content in partial/
-      unlink(File->Name().c_str());
+      RemoveFile("https", File->Name());
       return false;
    }
 
    // invalid range-request
    if (Server->Result == 416)
    {
-      unlink(File->Name().c_str());
+      RemoveFile("https", File->Name());
       delete File;
       Redirect(Itm->Uri);
       return true;

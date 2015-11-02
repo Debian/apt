@@ -426,8 +426,8 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
 {
    string DFile = _config->FindFile("Dir::State::cdroms");
    string NewFile = DFile + ".new";
-   
-   unlink(NewFile.c_str());
+
+   RemoveFile("WriteDatabase", NewFile);
    ofstream Out(NewFile.c_str());
    if (!Out)
       return _error->Errno("ofstream::ofstream",
@@ -468,7 +468,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
       return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
 
    string NewFile = File + ".new";
-   unlink(NewFile.c_str());
+   RemoveFile("WriteDatabase", NewFile);
    ofstream Out(NewFile.c_str());
    if (!Out)
       return _error->Errno("ofstream::ofstream",

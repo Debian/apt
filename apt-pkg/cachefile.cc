@@ -191,9 +191,9 @@ void pkgCacheFile::RemoveCaches()
    std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
 
    if (pkgcache.empty() == false && RealFileExists(pkgcache) == true)
-      unlink(pkgcache.c_str());
+      RemoveFile("RemoveCaches", pkgcache);
    if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
-      unlink(srcpkgcache.c_str());
+      RemoveFile("RemoveCaches", srcpkgcache);
    if (pkgcache.empty() == false)
    {
       std::string cachedir = flNotFile(pkgcache);
@@ -207,7 +207,7 @@ void pkgCacheFile::RemoveCaches()
 	    std::string nuke = flNotDir(*file);
 	    if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
 	       continue;
-	    unlink(file->c_str());
+	    RemoveFile("RemoveCaches", *file);
 	 }
       }
    }
@@ -226,7 +226,7 @@ void pkgCacheFile::RemoveCaches()
       std::string nuke = flNotDir(*file);
       if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
 	 continue;
-      unlink(file->c_str());
+      RemoveFile("RemoveCaches", *file);
    }
 }
 									/*}}}*/

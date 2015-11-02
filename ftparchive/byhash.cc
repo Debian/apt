@@ -41,9 +41,8 @@ void DeleteAllButMostRecent(std::string dir, int KeepFiles)
    auto files = GetListOfFilesInDir(dir, false);
    std::sort(files.begin(), files.end(), Cmp());
 
-   for (auto I=files.begin(); I<files.end()-KeepFiles; I++) {
-      unlink((*I).c_str());
-   }
+   for (auto I=files.begin(); I<files.end()-KeepFiles; ++I)
+      RemoveFile("DeleteAllButMostRecent", *I);
 }
 
 // Takes a input filename (e.g. binary-i386/Packages) and a hashstring

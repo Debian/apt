@@ -1090,7 +1090,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 	 // If the file is missing we hard fail and delete the destfile
 	 // otherwise transient fail
 	 if (Missing == true) {
-	    unlink(FailFile.c_str());
+	    RemoveFile("ftp", FailFile);
 	    return false;
 	 }
 	 Fail(true);

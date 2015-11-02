@@ -172,6 +172,21 @@ bool CopyFile(FileFd &From,FileFd &To)
    return true;
 }
 									/*}}}*/
+bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
+{
+   if (FileName == "/dev/null")
+      return true;
+   errno = 0;
+   if (unlink(FileName.c_str()) != 0)
+   {
+      if (errno == ENOENT)
+	 return true;
+
+      return _error->WarningE(Function,_("Problem unlinking the file %s"), FileName.c_str());
+   }
+   return true;
+}
+									/*}}}*/
 // GetLock - Gets a lock file						/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create an empty file of the given name and lock it. Once this
@@ -1135,13 +1150,13 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    else if ((OpenMode & (Exclusive | Create)) == (Exclusive | Create))
    {
       // for atomic, this will be done by rename in Close()
-      unlink(FileName.c_str());
+      RemoveFile("FileFd::Open", FileName);
    }
    if ((OpenMode & Empty) == Empty)
    {
       struct stat Buf;
       if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
-	 unlink(FileName.c_str());
+	 RemoveFile("FileFd::Open", FileName);
    }
 
    int fileflags = 0;
@@ -2025,8 +2040,7 @@ bool FileFd::Close()
 
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
-      if (unlink(FileName.c_str()) != 0)
-	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
+      Res &= RemoveFile("FileFd::Close", FileName);
 
    if (Res == false)
       Flags |= Fail;

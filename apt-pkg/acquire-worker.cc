@@ -742,9 +742,9 @@ void pkgAcquire::Worker::PrepareFiles(char const * const caller, pkgAcquire::Que
       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
       {
 	 pkgAcquire::Item const * const Owner = *O;
-	 if (Owner->DestFile == filename)
+	 if (Owner->DestFile == filename || filename == "/dev/null")
 	    continue;
-	 unlink(Owner->DestFile.c_str());
+	 RemoveFile("PrepareFiles", Owner->DestFile);
 	 if (link(filename.c_str(), Owner->DestFile.c_str()) != 0)
 	 {
 	    // different mounts can't happen for us as we download to lists/ by default,
@@ -759,7 +759,7 @@ void pkgAcquire::Worker::PrepareFiles(char const * const caller, pkgAcquire::Que
    else
    {
       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
-	 unlink((*O)->DestFile.c_str());
+	 RemoveFile("PrepareFiles", (*O)->DestFile);
    }
 }
 									/*}}}*/

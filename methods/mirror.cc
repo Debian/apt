@@ -122,7 +122,7 @@ bool MirrorMethod::Clean(string Dir)
       }
       // nothing found, nuke it
       if (I == list.end())
-	 unlink(Dir->d_name);
+	 RemoveFile("mirror", Dir->d_name);
    }
 
    closedir(D);

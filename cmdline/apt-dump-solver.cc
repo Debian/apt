@@ -53,8 +53,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	   return 0;
 	}
 
-	if (strcmp(filename, "/dev/null") != 0)
-	   unlink(filename);
+	RemoveFile(argv[0], filename);
 	FileFd input, output;
 	if (input.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false ||
 	      output.Open(filename, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600) == false ||

@@ -76,7 +76,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
       }
    }
    if (Res.IMSHit != true)
-      unlink(Itm->DestFile.c_str());
+      RemoveFile("file", Itm->DestFile);
 
    // See if the file exists
    if (stat(File.c_str(),&Buf) == 0)

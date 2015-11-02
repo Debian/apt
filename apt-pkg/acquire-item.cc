@@ -147,20 +147,6 @@ static bool BootstrapPDiffWith(std::string const &PartialFile, std::string const
    return typeItr != types.cend();
 }
 									/*}}}*/
-static bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
-{
-   if (FileName == "/dev/null")
-      return true;
-   errno = 0;
-   if (unlink(FileName.c_str()) != 0)
-   {
-      if (errno == ENOENT)
-	 return true;
-      return _error->WarningE(Function, "Removal of file %s failed", FileName.c_str());
-   }
-   return true;
-}
-									/*}}}*/
 
 static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
 {

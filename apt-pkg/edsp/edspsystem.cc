@@ -57,8 +57,8 @@ public:
       if (tempDir.empty())
 	 return;
 
-      unlink(tempStatesFile.c_str());
-      unlink(tempPrefsFile.c_str());
+      RemoveFile("DeInitialize", tempStatesFile);
+      RemoveFile("DeInitialize", tempPrefsFile);
       rmdir(tempDir.c_str());
    }
 

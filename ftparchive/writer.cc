@@ -302,9 +302,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	       _error->Errno("readlink",_("Failed to readlink %s"),OriginalPath);
 	    else
 	    {
-	       if (unlink(OriginalPath) != 0)
-		  _error->Errno("unlink",_("Failed to unlink %s"),OriginalPath);
-	       else
+	       if (RemoveFile("FTWScanner::Delink", OriginalPath))
 	       {
 		  if (link(FileName.c_str(),OriginalPath) != 0)
 		  {

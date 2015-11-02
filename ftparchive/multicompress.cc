@@ -352,9 +352,7 @@ bool MultiCompress::Child(int const &FD)
 	 for (Files *I = Outputs; I != 0; I = I->Next)
 	 {
 	    I->TmpFile.Close();
-	    if (unlink(I->TmpFile.Name().c_str()) != 0)
-	       _error->Errno("unlink",_("Problem unlinking %s"),
-			     I->TmpFile.Name().c_str());
+	    RemoveFile("MultiCompress::Child", I->TmpFile.Name());
 	 }
 	 return !_error->PendingError();
       }      

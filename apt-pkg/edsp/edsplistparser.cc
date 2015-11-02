@@ -31,12 +31,10 @@ public:
    edspListParserPrivate()
    {
       std::string const states = _config->FindFile("Dir::State::extended_states");
-      if (states != "/dev/null")
-	 unlink(states.c_str());
+      RemoveFile("edspListParserPrivate", states);
       extendedstates.Open(states, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
       std::string const prefs = _config->FindFile("Dir::Etc::preferences");
-      if (prefs != "/dev/null")
-	 unlink(prefs.c_str());
+      RemoveFile("edspListParserPrivate", prefs);
       preferences.Open(prefs, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
    }
 };

@@ -150,6 +150,7 @@ class FileFd
 
 bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
+bool RemoveFile(char const * const Function, std::string const &FileName);
 int GetLock(std::string File,bool Errors = true);
 bool FileExists(std::string File);
 bool RealFileExists(std::string File);

@@ -331,7 +331,7 @@ bool DoClean(CommandLine &)
 	 c1out << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << std::endl;
 
 	 if (_config->FindB("APT::Get::Simulate") == false)
-	    unlink(File);
+	    RemoveFile("Cleaner::Erase", File);
       };
 };
 bool DoAutoClean(CommandLine &)

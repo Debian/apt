@@ -645,7 +645,7 @@ bool pkgAcquire::Clean(string Dir)
       
       // Nothing found, nuke it
       if (I == Items.end())
-	 unlink(Dir->d_name);
+	 RemoveFile("Clean", Dir->d_name);
    };
    
    closedir(D);
@@ -993,15 +993,15 @@ void pkgAcquire::Queue::QItem::SyncDestinationFiles() const		/*{{{*/
       if (lstat((*O)->DestFile.c_str(),&file) == 0)
       {
 	 if ((file.st_mode & S_IFREG) == 0)
-	    unlink((*O)->DestFile.c_str());
+	    RemoveFile("SyncDestinationFiles", (*O)->DestFile);
 	 else if (supersize < file.st_size)
 	 {
 	    supersize = file.st_size;
-	    unlink(superfile.c_str());
+	    RemoveFile("SyncDestinationFiles", superfile);
 	    rename((*O)->DestFile.c_str(), superfile.c_str());
 	 }
 	 else
-	    unlink((*O)->DestFile.c_str());
+	    RemoveFile("SyncDestinationFiles", (*O)->DestFile);
 	 if (symlink(superfile.c_str(), (*O)->DestFile.c_str()) != 0)
 	 {
 	    ; // not a problem per-se and no real alternative

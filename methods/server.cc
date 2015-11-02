@@ -274,7 +274,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    // Not Modified
    if (Server->Result == 304)
    {
-      unlink(Queue->DestFile.c_str());
+      RemoveFile("server", Queue->DestFile);
       Res.IMSHit = true;
       Res.LastModified = Queue->LastModified;
       return IMS_HIT;
@@ -350,7 +350,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	    Server->StartPos = Server->TotalFileSize;
 	    Server->Result = 200;
 	 }
-	 else if (unlink(Queue->DestFile.c_str()) == 0)
+	 else if (RemoveFile("server", Queue->DestFile))
 	 {
 	    NextURI = Queue->Uri;
 	    return TRY_AGAIN_OR_REDIRECT;
