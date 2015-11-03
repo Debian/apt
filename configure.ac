@@ -12,8 +12,9 @@ dnl not used but STL is.
 dnl 'make -f Makefile startup' will generate the configure file from
 dnl configure.ac correctly and can be run at any time
 
-AC_PREREQ(2.50)
-AC_INIT(configure.ac)
+AC_PREREQ([2.69])
+AC_INIT
+AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
@@ -28,12 +29,12 @@ AC_SUBST(PACKAGE_VERSION)
 AC_SUBST(PACKAGE_MAIL)
 
 dnl Check the archs, we want the target type.
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 
 dnl Check our C compiler
-AC_CHECK_TOOL_PREFIX
+
 AC_PROG_CC
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 
 dnl check for large file support and enable it if possible
 dnl do this early as other stuff might depend on it
@@ -209,4 +210,6 @@ fi
 AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile:doc/Doxyfile.in,make -s dirs)
+AC_CONFIG_FILES([environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile:doc/Doxyfile.in])
+AC_CONFIG_COMMANDS([default],[make -s dirs],[])
+AC_OUTPUT
