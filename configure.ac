@@ -12,7 +12,7 @@ dnl not used but STL is.
 dnl 'make -f Makefile startup' will generate the configure file from
 dnl configure.ac correctly and can be run at any time
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_AUX_DIR(buildlib)
