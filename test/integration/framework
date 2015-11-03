@@ -377,6 +377,7 @@ EOF
 	fi
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
+	echo 'Acquire::Connect::AddrConfig "false";' > rootdir/etc/apt/apt.conf.d/connect-addrconfig
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA1' # these are tests, not security best-practices
 
