@@ -83,7 +83,7 @@ public:
    bool stdin_is_dev_null;
    // the buffer we use for the dpkg status-fd reading
    char dpkgbuf[1024];
-   int dpkgbuf_pos;
+   size_t dpkgbuf_pos;
    FILE *term_out;
    FILE *history_out;
    string dpkg_error;
@@ -754,40 +754,33 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
 }
 									/*}}}*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
-// ---------------------------------------------------------------------
-/*
- */
 void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 {
-   char *p, *q;
-   int len;
-
-   len=read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], sizeof(d->dpkgbuf)-d->dpkgbuf_pos);
-   d->dpkgbuf_pos += len;
+   ssize_t const len = read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos],
+	 (sizeof(d->dpkgbuf)/sizeof(d->dpkgbuf[0])) - d->dpkgbuf_pos);
    if(len <= 0)
       return;
+   d->dpkgbuf_pos += (len / sizeof(d->dpkgbuf[0]));
 
-   // process line by line if we have a buffer
-   p = q = d->dpkgbuf;
-   while((q=(char*)memchr(p, '\n', d->dpkgbuf+d->dpkgbuf_pos-p)) != NULL)
+   // process line by line from the buffer
+   char *p = d->dpkgbuf, *q = nullptr;
+   while((q=(char*)memchr(p, '\n', (d->dpkgbuf + d->dpkgbuf_pos) - p)) != nullptr)
    {
-      *q = 0;
+      *q = '\0';
       ProcessDpkgStatusLine(p);
-      p=q+1; // continue with next line
+      p = q + 1; // continue with next line
    }
 
-   // now move the unprocessed bits (after the final \n that is now a 0x0) 
-   // to the start and update d->dpkgbuf_pos
-   p = (char*)memrchr(d->dpkgbuf, 0, d->dpkgbuf_pos);
-   if(p == NULL)
+   // check if we stripped the buffer clean
+   if (p > (d->dpkgbuf + d->dpkgbuf_pos))
+   {
+      d->dpkgbuf_pos = 0;
       return;
+   }
 
-   // we are interessted in the first char *after* 0x0
-   p++;
-
-   // move the unprocessed tail to the start and update pos
-   memmove(d->dpkgbuf, p, p-d->dpkgbuf);
-   d->dpkgbuf_pos = d->dpkgbuf+d->dpkgbuf_pos-p;
+   // otherwise move the unprocessed tail to the start and update pos
+   memmove(d->dpkgbuf, p, (p - d->dpkgbuf));
+   d->dpkgbuf_pos = (d->dpkgbuf + d->dpkgbuf_pos) - p;
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
