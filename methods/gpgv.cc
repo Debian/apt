@@ -6,6 +6,7 @@
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include "aptmethod.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -35,7 +36,7 @@ using std::vector;
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 
-class GPGVMethod : public pkgAcqMethod
+class GPGVMethod : public aptMethod
 {
    private:
    string VerifyGetSigners(const char *file, const char *outfile,
@@ -47,21 +48,10 @@ class GPGVMethod : public pkgAcqMethod
    
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
-   virtual bool Configuration(string Message) APT_OVERRIDE;
    public:
    
-   GPGVMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
+   GPGVMethod() : aptMethod("gpgv","1.0",SingleInstance | SendConfig) {};
 };
-
-bool GPGVMethod::Configuration(string Message)
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
 
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 std::string const &key,

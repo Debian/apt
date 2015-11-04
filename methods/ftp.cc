@@ -950,7 +950,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 // FtpMethod::FtpMethod - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FtpMethod::FtpMethod() : pkgAcqMethod("1.0",SendConfig)
+FtpMethod::FtpMethod() : aptMethod("ftp","1.0",SendConfig)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -985,13 +985,10 @@ void FtpMethod::SigTerm(int)
 /* We stash the desired pipeline depth */
 bool FtpMethod::Configuration(string Message)
 {
-   if (pkgAcqMethod::Configuration(Message) == false)
+   if (aptMethod::Configuration(Message) == false)
       return false;
-   
-   TimeOut = _config->FindI("Acquire::Ftp::Timeout",TimeOut);
 
-   // no more active ftp, sorry
-   DropPrivsOrDie();
+   TimeOut = _config->FindI("Acquire::Ftp::Timeout",TimeOut);
 
    return true;
 }

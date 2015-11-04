@@ -387,7 +387,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 // RSHMethod::RSHMethod - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
+RSHMethod::RSHMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.0",SendConfig), Prog(pProg)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -399,15 +399,13 @@ RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
 // ---------------------------------------------------------------------
 bool RSHMethod::Configuration(std::string Message)
 {
-   char ProgStr[100];
-  
-   if (pkgAcqMethod::Configuration(Message) == false)
+   if (aptMethod::Configuration(Message) == false)
       return false;
 
-   snprintf(ProgStr, sizeof ProgStr, "Acquire::%s::Timeout", Prog);
-   TimeOut = _config->FindI(ProgStr,TimeOut);
-   snprintf(ProgStr, sizeof ProgStr, "Acquire::%s::Options", Prog);
-   RshOptions = _config->Tree(ProgStr);
+   std::string const timeconf = std::string("Acquire::") + Prog + "::Timeout";
+   TimeOut = _config->FindI(timeconf, TimeOut);
+   std::string const optsconf = std::string("Acquire::") + Prog + "::Options";
+   RshOptions = _config->Tree(optsconf.c_str());
 
    return true;
 }
@@ -548,8 +546,6 @@ int main(int, const char *argv[])
 {
    setlocale(LC_ALL, "");
 
-   RSHMethod Mth;
-   Prog = strrchr(argv[0],'/');
-   Prog++;
+   RSHMethod Mth(flNotDir(argv[0]));
    return Mth.Run();
 }

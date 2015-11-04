@@ -137,7 +137,7 @@ class HttpMethod : public ServerMethod
    public:
    friend struct HttpServerState;
 
-   HttpMethod() : ServerMethod("1.2",Pipeline | SendConfig)
+   HttpMethod() : ServerMethod("http", "1.2",Pipeline | SendConfig)
    {
       File = 0;
       Server = 0;

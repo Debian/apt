@@ -82,7 +82,7 @@ class HttpsMethod : public ServerMethod
    using pkgAcqMethod::FetchResult;
    using pkgAcqMethod::FetchItem;
 
-   HttpsMethod() : ServerMethod("1.2",Pipeline | SendConfig), File(NULL)
+   HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig), File(NULL)
    {
       curl = curl_easy_init();
    };

@@ -252,17 +252,6 @@ bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
 }
 									/*}}}*/
 
-bool ServerMethod::Configuration(string Message)			/*{{{*/
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
-									/*}}}*/
-
 // ServerMethod::DealWithHeaders - Handle the retrieved header data	/*{{{*/
 // ---------------------------------------------------------------------
 /* We look at the header data we got back from the server and decide what
@@ -753,8 +742,8 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
    return MaxSizeInQueue;
 }
 									/*}}}*/
-ServerMethod::ServerMethod(const char *Ver,unsigned long Flags) :	/*{{{*/
-   pkgAcqMethod(Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
+ServerMethod::ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
+   aptMethod(Binary, Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }

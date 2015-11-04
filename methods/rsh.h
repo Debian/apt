@@ -54,9 +54,11 @@ class RSHConn
 };
 
 #include <apt-pkg/acquire-method.h>
+#include "aptmethod.h"
 
-class RSHMethod : public pkgAcqMethod
+class RSHMethod : public aptMethod
 {
+   std::string const Prog;
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
@@ -69,7 +71,7 @@ class RSHMethod : public pkgAcqMethod
 
    public:
 
-   RSHMethod();
+   RSHMethod(std::string const &Prog);
 };
 
 #endif

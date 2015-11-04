@@ -18,6 +18,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/aptconfiguration.h>
+#include "aptmethod.h"
 
 #include <string.h>
 #include <sys/stat.h>
@@ -28,27 +29,15 @@
 #include <apti18n.h>
 									/*}}}*/
 
-const char *Prog;
-
-class GzipMethod : public pkgAcqMethod
+class GzipMethod : public aptMethod
 {
+   std::string const Prog;
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
-   
+
    public:
-   
-   GzipMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
+
+   GzipMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.1",SingleInstance | SendConfig), Prog(pProg) {};
 };
-
-bool GzipMethod::Configuration(std::string Message)
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
@@ -68,7 +57,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       if (compressor->Name == Prog)
 	 break;
    if (compressor == compressors.end())
-      return _error->Error("Extraction of file %s requires unknown compressor %s", Path.c_str(), Prog);
+      return _error->Error("Extraction of file %s requires unknown compressor %s", Path.c_str(), Prog.c_str());
 
    // Open the source and destination files
    FileFd From;
@@ -157,10 +146,6 @@ int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 
-   Prog = strrchr(argv[0],'/');
-   ++Prog;
-
-   GzipMethod Mth;
-
+   GzipMethod Mth(flNotDir(argv[0]));
    return Mth.Run();
 }

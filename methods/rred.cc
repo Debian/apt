@@ -13,6 +13,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
+#include "aptmethod.h"
 
 #include <stddef.h>
 #include <iostream>
@@ -532,7 +533,7 @@ class Patch {
    }
 };
 
-class RredMethod : public pkgAcqMethod {
+class RredMethod : public aptMethod {
    private:
       bool Debug;
 
@@ -680,18 +681,8 @@ class RredMethod : public pkgAcqMethod {
 	 return true;
       }
 
-      bool Configuration(std::string Message) APT_OVERRIDE
-      {
-	 if (pkgAcqMethod::Configuration(Message) == false)
-	    return false;
-
-	 DropPrivsOrDie();
-
-	 return true;
-      }
-
    public:
-      RredMethod() : pkgAcqMethod("2.0",SingleInstance | SendConfig), Debug(false) {}
+      RredMethod() : aptMethod("rred", "2.0",SingleInstance | SendConfig), Debug(false) {}
 };
 
 int main(int argc, char **argv)

@@ -317,14 +317,14 @@ setupenvironment() {
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
-	# store apt-key were we can access it, even if we run it as a different user
-	# destroys coverage reporting though, so just do it for root for now
+	# either store apt-key were we can access it, even if we run it as a different user
+	#cp "${BUILDDIRECTORY}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
+	#chmod o+rx "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key"
+	#echo "Dir::Bin::apt-key \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key\";" >> aptconfig.conf
+	# destroys coverage reporting though, so we disable changing user for the calling gpgv
+	echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	if [ "$(id -u)" = '0' ]; then
-		cp "${BUILDDIRECTORY}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
-		chmod o+rx "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key"
-		echo "Dir::Bin::apt-key \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key\";" >> aptconfig.conf
-	else
-		echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
+		echo 'Binary::gpgv::Debug::NoDropPrivs "true";' >>aptconfig.conf
 	fi
 
 	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF

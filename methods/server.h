@@ -13,6 +13,7 @@
 
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-method.h>
+#include "aptmethod.h"
 
 #include <time.h>
 #include <iostream>
@@ -104,7 +105,7 @@ struct ServerState
    virtual ~ServerState() {};
 };
 
-class ServerMethod : public pkgAcqMethod
+class ServerMethod : public aptMethod
 {
    protected:
    virtual bool Fetch(FetchItem *) APT_OVERRIDE;
@@ -147,7 +148,6 @@ class ServerMethod : public pkgAcqMethod
    static time_t FailTime;
    static APT_NORETURN void SigTerm(int);
 
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    virtual bool Flush() { return Server->Flush(File); };
 
    int Loop();
@@ -156,7 +156,7 @@ class ServerMethod : public pkgAcqMethod
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) = 0;
    virtual void RotateDNS() = 0;
 
-   ServerMethod(const char *Ver,unsigned long Flags = 0);
+   ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags);
    virtual ~ServerMethod() {};
 };
 

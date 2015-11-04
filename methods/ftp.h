@@ -12,6 +12,7 @@
 
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
+#include "aptmethod.h"
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -71,7 +72,7 @@ class FTPConn
    ~FTPConn();
 };
 
-class FtpMethod : public pkgAcqMethod
+class FtpMethod : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
