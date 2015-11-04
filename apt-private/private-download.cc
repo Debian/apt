@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <sys/vfs.h>
 #include <sys/statvfs.h>
+#include <sys/stat.h>
 #include <errno.h>
 
 #include <apti18n.h>
@@ -224,6 +225,7 @@ bool DoDownload(CommandLine &CmdL)
 	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
 	 std::ofstream dst(filename.c_str(), std::ios::binary);
 	 dst << src.rdbuf();
+	 chmod(filename.c_str(), 0644);
       }
    }
    return Failed == false;

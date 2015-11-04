@@ -19,9 +19,12 @@ insertsource 'unstable' 'foo' 'all' '1'
 setupaptarchive --no-update
 
 # ensure the archive is not writable
-addtrap 'prefix' 'chmod 750 aptarchive/dists/unstable/main/binary-all;'
-chmod 550 aptarchive/dists/unstable/main/binary-all
-
+addtrap 'prefix' 'chmod 755 aptarchive/dists/unstable/main/binary-all;'
+if [ "$(id -u)" = '0' ]; then
+	chmod 550 aptarchive/dists/unstable/main/binary-all
+	testfailure aptget update
+fi
+chmod 555 aptarchive/dists/unstable/main/binary-all
 testsuccess aptget update
 
 # the release files aren't an IMS-hit, but the indexes are

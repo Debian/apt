@@ -19,13 +19,14 @@ setupaptarchive --no-update
 APTARCHIVE="$(readlink -f ./aptarchive)"
 find "$APTARCHIVE/dists/unstable" -name '*Release*' -delete
 
+echo 'Acquire::Progress::Ignore::ShowErrorText "false";' > rootdir/etc/apt/apt.conf.d/99show-no-ignore-errors.conf
+
 # update without authenticated files leads to warning
 testfailureequal "Get:1 file:$APTARCHIVE unstable InRelease
 Ign:1 file:$APTARCHIVE unstable InRelease
-  File not found
 Get:2 file:$APTARCHIVE unstable Release
 Err:2 file:$APTARCHIVE unstable Release
-  File not found
+  File not found - ${APTARCHIVE}/dists/unstable/Release (2: No such file or directory)
 Reading package lists...
 E: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
 N: Updating such a repository securily is impossible and therefore disabled by default.
@@ -46,46 +47,32 @@ filesize() {
 #exit
 testwarningequal "Get:1 file:$APTARCHIVE unstable InRelease
 Ign:1 file:$APTARCHIVE unstable InRelease
-  File not found
 Get:2 file:$APTARCHIVE unstable Release
 Ign:2 file:$APTARCHIVE unstable Release
-  File not found
 Get:3 file:$APTARCHIVE unstable/main Sources
 Ign:3 file:$APTARCHIVE unstable/main Sources
-  File not found
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-  File not found
 Get:5 file:$APTARCHIVE unstable/main all Packages
 Ign:5 file:$APTARCHIVE unstable/main all Packages
-  File not found
 Get:6 file:$APTARCHIVE unstable/main Translation-en
 Ign:6 file:$APTARCHIVE unstable/main Translation-en
-  File not found
 Get:3 file:$APTARCHIVE unstable/main Sources
 Ign:3 file:$APTARCHIVE unstable/main Sources
-  File not found
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-  File not found
 Get:5 file:$APTARCHIVE unstable/main all Packages
 Ign:5 file:$APTARCHIVE unstable/main all Packages
-  File not found
 Get:6 file:$APTARCHIVE unstable/main Translation-en
 Ign:6 file:$APTARCHIVE unstable/main Translation-en
-  File not found
 Get:3 file:$APTARCHIVE unstable/main Sources
 Ign:3 file:$APTARCHIVE unstable/main Sources
-  File not found
 Get:4 file:$APTARCHIVE unstable/main i386 Packages
 Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-  File not found
 Get:5 file:$APTARCHIVE unstable/main all Packages
 Ign:5 file:$APTARCHIVE unstable/main all Packages
-  File not found
 Get:6 file:$APTARCHIVE unstable/main Translation-en
 Ign:6 file:$APTARCHIVE unstable/main Translation-en
-  File not found
 Get:3 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
 Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages' 'Architecture: i386') B]
 Get:5 file:$APTARCHIVE unstable/main all Packages [$(filesize 'Packages' 'Architecture: all') B]

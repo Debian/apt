@@ -21,6 +21,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
+#include "aptmethod.h"
 
 #include <string>
 #include <sys/stat.h>
@@ -28,24 +29,13 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class FileMethod : public pkgAcqMethod
+class FileMethod : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
    public:
-
-   FileMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig | LocalOnly) {};
+   FileMethod() : aptMethod("file", "1.0", SingleInstance | SendConfig | LocalOnly) {};
 };
-bool FileMethod::Configuration(std::string Message)
-{
-   if (pkgAcqMethod::Configuration(Message) == false)
-      return false;
-
-   DropPrivsOrDie();
-
-   return true;
-}
 
 // FileMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -78,6 +68,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
    if (Res.IMSHit != true)
       RemoveFile("file", Itm->DestFile);
 
+   int olderrno = 0;
    // See if the file exists
    if (stat(File.c_str(),&Buf) == 0)
    {
@@ -92,11 +83,10 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	    Res.IMSHit = true;
       }
 
-      Hashes Hash(Itm->ExpectedHashes);
-      FileFd Fd(File, FileFd::ReadOnly);
-      Hash.AddFD(Fd);
-      Res.TakeHashes(Hash);
+      CalculateHashes(Itm, Res);
    }
+   else
+      olderrno = errno;
    if (Res.IMSHit == false)
       URIStart(Res);
 
@@ -128,7 +118,10 @@ bool FileMethod::Fetch(FetchItem *Itm)
    else if (Res.Filename.empty() == false)
       URIDone(Res);
    else
-      return _error->Error(_("File not found"));
+   {
+      errno = olderrno;
+      return _error->Errno(File.c_str(), _("File not found"));
+   }
 
    return true;
 }

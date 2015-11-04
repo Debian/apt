@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
+#include "aptmethod.h"
 
 #include <string>
 #include <sys/stat.h>
@@ -25,23 +26,14 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class CopyMethod : public pkgAcqMethod
+class CopyMethod : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
-   void CalculateHashes(FetchItem const * const Itm, FetchResult &Res);
-   
-   public:
-   
-   CopyMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
-};
 
-void CopyMethod::CalculateHashes(FetchItem const * const Itm, FetchResult &Res)
-{
-   Hashes Hash(Itm->ExpectedHashes);
-   FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd);
-   Res.TakeHashes(Hash);
-}
+   public:
+
+   CopyMethod() : aptMethod("copy", "1.0",SingleInstance | SendConfig) {};
+};
 
 // CopyMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -76,12 +68,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    FileFd From(File,FileFd::ReadOnly);
    FileFd To(Itm->DestFile,FileFd::WriteAtomic);
    To.EraseOnFailure();
-   if (_error->PendingError() == true)
-   {
-      To.OpFail();
-      return false;
-   }
-   
+
    // Copy the file
    if (CopyFile(From,To) == false)
    {
@@ -101,7 +88,6 @@ bool CopyMethod::Fetch(FetchItem *Itm)
       return _error->Errno("utimes",_("Failed to set modification time"));
 
    CalculateHashes(Itm, Res);
-
    URIDone(Res);
    return true;
 }
