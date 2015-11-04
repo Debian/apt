@@ -89,7 +89,7 @@ class APT_PUBLIC CacheSetHelperAPTGet : public APT::CacheSetHelper {
 public:
 	std::list<std::pair<pkgCache::VerIterator, std::string> > selectedByRelease;
 
-	CacheSetHelperAPTGet(std::ostream &out);
+	explicit CacheSetHelperAPTGet(std::ostream &out);
 
 	virtual void showTaskSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) APT_OVERRIDE;
         virtual void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) APT_OVERRIDE;

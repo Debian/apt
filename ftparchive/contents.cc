@@ -100,7 +100,7 @@ void *GenContents::Node::operator new(size_t Amount,GenContents *Owner)
    if (Owner->NodeLeft == 0)
    {
       Owner->NodeLeft = 10000;
-      Owner->NodePool = (Node *)malloc(Amount*Owner->NodeLeft);
+      Owner->NodePool = static_cast<Node *>(malloc(Amount*Owner->NodeLeft));
       BigBlock *Block = new BigBlock;
       Block->Block = Owner->NodePool;
       Block->Next = Owner->BlockList;

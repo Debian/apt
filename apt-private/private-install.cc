@@ -666,7 +666,7 @@ struct PkgIsExtraInstalled {
    pkgCacheFile * const Cache;
    APT::VersionSet const * const verset;
    PkgIsExtraInstalled(pkgCacheFile * const Cache, APT::VersionSet const * const Container) : Cache(Cache), verset(Container) {}
-   bool operator() (pkgCache::PkgIterator const Pkg)
+   bool operator() (pkgCache::PkgIterator const &Pkg)
    {
         if ((*Cache)[Pkg].Install() == false)
            return false;

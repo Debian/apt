@@ -126,7 +126,7 @@ namespace
     const char *target;
 
   public:
-    MatchProcessingOp(const char *the_target)
+    explicit MatchProcessingOp(const char *the_target)
       : target(the_target)
     {
     }

@@ -49,7 +49,7 @@ size_t
 HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    size_t len = size * nmemb;
-   CURLUserPointer *me = (CURLUserPointer *)userp;
+   CURLUserPointer *me = static_cast<CURLUserPointer *>(userp);
    std::string line((char*) buffer, len);
    for (--len; len > 0; --len)
       if (isspace(line[len]) == 0)
@@ -115,7 +115,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 size_t 
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
-   HttpsMethod *me = (HttpsMethod *)userp;
+   HttpsMethod *me = static_cast<HttpsMethod *>(userp);
    size_t buffer_size = size * nmemb;
    // we don't need to count the junk here, just drop anything we get as
    // we don't always know how long it would be, e.g. in chunked encoding.

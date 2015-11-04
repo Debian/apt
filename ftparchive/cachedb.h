@@ -189,7 +189,7 @@ class CacheDB
    
    bool Clean();
    
-   CacheDB(std::string const &DB);
+   explicit CacheDB(std::string const &DB);
    ~CacheDB();
 };
     

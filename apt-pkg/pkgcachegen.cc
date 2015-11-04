@@ -1434,7 +1434,6 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 		       pkgSourceList const * const List,
 		       FileIterator const Start, FileIterator const End)
 {
-   std::vector<pkgIndexFile *> Files;
    bool mergeFailure = false;
 
    auto const indexFileMerge = [&](pkgIndexFile * const I) {

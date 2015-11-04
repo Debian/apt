@@ -68,7 +68,7 @@ class FTPConn
 	    Hashes &MD5,bool &Missing, unsigned long long MaximumSize,
             pkgAcqMethod *Owner);
    
-   FTPConn(URI Srv);
+   explicit FTPConn(URI Srv);
    ~FTPConn();
 };
 

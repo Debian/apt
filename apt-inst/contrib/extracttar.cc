@@ -101,7 +101,7 @@ bool ExtractTar::StartGzip()
 
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
-   for (; compressor != compressors.end(); compressor++) {
+   for (; compressor != compressors.end(); ++compressor) {
       if (compressor->Name == DecompressProg) {
 	 return InFd.OpenDescriptor(File.Fd(), FileFd::ReadOnly, *compressor, false);
       }

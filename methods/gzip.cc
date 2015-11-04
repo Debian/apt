@@ -36,7 +36,7 @@ class GzipMethod : public aptMethod
 
    public:
 
-   GzipMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.1",SingleInstance | SendConfig), Prog(pProg) {};
+   explicit GzipMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.1",SingleInstance | SendConfig), Prog(pProg) {};
 };
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/

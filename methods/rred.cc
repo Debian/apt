@@ -39,7 +39,7 @@ class MemBlock {
    char *free;
    MemBlock *next;
 
-   MemBlock(size_t size) : size(size), next(NULL)
+   explicit MemBlock(size_t size) : size(size), next(NULL)
    {
       free = start = new char[size];
    }
@@ -118,7 +118,7 @@ struct Change {
    size_t add_len; /* bytes */
    char *add;
 
-   Change(size_t off)
+   explicit Change(size_t off)
    {
       offset = off;
       del_cnt = add_cnt = add_len = 0;

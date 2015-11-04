@@ -2237,14 +2237,10 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
-   for(vector<DiffInfo>::iterator I = available_patches.begin();
-       available_patches.empty() == false &&
-	  I != available_patches.end() &&
-	  I->result_hashes != LocalHashes;
-       ++I)
-   {
-      available_patches.erase(I);
-   }
+   available_patches.erase(available_patches.begin(),
+	 std::find_if(available_patches.begin(), available_patches.end(), [&](DiffInfo const &I) {
+	    return I.result_hashes == LocalHashes;
+	    }));
 
    // error checking and falling back if no patch was found
    if(available_patches.empty() == true)

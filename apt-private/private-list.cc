@@ -41,7 +41,7 @@ struct PackageSortAlphabetic						/*{{{*/
 class PackageNameMatcher : public Matcher
 {
   public:
-   PackageNameMatcher(const char **patterns)
+   explicit PackageNameMatcher(const char **patterns)
    {
       for(int i=0; patterns[i] != NULL; ++i)
       {

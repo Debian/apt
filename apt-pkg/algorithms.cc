@@ -1315,7 +1315,7 @@ void pkgProblemResolver::InstallProtect()
 struct PrioComp {
    pkgCache &PrioCache;
 
-   PrioComp(pkgCache &PrioCache) : PrioCache(PrioCache) {
+   explicit PrioComp(pkgCache &PrioCache) : PrioCache(PrioCache) {
    }
 
    bool operator() (pkgCache::Version * const &A, pkgCache::Version * const &B) {

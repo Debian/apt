@@ -176,8 +176,6 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    if (Quiet > 0)
       return true;
 
-   enum {Long = 0,Medium,Short} Mode = Medium;
-
    std::string Line;
    {
       std::stringstream S;
@@ -203,6 +201,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
 	    S << " " << I->CurrentItem->Owner->ActiveSubprocess;
 
+	 enum {Long = 0,Medium,Short} Mode = Medium;
 	 // Add the current progress
 	 if (Mode == Long)
 	    S << " " << I->CurrentSize;

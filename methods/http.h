@@ -87,7 +87,7 @@ class CircleBuf
    // Dump everything
    void Stats();
 
-   CircleBuf(unsigned long long Size);
+   explicit CircleBuf(unsigned long long Size);
    ~CircleBuf();
 };
 

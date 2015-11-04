@@ -235,7 +235,7 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVerNew(pkgCache::PkgIterator const 
    int candPriority = -1;
    pkgVersioningSystem *vs = Cache->VS;
 
-   for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ver++) {
+   for (pkgCache::VerIterator ver = Pkg.VersionList(); ver.end() == false; ++ver) {
       int priority = GetPriority(ver, true);
 
       if (priority == 0 || priority <= candPriority)
@@ -322,7 +322,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 
 	 // Find matching version(s) and copy the pin into it
 	 pkgVersionMatch Match(P->Data,P->Type);
-	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; Ver++)
+	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
 	 {
 	    if (Match.VersionMatches(Ver)) {
 	       Pin *VP = VerPins + Ver->ID;

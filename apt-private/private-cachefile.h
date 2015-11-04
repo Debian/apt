@@ -46,7 +46,7 @@ class SortedPackageUniverse : public APT::PackageUniverse
    void LazyInit() const;
 
 public:
-   SortedPackageUniverse(CacheFile &Cache);
+   explicit SortedPackageUniverse(CacheFile &Cache);
 
    class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>
    {

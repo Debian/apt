@@ -179,8 +179,8 @@ CacheSetHelperVirtuals::CacheSetHelperVirtuals(bool const ShowErrors, GlobalErro
 									/*}}}*/
 
 // CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
-CacheSetHelperAPTGet::CacheSetHelperAPTGet(std::ostream &out) :
-   APT::CacheSetHelper{true}, out(out)
+CacheSetHelperAPTGet::CacheSetHelperAPTGet(std::ostream &pout) :
+   APT::CacheSetHelper{true}, out(pout)
 {
    explicitlyNamed = true;
 }
@@ -245,8 +245,6 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 		  "This may mean that the package is missing, has been obsoleted, or\n"
 		  "is only available from another source\n"),Pkg.FullName(true).c_str());
 
-	 std::string List;
-	 std::string VersionsList;
 	 std::vector<bool> Seen(Cache.GetPkgCache()->Head().PackageCount, false);
 	 APT::PackageList pkglist;
 	 for (pkgCache::DepIterator Dep = Pkg.RevDependsList();

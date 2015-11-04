@@ -396,7 +396,7 @@ bool Policy(CommandLine &CmdL)
 	    continue;
 	 }
 	 // New code
-	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); V++) {
+	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); ++V) {
 	    auto Prio = Plcy->GetPriority(V, false);
 	    if (Prio == 0)
 	       continue;

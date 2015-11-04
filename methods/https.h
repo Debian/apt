@@ -68,21 +68,19 @@ class HttpsMethod : public ServerMethod
 				 double ultotal, double ulnow);
    void SetupProxy();
    CURL *curl;
-   std::unique_ptr<ServerState> Server;
 
    // Used by ServerMethods unused by https
    virtual void SendReq(FetchItem *) APT_OVERRIDE { exit(42); }
    virtual void RotateDNS() APT_OVERRIDE { exit(42); }
 
    public:
-   FileFd *File;
 
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    using pkgAcqMethod::FetchResult;
    using pkgAcqMethod::FetchItem;
 
-   HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig), File(NULL)
+   HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig)
    {
       curl = curl_easy_init();
    };

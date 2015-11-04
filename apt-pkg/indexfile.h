@@ -168,7 +168,7 @@ public:
    virtual bool Merge(pkgCacheGenerator &Gen, OpProgress* const Prog) APT_OVERRIDE;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
 
-   pkgDebianIndexFile(bool const Trusted);
+   explicit pkgDebianIndexFile(bool const Trusted);
    virtual ~pkgDebianIndexFile();
 };
 

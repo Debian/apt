@@ -819,12 +819,12 @@ static bool DoGeneratePackagesAndSources(Configuration &Setup,
       _error->DumpErrors();
       
       // Do the generation for Packages
-      for (End = List; End->Str != 0; End++)
+      for (End = List; End->Str != 0; ++End)
       {
 	 if (End->Hit == false)
 	    continue;
 	 
-	 PackageMap *I = (PackageMap *)End->UserData;
+	 PackageMap * const I = static_cast<PackageMap *>(End->UserData);
 	 if (I->PkgDone == true)
 	    continue;
 	 if (I->GenPackages(Setup,Stats) == false)
@@ -832,12 +832,12 @@ static bool DoGeneratePackagesAndSources(Configuration &Setup,
       }
       
       // Do the generation for Sources
-      for (End = List; End->Str != 0; End++)
+      for (End = List; End->Str != 0; ++End)
       {
 	 if (End->Hit == false)
 	    continue;
 	 
-	 PackageMap *I = (PackageMap *)End->UserData;
+	 PackageMap * const I = static_cast<PackageMap *>(End->UserData);
 	 if (I->SrcDone == true)
 	    continue;
 	 if (I->GenSources(Setup,SrcStats) == false)
