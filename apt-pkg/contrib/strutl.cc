@@ -331,7 +331,7 @@ string QuoteString(const string &Str, const char *Bad)
 	  *I == 0x25 || // percent '%' char
 	  *I <= 0x20 || *I >= 0x7F) // control chars
       {
-	 ioprintf(Res,"%%%02x",(int)*I);
+	 ioprintf(Res, "%%%02hhx", *I);
       }
       else
 	 Res << *I;

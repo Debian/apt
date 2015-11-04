@@ -235,3 +235,14 @@ TEST(StrUtilTest,ReadMessages)
    ReadMessagesTestWithNewLine("\n\n", "ab");
    ReadMessagesTestWithNewLine("\r\n\r\n", "ab");
 }
+TEST(StrUtilTest,QuoteString)
+{
+   EXPECT_EQ("", QuoteString("", ""));
+   EXPECT_EQ("K%c3%b6ln", QuoteString("Köln", ""));
+   EXPECT_EQ("Köln", DeQuoteString(QuoteString("Köln", "")));
+   EXPECT_EQ("Köln", DeQuoteString(DeQuoteString(QuoteString(QuoteString("Köln", ""), ""))));
+   EXPECT_EQ("~-_$#|u%c3%a4%c3%b6%c5%a6%e2%84%a2%e2%85%9e%c2%b1%c3%86%e1%ba%9e%c2%aa%c3%9f", QuoteString("~-_$#|uäöŦ™⅞±Æẞªß", ""));
+   EXPECT_EQ("~-_$#|uäöŦ™⅞±Æẞªß", DeQuoteString(QuoteString("~-_$#|uäöŦ™⅞±Æẞªß", "")));
+   EXPECT_EQ("%45ltvill%65%2d%45rbach", QuoteString("Eltville-Erbach", "E-Ae"));
+   EXPECT_EQ("Eltville-Erbach", DeQuoteString(QuoteString("Eltville-Erbach", "")));
+}
