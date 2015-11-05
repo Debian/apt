@@ -165,6 +165,8 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
       memset(&Hints,0,sizeof(Hints));
       Hints.ai_socktype = SOCK_STREAM;
       Hints.ai_flags = 0;
+      if (_config->FindB("Acquire::Connect::IDN", true) == true)
+	 Hints.ai_flags |= AI_IDN;
       // see getaddrinfo(3): only return address if system has such a address configured
       // useful if system is ipv4 only, to not get ipv6, but that fails if the system has
       // no address configured: e.g. offline and trying to connect to localhost.
