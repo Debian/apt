@@ -213,7 +213,7 @@ APT_CONST bool pkgAcqTransactionItem::HashesRequired() const
       Only repositories without a Release file can (obviously) not have
       hashes – and they are very uncommon and strongly discouraged */
    return TransactionManager->MetaIndexParser != NULL &&
-      TransactionManager->MetaIndexParser->GetLoadedSuccessfully() != metaIndex::TRI_UNSET;
+      TransactionManager->MetaIndexParser->GetLoadedSuccessfully() == metaIndex::TRI_YES;
 }
 HashStringList pkgAcqTransactionItem::GetExpectedHashes() const
 {
@@ -1669,10 +1669,11 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
 
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
-      if (TransactionManager->MetaIndexParser->Load(MetaIndex->DestFile, &ErrorText) == false || MetaIndex->VerifyVendor(Message) == false)
+      bool const GoodLoad = TransactionManager->MetaIndexParser->Load(MetaIndex->DestFile, &ErrorText);
+      if (MetaIndex->VerifyVendor(Message) == false)
 	 /* expired Release files are still a problem you need extra force for */;
       else
-	 MetaIndex->QueueIndexes(true);
+	 MetaIndex->QueueIndexes(GoodLoad);
 
       TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
    }

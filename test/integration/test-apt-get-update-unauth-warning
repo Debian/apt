@@ -11,16 +11,21 @@ setupenvironment
 configarchitecture "i386"
 configcompression '.' 'gz'
 
+echo 'Acquire::Progress::Ignore::ShowErrorText "false";' > rootdir/etc/apt/apt.conf.d/99show-no-ignore-errors.conf
+
 # a "normal" package with source and binary
 buildsimplenativepackage 'foo' 'all' '2.0'
 
 setupaptarchive --no-update
 
 APTARCHIVE="$(readlink -f ./aptarchive)"
+find "$APTARCHIVE/dists/unstable" \( -name 'InRelease' -o -name 'Release.gpg' \) -delete
+sed -i -n '/^SHA1:$/q;p' "${APTARCHIVE}/dists/unstable/Release"
+testwarning aptget update
+
+
+rm -rf rootdir/var/lib/apt/lists
 find "$APTARCHIVE/dists/unstable" -name '*Release*' -delete
-
-echo 'Acquire::Progress::Ignore::ShowErrorText "false";' > rootdir/etc/apt/apt.conf.d/99show-no-ignore-errors.conf
-
 # update without authenticated files leads to warning
 testfailureequal "Get:1 file:$APTARCHIVE unstable InRelease
 Ign:1 file:$APTARCHIVE unstable InRelease
