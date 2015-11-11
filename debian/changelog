@@ -1,3 +1,47 @@
+apt (1.1~exp15) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * deblistparser: Make PrioList const
+  * srvrec: Do not expose C++11 tuple use in header
+  * cacheset: Fix compilation on new GCC in C++98 mode
+  * Provide tests for thread-safety
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 802610)
+
+  [ David Kalnischkies ]
+  * implement a public pkgSystem::MultiArchSupported
+  * implement a public pkgSystem::ArchitecturesSupported
+  * implement operator* for cacheset iterators
+  * refactor dpkg execution in deb/debsystem
+  * provide public interface to hold/unhold packages
+  * allow all dpkg selections to be set via apt-mark and libapt
+  * drop privileges in file:// method as we do for decompressors
+  * unbreak the copy-method claiming hashsum mismatch since ~exp9
+    (Closes: 799158)
+  * show progress info while 'downloading' a local .deb file
+  * support .deb files in upgrade operations as well
+  * rework errors and warnings around insecure repositories (Closes: 796549)
+  * refer to apt-secure(8) in unsecure repositories warning
+  * suggest 'apt autoremove' to get right of unneeded packages (Closes: 801571)
+  * add binary-specific options via Binary scope
+  * revamp apt(8) to refer more instead of duplicating
+  * disable updating insecure repositories in apt by default
+  * new quiet level -qq for apt to hide progress output
+  * hidden support more apt-get/apt-cache commands in apt
+    (Closes: 778234, 780700, 781237)
+  * show version and type in "apt (r)depends" (Closes: 218995)
+  * revamp all tools help messages
+  * sanify API to get 'the' candidate version (Closes: #803471)
+  * support arch:all data e.g. in separate Packages file
+  * ignore newlines in dpkg-deb control output for installing debs
+    (Closes: 802553)
+  * allow acquire method specific options via Binary scope
+  * encode UTF-8 characters correctly in QuoteString (Closes: 799123)
+  * activate AI_IDN by default to support IDN domains (Closes: 763437)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 11 Nov 2015 17:04:43 +0100
+
 apt (1.1~exp14) experimental; urgency=medium
 
   [ Julian Andres Klode ]
