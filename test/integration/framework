@@ -1522,19 +1522,22 @@ msgfailoutput() {
 	msgfail "$MSG"
 }
 
-testsuccess() {
-	msggroup 'testsuccess'
+testsuccesswithglobalerror() {
+	local TYPE="$1"
+	local ERRORS="$2"
+	shift 2
+	msggroup "$TYPE"
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
 		msgtest 'Test for successful execution of' "$*"
 	fi
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/${TYPE}.output"
 	if "$@" >"${OUTPUT}" 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
 				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-			elif grep -E '^[WE]: ' "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
+			elif grep -E "^[${ERRORS}]: " "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
 				if [ "$IGNORE_PTY_NOT_MOUNTED" = '1' ]; then
 					if echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)' \
 						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
@@ -1544,6 +1547,12 @@ testsuccess() {
 					fi
 				else
 					msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+				fi
+			elif [ "$TYPE" = 'testsuccesswithnotice' ]; then
+				if grep -q -E "^N: " "$OUTPUT"; then
+					msgpass
+				else
+					msgfailoutput 'successful run, but output had no notices' "$OUTPUT" "$@"
 				fi
 			else
 				msgpass
@@ -1555,8 +1564,14 @@ testsuccess() {
 		local EXITCODE=$?
 		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
-	aptautotest 'testsuccess' "$@"
+	aptautotest "$TYPE" "$@"
 	msggroup
+}
+testsuccesswithnotice() {
+	testsuccesswithglobalerror 'testsuccesswithnotice' 'WE' "$@"
+}
+testsuccess() {
+	testsuccesswithglobalerror 'testsuccess' 'NWE' "$@"
 }
 testwarning() {
 	msggroup 'testwarning'
@@ -1629,22 +1644,41 @@ testfailure() {
 
 testreturnstateequal() {
 	local STATE="$1"
-	msggroup "${STATE}equal"
-	if [ "$2" != '--nomsg' ]; then
-		local CMP="$2"
-		shift 2
-		"$STATE" "$@"
-		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
-	else
-		local CMP="$3"
+	if [ "$STATE" = 'testsuccesswithglobalerror' ]; then
+		local STATE="$2"
+		local TYPE="$3"
 		shift 3
-		"$STATE" --nomsg "$@"
-		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+		msggroup "${STATE}equal"
+		if [ "$1" != '--nomsg' ]; then
+			local CMP="$1"
+			shift
+			testsuccesswithglobalerror "$STATE" "$TYPE" "$@"
+			testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+		else
+			local CMP="$2"
+			shift 2
+			testsuccesswithglobalerror "$STATE" "$TYPE" "$@"
+			testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+		fi
+	else
+		msggroup "${STATE}equal"
+		if [ "$2" != '--nomsg' ]; then
+			local CMP="$2"
+			shift 2
+			"$STATE" "$@"
+			testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+		else
+			local CMP="$3"
+			shift 3
+			"$STATE" --nomsg "$@"
+			testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/${STATE}.output" "$CMP"
+		fi
 	fi
 	msggroup
 }
 testsuccessequal() {
-	testreturnstateequal 'testsuccess' "$@"
+	# we compare output, so we know perfectly well about N:
+	testreturnstateequal 'testsuccesswithglobalerror' 'testsuccess' 'WE' "$@"
 }
 testwarningequal() {
 	testreturnstateequal 'testwarning' "$@"
