@@ -30,14 +30,8 @@ find aptarchive/dists -name '*Release*' -type f | while read file; do
 	testaccessrights "$file" '640'
 done
 if [ "$(id -u)" = '0' ]; then
-	# permission errors an everything
-	testfailure aptget update
-
-	find aptarchive/dists -name '*Packages*' -type f | while read file; do
-		chmod 777 "$file"
-	done
-	# permission errors on Release
-	testwarning aptget update
+	# Release file can't be accessed by _apt
+	testsuccesswithnotice aptget update -q=0
 fi
 
 #everything (too) permissive

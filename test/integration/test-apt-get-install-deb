@@ -103,3 +103,14 @@ createpkg 'trailing-newline' '' '
 testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
 testsuccess aptget install ./incoming/pkg-leading-newline_0_all.deb
 testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
+
+# see if permission dropping is checked before usage
+if [ "$(id -u)" = '0' ]; then
+	apt clean
+	chmod 711 ./incoming
+	testsuccess aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+	chmod 710 ./incoming
+	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+	chmod 700 ./incoming
+	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+fi

@@ -2280,7 +2280,7 @@ bool DropPrivileges()							/*{{{*/
    // empty setting disables privilege dropping - this also ensures
    // backward compatibility, see bug #764506
    const std::string toUser = _config->Find("APT::Sandbox::User");
-   if (toUser.empty())
+   if (toUser.empty() || toUser == "root")
       return true;
 
    // uid will be 0 in the end, but gid might be different anyway

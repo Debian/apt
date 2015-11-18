@@ -148,6 +148,7 @@ TEST(ConfigurationTest,Merge)
 {
 	Configuration Cnf;
 	Cnf.Set("Binary::apt::option::foo", "bar");
+	Cnf.Set("Binary::apt::option::empty", "");
 	Cnf.Set("option::foo", "foo");
 
 	Cnf.MoveSubTree("Binary::apt", "Binary::apt2");
@@ -156,8 +157,13 @@ TEST(ConfigurationTest,Merge)
 	EXPECT_EQ("foo", Cnf.Find("option::foo"));
 	EXPECT_EQ("bar", Cnf.Find("Binary::apt2::option::foo"));
 
+	EXPECT_FALSE(Cnf.Exists("option::empty"));
+	EXPECT_TRUE(Cnf.Exists("Binary::apt2::option::empty"));
+	Cnf.Set("option::empty", "not");
+
 	Cnf.MoveSubTree("Binary::apt2", NULL);
 	EXPECT_FALSE(Cnf.Exists("Binary::apt2::option"));
 	EXPECT_TRUE(Cnf.Exists("option"));
 	EXPECT_EQ("bar", Cnf.Find("option::foo"));
+	EXPECT_EQ("", Cnf.Find("option::empty"));
 }

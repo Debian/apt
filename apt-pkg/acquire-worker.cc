@@ -639,7 +639,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 
    if (RealFileExists(Item->Owner->DestFile))
    {
-      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
       ChangeOwnerAndPermissionOfFile("Item::QueueURI", Item->Owner->DestFile.c_str(),
                                      SandboxUser.c_str(), "root", 0600);
    }

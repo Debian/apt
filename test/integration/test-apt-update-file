@@ -14,6 +14,7 @@ configcompression 'bz2' 'gz'
 confighashes 'SHA512'
 
 insertpackage 'unstable' 'foo' 'all' '1'
+insertpackage 'unstable' 'bar' 'amd64' '1'
 insertsource 'unstable' 'foo' 'all' '1'
 
 setupaptarchive --no-update
@@ -21,8 +22,22 @@ setupaptarchive --no-update
 # ensure the archive is not writable
 addtrap 'prefix' 'chmod 755 aptarchive/dists/unstable/main/binary-all;'
 if [ "$(id -u)" = '0' ]; then
-	chmod 550 aptarchive/dists/unstable/main/binary-all
+	# too deep to notice it, but it also unlikely that files in the same repo have different permissions
+	chmod 500 aptarchive/dists/unstable/main/binary-all
 	testfailure aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	chmod 755 aptarchive/dists/unstable/main/binary-all
+	testsuccess aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	chmod 511 aptarchive/dists/
+	testsuccess aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	chmod 510 aptarchive/dists/
+	testsuccesswithnotice aptget update -q=0
+	rm -rf rootdir/var/lib/apt/lists
+	chmod 500 aptarchive/dists/
+	testsuccesswithnotice aptget update -q=0
+	exit
 fi
 chmod 555 aptarchive/dists/unstable/main/binary-all
 testsuccess aptget update

@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +77,7 @@ void pkgAcquire::Initialize()
 
    // chown the auth.conf file as it will be accessed by our methods
    std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+   if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
    {
       struct passwd const * const pw = getpwnam(SandboxUser.c_str());
       struct group const * const gr = getgrnam("root");
@@ -102,7 +103,7 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
       return false;
 
    std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-   if (getuid() == 0 && SandboxUser.empty() == false) // if we aren't root, we can't chown, so don't try it
+   if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
    {
       struct passwd const * const pw = getpwnam(SandboxUser.c_str());
       struct group const * const gr = getgrnam("root");
@@ -448,13 +449,50 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 /* This runs the queues. It manages a select loop for all of the
    Worker tasks. The workers interact with the queues and items to
    manage the actual fetch. */
+static bool IsAccessibleBySandboxUser(std::string const &filename, bool const ReadWrite)
+{
+   // you would think this is easily to answer with faccessat, right? Wrong!
+   // It e.g. gets groups wrong, so the only thing which works reliable is trying
+   // to open the file we want to open later on…
+   if (unlikely(filename.empty()))
+      return true;
+
+   if (ReadWrite == false)
+   {
+      errno = 0;
+      // can we read a file? Note that non-existing files are "fine"
+      int const fd = open(filename.c_str(), O_RDONLY | O_CLOEXEC);
+      if (fd == -1 && errno == EACCES)
+	 return false;
+      close(fd);
+      return true;
+   }
+   else
+   {
+      // the file might not exist yet and even if it does we will fix permissions,
+      // so important is here just that the directory it is in allows that
+      std::string const dirname = flNotFile(filename);
+      if (unlikely(dirname.empty()))
+	 return true;
+
+      char const * const filetag = ".apt-acquire-privs-test.XXXXXX";
+      std::string const tmpfile_tpl = flCombine(dirname, filetag);
+      std::unique_ptr<char, decltype(std::free) *> tmpfile { strdup(tmpfile_tpl.c_str()), std::free };
+      int const fd = mkstemp(tmpfile.get());
+      if (fd == -1 && errno == EACCES)
+	 return false;
+      RemoveFile("IsAccessibleBySandboxUser", tmpfile.get());
+      close(fd);
+      return true;
+   }
+}
 static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 {
    if(getuid() != 0)
       return;
 
-   std::string SandboxUser = _config->Find("APT::Sandbox::User");
-   if (SandboxUser.empty())
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   if (SandboxUser.empty() || SandboxUser == "root")
       return;
 
    struct passwd const * const pw = getpwnam(SandboxUser.c_str());
@@ -463,50 +501,67 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 
    gid_t const old_euid = geteuid();
    gid_t const old_egid = getegid();
+
+   long const ngroups_max = sysconf(_SC_NGROUPS_MAX);
+   std::unique_ptr<gid_t[]> old_gidlist(new gid_t[ngroups_max]);
+   if (unlikely(old_gidlist == NULL))
+      return;
+   ssize_t old_gidlist_nr;
+   if ((old_gidlist_nr = getgroups(ngroups_max, old_gidlist.get())) < 0)
+   {
+      _error->FatalE("getgroups", "getgroups %lu failed", ngroups_max);
+      old_gidlist[0] = 0;
+      old_gidlist_nr = 1;
+   }
+   if (setgroups(1, &pw->pw_gid))
+      _error->FatalE("setgroups", "setgroups %u failed", pw->pw_gid);
+
    if (setegid(pw->pw_gid) != 0)
-      _error->Errno("setegid", "setegid %u failed", pw->pw_gid);
+      _error->FatalE("setegid", "setegid %u failed", pw->pw_gid);
    if (seteuid(pw->pw_uid) != 0)
-      _error->Errno("seteuid", "seteuid %u failed", pw->pw_uid);
+      _error->FatalE("seteuid", "seteuid %u failed", pw->pw_uid);
 
    for (pkgAcquire::ItemCIterator I = Fetcher.ItemsBegin();
 	I != Fetcher.ItemsEnd(); ++I)
    {
-      std::string filename = (*I)->DestFile;
-      if (filename.empty())
-	 continue;
-
       // no need to drop privileges for a complete file
       if ((*I)->Complete == true)
 	 continue;
 
-      // we check directory instead of file as the file might or might not
-      // exist already as a link or not which complicates everything…
-      std::string dirname = flNotFile(filename);
-      if (unlikely(dirname.empty()))
-	 continue;
-      // translate relative to absolute for DirectoryExists
-      // FIXME: What about ../ and ./../ ?
-      if (dirname.substr(0,2) == "./")
-	 dirname = SafeGetCWD() + dirname.substr(2);
-
-      if (DirectoryExists(dirname))
-	 ;
-      else
-	 continue; // assume it is created correctly by the acquire system
-
-      if (faccessat(-1, dirname.c_str(), R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0)
+      // if destination file is inaccessible all hope is lost for privilege dropping
+      if (IsAccessibleBySandboxUser((*I)->DestFile, true) == false)
       {
 	 _error->WarningE("pkgAcquire::Run", _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
-	       filename.c_str(), SandboxUser.c_str());
+	       (*I)->DestFile.c_str(), SandboxUser.c_str());
 	 _config->Set("APT::Sandbox::User", "");
 	 break;
+      }
+
+      // if its the source file (e.g. local sources) we might be lucky
+      // by dropping the dropping only for some methods.
+      URI const source = (*I)->DescURI();
+      if (source.Access == "file" || source.Access == "copy")
+      {
+	 std::string const conf = "Binary::" + source.Access + "::APT::Sandbox::User";
+	 if (_config->Exists(conf) == true)
+	    continue;
+
+	 if (IsAccessibleBySandboxUser(source.Path, false) == false)
+	 {
+	    _error->NoticeE("pkgAcquire::Run", _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
+		  source.Path.c_str(), SandboxUser.c_str());
+	    _config->CndSet("Binary::file::APT::Sandbox::User", "root");
+	    _config->CndSet("Binary::copy::APT::Sandbox::User", "root");
+	 }
       }
    }
 
    if (seteuid(old_euid) != 0)
-      _error->Errno("seteuid", "seteuid %u failed", old_euid);
+      _error->FatalE("seteuid", "seteuid %u failed", old_euid);
    if (setegid(old_egid) != 0)
-      _error->Errno("setegid", "setegid %u failed", old_egid);
+      _error->FatalE("setegid", "setegid %u failed", old_egid);
+   if (setgroups(old_gidlist_nr, old_gidlist.get()))
+      _error->FatalE("setgroups", "setgroups %u failed", 0);
 }
 pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {
