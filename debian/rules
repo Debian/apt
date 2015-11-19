@@ -89,7 +89,7 @@ build/environment.mak: build/configure-stamp
 configure: configure.ac
 build/configure-stamp: configure buildlib/config.sub buildlib/config.guess
 	dh_testdir
-	-mkdir build
+	mkdir -p build
 	cp COPYING debian/copyright
 	cd build && CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" ../configure $(confflags)
 	touch $@

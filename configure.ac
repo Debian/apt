@@ -211,5 +211,4 @@ AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
 AC_CONFIG_FILES([environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile:doc/Doxyfile.in])
-AC_CONFIG_COMMANDS([default],[make -s dirs],[])
 AC_OUTPUT

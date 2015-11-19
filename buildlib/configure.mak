@@ -13,7 +13,7 @@
 BUILDDIR=build
 
 .PHONY: startup missing-config-files
-startup: configure $(BUILDDIR)/config.status $(addprefix $(BUILDDIR)/,$(CONVERTED))
+startup: $(BUILDDIR)/configure-stamp $(addprefix $(BUILDDIR)/,$(CONVERTED))
 
 # use the files provided from the system instead of carry around
 # and use (most of the time outdated) copycats
@@ -48,14 +48,15 @@ missing-config-files:
 	@echo "http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
 	exit 100
 
-configure: aclocal.m4 configure.ac buildlib/config.guess buildlib/config.sub
+configure: aclocal.m4 configure.ac
 	autoconf
 
 aclocal.m4: $(wildcard buildlib/*.m4)
 	aclocal -I buildlib
 
-$(BUILDDIR)/config.status: configure
+$(BUILDDIR)/configure-stamp: configure buildlib/config.guess buildlib/config.sub
 	/usr/bin/test -e $(BUILDDIR) || mkdir $(BUILDDIR)
 	(HERE=`pwd`; cd $(BUILDDIR) && $$HERE/configure)
+	touch $(BUILDDIR)/configure-stamp
 
-$(addprefix $(BUILDDIR)/,$(CONVERTED)): $(BUILDDIR)/config.status
+$(addprefix $(BUILDDIR)/,$(CONVERTED)): $(BUILDDIR)/configure-stamp
