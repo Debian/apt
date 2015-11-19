@@ -268,8 +268,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"pkgOrderList::DepUnPackPre(pkgCache::DepIterator)@APTPKG_5.0" 0.8.0
  (c++)"pkgOrderList::DepUnPackCrit(pkgCache::DepIterator)@APTPKG_5.0" 0.8.0
  (c++)"pkgOrderList::DepUnPackPreD(pkgCache::DepIterator)@APTPKG_5.0" 0.8.0
- (c++)"pkgOrderList::OrderCompareA(void const*, void const*)@APTPKG_5.0" 0.8.0
- (c++)"pkgOrderList::OrderCompareB(void const*, void const*)@APTPKG_5.0" 0.8.0
  (c++)"pkgOrderList::OrderCritical()@APTPKG_5.0" 0.8.0
  (c++)"pkgOrderList::VisitProvides(pkgCache::DepIterator, bool)@APTPKG_5.0" 0.8.0
  (c++)"pkgOrderList::OrderConfigure()@APTPKG_5.0" 0.8.0
@@ -833,9 +831,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"SummationImplementation::AddFD(FileFd&, unsigned long long)@APTPKG_5.0" 0.8.16~exp9
  (c++|optional=deprecated,previous-inline)"FileFd::gzFd()@APTPKG_5.0" 0.8.0
 ### CacheSet rework: making them real containers breaks bigtime the API (for the CacheSetHelper)
- (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindTask(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindRegEx(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindAllVer(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
@@ -845,29 +840,14 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"APT::CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const&, pkgCache::VerIterator, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindCandInstVer(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindInstCandVer(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::insert(pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::insert(pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
- (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::insert(pkgCache::VerIterator const&)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::VersionContainerInterface::getCandidateVer(pkgCacheFile&, pkgCache::PkgIterator const&, APT::CacheSetHelper&)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::VersionContainerInterface::getInstalledVer(pkgCacheFile&, pkgCache::PkgIterator const&, APT::CacheSetHelper&)@APTPKG_5.0" 0.8.16~exp9
  (c++)"APT::VersionContainerInterface::FromModifierCommandLine(unsigned short&, APT::VersionContainerInterface*, pkgCacheFile&, char const*, std::__cxx11::list<APT::VersionContainerInterface::Modifier, std::allocator<APT::VersionContainerInterface::Modifier> > const&, APT::CacheSetHelper&)@APTPKG_5.0" 0.8.16~exp9
  (c++)"EDSP::WriteLimitedScenario(pkgDepCache&, _IO_FILE*, APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > > const&, OpProgress*)@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
  (c++)"typeinfo for APT::PackageContainerInterface@APTPKG_5.0" 0.8.16~exp9
  (c++)"typeinfo for APT::VersionContainerInterface@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo name for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo name for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"typeinfo name for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
  (c++)"typeinfo name for APT::PackageContainerInterface@APTPKG_5.0" 0.8.16~exp9
  (c++)"typeinfo name for APT::VersionContainerInterface@APTPKG_5.0" 0.8.16~exp9
- (c++)"vtable for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"vtable for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
- (c++)"vtable for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
  (c++)"vtable for APT::PackageContainerInterface@APTPKG_5.0" 0.8.16~exp9
  (c++)"vtable for APT::VersionContainerInterface@APTPKG_5.0" 0.8.16~exp9
 ### rework of the packagemanager rework
@@ -1043,6 +1023,34 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"APT::VersionContainerInterface::FromCommandLine(APT::VersionContainerInterface*, pkgCacheFile&, char const**, APT::CacheSetHelper::VerSelector, APT::CacheSetHelper&)@APTPKG_5.0" 1.1~exp4
  (c++)"APT::VersionContainerInterface::FromPackage(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&, APT::CacheSetHelper::VerSelector, APT::CacheSetHelper&)@APTPKG_5.0" 1.1~exp4
  (c++)"APT::VersionContainerInterface::FromString(APT::VersionContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper::VerSelector, APT::CacheSetHelper&, bool)@APTPKG_5.0" 1.1~exp4
+ (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::size() const@APTPKG_5.0" 1.1~exp9
+ (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::~VersionContainer()@APTPKG_5.0" 1.1~exp9
+ (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::empty() const@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::insert(pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::insert(pkgCache::PkgIterator const&)@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::clear()@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::insert(pkgCache::VerIterator const&)@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo name for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo name for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"typeinfo name for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"vtable for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"vtable for APT::PackageContainer<std::__cxx11::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"vtable for APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 0.8.16~exp9
+ (c++)"APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::clear()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::empty() const@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::insert(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::size() const@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::~VersionContainer()@APTPKG_5.0" 1.1~exp15
+ (c++)"typeinfo for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 1.1~exp15
+ (c++)"typeinfo name for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 1.1~exp15
+ (c++)"vtable for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_5.0" 1.1~exp15
 ### all the hashes are belong to us
 # (c++|optional=inline)"Hashes::AddFD(int, unsigned long long, bool, bool, bool, bool)@APTPKG_5.0" 0.8.16~exp6
 # (c++|optional=inline)"Hashes::AddFD(FileFd&, unsigned long long, bool, bool, bool, bool)@APTPKG_5.0" 0.8.16~exp9
@@ -1193,8 +1201,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"APT::VersionContainerInterface::operator=(APT::VersionContainerInterface const&)@APTPKG_5.0" 1.1~exp9
  (c++)"APT::VersionContainerInterface::~VersionContainerInterface()@APTPKG_5.0" 1.1~exp9
  (c++)"APT::VersionContainerInterface::VersionContainerInterface()@APTPKG_5.0" 1.1~exp9
- (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::size() const@APTPKG_5.0" 1.1~exp9
- (c++)"APT::VersionContainer<std::__cxx11::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::~VersionContainer()@APTPKG_5.0" 1.1~exp9
  (c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned int)@APTPKG_5.0" 1.1~exp9
  (c++)"CommandLine::CommandLine()@APTPKG_5.0" 1.1~exp9
  (c++)"Configuration::FindVector(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) const@APTPKG_5.0" 1.1~exp9
@@ -1456,16 +1462,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"typeinfo name for SigVerify@APTPKG_5.0" 1.1~exp9
  (c++)"typeinfo name for TranslationsCopy@APTPKG_5.0" 1.1~exp9
  (c++)"URI::ArchiveOnly(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<APT::Configuration::Compressor>(APT::Configuration::Compressor&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<char const*, std::allocator<char const*> >::emplace_back<char const*>(char const*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgCache::GrpIterator*, std::allocator<pkgCache::GrpIterator*> >::emplace_back<pkgCache::GrpIterator*>(pkgCache::GrpIterator*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgCache::PkgIterator*, std::allocator<pkgCache::PkgIterator*> >::emplace_back<pkgCache::PkgIterator*>(pkgCache::PkgIterator*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgCache::RlsFileIterator*, std::allocator<pkgCache::RlsFileIterator*> >::emplace_back<pkgCache::RlsFileIterator*>(pkgCache::RlsFileIterator*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgCache::VerIterator*, std::allocator<pkgCache::VerIterator*> >::emplace_back<pkgCache::VerIterator*>(pkgCache::VerIterator*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item>(pkgDPkgPM::Item&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgIndexFile*, std::allocator<pkgIndexFile*> >::emplace_back<pkgIndexFile*>(pkgIndexFile*&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<pkgTagSection::Tag, std::allocator<pkgTagSection::Tag> >::emplace_back<pkgTagSection::Tag>(pkgTagSection::Tag&&)@APTPKG_5.0" 1.1~exp9
- (c++)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_5.0" 1.1~exp9
  (c++)"vtable for APT::PackageUniverse@APTPKG_5.0" 1.1~exp9
  (c++)"vtable for debDebianSourceDirIndex@APTPKG_5.0" 1.1~exp9
  (c++)"vtable for debDebPkgFileIndex@APTPKG_5.0" 1.1~exp9
@@ -1490,8 +1486,67 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"vtable for pkgUserTagSection@APTPKG_5.0" 1.1~exp9
  (c++)"vtable for SigVerify@APTPKG_5.0" 1.1~exp9
  (c++)"vtable for TranslationsCopy@APTPKG_5.0" 1.1~exp9
+### dpkg selection state changer & general dpkg interfacing
+ (c++)"APT::StateChanges::clear()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::empty() const@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Error()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Hold()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Hold(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Install()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Install(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::operator=(APT::StateChanges&&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Purge()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Purge(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Remove()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Remove(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Save(bool)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::~StateChanges()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::StateChanges()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::StateChanges(APT::StateChanges&&)@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Unhold()@APTPKG_5.0" 1.1~exp15
+ (c++)"APT::StateChanges::Unhold(pkgCache::VerIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgSystem::ArchitecturesSupported[abi:cxx11]() const@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgSystem::MultiArchSupported() const@APTPKG_5.0" 1.1~exp15
+ (c++)"metaIndex::IsArchitectureSupported(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@APTPKG_5.0" 1.1~exp15
+### misc stuff
+ (c++)"RemoveFile(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgOrderList::OrderCompareA(pkgCache::Package*, pkgCache::Package*)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgOrderList::OrderCompareB(pkgCache::Package*, pkgCache::Package*)@APTPKG_5.0" 1.1~exp15
+ (c++)"CommandLine::DispatchArg(CommandLine::Dispatch const*, bool)@APTPKG_5.0" 1.1~exp15
+ (c++)"Configuration::MoveSubTree(char const*, char const*)@APTPKG_5.0" 1.1~exp15
+ (c++)"GetTempDir(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"HashString::usable() const@APTPKG_5.0" 1.1~exp15
+ (c++)"IndexTarget::OptionBool(IndexTarget::OptionKeys) const@APTPKG_5.0" 1.1~exp12
+ (c++)"pkgDepCache::GetCandidateVersion(pkgCache::PkgIterator const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgDepCache::Policy::GetPriority(pkgCache::VerIterator const&, bool)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgPackageManager::CheckRBreaks(pkgCache::PkgIterator const&, pkgCache::DepIterator, char const*)@APTPKG_5.0" 1.1~exp11
+ (c++)"pkgPolicy::GetPriority(pkgCache::VerIterator const&, bool)@APTPKG_5.0" 1.1~exp9
+ (c++)"pkgSourceList::AddVolatileFiles(CommandLine&, std::vector<char const*, std::allocator<char const*> >*)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgSourceList::AddVolatileFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.0" 1.1~exp15
+ (c++)"pkgVersionMatch::VersionMatches(pkgCache::VerIterator)@APTPKG_5.0" 1.1~exp9
+ (c++)"GetSrvRecords(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<SrvRec, std::allocator<SrvRec> >&)@APTPKG_5.0" 1.1~exp15
+ (c++)"GetSrvRecords(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<SrvRec, std::allocator<SrvRec> >&)@APTPKG_5.0" 1.1~exp15
+ (c++)"PopFromSrvRecs(std::vector<SrvRec, std::allocator<SrvRec> >&)@APTPKG_5.0" 1.1~exp15
+ (c++)"SrvRec::operator==(SrvRec const&) const@APTPKG_5.0" 1.1~exp15
 ### symbol versioning:
  APTPKG_5.0@APTPKG_5.0 1.1~exp9
+### gcc artifacts
+ (c++)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<APT::Configuration::Compressor>(APT::Configuration::Compressor&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<char const*, std::allocator<char const*> >::emplace_back<char const*>(char const*&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgCache::GrpIterator*, std::allocator<pkgCache::GrpIterator*> >::emplace_back<pkgCache::GrpIterator*>(pkgCache::GrpIterator*&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgCache::PkgIterator*, std::allocator<pkgCache::PkgIterator*> >::emplace_back<pkgCache::PkgIterator*>(pkgCache::PkgIterator*&&)@APTPKG_5.0" 1.1~exp9
+# (c++|optional=std)"void std::vector<pkgCache::RlsFileIterator*, std::allocator<pkgCache::RlsFileIterator*> >::emplace_back<pkgCache::RlsFileIterator*>(pkgCache::RlsFileIterator*&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgCache::VerIterator*, std::allocator<pkgCache::VerIterator*> >::emplace_back<pkgCache::VerIterator*>(pkgCache::VerIterator*&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item>(pkgDPkgPM::Item&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgIndexFile*, std::allocator<pkgIndexFile*> >::emplace_back<pkgIndexFile*>(pkgIndexFile*&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<pkgTagSection::Tag, std::allocator<pkgTagSection::Tag> >::emplace_back<pkgTagSection::Tag>(pkgTagSection::Tag&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_5.0" 1.1~exp9
+ (c++|optional=std)"void std::vector<long, std::allocator<long> >::emplace_back<long>(long&&)@APTPKG_5.0" 1.1~exp15
+ (c++|optional=std)"void std::vector<metaIndex*, std::allocator<metaIndex*> >::emplace_back<metaIndex*>(metaIndex*&&)@APTPKG_5.0" 1.1~exp15
+ (c++|optional=std)"void std::vector<pkgCache::DepIterator*, std::allocator<pkgCache::DepIterator*> >::emplace_back<pkgCache::DepIterator*>(pkgCache::DepIterator*&&)@APTPKG_5.0" 1.1~exp15
+ (c++|optional=std)"void std::vector<pkgCache::PrvIterator*, std::allocator<pkgCache::PrvIterator*> >::emplace_back<pkgCache::PrvIterator*>(pkgCache::PrvIterator*&&)@APTPKG_5.0" 1.1~exp15
+ (c++|optional=std)"void std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> >::emplace_back<pkgCache::VerIterator>(pkgCache::VerIterator&&)@APTPKG_5.0" 1.1~exp15
+ (c++|optional=std)"SrvRec* std::__move_merge<__gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, SrvRec*, __gnu_cxx::__ops::_Iter_less_iter>(__gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, SrvRec*, __gnu_cxx::__ops::_Iter_less_iter)@APTPKG_5.0" 1.1~exp15
 ### try to ignore std:: template instances
  (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@APTPKG_5.0$" 0.8.0
  (c++|regex|optional=std)"^(void |)std::[^ ]+<.+ >::(_|~).+\(.*\)@APTPKG_5.0$" 0.8.0
