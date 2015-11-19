@@ -53,7 +53,7 @@ rm "$NEWMETHODS/https"
 
 cd downloaded
 testfailureequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
-N: Is the package apt-transport-https installed?" aptget download apt -q=0
+N: Is the package apt-transport-https installed?" aptget download apt
 testfailure test -e apt_1.0_all.deb
 cd - >/dev/null
 

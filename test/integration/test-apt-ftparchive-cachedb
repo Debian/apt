@@ -69,7 +69,7 @@ buildsimplenativepackage 'foo' 'i386' '1' 'test'
 mv incoming/* aptarchive/pool/main/
 
 # generate (empty cachedb)
-testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
@@ -77,7 +77,7 @@ testsuccessequal ' Misses in Cache: 2
  dists/test/Contents-i386: New 402 B  Misses in Cache: 0' grep Misses stats-out.txt
 
 # generate again
-testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
@@ -87,7 +87,7 @@ testsuccessequal ' Misses in Cache: 0
 # and again (with removing the Packages file)
 rm -f ./aptarchive/dists/test/main/binary-i386/*
 rm -f ./aptarchive/dists/test/Contents-i386
-testsuccess aptftparchive generate ftparchive.conf -q=0 -o APT::FTPArchive::ShowCacheMisses=1
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
 cp rootdir/tmp/testsuccess.output stats-out.txt
 ensure_correct_packages_file
 ensure_correct_contents_file
@@ -96,8 +96,8 @@ testsuccessequal ' Misses in Cache: 0
 
 # and clean
 rm -rf aptarchive/pool/main/*
-testsuccessequal "packages-main-i386.db" aptftparchive clean ftparchive.conf -q=0
-testsuccess aptftparchive clean ftparchive.conf -q=0 -o Debug::APT::FTPArchive::Clean=1
+testsuccessequal "packages-main-i386.db" aptftparchive clean ftparchive.conf
+testsuccess aptftparchive clean ftparchive.conf -o Debug::APT::FTPArchive::Clean=1
 cp rootdir/tmp/testsuccess.output clean-out.txt
 testsuccessequal "0	Number of unique keys in the tree" grep unique clean-out.txt
 testsuccessequal "packages-main-i386.db" grep packages-main-i386.db clean-out.txt

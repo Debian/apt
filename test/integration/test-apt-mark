@@ -20,7 +20,7 @@ testdpkginstalled dpkg
 
 testnoautopkg() {
 	testempty aptmark showauto
-	testempty aptcache showauto
+	testempty aptcache -q=1 showauto
 	testsuccessequal 'bar
 dpkg
 foo' aptmark showmanual
@@ -29,22 +29,22 @@ foo' aptmark showmanual bar foo uninstalled
 }
 testfooisauto() {
 	testsuccessequal 'foo' aptmark showauto
-	testsuccessequal 'foo' aptcache showauto
+	testsuccessequal 'foo' aptcache -q=1 showauto
 	testsuccessequal 'foo' aptmark showauto foo
-	testsuccessequal 'foo' aptcache showauto foo
+	testsuccessequal 'foo' aptcache -q=1 showauto foo
 	testsuccessequal 'bar
 dpkg' aptmark showmanual
 	testsuccessequal 'bar' aptmark showmanual bar
 }
 testmarkonpkgasauto() {
-	testsuccess $1 $2 foo
+	testsuccess $1 -q=1 $2 foo
 	testfooisauto
-	testsuccess $1 $2 foo
+	testsuccess $1 -q=1 $2 foo
 	testfooisauto
 
-	testsuccess $1 $3 foo
+	testsuccess $1 -q=1 $3 foo
 	testnoautopkg
-	testsuccess $1 $3 foo
+	testsuccess $1 -q=1 $3 foo
 	testnoautopkg
 }
 

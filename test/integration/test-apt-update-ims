@@ -39,7 +39,7 @@ runtest() {
 
     # check that I-M-S header is kept in redirections
     echo "$EXPECT" | sed -e 's#(invalid since [^)]\+)#(invalid since)#' > expected.output
-    $TEST aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0 -q=0 $APTOPT
+    $TEST aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0 $APTOPT
     sed -i -e 's#(invalid since [^)]\+)#(invalid since)#' rootdir/tmp/${TEST}.output
     testequal "$(cat expected.output)" cat rootdir/tmp/${TEST}.output
     testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"

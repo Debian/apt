@@ -26,7 +26,8 @@ insertpackage 'testing' 'bar' 'all' '2'
 setupaptarchive
 
 testsuccessequal "Listing...
-bar/testing 2 all [upgradable from: 1]" apt list --upgradable
+bar/testing 2 all [upgradable from: 1]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list --upgradable
 
 testsuccessequal "Listing...
 bar/testing 2 all [upgradable from: 1]

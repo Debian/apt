@@ -38,7 +38,7 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  foo:i386 : Conflicts: foo but 1.0 is to be installed
  foo : Conflicts: foo:i386 but 1.0 is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s -q=0
+E: Unable to correct problems, you have held broken packages." aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s
 
 testdpkgnotinstalled 'foo'
 testsuccess aptget install ./incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
@@ -55,7 +55,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv foo:i386 [1.0]
 Inst foo (1.0 local-deb [amd64])
-Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0
+Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s
 
 # Check that installing the local deb works if it is not the candidate
 echo "Package: foo
@@ -73,7 +73,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv foo:i386 [1.0]
 Inst foo (1.0 local-deb [amd64])
-Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s -q=0
+Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s
 
 createpkg() {
 	local PKG="pkg-$1"
@@ -108,9 +108,9 @@ testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
 if [ "$(id -u)" = '0' ]; then
 	apt clean
 	chmod 711 ./incoming
-	testsuccess aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+	testsuccess aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
 	chmod 710 ./incoming
-	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
 	chmod 700 ./incoming
-	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb -q=0
+	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
 fi

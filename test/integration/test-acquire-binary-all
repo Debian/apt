@@ -22,7 +22,7 @@ testsuccess grep '_binary-all_Packages' lists.before
 
 configarchitecture 'amd64' 'i386'
 testsuccessequal "All packages are up to date.
-N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' doesn't support architecture 'i386'" apt update -q=0 -o quiet::NoProgress=1
+N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' doesn't support architecture 'i386'" apt update -o quiet::NoProgress=1
 testfileequal lists.before "$(listcurrentlistsdirectory)"
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
@@ -32,8 +32,7 @@ msgmsg 'Releasefile with Architectures field but without all'
 getarchitecturesfromreleasefile() { echo "$(getarchitectures)"; }
 generatereleasefiles
 signreleasefiles
-testsuccessequal "All packages are up to date.
-N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' doesn't support architecture 'i386'" apt update -q=0 -o quiet::NoProgress=1
+testsuccessequal 'All packages are up to date.' apt update -o quiet::NoProgress=1
 cp rootdir/tmp/testsuccess.output aptupdate.output
 testfailure grep '^Get.* all Packages ' aptupdate.output
 testequal 'foo-2' aptcache pkgnames foo-
@@ -57,7 +56,7 @@ foo-2' aptcache pkgnames foo-
 
 # apt doesn't know supported archs, so missing a configured arch is a failure
 configarchitecture 'amd64' 'i386'
-testfailure apt update -q=0
+testfailure apt update
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 

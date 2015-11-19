@@ -58,25 +58,22 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 
-        # test signed release file
-        msgtest 'apt-get update gets the expected hashsum mismatch'
-	aptget update 2>&1 | grep "Hash Sum mismatch" > /dev/null && msgpass || msgfail
-        msgtest 'No package from the source available'
-        [ "$(aptcache show apt 2>&1)" = "E: No packages found" ] && msgpass || msgfail
+	# test signed release file
+	msgtest 'apt-get update gets the expected hashsum mismatch'
+	testfailure aptget update
+	testsuccess grep "Hash Sum mismatch" rootdir/tmp/testfailure.output
+	msgtest 'No package from the source available'
+	testfailureequal --nomsg 'N: Unable to locate package apt
+E: No packages found' aptcache show apt
         msgtest 'No Packages file in /var/lib/apt/lists'
         [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null | grep -v FAILED 2>/dev/null)" = "" ] && msgpass || msgfail 
         
         # now with the unsigned Release file
         rm -rf rootdir/var/lib/apt/lists
         rm aptarchive/InRelease aptarchive/Release.gpg
-        msgtest 'unsigned apt-get update gets the expected hashsum mismatch'
-	aptget update --allow-insecure-repositories >output.log 2>&1 || true
-        if grep -q "Hash Sum mismatch" output.log; then
-            msgpass
-        else
-            cat output.log
-            msgfail
-        fi
+	msgtest 'unsigned apt-get update gets the expected hashsum mismatch'
+	testfailure --nomsg aptget update --allow-insecure-repositories
+	testsuccess grep "Hash Sum mismatch" rootdir/tmp/testfailure.output
 }
 
 for COMPRESSEDINDEXES in 'false' 'true'; do

@@ -33,10 +33,10 @@ if [ "$(id -u)" = '0' ]; then
 	testsuccess aptget update
 	rm -rf rootdir/var/lib/apt/lists
 	chmod 510 aptarchive/dists/
-	testsuccesswithnotice aptget update -q=0
+	testsuccesswithnotice aptget update
 	rm -rf rootdir/var/lib/apt/lists
 	chmod 500 aptarchive/dists/
-	testsuccesswithnotice aptget update -q=0
+	testsuccesswithnotice aptget update
 	exit
 fi
 chmod 555 aptarchive/dists/unstable/main/binary-all

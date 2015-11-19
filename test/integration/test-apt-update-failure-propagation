@@ -28,7 +28,7 @@ done
 
 pretest() {
 	rm -rf rootdir/var/lib/apt/lists
-	testsuccessequal 'N: Unable to locate package foo' aptcache policy foo -q=0
+	testsuccessequal 'N: Unable to locate package foo' aptcache policy foo
 }
 pretest
 testsuccess aptget update
@@ -43,8 +43,10 @@ testsuccessequal "foo:
 
 pretest
 mv aptarchive/dists/stable aptarchive/dists/stable.good
-testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file." apt update
-testfailure aptget update -q=0 --no-allow-insecure-repositories
+testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
+N: Updating such a repository securily is impossible and therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details." apt update
+testfailure aptget update --no-allow-insecure-repositories
 testequalor2 "Hit:1 http://localhost:${APTHTTPPORT} sid InRelease
 Ign:2 https://localhost:${APTHTTPSPORT} stable InRelease
   404  Not Found
@@ -77,6 +79,7 @@ posttest
 pretest
 rm "${NEWMETHODS}/https"
 testfailuremsg "E: The method driver ${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods/https could not be found.
+N: Is the package apt-transport-https installed?
 W: Failed to fetch https://localhost:${APTHTTPSPORT}/dists/stable/InRelease  
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 posttest

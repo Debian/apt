@@ -33,7 +33,7 @@ testsuccess aptget install old-pkg=1.0 --trivial-only
 
 testmarkedauto # old-pkg is manual installed
 
-CMD='aptget dist-upgrade -y -q=0'
+CMD='aptget dist-upgrade -y'
 msgtest 'Test for equality of' "$CMD"
 COMPAREFILE="$(mktemp)"
 echo 'The following package disappeared from your system as

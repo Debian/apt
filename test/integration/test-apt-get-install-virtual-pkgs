@@ -32,7 +32,7 @@ The following NEW packages will be installed:
   foo
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst foo (1 unstable [amd64])
-Conf foo (1 unstable [amd64])" aptget install foo-prv -s -q=0
+Conf foo (1 unstable [amd64])" aptget install foo-prv -s
 
 testvirtuals() {
 	testfailureequal "Reading package lists...
@@ -42,7 +42,7 @@ Package $1 is a virtual package provided by:
   $2
 You should explicitly select one to install.
 
-E: Package '$1' has no installation candidate" aptget install $1 -s -q=0
+E: Package '$1' has no installation candidate" aptget install $1 -s
 }
 
 testvirtuals 'foo-prv1' 'baz1 1' 'foo1 1'
@@ -61,4 +61,4 @@ Package foo-prv5 is a virtual package provided by:
   foo5:i386 2 [Not candidate version]
   baz5 1 [Not candidate version]
 
-E: Package 'foo-prv5' has no installation candidate" aptget install foo-prv5 -s -q=0
+E: Package 'foo-prv5' has no installation candidate" aptget install foo-prv5 -s

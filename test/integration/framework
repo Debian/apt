@@ -361,6 +361,7 @@ EOF
 		if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
 			echo "DPKG::options:: \"--force-architecture\";" # Added to test multiarch before dpkg is ready for it…
 		fi
+		echo 'quiet "0";'
 		echo 'quiet::NoUpdate "true";'
 		echo 'quiet::NoStatistic "true";'
 		# too distracting for users, but helpful to detect changes
@@ -973,8 +974,8 @@ generatereleasefiles() {
 	# both should be given in notation date/touch can understand
 	local DATE="$1"
 	local VALIDUNTIL="$2"
-	msgninfo "\tGenerate Release files… "
 	if [ -e aptarchive/dists ]; then
+		msgninfo "\tGenerate Release files for dists… "
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
 			local ARCHITECTURES="$(getarchitecturesfromreleasefile "$dir")"
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
@@ -996,6 +997,7 @@ NotAutomatic: yes' "$dir/Release"
 			fi
 		done
 	else
+		msgninfo "\tGenerate Release files for flat… "
 		aptftparchiverelease ./aptarchive > aptarchive/Release
 	fi
 	if [ -n "$DATE" -a "$DATE" != "now" ]; then
@@ -1399,7 +1401,7 @@ N: No packages found"
 	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' >"$COMPAREFILE"
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.output"
-	testoutputequal "$COMPAREFILE" aptcache show -q=0 "$PACKAGE"
+	testoutputequal "$COMPAREFILE" aptcache show "$PACKAGE"
 	msggroup
 }
 

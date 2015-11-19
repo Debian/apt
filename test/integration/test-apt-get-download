@@ -31,7 +31,7 @@ find aptarchive/dists -name '*Release*' -type f | while read file; do
 done
 if [ "$(id -u)" = '0' ]; then
 	# Release file can't be accessed by _apt
-	testsuccesswithnotice aptget update -q=0
+	testsuccesswithnotice aptget update
 fi
 
 #everything (too) permissive

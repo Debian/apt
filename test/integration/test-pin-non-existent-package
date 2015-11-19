@@ -23,7 +23,7 @@ testcandidate() {
 }
 
 testcandidate rapt '0.8.15'
-testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
+testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 Calculating upgrade...
@@ -34,7 +34,7 @@ Pin: release a=unstable
 Pin-Priority: -1' > rootdir/etc/apt/preferences
 
 testcandidate rapt '(none)'
-testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
+testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 Calculating upgrade...
@@ -53,7 +53,7 @@ Pin: release a=unstable
 Pin-Priority: 1000' >> rootdir/etc/apt/preferences
 
 testcandidate rapt '(none)'
-testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
+testsuccessequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
