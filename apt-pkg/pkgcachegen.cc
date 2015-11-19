@@ -125,7 +125,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
    advoid a problem during a crash */
 pkgCacheGenerator::~pkgCacheGenerator()
 {
-   if (_error->PendingError() == true)
+   if (_error->PendingError() == true || Map.validData() == false)
       return;
    if (Map.Sync() == false)
       return;
@@ -1307,6 +1307,8 @@ static bool CheckValidity(const string &CacheFile,
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
    std::unique_ptr<MMap> Map(new MMap(CacheF,0));
+   if (unlikely(Map->validData()) == false)
+      return false;
    pkgCache Cache(Map.get());
    if (_error->PendingError() || Map->Size() == 0)
    {
@@ -1539,6 +1541,8 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
       std::unique_ptr<DynamicMMap> &Map, OpProgress * const Progress, std::string const &FileName)
 {
    Map.reset(CreateDynamicMMap(NULL, 0));
+   if (unlikely(Map->validData()) == false)
+      return false;
    FileFd CacheF(FileName, FileFd::ReadOnly);
    if (CacheF.IsOpen() == false || CacheF.Failed())
       return false;
@@ -1628,6 +1632,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 
    // At this point we know we need to construct something, so get storage ready
    std::unique_ptr<DynamicMMap> Map(CreateDynamicMMap(NULL, 0));
+   if (unlikely(Map->validData()) == false)
+      return false;
    if (Debug == true)
       std::clog << "Open memory Map (not filebased)" << std::endl;
 
@@ -1716,6 +1722,8 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 
    ScopedErrorMerge sem;
    std::unique_ptr<DynamicMMap> Map(CreateDynamicMMap(NULL, 0));
+   if (unlikely(Map->validData()) == false)
+      return false;
    map_filesize_t CurrentSize = 0;
    map_filesize_t TotalSize = 0;
    TotalSize = ComputeSize(NULL, Files.begin(), Files.end());

@@ -80,6 +80,8 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
       if (file.IsOpen() == false || file.Failed())
 	 return false;
       Map = new MMap(file, MMap::Public|MMap::ReadOnly);
+      if (unlikely(Map->validData() == false))
+	 return false;
       Cache = new pkgCache(Map);
       return _error->PendingError() == false;
    }
