@@ -58,7 +58,7 @@ $($(LOCAL)-VERSIONSCRIPT):
 $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) $(LIBRARYDEPENDS) $($(LOCAL)-VERSIONSCRIPT)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY)*.so* 2> /dev/null
 	echo Building shared library $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Wl,--version-script=$($(@F)-VERSIONSCRIPT) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
+	$(CXX) $(CXXSTD) $(CXXFLAGS) $(LDFLAGS) -Wl,--version-script=$($(@F)-VERSIONSCRIPT) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
 	   -o $@ $(SONAME_MAGIC)$($(@F)-SONAME) -shared \
 	   $(filter %.opic,$^) \
 	   $($(@F)-SLIBS) 
@@ -67,7 +67,7 @@ $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) 
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.opic: %.cc $(LIBRARYDEPENDS)
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
 	$(DoDep)
 
 # Include the dependencies that are available

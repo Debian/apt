@@ -39,7 +39,7 @@ ifndef ONLYSTATICLIBS
 $(LIB)/$(MODULE)module.so: $($(LOCAL)-OBJS)
 	-rm -f $(LIB)/$($(@F)-MODULE)module.so* 2> /dev/null
 	echo Building shared Python module $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
+	$(CXX) $(CXXSTD) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
 	   -o $@ -shared \
 	   $(filter %.opic,$^) \
 	   $($(@F)-SLIBS) $(PYTHONLIB)
@@ -58,7 +58,7 @@ endif  # ifdef PYTHONLIB
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.opic: %.cc
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
 	$(DoDep)
 
 # Include the dependencies that are available

@@ -44,13 +44,13 @@ $(PROGRAM): $($(LOCAL)-BIN)
 # The binary build rule
 $($(LOCAL)-BIN): $($(LOCAL)-OBJS) $($(LOCAL)-MKS)
 	echo Building program $@
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LFLAGS) -o $@ $(filter %.o,$^) $($(@F)-SLIBS) $(LEFLAGS)
+	$(CXX) $(CXXSTD) $(CXXFLAGS) $(LDFLAGS) $(LFLAGS) -o $@ $(filter %.o,$^) $($(@F)-SLIBS) $(LEFLAGS)
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.o: %.cc
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) -o $@ $(abspath $<)
 	$(DoDep)
 
 # Include the dependencies that are available
