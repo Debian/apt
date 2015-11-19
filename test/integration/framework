@@ -1766,8 +1766,8 @@ listcurrentlistsdirectory() {
 ### convenience hacks ###
 mkdir() {
 	# creating some directories by hand is a tedious task, so make it look simple
-	if [ "$*" = '-p rootdir/var/lib/apt/lists' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" ] ||
-	   [ "$*" = '-p rootdir/var/lib/apt/lists/partial' ] || [ "$*" = "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" ]; then
+	local PARAMS="$*"
+	if [ "$PARAMS" != "${PARAMS#*rootdir/var/lib/apt/lists}" ]; then
 		# only the last directory created by mkdir is effected by the -m !
 		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt"
 		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"
