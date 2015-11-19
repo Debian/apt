@@ -205,17 +205,11 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 
    /* Determine the possible location of an option or 0 if their is
       no option */
-   if (Opt[1] == 0 || (Opt[1] == '=' && Opt[2] == 0))
+   if (Opt[1] == 0)
    {
       if (I + 1 < argc && argv[I+1][0] != '-')
 	 Argument = argv[I+1];
-      
-      // Equals was specified but we fell off the end!
-      if (Opt[1] == '=' && Argument == 0)
-	 return _error->Error(_("Option %s requires an argument."),argv[I]);
-      if (Opt[1] == '=')
-	 CertainArg = true;
-	 
+
       IncI = 1;
    }
    else
@@ -244,20 +238,11 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       // Arbitrary item specification
       if ((A->Flags & ArbItem) == ArbItem)
       {
-	 const char *J = strchr(Argument, '=');
-	 if (J == NULL)
+	 const char * const J = strchr(Argument, '=');
+	 if (J == nullptr)
 	    return _error->Error(_("Option %s: Configuration item specification must have an =<val>."),argv[I]);
 
-	 // = is trailing
-	 if (J[1] == 0)
-	 {
-	    if (I+1 >= argc)
-	       return _error->Error(_("Option %s: Configuration item specification must have an =<val>."),argv[I]);
-	    Conf->Set(string(Argument,J-Argument),string(argv[I++ +1]));
-	 }
-	 else
-	    Conf->Set(string(Argument,J-Argument),string(J+1));
-	 
+	 Conf->Set(string(Argument,J-Argument), J+1);
 	 return true;
       }
       

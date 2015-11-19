@@ -38,7 +38,9 @@ TEST(CommandLineTest,Parsing)
 {
    CommandLine::Args Args[] = {
       { 't', 0, "Test::Worked", 0 },
+      { 'T', "testing", "Test::Worked", CommandLine::HasArg },
       { 'z', "zero", "Test::Zero", 0 },
+      { 'o', "option", 0, CommandLine::ArbItem },
       {0,0,0,0}
    };
    ::Configuration c;
@@ -60,6 +62,79 @@ TEST(CommandLineTest,Parsing)
    CmdL.Parse(3 , argv2);
    EXPECT_TRUE(c.FindB("Test::Worked", false));
    EXPECT_FALSE(c.FindB("Test::Zero", false));
+
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-T", "yes" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.FindB("Test::Worked", false));
+   EXPECT_EQ("yes", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(0, CmdL.FileSize());
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-T=yes" };
+   CmdL.Parse(2 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("yes", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(0, CmdL.FileSize());
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-T=", "yes" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("no", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(1, CmdL.FileSize());
+   }
+
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "--testing", "yes" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.FindB("Test::Worked", false));
+   EXPECT_EQ("yes", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(0, CmdL.FileSize());
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "--testing=yes" };
+   CmdL.Parse(2 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("yes", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(0, CmdL.FileSize());
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "--testing=", "yes" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("no", c.Find("Test::Worked", "no"));
+   EXPECT_EQ(1, CmdL.FileSize());
+   }
+
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-o", "test::worked=yes" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.FindB("Test::Worked", false));
+   EXPECT_EQ("yes", c.Find("Test::Worked", "no"));
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-o", "test::worked=" };
+   CmdL.Parse(3 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("no", c.Find("Test::Worked", "no"));
+   }
+   c.Clear("Test");
+   {
+   char const * argv[] = { "test", "-o", "test::worked=", "yes" };
+   CmdL.Parse(4 , argv);
+   EXPECT_TRUE(c.Exists("Test::Worked"));
+   EXPECT_EQ("no", c.Find("Test::Worked", "no"));
+   }
+   c.Clear("Test");
 }
 
 TEST(CommandLineTest, BoolParsing)

@@ -982,25 +982,13 @@ generatereleasefiles() {
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
 			local LABEL="$(getlabelfromsuite $SUITE)"
 			local ORIGIN="$(getoriginfromsuite $SUITE)"
-			if [ -n "$VERSION" ]; then
-				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
-			fi
-			if [ -n "$LABEL" ]; then
-				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
-			fi
-			if [ -n "$ORIGIN" ]; then
-				ORIGIN="-o APT::FTPArchive::Release::Origin=${ORIGIN}"
-			fi
-			if [ -n "$ARCHITECTURES" ]; then
-				ARCHITECTURES="-o APT::FTPArchive::Release::Architectures=${ARCHITECTURES}"
-			fi
 			aptftparchiverelease "$dir" \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
-				${ARCHITECTURES} \
-				${LABEL} \
-				${ORIGIN} \
-				${VERSION} \
+				-o APT::FTPArchive::Release::Architectures="${ARCHITECTURES}" \
+				-o APT::FTPArchive::Release::Label="${LABEL}" \
+				-o APT::FTPArchive::Release::Origin="${ORIGIN}" \
+				-o APT::FTPArchive::Release::Version="${VERSION}" \
 				> "$dir/Release"
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
 				sed -i '/^Date: / a\
