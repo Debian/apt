@@ -419,7 +419,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *
     * The version returned is the version previously set explicitly via
     * SetCandidate* methods like #SetCandidateVersion or if there wasn't one
-    * set the version as choosen via #Policy.
+    * set the version as chosen via #Policy.
     *
     * @param Pkg is the package to return the candidate for
     */
