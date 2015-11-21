@@ -219,6 +219,7 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
    RW.push_back(pkgTagSection::Tag::Remove("Description"));
    RW.push_back(pkgTagSection::Tag::Remove("Description-md5"));
    // improve
+   RW.push_back(pkgTagSection::Tag::Rewrite("Package", V.ParentPkg().FullName(true)));
    RW.push_back(pkgTagSection::Tag::Rewrite("Installed-Size", installed_size));
    RW.push_back(pkgTagSection::Tag::Remove("Size"));
    RW.push_back(pkgTagSection::Tag::Rewrite("Download-Size", package_size));
