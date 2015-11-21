@@ -203,7 +203,7 @@ everythingfails -t testing
 msgmsg 'Test conflicting trusted options are refused'
 testsource() {
 	echo "$@" > rootdir/etc/apt/sources.list.d/example.list
-	testfailuremsg 'E: Conflicting values set for option Trusted concerning source http://example.org/bad/ unstable
+	testfailuremsg 'E: Conflicting values set for option Trusted regarding source http://example.org/bad/ unstable
 E: The list of sources could not be read.' aptget update --print-uris
 }
 for VAL in 'yes' 'no'; do

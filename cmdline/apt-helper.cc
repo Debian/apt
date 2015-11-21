@@ -112,7 +112,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
 	    "       apt-helper [options] download-file uri target-path\n"
 	    "\n"
 	    "apt-helper bundles a variety of commands for shell scripts to use\n"
-	    "e.g. the same proxy configuration or acquire system as APT would do.\n");
+	    "e.g. the same proxy configuration or acquire system as APT would.\n");
    return true;
 }
 									/*}}}*/

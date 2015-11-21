@@ -1209,10 +1209,10 @@ bool ShowHelp(CommandLine &)						/*{{{*/
       "       apt-cache [options] show pkg1 [pkg2 ...]\n"
       "\n"
       "apt-cache queries and displays available information about installed\n"
-      "as well as installable packages. It works exclusively on the data\n"
-      "acquired via the 'update' command of e.g. apt-get to the local cache.\n"
-      "The displayed information can therefore be outdated if the last update\n"
-      "is too long ago, but in exchange apt-cache works independently of the\n"
+      "and installable packages. It works exclusively on the data acquired\n"
+      "into the local cache via the 'update' command of e.g. apt-get. The\n"
+      "displayed information may therefore be outdated if the last update was\n"
+      "too long ago, but in exchange apt-cache works independently of the\n"
       "availability of the configured sources (e.g. offline).\n");
    return true;
 }

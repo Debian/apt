@@ -536,7 +536,7 @@ bool debReleaseIndex::SetTrusted(TriState const pTrusted)
       Trusted = pTrusted;
    else if (Trusted != pTrusted)
       // TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
-      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Trusted", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Trusted", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::SetCheckValidUntil(TriState const pCheckValidUntil)
@@ -544,7 +544,7 @@ bool debReleaseIndex::SetCheckValidUntil(TriState const pCheckValidUntil)
    if (d->CheckValidUntil == TRI_UNSET)
       d->CheckValidUntil = pCheckValidUntil;
    else if (d->CheckValidUntil != pCheckValidUntil)
-      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Check-Valid-Until", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Check-Valid-Until", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::SetValidUntilMin(time_t const Valid)
@@ -552,7 +552,7 @@ bool debReleaseIndex::SetValidUntilMin(time_t const Valid)
    if (d->ValidUntilMin == 0)
       d->ValidUntilMin = Valid;
    else if (d->ValidUntilMin != Valid)
-      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Min-ValidTime", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Min-ValidTime", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::SetValidUntilMax(time_t const Valid)
@@ -560,7 +560,7 @@ bool debReleaseIndex::SetValidUntilMax(time_t const Valid)
    if (d->ValidUntilMax == 0)
       d->ValidUntilMax = Valid;
    else if (d->ValidUntilMax != Valid)
-      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Max-ValidTime", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Max-ValidTime", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
@@ -578,12 +578,12 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
 	 finger.erase(std::remove(finger.begin(), finger.end(), ' '), finger.end());
 	 std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
 	 if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
-	    return _error->Error(_("Invalid value set for option %s concerning source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
+	    return _error->Error(_("Invalid value set for option %s regarding source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
       }
       SignedBy = pSignedBy;
    }
    else if (SignedBy != pSignedBy)
-      return _error->Error(_("Conflicting values set for option %s concerning source %s %s"), "Signed-By", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Signed-By", URI.c_str(), Dist.c_str());
    return true;
 }
 									/*}}}*/

@@ -138,7 +138,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
       "\n"
       "apt-sortpkgs is a simple tool to sort package information files.\n"
-      "It sorts by default by binary package information, but the -s option\n"
+      "By default it sorts by binary package information, but the -s option\n"
       "can be used to switch to source package ordering instead.\n");
    return true;
 }

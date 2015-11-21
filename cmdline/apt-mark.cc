@@ -286,9 +286,9 @@ bool ShowHelp(CommandLine &)						/*{{{*/
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
       "\n"
       "apt-mark is a simple command line interface for marking packages\n"
-      "as manually or automatically installed. It is also possible to\n"
-      "manipulate the dpkg(1) selection states of packages with it.\n"
-      "It can also list all packages with or without a certain marking.\n");
+      "as manually or automatically installed. It can also be used to\n"
+      "manipulate the dpkg(1) selection states of packages, and to list\n"
+      "all packages with or without a certain marking.\n");
    return true;
 }
 									/*}}}*/

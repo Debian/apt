@@ -47,7 +47,8 @@ bool ShowHelp(CommandLine &)						/*{{{*/
 		_("Usage: apt-internal-solver\n"
 		"\n"
 		"apt-internal-solver is an interface to use the current internal\n"
-		"like an external resolver for the APT family for debugging or alike.\n");
+		"resolver for the APT family like an external one, for debugging or\n"
+		"the like.\n");
 	return true;
 }
 									/*}}}*/

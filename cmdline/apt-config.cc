@@ -82,7 +82,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
       _("Usage: apt-config [options] command\n"
       "\n"
       "apt-config is an interface to the configuration settings used by\n"
-      "all APT tools to be used mainly in debugging and shell scripting.\n");
+      "all APT tools, mainly intended for debugging and shell scripting.\n");
    return true;
 }
 									/*}}}*/

@@ -116,7 +116,7 @@ static int parsenetrc_string (char *host, std::string &login, std::string &passw
             state = NOTHING;
           break;
         case HOSTVALID:
-          /* we are now parsing sub-keywords concerning "our" host */
+          /* we are now parsing sub-keywords regarding "our" host */
           if (state_login) {
             if (specific_login)
               state_our_login = !strcasecmp (login.c_str(), tok);

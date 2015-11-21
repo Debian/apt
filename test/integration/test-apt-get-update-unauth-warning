@@ -34,7 +34,7 @@ Err:2 file:$APTARCHIVE unstable Release
   File not found - ${APTARCHIVE}/dists/unstable/Release (2: No such file or directory)
 Reading package lists...
 E: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
-N: Updating such a repository securily is impossible and therefore disabled by default.
+N: Updating such a repository securely is impossible and therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update --no-allow-insecure-repositories
 
 # no package foo
@@ -84,7 +84,7 @@ Get:5 file:$APTARCHIVE unstable/main all Packages [$(filesize 'Packages' 'Archit
 Get:6 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
 W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
-N: Data from such a repository can not be authenticated and is therefore potentially dangerous to use.
+N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
 N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update --allow-insecure-repositories
 # ensure we can not install the package
 testfailureequal "WARNING: The following packages cannot be authenticated!
