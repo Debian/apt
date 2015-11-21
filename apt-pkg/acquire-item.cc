@@ -1731,6 +1731,9 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
 /* The only header we use is the last-modified header. */
 string pkgAcqDiffIndex::Custom600Headers() const
 {
+   if (TransactionManager->LastMetaIndexParser != NULL)
+      return "\nIndex-File: true";
+
    string const Final = GetFinalFilename();
 
    if(Debug)
@@ -2566,12 +2569,17 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers() const
 {
-   string Final = GetFinalFilename();
 
    string msg = "\nIndex-File: true";
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
-      msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+
+   if (TransactionManager->LastMetaIndexParser == NULL)
+   {
+      std::string const Final = GetFinalFilename();
+
+      struct stat Buf;
+      if (stat(Final.c_str(),&Buf) == 0)
+	 msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   }
 
    if(Target.IsOptional)
       msg += "\nFail-Ignore: true";
