@@ -65,6 +65,10 @@ update-po:
 		--porefs noline,wrap \
 		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
+	sed -n '/^#$$/,$$p' po/apt-doc.pot > po/apt-doc.pot.headerfree
+	#cat po/apt-doc.pot > po/apt-doc.pot.headerfree
+	cat po/header.pot.txt po/apt-doc.pot.headerfree > po/apt-doc.pot
+	rm -f po/apt-doc.pot.headerfree
 
 manpages/subdirs: $(MANPAGEPOLIST)
 $(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a.conf
