@@ -52,9 +52,9 @@
    </para>
 
    <para>
-   If an archive doesn't have a signed Release file or no Release file at all
+   If an archive has an unsigned Release file or no Release file at all
    current APT versions will raise a warning in <command>update</command>
-   operations and frontends like <command>apt-get</command> will require
+   operations and front-ends like <command>apt-get</command> will require
    explicit confirmation if an installation request includes a package from
    such an unauthenticated archive.
    </para>
@@ -67,13 +67,13 @@
    </para>
 
    <para>
-   Note: All APT-based package management frontends like &apt-get;, &aptitude;
+   Note: All APT-based package management front-ends like &apt-get;, &aptitude;
    and &synaptic; support this authentication feature, so this manpage uses
    <literal>APT</literal> to refer to them all for simplicity only.
    </para>
 </refsect1>
 
- <refsect1><title>Trusted repositories</title>
+ <refsect1><title>Trusted Repositories</title>
 
    <para>
    The chain of trust from an APT archive to the end user is made up of
@@ -91,10 +91,10 @@
    devscripts packages respectively).</para>
 
    <para>
-   The chain of trust in Debian e.g. starts when a maintainer uploads a new
+   The chain of trust in Debian starts (e.g.) when a maintainer uploads a new
    package or a new version of a package to the Debian archive. In
    order to become effective, this upload needs to be signed by a key
-   contained in one of the Debian package maintainers keyrings (available in
+   contained in one of the Debian package maintainer keyrings (available in
    the debian-keyring package). Maintainers' keys are signed by
    other maintainers following pre-established procedures to
    ensure the identity of the key holder. Similar procedures exist in all
@@ -144,7 +144,7 @@
    this mechanism can complement a per-package signature.</para>
 </refsect1>
 
- <refsect1><title>User configuration</title>
+ <refsect1><title>User Configuration</title>
    <para>
    <command>apt-key</command> is the program that manages the list of keys used
    by APT to trust repositories. It can be used to add or remove keys as well
@@ -165,7 +165,7 @@
    </para>
 </refsect1>
 
-<refsect1><title>Archive configuration</title>
+<refsect1><title>Archive Configuration</title>
    <para>
    If you want to provide archive signatures in an archive under your
    maintenance you have to:
@@ -182,7 +182,7 @@
       <command>gpg -abs -o Release.gpg Release</command>.</para></listitem>
 
       <listitem><para>
-      <emphasis>Publish the key fingerprint</emphasis>, that way your users
+      <emphasis>Publish the key fingerprint</emphasis>, so that your users
       will know what key they need to import in order to authenticate the files
       in the archive. It is best to ship your key in its own keyring package
       like &keyring-distro; does with &keyring-package; to be able to
@@ -194,7 +194,7 @@
       If your users can't acquire your key securely the chain of trust described above is broken.
       How you can help users add your key depends on your archive and target audience ranging
       from having your keyring package included in another archive users already have configured
-      (like the default repositories of their distribution) to leverage the web of trust.
+      (like the default repositories of their distribution) to leveraging the web of trust.
       </para></listitem>
 
     </itemizedlist>
@@ -215,7 +215,7 @@
 <ulink
 url="https://www.debian.org/doc/manuals/securing-debian-howto/ch7">Debian
 Security Infrastructure</ulink> chapter of the Securing Debian Manual
-(available also in the harden-doc package) and the
+(also available in the harden-doc package) and the
 <ulink url="http://www.cryptnet.net/fdp/crypto/strong_distro.html"
 >Strong Distribution HOWTO</ulink> by V. Alex Brennen.  </para>
 
@@ -234,4 +234,3 @@ Peña, Isaac Jones, Colin Walters, Florian Weimer and Michael Vogt.
  
 
 </refentry>
-
