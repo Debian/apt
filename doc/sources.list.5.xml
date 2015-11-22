@@ -31,12 +31,13 @@
  
  <refsect1><title>Description</title>
    <para>
-      The source list <filename>/etc/apt/sources.list</filename> and the the
+      The source list <filename>/etc/apt/sources.list</filename> and the
       files contained in <filename>/etc/apt/sources.list.d/</filename> are
       designed to support any number of active sources and a variety of source
-      media. The files list one source per line (one line style) or contain multiline
+      media. The files list one source per line (one-line style) or contain multiline
       stanzas defining one or more sources per stanza (deb822 style), with the
-      most preferred source listed first (in case a single version is available from more than one source). The information available from the
+      most preferred source listed first (in case a single version is
+      available from more than one source). The information available from the
       configured sources is acquired by <command>apt-get update</command> (or
       by an equivalent command from another APT front-end).
    </para>
@@ -55,7 +56,7 @@
        configuration list - in which case it will be silently ignored.</para>
  </refsect1>
 
- <refsect1><title>one line style format</title>
+ <refsect1><title>One-Line-Style Format</title>
     <para>
        Files in this format have the extension <filename>.list</filename>.
        Each line specifying a source starts with a type (e.g. <literal>deb-src</literal>)
@@ -71,27 +72,27 @@
        included in the line after the type separated from it with a space.
        If an option allows multiple values these are separated from each other
        with a comma (<literal>,</literal>). An option name is separated from its
-       value(s) by a equal sign (<literal>=</literal>). Multivalue options have
-       also <literal>-=</literal> and <literal>+=</literal> as separator which
+       value(s) by an equals sign (<literal>=</literal>). Multivalue options also
+       have <literal>-=</literal> and <literal>+=</literal> as separators, which
        instead of replacing the default with the given value(s) modify the default
        value(s) to remove or include the given values.
    </para><para>
        This is the traditional format and supported by all apt versions.
        Note that not all options as described below are supported by all apt versions.
-       Note also that some older applications parsing this format on its own might not
+       Note also that some older applications parsing this format on their own might not
        expect to encounter options as they were uncommon before the introduction of
        multi-architecture support.
     </para>
  </refsect1>
 
- <refsect1><title>deb822 style format</title>
+ <refsect1><title>deb822-Style Format</title>
     <para>
        Files in this format have the extension <filename>.sources</filename>.
        The format is similar in syntax to other files used by Debian and its
-       derivatives, like the metadata itself apt will download from the configured
+       derivatives, such as the metadata files that apt will download from the configured
        sources or the <filename>debian/control</filename> file in a Debian source package.
 
-       Individual entries are separated by an empty line, additional empty
+       Individual entries are separated by an empty line; additional empty
        lines are ignored, and a <literal>#</literal> character at the start of
        the line marks the entire line as a comment. An entry can hence be
        disabled by commenting out each line belonging to the stanza, but it is
@@ -101,26 +102,26 @@
        Options have the same syntax as every other field: A fieldname separated by
        a colon (<literal>:</literal>) and optionally spaces from its value(s).
        Note especially that multiple values are separated by spaces, not by
-       commas as in the one line format. Multivalue fields like <literal>Architectures</literal>
+       commas as in the one-line format. Multivalue fields like <literal>Architectures</literal>
        also have <literal>Architectures-Add</literal> and <literal>Architectures-Remove</literal>
        to modify the default value rather than replacing it.
    </para><para>
        This is a new format supported by apt itself since version 1.1. Previous
        versions ignore such files with a notice message as described earlier.
-       It is intended to make this format gradually the default format and
-       deprecating the previously described one line style format as it is
-       easier to create, extend and modify by humans and machines alike
+       It is intended to make this format gradually the default format,
+       deprecating the previously described one-line-style format, as it is
+       easier to create, extend and modify for humans and machines alike
        especially if a lot of sources and/or options are involved.
 
        Developers who are working with and/or parsing apt sources are highly
        encouraged to add support for this format and to contact the APT team
        to coordinate and share this work. Users can freely adopt this format
-       already, but could encounter problems with software not supporting
+       already, but may encounter problems with software not supporting
        the format yet.
     </para>
  </refsect1>
 
- <refsect1><title>The deb and deb-src types: General Format</title>
+ <refsect1><title>The deb and deb-src Types: General Format</title>
    <para>The <literal>deb</literal> type references a typical two-level Debian
    archive, <filename>distribution/component</filename>. The
    <literal>distribution</literal> is generally a suite name like
@@ -132,7 +133,7 @@
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
 
-   <para>The format for two one line style entries using the
+   <para>The format for two one-line-style entries using the
    <literal>deb</literal> and <literal>deb-src</literal> types is:</para>
 
    <literallayout>deb [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]
@@ -163,10 +164,10 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
    which expands to the Debian architecture (such as <literal>amd64</literal> or
    <literal>armel</literal>) used on the system. This permits architecture-independent
    <filename>sources.list</filename> files to be used. In general this is only
-   of interest when specifying an exact path, <literal>APT</literal> will
+   of interest when specifying an exact path; <literal>APT</literal> will
    automatically generate a URI with the current architecture otherwise.</para>
 
-   <para>Especially in the one line style format since only one distribution
+   <para>Especially in the one-line-style format since only one distribution
       can be specified per line it may be necessary to have multiple lines for
       the same URI, if a subset of all available distributions or components at
       that location is desired.  APT will sort the URI list after it has
@@ -184,19 +185,19 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
    network, followed by distant Internet hosts, for example).</para>
 
    <para>As an example, the sources for your distribution could look like this
-      in one line style format:
+      in one-line-style format:
       <literallayout>&sourceslist-list-format;</literallayout> or like this in
       deb822 style format:
       <literallayout>&sourceslist-sources-format;</literallayout></para>
  </refsect1>
 
  <refsect1><title>The deb and deb-src types: Options</title>
-    <para>Each source entry can have options specified modifying which and how
-       the source is accessed and data acquired from it. Format, syntax and names
-       of the options varies between the two formats one line and deb822 style
-       as described, but they have both the same options available. For simplicity
-       we list the deb822 fieldname and provide the one line name in brackets.
-       Remember that beside setting multivalue options explicitly, there is also
+    <para>Each source entry can have options specified to modify which source
+       is accessed and how data is acquired from it. Format, syntax and names
+       of the options vary between the one-line-style and deb822-style formats
+       as described, but they both have the same options available. For simplicity
+       we list the deb822 fieldname and provide the one-line name in brackets.
+       Remember that besides setting multivalue options explicitly, there is also
        the option to modify them based on the default, but we aren't listing those
        names explicitly here. Unsupported options are silently ignored by all
        APT versions.
@@ -211,7 +212,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 
 	  <listitem><para><option>Languages</option>
 		(<option>lang</option>) is a multivalue option defining for
-		which languages information like translated package
+		which languages information such as translated package
 		descriptions should be downloaded.  If this option isn't set
 		the default is all languages as defined by the
 		<option>Acquire::Languages</option> config option.
@@ -222,7 +223,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		which download targets apt will try to acquire from this
 		source. If not specified, the default set is defined by the
 		<option>Acquire::IndexTargets</option> configuration scope.
-		Aditionally, specific targets can be enabled or disabled by
+		Additionally, specific targets can be enabled or disabled by
 		using the identifier as field name instead of using this
 		multivalue option.
 	  </para></listitem>
@@ -234,22 +235,23 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		doesn't announce the availability of PDiffs.  Defaults to the
 		value of the option with the same name for a specific index file
 		defined in the <option>Acquire::IndexTargets</option> scope,
-		which itself default to the value of configuration option
+		which itself defaults to the value of configuration option
 		<option>Acquire::PDiffs</option> which defaults to
 		<literal>yes</literal>.
 	  </para></listitem>
 
 	  <listitem><para><option>By-Hash</option> (<option>by-hash</option>)
-		can have the value "yes", "no" or "force" and controls if APT
-		should try to acquire indexes via an URI constructed from a
-		hashsum of the expected file instead of using the well-known
-		stable filename of the index. Using this can avoid hashsum
-		mismatches, but requires a supporting mirror. The value
-		"yes"/"no" activates/disables the use of this feature if this
-		source indicates support for it, while "force" will enable the
-		feature regardless of what the source indicates.
-		Defaults to the value of the option of the same name for a
-		specific index file defined in the
+		can have the value <literal>yes</literal>, <literal>no</literal>
+		or <literal>force</literal> and controls if APT should try to
+		acquire indexes via a URI constructed from a hashsum of the
+		expected file instead of using the well-known stable filename
+		of the index. Using this can avoid hashsum mismatches, but
+		requires a supporting mirror. A <literal>yes</literal> or
+		<literal>no</literal> value activates/disables the use of this
+		feature if this source indicates support for it, while
+		<literal>force</literal> will enable the feature regardless of
+		what the source indicates. Defaults to the value of the option
+		of the same name for a specific index file defined in the
 		<option>Acquire::IndexTargets</option> scope, which itself
 		defaults to the value of configuration option
 		<option>Acquire::By-Hash</option> which defaults to
@@ -258,7 +260,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 
        </itemizedlist>
 
-       Further more, there are options which if set effect
+       Furthermore, there are options which if set affect
        <emphasis>all</emphasis> sources with the same URI and Suite, so they
        have to be set on all such entries and can not be varied between
        different components. APT will try to detect and error out on such
@@ -270,12 +272,13 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		is considered trusted or if warnings should be raised before e.g.
 		packages are installed from this source. This option can be used
 		to override this decision either with the value <literal>yes</literal>,
-		which lets APT consider this source always as a trusted source
-		even if it has no or fails authentication checks by disabling parts
-		of &apt-secure; and should therefore only be used in a local and trusted
+		which lets APT consider this source always as a trusted source,
+		even if it lacks or fails authentication checks, by disabling parts
+		of &apt-secure;. It should therefore only be used in a local and trusted
 		context (if at all) as otherwise security is breached. The opposite
-		can be achieved with the value no, which causes the source to be handled
-		as untrusted even if the authentication checks passed successfully.
+		can be achieved with the value <literal>no</literal>, which
+		causes the source to be handled as untrusted even if the
+		authentication checks passed successfully.
 		The default value can't be set explicitly.
 	  </para></listitem>
 
@@ -283,11 +286,11 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		is either an absolute path to a keyring file (has to be
 		accessible and readable for the <literal>_apt</literal> user,
 		so ensure everyone has read-permissions on the file) or a
-		fingerprint of a key in either the
+		fingerprint of a key either in the
 		<filename>trusted.gpg</filename> keyring or in one of the
 		keyrings in the <filename>trusted.gpg.d/</filename> directory
 		(see <command>apt-key fingerprint</command>). If the option is
-		set only the key(s) in this keyring or only the key with this
+		set, only the key(s) in this keyring or only the key with this
 		fingerprint is used for the &apt-secure; verification of this
 		repository. Otherwise all keys in the trusted keyrings are
 		considered valid signers for this repository.
@@ -295,15 +298,15 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 
 	  <listitem><para><option>Check-Valid-Until</option> (<option>check-valid-until</option>)
 		is a yes/no value which controls if APT should try to detect
-		replay attacks. A repository creator can declare until then the
-		data provided in the repository should be considered valid and
-		if this time is reached, but no new data is provided the data
-		is considered expired and an error is raised.  Beside
-		increasing security as a malicious attacker can't sent old data
-		forever denying a user to be able to upgrade to a new version,
+		replay attacks. A repository creator can declare a time until
+		which the data provided in the repository should be considered valid,
+		and if this time is reached, but no new data is provided, the data
+		is considered expired and an error is raised.  Besides
+		increasing security, as a malicious attacker can't send old data
+		forever to prevent a user from upgrading to a new version,
 		this also helps users identify mirrors which are no longer
-		updated. Some repositories like historic archives aren't
-		updated anymore by design through, so this check can be
+		updated. However, some repositories such as historic archives
+		are not updated any more by design, so this check can be
 		disabled by setting this option to <literal>no</literal>.
 		Defaults to the value of configuration option
 		<option>Acquire::Check-Valid-Until</option> which itself
@@ -332,7 +335,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
     </para>
  </refsect1>
 
- <refsect1><title>URI specification</title>
+ <refsect1><title>URI Specification</title>
 
     <para>The currently recognized URI types are:
    <variablelist>
@@ -401,7 +404,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
   </variablelist>
  </para>
  </refsect1>
- 
+
  <refsect1><title>Examples</title>
    <para>Uses the archive stored locally (or NFS mounted) at /home/apt/debian
    for stable/main, stable/contrib, and stable/non-free.</para>
@@ -418,13 +421,12 @@ URIs: file:/home/apt/debian
 Suites: unstable
 Components: main contrib non-free</literallayout>
 
-   <para>Source line for the above</para>
+   <para>Sources specification for the above.</para>
    <literallayout>deb-src file:/home/apt/debian unstable main contrib non-free</literallayout>
    <literallayout>Types: deb-src
 URIs: file:/home/apt/debian
 Suites: unstable
 Components: main contrib non-free</literallayout>
-
 
    <para>The first line gets package information for the architectures in <literal>APT::Architectures</literal>
    while the second always retrieves <literal>amd64</literal> and <literal>armel</literal>.</para>
