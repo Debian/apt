@@ -1181,7 +1181,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
       /* unsatisfiable dependency: IsInstallOkDependenciesSatisfiableByCandidates
          would have prevented us to get here if not overridden, so just skip
-	 over the problem here as the frontend will know what it is doing */
+	 over the problem here as the front-end will know what it is doing */
       if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer && Start.IsNegative() == false)
 	 continue;
 

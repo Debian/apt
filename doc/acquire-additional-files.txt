@@ -4,18 +4,18 @@ The download and verification of data from multiple sources in different
 compression formats, with partial downloads and patches is an involved
 process which is hard to implement correctly and securely.
 
-APT frontends share the code and binaries to make this happen in libapt
+APT front-ends share the code and binaries to make this happen in libapt
 with the Acquire system, supported by helpers shipped in the apt package
 itself and additional transports in individual packages like
 apt-transport-https.
 
 For its own operation libapt needs or can make use of Packages, Sources
 and Translation-* files, which it will acquire by default, but
-a repository might contain more data files (e.g.  Contents) a frontend
+a repository might contain more data files (e.g.  Contents) a front-end
 (e.g. apt-file) might want to use and would therefore need to be
 downloaded as well.
 
-This file describes the configuration scheme such a frontend can use to
+This file describes the configuration scheme such a front-end can use to
 instruct the Acquire system to download those additional files.
 
 # The Configuration Stanza
@@ -83,11 +83,11 @@ Additional optional properties:
   regardless of this setting.
 * KeepCompressed: The default is the value of Acquire::GzipIndexes,
   which defaults to false. If true, the acquire system will keep the
-  file compressed on disk rather than extract it. If your frontend can't
+  file compressed on disk rather than extract it. If your front-end can't
   deal with compressed files transparently you have to explicitly set
   this option to false to avoid problems with users setting the option
   globally. On the other hand, if you set it to true or don't set it you
-  have to ensure your frontend can deal with all compressed fileformats
+  have to ensure your front-end can deal with all compressed fileformats
   supported by apt (libapt users can e.g. use FileFd).
 * flat{MetaKey,Description}: APT supports two types of repositories:
   dists-style repositories which are the default and by far the most
@@ -106,10 +106,10 @@ information about the compressed files/PDiffs to make this happen.
 *NO* properties have to be set to enable this!
 
 
-More properties exist, but these should *NOT* be set by frontends
+More properties exist, but these should *NOT* be set by front-ends
 requesting files. They exist for internal and end-user usage only.
 Some of these are – which are documented here only to ensure that they
-aren't accidentally used by frontends:
+aren't accidentally used by front-ends:
 * PDiffs: controls if apt will try to use PDiffs for this target.
   Defaults to the value of Acquire::PDiffs which is true by default.
   Can be overridden per-source by the sources.list option of the same
@@ -120,9 +120,9 @@ aren't accidentally used by frontends:
 * CompressionTypes: The default value is a space separated list of
   compression types supported by apt (see Acquire::CompressionTypes).
   You can set this option to prevent apt from downloading a compression
-  type a frontend can't open transparently. This should always be
+  type a front-end can't open transparently. This should always be
   a temporary workaround through and a bug should be reported against
-  the frontend in question.
+  the front-end in question.
 
 
 # More examples
@@ -257,7 +257,7 @@ about which files they require. It is usually best to have a common
 package ship the configuration needed to get the files, but specific
 needs might require specific solutions. Again: talk to us.
 
-Bad things will happen if multiple frontends request the same file(s)
+Bad things will happen if multiple front-ends request the same file(s)
 via different targets, which is another reason why coordination is very
 important!
 
@@ -278,7 +278,7 @@ In other words: We would be opening Pandora's box.
 
 # Acquiring files to a specific location on disk
 
-You can't by design to avoid multiple frontends requesting the same file
+You can't by design to avoid multiple front-ends requesting the same file
 to be downloaded to multiple different places on (different) disks
 (among other reasons).  See the next point for a solution if you really
 have to force a specific location by creating symlinks.

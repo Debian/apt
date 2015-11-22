@@ -68,7 +68,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    /** \brief saves packages dpkg let disappear
 
        This way APT can retreat from trying to configure these
-       packages later on and a frontend can choose to display a
+       packages later on and a front-end can choose to display a
        notice to inform the user about these disappears.
    */
    std::set<std::string> disappearedPkgs;
