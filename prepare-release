@@ -56,6 +56,14 @@ if [ "$1" = 'pre-export' ]; then
 	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.ac
 	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
 
+	# update the last-modification field of manpages based on git changes
+	grep --files-with-matches '<date>' doc/*.xml | while read file; do \
+		LASTMOD="$(date -d "@$(git log --format='%at' --max-count=1 --invert-grep --fixed-strings --grep 'review
+typo
+Git-Dch: Ignore' "$file")" '+%Y-%m-%dT00:00:00Z')"
+		sed -i -e "s#^\([ ]\+\)<date>.*</date>\$#\1<date>$LASTMOD</date>#" "$file"
+	done
+
 	if [ "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' po/apt-all.pot | cut -d' ' -f 2)" -o \
 	     "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' doc/po/apt-doc.pot | cut -d' ' -f 2)" ]; then
 		echo >&2 'POT files are not up-to-date. Execute »make update-po« for you…'
@@ -63,7 +71,7 @@ if [ "$1" = 'pre-export' ]; then
 	fi
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
-		echo >&2 "REMEMBER: Tag this release with »git tag ${VERSION}« if you are satisfied"
+		echo >&2 "REMEMBER: Tag this release with »git tag -s ${VERSION}« if you are satisfied"
 	else
 		echo >&2 'REMEMBER: Change to a valid distribution before release'
 	fi
@@ -160,7 +168,7 @@ else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 post-build
 
-If you use »git buildpackage« you can leave these alone as they will
+If you use »gbp buildpackage« you can leave these alone as they will
 be run at the right places auto-magically. Otherwise you should use
 »pre-export« to update po and pot files as well as version numbering.
 »post-build« can be used to run some more or less useful checks later on.
