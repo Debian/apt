@@ -72,7 +72,7 @@
      <varlistentry><term><option>install</option>, <option>remove</option>, <option>purge</option> (&apt-get;)</term>
      <listitem><para>Performs the requested action on one or more packages
 	   specified via &regex;, &glob; or exact match. The requested action
-	   can be overidden for specific packages by append a plus (+) to the
+	   can be overridden for specific packages by append a plus (+) to the
 	   package name to install this package or a minus (-) to remove it.
      </para><para>
 	   A specific version of a package can be selected for installation by
@@ -85,11 +85,11 @@
      </para><para>
 	   Removing a package removes all packaged data, but leaves usually
 	   small (modified) user configuration files behind, in case the
-	   remove was an accident. Just issuing an installtion request for the
-	   accidentally removed package will restore it funcation as before in
-	   that case. On the other hand you can get right of these leftovers
-	   via calling <command>purge</command> even on already removed
-	   packages.  Note that this does not effect any data or configuration
+	   remove was an accident. Just issuing an installation request for the
+	   accidentally removed package will restore its function as before in
+	   that case. On the other hand you can get rid of these leftovers
+	   by calling <command>purge</command> even on already removed
+	   packages. Note that this does not affect any data or configuration
 	   stored in your home directory.
      </para></listitem>
      </varlistentry>
@@ -101,17 +101,17 @@
 	   and are now no longer needed as dependencies changed or the package(s)
 	   needing them were removed in the meantime.
      </para><para>
-	   Try to ensure that the list does not include applications you have
-	   grown to like even through they there once installed just as a
+	   You should check that the list does not include applications you have
+	   grown to like even though they were once installed just as a
 	   dependency of another package. You can mark such a package as manually
 	   installed by using &apt-mark;. Packages which you have installed explicitly
-	   via <command>install</command> are never proposed for automatic removal as well.
+	   via <command>install</command> are also never proposed for automatic removal.
      </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>search</option> (&apt-cache;)</term>
      <listitem><para><option>search</option> can be used to search for the given
-	   &regex; term(s) in the list of the available packages and display
+	   &regex; term(s) in the list of available packages and display
 	   matches.  This can e.g. be useful if you are looking for packages
 	   having a specific feature.  If you are looking for a package
 	   including a specific file try &apt-file;.
@@ -122,7 +122,7 @@
      <listitem><para>Show information about the given package(s) including
 	   its dependencies, installation and download size, sources the
 	   package is available from, the description of the packages content
-	   and many more. It can e.g. be helpful to look at this information
+	   and much more. It can e.g. be helpful to look at this information
 	   before allowing &apt; to remove a package or while searching for
 	   new packages to install.
      </para></listitem>
@@ -149,18 +149,18 @@
    </variablelist>
  </refsect1>
 
- <refsect1><title>Script usage and Differences to other APT tools</title>
+ <refsect1><title>Script Usage and Differences from Other APT Tools</title>
   <para>
-   The &apt; commandline is designed as a end-user tool and it may
-   change behaviour between versions. While it tries to not break
-   backward compatibility there is no guarantee for it either if it
-   seems benefitial for interactive use.
+   The &apt; commandline is designed as an end-user tool and it may
+   change behavior between versions. While it tries not to break
+   backward compatibility this is not guaranteed either if a change
+   seems beneficial for interactive use.
   </para><para>
    All features of &apt; are available in dedicated APT tools like &apt-get;
    and &apt-cache; as well.  &apt; just changes the default value of some
-   options (see &apt-conf; and specifically the Binary scope). So prefer using
-   these commands (potentially with some additional options enabled) in your
-   scripts as they keep backward compatibility as much as possible.
+   options (see &apt-conf; and specifically the Binary scope). So you should
+   prefer using these commands (potentially with some additional options
+   enabled) in your scripts as they keep backward compatibility as much as possible.
    </para>
  </refsect1>
 
