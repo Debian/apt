@@ -34,7 +34,7 @@ EOF
 assert_update_is_refused_and_last_good_state_used()
 {
     testfailuremsg "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed.
-N: Updating such a repository securely is impossible and therefore disabled by default.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update
 
     assert_repo_is_intact

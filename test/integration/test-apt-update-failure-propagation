@@ -44,7 +44,7 @@ testsuccessequal "foo:
 pretest
 mv aptarchive/dists/stable aptarchive/dists/stable.good
 testfailuremsg "E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
-N: Updating such a repository securely is impossible and therefore disabled by default.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details." apt update
 testfailure aptget update --no-allow-insecure-repositories
 testequalor2 "Hit:1 http://localhost:${APTHTTPPORT} sid InRelease
@@ -54,7 +54,7 @@ Err:3 https://localhost:${APTHTTPSPORT} stable Release
   404  Not Found
 Reading package lists...
 E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
-N: Updating such a repository securely is impossible and therefore disabled by default.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details." "Ign:1 https://localhost:${APTHTTPSPORT} stable InRelease
   404  Not Found
 Err:2 https://localhost:${APTHTTPSPORT} stable Release
@@ -62,7 +62,7 @@ Err:2 https://localhost:${APTHTTPSPORT} stable Release
 Hit:3 http://localhost:${APTHTTPPORT} sid InRelease
 Reading package lists...
 E: The repository 'https://localhost:${APTHTTPSPORT} stable Release' does not have a Release file.
-N: Updating such a repository securely is impossible and therefore disabled by default.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details." cat rootdir/tmp/testfailure.output
 
 mv aptarchive/dists/stable.good aptarchive/dists/stable

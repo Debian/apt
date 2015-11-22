@@ -153,7 +153,7 @@ static bool MessageInsecureRepository(bool const isError, std::string const &msg
    if (isError)
    {
       _error->Error("%s", msg.c_str());
-      _error->Notice("%s", _("Updating such a repository securely is impossible and therefore disabled by default."));
+      _error->Notice("%s", _("Updating from such a repository can't be done securely, and is therefore disabled by default."));
    }
    else
    {
