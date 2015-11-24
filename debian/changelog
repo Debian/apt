@@ -1,3 +1,27 @@
+apt (1.1~exp16) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * do not use _apt for file/copy sources if it isn't world-accessible
+    (Closes: 805069)
+  * support setting empty values (sanely) & removing support
+    for space-gapping: '-o option= value'
+    Thanks to Daniel Hartwig for initial patch. (Closes: 693092)
+  * ignore lost+found in private directory cleanup (Closes: 805424)
+  * update libapt-{pkg,inst} symbols files
+  * do not rerun ./configure causing FTCBFS with newer autotools-dev.
+    Thanks to Helmut Grohne for the detailed bugreport. (Closes: 804923)
+  * do not segfault in cache generation on mmap failure (Closes: 803417)
+  * do not sent Last-Modified if we expect a changed file
+  * show potentially arch-qualified fullname in 'apt show'
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation (NEW) (Closes: 805474)
+
+  [ Justin B Rye ]
+  * review of new/changed translatable program strings
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 24 Nov 2015 21:29:14 +0100
+
 apt (1.1~exp15) experimental; urgency=medium
 
   [ Julian Andres Klode ]
