@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-27 10:30+0100\n"
+"POT-Creation-Date: 2015-11-25 16:01+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -192,7 +192,7 @@ msgstr ""
 
 #: apt-private/private-cmndline.cc
 msgid ""
-"Configuration options and syntax are detailed in apt.conf(5).\n"
+"Configuration options and syntax is detailed in apt.conf(5).\n"
 "Information about how to configure sources can be found in sources.list(5).\n"
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
@@ -229,7 +229,7 @@ msgstr "Встановити ці пакунки без перевірки?"
 
 #: apt-private/private-download.cc apt-private/private-install.cc
 msgid ""
-"--force-yes is deprecated; use one of the options starting with --allow "
+"--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
 
@@ -1117,10 +1117,10 @@ msgid ""
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache queries and displays available information about installed\n"
-"as well as installable packages. It works exclusively on the data\n"
-"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
-"The displayed information can therefore be outdated if the last update\n"
-"is too long ago, but in exchange apt-cache works independently of the\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
 
@@ -1242,7 +1242,7 @@ msgstr "Повторіть цей процес для решти CD з вашо�
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is used to add CD-ROMs, USB flashdrives and other removable\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
@@ -1252,12 +1252,16 @@ msgid "Arguments not in pairs"
 msgstr "Аргументи не в парах"
 
 #: cmdline/apt-config.cc
+#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is an interface to the configuration settings used by\n"
-"all APT tools to be used mainly in debugging and shell scripting.\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
 msgstr ""
+"Використання: apt-config [опції] команда\n"
+"\n"
+"apt-config - простий інструмент для зчитування конфігураційного файла APT\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1472,9 +1476,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It is also possible to\n"
-"manipulate the dpkg(1) selection states of packages with it.\n"
-"It can also list all packages with or without a certain marking.\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
 msgstr ""
 "Використання: apt-mark [опції] {auto|manual} пакунок1 [пакунок2 ...]\n"
 "\n"
@@ -2013,7 +2017,8 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike.\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
 msgstr ""
 "Використання: apt-internal-solver\n"
 "\n"
@@ -2037,7 +2042,7 @@ msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
 "apt-sortpkgs is a simple tool to sort package information files.\n"
-"It sorts by default by binary package information, but the -s option\n"
+"By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
 
@@ -2238,11 +2243,6 @@ msgstr "Помилка уведення/виводу в підпроцес/фа�
 msgid "Failed to read while computing MD5"
 msgstr "Помилка зчитування під час обчислення MD5"
 
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Problem unlinking %s"
-msgstr "Не вдалося видалити %s"
-
 #: ftparchive/multicompress.cc apt-inst/extract.cc
 #, c-format
 msgid "Failed to rename %s to %s"
@@ -2325,11 +2325,6 @@ msgstr "DeLink %s [%s]\n"
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Не вдалося прочитати посилання (readlink) %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "Не вдалося видалити посилання (unlink) %s"
 
 #: ftparchive/writer.cc
 #, c-format
@@ -2560,8 +2555,8 @@ msgstr "Завантажується файл %li з %li"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"Updating such a repository securely is impossible and therefore disabled by "
-"default."
+"Updating from such a repository can't be done securely, and is therefore "
+"disabled by default."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -2613,6 +2608,13 @@ msgstr ""
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Помилка GPG: %s: %s"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't support "
+"architecture '%s'"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -3016,6 +3018,11 @@ msgstr "Синтаксична помилка %s:%u: Зайве сміття в 
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
+msgid "Problem unlinking the file %s"
+msgstr "Проблема з роз'єднанням файла %s"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "Блокування не використовується, так як файл блокування %s доступний тільки "
@@ -3129,11 +3136,6 @@ msgid "Problem renaming the file %s to %s"
 msgstr "Проблема з перейменуванням файла %s на %s"
 
 #: apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Problem unlinking the file %s"
-msgstr "Проблема з роз'єднанням файла %s"
-
-#: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Проблема з синхронізацією файла"
 
@@ -3143,13 +3145,13 @@ msgstr "Неможливо відобразити в пам'яті (mmap) пус
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "Неможливо створити копію файлового дескриптора %i"
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "Неможливо зробити mmap для %llu байт"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "Неможливо зробити mmap для %llu байт"
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "Неможливо створити копію файлового дескриптора %i"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Unable to close mmap"
@@ -3809,6 +3811,12 @@ msgstr ""
 msgid "Calculating upgrade"
 msgstr "Обчислення оновлень"
 
+#~ msgid "Problem unlinking %s"
+#~ msgstr "Не вдалося видалити %s"
+
+#~ msgid "Failed to unlink %s"
+#~ msgstr "Не вдалося видалити посилання (unlink) %s"
+
 #~ msgid ""
 #~ "Usage: apt-cache [options] command\n"
 #~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
@@ -3869,16 +3877,6 @@ msgstr "Обчислення оновлень"
 #~ "tmp\n"
 #~ "Для докладної інформації дивіться керівництва для apt-mark(8) і apt."
 #~ "conf(5)."
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ msgstr ""
-#~ "Використання: apt-config [опції] команда\n"
-#~ "\n"
-#~ "apt-config - простий інструмент для зчитування конфігураційного файла "
-#~ "APT\n"
 
 #~ msgid ""
 #~ "Options:\n"

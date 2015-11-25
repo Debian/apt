@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-27 10:30+0100\n"
+"POT-Creation-Date: 2015-11-25 16:01+0100\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -184,7 +184,7 @@ msgstr ""
 
 #: apt-private/private-cmndline.cc
 msgid ""
-"Configuration options and syntax are detailed in apt.conf(5).\n"
+"Configuration options and syntax is detailed in apt.conf(5).\n"
 "Information about how to configure sources can be found in sources.list(5).\n"
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
@@ -221,7 +221,7 @@ msgstr "不经验证就安装这些软件包吗？"
 
 #: apt-private/private-download.cc apt-private/private-install.cc
 msgid ""
-"--force-yes is deprecated; use one of the options starting with --allow "
+"--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
 
@@ -1058,10 +1058,10 @@ msgid ""
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache queries and displays available information about installed\n"
-"as well as installable packages. It works exclusively on the data\n"
-"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
-"The displayed information can therefore be outdated if the last update\n"
-"is too long ago, but in exchange apt-cache works independently of the\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr "请对您的盘片套件中的其它盘片重复相同的操作。"
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is used to add CD-ROMs, USB flashdrives and other removable\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
@@ -1191,12 +1191,16 @@ msgid "Arguments not in pairs"
 msgstr "参数不成对"
 
 #: cmdline/apt-config.cc
+#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is an interface to the configuration settings used by\n"
-"all APT tools to be used mainly in debugging and shell scripting.\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
 msgstr ""
+"用法：apt-config [选项] 命令\n"
+"\n"
+"apt-config 是一个用于读取APT 配置文件的简单工具\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1408,9 +1412,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It is also possible to\n"
-"manipulate the dpkg(1) selection states of packages with it.\n"
-"It can also list all packages with or without a certain marking.\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
 msgstr ""
 "用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
 "\n"
@@ -1935,7 +1939,8 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike.\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
 msgstr ""
 "用法： apt-internal-solver\n"
 "\n"
@@ -1957,7 +1962,7 @@ msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
 "apt-sortpkgs is a simple tool to sort package information files.\n"
-"It sorts by default by binary package information, but the -s option\n"
+"By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
 
@@ -2146,11 +2151,6 @@ msgstr "无法对子进程或文件进行读写"
 msgid "Failed to read while computing MD5"
 msgstr "在计算 MD5 校验和时无法读取数据"
 
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Problem unlinking %s"
-msgstr "在使用 unlink 删除 %s 时出错"
-
 #: ftparchive/multicompress.cc apt-inst/extract.cc
 #, c-format
 msgid "Failed to rename %s to %s"
@@ -2233,11 +2233,6 @@ msgstr " DeLink %s [%s]\n"
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "无法读取符号链接 %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "无法使用 unlink 删除 %s"
 
 #: ftparchive/writer.cc
 #, c-format
@@ -2464,8 +2459,8 @@ msgstr "正在下载第 %li 个文件，共 %li 个"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"Updating such a repository securely is impossible and therefore disabled by "
-"default."
+"Updating from such a repository can't be done securely, and is therefore "
+"disabled by default."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -2515,6 +2510,13 @@ msgstr ""
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG 错误：%s: %s"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't support "
+"architecture '%s'"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2904,6 +2906,11 @@ msgstr "语法错误 %s:%u：文件尾部有多余的无意义的数据"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
+msgid "Problem unlinking the file %s"
+msgstr "用 unlink 删除文件 %s 出错"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "由于文件系统为只读，因而无法使用文件锁 %s"
 
@@ -3012,11 +3019,6 @@ msgid "Problem renaming the file %s to %s"
 msgstr "重命名文件 %s 为 %s 出错"
 
 #: apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Problem unlinking the file %s"
-msgstr "用 unlink 删除文件 %s 出错"
-
-#: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "同步文件出错"
 
@@ -3026,13 +3028,13 @@ msgstr "无法 mmap 一个空文件"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "无法为复制文件描述符 %i"
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "无法 mmap %llu 字节的数据"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "无法 mmap %llu 字节的数据"
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "无法为复制文件描述符 %i"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Unable to close mmap"
@@ -3662,6 +3664,12 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 msgid "Calculating upgrade"
 msgstr "正在对升级进行计算"
 
+#~ msgid "Problem unlinking %s"
+#~ msgstr "在使用 unlink 删除 %s 时出错"
+
+#~ msgid "Failed to unlink %s"
+#~ msgstr "无法使用 unlink 删除 %s"
+
 #~ msgid ""
 #~ "Usage: apt-cache [options] command\n"
 #~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
@@ -3731,15 +3739,6 @@ msgstr "正在对升级进行计算"
 #~ "  -c=? 读取指定的配置文件\n"
 #~ "  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
 #~ "更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ msgstr ""
-#~ "用法：apt-config [选项] 命令\n"
-#~ "\n"
-#~ "apt-config 是一个用于读取APT 配置文件的简单工具\n"
 
 #~ msgid ""
 #~ "Options:\n"

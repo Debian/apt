@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-27 10:30+0100\n"
+"POT-Creation-Date: 2015-11-25 16:01+0100\n"
 "PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -185,7 +185,7 @@ msgstr ""
 
 #: apt-private/private-cmndline.cc
 msgid ""
-"Configuration options and syntax are detailed in apt.conf(5).\n"
+"Configuration options and syntax is detailed in apt.conf(5).\n"
 "Information about how to configure sources can be found in sources.list(5).\n"
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
@@ -222,7 +222,7 @@ msgstr "Valóban ellenőrzés nélkül telepíti a csomagokat?"
 
 #: apt-private/private-download.cc apt-private/private-install.cc
 msgid ""
-"--force-yes is deprecated; use one of the options starting with --allow "
+"--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
 
@@ -1095,10 +1095,10 @@ msgid ""
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache queries and displays available information about installed\n"
-"as well as installable packages. It works exclusively on the data\n"
-"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
-"The displayed information can therefore be outdated if the last update\n"
-"is too long ago, but in exchange apt-cache works independently of the\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
 
@@ -1220,7 +1220,7 @@ msgstr "Ismételje meg a folyamatot készlete többi CD-jével is."
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is used to add CD-ROMs, USB flashdrives and other removable\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
@@ -1230,12 +1230,16 @@ msgid "Arguments not in pairs"
 msgstr "Az argumentumok nincsenek párban"
 
 #: cmdline/apt-config.cc
+#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is an interface to the configuration settings used by\n"
-"all APT tools to be used mainly in debugging and shell scripting.\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
 msgstr ""
+"Használat: apt-config [kapcsolók] parancs\n"
+"\n"
+"Az apt-config egy egyszerű eszköz az APT konfigurációs fájl olvasására\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1446,9 +1450,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It is also possible to\n"
-"manipulate the dpkg(1) selection states of packages with it.\n"
-"It can also list all packages with or without a certain marking.\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
 msgstr ""
 "Használat: apt-mark [kapcsolók] {auto|manual} csom1 [csom2 ...]\n"
 "\n"
@@ -1986,7 +1990,8 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike.\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
 msgstr ""
 "Használat: apt-internal-solver\n"
 "\n"
@@ -2009,7 +2014,7 @@ msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
 "apt-sortpkgs is a simple tool to sort package information files.\n"
-"It sorts by default by binary package information, but the -s option\n"
+"By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
 
@@ -2202,11 +2207,6 @@ msgstr "IO az alfolyamathoz/fájlhoz nem sikerült"
 msgid "Failed to read while computing MD5"
 msgstr "Olvasási hiba az MD5 kiszámításakor"
 
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Problem unlinking %s"
-msgstr "Hiba %s törlésekor"
-
 #: ftparchive/multicompress.cc apt-inst/extract.cc
 #, c-format
 msgid "Failed to rename %s to %s"
@@ -2289,11 +2289,6 @@ msgstr " DeLink %s [%s]\n"
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "readlink nem hajtható végre erre: %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "%s törlése sikertelen"
 
 #: ftparchive/writer.cc
 #, c-format
@@ -2520,8 +2515,8 @@ msgstr "%li/%li fájl letöltése"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"Updating such a repository securely is impossible and therefore disabled by "
-"default."
+"Updating from such a repository can't be done securely, and is therefore "
+"disabled by default."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -2573,6 +2568,13 @@ msgstr ""
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG hiba: %s: %s"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't support "
+"architecture '%s'"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2976,6 +2978,11 @@ msgstr "Szintaktikai hiba %s: %u: fölösleges szemét a fájl végén"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
+msgid "Problem unlinking the file %s"
+msgstr "Hiba a(z) %s fájl törlésekor"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Nem lesz zárolva a(z) „%s” csak olvasható zárolási fájl"
 
@@ -3089,11 +3096,6 @@ msgid "Problem renaming the file %s to %s"
 msgstr "Hiba a(z) %s fájl átnevezésekor erre: %s"
 
 #: apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Problem unlinking the file %s"
-msgstr "Hiba a(z) %s fájl törlésekor"
-
-#: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Hiba a fájl szinkronizálásakor"
 
@@ -3104,13 +3106,13 @@ msgstr "Nem lehet mmap-olni egy üres fájlt"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "Nem lehetett kettőzni a(z) %i fájlleírót"
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "Nem sikerült %llu bájtot mmap-olni"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "Nem sikerült %llu bájtot mmap-olni"
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "Nem lehetett kettőzni a(z) %i fájlleírót"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Unable to close mmap"
@@ -3760,6 +3762,12 @@ msgstr ""
 msgid "Calculating upgrade"
 msgstr "Frissítés kiszámítása"
 
+#~ msgid "Problem unlinking %s"
+#~ msgstr "Hiba %s törlésekor"
+
+#~ msgid "Failed to unlink %s"
+#~ msgstr "%s törlése sikertelen"
+
 #~ msgid ""
 #~ "Usage: apt-cache [options] command\n"
 #~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
@@ -3824,15 +3832,6 @@ msgstr "Frissítés kiszámítása"
 #~ "tmp\n"
 #~ "Lásd még az apt-mark(8) és apt.conf(5) kézikönyvlapokat további\n"
 #~ "információkért."
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ msgstr ""
-#~ "Használat: apt-config [kapcsolók] parancs\n"
-#~ "\n"
-#~ "Az apt-config egy egyszerű eszköz az APT konfigurációs fájl olvasására\n"
 
 #~ msgid ""
 #~ "Options:\n"

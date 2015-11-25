@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-10-27 10:30+0100\n"
+"POT-Creation-Date: 2015-11-25 16:01+0100\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -182,7 +182,7 @@ msgstr ""
 
 #: apt-private/private-cmndline.cc
 msgid ""
-"Configuration options and syntax are detailed in apt.conf(5).\n"
+"Configuration options and syntax is detailed in apt.conf(5).\n"
 "Information about how to configure sources can be found in sources.list(5).\n"
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
@@ -221,7 +221,7 @@ msgstr ""
 
 #: apt-private/private-download.cc apt-private/private-install.cc
 msgid ""
-"--force-yes is deprecated; use one of the options starting with --allow "
+"--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
 
@@ -1099,10 +1099,10 @@ msgid ""
 "       apt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache queries and displays available information about installed\n"
-"as well as installable packages. It works exclusively on the data\n"
-"acquired via the 'update' command of e.g. apt-get to the local cache.\n"
-"The displayed information can therefore be outdated if the last update\n"
-"is too long ago, but in exchange apt-cache works independently of the\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
 
@@ -1228,7 +1228,7 @@ msgstr ""
 msgid ""
 "Usage: apt-cdrom [options] command\n"
 "\n"
-"apt-cdrom is used to add CD-ROMs, USB flashdrives and other removable\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
@@ -1238,12 +1238,16 @@ msgid "Arguments not in pairs"
 msgstr "Nid yw ymresymiadau mewn parau"
 
 #: cmdline/apt-config.cc
+#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is an interface to the configuration settings used by\n"
-"all APT tools to be used mainly in debugging and shell scripting.\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
 msgstr ""
+"Defnydd: apt-config [opsiynnau] gorchymyn\n"
+"\n"
+"Mae apt-config yn erfyn syml sy'n darllen ffeil cyfluniad APT\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1454,9 +1458,9 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It is also possible to\n"
-"manipulate the dpkg(1) selection states of packages with it.\n"
-"It can also list all packages with or without a certain marking.\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc
@@ -2004,7 +2008,8 @@ msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
 "apt-internal-solver is an interface to use the current internal\n"
-"like an external resolver for the APT family for debugging or alike.\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
 msgstr ""
 "Defnydd: apt-extracttemplates ffeil1 [ffeil2 ...]\n"
 "\n"
@@ -2026,7 +2031,7 @@ msgid ""
 "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
 "\n"
 "apt-sortpkgs is a simple tool to sort package information files.\n"
-"It sorts by default by binary package information, but the -s option\n"
+"By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
 
@@ -2219,11 +2224,6 @@ msgstr "Methodd MA i isbroses/ffeil"
 msgid "Failed to read while computing MD5"
 msgstr "Methwyd darllen wrth gyfrifo MD5"
 
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Problem unlinking %s"
-msgstr "Gwall wrth datgysylltu %s"
-
 #: ftparchive/multicompress.cc apt-inst/extract.cc
 #, c-format
 msgid "Failed to rename %s to %s"
@@ -2307,11 +2307,6 @@ msgstr " DatGysylltu %s [%s]\n"
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Methwyd darllen y cyswllt %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to unlink %s"
-msgstr "Methwyd datgysylltu %s"
 
 #: ftparchive/writer.cc
 #, c-format
@@ -2544,8 +2539,8 @@ msgstr "Yn Darllen Rhestr Ffeiliau"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"Updating such a repository securely is impossible and therefore disabled by "
-"default."
+"Updating from such a repository can't be done securely, and is therefore "
+"disabled by default."
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -2595,6 +2590,13 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "GPG error: %s: %s"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't support "
+"architecture '%s'"
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -2991,6 +2993,11 @@ msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Gwall cystrawen %s:%u: Sbwriel ychwanegol ar ddiwedd y ffeil"
 
 #: apt-pkg/contrib/fileutl.cc
+#, fuzzy, c-format
+msgid "Problem unlinking the file %s"
+msgstr "Gwall wrth dadgysylltu'r ffeil"
+
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Ddim yn cloi'r ffeil clo darllen-yn-unig %s"
@@ -3102,11 +3109,6 @@ msgid "Problem renaming the file %s to %s"
 msgstr "Gwall wrth gyfamseru'r ffeil"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-msgid "Problem unlinking the file %s"
-msgstr "Gwall wrth dadgysylltu'r ffeil"
-
-#: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Gwall wrth gyfamseru'r ffeil"
 
@@ -3116,13 +3118,13 @@ msgstr "Ni ellir defnyddio mmap() ar ffeil gwag"
 
 #: apt-pkg/contrib/mmap.cc
 #, fuzzy, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "Methwyd agor pibell ar gyfer %s"
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "Methwyd gwneud mmap() efo %lu beit"
 
 #: apt-pkg/contrib/mmap.cc
 #, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "Methwyd gwneud mmap() efo %lu beit"
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "Methwyd agor pibell ar gyfer %s"
 
 #: apt-pkg/contrib/mmap.cc
 #, fuzzy
@@ -3772,6 +3774,12 @@ msgstr ""
 msgid "Calculating upgrade"
 msgstr "Yn Cyfrifo'r Uwchraddiad"
 
+#~ msgid "Problem unlinking %s"
+#~ msgstr "Gwall wrth datgysylltu %s"
+
+#~ msgid "Failed to unlink %s"
+#~ msgstr "Methwyd datgysylltu %s"
+
 #~ msgid ""
 #~ "Usage: apt-cache [options] command\n"
 #~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
@@ -3784,15 +3792,6 @@ msgstr "Yn Cyfrifo'r Uwchraddiad"
 #~ "\n"
 #~ "Mae apt-cache yn erfyn lefel isel a ddefnyddir i ymdrin a ffeiliau storfa "
 #~ "deuol APT, ac ymholi gwybodaeth ohonynt\n"
-
-#~ msgid ""
-#~ "Usage: apt-config [options] command\n"
-#~ "\n"
-#~ "apt-config is a simple tool to read the APT config file\n"
-#~ msgstr ""
-#~ "Defnydd: apt-config [opsiynnau] gorchymyn\n"
-#~ "\n"
-#~ "Mae apt-config yn erfyn syml sy'n darllen ffeil cyfluniad APT\n"
 
 #~ msgid ""
 #~ "Options:\n"
