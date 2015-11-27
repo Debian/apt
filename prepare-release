@@ -60,6 +60,7 @@ if [ "$1" = 'pre-export' ]; then
 	grep --files-with-matches '<date>' doc/*.xml | while read file; do \
 		LASTMOD="$(date -d "@$(git log --format='%at' --max-count=1 --invert-grep --fixed-strings --grep 'review
 typo
+release
 Git-Dch: Ignore' "$file")" '+%Y-%m-%dT00:00:00Z')"
 		sed -i -e "s#^\([ ]\+\)<date>.*</date>\$#\1<date>$LASTMOD</date>#" "$file"
 	done
@@ -68,6 +69,17 @@ Git-Dch: Ignore' "$file")" '+%Y-%m-%dT00:00:00Z')"
 	     "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' doc/po/apt-doc.pot | cut -d' ' -f 2)" ]; then
 		echo >&2 'POT files are not up-to-date. Execute »make update-po« for you…'
 		make update-po
+	fi
+elif [ "$1" = 'pre-build' ]; then
+	if [ "$DISTRIBUTION" = "UNRELEASED" ]; then
+		echo 'BUILDING AN UNRELEASED VERSION'
+	else
+		CONFVERSION="$(sed -ne "s/^PACKAGE_VERSION=\"\(.*\)\"$/\1/p" configure.ac)"
+		if [ "$VERSION" != "$CONFVERSION" ]; then
+			echo "changelog (${VERSION}) and configure (${CONFVERSION}) talk about different versions!"
+			echo "You probably want to run »./prepare-release pre-export« to fix this."
+			exit 1
+		fi
 	fi
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
@@ -166,12 +178,14 @@ elif [ "$1" = 'coverage' ]; then
 	genhtml --output-directory "${DIR}" "${DIR}/apt.coverage.fixed" ${LCOVRC}
 else
 	echo >&1 "Usage:\t$0 pre-export
+\t$0 pre-build
 \t$0 post-build
 
-If you use »gbp buildpackage« you can leave these alone as they will
-be run at the right places auto-magically. Otherwise you should use
-»pre-export« to update po and pot files as well as version numbering.
-»post-build« can be used to run some more or less useful checks later on.
+Updating po-files and versions as well as some basic checks are done
+by »pre-export« which needs to be run before package building.
+If you use »gbp buildpackage« you will be notified if you forget.
+»pre-build« and »post-build« can be used to run some more or less
+useful checks automatically run by »gbp« otherwise.
 
 \t$0 library
 \t$0 buildlog filename…
