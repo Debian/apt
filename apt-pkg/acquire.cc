@@ -507,7 +507,11 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 
    struct passwd const * const pw = getpwnam(SandboxUser.c_str());
    if (pw == NULL)
+   {
+      _error->Warning(_("No sandbox user '%s' on the system, can not drop privileges"), SandboxUser.c_str());
+      _config->Set("APT::Sandbox::User", "");
       return;
+   }
 
    gid_t const old_euid = geteuid();
    gid_t const old_egid = getegid();
