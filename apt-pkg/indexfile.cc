@@ -107,9 +107,11 @@ bool pkgIndexFile::CheckLanguageCode(const char * const Lang)
 									/*}}}*/
 // IndexFile::LanguageCode - Return the Language Code			/*{{{*/
 std::string pkgIndexFile::LanguageCode() {
+APT_IGNORE_DEPRECATED_PUSH
 	if (TranslationsAvailable() == false)
 		return "";
 	return APT::Configuration::getLanguages()[0];
+APT_IGNORE_DEPRECATED_POP
 }
 									/*}}}*/
 
