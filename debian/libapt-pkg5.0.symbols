@@ -116,6 +116,7 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"pkgAcquire::Remove(pkgAcquire::Item*)@APTPKG_5.0" 0.8.0
  (c++)"pkgAcquire::Remove(pkgAcquire::Worker*)@APTPKG_5.0" 0.8.0
  (c++)"pkgAcquire::RunFds(fd_set*, fd_set*)@APTPKG_5.0" 0.8.0
+ (c++)"pkgAcquire::RunFdsSane(fd_set*, fd_set*)@APTPKG_5.0" 1.1.1
  (c++)"pkgAcquire::SetFds(int&, fd_set*, fd_set*)@APTPKG_5.0" 0.8.0
  (c++)"pkgAcquire::UriEnd()@APTPKG_5.0" 0.8.0
  (c++)"pkgAcquire::Worker::OutFdReady()@APTPKG_5.0" 0.8.0
@@ -668,43 +669,48 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"typeinfo name for pkgArchiveCleaner@APTPKG_5.0" 0.8.0
  (c++)"vtable for pkgArchiveCleaner@APTPKG_5.0" 0.8.0
 ### architecture specific: va_list
- (arch=armel armhf|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@APTPKG_5.0" 0.8.15~exp1
- (arch=i386 hurd-i386 kfreebsd-i386 ppc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@APTPKG_5.0" 0.8.15~exp1
- (arch=hppa ia64 mips mipsel sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@APTPKG_5.0" 0.8.15~exp1
+ (arch=armel armhf arm64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@APTPKG_5.0" 0.8.15~exp1
+ (arch=i386 hurd-i386 kfreebsd-i386 ppc64 ppc64el|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@APTPKG_5.0" 0.8.15~exp1
+ (arch=hppa ia64 mips mipsel mips64el sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@APTPKG_5.0" 0.8.15~exp1
  (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390 s390x x32|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@APTPKG_5.0" 0.8.15~exp1
  (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@APTPKG_5.0" 0.8.15~exp1
  (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@APTPKG_5.0" 0.8.15~exp1
 ### architecture specific: va_list & size_t
  (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@APTPKG_5.0" 0.8.11.4
  (arch=armel armhf|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@APTPKG_5.0" 0.8.11.4
+ (arch=arm64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=alpha|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=powerpc powerpcspe x32|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@APTPKG_5.0" 0.8.11.4
  (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=hppa mips mipsel sparc|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@APTPKG_5.0" 0.8.11.4
- (arch=ia64 sparc64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@APTPKG_5.0" 0.8.11.4
+ (arch=ia64 sparc64 mips64el|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=sh4|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@APTPKG_5.0" 0.8.11.4
- (arch=ppc64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@APTPKG_5.0" 0.8.11.4
+ (arch=ppc64 ppc64el|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@APTPKG_5.0" 0.8.11.4
  (arch=armel armhf|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@APTPKG_5.0" 0.8.11.4
+ (arch=arm64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=alpha|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=powerpc powerpcspe x32|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@APTPKG_5.0" 0.8.11.4
  (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@APTPKG_5.0" 0.8.11.4
  (arch=hppa mips mipsel sparc|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@APTPKG_5.0" 0.8.11.4
- (arch=ia64 sparc64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4 1
+ (arch=ia64 sparc64 mips64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4 1
  (arch=sh4|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@APTPKG_5.0" 0.8.11.4
- (arch=ppc64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4
+ (arch=ppc64 ppc64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@APTPKG_5.0" 0.8.11.4
 ### architecture specific: size_t
  (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc x32|c++)"_strtabexpand(char*, unsigned int)@APTPKG_5.0" 0.8.0
- (arch=alpha amd64 ia64 kfreebsd-amd64 s390 s390x sparc64 ppc64|c++)"_strtabexpand(char*, unsigned long)@APTPKG_5.0" 0.8.0
+ (arch=alpha amd64 arm64 ia64 kfreebsd-amd64 mips64el s390 s390x sparc64 ppc64 ppc64el|c++)"_strtabexpand(char*, unsigned long)@APTPKG_5.0" 0.8.0
 ### architecture specific: time_t
  (arch=!x32|c++)"TimeRFC1123[abi:cxx11](long)@APTPKG_5.0" 0.8.0
- (arch=x32|c++)"TimeRFC1123(long long)@APTPKG_5.0" 0.8.0
+ (arch=x32|c++)"TimeRFC1123[abi:cxx11](long long)@APTPKG_5.0" 0.8.0
  (arch=!x32|c++)"FTPMDTMStrToTime(char const*, long&)@APTPKG_5.0" 0.8.0
  (arch=x32|c++)"FTPMDTMStrToTime(char const*, long long&)@APTPKG_5.0" 0.8.0
  (arch=!x32|c++)"StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long&)@APTPKG_5.0" 0.8.0
  (arch=x32|c++)"StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long long&)@APTPKG_5.0" 0.8.0
  (arch=!x32|c++)"RFC1123StrToTime(char const*, long&)@APTPKG_5.0" 0.8.0
  (arch=x32|c++)"RFC1123StrToTime(char const*, long long&)@APTPKG_5.0" 0.8.0
+### architecture specific: mode_t
+ (arch=!kfreebsd-i386 !kfreebsd-amd64|c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned int)@APTPKG_5.0" 1.1~exp9
+ (arch=kfreebsd-i386 kfreebsd-amd64|c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned short)@APTPKG_5.0" 1.1~exp9
 ###
  (c++)"CreateAPTDirectoryIfNeeded(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.0" 0.8.2
  (c++)"FileFd::FileSize()@APTPKG_5.0" 0.8.8
@@ -1201,7 +1207,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"APT::VersionContainerInterface::operator=(APT::VersionContainerInterface const&)@APTPKG_5.0" 1.1~exp9
  (c++)"APT::VersionContainerInterface::~VersionContainerInterface()@APTPKG_5.0" 1.1~exp9
  (c++)"APT::VersionContainerInterface::VersionContainerInterface()@APTPKG_5.0" 1.1~exp9
- (c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned int)@APTPKG_5.0" 1.1~exp9
  (c++)"CommandLine::CommandLine()@APTPKG_5.0" 1.1~exp9
  (c++)"Configuration::FindVector(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) const@APTPKG_5.0" 1.1~exp9
  (c++)"debDebianSourceDirIndex::GetType() const@APTPKG_5.0" 1.1~exp9
@@ -1541,7 +1546,8 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++|optional=std)"void std::vector<pkgIndexFile*, std::allocator<pkgIndexFile*> >::emplace_back<pkgIndexFile*>(pkgIndexFile*&&)@APTPKG_5.0" 1.1~exp9
  (c++|optional=std)"void std::vector<pkgTagSection::Tag, std::allocator<pkgTagSection::Tag> >::emplace_back<pkgTagSection::Tag>(pkgTagSection::Tag&&)@APTPKG_5.0" 1.1~exp9
  (c++|optional=std)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_5.0" 1.1~exp9
- (c++|optional=std)"void std::vector<long, std::allocator<long> >::emplace_back<long>(long&&)@APTPKG_5.0" 1.1~exp15
+ (arch=!x32|c++|optional=std)"void std::vector<long, std::allocator<long> >::emplace_back<long>(long&&)@APTPKG_5.0" 1.1~exp15
+ (arch=x32|c++|optional=std)"void std::vector<long long, std::allocator<long long> >::emplace_back<long long>(long long&&)@APTPKG_5.0" 1.1~exp15
  (c++|optional=std)"void std::vector<metaIndex*, std::allocator<metaIndex*> >::emplace_back<metaIndex*>(metaIndex*&&)@APTPKG_5.0" 1.1~exp15
  (c++|optional=std)"void std::vector<pkgCache::DepIterator*, std::allocator<pkgCache::DepIterator*> >::emplace_back<pkgCache::DepIterator*>(pkgCache::DepIterator*&&)@APTPKG_5.0" 1.1~exp15
  (c++|optional=std)"void std::vector<pkgCache::PrvIterator*, std::allocator<pkgCache::PrvIterator*> >::emplace_back<pkgCache::PrvIterator*>(pkgCache::PrvIterator*&&)@APTPKG_5.0" 1.1~exp15
