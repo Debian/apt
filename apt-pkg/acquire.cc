@@ -428,20 +428,30 @@ void pkgAcquire::SetFds(int &Fd,fd_set *RSet,fd_set *WSet)
    }
 }
 									/*}}}*/
-// Acquire::RunFds - Deal with active FDs				/*{{{*/
+// Acquire::RunFds - compatibility remove on next abi/api break		/*{{{*/
+void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
+{
+   RunFdsSane(RSet, WSet);
+};
+									/*}}}*/
+// Acquire::RunFdsSane - Deal with active FDs				/*{{{*/
 // ---------------------------------------------------------------------
 /* Dispatch active FDs over to the proper workers. It is very important
    that a worker never be erased while this is running! The queue class
    should never erase a worker except during shutdown processing. */
-void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
+bool pkgAcquire::RunFdsSane(fd_set *RSet,fd_set *WSet)
 {
+   bool Res = true;
+
    for (Worker *I = Workers; I != 0; I = I->NextAcquire)
    {
       if (I->InFd >= 0 && FD_ISSET(I->InFd,RSet) != 0)
-	 I->InFdReady();
+	 Res &= I->InFdReady();
       if (I->OutFd >= 0 && FD_ISSET(I->OutFd,WSet) != 0)
-	 I->OutFdReady();
+	 Res &= I->OutFdReady();
    }
+
+   return Res;
 }
 									/*}}}*/
 // Acquire::Run - Run the fetch sequence				/*{{{*/
@@ -604,7 +614,8 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 	 break;
       }
 
-      RunFds(&RFds,&WFds);
+      if(RunFdsSane(&RFds,&WFds) == false)
+         break;
 
       // Timeout, notify the log class
       if (Res == 0 || (Log != 0 && Log->Update == true))

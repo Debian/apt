@@ -236,8 +236,15 @@ class pkgAcquire
     *
     *  \param WSet The set of file descriptors that are ready for
     *  output.
+    *
+    * \return false if there is an error condition on one of the fds
     */
-   virtual void RunFds(fd_set *RSet,fd_set *WSet);   
+   bool RunFdsSane(fd_set *RSet,fd_set *WSet);
+
+   // just here for compatbility, needs to be removed on the next
+   // ABI/API break. RunFdsSane() is what should be used as it
+   // returns if there is an error condition on one of the fds
+   virtual void RunFds(fd_set *RSet,fd_set *WSet);
 
    /** \brief Check for idle queues with ready-to-fetch items.
     *
