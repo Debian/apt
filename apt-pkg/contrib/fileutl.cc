@@ -2322,12 +2322,17 @@ bool DropPrivileges()							/*{{{*/
       return _error->Errno("seteuid", "Failed to seteuid");
 #endif
 
-   // Verify that the user has only a single group, and the correct one
-   gid_t groups[1];
-   if (getgroups(1, groups) != 1)
-      return _error->Errno("getgroups", "Could not get new groups");
-   if (groups[0] != pw->pw_gid)
-      return _error->Error("Could not switch group");
+   // Verify that the user isn't still in any supplementary groups
+   long const ngroups_max = sysconf(_SC_NGROUPS_MAX);
+   std::unique_ptr<gid_t[]> gidlist(new gid_t[ngroups_max]);
+   if (unlikely(gidlist == NULL))
+      return _error->Error("Allocation of a list of size %lu for getgroups failed", ngroups_max);
+   ssize_t gidlist_nr;
+   if ((gidlist_nr = getgroups(ngroups_max, gidlist.get())) < 0)
+      return _error->Errno("getgroups", "Could not get new groups (%lu)", ngroups_max);
+   for (ssize_t i = 0; i < gidlist_nr; ++i)
+      if (gidlist[i] != pw->pw_gid)
+	 return _error->Error("Could not switch group, user %s is still in group %d", toUser.c_str(), gidlist[i]);
 
    // Verify that gid, egid, uid, and euid changed
    if (getgid() != pw->pw_gid)
