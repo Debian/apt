@@ -61,10 +61,10 @@ bool pkgCdrom::FindPackages(string CD,
       return _error->Errno("chdir","Unable to change to %s",CD.c_str());
 
    // Look for a .disk subdirectory
-   if (DirectoryExists(".disk") == true)
+   if (InfoDir.empty() == true)
    {
-      if (InfoDir.empty() == true)
-	 InfoDir = CD + ".disk/";
+      if (DirectoryExists(".disk") == true)
+	 InfoDir = InfoDir + CD + ".disk/";
    }
 
    // Don't look into directories that have been marked to ingore.

@@ -24,7 +24,9 @@ class Cdrom : public pkgCdrom {
 	    std::string &InfoDir) {
 	 std::string const startdir = SafeGetCWD();
 	 EXPECT_FALSE(startdir.empty());
+	 EXPECT_TRUE(InfoDir.empty());
 	 bool const result = pkgCdrom::FindPackages(CD, List, SList, SigList, TransList, InfoDir, NULL, 0);
+	 EXPECT_FALSE(InfoDir.empty());
 	 std::sort(List.begin(), List.end());
 	 std::sort(SList.begin(), SList.end());
 	 std::sort(SigList.begin(), SigList.end());
