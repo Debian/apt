@@ -33,8 +33,8 @@ APT_IGNORE_DEPRECATED_PUSH
    // Describes a single file
    struct File
    {
-      APT_DEPRECATED std::string MD5Hash;
-      APT_DEPRECATED unsigned long Size;
+      APT_DEPRECATED_MSG("Use Hashes member instead of hardcoded hash algorithm") std::string MD5Hash;
+      APT_DEPRECATED_MSG("Use FileSize member instead") unsigned long Size;
       std::string Path;
       std::string Type;
    };

@@ -212,7 +212,7 @@ class pkgCache								/*{{{*/
    Provides *ProvideP;
    Dependency *DepP;
    DependencyData *DepDataP;
-   APT_DEPRECATED StringItem *StringItemP;
+   APT_DEPRECATED_MSG("Not used anymore in cache generation and without a replacement") StringItem *StringItemP;
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
@@ -413,7 +413,7 @@ struct pkgCache::Package
     * Note that the access method Name() will remain. It is just this data member
     * deprecated as this information is already stored and available via the
     * associated Group – so it is wasting precious binary cache space */
-   APT_DEPRECATED map_stringitem_t Name;
+   APT_DEPRECATED_MSG("Use the .Name() method instead of accessing the member directly") map_stringitem_t Name;
    /** \brief Architecture of the package */
    map_stringitem_t Arch;
    /** \brief Base of a singly linked list of versions
@@ -602,7 +602,7 @@ struct pkgCache::Version
 		       AllAllowed = All | Allowed };
 
    /** \brief deprecated variant of No */
-   static const APT_DEPRECATED VerMultiArch None = No;
+   static const APT_DEPRECATED_MSG("The default value of the Multi-Arch field is no, not none") VerMultiArch None = No;
 
    /** \brief stores the MultiArch capabilities of this version
 
@@ -742,7 +742,7 @@ struct pkgCache::Provides
 };
 									/*}}}*/
 // UNUSED StringItem structure						/*{{{*/
-struct APT_DEPRECATED  pkgCache::StringItem
+struct APT_DEPRECATED_MSG("No longer used in cache generation without a replacement") pkgCache::StringItem
 {
    /** \brief string this refers to */
    map_ptrloc String;        // StringItem

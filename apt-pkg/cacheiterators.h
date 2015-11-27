@@ -157,7 +157,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	inline const char *Name() const { return Group().Name(); }
 	// Versions have sections - and packages can have different versions with different sections
 	// so this interface is broken by design. Run as fast as you can to Version.Section().
-	APT_DEPRECATED inline const char *Section() const;
+	APT_DEPRECATED_MSG("Use the .Section method of VerIterator instead") inline const char *Section() const;
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);}
 	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;}
@@ -514,7 +514,7 @@ inline pkgCache::VerFileIterator pkgCache::VerIterator::FileList() const
        {return VerFileIterator(*Owner,Owner->VerFileP + S->FileList);}
 inline pkgCache::DescFileIterator pkgCache::DescIterator::FileList() const
        {return DescFileIterator(*Owner,Owner->DescFileP + S->FileList);}
-APT_DEPRECATED inline const char * pkgCache::PkgIterator::Section() const
+APT_DEPRECATED_MSG("Use the .Section method of VerIterator instead") inline const char * pkgCache::PkgIterator::Section() const
        {return S->VersionList == 0 ? 0 : VersionList().Section();}
 									/*}}}*/
 #endif

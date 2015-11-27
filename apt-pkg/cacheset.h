@@ -76,8 +76,7 @@ public:									/*{{{*/
 					    pkgCacheFile &Cache, const char * cmdline,
 					    std::list<PkgModifier> const &mods);
 
-	// use PackageFrom(PACKAGENAME, …) instead
-	APT_DEPRECATED pkgCache::PkgIterator PackageFromName(pkgCacheFile &Cache, std::string const &pattern);
+	APT_DEPRECATED_MSG("use .PackageFrom(PACKAGENAME, …) instead") pkgCache::PkgIterator PackageFromName(pkgCacheFile &Cache, std::string const &pattern);
 
 	/** \brief be notified about the package being selected via pattern
 	 *
@@ -89,10 +88,10 @@ public:									/*{{{*/
 	 */
 	virtual void showPackageSelection(pkgCache::PkgIterator const &pkg, PkgSelector const select, std::string const &pattern);
 	// use the method above instead, react only on the type you need and let the base handle the rest if need be
-	// this allows use to add new selection methods without breaking the ABI constantly with new virtual methods
-	APT_DEPRECATED virtual void showTaskSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
-	APT_DEPRECATED virtual void showRegExSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
-	APT_DEPRECATED virtual void showFnmatchSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	// this allows us to add new selection methods without breaking the ABI constantly with new virtual methods
+	APT_DEPRECATED_MSG("override .showPackageSelection and select with switch") virtual void showTaskSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	APT_DEPRECATED_MSG("override .showPackageSelection and select with switch") virtual void showRegExSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	APT_DEPRECATED_MSG("override .showPackageSelection and select with switch") virtual void showFnmatchSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
 
 	/** \brief be notified if a package can't be found via pattern
 	 *
@@ -105,10 +104,10 @@ public:									/*{{{*/
 	 */
 	virtual void canNotFindPackage(enum PkgSelector const select, PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 	// same as above for showPackageSelection
-	APT_DEPRECATED virtual void canNotFindTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-	APT_DEPRECATED virtual void canNotFindRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-	APT_DEPRECATED virtual void canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-	APT_DEPRECATED virtual void canNotFindPackage(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str);
+	APT_DEPRECATED_MSG("override .canNotFindPackage and select with switch") virtual void canNotFindTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED_MSG("override .canNotFindPackage and select with switch") virtual void canNotFindRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED_MSG("override .canNotFindPackage and select with switch") virtual void canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED_MSG("override .canNotFindPackage and select with switch") virtual void canNotFindPackage(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str);
 
 	/** \brief specifies which version(s) we want to refer to */
 	enum VerSelector {
@@ -145,8 +144,7 @@ public:									/*{{{*/
 	 */
 	virtual void showVersionSelection(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver,
 	      enum VerSelector const select, std::string const &pattern);
-	// renamed to have a similar interface to showPackageSelection
-	APT_DEPRECATED virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
+	APT_DEPRECATED_MSG("use .showVersionSelection instead, similar to .showPackageSelection") virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
 				 std::string const &ver, bool const verIsRel);
 
 	/** \brief be notified if a version can't be found for a package
@@ -159,23 +157,21 @@ public:									/*{{{*/
 	 * \param Pkg is the package we wanted a version from
 	 */
 	virtual void canNotFindVersion(enum VerSelector const select, VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
-	// same as above for showPackageSelection
-	APT_DEPRECATED virtual void canNotFindAllVer(VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
-	APT_DEPRECATED virtual void canNotFindInstCandVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("override .canNotFindVersion and select via switch") virtual void canNotFindAllVer(VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
+	APT_DEPRECATED_MSG("override .canNotFindVersion and select via switch") virtual void canNotFindInstCandVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
-	APT_DEPRECATED virtual void canNotFindCandInstVer(VersionContainerInterface * const vci,
+	APT_DEPRECATED_MSG("override .canNotFindVersion and select via switch") virtual void canNotFindCandInstVer(VersionContainerInterface * const vci,
 				pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
 
 	// the difference between canNotFind and canNotGet is that the later is more low-level
 	// and called from other places: In this case looking into the code is the only real answer…
 	virtual pkgCache::VerIterator canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
-	// same as above for showPackageSelection
-	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
-	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
-	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindInstalledVer(pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindInstalledVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
 
 	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str);
@@ -316,7 +312,7 @@ public:
 		inline const char *Name() const {return getType().Name(); }
 		inline std::string FullName(bool const Pretty) const { return getType().FullName(Pretty); }
 		inline std::string FullName() const { return getType().FullName(); }
-		APT_DEPRECATED inline const char *Section() const {
+		APT_DEPRECATED_MSG("Use the .Section method of VerIterator instead") inline const char *Section() const {
 		   APT_IGNORE_DEPRECATED_PUSH
 		      return getType().Section();
 		   APT_IGNORE_DEPRECATED_POP
@@ -345,8 +341,7 @@ public:
 	virtual void clear() = 0;
 	virtual size_t size() const = 0;
 
-	// FIXME: This is a bloody hack removed soon. Use CacheSetHelper::PkgSelector !
-	enum APT_DEPRECATED Constructor { UNKNOWN = CacheSetHelper::UNKNOWN,
+	enum APT_DEPRECATED_MSG("Use CacheSetHelper::PkgSelector instead") Constructor { UNKNOWN = CacheSetHelper::UNKNOWN,
 		REGEX = CacheSetHelper::REGEX,
 		TASK = CacheSetHelper::TASK,
 		FNMATCH = CacheSetHelper::FNMATCH };
@@ -361,25 +356,25 @@ APT_IGNORE_DEPRECATED_POP
 	PackageContainerInterface& operator=(PackageContainerInterface const &other);
 	virtual ~PackageContainerInterface();
 
-	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFrom(CacheSetHelper::TASK, …) instead") static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::TASK, pci, Cache, pattern); }
-	APT_DEPRECATED static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFrom(CacheSetHelper::REGEX, …) instead") static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::REGEX, pci, Cache, pattern); }
-	APT_DEPRECATED static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFrom(CacheSetHelper::FNMATCH, …) instead") static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::FNMATCH, pci, Cache, pattern); }
-	APT_DEPRECATED static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFrom(CacheSetHelper::PACKAGENAME, …) instead") static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, pattern); }
-	APT_DEPRECATED static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFrom(CacheSetHelper::STRING, …) instead") static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 	   return helper.PackageFrom(CacheSetHelper::STRING, pci, Cache, pattern); }
-	APT_DEPRECATED static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFromCommandLine instead") static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
 	   return helper.PackageFromCommandLine(pci, Cache, cmdline); }
 
-	APT_DEPRECATED typedef CacheSetHelper::PkgModifier Modifier;
+	APT_DEPRECATED_MSG("enum moved to CacheSetHelper::PkgModifier") typedef CacheSetHelper::PkgModifier Modifier;
 
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFromName instead") static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 	   return helper.PackageFromName(Cache, pattern); }
-	APT_DEPRECATED static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+	APT_DEPRECATED_MSG("Use helper.PackageFromModifierCommandLine instead") static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
 	      pkgCacheFile &Cache, const char * cmdline,
 	      std::list<Modifier> const &mods, CacheSetHelper &helper) {
 	   return helper.PackageFromModifierCommandLine(modID, pci, Cache, cmdline, mods); }
@@ -445,7 +440,7 @@ public:									/*{{{*/
 	PackageContainer() : PackageContainerInterface(CacheSetHelper::UNKNOWN) {}
 	explicit PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED explicit PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
+	APT_DEPRECATED_MSG("Construct with a CacheSetHelper::PkgSelector instead") explicit PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
 APT_IGNORE_DEPRECATED_POP
 	template<typename Itr> PackageContainer(Itr first, Itr last) : PackageContainerInterface(CacheSetHelper::UNKNOWN), _cont(first, last) {}
 #if __cplusplus >= 201103L
@@ -520,10 +515,10 @@ APT_IGNORE_DEPRECATED_PUSH
 	    \param Cache the package is in
 	    \param pattern String the package name should be extracted from
 	    \param helper responsible for error and message handling */
-	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	APT_DEPRECATED_MSG("Use helper.PackageFromName instead") static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		return helper.PackageFromName(Cache, pattern);
 	}
-	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
+	APT_DEPRECATED_MSG("Use helper.PackageFromName instead") static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
 		return FromName(Cache, pattern, helper);
 	}
@@ -799,7 +794,7 @@ public:
 	virtual size_t size() const = 0;
 
 	/** \brief specifies which version(s) will be returned if non is given */
-	enum APT_DEPRECATED Version {
+	enum APT_DEPRECATED_MSG("enum moved to CacheSetHelper::VerSelector instead") Version {
 		ALL = CacheSetHelper::ALL,
 		CANDANDINST = CacheSetHelper::CANDANDINST,
 		CANDIDATE = CacheSetHelper::CANDIDATE,
@@ -818,7 +813,7 @@ public:
 			  enum CacheSetHelper::VerSelector const select) : ID(id), Alias(alias), Pos(pos),
 			 SelectVersion(select) {}
 APT_IGNORE_DEPRECATED_PUSH
-		APT_DEPRECATED Modifier(unsigned short const &id, const char * const alias, Position const &pos,
+		APT_DEPRECATED_MSG("Construct with a CacheSetHelper::VerSelector instead") Modifier(unsigned short const &id, const char * const alias, Position const &pos,
 			  Version const &select) : ID(id), Alias(alias), Pos(pos),
 			 SelectVersion((CacheSetHelper::VerSelector)select) {}
 APT_IGNORE_DEPRECATED_POP
@@ -828,7 +823,7 @@ APT_IGNORE_DEPRECATED_POP
 				    const char **cmdline, CacheSetHelper::VerSelector const fallback,
 				    CacheSetHelper &helper);
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("Use CacheSetHelper::VerSelector as fallback selector") static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				    const char **cmdline, Version const &fallback,
 				    CacheSetHelper &helper) {
 	   return FromCommandLine(vci, Cache, cmdline, (CacheSetHelper::VerSelector)fallback, helper);
@@ -839,7 +834,7 @@ APT_IGNORE_DEPRECATED_POP
 			       std::string pkg, CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false);
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("Use CacheSetHelper::VerSelector as fallback selector") static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 			       std::string pkg, Version const &fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false) {
 	   return FromString(vci, Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper, onlyFromName);
@@ -850,7 +845,7 @@ APT_IGNORE_DEPRECATED_POP
 				pkgCache::PkgIterator const &P, CacheSetHelper::VerSelector const fallback,
 				CacheSetHelper &helper);
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("Use CacheSetHelper::VerSelector as fallback selector") static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &P, Version const &fallback,
 				CacheSetHelper &helper) {
 	   return FromPackage(vci, Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
@@ -870,7 +865,7 @@ APT_IGNORE_DEPRECATED_POP
 				   CacheSetHelper::VerSelector const selector,
 				   CacheSetHelper &helper);
 APT_IGNORE_DEPRECATED_PUSH
-	APT_DEPRECATED static bool FromDependency(VersionContainerInterface * const vci,
+	APT_DEPRECATED_MSG("Use CacheSetHelper::VerSelector as fallback selector") static bool FromDependency(VersionContainerInterface * const vci,
 				   pkgCacheFile &Cache,
 				   pkgCache::DepIterator const &D,
 				   Version const &selector,

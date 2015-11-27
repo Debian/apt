@@ -97,7 +97,7 @@ class FileFd
       And as the auto-conversation converts a 'unsigned long *' to a 'bool'
       instead of 'unsigned long long *' we need to provide this explicitly -
       otherwise applications magically start to fail… */
-   bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED
+   bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED_MSG("The Actual variable you pass in should be an unsigned long long")
    {
 	unsigned long long R;
 	bool const T = Read(To, Size, &R);
@@ -121,7 +121,7 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) { OpenDescriptor(fd, ReadWrite);};
-   gzFile gzFd() APT_DEPRECATED APT_PURE;
+   gzFile gzFd() APT_DEPRECATED_MSG("Implementation detail, do not use to be able to support bzip2, xz and co") APT_PURE;
 
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};

@@ -66,7 +66,7 @@ std::string URItoFileName(const std::string &URI);
 std::string TimeRFC1123(time_t Date);
 bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
 bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
-APT_DEPRECATED bool StrToTime(const std::string &Val,time_t &Result);
+APT_DEPRECATED_MSG("Use RFC1123StrToTime or FTPMDTMStrToTime as needed instead") bool StrToTime(const std::string &Val,time_t &Result);
 std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const std::string &Text,int Default = -1);
 bool ReadMessages(int Fd, std::vector<std::string> &List);

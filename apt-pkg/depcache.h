@@ -362,7 +362,7 @@ class pkgDepCache : protected pkgCache::Namespace
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
 
    // Policy implementation
-   APT_DEPRECATED inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return /* GetCandidateVersion(Pkg); but for API compat: */ LocalPolicy->GetCandidateVer(Pkg);};
+   APT_DEPRECATED_MSG("Confusingly named method which returns the candidate as choosen by policy (NOT as choosen via .SetCandidateVersion!). You probably want to use .GetCandidateVersion instead.") inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return /* GetCandidateVersion(Pkg); but for API compat: */ LocalPolicy->GetCandidateVer(Pkg);};
 
    inline bool IsImportantDep(DepIterator Dep) const {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};

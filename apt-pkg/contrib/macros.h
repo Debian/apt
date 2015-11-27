@@ -72,6 +72,7 @@
 
 #if APT_GCC_VERSION >= 0x0300
 	#define APT_DEPRECATED	__attribute__ ((deprecated))
+	#define APT_DEPRECATED_MSG(X)	__attribute__ ((deprecated(X)))
 	#define APT_CONST	__attribute__((const))
 	#define APT_PURE	__attribute__((pure))
 	#define APT_NORETURN	__attribute__((noreturn))
@@ -79,6 +80,7 @@
 	#define APT_WEAK        __attribute__((weak));
 #else
 	#define APT_DEPRECATED
+	#define APT_DEPRECATED_MSG
 	#define APT_CONST
 	#define APT_PURE
 	#define APT_NORETURN

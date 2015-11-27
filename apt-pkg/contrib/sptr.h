@@ -20,9 +20,10 @@
 									/*}}}*/
 #ifndef SMART_POINTER_H
 #define SMART_POINTER_H
+#include <apt-pkg/macros.h>
 
 template <class T>
-class APT_DEPRECATED SPtr
+class APT_DEPRECATED_MSG("use std::unique_ptr instead") SPtr
 {
    public:
    T *Ptr;
@@ -43,7 +44,7 @@ class APT_DEPRECATED SPtr
 };
 
 template <class T>
-class APT_DEPRECATED SPtrArray
+class APT_DEPRECATED_MSG("use std::unique_ptr instead") SPtrArray
 {
    public:
    T *Ptr;

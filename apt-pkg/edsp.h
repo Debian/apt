@@ -192,7 +192,7 @@ namespace EDSP								/*{{{*/
 	 *  \return PID of the started solver or 0 if failure occurred
 	 */
 	pid_t ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
-	APT_DEPRECATED bool ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
+	APT_DEPRECATED_MSG("add a dummy bool parameter to use the overload returning a pid_t") bool ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
 
 	/** \brief call an external resolver to handle the request
 	 *

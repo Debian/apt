@@ -35,7 +35,7 @@ public:
       HashStringList Hashes;
       unsigned long long Size;
 
-      APT_DEPRECATED HashString Hash;
+      APT_DEPRECATED_MSG("Use the HashStringList member Hashes instead of a hardcoded HashString") HashString Hash;
    };
    APT_IGNORE_DEPRECATED_POP
 

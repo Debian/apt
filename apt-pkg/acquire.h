@@ -364,7 +364,7 @@ class pkgAcquire
     *  if no lock file should be used. If set also all needed directories
     *  will be created.
     */
-   APT_DEPRECATED bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
+   APT_DEPRECATED_MSG("Use constructors, .SetLog and .GetLock as needed") bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
 
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 

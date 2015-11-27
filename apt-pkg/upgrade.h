@@ -28,9 +28,8 @@ namespace APT {
    }
 }
 
-// please use APT::Upgrade::Upgrade() instead
-APT_DEPRECATED bool pkgDistUpgrade(pkgDepCache &Cache);
-APT_DEPRECATED bool pkgAllUpgrade(pkgDepCache &Cache);
+APT_DEPRECATED_MSG("Use APT::Upgrade::Upgrade() instead") bool pkgDistUpgrade(pkgDepCache &Cache);
+APT_DEPRECATED_MSG("Use APT::Upgrade::Upgrade() instead") bool pkgAllUpgrade(pkgDepCache &Cache);
 
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 #endif

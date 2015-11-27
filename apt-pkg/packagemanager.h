@@ -113,7 +113,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // Do the installation
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
-   APT_DEPRECATED OrderResult DoInstall(int statusFd=-1);
+   APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstall(int statusFd=-1);
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt
@@ -124,7 +124,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
-   APT_DEPRECATED OrderResult DoInstallPostFork(int statusFd=-1);
+   APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstallPostFork(int statusFd=-1);
 
    // ?
    bool FixMissing();

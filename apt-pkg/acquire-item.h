@@ -105,7 +105,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    /** \brief If not \b NULL, contains the name of a subprocess that
     *  is operating on this object (for instance, "gzip" or "gpgv").
     */
-   APT_DEPRECATED const char *Mode;
+   APT_DEPRECATED_MSG("Use the std::string member ActiveSubprocess instead") const char *Mode;
 
    /** \brief contains the name of the subprocess that is operating on this object
     * (for instance, "gzip", "rred" or "gpgv"). This is obsoleting #Mode from above

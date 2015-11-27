@@ -163,15 +163,14 @@ class pkgTagFile
 extern const char **TFRewritePackageOrder;
 extern const char **TFRewriteSourceOrder;
 
-// Use pkgTagSection::Tag and pkgTagSection::Write() instead
 APT_IGNORE_DEPRECATED_PUSH
-struct APT_DEPRECATED TFRewriteData
+struct APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") TFRewriteData
 {
    const char *Tag;
    const char *Rewrite;
    const char *NewTag;
 };
-APT_DEPRECATED bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
+APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	       TFRewriteData *Rewrite);
 APT_IGNORE_DEPRECATED_POP
 

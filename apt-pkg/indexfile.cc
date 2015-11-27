@@ -89,19 +89,12 @@ std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &/*Record*/,
 }
 									/*}}}*/
 // IndexFile::TranslationsAvailable - Check if will use Translation	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool pkgIndexFile::TranslationsAvailable() {
 	return (APT::Configuration::getLanguages().empty() != true);
 }
 									/*}}}*/
 // IndexFile::CheckLanguageCode - Check the Language Code		/*{{{*/
-// ---------------------------------------------------------------------
-/* No intern need for this method anymore as the check for correctness
-   is already done in getLanguages(). Note also that this check is
-   rather bad (doesn't take three character like ast into account).
-   TODO: Remove method with next API break */
-APT_DEPRECATED bool pkgIndexFile::CheckLanguageCode(const char * const Lang)
+bool pkgIndexFile::CheckLanguageCode(const char * const Lang)
 {
   if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
     return true;
@@ -113,11 +106,7 @@ APT_DEPRECATED bool pkgIndexFile::CheckLanguageCode(const char * const Lang)
 }
 									/*}}}*/
 // IndexFile::LanguageCode - Return the Language Code			/*{{{*/
-// ---------------------------------------------------------------------
-/* As we have now possibly more than one LanguageCode this method is
-   supersided by a) private classmembers or b) getLanguages().
-   TODO: Remove method with next API break */
-APT_DEPRECATED std::string pkgIndexFile::LanguageCode() {
+std::string pkgIndexFile::LanguageCode() {
 	if (TranslationsAvailable() == false)
 		return "";
 	return APT::Configuration::getLanguages()[0];

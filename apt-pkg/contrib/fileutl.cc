@@ -2090,7 +2090,7 @@ bool FileFd::FileFdError(const char *Description,...) {
 }
 									/*}}}*/
 
-APT_DEPRECATED gzFile FileFd::gzFd() {
+gzFile FileFd::gzFd() {
 #ifdef HAVE_ZLIB
    return d->gz;
 #else

@@ -142,7 +142,7 @@ class pkgProblemResolver						/*{{{*/
    // Try to resolve problems only by using keep
    bool ResolveByKeep(OpProgress * const Progress = NULL);
 
-   APT_DEPRECATED void InstallProtect();
+   APT_DEPRECATED_MSG("NOOP as MarkInstall enforces not overriding FromUser markings") void InstallProtect();
 
    explicit pkgProblemResolver(pkgDepCache *Cache);
    virtual ~pkgProblemResolver();
