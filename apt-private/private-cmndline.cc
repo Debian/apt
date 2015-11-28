@@ -514,7 +514,3 @@ unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::D
    return Errors == true ? 100 : 0;
 }
 									/*}}}*/
-
-// weak symbols
-bool ShowHelp(CommandLine &) { return false; }
-std::vector<aptDispatchWithHelp> GetCommands() { return {}; }
