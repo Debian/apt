@@ -383,11 +383,11 @@ EOF
 	confighashes 'SHA1' # these are tests, not security best-practices
 
 	# create some files in /tmp and look at user/group to get what this means
-	TEST_DEFAULT_USER="$USER"
+	TEST_DEFAULT_USER="$(id -un)"
 	if [ "$(uname)" = 'GNU/kFreeBSD' ]; then
 		TEST_DEFAULT_GROUP='root'
 	else
-		TEST_DEFAULT_GROUP="$USER"
+		TEST_DEFAULT_GROUP="$(id -gn)"
 	fi
 
 	# cleanup the environment a bit
