@@ -2283,6 +2283,12 @@ bool DropPrivileges()							/*{{{*/
    if (toUser.empty() || toUser == "root")
       return true;
 
+   // a lot can go wrong trying to drop privileges completely,
+   // so ideally we would like to verify that we have done it –
+   // but the verify asks for too much in case of fakeroot (and alike)
+   // [Specific checks can be overridden with dedicated options]
+   bool const VerifySandboxing = _config->FindB("APT::Sandbox::Verify", false);
+
    // uid will be 0 in the end, but gid might be different anyway
    uid_t const old_uid = getuid();
    gid_t const old_gid = getgid();
@@ -2322,56 +2328,68 @@ bool DropPrivileges()							/*{{{*/
       return _error->Errno("seteuid", "Failed to seteuid");
 #endif
 
-   // Verify that the user isn't still in any supplementary groups
-   long const ngroups_max = sysconf(_SC_NGROUPS_MAX);
-   std::unique_ptr<gid_t[]> gidlist(new gid_t[ngroups_max]);
-   if (unlikely(gidlist == NULL))
-      return _error->Error("Allocation of a list of size %lu for getgroups failed", ngroups_max);
-   ssize_t gidlist_nr;
-   if ((gidlist_nr = getgroups(ngroups_max, gidlist.get())) < 0)
-      return _error->Errno("getgroups", "Could not get new groups (%lu)", ngroups_max);
-   for (ssize_t i = 0; i < gidlist_nr; ++i)
-      if (gidlist[i] != pw->pw_gid)
-	 return _error->Error("Could not switch group, user %s is still in group %d", toUser.c_str(), gidlist[i]);
+   // disabled by default as fakeroot doesn't implement getgroups currently (#806521)
+   if (VerifySandboxing == true || _config->FindB("APT::Sandbox::Verify::Groups", false) == true)
+   {
+      // Verify that the user isn't still in any supplementary groups
+      long const ngroups_max = sysconf(_SC_NGROUPS_MAX);
+      std::unique_ptr<gid_t[]> gidlist(new gid_t[ngroups_max]);
+      if (unlikely(gidlist == NULL))
+	 return _error->Error("Allocation of a list of size %lu for getgroups failed", ngroups_max);
+      ssize_t gidlist_nr;
+      if ((gidlist_nr = getgroups(ngroups_max, gidlist.get())) < 0)
+	 return _error->Errno("getgroups", "Could not get new groups (%lu)", ngroups_max);
+      for (ssize_t i = 0; i < gidlist_nr; ++i)
+	 if (gidlist[i] != pw->pw_gid)
+	    return _error->Error("Could not switch group, user %s is still in group %d", toUser.c_str(), gidlist[i]);
+   }
 
-   // Verify that gid, egid, uid, and euid changed
-   if (getgid() != pw->pw_gid)
-      return _error->Error("Could not switch group");
-   if (getegid() != pw->pw_gid)
-      return _error->Error("Could not switch effective group");
-   if (getuid() != pw->pw_uid)
-      return _error->Error("Could not switch user");
-   if (geteuid() != pw->pw_uid)
-      return _error->Error("Could not switch effective user");
+   // enabled by default as all fakeroot-lookalikes should fake that accordingly
+   if (VerifySandboxing == true || _config->FindB("APT::Sandbox::Verify::IDs", true) == true)
+   {
+      // Verify that gid, egid, uid, and euid changed
+      if (getgid() != pw->pw_gid)
+	 return _error->Error("Could not switch group");
+      if (getegid() != pw->pw_gid)
+	 return _error->Error("Could not switch effective group");
+      if (getuid() != pw->pw_uid)
+	 return _error->Error("Could not switch user");
+      if (geteuid() != pw->pw_uid)
+	 return _error->Error("Could not switch effective user");
 
 #ifdef HAVE_GETRESUID
-   // verify that the saved set-user-id was changed as well
-   uid_t ruid = 0;
-   uid_t euid = 0;
-   uid_t suid = 0;
-   if (getresuid(&ruid, &euid, &suid))
-      return _error->Errno("getresuid", "Could not get saved set-user-ID");
-   if (suid != pw->pw_uid)
-      return _error->Error("Could not switch saved set-user-ID");
+      // verify that the saved set-user-id was changed as well
+      uid_t ruid = 0;
+      uid_t euid = 0;
+      uid_t suid = 0;
+      if (getresuid(&ruid, &euid, &suid))
+	 return _error->Errno("getresuid", "Could not get saved set-user-ID");
+      if (suid != pw->pw_uid)
+	 return _error->Error("Could not switch saved set-user-ID");
 #endif
 
 #ifdef HAVE_GETRESGID
-   // verify that the saved set-group-id was changed as well
-   gid_t rgid = 0;
-   gid_t egid = 0;
-   gid_t sgid = 0;
-   if (getresgid(&rgid, &egid, &sgid))
-      return _error->Errno("getresuid", "Could not get saved set-group-ID");
-   if (sgid != pw->pw_gid)
-      return _error->Error("Could not switch saved set-group-ID");
+      // verify that the saved set-group-id was changed as well
+      gid_t rgid = 0;
+      gid_t egid = 0;
+      gid_t sgid = 0;
+      if (getresgid(&rgid, &egid, &sgid))
+	 return _error->Errno("getresuid", "Could not get saved set-group-ID");
+      if (sgid != pw->pw_gid)
+	 return _error->Error("Could not switch saved set-group-ID");
 #endif
+   }
 
-   // Check that uid and gid changes do not work anymore
-   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
-      return _error->Error("Could restore a gid to root, privilege dropping did not work");
+   // disabled as fakeroot doesn't forbid (by design) (re)gaining root from unprivileged
+   if (VerifySandboxing == true || _config->FindB("APT::Sandbox::Verify::Regain", false) == true)
+   {
+      // Check that uid and gid changes do not work anymore
+      if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
+	 return _error->Error("Could restore a gid to root, privilege dropping did not work");
 
-   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
-      return _error->Error("Could restore a uid to root, privilege dropping did not work");
+      if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+	 return _error->Error("Could restore a uid to root, privilege dropping did not work");
+   }
 
    return true;
 }
