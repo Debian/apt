@@ -120,7 +120,7 @@ class HashStringList
    /** @return size of the list of HashStrings */
    size_t size() const { return list.size(); }
 
-   /** take the 'best' hash and verify file with it
+   /** verify file against all hashes in the list
     *
     * @param filename to verify
     * @return true if the file matches the hashsum, otherwise false
