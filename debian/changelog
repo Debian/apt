@@ -1,3 +1,17 @@
+apt (1.1.2) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * outsmart gcc -O3 over-optimization in pkgCdrom::FindPackages
+  * disable privilege-drop verification by default as fakeroot trips over it
+    (Closes: 806475)
+  * fix program name detection in rsh method
+  * disable privilege dropping for rsh/ssh method by default (Closes: 806511)
+
+  [ Michael Vogt ]
+  * do not use "-Wl,-Bsymbolic-functions" during the build to avoid breakage
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 28 Nov 2015 22:47:40 +0100
+
 apt (1.1.1) unstable; urgency=medium
 
   [ Michael Vogt ]
