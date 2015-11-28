@@ -34,7 +34,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-const char *Prog;
 unsigned long TimeOut = 120;
 Configuration::Item const *RshOptions = 0;
 time_t RSHMethod::FailTime = 0;
@@ -44,8 +43,8 @@ int RSHMethod::FailFd = -1;
 // RSHConn::RSHConn - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-RSHConn::RSHConn(URI Srv) : Len(0), WriteFd(-1), ReadFd(-1),
-                            ServerName(Srv), Process(-1) {
+RSHConn::RSHConn(std::string const &pProg, URI Srv) : Len(0), WriteFd(-1), ReadFd(-1),
+                            ServerName(Srv), Prog(pProg), Process(-1) {
    Buffer[0] = '\0';
 }
 									/*}}}*/
@@ -128,7 +127,7 @@ bool RSHConn::Connect(std::string Host, unsigned int Port, std::string User)
       // Probably should do
       // dup2(open("/dev/null",O_RDONLY),STDERR_FILENO);
 
-      Args[i++] = Prog;
+      Args[i++] = Prog.c_str();
 
       // Insert user-supplied command line options
       Configuration::Item const *Opts = RshOptions;
@@ -443,7 +442,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false) {
       delete Server;
-      Server = new RSHConn(Get);
+      Server = new RSHConn(Prog, Get);
    }
 
    // Could not connect is a transient error..

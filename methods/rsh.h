@@ -25,6 +25,7 @@ class RSHConn
    int WriteFd;
    int ReadFd;
    URI ServerName;
+   std::string const Prog;
 
    // Private helper functions
    bool ReadLine(std::string &Text);
@@ -49,7 +50,7 @@ class RSHConn
    bool Get(const char *Path,FileFd &To,unsigned long long Resume,
             Hashes &Hash,bool &Missing, unsigned long long Size);
 
-   explicit RSHConn(URI Srv);
+   RSHConn(std::string const &Prog, URI Srv);
    ~RSHConn();
 };
 
