@@ -29,7 +29,10 @@ ifneq (,$(shell which dpkg-buildflags))
   # (http://savannah.gnu.org/bugs/?10593)
   dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags
   export CXXFLAGS = $(shell $(dpkg_buildflags) --get CXXFLAGS)
-  export LDFLAGS = $(shell $(dpkg_buildflags) --get LDFLAGS)
+  # we can not use "-Wl,-Bsymbolic-functions" with the new weak symbols
+  # in libapt-private (commit 28f24d3d added those)
+  comma:= ,
+  export LDFLAGS = $(subst -Wl$(comma)-Bsymbolic-functions,,$(shell $(dpkg_buildflags) --get LDFLAGS))
   export CPPFLAGS = $(shell $(dpkg_buildflags) --get CPPFLAGS)
 else
   ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
