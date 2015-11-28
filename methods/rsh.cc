@@ -398,6 +398,10 @@ RSHMethod::RSHMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.0",S
 // ---------------------------------------------------------------------
 bool RSHMethod::Configuration(std::string Message)
 {
+   // enabling privilege dropping for this method requires configuration…
+   // … which is otherwise lifted straight from root, so use it by default.
+   _config->Set(std::string("Binary::") + Prog + "::APT::Sandbox::User", "");
+
    if (aptMethod::Configuration(Message) == false)
       return false;
 
