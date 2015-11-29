@@ -558,7 +558,7 @@ bool pkgSourceList::AddVolatileFile(std::string const &File)		/*{{{*/
 void pkgSourceList::AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL)/*{{{*/
 {
    std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const * const I) {
-      if (I != nullptr && (I[0] == '/' || (I[0] == '.' && I[1] == '/')))
+      if (I != nullptr && (I[0] == '/' || (I[0] == '.' && ((I[1] == '.' && I[2] == '/') || I[1] == '/'))))
       {
 	 if (AddVolatileFile(I))
 	 {
