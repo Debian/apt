@@ -288,6 +288,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 		  while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0) 
 		  {
 		     const std::string Ver = Parse->Version();
+		     bool CorrectRelTag = false;
 
 		     // See if we need to look for a specific release tag
 		     if (RelTag != "" && UserRequestedVerTag == "")
@@ -297,13 +298,10 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			{
 			   if ((Rls->Archive != 0 && RelTag == Rls.Archive()) ||
 				 (Rls->Codename != 0 && RelTag == Rls.Codename()))
-			   {
-			      Last = Parse;
-			      Offset = Parse->Offset();
-			      Version = Ver;
-			   }
+			      CorrectRelTag = true;
 			}
-		     }
+		     } else
+			CorrectRelTag = true;
 
 		     // Ignore all versions which doesn't fit
 		     if (VerTag.empty() == false &&
@@ -311,7 +309,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			continue;
 
 		     // Newer version or an exact match? Save the hit
-		     if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
+		     if (CorrectRelTag && (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0)) {
 			Last = Parse;
 			Offset = Parse->Offset();
 			Version = Ver;
