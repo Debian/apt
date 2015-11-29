@@ -155,7 +155,7 @@ int main(int argc,const char *argv[])					/*{{{*/
    InitLocale();
 
    CommandLine CmdL;
-   ParseCommandLine(CmdL, APT_CMD::APT_SORTPKG, &_config, &_system, argc, argv);
+   ParseCommandLine(CmdL, APT_CMD::APT_SORTPKG, &_config, &_system, argc, argv, &ShowHelp, &GetCommands);
 
    // Match the operation
    for (unsigned int I = 0; I != CmdL.FileSize(); I++)

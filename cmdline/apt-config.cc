@@ -101,7 +101,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_CONFIG, &_config, &_system, argc, argv);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_CONFIG, &_config, &_system, argc, argv, &ShowHelp, &GetCommands);
 
    std::vector<std::string> const langs = APT::Configuration::getLanguages(true);
    _config->Clear("Acquire::Languages");

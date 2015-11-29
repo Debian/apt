@@ -1048,7 +1048,7 @@ int main(int argc, const char *argv[])					/*{{{*/
 
    // Parse the command line and initialize the package library
    CommandLine CmdL;
-   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_FTPARCHIVE, &_config, NULL, argc, argv);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_FTPARCHIVE, &_config, NULL, argc, argv, ShowHelp, &GetCommands);
 
    _config->CndSet("quiet",0);
    Quiet = _config->FindI("quiet",0);

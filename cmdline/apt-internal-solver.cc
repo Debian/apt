@@ -71,7 +71,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	DropPrivileges();
 
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, APT_CMD::APT_INTERNAL_SOLVER, &_config, NULL, argc, argv);
+	ParseCommandLine(CmdL, APT_CMD::APT_INTERNAL_SOLVER, &_config, NULL, argc, argv, &ShowHelp, &GetCommands);
 
 	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
 	{

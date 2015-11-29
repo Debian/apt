@@ -378,7 +378,8 @@ static void ShowHelpListCommands(std::vector<aptDispatchWithHelp> const &Cmds)/*
    }
 }
 									/*}}}*/
-static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<aptDispatchWithHelp> const &Cmds)/*{{{*/
+static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<aptDispatchWithHelp> const &Cmds,/*{{{*/
+      bool (*ShowHelp)(CommandLine &))
 {
    std::cout << PACKAGE << " " << PACKAGE_VERSION << " (" << COMMON_ARCH << ")" << std::endl;
    if (_config->FindB("version") == true && Binary != APT_CMD::APT_GET)
@@ -442,7 +443,8 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 }
 									/*}}}*/
 std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
-      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[])
+      Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[],
+      bool (*ShowHelp)(CommandLine &), std::vector<aptDispatchWithHelp> (*GetCommands)(void))
 {
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
    {
@@ -477,7 +479,7 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
-	 ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
+	 ShowCommonHelp(Binary, CmdL, CmdsWithHelp, ShowHelp);
 
       _error->DumpErrors();
       exit(100);
@@ -487,12 +489,12 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
    {
-      ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp, ShowHelp);
       exit(0);
    }
    if (Cmds.empty() == false && CmdL.FileSize() == 0)
    {
-      ShowCommonHelp(Binary, CmdL, CmdsWithHelp);
+      ShowCommonHelp(Binary, CmdL, CmdsWithHelp, ShowHelp);
       exit(1);
    }
    return Cmds;
@@ -514,7 +516,3 @@ unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::D
    return Errors == true ? 100 : 0;
 }
 									/*}}}*/
-
-// weak symbols
-bool ShowHelp(CommandLine &) { return false; }
-std::vector<aptDispatchWithHelp> GetCommands() { return {}; }

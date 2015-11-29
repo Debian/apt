@@ -100,7 +100,7 @@ int main(int argc, const char *argv[])					/*{{{*/
    InitLocale();
 
    CommandLine CmdL;
-   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT, &_config, &_system, argc, argv);
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT, &_config, &_system, argc, argv, &ShowHelp, &GetCommands);
 
    int const quiet = _config->FindI("quiet", 0);
    if (quiet == 2)
