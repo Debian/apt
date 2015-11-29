@@ -105,7 +105,7 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
       _("Usage: apt-helper [options] command\n"
@@ -116,7 +116,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},

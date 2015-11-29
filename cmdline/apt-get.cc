@@ -343,7 +343,7 @@ static bool DoIndexTargets(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    if (_config->FindB("version") == true)
    {
@@ -399,7 +399,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"update", &DoUpdate, _("Retrieve new lists of packages")},

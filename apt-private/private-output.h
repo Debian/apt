@@ -34,7 +34,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
 APT_PUBLIC void ShowBroken(std::ostream &out, CacheFile &Cache, bool const Now);
 APT_PUBLIC void ShowBroken(std::ostream &out, pkgCacheFile &Cache, bool const Now);
 
-template<class Container, class PredicateC, class DisplayP, class DisplayV> APT_PUBLIC bool ShowList(std::ostream &out, std::string const &Title,
+template<class Container, class PredicateC, class DisplayP, class DisplayV> bool ShowList(std::ostream &out, std::string const &Title,
       Container const &cont,
       PredicateC Predicate,
       DisplayP PkgDisplay,

@@ -215,7 +215,7 @@ bool DebFile::ParseInfo()
 	return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
 	cout <<
 		_("Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -330,7 +330,7 @@ static bool Go(CommandLine &CmdL)
 	return !_error->PendingError();
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
 	{nullptr, nullptr, nullptr}

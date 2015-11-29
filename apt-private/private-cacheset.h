@@ -15,7 +15,7 @@
 
 class OpProgress;
 
-struct APT_PUBLIC VersionSortDescriptionLocality			/*{{{*/
+struct VersionSortDescriptionLocality					/*{{{*/
 {
    bool operator () (const pkgCache::VerIterator &v_lhs,
 	 const pkgCache::VerIterator &v_rhs)
@@ -65,7 +65,7 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
 
 
 // CacheSetHelper saving virtual packages				/*{{{*/
-class APT_PUBLIC CacheSetHelperVirtuals: public APT::CacheSetHelper {
+class CacheSetHelperVirtuals: public APT::CacheSetHelper {
 public:
    APT::PackageSet virtualPkgs;
 
@@ -78,7 +78,7 @@ public:
 									/*}}}*/
 
 // CacheSetHelperAPTGet - responsible for message telling from the CacheSets/*{{{*/
-class APT_PUBLIC CacheSetHelperAPTGet : public APT::CacheSetHelper {
+class CacheSetHelperAPTGet : public APT::CacheSetHelper {
 	/** \brief stream message should be printed to */
 	std::ostream &out;
 	/** \brief were things like Task or RegEx used to select packages? */

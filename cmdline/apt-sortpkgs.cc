@@ -132,7 +132,7 @@ static bool DoIt(string InFile)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
     _("Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
@@ -143,7 +143,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {nullptr, nullptr, nullptr}

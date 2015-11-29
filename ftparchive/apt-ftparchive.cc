@@ -615,7 +615,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 }
 									/*}}}*/
 
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
     _("Usage: apt-ftparchive [options] command\n"
@@ -1029,7 +1029,7 @@ static bool Clean(CommandLine &CmdL)
 }
 									/*}}}*/
 
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"packages",&SimpleGenPackages, nullptr},

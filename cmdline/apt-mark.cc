@@ -280,7 +280,7 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
@@ -292,7 +292,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"auto",&DoAuto, _("Mark the given packages as automatically installed")},

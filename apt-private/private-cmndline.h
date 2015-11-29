@@ -22,15 +22,12 @@ enum class APT_CMD {
    APT_MARK,
    APT_SORTPKG,
 };
-
-APT_PUBLIC bool ShowHelp(CommandLine &CmdL) APT_WEAK;
 struct aptDispatchWithHelp
 {
    const char *Match;
    bool (*Handler)(CommandLine &);
    const char *Help;
 };
-APT_PUBLIC std::vector<aptDispatchWithHelp> GetCommands() APT_WEAK;
 
 APT_PUBLIC std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char * argv[],

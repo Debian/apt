@@ -76,7 +76,7 @@ static bool DoDump(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
       _("Usage: apt-config [options] command\n"
@@ -86,7 +86,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"shell", &DoShell, _("get configuration values via shell evaluation")},

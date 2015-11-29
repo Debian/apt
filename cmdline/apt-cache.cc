@@ -1100,7 +1100,7 @@ static bool GenCaches(CommandLine &)
    return CacheFile.BuildCaches(&Progress, true);
 }
 									/*}}}*/
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
     _("Usage: apt-cache [options] command\n"
@@ -1115,7 +1115,7 @@ bool ShowHelp(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
       {"gencaches",&GenCaches, nullptr},

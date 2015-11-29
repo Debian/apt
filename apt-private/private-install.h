@@ -28,7 +28,7 @@ APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 
 
 // TryToInstall - Mark a package for installation			/*{{{*/
-struct APT_PUBLIC TryToInstall {
+struct TryToInstall {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
    bool FixBroken;
@@ -44,7 +44,7 @@ struct APT_PUBLIC TryToInstall {
 };
 									/*}}}*/
 // TryToRemove - Mark a package for removal				/*{{{*/
-struct APT_PUBLIC TryToRemove {
+struct TryToRemove {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
    bool PurgePkgs;
