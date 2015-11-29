@@ -27,13 +27,18 @@ insertsource 'stable' 'foo' 'all' '1.0'
 insertsource 'wheezy' 'foo' 'all' '0.0.1'
 insertsource 'wheezy' 'foo' 'all' '0.1'
 
-# the order of these versions is choosen to ensure that
+# the order of these versions is chosen to ensure that
 # * apt will pick the one in the correct release, despite a higher version coming later and
 # * apt will pick the highest version in a release, despite a lower version coming later.
 # (bts #746412)
 insertsource 'stable' 'baz' 'all' '1.0'
 insertsource 'unstable' 'baz' 'all' '2.0'
 insertsource 'unstable' 'baz' 'all' '1.5'
+
+# ensure we really have the situation we wanted (first 2.0 is foo above)
+testequal 'Version: 2.0
+Version: 2.0
+Version: 1.5' grep '^Version:' aptarchive/dists/unstable/main/source/Sources
 
 insertsource 'stable' 'bar' 'any' '1.1' 'Vcs-Browser: https://anonscm.debian.org/cgit/bar/bar.git
 Vcs-Git: git://anonscm.debian.org/bar/bar.git -b debian/experimental'
