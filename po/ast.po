@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -985,6 +985,11 @@ msgstr "Nun pudo renomase %s como %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "El paquete %s versión %s nun cumple una dependencia:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "La orde update nun lleva argumentos"
@@ -1000,11 +1005,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "El paquete %s versión %s nun cumple una dependencia:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1119,66 +1119,6 @@ msgstr "Llista los nomes de tolos paquetes nel sistema"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Amuesa los axustes de les normes"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Lleendo llista de paquetes"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Paquetes na chincheta:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Paquetes frañaos"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Desaniciar automáticamente tolos paquetes non usaos"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "%s axustáu como instaláu manualmente.\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Lleendo información d'estáu"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1302,6 +1242,10 @@ msgstr "Desaniciar paquetes"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Quitar y desaniciar paquetes"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Desaniciar automáticamente tolos paquetes non usaos"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1473,6 +1417,62 @@ msgstr "%s axustáu como instaláu manualmente.\n"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Lleendo llista de paquetes"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Paquetes na chincheta:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Paquetes frañaos"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s axustáu como instaláu manualmente.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Lleendo información d'estáu"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2458,50 +2458,6 @@ msgstr "Doble suma de desvíu %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Ficheru de configuración duplicáu %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Falta'l direutoriu de llistes %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Falta'l direutoriu d'archivos %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nun pudo bloquiase'l direutoriu %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Descargando ficheru %li de %li (falten %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Descargando ficheru %li de %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2666,6 +2622,50 @@ msgstr "El métodu %s nun entamó correchamente"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Por favor, introduz el discu '%s' nel preséu '%s' y calca Intro."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Falta'l direutoriu de llistes %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Falta'l direutoriu d'archivos %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nun pudo bloquiase'l direutoriu %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Descargando ficheru %li de %li (falten %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Descargando ficheru %li de %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

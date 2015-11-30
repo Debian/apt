@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -990,6 +990,11 @@ msgstr "Eșec la redenumirea lui %s în %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Pachetul %s versiunea %s are o dependență neîndeplinită:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Comanda de actualizare nu are argumente"
@@ -1006,11 +1011,6 @@ msgstr[2] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Pachetul %s versiunea %s are o dependență neîndeplinită:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1126,66 +1126,6 @@ msgstr "Afișează numele tuturor pachetelor din sistem"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Arată configurațiile de politici"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Citire liste de pachete"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Pachete alese special:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Pachete deteriorate"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Șterge automat toate pachetele nefolosite"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "%s este marcat ca fiind instalat manual.\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Se citesc informațiile de stare"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -1312,6 +1252,10 @@ msgstr "Șterge pachete"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Șterge și curăță pachete"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Șterge automat toate pachetele nefolosite"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1483,6 +1427,62 @@ msgstr "%s este marcat ca fiind instalat manual.\n"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Citire liste de pachete"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Pachete alese special:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Pachete deteriorate"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s este marcat ca fiind instalat manual.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Se citesc informațiile de stare"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2484,50 +2484,6 @@ msgstr "Adăugare dublă de redirectare %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Fișier „conf” duplicat %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "Directorul de liste %spartial lipsește."
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Directorul de arhive %spartial lipsește."
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nu pot încuia directorul cu lista"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Tipul de fișier index '%s' nu este suportat"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Se descarcă fișierul %li din %li (%s rămas)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Se descarcă fișierul %li din %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2693,6 +2649,50 @@ msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr ""
 "Vă rog introduceți discul numit: '%s' în unitatea '%s' și apăsați Enter."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "Directorul de liste %spartial lipsește."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Directorul de arhive %spartial lipsește."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nu pot încuia directorul cu lista"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Tipul de fișier index '%s' nu este suportat"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Se descarcă fișierul %li din %li (%s rămas)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Se descarcă fișierul %li din %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

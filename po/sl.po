@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -1005,6 +1005,11 @@ msgstr "Ni mogoče preimenovati %s v %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Paket %s različica %s ima nerešene odvisnosti:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Ukaz update ne sprejema argumentov"
@@ -1022,11 +1027,6 @@ msgstr[3] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Paket %s različica %s ima nerešene odvisnosti:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1141,66 +1141,6 @@ msgstr "Izpiše imena vseh paketov na sistemu"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Prikaže nastavitve pravil"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Branje seznama paketov"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Pripeti paketi:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Pokvarjeni paketi"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Samodejno odstrani vse neuporabljene pakete"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "vendar je navidezen paket"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Branje podatkov o stanju"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1325,6 +1265,10 @@ msgstr "Odstrani pakete"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Odstrani pakete in nastavitvene datoteke"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Samodejno odstrani vse neuporabljene pakete"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1498,6 +1442,62 @@ msgstr ""
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Branje seznama paketov"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Pripeti paketi:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Pokvarjeni paketi"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "vendar je navidezen paket"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Branje podatkov o stanju"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2478,50 +2478,6 @@ msgstr "Dvojni seštevek odklona %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Dvojnik datoteke z nastavitvami %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Mapa seznama %spartial manjka."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Mapa arhivov %spartial manjka."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Mape %s ni mogoče zakleniti"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Vrsta datoteke s kazalom '%s' ni podprta"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Pridobivanje datoteke %li od %li (%s preostalo)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Pridobivanje datoteke %li od %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2690,6 +2646,50 @@ msgstr "Način %s se ni začel pravilno"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Vstavite disk z oznako '%s' v pogon '%s' in pritisnite vnosno tipko."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Mapa seznama %spartial manjka."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Mapa arhivov %spartial manjka."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Mape %s ni mogoče zakleniti"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Vrsta datoteke s kazalom '%s' ni podprta"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Pridobivanje datoteke %li od %li (%s preostalo)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Pridobivanje datoteke %li od %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

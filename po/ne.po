@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -962,6 +962,11 @@ msgstr " %s मा  %s  पुन:नामकरण असफल भयो"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "प्याकेज %s संस्करण %s संग एउटा नभेटिएको dep छ:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "अद्यावधिक आदेशले कुनै तर्कहरू लिदैन"
@@ -977,11 +982,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "प्याकेज %s संस्करण %s संग एउटा नभेटिएको dep छ:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1099,67 +1099,6 @@ msgstr "सबै प्याकेजहरुको नामहरू सू
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "नीति सेटिङ्गहरू देखाउनुहोस्"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "प्याकेज सूचिहरू पढिदैछ"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "पिन गरिएका प्याकेजहरू:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "भाँचिएका प्याकेजहरू"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-#, fuzzy
-msgid "Remove automatically all unused packages"
-msgstr "तर %s स्थापना हुनुपर्यो"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "तर %s स्थापना हुनुपर्यो"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "उपलब्ध सूचना गाँभिदैछ"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -1283,6 +1222,11 @@ msgstr ""
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr ""
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+#, fuzzy
+msgid "Remove automatically all unused packages"
+msgstr "तर %s स्थापना हुनुपर्यो"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1454,6 +1398,62 @@ msgstr "तर %s स्थापना हुनुपर्यो"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "प्याकेज सूचिहरू पढिदैछ"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "पिन गरिएका प्याकेजहरू:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "भाँचिएका प्याकेजहरू"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "तर %s स्थापना हुनुपर्यो"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "उपलब्ध सूचना गाँभिदैछ"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2433,50 +2433,6 @@ msgstr "मोडको डबल थप %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "नक्कली कनफिगगरेसन फाइल %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "आंशिक सूचिहरुको डाइरेक्ट्री %s हराइरहेछ ।"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "आंशिक संग्रह डाइरेक्ट्री %s हराइरहेछ ।"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "सूचि डाइरेक्ट्री ताल्चा मार्न असफल"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "%li को %li फाइल पुन:प्राप्त गरिदैछ (%s बाँकी छ)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "%li को %li फाइल पुन:प्राप्त गरिदैछ"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2638,6 +2594,50 @@ msgstr "विधि %s सही रुपले सुरू हुन सक�
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "कृपया डिस्क लेबुल: '%s' ड्राइभ '%s'मा घुसउनुहोस् र इन्टर थिच्नुहोस् । "
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "आंशिक सूचिहरुको डाइरेक्ट्री %s हराइरहेछ ।"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "आंशिक संग्रह डाइरेक्ट्री %s हराइरहेछ ।"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "सूचि डाइरेक्ट्री ताल्चा मार्न असफल"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "%li को %li फाइल पुन:प्राप्त गरिदैछ (%s बाँकी छ)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "%li को %li फाइल पुन:प्राप्त गरिदैछ"
 
 #: apt-pkg/algorithms.cc
 #, c-format

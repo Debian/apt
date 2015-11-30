@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -958,6 +958,11 @@ msgstr "無法將 %s 更名為 %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "套件 %s 版本 %s 未能滿足相依性：\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "update 指令不需任何參數"
@@ -973,11 +978,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "套件 %s 版本 %s 未能滿足相依性：\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1093,66 +1093,6 @@ msgstr "列出系統中所有套件"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "顯示套件的可安裝版本資訊"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "正在讀取套件清單"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "鎖定的套件："
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "損毀的套件"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "自動移除所有不再使用的套件"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "正在讀取狀態資料"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -1276,6 +1216,10 @@ msgstr "移除套件"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "移除並清除套件"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "自動移除所有不再使用的套件"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1447,6 +1391,62 @@ msgstr "%s 被設定為手動安裝。\n"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "正在讀取套件清單"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "鎖定的套件："
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "損毀的套件"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "正在讀取狀態資料"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2419,50 +2419,6 @@ msgstr "重複加入抽換資訊 %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "重複的設定檔 %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "找不到清單目錄 %spartial。"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "找不到套件檔目錄 %spartial。"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "無法鎖定列表目錄"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "不被支援的索引檔類型 '%s'"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在取得檔案 %li/%li（還有 %s）"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "正在取得檔案 %li/%li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2623,6 +2579,50 @@ msgstr "安裝方式 %s 沒有正確啟動"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "請把標籤為 '%s' 的光碟放入 '%s' 裝置中，然後按下 [Enter] 鍵。"
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "找不到清單目錄 %spartial。"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "找不到套件檔目錄 %spartial。"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "無法鎖定列表目錄"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "不被支援的索引檔類型 '%s'"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "正在取得檔案 %li/%li（還有 %s）"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "正在取得檔案 %li/%li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

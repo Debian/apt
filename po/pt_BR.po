@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -985,6 +985,11 @@ msgstr "Falha ao baixar %s  %s\n"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "O pacote %s versão %s tem uma dependência desencontrada:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "O comando update não leva argumentos"
@@ -1000,11 +1005,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "O pacote %s versão %s tem uma dependência desencontrada:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1120,66 +1120,6 @@ msgstr "Lista o nome de todos os pacotes no sistema"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Mostra as configurações de políticas"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Lendo listas de pacotes"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Pacotes alfinetados (\"pinned\"):"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Pacotes quebrados"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Remove automaticamente todos os pacotes não usados"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "%s configurado para instalar manualmente.\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Lendo informação de estado"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -1306,6 +1246,10 @@ msgstr "Remove pacotes"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Remove e expurga (\"purge\") pacotes"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Remove automaticamente todos os pacotes não usados"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1477,6 +1421,62 @@ msgstr "%s configurado para instalar manualmente.\n"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Lendo listas de pacotes"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Pacotes alfinetados (\"pinned\"):"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Pacotes quebrados"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s configurado para instalar manualmente.\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Lendo informação de estado"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2470,50 +2470,6 @@ msgstr "Adição dupla de desvio %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Arquivo de configuração duplicado %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "Diretório de listas %spartial está faltando."
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Diretório de arquivos %spartial está faltando."
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "Impossível criar trava no diretório de listas"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Tipo de arquivo de índice '%s' não é suportado"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Obtendo o arquivo %li de %li (%s restantes)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Obtendo arquivo %li de %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2678,6 +2634,50 @@ msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr ""
 "Por favor, insira o disco nomeado: '%s' na unidade '%s' e pressione enter."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "Diretório de listas %spartial está faltando."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Diretório de arquivos %spartial está faltando."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "Impossível criar trava no diretório de listas"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Tipo de arquivo de índice '%s' não é suportado"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Obtendo o arquivo %li de %li (%s restantes)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Obtendo arquivo %li de %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

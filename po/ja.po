@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -992,6 +992,11 @@ msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 "'%s' ファイルが変更されています。「apt-get update」を実行してください。"
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "パッケージ %s のバージョン %s には解決不可能な依存関係があります:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "update コマンドは引数をとりません"
@@ -1008,11 +1013,6 @@ msgstr[0] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "パッケージはすべて最新です。"
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "パッケージ %s のバージョン %s には解決不可能な依存関係があります:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1128,61 +1128,6 @@ msgstr "システム内のすべてのパッケージ名一覧を表示する"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "ポリシー設定情報を表示する"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "パッケージ名を基にパッケージの一覧を表示"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "パッケージの説明を検索"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "パッケージの詳細を表示"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "パッケージをインストール"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "パッケージを削除"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "自動インストールされ使われていないすべてのパッケージを削除する"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "利用可能パッケージの一覧を更新"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "パッケージをインストール/更新してシステムをアップグレード"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "パッケージを削除/インストール/更新してシステムをアップグレード"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "ソース情報ファイルを編集"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1318,6 +1263,10 @@ msgstr "パッケージを削除する"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "設定ファイルまで含めてパッケージを削除する"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "自動インストールされ使われていないすべてのパッケージを削除する"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1494,6 +1443,57 @@ msgstr "手作業でインストールしたパッケージの一覧を表示す
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "保留されているパッケージの一覧を表示する"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "パッケージ名を基にパッケージの一覧を表示"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "パッケージの説明を検索"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "パッケージの詳細を表示"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "パッケージをインストール"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "パッケージを削除"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "利用可能パッケージの一覧を更新"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "パッケージをインストール/更新してシステムをアップグレード"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "パッケージを削除/インストール/更新してシステムをアップグレード"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "ソース情報ファイルを編集"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2473,50 +2473,6 @@ msgstr "%s -> %s の diversion が二重に追加されています"
 msgid "Duplicate conf file %s/%s"
 msgstr "設定ファイル %s/%s が重複しています"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "リストディレクトリ %spartial が見つかりません。"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "アーカイブディレクトリ %spartial が見つかりません。"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "ディレクトリ %s をロックできません"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "%s の消去はサポートされていません"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "ファイルを取得しています %li/%li (残り %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "ファイルを取得しています %li/%li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2688,6 +2644,50 @@ msgid ""
 msgstr ""
 "'%s' とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してくだ"
 "さい。"
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "リストディレクトリ %spartial が見つかりません。"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "アーカイブディレクトリ %spartial が見つかりません。"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "ディレクトリ %s をロックできません"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "%s の消去はサポートされていません"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "ファイルを取得しています %li/%li (残り %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "ファイルを取得しています %li/%li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

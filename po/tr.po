@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -1005,6 +1005,11 @@ msgstr "%s ayrıştırılamadı. Tekrar düzenlemek ister misiniz? "
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "'%s' dosyası değişti, lütfen 'apt-get update' komutunu çalıştırın."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "%s paketinin (sürüm %s) karşılanamayan bir bağımlılığı var:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "'update' komutu argüman almaz"
@@ -1024,11 +1029,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Tüm paketler güncel."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "%s paketinin (sürüm %s) karşılanamayan bir bağımlılığı var:\n"
 
 #: cmdline/apt-cache.cc
 msgid "apt-cache stats does not take any arguments"
@@ -1144,61 +1144,6 @@ msgstr "Sistemdeki tüm paketlerin adlarını listele"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "İlke seçeneklerini görüntüle"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "Paketleri adlarına göre listele"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "Paket açıklamalarında arama yap"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "Paket ayrıntılarını görüntüle"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "paket kur"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "paket kaldır"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Kullanılmayan tüm paketleri otomatik olarak kaldır"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "Kullanılabilir paketlerin listesini güncelle"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "sistemi yükselt (paket kurarak ve yükselterek)"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "kaynak bilgi dosyasını düzenle"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1328,6 +1273,10 @@ msgstr "Paket(leri) kaldır"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Paketleri ve yapılandırma dosyalarını kaldır"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Kullanılmayan tüm paketleri otomatik olarak kaldır"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1504,6 +1453,57 @@ msgstr "Elle kurulmuş paketlerin listesini görüntüle"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "Tutulur durumda olan paketlerin listesini görüntüle"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "Paketleri adlarına göre listele"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "Paket açıklamalarında arama yap"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "Paket ayrıntılarını görüntüle"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "paket kur"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "paket kaldır"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "Kullanılabilir paketlerin listesini güncelle"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "sistemi yükselt (paket kurarak ve yükselterek)"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "kaynak bilgi dosyasını düzenle"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2488,52 +2488,6 @@ msgstr "Aynı dosya iki kez yönlendirilemez: %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "%s/%s yapılandırma dosyası zaten mevcut"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Liste dizini %spartial bulunamadı."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Arşiv dizini %spartial bulunamadı."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "%s dizini kilitlenemiyor"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-"'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için dosya "
-"indirilirken ayrıcalıklar bırakılamıyor."
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "%s temizliği desteklenmiyor"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Alınan dosya: %li / %li (%s kaldı)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Alınan dosya: %li / %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2704,6 +2658,52 @@ msgid ""
 msgstr ""
 "Lütfen '%s' olarak etiketlenmiş diski '%s' sürücüsüne yerleştirin ve [Enter] "
 "tuşuna basın."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Liste dizini %spartial bulunamadı."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Arşiv dizini %spartial bulunamadı."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "%s dizini kilitlenemiyor"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+"'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için dosya "
+"indirilirken ayrıcalıklar bırakılamıyor."
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "%s temizliği desteklenmiyor"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Alınan dosya: %li / %li (%s kaldı)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Alınan dosya: %li / %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

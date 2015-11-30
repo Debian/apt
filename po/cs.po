@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -991,6 +991,11 @@ msgstr "Nepodařilo se zpracovat %s. Zkusit znovu upravit?"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "Soubor „%s“ se změnil, spusťte prosím „apt-get update“."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Balík %s verze %s má nesplněné závislosti:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Příkaz update neakceptuje žádné argumenty"
@@ -1010,11 +1015,6 @@ msgstr[2] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Všechny balíky jsou aktuální."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Balík %s verze %s má nesplněné závislosti:\n"
 
 #: cmdline/apt-cache.cc
 msgid "apt-cache stats does not take any arguments"
@@ -1128,61 +1128,6 @@ msgstr "Vypíše jména všech balíků v systému"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Zobrazí nastavenou politiku"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "vypíše balíky podle jmen"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "hledá v popisech balíků"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "zobrazí podrobnosti balíku"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "nainstaluje balíky"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "odstraní balíky"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "automaticky odstraní nepoužívané balíky"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "aktualizuje seznam dostupných balíků"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "aktualizuje systém instalací/aktualizací balíků"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "aktualizuje systém instalací/aktualizací/odstraněním balíků"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "upraví soubor se zdroji balíků"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1309,6 +1254,10 @@ msgstr "Odstraní balíky"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Odstraní balíky včetně konfiguračních souborů"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "automaticky odstraní nepoužívané balíky"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1485,6 +1434,57 @@ msgstr "Vypíše seznam balíků instalovaných ručně"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "Vypíše seznam podržených balíků"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "vypíše balíky podle jmen"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "hledá v popisech balíků"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "zobrazí podrobnosti balíku"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "nainstaluje balíky"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "odstraní balíky"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "aktualizuje seznam dostupných balíků"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "aktualizuje systém instalací/aktualizací balíků"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "aktualizuje systém instalací/aktualizací/odstraněním balíků"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "upraví soubor se zdroji balíků"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2461,52 +2461,6 @@ msgstr "Dvojí přidání diverze %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitní konfigurační soubor %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Adresář seznamů %spartial chybí."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archivní adresář %spartial chybí."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nelze uzamknout adresář %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-"Pro stažení nelze zahodit oprávnění, jelikož soubor „%s“ by nebyl přístupný "
-"uživateli „%s“."
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Vyčištění %s není podporováno"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Stahuje se soubor %li z %li (zbývá %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Stahuje se soubor %li z %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2674,6 +2628,52 @@ msgstr "Metoda %s nebyla spuštěna správně"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte [Enter]."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Adresář seznamů %spartial chybí."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archivní adresář %spartial chybí."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nelze uzamknout adresář %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+"Pro stažení nelze zahodit oprávnění, jelikož soubor „%s“ by nebyl přístupný "
+"uživateli „%s“."
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Vyčištění %s není podporováno"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Stahuje se soubor %li z %li (zbývá %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Stahuje se soubor %li z %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

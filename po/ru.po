@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -1012,6 +1012,11 @@ msgstr "Не удалось разобрать «%s». Повторить ред
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "Файл «%s» изменён, запустите «apt-get update»."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Пакет %s версии %s имеет неудовлетворённую зависимость:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Команде update не нужны аргументы"
@@ -1033,11 +1038,6 @@ msgstr[2] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Все пакеты имеют последние версии."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Пакет %s версии %s имеет неудовлетворённую зависимость:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1152,61 +1152,6 @@ msgstr "показать имена всех пакетов в системе"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "показать текущую политику выбора пакетов"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "показать список пакетов из указанных имён пакетов"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "искать в описаниях пакетов"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "показать дополнительные данные о пакете"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "установить пакеты"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "удалить пакеты"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "автоматически удалить все неиспользуемые пакеты"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "обновить список доступных пакетов"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "обновить систему, устанавливая/обновляя пакеты"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "редактировать файл с источниками пакетов"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1340,6 +1285,10 @@ msgstr "удалить пакеты"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "удалить пакеты вместе с их файлами настройки"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "автоматически удалить все неиспользуемые пакеты"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1518,6 +1467,57 @@ msgstr "вывести список пакетов установленных в
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "вывести список зафиксированных пакетов"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "показать список пакетов из указанных имён пакетов"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "искать в описаниях пакетов"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "показать дополнительные данные о пакете"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "установить пакеты"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "удалить пакеты"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "обновить список доступных пакетов"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "обновить систему, устанавливая/обновляя пакеты"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "редактировать файл с источниками пакетов"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2512,50 +2512,6 @@ msgstr "Двойное добавление diversion %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Повторно указан файл настройки %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Каталог списка %spartial отсутствует."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Архивный каталог %spartial отсутствует."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Невозможно заблокировать каталог %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Очистка «%s» не поддерживается"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Скачивается файл %li из %li (осталось %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Скачивается файл %li из %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2721,6 +2677,50 @@ msgstr "Метод %s запустился не корректно"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Каталог списка %spartial отсутствует."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Архивный каталог %spartial отсутствует."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Невозможно заблокировать каталог %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Очистка «%s» не поддерживается"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Скачивается файл %li из %li (осталось %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Скачивается файл %li из %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

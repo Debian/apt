@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -960,6 +960,11 @@ msgstr "แจง %s ไม่สำเร็จ จะแก้ไขอีก�
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "แฟ้ม '%s' ของคุณมีการเปลี่ยนแปลง กรุณาเรียก 'apt-get update'"
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "แพกเกจ %s รุ่น %s ขาดแพกเกจที่ต้องใช้:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "คำสั่ง update ไม่รับอาร์กิวเมนต์เพิ่ม"
@@ -975,11 +980,6 @@ msgstr[0] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "ปรับรุ่นทุกแพกเกจเป็นรุ่นล่าสุดแล้ว"
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "แพกเกจ %s รุ่น %s ขาดแพกเกจที่ต้องใช้:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1094,61 +1094,6 @@ msgstr "แสดงรายชื่อแพกเกจทั้งหมด
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "แสดงค่าตั้งนโยบาย"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "แสดงรายชื่อแพกเกจที่มีชื่อตรงกับรูปแบบที่กำหนด"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "ค้นหาในคำบรรยายแพกเกจ"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "แสดงรายละเอียดของแพกเกจ"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "ติดตั้งแพกเกจ"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "ถอดถอนแพกเกจ"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "ถอดถอนแพกเกจที่ไม่ใช้แล้วโดยอัตโนมัติ"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "ปรับข้อมูลรายชื่อของแพกเกจที่มี"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "ปรับรุ่นระบบโดยติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "ปรับรุ่นระบบโดยถอดถอน/ติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "แก้ไขแฟ้มข้อมูลแหล่งแพกเกจ"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1274,6 +1219,10 @@ msgstr "ถอดถอนแพกเกจ"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "ถอดถอนแพกเกจพร้อมลบค่าตั้งทั้งหมด"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "ถอดถอนแพกเกจที่ไม่ใช้แล้วโดยอัตโนมัติ"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1450,6 +1399,57 @@ msgstr "แสดงรายชื่อของแพกเกจที่ต
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "แสดงรายชื่อของแพกเกจที่คงรุ่นอยู่"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "แสดงรายชื่อแพกเกจที่มีชื่อตรงกับรูปแบบที่กำหนด"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "ค้นหาในคำบรรยายแพกเกจ"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "แสดงรายละเอียดของแพกเกจ"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "ติดตั้งแพกเกจ"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "ถอดถอนแพกเกจ"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "ปรับข้อมูลรายชื่อของแพกเกจที่มี"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "ปรับรุ่นระบบโดยติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "ปรับรุ่นระบบโดยถอดถอน/ติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "แก้ไขแฟ้มข้อมูลแหล่งแพกเกจ"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2417,50 +2417,6 @@ msgstr "เพิ่มการเบนแฟ้ม %s -> %s ซ้ำสอ�
 msgid "Duplicate conf file %s/%s"
 msgstr "แฟ้มค่าตั้ง %s/%s ซ้ำ"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "ไม่มีไดเรกทอรีรายชื่อแพกเกจ %spartial"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "ไม่มีไดเรกทอรีแพกเกจ %spartial"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "ไม่สามารถล็อคไดเรกทอรี %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li (เหลืออีก %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2624,6 +2580,50 @@ msgstr "ไม่สามารถเรียกทำงานวิธีก
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "กรุณาใส่แผ่นชื่อ: '%s' ลงในไดรว์ '%s' แล้วกด enter"
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "ไม่มีไดเรกทอรีรายชื่อแพกเกจ %spartial"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "ไม่มีไดเรกทอรีแพกเกจ %spartial"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "ไม่สามารถล็อคไดเรกทอรี %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li (เหลืออีก %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "กำลังดาวน์โหลดแฟ้มที่ %li จาก %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

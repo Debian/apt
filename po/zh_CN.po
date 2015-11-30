@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -958,6 +958,11 @@ msgstr "解析 %s 失败。请重新编辑之后再试。"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。"
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "版本为 %2$s 的软件包 %1$s 有未满足的依赖关系：\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr " update 命令不需要参数"
@@ -973,11 +978,6 @@ msgstr[0] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "所有软件包均为最新。"
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "版本为 %2$s 的软件包 %1$s 有未满足的依赖关系：\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1092,61 +1092,6 @@ msgstr "列出所有软件包的名字"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "显示软件包的安装设置状态"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "根据名称列出软件包"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "搜索软件包描述"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "显示软件包细节"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "安装软件包"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "移除软件包"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "卸载所有自动安装且不再使用的软件包"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "更新可用软件包列表"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "通过 安装/升级 软件来更新系统"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "通过 卸载/安装/升级 来更新系统"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "编辑软件源信息文件"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1272,6 +1217,10 @@ msgstr "卸载软件包"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "卸载并清除软件包的配置"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "卸载所有自动安装且不再使用的软件包"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1448,6 +1397,57 @@ msgstr "列出所有手动安装的软件包"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "列出设为保留的软件包"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "根据名称列出软件包"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "搜索软件包描述"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "显示软件包细节"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "安装软件包"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "移除软件包"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "更新可用软件包列表"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "通过 安装/升级 软件来更新系统"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "通过 卸载/安装/升级 来更新系统"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "编辑软件源信息文件"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2418,50 +2418,6 @@ msgstr "添加了两个转移项 %s-> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "重复的配置文件 %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "软件包列表的目录 %spartial 缺失。"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "仓库目录 %spartial 确实。"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "无法对目录 %s 加锁"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "%s 的 Clean (清理)不被支持"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "正在下载第 %li 个文件，共 %li 个"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2624,6 +2580,50 @@ msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "请把标有“%s”的盘片插入驱动器“%s”再按回车键。"
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "软件包列表的目录 %spartial 缺失。"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "仓库目录 %spartial 确实。"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "无法对目录 %s 加锁"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "%s 的 Clean (清理)不被支持"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "正在下载第 %li 个文件，共 %li 个"
 
 #: apt-pkg/algorithms.cc
 #, c-format

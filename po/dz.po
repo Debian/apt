@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -973,6 +973,11 @@ msgstr "%s་ལུ་%s་བསྐྱར་མིང་བཏགས་ནི�
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "ཐུམ་སྒྲིལ་ %s ཐོན་རིམ་ %s ལུ་ ཌེཔ་མ་ཚང་ཅིག་འདུག:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "དུས་མཐུན་བཟོ་བའི་བརྡ་བཀོད་འདི་གིས་སྒྲུབ་རྟགས་ཚུ་མི་འབག་འབད།"
@@ -988,11 +993,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr ""
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "ཐུམ་སྒྲིལ་ %s ཐོན་རིམ་ %s ལུ་ ཌེཔ་མ་ཚང་ཅིག་འདུག:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1110,67 +1110,6 @@ msgstr "འདི་གིས་ཐུམ་སྒྲིལ་ཚུ་ཆ་མ
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "འདི་གིས་ སྲིད་བྱུས་སྒྲིག་སྟངས་ཚུ་སྟོནམ་ཨིན།"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "ཆད་པ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ།"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-#, fuzzy
-msgid "Remove automatically all unused packages"
-msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "འཐོབ་ཚུགས་པའི་བརྡ་དོན་མཉམ་བསྡོམས་འབད་དོ།"
 
 #: cmdline/apt-cdrom.cc
 #, fuzzy
@@ -1296,6 +1235,11 @@ msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་ཚུ་རྩ�
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr ""
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+#, fuzzy
+msgid "Remove automatically all unused packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1467,6 +1411,62 @@ msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུག�
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "ཆད་པ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ།"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "འཐོབ་ཚུགས་པའི་བརྡ་དོན་མཉམ་བསྡོམས་འབད་དོ།"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2458,50 +2458,6 @@ msgstr "%s -> %s་ཁ་ཕྱོགས་ཀྱི་ལོག་བལྟབ�
 msgid "Duplicate conf file %s/%s"
 msgstr "རིམ་སྒྲིག་ཡིག་སྣོད་%s/%s་འདི་ངོ་བཤུས་བཟོ།"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "ཡིག་མཛོད་སྣོད་ཐོ་ %s་ ཆ་ཤས་འདི་བརླག་སྟོར་ཞུགས་ཏེ་འདུག"
-
-#: apt-pkg/acquire.cc
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཀྱི་དབྱེ་བ་ '%s' འདི་རྒྱབ་སྐྱོར་མ་འབད་བས།"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "%li་ གི་བརླག་སྟོར་ཞུགས་པའི་ཡིག་སྣོད་%li (%s ལྷག་ལུས་དོ།)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr " %li་གི་བརླག་སྟོར་ཟུགསཔའི་ཡིག་སྣོད་ %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2664,6 +2620,50 @@ msgstr "ཐབས་ལམ་ %s འདི་ངེས་བདེན་སྦ�
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "ཁ་ཡིག་བཀོད་ཡོད་པའི་ ཌིསི་འདི་བཙུགས་གནང་། '%s'འདྲེན་འཕྲུལ་ནང་'%s' དང་ལོག་ལྡེ་འདི་ཨེབ།་"
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "ཡིག་མཛོད་སྣོད་ཐོ་ %s་ ཆ་ཤས་འདི་བརླག་སྟོར་ཞུགས་ཏེ་འདུག"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཀྱི་དབྱེ་བ་ '%s' འདི་རྒྱབ་སྐྱོར་མ་འབད་བས།"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "%li་ གི་བརླག་སྟོར་ཞུགས་པའི་ཡིག་སྣོད་%li (%s ལྷག་ལུས་དོ།)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr " %li་གི་བརླག་སྟོར་ཟུགསཔའི་ཡིག་སྣོད་ %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

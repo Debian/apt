@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -984,6 +984,11 @@ msgstr "Gặp lỗi khi phân tích %s. Sửa lại chứ? "
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "Tập tin “%s” của bạn đã thay đổi, hãy chạy lệnh “apt-get update”."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Gói %s phiên bản %s có phần phụ thuộc chưa thỏa mãn:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Lệnh cập nhật không chấp nhận đối số"
@@ -999,11 +1004,6 @@ msgstr[0] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Mọi gói đã được cập nhật."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Gói %s phiên bản %s có phần phụ thuộc chưa thỏa mãn:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1119,61 +1119,6 @@ msgstr "Liệt kê danh sách mọi gói trên hệ thống"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Hiển thị các cài đặt về chính sách"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "liệt kê các gói dựa trên cơ sở là tên gói"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "tìm trong phần mô tả của gói"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "hiển thị thông tin chi tiết về gói"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "cài đặt các gói"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "gỡ bỏ các gói"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Tự động gỡ bỏ tất cả các gói không dùng"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "cập nhật danh sánh các gói sẵn có"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "nâng cấp các gói trong hệ thống"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các gói"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "sửa tập tin thông tin gói nguồn"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1311,6 +1256,10 @@ msgstr "Gỡ bỏ gói phần mềm"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Gỡ bỏ và tẩy xóa gói"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Tự động gỡ bỏ tất cả các gói không dùng"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1490,6 +1439,57 @@ msgstr "In ra danh sách các gói được cài đặt bằng tay"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "In ra danh sách các gói được giữ lại"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "liệt kê các gói dựa trên cơ sở là tên gói"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "tìm trong phần mô tả của gói"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "hiển thị thông tin chi tiết về gói"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "cài đặt các gói"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "gỡ bỏ các gói"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "cập nhật danh sánh các gói sẵn có"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "nâng cấp các gói trong hệ thống"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các gói"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "sửa tập tin thông tin gói nguồn"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2494,50 +2494,6 @@ msgstr "Sự trệch đi được thêm hai lần %s → %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Tập tin cấu hình (conf) trùng lặp %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Thiếu thư mục danh sách %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Thiếu thư mục kho lưu %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Không thể khoá thư mục %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Không hỗ trợ việc xóa %s"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Đang tải tập tin thứ %li trong tổng số %li (còn lại %s)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Đang tải tập tin %li trong tổng số %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2706,6 +2662,50 @@ msgstr "Phương thức %s đã không khởi chạy đúng đắn."
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Hãy cho đĩa có nhãn “%s” vào ổ “%s” rồi bấm nút Enter."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Thiếu thư mục danh sách %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Thiếu thư mục kho lưu %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Không thể khoá thư mục %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Không hỗ trợ việc xóa %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Đang tải tập tin thứ %li trong tổng số %li (còn lại %s)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Đang tải tập tin %li trong tổng số %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

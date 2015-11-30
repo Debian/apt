@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -1000,6 +1000,12 @@ msgstr "Misslyckades med att tolka %s. Redigera igen? "
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "Din ”%s”-fil ändrades, kör ”apt-get update”."
 
+#: apt-private/private-unmet.cc
+#, fuzzy, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr ""
+"Paketet %s med version %s har ett beroende som inte kan tillfredsställas:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Uppdateringskommandot tar inga argument"
@@ -1017,12 +1023,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Alla paket är uppdaterade."
-
-#: cmdline/apt-cache.cc
-#, fuzzy, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr ""
-"Paketet %s med version %s har ett beroende som inte kan tillfredsställas:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1137,61 +1137,6 @@ msgstr "Lista namnen på alla paket i systemet"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Visa policyinställningar"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "lista paket baserat på paketnamn"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "sök i paketbeskrivningar"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "visa detaljer för paket"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "installera paket"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "ta bort paket"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Ta automatiskt bort alla oanvända paket"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "uppdatera lista över tillgängliga paket"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "uppgradera systemet genom att installera/uppgradera paket"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "uppgradera systemet genom att ta bort/installera/uppgradera paket"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "redigera källinformationsfilen"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1321,6 +1266,10 @@ msgstr "Ta bort paket"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Ta bort paket och konfigurationsfiler"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Ta automatiskt bort alla oanvända paket"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1498,6 +1447,57 @@ msgstr "Visa listan över manuellt installerade paket"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "Visa listan över tillbakahållna paket"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "lista paket baserat på paketnamn"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "sök i paketbeskrivningar"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "visa detaljer för paket"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "installera paket"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "ta bort paket"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "uppdatera lista över tillgängliga paket"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "uppgradera systemet genom att installera/uppgradera paket"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "uppgradera systemet genom att ta bort/installera/uppgradera paket"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "redigera källinformationsfilen"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2496,52 +2496,6 @@ msgstr "Omdirigeringen %s -> %s inlagd två gånger"
 msgid "Duplicate conf file %s/%s"
 msgstr "Duplicerad konfigurationsfil %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Listkatalogen %spartial saknas."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Arkivkatalogen %spartial saknas."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Kunde inte låsa katalogen %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-"Kan inte släppa privilegier för hämtning eftersom filen ”%s” inte kunde "
-"kommas åt av användaren ”%s”."
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Rensning av %s stöds inte"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Hämtar fil %li av %li (%s återstår)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Hämtar fil %li av %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2709,6 +2663,52 @@ msgstr "Metoden %s startade inte korrekt"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Mata in skivan med etiketten ”%s” i enheten ”%s” och tryck på [Retur]."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Listkatalogen %spartial saknas."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Arkivkatalogen %spartial saknas."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Kunde inte låsa katalogen %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+"Kan inte släppa privilegier för hämtning eftersom filen ”%s” inte kunde "
+"kommas åt av användaren ”%s”."
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Rensning av %s stöds inte"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Hämtar fil %li av %li (%s återstår)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Hämtar fil %li av %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

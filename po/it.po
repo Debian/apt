@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2015-04-07 16:51+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -1007,6 +1007,11 @@ msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 "Il proprio file \"%s\" è stato modificato: eseguire \"apt-get update\"."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Il pacchetto %s versione %s ha una dipendenza non soddisfatta:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Il comando update non accetta argomenti"
@@ -1026,11 +1031,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Tutti i pacchetti sono aggiornati."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Il pacchetto %s versione %s ha una dipendenza non soddisfatta:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1146,65 +1146,6 @@ msgstr "Elenca i nomi di tutti i pacchetti nel sistema"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Mostra le preferenze adottate"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "Elenca i pacchetti in base al nome"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "Cerca tra le descrizioni dei pacchetti"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "Mostra dettagli di un pacchetto"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "Installa pacchetti"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "Rimuove pacchetti"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Rimuove automaticamente i pacchetti inutilizzati"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "Aggiorna l'elenco dei pacchetti disponibili"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-"Esegue l'avanzamento di versione del sistema installando e aggiornando i "
-"pacchetti"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-"Esegue l'avanzamento di versione del sistema rimuovendo, installando e "
-"aggiornando i pacchetti"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "Modifica il file sulle informazioni delle sorgenti"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1335,6 +1276,10 @@ msgstr "Rimuove i pacchetti"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Rimuove i pacchetti e la loro configurazione"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Rimuove automaticamente i pacchetti inutilizzati"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1513,6 +1458,61 @@ msgstr "Stampa l'elenco dei pacchetti installati manualmente"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "Stampa l'elenco dei pacchetti bloccati"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "Elenca i pacchetti in base al nome"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "Cerca tra le descrizioni dei pacchetti"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "Mostra dettagli di un pacchetto"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "Installa pacchetti"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "Rimuove pacchetti"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "Aggiorna l'elenco dei pacchetti disponibili"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+"Esegue l'avanzamento di versione del sistema installando e aggiornando i "
+"pacchetti"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+"Esegue l'avanzamento di versione del sistema rimuovendo, installando e "
+"aggiornando i pacchetti"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "Modifica il file sulle informazioni delle sorgenti"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2508,51 +2508,6 @@ msgstr "Doppia aggiunta di deviazione %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "File di configurazione duplicato %s/%s"
 
-# (ndt) sarebbe da controllare meglio assieme a quella dopo
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Manca la directory di liste %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Manca la directory di archivio %spartial."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Impossibile bloccare la directory %s"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "La pulizia di %s non è supportata"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Scaricamento file %li di %li (%s rimanente)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Scaricamento file %li di %li"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2723,6 +2678,51 @@ msgstr "Il metodo %s non si è avviato correttamente"
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr "Inserire il disco chiamato \"%s\" nell'unità \"%s\" e premere Invio."
+
+# (ndt) sarebbe da controllare meglio assieme a quella dopo
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Manca la directory di liste %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Manca la directory di archivio %spartial."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Impossibile bloccare la directory %s"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "La pulizia di %s non è supportata"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Scaricamento file %li di %li (%s rimanente)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Scaricamento file %li di %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format

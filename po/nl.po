@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-11-28 22:48+0100\n"
+"POT-Creation-Date: 2015-11-30 08:50+0100\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1007,6 +1007,11 @@ msgstr "Verwerken van %s is mislukt. Opnieuw bewerken? "
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr "Uw bestand '%s' is gewijzigd. Voer 'apt-get update' uit."
 
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Pakket %s versie %s heeft een niet-voldane vereiste:\n"
+
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "De opdracht 'update' aanvaardt geen argumenten"
@@ -1026,11 +1031,6 @@ msgstr[1] ""
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
 msgstr "Alle pakketten zijn up-to-date."
-
-#: cmdline/apt-cache.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Pakket %s versie %s heeft een niet-voldane vereiste:\n"
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1147,63 +1147,6 @@ msgstr "Toon de namen van alle pakketten op het systeem"
 #: cmdline/apt-cache.cc
 msgid "Show policy settings"
 msgstr "Toon beleidsinstellingen"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "geef een lijst van pakketten op basis van hun naam"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "zoek in de pakketbeschrijvingen"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "toon gedetailleerde informatie over het pakket"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "installeer pakketten"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "verwijder pakketten"
-
-#: cmdline/apt.cc cmdline/apt-get.cc
-msgid "Remove automatically all unused packages"
-msgstr "Verwijder automatisch alle ongebruikte pakketten"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "werk de lijst van beschikbare pakketten bij"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "waardeer het systeem op door pakketten te installeren/op te waarderen"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-"waardeer het systeem op door pakketten te verwijderen/te installeren/op te "
-"waarderen"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "bewerk het bestand met informatie over de bron"
 
 #: cmdline/apt-cdrom.cc
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -1338,6 +1281,10 @@ msgstr "Verwijder pakketten"
 #: cmdline/apt-get.cc
 msgid "Remove packages and config files"
 msgstr "Verwijder pakketten en hun configuratiebestanden"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Verwijder automatisch alle ongebruikte pakketten"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -1515,6 +1462,59 @@ msgstr "Toon de lijst van manueel geïnstalleerde pakketten"
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
 msgstr "Toon de lijst van tegengehouden pakketten"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "geef een lijst van pakketten op basis van hun naam"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "zoek in de pakketbeschrijvingen"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "toon gedetailleerde informatie over het pakket"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "installeer pakketten"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "verwijder pakketten"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "werk de lijst van beschikbare pakketten bij"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "waardeer het systeem op door pakketten te installeren/op te waarderen"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+"waardeer het systeem op door pakketten te verwijderen/te installeren/op te "
+"waarderen"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "bewerk het bestand met informatie over de bron"
 
 #: methods/cdrom.cc
 #, c-format
@@ -2510,50 +2510,6 @@ msgstr "Dubbele toevoeging van de omleiding %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Dubbel configuratiebestand %s/%s"
 
-#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Lijstmap %spartial is afwezig."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archiefmap %spartial is afwezig."
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Kan de map %s niet vergrendelen"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
-msgstr ""
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Opschonen van %s wordt niet ondersteund"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Bestand %li van %li wordt opgehaald (nog %s te gaan)"
-
-#: apt-pkg/acquire.cc
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Bestand %li van %li wordt opgehaald"
-
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
@@ -2725,6 +2681,50 @@ msgid ""
 msgstr ""
 "Gelieve de schijf met label '%s' in het station '%s' te plaatsen en op "
 "'enter' te drukken."
+
+#: apt-pkg/acquire.cc apt-pkg/cdrom.cc
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Lijstmap %spartial is afwezig."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archiefmap %spartial is afwezig."
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Kan de map %s niet vergrendelen"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "No sandbox user '%s' on the system, can not drop privileges"
+msgstr ""
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid ""
+"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
+"user '%s'."
+msgstr ""
+
+#: apt-pkg/acquire.cc apt-pkg/clean.cc
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Opschonen van %s wordt niet ondersteund"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Bestand %li van %li wordt opgehaald (nog %s te gaan)"
+
+#: apt-pkg/acquire.cc
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Bestand %li van %li wordt opgehaald"
 
 #: apt-pkg/algorithms.cc
 #, c-format
