@@ -180,3 +180,6 @@ ifndef PARALLEL_RUN
   MAKEFLAGS += -j $(NUM_PROCS)
  endif
 endif
+
+# This makes sorting predictable
+export LC_COLLATE=C.UTF-8
