@@ -951,6 +951,29 @@ bool DoBuildDep(CommandLine &CmdL)
    else
       StripMultiArch = true;
 
+   // deal with the build essentials first
+   {
+      std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
+
+      Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
+      if (Opts)
+	 Opts = Opts->Child;
+      for (; Opts; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+
+	 pkgSrcRecords::Parser::BuildDepRec rec;
+	 rec.Package = Opts->Value;
+	 rec.Type = pkgSrcRecords::Parser::BuildDependIndep;
+	 rec.Op = 0;
+	 BuildDeps.push_back(rec);
+      }
+
+      if (InstallBuildDepsLoop(Cache, "APT::Build-Essential", BuildDeps, StripMultiArch, hostArch) == false)
+	 return false;
+   }
+
    unsigned J = 0;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
@@ -1002,22 +1025,6 @@ bool DoBuildDep(CommandLine &CmdL)
       }
       else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
 	 return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-
-      // Also ensure that build-essential packages are present
-      Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
-      if (Opts) 
-	 Opts = Opts->Child;
-      for (; Opts; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty() == true)
-	    continue;
-
-	 pkgSrcRecords::Parser::BuildDepRec rec;
-	 rec.Package = Opts->Value;
-	 rec.Type = pkgSrcRecords::Parser::BuildDependIndep;
-	 rec.Op = 0;
-	 BuildDeps.push_back(rec);
-      }
 
       if (BuildDeps.empty() == true)
       {
