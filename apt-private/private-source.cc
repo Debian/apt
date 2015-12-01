@@ -611,6 +611,306 @@ bool DoSource(CommandLine &CmdL)
    return ExecWait(Process, "dpkg-source");
 }
 									/*}}}*/
+// InstallBuildDepsLoop							/*{{{*/
+static bool InstallBuildDepsLoop(CacheFile &Cache, std::string const &Src,
+      std::vector<pkgSrcRecords::Parser::BuildDepRec> const &BuildDeps,
+      bool const StripMultiArch, std::string const &hostArch)
+{
+   // Install the requested packages
+   std::vector <pkgSrcRecords::Parser::BuildDepRec>::const_iterator D;
+   pkgProblemResolver Fix(Cache);
+   bool skipAlternatives = false; // skip remaining alternatives in an or group
+   for (D = BuildDeps.begin(); D != BuildDeps.end(); ++D)
+   {
+      bool hasAlternatives = (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or);
+
+      if (skipAlternatives == true)
+      {
+	 /*
+	  * if there are alternatives, we've already picked one, so skip
+	  * the rest
+	  *
+	  * TODO: this means that if there's a build-dep on A|B and B is
+	  * installed, we'll still try to install A; more importantly,
+	  * if A is currently broken, we cannot go back and try B. To fix
+	  * this would require we do a Resolve cycle for each package we
+	  * add to the install list. Ugh
+	  */
+	 if (!hasAlternatives)
+	    skipAlternatives = false; // end of or group
+	 continue;
+      }
+
+      if ((*D).Type == pkgSrcRecords::Parser::BuildConflict ||
+	    (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
+      {
+	 pkgCache::GrpIterator Grp = Cache->FindGrp((*D).Package);
+	 // Build-conflicts on unknown packages are silently ignored
+	 if (Grp.end() == true)
+	    continue;
+
+	 for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+	 {
+	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
+	    /*
+	     * Remove if we have an installed version that satisfies the
+	     * version criteria
+	     */
+	    if (IV.end() == false &&
+		  Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+	       TryToInstallBuildDep(Pkg,Cache,Fix,true,false);
+	 }
+      }
+      else // BuildDep || BuildDepIndep
+      {
+	 if (_config->FindB("Debug::BuildDeps",false) == true)
+	    std::cout << "Looking for " << (*D).Package << "...\n";
+
+	 pkgCache::PkgIterator Pkg;
+
+	 // Cross-Building?
+	 if (StripMultiArch == false && D->Type != pkgSrcRecords::Parser::BuildDependIndep)
+	 {
+	    size_t const colon = D->Package.find(":");
+	    if (colon != std::string::npos)
+	    {
+	       if (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0)
+		  Pkg = Cache->FindPkg(D->Package.substr(0,colon));
+	       else
+		  Pkg = Cache->FindPkg(D->Package);
+	    }
+	    else
+	       Pkg = Cache->FindPkg(D->Package, hostArch);
+
+	    // a bad version either is invalid or doesn't satify dependency
+#define BADVER(Ver) (Ver.end() == true || \
+      (D->Version.empty() == false && \
+       Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false))
+
+	    APT::VersionList verlist;
+	    if (Pkg.end() == false)
+	    {
+	       pkgCache::VerIterator Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+	       if (BADVER(Ver) == false)
+		  verlist.insert(Ver);
+	       Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	       if (BADVER(Ver) == false)
+		  verlist.insert(Ver);
+	    }
+	    if (verlist.empty() == true)
+	    {
+	       pkgCache::PkgIterator BuildPkg = Cache->FindPkg(D->Package, "native");
+	       if (BuildPkg.end() == false && Pkg != BuildPkg)
+	       {
+		  pkgCache::VerIterator Ver = (*Cache)[BuildPkg].InstVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
+		  Ver = (*Cache)[BuildPkg].CandidateVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
+	       }
+	    }
+#undef BADVER
+
+	    std::string forbidden;
+	    // We need to decide if host or build arch, so find a version we can look at
+	    APT::VersionList::const_iterator Ver = verlist.begin();
+	    for (; Ver != verlist.end(); ++Ver)
+	    {
+	       forbidden.clear();
+	       if (Ver->MultiArch == pkgCache::Version::No || Ver->MultiArch == pkgCache::Version::All)
+	       {
+		  if (colon == std::string::npos)
+		     Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
+		  else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+		     forbidden = "Multi-Arch: no";
+		  else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     Pkg = Ver.ParentPkg().Group().FindPkg("native");
+	       }
+	       else if (Ver->MultiArch == pkgCache::Version::Same)
+	       {
+		  if (colon == std::string::npos)
+		     Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
+		  else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+		     forbidden = "Multi-Arch: same";
+		  else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     Pkg = Ver.ParentPkg().Group().FindPkg("native");
+	       }
+	       else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+	       {
+		  if (colon == std::string::npos)
+		     Pkg = Ver.ParentPkg().Group().FindPkg("native");
+		  else if (strcmp(D->Package.c_str() + colon, ":any") == 0 ||
+			strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     forbidden = "Multi-Arch: foreign";
+	       }
+	       else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+	       {
+		  if (colon == std::string::npos)
+		     Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
+		  else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+		  {
+		     // prefer any installed over preferred non-installed architectures
+		     pkgCache::GrpIterator Grp = Ver.ParentPkg().Group();
+		     // we don't check for version here as we are better of with upgrading than remove and install
+		     for (Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+			if (Pkg.CurrentVer().end() == false)
+			   break;
+		     if (Pkg.end() == true)
+			Pkg = Grp.FindPreferredPkg(true);
+		  }
+		  else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     Pkg = Ver.ParentPkg().Group().FindPkg("native");
+	       }
+
+	       if (forbidden.empty() == false)
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     std::cout << D->Package.substr(colon, std::string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << " (" << Ver.VerStr() << ")" << std::endl;
+		  continue;
+	       }
+
+	       //we found a good version
+	       break;
+	    }
+	    if (Ver == verlist.end())
+	    {
+	       if (_config->FindB("Debug::BuildDeps",false) == true)
+		  std::cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << std::endl;
+
+	       if (forbidden.empty() == false)
+	       {
+		  if (hasAlternatives)
+		     continue;
+		  return _error->Error(_("%s dependency for %s can't be satisfied "
+			   "because %s is not allowed on '%s' packages"),
+			pkgSrcRecords::Parser::BuildDepType(D->Type), Src.c_str(),
+			D->Package.c_str(), forbidden.c_str());
+	       }
+	    }
+	 }
+	 else
+	    Pkg = Cache->FindPkg(D->Package);
+
+	 if (Pkg.end() == true || (Pkg->VersionList == 0 && Pkg->ProvidesList == 0))
+	 {
+	    if (_config->FindB("Debug::BuildDeps",false) == true)
+	       std::cout << " (not found)" << (*D).Package << std::endl;
+
+	    if (hasAlternatives)
+	       continue;
+
+	    return _error->Error(_("%s dependency for %s cannot be satisfied "
+		     "because the package %s cannot be found"),
+		  pkgSrcRecords::Parser::BuildDepType(D->Type), Src.c_str(),
+		  (*D).Package.c_str());
+	 }
+
+	 pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
+	 if (IV.end() == false)
+	 {
+	    if (_config->FindB("Debug::BuildDeps",false) == true)
+	       std::cout << "  Is installed\n";
+
+	    if (D->Version.empty() == true ||
+		  Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+	    {
+	       skipAlternatives = hasAlternatives;
+	       continue;
+	    }
+
+	    if (_config->FindB("Debug::BuildDeps",false) == true)
+	       std::cout << "    ...but the installed version doesn't meet the version requirement\n";
+
+	    if (((*D).Op & pkgCache::Dep::LessEq) == pkgCache::Dep::LessEq)
+	       return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
+		     pkgSrcRecords::Parser::BuildDepType(D->Type), Src.c_str(), Pkg.FullName(true).c_str());
+	 }
+
+	 // Only consider virtual packages if there is no versioned dependency
+	 if ((*D).Version.empty() == true)
+	 {
+	    /*
+	     * If this is a virtual package, we need to check the list of
+	     * packages that provide it and see if any of those are
+	     * installed
+	     */
+	    pkgCache::PrvIterator Prv = Pkg.ProvidesList();
+	    for (; Prv.end() != true; ++Prv)
+	    {
+	       if (_config->FindB("Debug::BuildDeps",false) == true)
+		  std::cout << "  Checking provider " << Prv.OwnerPkg().FullName() << std::endl;
+
+	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
+		  break;
+	    }
+
+	    if (Prv.end() == false)
+	    {
+	       if (_config->FindB("Debug::BuildDeps",false) == true)
+		  std::cout << "  Is provided by installed package " << Prv.OwnerPkg().FullName() << std::endl;
+	       skipAlternatives = hasAlternatives;
+	       continue;
+	    }
+	 }
+	 else // versioned dependency
+	 {
+	    pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	    if (CV.end() == true ||
+		  Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == false)
+	    {
+	       if (hasAlternatives)
+		  continue;
+	       else if (CV.end() == false)
+		  return _error->Error(_("%s dependency for %s cannot be satisfied "
+			   "because candidate version of package %s "
+			   "can't satisfy version requirements"),
+			pkgSrcRecords::Parser::BuildDepType(D->Type), Src.c_str(),
+			D->Package.c_str());
+	       else
+		  return _error->Error(_("%s dependency for %s cannot be satisfied "
+			   "because package %s has no candidate version"),
+			pkgSrcRecords::Parser::BuildDepType(D->Type), Src.c_str(),
+			D->Package.c_str());
+	    }
+	 }
+
+	 if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false,false) == true)
+	 {
+	    // We successfully installed something; skip remaining alternatives
+	    skipAlternatives = hasAlternatives;
+	    if(_config->FindB("APT::Get::Build-Dep-Automatic", false) == true)
+	       Cache->MarkAuto(Pkg, true);
+	    continue;
+	 }
+	 else if (hasAlternatives)
+	 {
+	    if (_config->FindB("Debug::BuildDeps",false) == true)
+	       std::cout << "  Unsatisfiable, trying alternatives\n";
+	    continue;
+	 }
+	 else
+	 {
+	    return _error->Error(_("Failed to satisfy %s dependency for %s: %s"),
+		  pkgSrcRecords::Parser::BuildDepType(D->Type),
+		  Src.c_str(),
+		  (*D).Package.c_str());
+	 }
+      }
+   }
+
+   if (Fix.Resolve(true) == false)
+      _error->Discard();
+
+   // Now we check the state of the packages,
+   if (Cache->BrokenCount() != 0)
+   {
+      ShowBroken(std::cout, Cache, false);
+      return _error->Error(_("Build-dependencies for %s could not be satisfied."), Src.c_str());
+   }
+   return true;
+}
+									/*}}}*/
 // DoBuildDep - Install/removes packages to satisfy build dependencies  /*{{{*/
 // ---------------------------------------------------------------------
 /* This function will look at the build depends list of the given source 
@@ -725,298 +1025,8 @@ bool DoBuildDep(CommandLine &CmdL)
 	 continue;
       }
 
-      // Install the requested packages
-      std::vector <pkgSrcRecords::Parser::BuildDepRec>::iterator D;
-      pkgProblemResolver Fix(Cache);
-      bool skipAlternatives = false; // skip remaining alternatives in an or group
-      for (D = BuildDeps.begin(); D != BuildDeps.end(); ++D)
-      {
-	 bool hasAlternatives = (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or);
-
-	 if (skipAlternatives == true)
-	 {
-	    /*
-	     * if there are alternatives, we've already picked one, so skip
-	     * the rest
-	     *
-	     * TODO: this means that if there's a build-dep on A|B and B is
-	     * installed, we'll still try to install A; more importantly,
-	     * if A is currently broken, we cannot go back and try B. To fix 
-	     * this would require we do a Resolve cycle for each package we 
-	     * add to the install list. Ugh
-	     */
-	    if (!hasAlternatives)
-	       skipAlternatives = false; // end of or group
-	    continue;
-	 }
-
-	 if ((*D).Type == pkgSrcRecords::Parser::BuildConflict ||
-	       (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
-	 {
-	    pkgCache::GrpIterator Grp = Cache->FindGrp((*D).Package);
-	    // Build-conflicts on unknown packages are silently ignored
-	    if (Grp.end() == true)
-	       continue;
-
-	    for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
-	    {
-	       pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-	       /*
-		* Remove if we have an installed version that satisfies the
-		* version criteria
-		*/
-	       if (IV.end() == false &&
-		     Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-		  TryToInstallBuildDep(Pkg,Cache,Fix,true,false);
-	    }
-	 }
-	 else // BuildDep || BuildDepIndep
-	 {
-	    if (_config->FindB("Debug::BuildDeps",false) == true)
-	       std::cout << "Looking for " << (*D).Package << "...\n";
-
-	    pkgCache::PkgIterator Pkg;
-
-	    // Cross-Building?
-	    if (StripMultiArch == false && D->Type != pkgSrcRecords::Parser::BuildDependIndep)
-	    {
-	       size_t const colon = D->Package.find(":");
-	       if (colon != std::string::npos)
-	       {
-		  if (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0)
-		     Pkg = Cache->FindPkg(D->Package.substr(0,colon));
-		  else
-		     Pkg = Cache->FindPkg(D->Package);
-	       }
-	       else
-		  Pkg = Cache->FindPkg(D->Package, hostArch);
-
-	       // a bad version either is invalid or doesn't satify dependency
-#define BADVER(Ver) (Ver.end() == true || \
-      (D->Version.empty() == false && \
-       Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false))
-
-	       APT::VersionList verlist;
-	       if (Pkg.end() == false)
-	       {
-		  pkgCache::VerIterator Ver = (*Cache)[Pkg].InstVerIter(*Cache);
-		  if (BADVER(Ver) == false)
-		     verlist.insert(Ver);
-		  Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
-		  if (BADVER(Ver) == false)
-		     verlist.insert(Ver);
-	       }
-	       if (verlist.empty() == true)
-	       {
-		  pkgCache::PkgIterator BuildPkg = Cache->FindPkg(D->Package, "native");
-		  if (BuildPkg.end() == false && Pkg != BuildPkg)
-		  {
-		     pkgCache::VerIterator Ver = (*Cache)[BuildPkg].InstVerIter(*Cache);
-		     if (BADVER(Ver) == false)
-			verlist.insert(Ver);
-		     Ver = (*Cache)[BuildPkg].CandidateVerIter(*Cache);
-		     if (BADVER(Ver) == false)
-			verlist.insert(Ver);
-		  }
-	       }
-#undef BADVER
-
-	       std::string forbidden;
-	       // We need to decide if host or build arch, so find a version we can look at
-	       APT::VersionList::const_iterator Ver = verlist.begin();
-	       for (; Ver != verlist.end(); ++Ver)
-	       {
-		  forbidden.clear();
-		  if (Ver->MultiArch == pkgCache::Version::No || Ver->MultiArch == pkgCache::Version::All)
-		  {
-		     if (colon == std::string::npos)
-			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
-			forbidden = "Multi-Arch: no";
-		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
-			Pkg = Ver.ParentPkg().Group().FindPkg("native");
-		  }
-		  else if (Ver->MultiArch == pkgCache::Version::Same)
-		  {
-		     if (colon == std::string::npos)
-			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
-			forbidden = "Multi-Arch: same";
-		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
-			Pkg = Ver.ParentPkg().Group().FindPkg("native");
-		  }
-		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
-		  {
-		     if (colon == std::string::npos)
-			Pkg = Ver.ParentPkg().Group().FindPkg("native");
-		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0 ||
-			   strcmp(D->Package.c_str() + colon, ":native") == 0)
-			forbidden = "Multi-Arch: foreign";
-		  }
-		  else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
-		  {
-		     if (colon == std::string::npos)
-			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
-		     {
-			// prefer any installed over preferred non-installed architectures
-			pkgCache::GrpIterator Grp = Ver.ParentPkg().Group();
-			// we don't check for version here as we are better of with upgrading than remove and install
-			for (Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
-			   if (Pkg.CurrentVer().end() == false)
-			      break;
-			if (Pkg.end() == true)
-			   Pkg = Grp.FindPreferredPkg(true);
-		     }
-		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
-			Pkg = Ver.ParentPkg().Group().FindPkg("native");
-		  }
-
-		  if (forbidden.empty() == false)
-		  {
-		     if (_config->FindB("Debug::BuildDeps",false) == true)
-			std::cout << D->Package.substr(colon, std::string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << " (" << Ver.VerStr() << ")" << std::endl;
-		     continue;
-		  }
-
-		  //we found a good version
-		  break;
-	       }
-	       if (Ver == verlist.end())
-	       {
-		  if (_config->FindB("Debug::BuildDeps",false) == true)
-		     std::cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << std::endl;
-
-		  if (forbidden.empty() == false)
-		  {
-		     if (hasAlternatives)
-			continue;
-		     return _error->Error(_("%s dependency for %s can't be satisfied "
-			      "because %s is not allowed on '%s' packages"),
-			   Last->BuildDepType(D->Type), Src.c_str(),
-			   D->Package.c_str(), forbidden.c_str());
-		  }
-	       }
-	    }
-	    else
-	       Pkg = Cache->FindPkg(D->Package);
-
-	    if (Pkg.end() == true || (Pkg->VersionList == 0 && Pkg->ProvidesList == 0))
-	    {
-	       if (_config->FindB("Debug::BuildDeps",false) == true)
-		  std::cout << " (not found)" << (*D).Package << std::endl;
-
-	       if (hasAlternatives)
-		  continue;
-
-	       return _error->Error(_("%s dependency for %s cannot be satisfied "
-			"because the package %s cannot be found"),
-		     Last->BuildDepType((*D).Type),Src.c_str(),
-		     (*D).Package.c_str());
-	    }
-
-	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-	    if (IV.end() == false)
-	    {
-	       if (_config->FindB("Debug::BuildDeps",false) == true)
-		  std::cout << "  Is installed\n";
-
-	       if (D->Version.empty() == true ||
-		     Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-	       {
-		  skipAlternatives = hasAlternatives;
-		  continue;
-	       }
-
-	       if (_config->FindB("Debug::BuildDeps",false) == true)
-		  std::cout << "    ...but the installed version doesn't meet the version requirement\n";
-
-	       if (((*D).Op & pkgCache::Dep::LessEq) == pkgCache::Dep::LessEq)
-		  return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
-			Last->BuildDepType((*D).Type), Src.c_str(), Pkg.FullName(true).c_str());
-	    }
-
-	    // Only consider virtual packages if there is no versioned dependency
-	    if ((*D).Version.empty() == true)
-	    {
-	       /*
-		* If this is a virtual package, we need to check the list of
-		* packages that provide it and see if any of those are
-		* installed
-		*/
-	       pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-	       for (; Prv.end() != true; ++Prv)
-	       {
-		  if (_config->FindB("Debug::BuildDeps",false) == true)
-		     std::cout << "  Checking provider " << Prv.OwnerPkg().FullName() << std::endl;
-
-		  if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
-		     break;
-	       }
-
-	       if (Prv.end() == false)
-	       {
-		  if (_config->FindB("Debug::BuildDeps",false) == true)
-		     std::cout << "  Is provided by installed package " << Prv.OwnerPkg().FullName() << std::endl;
-		  skipAlternatives = hasAlternatives;
-		  continue;
-	       }
-	    }
-	    else // versioned dependency
-	    {
-	       pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
-	       if (CV.end() == true ||
-		     Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == false)
-	       {
-		  if (hasAlternatives)
-		     continue;
-		  else if (CV.end() == false)
-		     return _error->Error(_("%s dependency for %s cannot be satisfied "
-			      "because candidate version of package %s "
-			      "can't satisfy version requirements"),
-			   Last->BuildDepType(D->Type), Src.c_str(),
-			   D->Package.c_str());
-		  else
-		     return _error->Error(_("%s dependency for %s cannot be satisfied "
-			      "because package %s has no candidate version"),
-			   Last->BuildDepType(D->Type), Src.c_str(),
-			   D->Package.c_str());
-	       }
-	    }
-
-	    if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false,false) == true)
-	    {
-	       // We successfully installed something; skip remaining alternatives
-	       skipAlternatives = hasAlternatives;
-	       if(_config->FindB("APT::Get::Build-Dep-Automatic", false) == true)
-		  Cache->MarkAuto(Pkg, true);
-	       continue;
-	    }
-	    else if (hasAlternatives)
-	    {
-	       if (_config->FindB("Debug::BuildDeps",false) == true)
-		  std::cout << "  Unsatisfiable, trying alternatives\n";
-	       continue;
-	    }
-	    else
-	    {
-	       return _error->Error(_("Failed to satisfy %s dependency for %s: %s"),
-		     Last->BuildDepType((*D).Type),
-		     Src.c_str(),
-		     (*D).Package.c_str());
-	    }
-	 }
-      }
-
-      if (Fix.Resolve(true) == false)
-	 _error->Discard();
-
-      // Now we check the state of the packages,
-      if (Cache->BrokenCount() != 0)
-      {
-	 ShowBroken(std::cout, Cache, false);
-	 return _error->Error(_("Build-dependencies for %s could not be satisfied."),*I);
-      }
+      if (InstallBuildDepsLoop(Cache, Src, BuildDeps, StripMultiArch, hostArch) == false)
+	 return false;
    }
 
    if (InstallPackages(Cache, false, true) == false)
