@@ -152,7 +152,13 @@ public:
 class debDscFileIndex : public pkgDebianIndexRealFile
 {
    void * const d;
- public:
+
+protected:
+   virtual std::string GetComponent() const APT_OVERRIDE;
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
+
+public:
    virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
    virtual pkgSrcRecords::Parser *CreateSrcParser() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE {return false;};
@@ -163,7 +169,10 @@ class debDscFileIndex : public pkgDebianIndexRealFile
 
 class debDebianSourceDirIndex : public debDscFileIndex
 {
- public:
+protected:
+   virtual std::string GetComponent() const APT_OVERRIDE;
+
+public:
    virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
 };
 

@@ -278,6 +278,24 @@ pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
       return NULL;
    return new debDscRecordParser(File, this);
 }
+std::string debDscFileIndex::GetComponent() const
+{
+   return "local-dsc";
+}
+std::string debDscFileIndex::GetArchitecture() const
+{
+   return "source";
+}
+uint8_t debDscFileIndex::GetIndexFlags() const
+{
+   return pkgCache::Flag::LocalSource;
+}
+									/*}}}*/
+// ControlFile Index - a directory with a debian/control file		/*{{{*/
+std::string debDebianSourceDirIndex::GetComponent() const
+{
+   return "local-control";
+}
 									/*}}}*/
 
 // Index File types for Debian						/*{{{*/

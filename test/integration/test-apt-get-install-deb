@@ -43,6 +43,7 @@ E: Unable to correct problems, you have held broken packages." aptget install ./
 testdpkgnotinstalled 'foo' 'foo:i386'
 testsuccess aptget install ./incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
 testdpkginstalled 'foo:i386'
+testfailure aptget install incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
 cd downloaded
 testsuccess aptget install "$(readlink -f ../incoming/foo_1.0_i386.deb)" -o Debug::pkgCacheGen=1 -y --allow-downgrades
 testsuccess aptget install ../incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1 -y --allow-downgrades

@@ -39,7 +39,7 @@ EOF
 test2vcardbuilddep() {
 	testsuccessequal "Reading package lists...
 Building dependency tree...
-Note, using file '2vcard_0.5-3.dsc' to get the build dependencies
+Note, using file './2vcard_0.5-3.dsc' to get the build dependencies
 The following packages will be REMOVED:
   build-conflict
 The following NEW packages will be installed:
@@ -49,7 +49,12 @@ Remv build-conflict [1]
 Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
-Conf debhelper (7 stable [i386])" aptget build-dep -s 2vcard_0.5-3.dsc
+Conf debhelper (7 stable [i386])" aptget build-dep -s ./2vcard_0.5-3.dsc
+testfailure aptget build-dep --simulate 2vcard_0.5-3.dsc
+cd downloaded
+testsuccess aptget build-dep --simulate ../2vcard_0.5-3.dsc
+testsuccess aptget build-dep --simulate "$(readlink -f ../2vcard_0.5-3.dsc)"
+cd ..
 }
 test2vcardbuilddep
 
@@ -129,7 +134,11 @@ Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
 Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./foo-1.0
-
+testfailure aptget build-dep --simulate foo-1.0
+cd downloaded
+testsuccess aptget build-dep --simulate ../foo-1.0
+testsuccess aptget build-dep --simulate "$(readlink -f ../foo-1.0)"
+cd ..
 
 testfailureequal 'Reading package lists...
 Building dependency tree...

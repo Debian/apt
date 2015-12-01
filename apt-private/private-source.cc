@@ -915,9 +915,39 @@ static bool InstallBuildDepsLoop(CacheFile &Cache, std::string const &Src,
 // ---------------------------------------------------------------------
 /* This function will look at the build depends list of the given source 
    package and install the necessary packages to make it true, or fail. */
+static std::vector<pkgSrcRecords::Parser::BuildDepRec> GetBuildDeps(pkgSrcRecords::Parser * const Last,
+      char const * const Src, bool const StripMultiArch, std::string const &hostArch)
+{
+   std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
+   // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
+   if (hostArch.empty() == false)
+   {
+      std::string nativeArch = _config->Find("APT::Architecture");
+      _config->Set("APT::Architecture", hostArch);
+      bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
+      _config->Set("APT::Architecture", nativeArch);
+      if (Success == false)
+      {
+	 _error->Error(_("Unable to get build-dependency information for %s"), Src);
+	 return {};
+      }
+   }
+   else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
+   {
+      _error->Error(_("Unable to get build-dependency information for %s"), Src);
+      return {};
+   }
+
+   if (BuildDeps.empty() == true)
+      ioprintf(c1out,_("%s has no build depends.\n"), Src);
+
+   return BuildDeps;
+}
 bool DoBuildDep(CommandLine &CmdL)
 {
    CacheFile Cache;
+   std::vector<char const *> VolatileCmdL;
+   Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
 
    _config->Set("APT::Install-Recommends", false);
 
@@ -926,7 +956,7 @@ bool DoBuildDep(CommandLine &CmdL)
    if (Cache.Open(WantLock) == false)
       return false;
 
-   if (CmdL.FileSize() <= 1)
+   if (CmdL.FileSize() <= 1 && VolatileCmdL.empty())
       return _error->Error(_("Must specify at least one package to check builddeps for"));
 
    // Read the source list
@@ -974,64 +1004,39 @@ bool DoBuildDep(CommandLine &CmdL)
 	 return false;
    }
 
-   unsigned J = 0;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
+   // FIXME: Avoid volatile sources == cmdline assumption
+   {
+      auto const VolatileSources = List->GetVolatileFiles();
+      if (VolatileSources.size() == VolatileCmdL.size())
+      {
+	 for (size_t i = 0; i < VolatileSources.size(); ++i)
+	 {
+	    char const * const Src = VolatileCmdL[i];
+	    if (DirectoryExists(Src))
+	       ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), Src);
+	    else
+	       ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), Src);
+	    std::unique_ptr<pkgSrcRecords::Parser> Last(VolatileSources[i]->CreateSrcParser());
+	    if (Last == nullptr)
+	       return _error->Error(_("Unable to find a source package for %s"), Src);
+
+	    auto const BuildDeps = GetBuildDeps(Last.get(), Src, StripMultiArch, hostArch);
+	    if (InstallBuildDepsLoop(Cache, Src, BuildDeps, StripMultiArch, hostArch) == false)
+	       return false;
+	 }
+      }
+      else
+	 _error->Error("Implementation error: Volatile sources (%lu) and commandline elements (%lu) do not match!", VolatileSources.size(), VolatileCmdL.size());
+   }
+
+   for (const char **I = CmdL.FileList + 1; *I != 0; ++I)
    {
       std::string Src;
-      pkgSrcRecords::Parser *Last = 0;
-      std::unique_ptr<pkgSrcRecords::Parser> LastOwner;
+      pkgSrcRecords::Parser * const Last = FindSrc(*I,SrcRecs,Src,Cache);
+      if (Last == nullptr)
+	 return _error->Error(_("Unable to find a source package for %s"), *I);
 
-      // an unpacked debian source tree
-      using APT::String::Startswith;
-      if ((Startswith(*I, "./") || Startswith(*I, "/")) &&
-	    DirectoryExists(*I))
-      {
-	 ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), *I);
-	 // FIXME: how can we make this more elegant?
-	 std::string TypeName = "Debian control file";
-	 pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
-	 if(Type != NULL)
-	    LastOwner.reset(Last = Type->CreateSrcPkgParser(*I));
-      }
-      // if its a local file (e.g. .dsc) use this
-      else if (FileExists(*I))
-      {
-	 ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), *I);
-
-	 // see if we can get a parser for this pkgIndexFile type
-	 std::string TypeName = "Debian " + flExtension(*I) + " file";
-	 pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
-	 if(Type != NULL)
-	    LastOwner.reset(Last = Type->CreateSrcPkgParser(*I));
-      } else {
-	 // normal case, search the cache for the source file
-	 Last = FindSrc(*I,SrcRecs,Src,Cache);
-      }
-
-      if (Last == 0)
-	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
-
-      // Process the build-dependencies
-      std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
-      if (hostArch.empty() == false)
-      {
-	 std::string nativeArch = _config->Find("APT::Architecture");
-	 _config->Set("APT::Architecture", hostArch);
-	 bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
-	 _config->Set("APT::Architecture", nativeArch);
-	 if (Success == false)
-	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-      }
-      else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
-	 return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-
-      if (BuildDeps.empty() == true)
-      {
-	 ioprintf(c1out,_("%s has no build depends.\n"),Src.c_str());
-	 continue;
-      }
-
+      auto const BuildDeps = GetBuildDeps(Last, Src.c_str(), StripMultiArch, hostArch);
       if (InstallBuildDepsLoop(Cache, Src, BuildDeps, StripMultiArch, hostArch) == false)
 	 return false;
    }
