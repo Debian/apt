@@ -1103,7 +1103,7 @@ class pkgAcqChangelog : public pkgAcquire::Item
 
    /** returns the URI to the changelog of this version
     *
-    *  \param Template URI where CHANGEPATH has to be filled in
+    *  \param Template URI where @CHANGEPATH@ has to be filled in
     *  \param Component in which the package resides, can be empty
     *  \param SrcName is the source package name
     *  \param SrcVersion is the source package version

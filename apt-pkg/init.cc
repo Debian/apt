@@ -116,10 +116,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::flatDescription", "$(RELEASE) Sources");
    Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::Optional", false);
 
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "http://metadata.ftp-master.debian.org/changelogs/CHANGEPATH_changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Tanglu", "http://metadata.tanglu.org/changelogs/CHANGEPATH_changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "http://changelogs.ubuntu.com/changelogs/pool/CHANGEPATH/changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/CHANGEPATH/changelog.txt");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "http://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Tanglu", "http://metadata.tanglu.org/changelogs/@CHANGEPATH@_changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "http://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
+   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/@CHANGEPATH@/changelog.txt");
 
    bool Res = true;
 

@@ -3178,7 +3178,7 @@ std::string pkgAcqChangelog::URI(std::string const &Template,
 	 char const * const Component, char const * const SrcName,
 	 char const * const SrcVersion)
 {
-   if (Template.find("CHANGEPATH") == std::string::npos)
+   if (Template.find("@CHANGEPATH@") == std::string::npos)
       return "";
 
    // the path is: COMPONENT/SRC/SRCNAME/SRCNAME_SRCVER, e.g. main/a/apt/1.1 or contrib/liba/libapt/2.0
@@ -3190,7 +3190,7 @@ std::string pkgAcqChangelog::URI(std::string const &Template,
    if (Component != NULL && strlen(Component) != 0)
       path = std::string(Component) + "/" + path;
 
-   return SubstVar(Template, "CHANGEPATH", path);
+   return SubstVar(Template, "@CHANGEPATH@", path);
 }
 									/*}}}*/
 // AcqChangelog::Failed - Failure handler				/*{{{*/

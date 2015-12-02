@@ -22,7 +22,7 @@ testsuccess aptget update -o Debug::Acquire::http=1 -o Debug::Acquire::https=1 -
 msgtest 'Test that the webserver does not answer' 'http requests'
 downloadfile "http://localhost:${APTHTTPPORT}/pool/main/a/apt/apt_1.0/changelog" changelog >/dev/null 2>&1 && msgfail || msgpass
 
-echo "Acquire::Changelogs::URI::Label::Testcases \"http://localhost:${APTHTTPPORT}/redirectme/pool/CHANGEPATH/changelog\";" > rootdir/etc/apt/apt.conf.d/changelog.conf
+echo "Acquire::Changelogs::URI::Label::Testcases \"http://localhost:${APTHTTPPORT}/redirectme/pool/@CHANGEPATH@/changelog\";" > rootdir/etc/apt/apt.conf.d/changelog.conf
 testsuccessequal "'http://localhost:${APTHTTPPORT}/redirectme/pool/main/a/apt/apt_1.0/changelog' apt.changelog" aptget changelog apt --print-uris
 
 cd downloaded
