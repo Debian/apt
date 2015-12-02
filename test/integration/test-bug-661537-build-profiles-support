@@ -65,9 +65,12 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst foo (1.0 unstable [all])
 Conf foo (1.0 unstable [all])'
-DROP='Reading package lists...
+setdrop() {
+	DROP="Reading package lists...
 Building dependency tree...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.'
+$1 has no build depends.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded."
+}
 
 msgtest 'Check if version of installed dpkg is high enough for' 'build profiles support'
 if dpkg --compare-versions "$(command dpkg-query --showformat='${Version}' --show dpkg)" 'ge' '1.17.14'; then
@@ -111,36 +114,43 @@ testprofile() {
 	testwithdpkg "$2" "$3" "$4"
 }
 
+setdrop 'spec-1'
 testprofile 'spec-1' 'foo <!stage1>' '' "$KEEP"
 testprofile 'spec-1' 'foo <!stage1>' 'stage1' "$DROP"
 testprofile 'spec-1' 'foo <!stage1>' 'notest' "$KEEP"
 testprofile 'spec-1' 'foo <!stage1>' 'stage1,notest' "$DROP"
 
+setdrop 'spec-2'
 testprofile 'spec-2' 'foo <stage1>' '' "$DROP"
 testprofile 'spec-2' 'foo <stage1>' 'stage1' "$KEEP"
 testprofile 'spec-2' 'foo <stage1>' 'notest' "$DROP"
 testprofile 'spec-2' 'foo <stage1>' 'stage1,notest' "$KEEP"
 
+setdrop 'spec-3'
 testprofile 'spec-3' 'foo <!stage1 !notest>' '' "$KEEP"
 testprofile 'spec-3' 'foo <!stage1 !notest>' 'stage1' "$DROP"
 testprofile 'spec-3' 'foo <!stage1 !notest>' 'notest' "$DROP"
 testprofile 'spec-3' 'foo <!stage1 !notest>' 'stage1,notest' "$DROP"
 
+setdrop 'spec-4'
 testprofile 'spec-4' 'foo <stage1 notest>' '' "$DROP"
 testprofile 'spec-4' 'foo <stage1 notest>' 'stage1' "$DROP"
 testprofile 'spec-4' 'foo <stage1 notest>' 'notest' "$DROP"
 testprofile 'spec-4' 'foo <stage1 notest>' 'stage1,notest' "$KEEP"
 
+setdrop 'spec-5'
 testprofile 'spec-5' 'foo <!stage1 notest>' '' "$DROP"
 testprofile 'spec-5' 'foo <!stage1 notest>' 'stage1' "$DROP"
 testprofile 'spec-5' 'foo <!stage1 notest>' 'notest' "$KEEP"
 testprofile 'spec-5' 'foo <!stage1 notest>' 'stage1,notest' "$DROP"
 
+setdrop 'spec-6'
 testprofile 'spec-6' 'foo <stage1 !notest>' '' "$DROP"
 testprofile 'spec-6' 'foo <stage1 !notest>' 'stage1' "$KEEP"
 testprofile 'spec-6' 'foo <stage1 !notest>' 'notest' "$DROP"
 testprofile 'spec-6' 'foo <stage1 !notest>' 'stage1,notest' "$DROP"
 
+setdrop 'spec-7'
 testprofile 'spec-7' 'foo <stage1> <!notest>' '' "$KEEP"
 testprofile 'spec-7' 'foo <stage1> <!notest>' 'stage1' "$KEEP"
 testprofile 'spec-7' 'foo <stage1> <!notest>' 'notest' "$DROP"
