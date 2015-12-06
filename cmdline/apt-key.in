@@ -220,7 +220,7 @@ foreach_keyring_do() {
 	    if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
 		TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
 	    fi
-	    for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
+	    for trusted in $(find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -regex '^.*\.gpg$' | sort); do
 		if [ -s "$trusted" ]; then
 		    $ACTION "$trusted" "$@"
 		fi
