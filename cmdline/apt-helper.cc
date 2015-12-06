@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include <stdlib.h>
+
 #include <apti18n.h>
 									/*}}}*/
 
