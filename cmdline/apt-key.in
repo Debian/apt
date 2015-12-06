@@ -25,6 +25,21 @@ requires_root() {
 	fi
 }
 
+command_available() {
+    # command -v "$1" >/dev/null 2>&1 # not required by policy, see #747320
+    # which "$1" >/dev/null 2>&1 # is in debianutils (essential) but not on non-debian systems
+    local OLDIFS="$IFS"
+    IFS=:
+    for p in $PATH; do
+	if [ -x "${p}/${1}" ]; then
+	    IFS="$OLDIFS"
+	    return 0
+	fi
+    done
+    IFS="$OLDIFS"
+    return 1
+}
+
 get_fingerprints_of_keyring() {
     aptkey_execute "$GPG_SH" --keyring "$1" --with-colons --fingerprint | while read publine; do
 	# search for a public key
@@ -112,7 +127,7 @@ net_update() {
     fi
     # in theory we would need to depend on wget for this, but this feature
     # isn't useable in debian anyway as we have no keyring uri nor a master key
-    if ! command -v wget >/dev/null 2>&1; then
+    if ! command_available 'wget'; then
 	echo >&2 "ERROR: an installed wget is required for a network-based update"
 	exit 1
     fi
@@ -472,11 +487,11 @@ create_gpg_home() {
 prepare_gpg_home() {
     eval $(apt-config shell GPG_EXE Apt::Key::gpgcommand)
 
-    if [ -n "$GPG_EXE" ] && command -v "$GPG_EXE" >/dev/null 2>&1; then
+    if [ -n "$GPG_EXE" ] && command_available "$GPG_EXE"; then
 	true
-    elif command -v gpg >/dev/null 2>&1; then
+    elif command_available 'gpg'; then
 	GPG_EXE="gpg"
-    elif command -v gpg2 >/dev/null 2>&1; then
+    elif command_available 'gpg2'; then
 	GPG_EXE="gpg2"
     else
 	echo >&2 "Error: gnupg or gnupg2 do not seem to be installed,"
@@ -569,9 +584,9 @@ case "$command" in
     verify)
 	GPGV=''
 	eval $(apt-config shell GPGV Apt::Key::gpgvcommand)
-	if [ -n "$GPGV" ] && command -v "$GPGV" >/dev/null 2>&1; then true;
-	elif command -v gpgv >/dev/null 2>&1; then GPGV='gpgv';
-	elif command -v gpgv2 >/dev/null 2>&1; then GPGV='gpgv2';
+	if [ -n "$GPGV" ] && command_available "$GPGV"; then true;
+	elif command_available 'gpgv'; then GPGV='gpgv';
+	elif command_available 'gpgv2'; then GPGV='gpgv2';
 	else
 	   echo >&2 'ERROR: gpgv or gpgv2 required for verification'
 	   exit 29
