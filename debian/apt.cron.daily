@@ -324,7 +324,7 @@ check_power(){
     #       1 (false)   System is not on main power
     #       255 (false) Power status could not be determined
     # Desktop systems always return 255 it seems
-    if which on_ac_power >/dev/null; then
+    if command -v on_ac_power >/dev/null 2>&1; then
         on_ac_power
         POWER=$?
         if [ $POWER -eq 1 ]; then
@@ -352,7 +352,7 @@ if test -r /var/lib/apt/extended_states; then
 fi
 
 # check apt-config existence
-if ! which apt-config >/dev/null ; then
+if ! command -v apt-config >/dev/null 2>&1; then
 	exit 0
 fi
 
@@ -388,7 +388,7 @@ fi
 check_power || exit 0
 
 # check if we can lock the cache and if the cache is clean
-if which apt-get >/dev/null && ! eval apt-get check $XAPTOPT $XSTDERR ; then
+if command -v apt-get >/dev/null 2>&1 && ! eval apt-get check $XAPTOPT $XSTDERR ; then
     debug_echo "error encountered in cron job with \"apt-get check\"."
     exit 0
 fi
@@ -451,7 +451,7 @@ UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
 if check_stamp $UPDATE_STAMP $UpdateInterval; then
     if eval apt-get $XAPTOPT -y update $XSTDERR; then
 	debug_echo "download updated metadata (success)."
-	if which dbus-send >/dev/null && pidof dbus-daemon >/dev/null; then
+	if command -v dbus-send >/dev/null 2>&1 && pidof dbus-daemon >/dev/null; then
 	    if dbus-send --system / app.apt.dbus.updated boolean:true ; then
 		debug_echo "send dbus signal (success)"
 	    else
@@ -487,7 +487,7 @@ fi
 
 # auto upgrade all upgradeable packages
 UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
-if which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+if command -v unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
     if unattended-upgrade $XUUPOPT; then
 	update_stamp $UPGRADE_STAMP
 	debug_echo "unattended-upgrade (success)"

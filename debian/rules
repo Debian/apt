@@ -24,7 +24,7 @@ confflags += --with-procs=$(PARALLEL)
 # See below
 -include build/environment.mak
 
-ifneq (,$(shell which dpkg-buildflags))
+ifneq (,$(shell command -v dpkg-buildflags))
   # make does not export to $(shell) so we need to workaround 
   # (http://savannah.gnu.org/bugs/?10593)
   dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags

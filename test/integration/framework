@@ -1205,7 +1205,7 @@ changetowebserver() {
 }
 
 changetohttpswebserver() {
-	if ! which stunnel4 >/dev/null; then
+	if ! command -v stunnel4 >/dev/null 2>&1; then
 		msgdie 'You need to install stunnel4 for https testcases'
 	fi
 	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
