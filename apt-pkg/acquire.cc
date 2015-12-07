@@ -730,7 +730,7 @@ bool pkgAcquire::Clean(string Dir)
 /* This is the total number of bytes needed */
 APT_PURE unsigned long long pkgAcquire::TotalNeeded()
 {
-   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0ull,
       [](unsigned long long const T, Item const * const I) {
 	 return T + I->FileSize;
    });
@@ -741,7 +741,7 @@ APT_PURE unsigned long long pkgAcquire::TotalNeeded()
 /* This is the number of bytes that is not local */
 APT_PURE unsigned long long pkgAcquire::FetchNeeded()
 {
-   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0llu,
       [](unsigned long long const T, Item const * const I) {
 	 if (I->Local == false)
 	    return T + I->FileSize;
@@ -755,7 +755,7 @@ APT_PURE unsigned long long pkgAcquire::FetchNeeded()
 /* This is the number of bytes that is not local */
 APT_PURE unsigned long long pkgAcquire::PartialPresent()
 {
-   return std::accumulate(ItemsBegin(), ItemsEnd(), 0,
+   return std::accumulate(ItemsBegin(), ItemsEnd(), 0llu,
       [](unsigned long long const T, Item const * const I) {
 	 if (I->Local == false)
 	    return T + I->PartialSize;

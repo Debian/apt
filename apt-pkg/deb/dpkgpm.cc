@@ -1194,7 +1194,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    std::vector<const char *> Args(sArgs.size(), NULL);
    std::transform(sArgs.begin(), sArgs.end(), Args.begin(),
 	 [](std::string const &s) { return s.c_str(); });
-   unsigned long long const StartSize = std::accumulate(sArgs.begin(), sArgs.end(), 0,
+   unsigned long long const StartSize = std::accumulate(sArgs.begin(), sArgs.end(), 0llu,
 	 [](unsigned long long const i, std::string const &s) { return i + s.length(); });
    size_t const BaseArgs = Args.size();
 
