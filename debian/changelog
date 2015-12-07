@@ -1,3 +1,25 @@
+apt (1.1.4) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * defaults.mak: Set LC_COLLATE=C.UTF-8 for reproducible sort order
+  * Avoid overflow when summing up file sizes
+
+  [ David Kalnischkies ]
+  * add a apt breaks (apt-utils << 1.1.3) for partial-upgrades (Closes: 806765)
+  * require explicit paths to dsc/control as we do for deb files
+    (Closes: 806693)
+  * use @CHANGEPATH@ as placeholder in changelog URI templates
+  * replace "which" with "command -v" for portability.
+    Thanks to Mingye Wang for the suggestion. (Closes: 807144)
+  * replace run-parts with find|sort to avoid debianutils usage
+  * part revert, part redo 'which' replacement.
+    Thanks to Jakub Wilk for pointing out #747320
+
+  [ Fredrik Fornwall ]
+  * apt-helper.cc: include <stdlib.h> for atoi (Closes: 807031)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 07 Dec 2015 15:31:31 +0100
+
 apt (1.1.3) unstable; urgency=medium
 
   [ David Kalnischkies ]
