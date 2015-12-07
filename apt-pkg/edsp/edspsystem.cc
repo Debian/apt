@@ -20,6 +20,7 @@
 #include <apt-pkg/fileutl.h>
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include <string>
