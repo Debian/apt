@@ -328,7 +328,7 @@ int pkgOrderList::Score(PkgIterator Pkg)
 	 break;
       }
 
-   // Important Required Standard Optional Extra
+   // Required Important Standard Optional Extra
    if (Cache[Pkg].InstVerIter(Cache)->Priority <= 5)
    {
       signed short PrioMap[] = {0,5,4,3,1,0};

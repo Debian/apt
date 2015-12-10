@@ -309,7 +309,7 @@ const char *pkgCache::DepType(unsigned char Type)
 /* */
 const char *pkgCache::Priority(unsigned char Prio)
 {
-   const char *Mapping[] = {0,_("important"),_("required"),_("standard"),
+   const char *Mapping[] = {0,_("required"),_("important"),_("standard"),
                             _("optional"),_("extra")};
    if (Prio < _count(Mapping))
       return Mapping[Prio];
