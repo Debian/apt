@@ -41,7 +41,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-bool ShowHelp(CommandLine &)						/*{{{*/
+static bool ShowHelp(CommandLine &)					/*{{{*/
 {
 	std::cout <<
 		_("Usage: apt-internal-solver\n"
@@ -58,7 +58,7 @@ APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
 	exit(EXIT_FAILURE);
 }
 									/*}}}*/
-std::vector<aptDispatchWithHelp> GetCommands()				/*{{{*/
+static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {};
 }
