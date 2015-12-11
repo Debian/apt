@@ -57,7 +57,12 @@ debListParser::debListParser(FileFd *File) :
 // ---------------------------------------------------------------------
 /* This is to return the name of the package this section describes */
 string debListParser::Package() {
-   string const Result = Section.FindS("Package");
+   string Result = Section.FindS("Package");
+
+   // Normalize mixed case package names to lower case, like dpkg does
+   // See Bug#807012 for details
+   std::transform(Result.begin(), Result.end(), Result.begin(), tolower_ascii);
+
    if(unlikely(Result.empty() == true))
       _error->Error("Encountered a section with no Package: header");
    return Result;

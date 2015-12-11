@@ -65,7 +65,13 @@ string debRecordParserBase::FileName()
 // RecordParserBase::Name - Return the package name			/*{{{*/
 string debRecordParserBase::Name()
 {
-   return Section.FindS("Package");
+   string Result = Section.FindS("Package");
+
+   // Normalize mixed case package names to lower case, like dpkg does
+   // See Bug#807012 for details
+   std::transform(Result.begin(), Result.end(), Result.begin(), tolower_ascii);
+
+   return Result;
 }
 									/*}}}*/
 // RecordParserBase::Homepage - Return the package homepage		/*{{{*/

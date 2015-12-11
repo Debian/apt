@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+TMPDIR=$(readlink -f .)
+
+insertinstalledpackage 'worldofgoo' 'all' '1'
+insertpackage 'unstable' 'WorldOfGoo' 'all' '1'
+
+setupaptarchive
+
+testsuccessequal "worldofgoo:
+  Installed: 1
+  Candidate: 1
+  Version table:
+ *** 1 500
+        500 file:${TMPDIR}/aptarchive unstable/main all Packages
+        100 ${TMPDIR}/rootdir/var/lib/dpkg/status" \
+        aptcache policy worldofgoo
