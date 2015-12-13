@@ -1837,10 +1837,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       std::clog << "Server-Current: " << ServerHashes.find(NULL)->toStr() << " and we start at "
 	 << CurrentPackagesFile << " " << LocalHashes.FileSize() << " " << LocalHashes.find(NULL)->toStr() << std::endl;
 
+   // historically, older hashes have more info than newer ones, so start
+   // collecting with older ones first to avoid implementing complicated
+   // information merging techniques… a failure is after all always
+   // recoverable with a complete file and hashes aren't changed that often.
+   std::vector<char const *> types;
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+      types.push_back(*type);
+
    // parse all of (provided) history
    vector<DiffInfo> available_patches;
    bool firstAcceptedHashes = true;
-   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   for (auto type = types.crbegin(); type != types.crend(); ++type)
    {
       if (LocalHashes.find(*type) == NULL)
 	 continue;
@@ -1898,7 +1906,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
-   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   for (auto type = types.crbegin(); type != types.crend(); ++type)
    {
       if (LocalHashes.find(*type) == NULL)
 	 continue;
@@ -1938,7 +1946,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       }
    }
 
-   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   for (auto type = types.crbegin(); type != types.crend(); ++type)
    {
       std::string tagname = *type;
       tagname.append("-Download");
