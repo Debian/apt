@@ -107,6 +107,9 @@ APT
   // be installed by default
   Install-Recommends "true";
   Install-Suggests "false";
+  // reverse Recommends or Suggests prevent autoremoval
+  AutoRemove::RecommendsImportant "true";
+  AutoRemove::SuggestsImportant "true";
 
   // consider dependencies of packages in this section manual
   Never-MarkAuto-Sections {"metapackages"; "universe/metapackages"; };
