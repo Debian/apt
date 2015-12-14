@@ -203,7 +203,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    table (480 used items) */
 map_id_t pkgCache::sHash(const string &Str) const
 {
-   unsigned long Hash = 0;
+   uint32_t Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
    return Hash % HeaderP->GetHashTableSize();
@@ -211,7 +211,7 @@ map_id_t pkgCache::sHash(const string &Str) const
 
 map_id_t pkgCache::sHash(const char *Str) const
 {
-   unsigned long Hash = tolower_ascii(*Str);
+   uint32_t Hash = tolower_ascii(*Str);
    for (const char *I = Str + 1; *I != 0; ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
    return Hash % HeaderP->GetHashTableSize();
