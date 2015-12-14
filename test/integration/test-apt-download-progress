@@ -34,8 +34,13 @@ testsuccess --nomsg apthelper download-file "http://localhost:${APTHTTPPORT}/$TE
 assertprogress apt-progress.log
 
 msgtest 'download progress works via' 'https'
-exec 3> apt-progress.log
-testsuccess --nomsg apthelper download-file "https://localhost:${APTHTTPSPORT}/$TESTFILE" ./downloaded/https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=600
+for i in 1 2 3 4 5; do
+    exec 3> apt-progress.log
+    testsuccess --nomsg apthelper download-file "https://localhost:${APTHTTPSPORT}/$TESTFILE" ./downloaded/https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=600
+    if [ "$(wc -l  apt-progress.log | awk '{print $1}')" -ge 3 ]; then
+        break
+    fi
+done
 assertprogress apt-progress.log
 
 # cleanup
