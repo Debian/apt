@@ -348,9 +348,11 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    }
 
    bool FoundHashSum = false;
-   for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
+   bool FoundStrongHashSum = false;
+   auto const SupportedHashes = HashString::SupportedHashes();
+   for (int i=0; SupportedHashes[i] != NULL; i++)
    {
-      if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
+      if (!Section.Find(SupportedHashes[i], Start, End))
 	 continue;
 
       std::string Name;
@@ -361,17 +363,20 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
 
+	 HashString const hs(SupportedHashes[i], Hash);
          if (Entries.find(Name) == Entries.end())
          {
             metaIndex::checkSum *Sum = new metaIndex::checkSum;
             Sum->MetaKeyFilename = Name;
             Sum->Size = Size;
 	    Sum->Hashes.FileSize(Size);
-            APT_IGNORE_DEPRECATED(Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);)
+            APT_IGNORE_DEPRECATED(Sum->Hash = hs;)
             Entries[Name] = Sum;
          }
-         Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
+         Entries[Name]->Hashes.push_back(hs);
          FoundHashSum = true;
+	 if (FoundStrongHashSum == false && hs.usable() == true)
+	    FoundStrongHashSum = true;
       }
    }
 
@@ -379,6 +384,12 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    {
       if (ErrorText != NULL)
 	 strprintf(*ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
+      return false;
+   }
+   if(FoundStrongHashSum == false)
+   {
+      if (ErrorText != NULL)
+	 strprintf(*ErrorText, _("No Hash entry in Release file %s, which is considered strong enough for security purposes"), Filename.c_str());
       return false;
    }
 

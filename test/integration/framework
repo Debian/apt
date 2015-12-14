@@ -1420,6 +1420,19 @@ testnopackage() {
 	fi
 	msggroup
 }
+testnosrcpackage() {
+	msggroup 'testnosrcpackage'
+	msgtest "Test for non-existent source packages" "apt-cache showsrc $*"
+	local SHOWPKG="$(aptcache showsrc "$@" 2>&1 | grep '^Package: ')"
+	if [ -n "$SHOWPKG" ]; then
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testnosrcpackage.output"
+		echo "$SHOWPKG" >"$OUTPUT"
+		msgfailoutput '' "$OUTPUT"
+	else
+		msgpass
+	fi
+	msggroup
+}
 
 testdpkgstatus() {
 	msggroup 'testdpkgstatus'

@@ -1075,6 +1075,16 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target->MetaKey.c_str());
 	    return;
 	 }
+	 else
+	 {
+	    auto const hashes = GetExpectedHashesFor(Target->MetaKey);
+	    if (hashes.usable() == false && hashes.empty() == false)
+	    {
+	       _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
+			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str());
+	       continue;
+	    }
+	 }
 
 	 // autoselect the compression method
 	 std::vector<std::string> types = VectorizeString(Target->Option(IndexTarget::COMPRESSIONTYPES), ' ');
