@@ -30,12 +30,12 @@ OPT='-o APT::Status-Fd=3 -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=
 
 msgtest 'download progress works via' 'http'
 exec 3> apt-progress.log
-testsuccess --nomsg apthelper download-file "http://localhost:${APTHTTPPORT}/$TESTFILE" ./downloaded/http-$TESTFILE $OPT -o Acquire::http::Dl-Limit=800
+testsuccess --nomsg apthelper download-file "http://localhost:${APTHTTPPORT}/$TESTFILE" ./downloaded/http-$TESTFILE $OPT -o Acquire::http::Dl-Limit=600
 assertprogress apt-progress.log
 
 msgtest 'download progress works via' 'https'
 exec 3> apt-progress.log
-testsuccess --nomsg apthelper download-file "https://localhost:${APTHTTPSPORT}/$TESTFILE" ./downloaded/https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=800
+testsuccess --nomsg apthelper download-file "https://localhost:${APTHTTPSPORT}/$TESTFILE" ./downloaded/https-$TESTFILE $OPT -o Acquire::https::Dl-Limit=600
 assertprogress apt-progress.log
 
 # cleanup
