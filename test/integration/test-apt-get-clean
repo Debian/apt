@@ -36,4 +36,26 @@ testfailure test -e rootdir/var/cache/apt/archives/foo_2_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
 
+directorygone() {
+	rm -rf "$1"
+	testsuccess apt autoclean
+	testfailure test -d "$1"
+	testsuccess apt clean
+	# clean creates an empty partial directory via GetLock
+	if [ "$(basename "$1")" = 'partial' ]; then
+		testsuccess test -d "$1"
+	else
+		testfailure test -d "$1"
+	fi
+}
+msgmsg 'Partial directory missing'
+directorygone 'rootdir/var/cache/apt/archives/partial'
+directorygone 'rootdir/var/lib/apt/lists/partial'
 
+msgmsg 'Archives directory missing'
+directorygone 'rootdir/var/cache/apt/archives'
+directorygone 'rootdir/var/lib/apt/lists'
+
+msgmsg 'apt directory missing'
+directorygone 'rootdir/var/cache/apt'
+directorygone 'rootdir/var/lib/apt'

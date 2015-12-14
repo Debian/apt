@@ -309,12 +309,18 @@ bool DoClean(CommandLine &)
    }
 
    pkgAcquire Fetcher;
-   Fetcher.GetLock(archivedir);
-   Fetcher.Clean(archivedir);
-   Fetcher.Clean(archivedir + "partial/");
+   if (archivedir.empty() == false && FileExists(archivedir) == true)
+   {
+      Fetcher.GetLock(archivedir);
+      Fetcher.Clean(archivedir);
+      Fetcher.Clean(archivedir + "partial/");
+   }
 
-   Fetcher.GetLock(listsdir);
-   Fetcher.Clean(listsdir + "partial/");
+   if (listsdir.empty() == false && FileExists(listsdir) == true)
+   {
+      Fetcher.GetLock(listsdir);
+      Fetcher.Clean(listsdir + "partial/");
+   }
 
    pkgCacheFile::RemoveCaches();
 
@@ -338,11 +344,15 @@ bool DoClean(CommandLine &)
 };
 bool DoAutoClean(CommandLine &)
 {
+   std::string const archivedir = _config->FindDir("Dir::Cache::Archives");
+   if (FileExists(archivedir) == false)
+      return true;
+
    // Lock the archive directory
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      int lock_fd = GetLock(_config->FindDir("Dir::Cache::Archives") + "lock");
+      int lock_fd = GetLock(flCombine(archivedir, "lock"));
       if (lock_fd < 0)
 	 return _error->Error(_("Unable to lock the download directory"));
       Lock.Fd(lock_fd);
@@ -354,7 +364,7 @@ bool DoAutoClean(CommandLine &)
 
    LogCleaner Cleaner;
 
-   return Cleaner.Go(_config->FindDir("Dir::Cache::archives"),*Cache) &&
-      Cleaner.Go(_config->FindDir("Dir::Cache::archives") + "partial/",*Cache);
+   return Cleaner.Go(archivedir, *Cache) &&
+      Cleaner.Go(flCombine(archivedir, "partial/"), *Cache);
 }
 									/*}}}*/

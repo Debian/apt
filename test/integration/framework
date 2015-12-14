@@ -1510,7 +1510,10 @@ msgfailoutput() {
 			if expr match "$1" "$FILEFLAGS" >/dev/null; then
 				echo "#### stat(2) of file: $2 ####"
 				stat "$2" || true
-				if test -e "$2"; then
+				if test -d "$2"; then
+					echo "#### The directory contains: $2 ####"
+					ls >&2 "$2" || true
+				elif test -e "$2"; then
 					echo "#### Complete file: $2 ####"
 					cat >&2 "$2" || true
 				fi
