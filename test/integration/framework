@@ -477,6 +477,7 @@ configdpkgnoopchroot() {
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <limits.h>
 
 static char * chrootdir = NULL;
 
@@ -493,13 +494,11 @@ int execvp(const char *file, char *const argv[]) {
 	if (chrootdir == NULL || strncmp(file, "/var/lib/dpkg/", strlen("/var/lib/dpkg/")) != 0)
 		return func_execvp(file, argv);
 	printf("REWRITE execvp call %s into %s\n", file, chrootdir);
-	char newfile[strlen(chrootdir) + strlen(file)];
-	strcpy(newfile, chrootdir);
-	strcat(newfile, file);
+	char newfile[PATH_MAX];
+	snprintf(newfile, sizeof(newfile), "%s/%s", chrootdir, file);
 	char const * const baseadmindir = "/var/lib/dpkg";
-	char admindir[strlen(chrootdir) + strlen(baseadmindir)];
-	strcpy(admindir, chrootdir);
-	strcat(admindir, baseadmindir);
+	char admindir[PATH_MAX];
+	snprintf(admindir, sizeof(admindir), "%s/%s", chrootdir, baseadmindir);
 	setenv("DPKG_ADMINDIR", admindir, 1);
 	return func_execvp(newfile, argv);
 }
