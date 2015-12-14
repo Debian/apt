@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -2556,6 +2556,13 @@ msgstr ""
 "list или повреден файл)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Няма налични публични ключове за следните идентификатори на ключове:\n"
 
@@ -3254,6 +3261,13 @@ msgstr "Във файла Release %s липсва контролна сума"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Неправилна стойност за „Date“ във файла Release %s"
 
@@ -3637,12 +3651,12 @@ msgid "Enhances"
 msgstr "Подобрява"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "важен"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "изискван"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "важен"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3770,7 +3784,7 @@ msgstr "Трябва да добавите адреси-URI от тип „sourc
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

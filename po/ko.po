@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -2511,6 +2511,13 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "다음 키 ID의 공개키가 없습니다:\n"
 
@@ -3185,6 +3192,13 @@ msgstr "Release 파일 %s에 Hash 항목이 없습니다"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Release 파일 %s에 'Date' 항목이 잘못되었습니다"
 
@@ -3557,12 +3571,12 @@ msgid "Enhances"
 msgstr "향상"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "중요"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "필수"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "중요"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3684,7 +3698,7 @@ msgstr "sources.list에 '소스' URI를 써 넣어야 합니다"
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

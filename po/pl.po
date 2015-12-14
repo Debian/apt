@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -2587,6 +2587,13 @@ msgstr ""
 "(nieprawidłowy wpis sources.list lub nieprawidłowy plik)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Dla następujących identyfikatorów kluczy brakuje klucza publicznego:\n"
 
@@ -3285,6 +3292,13 @@ msgstr "Brak wpisu Hash w pliku Release %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Nieprawidłowy wpis Date w pliku Release %s"
 
@@ -3668,12 +3682,12 @@ msgid "Enhances"
 msgstr "Rozszerza"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "ważny"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "wymagany"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "ważny"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3797,7 +3811,7 @@ msgstr "Należy dopisać jakieś URI pakietów źródłowych do pliku sources.li
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

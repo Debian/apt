@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -2545,6 +2545,13 @@ msgstr ""
 "sources.list エントリか、壊れたファイル)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\n"
 
@@ -3240,6 +3247,13 @@ msgstr "Release ファイル %s に Hash エントリがありません"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Release ファイル %s に無効な 'Date' エントリがあります"
 
@@ -3619,12 +3633,12 @@ msgid "Enhances"
 msgstr "拡張"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "重要"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "要求"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "重要"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3750,7 +3764,7 @@ msgstr "sources.list に 'ソース' URI を指定する必要があります"
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

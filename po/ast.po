@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -2529,6 +2529,13 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Nun hai clave pública denguna disponible pa les IDs de clave darréu:\n"
 
@@ -3217,6 +3224,13 @@ msgstr "Ensin entrada Hash nel ficheru release %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Entrada inválida pa 'Date' nel ficheru release %s"
 
@@ -3597,12 +3611,12 @@ msgid "Enhances"
 msgstr "Aumenta"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "importante"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "requeríu"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "importante"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3726,7 +3740,7 @@ msgstr "Has de poner delles URIs 'fonte' nel ficheru sources.list"
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -2539,6 +2539,13 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Não existem chaves públicas para os seguintes IDs de chaves:\n"
 
@@ -3217,6 +3224,13 @@ msgid "No Hash entry in Release file %s"
 msgstr ""
 
 #: apt-pkg/deb/debmetaindex.cc
+#, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Impossível analisar arquivo de pacote %s (1)"
@@ -3582,12 +3596,12 @@ msgid "Enhances"
 msgstr ""
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "importante"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "requerido"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "importante"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3714,7 +3728,7 @@ msgstr "Você deve colocar algumas URIs 'source' em seu sources.list"
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

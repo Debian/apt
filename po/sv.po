@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -2568,6 +2568,13 @@ msgstr ""
 "post eller fel format på fil)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Det finns ingen öppen nyckel tillgänglig för följande nyckel-id:n:\n"
 
@@ -3261,6 +3268,13 @@ msgstr "Ingen Hash-post i Release-filen %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ogiltig ”Date”-post i Release-filen %s"
 
@@ -3640,12 +3654,12 @@ msgid "Enhances"
 msgstr "Utökar"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "viktigt"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "nödvändigt"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "viktigt"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3772,7 +3786,7 @@ msgstr "Du måste lägga till några ”source”-URI:er i din sources.list"
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -2510,6 +2510,13 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
@@ -3174,6 +3181,13 @@ msgid "No Hash entry in Release file %s"
 msgstr ""
 
 #: apt-pkg/deb/debmetaindex.cc
+#, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Nepavyko atverti DB failo %s: %s"
@@ -3532,12 +3546,12 @@ msgid "Enhances"
 msgstr ""
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "Svarbu"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "privaloma"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "Svarbu"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3659,7 +3673,7 @@ msgstr ""
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

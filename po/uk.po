@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -2587,6 +2587,13 @@ msgstr ""
 "sources.list, або пошкоджений файл)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Відсутній публічний ключ для заданих ідентифікаторів (ID) ключа:\n"
 
@@ -3281,6 +3288,13 @@ msgstr "Немає запису 'Hash' у 'Release' файлі %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Невірний запис 'Date' у 'Release' файлі %s"
 
@@ -3667,12 +3681,12 @@ msgid "Enhances"
 msgstr "Покращує (Enhances)"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "важливі (important)"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "необхідні (required)"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "важливі (important)"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3796,7 +3810,7 @@ msgstr "Додайте деякі посилання (URI) на вихідні �
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

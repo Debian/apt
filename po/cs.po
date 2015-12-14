@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -2532,6 +2532,13 @@ msgstr ""
 "nebo porušený soubor)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "K následujícím ID klíčů není dostupný veřejný klíč:\n"
 
@@ -3220,6 +3227,13 @@ msgstr "Release soubor %s neobsahuje Hash záznam"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Neplatná položka „Date“ v Release souboru %s"
 
@@ -3593,12 +3607,12 @@ msgid "Enhances"
 msgstr "Rozšiřuje"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "důležitý"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "vyžadovaný"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "důležitý"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3721,8 +3735,8 @@ msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Do sources.list musíte zadat „zdrojové“ URI"
 
 #: apt-pkg/tagfile.cc
-#, c-format
-msgid "Cannot convert %s to integer"
+#, fuzzy, c-format
+msgid "Cannot convert %s to integer: out of range"
 msgstr "Nelze převést %s na celé číslo (integer)"
 
 #: apt-pkg/update.cc

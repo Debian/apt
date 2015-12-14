@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -2489,6 +2489,13 @@ msgstr ""
 "หรือแฟ้มผิดรูปแบบ)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "ไม่มีกุญแจสาธารณะสำหรับกุญแจหมายเลขต่อไปนี้:\n"
 
@@ -3158,6 +3165,13 @@ msgstr "ไม่มีรายการแฮชในแฟ้ม Release %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "รายการ 'Date' ไม่ถูกต้องในแฟ้ม Release %s"
 
@@ -3524,12 +3538,12 @@ msgid "Enhances"
 msgstr "เพิ่มความสามารถ"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "สำคัญ"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "จำเป็น"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "สำคัญ"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3651,7 +3665,7 @@ msgstr "คุณต้องเพิ่ม URI ชนิด 'source' ใน so
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc

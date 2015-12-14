@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -2559,6 +2559,13 @@ msgstr ""
 "dosyasındaki girdi ya da satır hatalı)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 "Aşağıdaki anahtar kimlikleri için kullanılır hiçbir genel anahtar yok:\n"
@@ -3257,6 +3264,13 @@ msgstr "'Release' dosyasında (%s) sağlama girdisi yok"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "'Release' dosyasında (%s) geçersiz 'Date' girdisi"
 
@@ -3634,12 +3648,12 @@ msgid "Enhances"
 msgstr "Geliştirdikleri"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "önemli"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "gerekli"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "önemli"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3762,8 +3776,8 @@ msgid "You must put some 'source' URIs in your sources.list"
 msgstr "'sources.list' dosyası içine bazı 'source' adresleri koymalısınız"
 
 #: apt-pkg/tagfile.cc
-#, c-format
-msgid "Cannot convert %s to integer"
+#, fuzzy, c-format
+msgid "Cannot convert %s to integer: out of range"
 msgstr "%s metni tam sayıya dönüştürülemiyor"
 
 #: apt-pkg/update.cc

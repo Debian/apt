@@ -1,3 +1,32 @@
+apt (1.1.5) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Do not swap required and important in pkgCache::Priority()
+    Thanks to Manuel A. Fernandez Montecelo for discovering this
+    (Closes: #807523)
+  * Convert package names from Packages files to lower case (Closes: #807012)
+  * test framework: Correctly generate new paths in noopchroot
+  * debian/apt.auto-removal.sh: Adjust -dbg exclusion for multi-arch
+  * pkgcache: Make hash arch-independent using fixed size integer
+  * test-apt-download-progress: Run the https test multiple times
+
+  [ David Kalnischkies ]
+  * update symbols files to 1.1.4 state of affairs
+  * parse .diff/Index hashes in reverse order
+  * redirect which stderr to /dev/null for consistency (Closes: 807373)
+  * show a more descriptive error for weak Release files (Closes: 806459)
+  * support regex and co in 'apt-cache policy $pkg' again (Closes: 807870)
+  * non-existing directories don't need to be cleaned (Closes: 807477)
+
+  [ Seo Sanghyeon ]
+  * fix incorrect Korean translation of "manually" and "automatically"
+
+  [ Andreas Metzler ]
+  * mention APT::AutoRemove::{Recommends,Suggests}Important option
+    (Closes: 807413)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 14 Dec 2015 16:56:11 +0100
+
 apt (1.1.4) unstable; urgency=medium
 
   [ Julian Andres Klode ]

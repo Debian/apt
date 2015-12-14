@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-07 15:31+0100\n"
+"POT-Creation-Date: 2015-12-14 16:56+0100\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -2584,6 +2584,13 @@ msgstr ""
 "в sources.list или файл)"
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' provides only "
+"weak security information for it"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
 
@@ -3281,6 +3288,13 @@ msgstr "Отсутствуют элементы Hash в файле Release (%s)"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
+msgid ""
+"No Hash entry in Release file %s, which is considered strong enough for "
+"security purposes"
+msgstr ""
+
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Неправильный элемент «Date» в файле Release %s"
 
@@ -3663,12 +3677,12 @@ msgid "Enhances"
 msgstr "Улучшает"
 
 #: apt-pkg/pkgcache.cc
-msgid "important"
-msgstr "важный"
-
-#: apt-pkg/pkgcache.cc
 msgid "required"
 msgstr "необходимый"
+
+#: apt-pkg/pkgcache.cc
+msgid "important"
+msgstr "важный"
 
 #: apt-pkg/pkgcache.cc
 msgid "standard"
@@ -3798,7 +3812,7 @@ msgstr "Вы должны заполнить sources.list, поместив ту
 
 #: apt-pkg/tagfile.cc
 #, c-format
-msgid "Cannot convert %s to integer"
+msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
 #: apt-pkg/update.cc
