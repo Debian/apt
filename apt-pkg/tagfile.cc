@@ -537,11 +537,10 @@ signed int pkgTagSection::FindI(const char *Tag,signed long Default) const
    errno = 0;
    char *End;
    signed long Result = strtol(S,&End,10);
-   if (errno == ERANGE)
-      _error->Errno("strtol", _("Cannot convert %s to integer"), S);
-   if (Result < std::numeric_limits<int>::min() || Result > std::numeric_limits<int>::max()) {
+   if (errno == ERANGE ||
+       Result < std::numeric_limits<int>::min() || Result > std::numeric_limits<int>::max()) {
       errno = ERANGE;
-      _error->Errno("", _("Cannot convert %s to integer"), S);
+      _error->Error(_("Cannot convert %s to integer: out of range"), S);
    }
    if (S == End)
       return Default;

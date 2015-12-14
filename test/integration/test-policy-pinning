@@ -302,7 +302,7 @@ Pin-Priority: 2147483648
 " > rootdir/etc/apt/preferences
 
 testfailureequal "Reading package lists...
-E: Cannot convert 2147483648 to integer -  (34: Numerical result out of range)
+E: Cannot convert 2147483648 to integer: out of range
 E: ${tmppath}/rootdir/etc/apt/preferences: Value 2147483648 is outside the range of valid pin priorities (-32768 to 32767)" \
  aptget install -s coolstuff -o PinPriority=2147483648
 
