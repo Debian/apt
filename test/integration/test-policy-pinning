@@ -83,6 +83,15 @@ buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
 
 setupaptarchive
 
+testsuccessequal "coolstuff:
+  Installed: (none)
+  Candidate: 2.0~bpo1
+  Version table:
+     2.0~bpo1 500
+        500 file:${APTARCHIVE} backports/main all Packages
+     1.0 500
+        500 file:${APTARCHIVE} stable/main all Packages" apt policy '^cool.*'
+
 testequalpolicycoolstuff() {
 	local INSTALLED="${1:-(none)}"
 	local CANDIDATE="${2:-(none)}"

@@ -336,7 +336,7 @@ bool CacheSetHelper::PackageFromString(PackageContainerInterface * const pci, pk
 bool CacheSetHelper::PackageFromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline) {
 	bool found = false;
 	for (const char **I = cmdline; *I != 0; ++I)
-		found |= PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, *I);
+		found |= PackageFrom(CacheSetHelper::STRING, pci, Cache, *I);
 	return found;
 }
 									/*}}}*/
