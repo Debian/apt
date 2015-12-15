@@ -55,8 +55,8 @@ aclocal.m4: $(wildcard buildlib/*.m4)
 	aclocal -I buildlib
 
 $(BUILDDIR)/configure-stamp: configure buildlib/config.guess buildlib/config.sub
-	/usr/bin/test -e $(BUILDDIR) || mkdir $(BUILDDIR)
-	(HERE=`pwd`; cd $(BUILDDIR) && $$HERE/configure)
-	touch $(BUILDDIR)/configure-stamp
+	/usr/bin/test -e '$(BUILDDIR)' || mkdir '$(BUILDDIR)'
+	(HERE="`pwd`"; cd '$(BUILDDIR)' && "$$HERE/configure")
+	touch '$(BUILDDIR)/configure-stamp'
 
 $(addprefix $(BUILDDIR)/,$(CONVERTED)): $(BUILDDIR)/configure-stamp

@@ -16,7 +16,7 @@ LOCAL := manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
 
 apt-vendor.ent: ../../vendor/current/apt-vendor.ent
-	ln -sf $(shell readlink -f $^) $@
+	ln -sf '$(abspath $^)' $@
 
 # Install generation hooks
 manpages: $($(LOCAL)-LIST)

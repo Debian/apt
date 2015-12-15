@@ -58,7 +58,7 @@ endif  # ifdef PYTHONLIB
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.opic: %.cc
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ '$(abspath $<)'
 	$(DoDep)
 
 # Include the dependencies that are available

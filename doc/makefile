@@ -13,10 +13,10 @@ include $(DOCBOOK_H)
 doc: manpages docbook
 
 examples/sources.list: ../vendor/current/sources.list
-	ln -sf $(shell readlink -f $^) $@
+	ln -sf '$(abspath $^)' $@
 
 apt-vendor.ent: ../vendor/current/apt-vendor.ent
-	ln -sf $(shell readlink -f $^) $@
+	ln -sf '$(abspath $^)' $@
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf

@@ -50,7 +50,7 @@ endif
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.o: %.cc
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) -o $@ '$(abspath $<)'
 	$(DoDep)
 
 # Include the dependencies that are available

@@ -67,7 +67,7 @@ $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) 
 vpath %.cc $(SUBDIRS)
 $(OBJ)/%.opic: %.cc $(LIBRARYDEPENDS)
 	echo Compiling $< to $@
-	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ $(abspath $<)
+	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXSTD) $(CXXFLAGS) $(PICFLAGS) -o $@ '$(abspath $<)'
 	$(DoDep)
 
 # Include the dependencies that are available
