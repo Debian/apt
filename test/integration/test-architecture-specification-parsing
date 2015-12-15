@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 
 # we need this construct here as it isn't really possible to fake native arch for dpkg-* tools

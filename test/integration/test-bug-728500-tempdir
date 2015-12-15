@@ -2,8 +2,8 @@
 
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'i386'
 
@@ -14,8 +14,6 @@ changetowebserver
 
 msgtest 'Test apt-get update with incorrect' 'TMPDIR'
 
-OUTPUT="$(mktemp)"
-addtrap "rm \"$OUTPUT\";"
 export TMPDIR=/does-not-exists
 testsuccess aptget update -o Debug::Acquire::gpg=1
 unset TMPDIR

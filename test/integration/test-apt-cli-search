@@ -1,17 +1,11 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "i386"
-
-if [ ! -x ${BUILDDIRECTORY}/apt ]; then
-    msgmsg "No ${BUILDDIRECTORY}/apt"
-    msgskip 
-    exit 0
-fi
 
 DESCR='Some description that has a unusual word xxyyzz and aabbcc and a UPPERCASE'
 DESCR2='Some other description with the unusual aabbcc only'
@@ -23,7 +17,7 @@ insertpackage 'testing' 'bar' 'i386' '2.0' '' '' "$DESCR2"
 
 setupaptarchive
 
-APTARCHIVE=$(readlink -f ./aptarchive)
+APTARCHIVE="$(readlink -f ./aptarchive)"
 
 testfailureequal 'E: You must give at least one search pattern' aptcache search
 testfailureequal 'E: You must give at least one search pattern' apt search

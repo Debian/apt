@@ -83,7 +83,8 @@ PASS=0
 ALL=0
 FAILED_TESTS=""
 DIR="$(readlink -f "$(dirname "$0")")"
-TESTLIST="$(find "$DIR" -mindepth 1 -maxdepth 1 -regex '^.*/test-[^/]*$' | sort)"
+cd "$DIR"
+TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
 if [ -n "$APT_TEST_JOBS" ]; then
 	if [ "$MSGCOLOR" != 'NO' ]; then
 		export MSGCOLOR='ALWAYS'

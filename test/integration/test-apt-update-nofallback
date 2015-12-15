@@ -200,8 +200,8 @@ W: Some index files failed to download. They have been ignored, or old ones used
 }
 
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "i386"

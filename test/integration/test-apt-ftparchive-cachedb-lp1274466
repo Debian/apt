@@ -5,15 +5,15 @@ set -e
 #
 # main()
 #
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture "i386"
 confighashes 'MD5' 'SHA1' 'SHA256' 'SHA512'
 
 # gather the db and the deb, ensure mtime is not modfied as its saved in the DB
-cp -p $TESTDIR/deb-lp1274466-cachedb.deb  foo_1_i386.deb
-cp -p $TESTDIR/cachedb-lp1274466-old-format.db old-format.db
+cp -p "$TESTDIR/deb-lp1274466-cachedb.deb" foo_1_i386.deb
+cp -p "$TESTDIR/cachedb-lp1274466-old-format.db" old-format.db
 
 # verify that the format is different
 testsuccess aptftparchive --db new-format.db packages .

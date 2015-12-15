@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'amd64'
 
@@ -68,8 +68,8 @@ testdownloadfile() {
 }
 
 TESTFILE='aptarchive/testfile'
-cp -a ${TESTDIR}/framework $TESTFILE
-cp -a ${TESTDIR}/framework "${TESTFILE}2"
+cp -a "${TESTDIR}/framework" "$TESTFILE"
+cp -a "${TESTDIR}/framework" "${TESTFILE}2"
 
 followuprequest() {
 	local DOWN='./downloaded/testfile'

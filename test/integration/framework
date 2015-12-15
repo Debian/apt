@@ -169,11 +169,11 @@ runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
 	local CMD="$1"
 	shift
-	case $CMD in
+	case "$CMD" in
 	sh|aptitude|*/*|command) ;;
 	*) CMD="${BUILDDIRECTORY}/$CMD";;
 	esac
-	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${LIBRARYPATH} $CMD "$@"
+	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${LIBRARYPATH} "$CMD" "$@"
 }
 aptconfig() { runapt apt-config "$@"; }
 aptcache() { runapt apt-cache "$@"; }
@@ -307,10 +307,8 @@ setupenvironment() {
 	if [ -f "${TESTDIRECTORY}/${SOURCESSFILE}" ]; then
 		cp "${TESTDIRECTORY}/${SOURCESSFILE}" aptarchive/Sources
 	fi
-	for key in $(find "$TESTDIRECTORY" -name '*.pub' -o -name '*.sec'); do
-		cp "$key" keys/
-		chmod 644 "$key"
-	done
+	find "$TESTDIRECTORY" \( -name '*.pub' -o -name '*.sec' \) -exec cp '{}' keys/ \;
+	chmod 644 keys/*
 	ln -s "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
@@ -330,11 +328,11 @@ setupenvironment() {
 	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
 #!/bin/sh
 set -e
-if [ -r "${TMPWORKINGDIRECTORY}/noopchroot.so" ]; then
+if [ -r '${TMPWORKINGDIRECTORY}/noopchroot.so' ]; then
 	if [ -n "\$LD_LIBRARY_PATH" ]; then
-		export LD_LIBRARY_PATH="${TMPWORKINGDIRECTORY}:${LD_LIBRARY_PATH}"
+		export LD_LIBRARY_PATH='${TMPWORKINGDIRECTORY}:'"\${LD_LIBRARY_PATH}"
 	else
-		export LD_LIBRARY_PATH="${TMPWORKINGDIRECTORY}"
+		export LD_LIBRARY_PATH='${TMPWORKINGDIRECTORY}'
 	fi
 	if [ -n "\$LD_PRELOAD" ]; then
 		export LD_PRELOAD="noopchroot.so \${LD_PRELOAD}"
@@ -345,13 +343,13 @@ fi
 EOF
 	cp "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
-exec fakeroot "${DPKG:-dpkg}" --root="${TMPWORKINGDIRECTORY}/rootdir" \\
-	--log="${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log" \\
+exec fakeroot '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" <<EOF
-exec fakeroot gdb --quiet -ex run "${DPKG:-dpkg}" --args "${DPKG:-dpkg}" --root="${TMPWORKINGDIRECTORY}/rootdir" \\
-	--log="${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log" \\
+exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
@@ -1186,7 +1184,7 @@ changetowebserver() {
 		cd aptarchive
 		local LOG="webserver.log"
 		if ! aptwebserver --port 0 -o aptwebserver::fork=1 -o aptwebserver::portfile='aptwebserver.port' "$@" >$LOG 2>&1 ; then
-			cat $LOG
+			cat "$LOG"
 			false
 		fi
 		waitforpidfile aptwebserver.pid

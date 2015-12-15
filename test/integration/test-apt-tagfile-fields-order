@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 
 dpkg_field_ordered_list() {
@@ -31,7 +31,7 @@ comparelsts() {
 
 msgtest 'Check that apt knows all fields dpkg orders in' 'Packages'
 dpkg_field_ordered_list 'CTRL_INDEX_PKG' > dpkg.lst
-sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
 comparelsts
 
 msgtest 'Check that apt knows all fields dpkg orders in' 'status'
@@ -45,7 +45,7 @@ comparelsts
 msgtest 'Check that apt knows all fields dpkg orders in' 'Sources'
 dpkg_field_ordered_list 'CTRL_INDEX_SRC' > dpkg.lst
 echo 'Package' > apt.tmp
-sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed '/^Package$/,/^Package$/ d' >> apt.tmp
+sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed '/^Package$/,/^Package$/ d' >> apt.tmp
 sort -u apt.tmp > apt.lst
 comparelsts
 
@@ -63,7 +63,7 @@ if [ "$USER" = 'david' ]; then
 		msgpass
 		msgtest 'Check that apt knows about all fields' 'dpkg parses'
 		sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKGSOURCE}" | sort -u > dpkg.lst
-		sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
 		comparelsts
 	fi
 
@@ -76,7 +76,7 @@ if [ "$USER" = 'david' ]; then
 		msgtest 'Check that apt knows about all fields' 'dak knows'
 		# dak mixes both, so we can only check with the mixed one as well
 		sed -ne "s#^.* VALUES ('\(.*\)', \(.*\)).*\$#\1 \2#p" "${DAKSOURCE}" | cut -d ' ' -f 1 | sort -u > dpkg.lst
-		sed -ne 's#^   "\(.*\)",.*$#\1#p' ${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c | sort -u > apt.lst
+		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sort -u > apt.lst
 		comparelsts
 	fi
 fi

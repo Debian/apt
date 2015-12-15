@@ -22,8 +22,8 @@ usr/share/doc/foo/copyright				    others/foo"
 #
 # main()
 #
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'i386'
 

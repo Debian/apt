@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "i386"
@@ -17,9 +17,9 @@ prepare() {
 		DATE='now + 6 days'
 	fi
 	for release in $(find rootdir/var/lib/apt/lists 2> /dev/null); do
-		touch -d 'now - 6 hours' $release
+		touch -d 'now - 6 hours' "$release"
 	done
-	cp $1 aptarchive/Packages
+	cp "$1" aptarchive/Packages
 	find aptarchive -name 'Release' -delete
 	compressfile aptarchive/Packages
         # create Release file with incorret checksums
@@ -53,7 +53,7 @@ touch aptarchive/apt.deb
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 runtest() {
-	prepare ${PKGFILE}
+	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete

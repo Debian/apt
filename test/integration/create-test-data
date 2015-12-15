@@ -6,8 +6,8 @@ if [ -z "$1" -o -z "$2" ]; then
 	exit 1
 fi
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 
 GENERATE=$1

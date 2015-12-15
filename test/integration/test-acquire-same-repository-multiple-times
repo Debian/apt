@@ -1,13 +1,13 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'amd64'
 
 TESTFILE="$TESTDIR/framework"
-cp $TESTFILE aptarchive/foo
+cp "$TESTFILE" aptarchive/foo
 APTARCHIVE="$(readlink -f ./aptarchive)"
 
 getcodenamefromsuite() { echo "jessie"; }
@@ -37,7 +37,7 @@ while read line; do
 	if [ -z "\$line" ]; then
 		sleep 0.5
 	fi
-done | "$OLDMETHODS/\${0##*/}"
+done | '$OLDMETHODS/'"\${0##*/}"
 EOF
 chmod +x "${NEWMETHODS}/file"
 ln -s "${NEWMETHODS}/file" "${NEWMETHODS}/http"

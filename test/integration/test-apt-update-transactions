@@ -3,8 +3,8 @@ set -e
 
 # ensure that an update will only succeed entirely or not at all
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture 'i386'

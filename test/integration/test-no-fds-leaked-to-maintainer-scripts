@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture 'amd64' 'i386'
@@ -13,7 +13,7 @@ BUILDDIR="incoming/fdleaks-1.0"
 for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
 	cat > ${BUILDDIR}/debian/$script << EOF
 #!/bin/sh
-if [ -e "$(pwd)/rootdir/tmp/read_stdin" ]; then
+if [ -e '$(pwd)/rootdir/tmp/read_stdin' ]; then
 	read line;
 	echo "STDIN: -\$line-"
 fi

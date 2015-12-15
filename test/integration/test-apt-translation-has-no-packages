@@ -9,17 +9,11 @@
 #
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "amd64"
-
-if [ ! -x ${BUILDDIRECTORY}/apt ]; then
-    msgmsg "No ${BUILDDIRECTORY}/apt"
-    msgskip
-    exit 0
-fi
 
 buildsimplenativepackage 'foo' 'all' '1.0'
 setupaptarchive

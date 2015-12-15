@@ -1,18 +1,11 @@
 #!/bin/sh
 set -e
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "i386"
-
-if [ ! -x ${BUILDDIRECTORY}/apt ]; then
-    msgmsg "No ${BUILDDIRECTORY}/apt"
-    msgskip 
-    exit 0
-fi
-
 
 insertpackage 'unstable' 'foo' 'all' '2.0' 'Depends: foo-new-dependency'
 insertpackage 'unstable' 'foo-new-dependency' 'all' '2.0'
@@ -20,7 +13,7 @@ insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
 
-APTARCHIVE=$(readlink -f ./aptarchive)
+APTARCHIVE="$(readlink -f ./aptarchive)"
 
 # default is to allow new dependencies
 testsuccessequal "The following NEW packages will be installed:

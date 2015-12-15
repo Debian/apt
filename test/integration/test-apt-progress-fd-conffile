@@ -34,8 +34,6 @@ echo 'meep' >> rootdir/etc/compiz.conf/compiz.conf
 
 # FIXME: Is there really no way to see if dpkg actually prompts?
 msgtest 'Test for successful execution of' 'apt-get install compiz-core=2.0'
-OUTPUT="$(mktemp)"
-addtrap "rm \"$OUTPUT\";"
 exec 3> apt-progress.log
 testsuccess --nomsg aptget install compiz-core=2.0 -o APT::Status-Fd=3 -o Dpkg::Use-Pty=false -o dpkg::options::='--force-confold'
 

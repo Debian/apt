@@ -169,8 +169,8 @@ test_inrelease_to_broken_gzip() {
     testfileequal lists.before "$(listcurrentlistsdirectory)"
 }
 
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 
 setupenvironment
 configarchitecture "i386"

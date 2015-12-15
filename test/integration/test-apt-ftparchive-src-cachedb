@@ -89,8 +89,8 @@ create_clearsigned_source_files() {
 #
 # main()
 #
-TESTDIR=$(readlink -f $(dirname $0))
-. $TESTDIR/framework
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
 setupenvironment
 configarchitecture "i386"
 confighashes 'MD5' 'SHA1' 'SHA256' 'SHA512'
