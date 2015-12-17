@@ -54,7 +54,7 @@ msgprintf() {
 		printf "$START " "$1"
 		shift
 		while [ -n "$1" ]; do
-			printf "$MIDDLE " "$(echo "$1" | sed -e 's#^apt\([cfghs]\)#apt-\1#')"
+			printf "$MIDDLE " "$(echo "$1" | sed -e 's#^apt\([cfghks]\)#apt-\1#')"
 			shift
 		done
 	fi
@@ -245,13 +245,23 @@ addtrap() {
 	trap "shellsetedetector; $CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
+escape_shell() {
+    echo "$@" | sed -e "s#'#'\"'\"'#g"
+}
+
 setupenvironment() {
 	# privilege dropping and testing doesn't work if /tmp isn't world-writeable (as e.g. with libpam-tmpdir)
 	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
 		unset TMPDIR
 	fi
 	TMPWORKINGDIRECTORY="$(mktemp -d)"
-	addtrap "cd /; rm -rf \"$TMPWORKINGDIRECTORY\";"
+	addtrap "cd /; rm -rf '$(escape_shell "$TMPWORKINGDIRECTORY")';"
+	if [ -n "$TMPDIR_ADD" ]; then
+		TMPWORKINGDIRECTORY="${TMPWORKINGDIRECTORY}/${TMPDIR_ADD}"
+		mkdir -p "$TMPWORKINGDIRECTORY"
+		unset TMPDIR_ADD
+		export TMPDIR="$TMPWORKINGDIRECTORY"
+	fi
 	msgninfo "Preparing environment for ${0##*/} in ${TMPWORKINGDIRECTORY}…"
 
 	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
@@ -1254,7 +1264,7 @@ EOF
 	# start with an unmounted disk
 	mv "${CD}" "${CD}-unmounted"
 	# we don't want the disk to be modifiable
-	addtrap 'prefix' "chmod -f -R +w \"$PWD/rootdir/media/cdrom/dists/\" \"$PWD/rootdir/media/cdrom-unmounted/dists/\" || true;"
+	addtrap 'prefix' "chmod -f -R +w '$(escape_shell "$PWD/rootdir/media/cdrom/dists/")' '$(escape_shell "$PWD/rootdir/media/cdrom-unmounted/dists/")' || true;"
 	chmod -R 555 rootdir/media/cdrom-unmounted/dists
 }
 

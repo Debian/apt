@@ -4,17 +4,14 @@ set -e
 unset GREP_OPTIONS
 export IFS="$(printf "\n\b")"
 
-APT_DIR="/"
-eval $(apt-config shell APT_DIR Dir)
-
 MASTER_KEYRING='&keyring-master-filename;'
-eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
+eval "$(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)"
 ARCHIVE_KEYRING='&keyring-filename;'
-eval $(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)
+eval "$(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)"
 REMOVED_KEYS='&keyring-removed-filename;'
-eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
+eval "$(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)"
 ARCHIVE_KEYRING_URI='&keyring-uri;'
-eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
+eval "$(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)"
 
 aptkey_echo() { echo "$@"; }
 
@@ -40,6 +37,10 @@ command_available() {
     return 1
 }
 
+escape_shell() {
+    echo "$@" | sed -e "s#'#'\"'\"'#g"
+}
+
 get_fingerprints_of_keyring() {
     aptkey_execute "$GPG_SH" --keyring "$1" --with-colons --fingerprint | while read publine; do
 	# search for a public key
@@ -55,8 +56,8 @@ get_fingerprints_of_keyring() {
 }
 
 add_keys_with_verify_against_master_keyring() {
-    ADD_KEYRING=$1
-    MASTER=$2
+    ADD_KEYRING="$1"
+    MASTER="$2"
 
     if [ ! -f "$ADD_KEYRING" ]; then
 	echo >&2 "ERROR: '$ADD_KEYRING' not found"
@@ -72,8 +73,8 @@ add_keys_with_verify_against_master_keyring() {
     #   all keys that are exported must have a valid signature
     #   from a key in the $distro-master-keyring
     add_keys="$(get_fingerprints_of_keyring "$ADD_KEYRING")"
-    all_add_keys=`aptkey_execute "$GPG_SH" --keyring "$ADD_KEYRING" --with-colons --list-keys | grep ^[ps]ub | cut -d: -f5`
-    master_keys=`aptkey_execute "$GPG_SH" --keyring "$MASTER" --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    all_add_keys="$(aptkey_execute "$GPG_SH" --keyring "$ADD_KEYRING" --with-colons --list-keys | grep ^[ps]ub | cut -d: -f5)"
+    master_keys="$(aptkey_execute "$GPG_SH" --keyring "$MASTER" --with-colons --list-keys | grep ^pub | cut -d: -f5)"
 
     # ensure there are no colisions LP: #857472
     for all_add_key in $all_add_keys; do
@@ -114,6 +115,9 @@ add_keys_with_verify_against_master_keyring() {
 # the archive-keyring keys needs to be signed with the master key
 # (otherwise it does not make sense from a security POV)
 net_update() {
+    local APT_DIR='/'
+    eval $(apt-config shell APT_DIR Dir)
+
     # Disabled for now as code is insecure (LP: #1013639 (and 857472, 1013128))
     APT_KEY_NET_UPDATE_ENABLED=""
     eval $(apt-config shell APT_KEY_NET_UPDATE_ENABLED APT::Key::Net-Update-Enabled)
@@ -137,7 +141,7 @@ net_update() {
     keyring="${APT_DIR}/var/lib/apt/keyrings/$(basename "$ARCHIVE_KEYRING_URI")"
     old_mtime=0
     if [ -e $keyring ]; then
-	old_mtime=$(stat -c %Y $keyring)
+	old_mtime=$(stat -c %Y "$keyring")
     fi
     (cd  "${APT_DIR}/var/lib/apt/keyrings"; wget --timeout=90 -q -N "$ARCHIVE_KEYRING_URI")
     if [ ! -e "$keyring" ]; then
@@ -228,7 +232,7 @@ foreach_keyring_do() {
 	    $ACTION "$TRUSTEDFILE" "$@"
 	fi
 	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+	eval "$(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)"
 	if [ -d "$TRUSTEDPARTS" ]; then
 	    # strip / suffix as gpg will double-slash in that case (#665411)
 	    local STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
@@ -360,7 +364,7 @@ setup_merged_keyring() {
 	FORCED_KEYRING="${GPGHOMEDIR}/forcedkeyid.gpg"
 	TRUSTEDFILE="${FORCED_KEYRING}"
 	echo "#!/bin/sh
-exec sh \"${GPG}\" --keyring \"${TRUSTEDFILE}\" \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
+exec sh '($(escape_shell "${GPG}")' --keyring '$(escape_shell "${TRUSTEDFILE}")' \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
 	GPG="${GPGHOMEDIR}/gpg.1.sh"
 	# ignore error as this "just" means we haven't found the forced keyid and the keyring will be empty
 	import_keyring_into_keyring '' "$TRUSTEDFILE" "$FORCED_KEYID" || true
@@ -372,12 +376,12 @@ exec sh \"${GPG}\" --keyring \"${TRUSTEDFILE}\" \"\$@\"" > "${GPGHOMEDIR}/gpg.1.
 	   touch "${GPGHOMEDIR}/pubring.gpg" "${GPGHOMEDIR}/pubring.orig.gpg"
 	fi
 	echo "#!/bin/sh
-exec sh \"${GPG}\" --keyring \"${GPGHOMEDIR}/pubring.gpg\" \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
+exec sh '$(escape_shell "${GPG}")' --keyring '$(escape_shell "${GPGHOMEDIR}/pubring.gpg")' \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
 	GPG="${GPGHOMEDIR}/gpg.1.sh"
     else
 	create_new_keyring "$TRUSTEDFILE"
 	echo "#!/bin/sh
-exec sh \"${GPG}\" --keyring \"${TRUSTEDFILE}\" \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
+exec sh '$(escape_shell "${GPG}")' --keyring '$(escape_shell "${TRUSTEDFILE}")' \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
 	GPG="${GPGHOMEDIR}/gpg.1.sh"
     fi
 }
@@ -479,13 +483,13 @@ create_gpg_home() {
 	fi
     fi
     GPGHOMEDIR="$(mktemp -d)"
-    CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
+    CURRENTTRAP="${CURRENTTRAP} rm -rf '$(escape_shell "${GPGHOMEDIR}")';"
     trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
     chmod 700 "$GPGHOMEDIR"
 }
 
 prepare_gpg_home() {
-    eval $(apt-config shell GPG_EXE Apt::Key::gpgcommand)
+    eval "$(apt-config shell GPG_EXE Apt::Key::gpgcommand)"
 
     if [ -n "$GPG_EXE" ] && command_available "$GPG_EXE"; then
 	true
@@ -518,8 +522,8 @@ prepare_gpg_home() {
     fi
     # tell gpg that it shouldn't try to maintain a trustdb file
     echo "#!/bin/sh
-exec \"${GPG_EXE}\" --ignore-time-conflict --no-options --no-default-keyring \\
-   --homedir \"${GPGHOMEDIR}\" --no-auto-check-trustdb --trust-model always \"\$@\"" > "${GPGHOMEDIR}/gpg.0.sh"
+exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-default-keyring \\
+--homedir '$(escape_shell "${GPGHOMEDIR}")' --no-auto-check-trustdb --trust-model always \"\$@\"" > "${GPGHOMEDIR}/gpg.0.sh"
     GPG_SH="${GPGHOMEDIR}/gpg.0.sh"
     GPG="$GPG_SH"
 

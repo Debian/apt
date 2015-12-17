@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+# apt-key is a shell script, so relatively prune to be effected by 'crazy' things:
+# confuses config parser as there exists no way of escaping " currently.
+#TMPDIR="$(mktemp -d)/This is \"fü\$\$ing cràzy\", \$(man man | head -n1 | cut -d' ' -f 1)\$!"
+# gpg doesn't like | in path names – documented e.g. in the man gpg2 --agent-program
+#TMPDIR="$(mktemp -d)/This is fü\$\$ing cràzy, \$(man man | head -n1 | cut -d' ' -f 1)\$!"
+TMPDIR_ADD="This is fü\$\$ing cràzy, \$(apt -v)\$!"
+
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
@@ -187,6 +194,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	echo 'Verify me. This is my signature.' > signature
 	testsuccess --nomsg aptkey --quiet --keyring keys/marvinparanoid.pub --secret-keyring keys/marvinparanoid.sec --readonly \
 		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
+	testsuccess test -s signature.gpg -a -s signature
 
 
 	for GPGV in '' 'gpgv' 'gpgv2'; do
