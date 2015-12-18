@@ -13,9 +13,7 @@ setupaptarchive --no-update
 for i in $(seq 1 50); do
 	touch rootdir/etc/apt/trusted.gpg.d/emptykey-${i}.gpg
 done
-
-aptkey list | grep '^pub' > aptkey.list
-testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+testaptkeys 'Joe Sixpack'
 
 testsuccess aptget update
 msgtest 'Test for no gpg errors/warnings in' 'apt-get update'

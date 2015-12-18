@@ -1108,9 +1108,9 @@ signreleasefiles() {
 		fi
 	fi
 	for RELEASE in $(find "${REPODIR}/" -name Release); do
-		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+		testsuccess $GPG --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		$GPG --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
+		testsuccess $GPG --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
 		# we might have set a specific date for the Release file, so copy it
 		touch -d "$(stat --format "%y" ${RELEASE})" "${RELEASE}.gpg" "${INRELEASE}"
 	done
@@ -1775,6 +1775,41 @@ testwebserverlaststatuscode() {
 		msgfailoutput "Status was $(cat "$STATUS")" "$OUTPUT"
 	fi
 	msggroup
+}
+
+createlistofkeys() {
+	local OUTPUT="$1"
+	shift
+	while [ -n "$1" ]; do
+		# gpg 2.1 has a slightly different output format
+		if grep -q ' rsa2048/' "$OUTPUT"; then
+			case "$1" in
+				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
+				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
+				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16';;
+				oldarchive) echo 'pub   rsa1024/F68C85A3 2013-12-19';;
+				newarchive) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
+				*) echo 'UNKNOWN KEY';;
+			esac
+		else
+			case "$1" in
+				*Joe*|*Sixpack*) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
+				*Rex*|*Expired*) echo 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
+				*Marvin*|*Paranoid*) echo 'pub   2048R/528144E2 2011-01-16';;
+				oldarchive) echo 'pub   1024R/F68C85A3 2013-12-19';;
+				newarchive) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
+				*) echo 'UNKNOWN KEY';;
+			esac
+		fi
+		shift
+	done
+}
+testaptkeys() {
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/aptkeylist.output"
+	if ! aptkey list | grep '^pub' > "$OUTPUT"; then
+		echo -n > "$OUTPUT"
+	fi
+	testfileequal "$OUTPUT" "$(createlistofkeys "$OUTPUT" "$@")"
 }
 
 pause() {

@@ -20,35 +20,6 @@ cleanplate() {
 	mkdir rootdir/etc/apt/trusted.gpg.d/
 }
 
-createlistofkeys() {
-	while [ -n "$1" ]; do
-		# gpg 2.1 has a slightly different output format
-		if grep -q ' rsa2048/' aptkey.list; then
-			case "$1" in
-				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
-				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
-				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16';;
-				*) echo 'UNKNOWN KEY';;
-			esac
-		else
-			case "$1" in
-				*Joe*|*Sixpack*) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
-				*Rex*|*Expired*) echo 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
-				*Marvin*|*Paranoid*) echo 'pub   2048R/528144E2 2011-01-16';;
-				*) echo 'UNKNOWN KEY';;
-			esac
-		fi
-		shift
-	done
-}
-
-testaptkeys() {
-	if ! aptkey list | grep '^pub' > aptkey.list; then
-		echo -n > aptkey.list
-	fi
-	testfileequal './aptkey.list' "$(createlistofkeys "$@")"
-}
-
 echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
 APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/aptkey.conf
 
