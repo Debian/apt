@@ -506,38 +506,38 @@ prepare_gpg_home() {
 
     create_gpg_home
 
-    # We don't use a secret keyring, of course, but gpg panics and
-    # implodes if there isn't one available - and writeable for imports
-    SECRETKEYRING="${GPGHOMEDIR}/secring.gpg"
-    touch "$SECRETKEYRING"
-
     # create the trustdb with an (empty) dummy keyring
     # older gpgs required it, newer gpgs even warn that it isn't needed,
     # but require it nonetheless for some commands, so we just play safe
     # here for the foreseeable future and create a dummy one
+    touch "${GPGHOMEDIR}/empty.gpg"
     if ! "$GPG_EXE" --ignore-time-conflict --no-options --no-default-keyring \
-       --homedir "$GPGHOMEDIR" --quiet --check-trustdb --keyring "$SECRETKEYRING" >"${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+       --homedir "$GPGHOMEDIR" --quiet --check-trustdb --keyring "${GPGHOMEDIR}/empty.gpg" >"${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
        cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
        false
     fi
-    # tell gpg that it shouldn't try to maintain a trustdb file
+
+    # now tell gpg that it shouldn't try to maintain this trustdb file
     echo "#!/bin/sh
 exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-default-keyring \\
 --homedir '$(escape_shell "${GPGHOMEDIR}")' --no-auto-check-trustdb --trust-model always \"\$@\"" > "${GPGHOMEDIR}/gpg.0.sh"
     GPG_SH="${GPGHOMEDIR}/gpg.0.sh"
     GPG="$GPG_SH"
 
+    # We don't usually need a secret keyring, of course, but
     # for advanced operations, we might really need a secret keyring after all
     if [ -n "$FORCED_SECRET_KEYRING" ] && [ -r "$FORCED_SECRET_KEYRING" ]; then
-	rm -f "$SECRETKEYRING"
-	cp -a "$FORCED_SECRET_KEYRING" "$SECRETKEYRING"
+	if ! aptkey_execute "$GPG" -v --batch --import "$FORCED_SECRET_KEYRING" >"${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
+	    false
+	fi
+    else
+       # and then, there are older versions of gpg which panic and implode
+       # if there isn't one available - and writeable for imports
+       # and even if not output is littered with the creation of a secring,
+       # so lets call import once to have it create what it wants in silence
+       echo -n | aptkey_execute "$GPG" --batch --import >/dev/null 2>&1 || true
     fi
-
-    # older gpg versions need a secring file, but newer versions take it as
-    # a hint to start a migration from earlier versions. The file is empty
-    # anyhow, so nothing actually happens, but its three lines of output
-    # nobody expects to see in apt-key context, so trigger it in silence
-    echo -n | aptkey_execute "$GPG" --batch --import >/dev/null 2>&1 || true
 }
 
 if [ "$command" != 'help' ] && [ "$command" != 'verify' ]; then
