@@ -160,8 +160,8 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
 
    // Buffered copy between fds
-   std::unique_ptr<unsigned char[]> Buf(new unsigned char[64000]);
-   constexpr unsigned long long BufSize = sizeof(Buf.get())/sizeof(Buf.get()[0]);
+   constexpr size_t BufSize = 64000;
+   std::unique_ptr<unsigned char[]> Buf(new unsigned char[BufSize]);
    unsigned long long ToRead = 0;
    do {
       if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
