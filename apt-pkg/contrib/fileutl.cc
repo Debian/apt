@@ -165,7 +165,7 @@ bool CopyFile(FileFd &From,FileFd &To)
    unsigned long long ToRead = 0;
    do {
       if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
-	  To.Write(Buf.get(),ToRead) == false)
+	  (ToRead > 0 && To.Write(Buf.get(),ToRead) == false))
 	 return false;
    } while (ToRead != 0);
 
