@@ -222,9 +222,13 @@ TEST(FileUtlTest, GetTempDir)
    setenv("TMPDIR", "/not-there-no-really-not", 1);
    EXPECT_EQ("/tmp", GetTempDir());
 
-   // here but not accessible for non-roots
-   setenv("TMPDIR", "/usr", 1);
-   EXPECT_EQ("/tmp", GetTempDir());
+   // root can access everything, so /usr will be accepted
+   if (geteuid() != 0)
+   {
+       // here but not accessible for non-roots
+       setenv("TMPDIR", "/usr", 1);
+       EXPECT_EQ("/tmp", GetTempDir());
+   }
 
    // files are no good for tmpdirs, too
    setenv("TMPDIR", "/dev/null", 1);
