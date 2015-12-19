@@ -165,7 +165,7 @@ bool CopyFile(FileFd &From,FileFd &To)
    unsigned long long ToRead = 0;
    do {
       if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
-	  (ToRead > 0 && To.Write(Buf.get(),ToRead) == false))
+	  To.Write(Buf.get(),ToRead) == false)
 	 return false;
    } while (ToRead != 0);
 
@@ -1654,9 +1654,9 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 /* */
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
-   ssize_t Res;
+   ssize_t Res = 1;
    errno = 0;
-   do
+   while (Res > 0 && Size > 0)
    {
       if (false)
 	 /* dummy so that the rest can be 'else if's */;
@@ -1725,7 +1725,6 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       if (d != NULL)
 	 d->seekpos += Res;
    }
-   while (Res > 0 && Size > 0);
    
    if (Size == 0)
       return true;
@@ -1734,9 +1733,9 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
-   ssize_t Res;
+   ssize_t Res = 1;
    errno = 0;
-   do
+   while (Res > 0 && Size > 0)
    {
       Res = write(Fd,From,Size);
       if (Res < 0 && errno == EINTR)
@@ -1747,7 +1746,6 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
       From = (char const *)From + Res;
       Size -= Res;
    }
-   while (Res > 0 && Size > 0);
 
    if (Size == 0)
       return true;
