@@ -1506,12 +1506,12 @@ FileFd::~FileFd()
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
-   ssize_t Res;
+   ssize_t Res = 1;
    errno = 0;
    if (Actual != 0)
       *Actual = 0;
    *((char *)To) = '\0';
-   do
+   while (Res > 0 && Size > 0)
    {
       if (false)
 	 /* dummy so that the rest can be 'else if's */;
@@ -1605,7 +1605,6 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       if (Actual != 0)
 	 *Actual += Res;
    }
-   while (Res > 0 && Size > 0);
    
    if (Size == 0)
       return true;
