@@ -41,6 +41,12 @@ using std::string;
 class FileFdPrivate;
 class FileFd
 {
+   friend class FileFdPrivate;
+   friend class GzipFileFdPrivate;
+   friend class Bz2FileFdPrivate;
+   friend class LzmaFileFdPrivate;
+   friend class DirectFileFdPrivate;
+   friend class PipedFileFdPrivate;
    protected:
    int iFd;
  
