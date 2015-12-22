@@ -1278,7 +1278,7 @@ public:
       {
 	 if (compressor.Name == "xz")
 	 {
-	    if (lzma_easy_encoder(&lzma->stream, xzlevel, LZMA_CHECK_CRC32) != LZMA_OK)
+	    if (lzma_easy_encoder(&lzma->stream, xzlevel, LZMA_CHECK_CRC64) != LZMA_OK)
 	       return false;
 	 }
 	 else
