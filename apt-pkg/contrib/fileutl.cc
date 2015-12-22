@@ -1253,6 +1253,32 @@ class LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
       }
    };
    LZMAFILE* lzma;
+   static uint32_t findXZlevel(std::vector<std::string> const &Args)
+   {
+      for (auto a = Args.rbegin(); a != Args.rend(); ++a)
+	 if (a->empty() == false && (*a)[0] == '-' && (*a)[1] != '-')
+	 {
+	    auto const number = a->find_last_of("0123456789");
+	    if (number == std::string::npos)
+	       continue;
+	    auto const extreme = a->find("e", number);
+	    uint32_t level = (extreme != std::string::npos) ? LZMA_PRESET_EXTREME : 0;
+	    switch ((*a)[number])
+	    {
+	       case '0': return level | 0;
+	       case '1': return level | 1;
+	       case '2': return level | 2;
+	       case '3': return level | 3;
+	       case '4': return level | 4;
+	       case '5': return level | 5;
+	       case '6': return level | 6;
+	       case '7': return level | 7;
+	       case '8': return level | 8;
+	       case '9': return level | 9;
+	    }
+	 }
+      return 6;
+   }
 public:
    virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
    {
@@ -1269,13 +1295,12 @@ public:
       if (lzma->file == nullptr)
 	 return false;
 
-      uint32_t const xzlevel = 6;
-      uint64_t const memlimit = UINT64_MAX;
       lzma_stream tmp_stream = LZMA_STREAM_INIT;
       lzma->stream = tmp_stream;
 
       if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly)
       {
+	 uint32_t const xzlevel = findXZlevel(compressor.CompressArgs);
 	 if (compressor.Name == "xz")
 	 {
 	    if (lzma_easy_encoder(&lzma->stream, xzlevel, LZMA_CHECK_CRC64) != LZMA_OK)
@@ -1292,6 +1317,7 @@ public:
       }
       else
       {
+	 uint64_t const memlimit = UINT64_MAX;
 	 if (compressor.Name == "xz")
 	 {
 	    if (lzma_auto_decoder(&lzma->stream, memlimit, 0) != LZMA_OK)
