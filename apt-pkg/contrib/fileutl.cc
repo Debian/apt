@@ -922,8 +922,8 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 class FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
-   static size_t constexpr buffersize_max = 1024;
-   char buffer[buffersize_max];
+   size_t buffersize_max = 0;
+   std::unique_ptr<char> buffer;
    unsigned long long buffersize = 0;
 public:
    int compressed_fd;
@@ -932,7 +932,7 @@ public:
    APT::Configuration::Compressor compressor;
    unsigned int openmode;
    unsigned long long seekpos;
-   FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd),
+   FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd), buffer(nullptr),
       compressed_fd(-1), compressor_pid(-1), is_pipe(false),
       openmode(0), seekpos(0) {};
 
@@ -944,7 +944,7 @@ public:
       {
 	 if (buffersize >= Size)
 	 {
-	    memcpy(To, buffer, Size);
+	    memcpy(To, buffer.get(), Size);
 	    if (buffersize == Size)
 	    {
 	       buffersize = 0;
@@ -952,13 +952,13 @@ public:
 	    else
 	    {
 	       buffersize -= Size;
-	       memmove(buffer, buffer + Size, buffersize);
+	       memmove(buffer.get(), buffer.get() + Size, buffersize);
 	    }
 	    return Size;
 	 }
 	 else
 	 {
-	    memcpy(To, buffer, buffersize);
+	    memcpy(To, buffer.get(), buffersize);
 	    Size -= buffersize;
 	    To = static_cast<char *>(To) + buffersize;
 	    tmp = buffersize;
@@ -982,12 +982,19 @@ public:
       do {
 	 if (buffersize == 0)
 	 {
+	    if (buffer.get() == nullptr)
+	    {
+	       buffer.reset(new char[Size]);
+	       buffersize_max = Size;
+	    }
 	    unsigned long long actualread = 0;
-	    if (filefd->Read(buffer, buffersize_max, &actualread) == false)
+	    if (filefd->Read(buffer.get(), buffersize_max, &actualread) == false)
 	       return nullptr;
 	    buffersize = actualread;
 	    if (buffersize == 0)
 	    {
+	       buffer.reset(nullptr);
+	       buffersize_max = 0;
 	       if (To == InitialTo)
 		  return nullptr;
 	       break;
@@ -996,17 +1003,17 @@ public:
 	 }
 
 	 unsigned long long const OutputSize = std::min(Size, buffersize);
-	 char const * const newline = static_cast<char const * const>(memchr(buffer, '\n', OutputSize));
+	 char const * const newline = static_cast<char const * const>(memchr(buffer.get(), '\n', OutputSize));
 	 if (newline != nullptr)
 	 {
-	    size_t length = (newline - buffer);
+	    size_t length = (newline - buffer.get());
 	    ++length;
-	    memcpy(To, buffer, length);
+	    memcpy(To, buffer.get(), length);
 	    To += length;
 	    if (length < buffersize)
 	    {
 	       buffersize -= length;
-	       memmove(buffer, buffer + length, buffersize);
+	       memmove(buffer.get(), buffer.get() + length, buffersize);
 	    }
 	    else
 	       buffersize = 0;
@@ -1014,11 +1021,11 @@ public:
 	 }
 	 else
 	 {
-	    memcpy(To, buffer, OutputSize);
+	    memcpy(To, buffer.get(), OutputSize);
 	    To += OutputSize;
 	    Size -= OutputSize;
 	    buffersize -= OutputSize;
-	    memmove(buffer, buffer + OutputSize, buffersize);
+	    memmove(buffer.get(), buffer.get() + OutputSize, buffersize);
 	 }
       } while (Size > 0);
       *To = '\0';
@@ -1176,7 +1183,7 @@ public:
       else
       {
 	 buffersize -= Over;
-	 memmove(buffer, buffer + Over, buffersize);
+	 memmove(buffer.get(), buffer.get() + Over, buffersize);
 	 return true;
       }
       if (Over == 0)
@@ -1649,7 +1656,7 @@ public:
       else
       {
 	 buffersize -= Over;
-	 memmove(buffer, buffer + Over, buffersize);
+	 memmove(buffer.get(), buffer.get() + Over, buffersize);
 	 return true;
       }
       if (Over == 0)
