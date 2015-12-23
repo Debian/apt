@@ -923,7 +923,7 @@ class FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
    size_t buffersize_max = 0;
-   std::unique_ptr<char> buffer;
+   std::unique_ptr<char[]> buffer;
    unsigned long long buffersize = 0;
 public:
    int compressed_fd;
@@ -932,7 +932,7 @@ public:
    APT::Configuration::Compressor compressor;
    unsigned int openmode;
    unsigned long long seekpos;
-   FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd), buffer(nullptr),
+   explicit FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd), buffer(nullptr),
       compressed_fd(-1), compressor_pid(-1), is_pipe(false),
       openmode(0), seekpos(0) {};
 
@@ -1244,7 +1244,7 @@ public:
       return true;
    }
 
-   GzipFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), gz(nullptr) {}
+   explicit GzipFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), gz(nullptr) {}
    virtual ~GzipFileFdPrivate() { InternalClose(""); }
 #endif
 };
@@ -1298,7 +1298,7 @@ public:
       return true;
    }
 
-   Bz2FileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), bz2(nullptr) {}
+   explicit Bz2FileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), bz2(nullptr) {}
    virtual ~Bz2FileFdPrivate() { InternalClose(""); }
 #endif
 };
@@ -1491,7 +1491,7 @@ public:
       return true;
    }
 
-   LzmaFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), lzma(nullptr) {}
+   explicit LzmaFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), lzma(nullptr) {}
    virtual ~LzmaFileFdPrivate() { InternalClose(""); }
 #endif
 };
@@ -1615,7 +1615,7 @@ public:
       compressor_pid = -1;
       return Ret;
    }
-   PipedFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd) {}
+   explicit PipedFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd) {}
    virtual ~PipedFileFdPrivate() { InternalClose(""); }
 };
 									/*}}}*/
@@ -1694,7 +1694,7 @@ public:
    virtual bool InternalClose(std::string const &) override { return true; }
    virtual bool InternalAlwaysAutoClose() const override { return false; }
 
-   DirectFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd) {}
+   explicit DirectFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd) {}
    virtual ~DirectFileFdPrivate() { InternalClose(""); }
 };
 									/*}}}*/
