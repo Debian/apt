@@ -309,16 +309,16 @@ bool DoClean(CommandLine &)
    }
 
    pkgAcquire Fetcher;
-   if (archivedir.empty() == false && FileExists(archivedir) == true)
+   if (archivedir.empty() == false && FileExists(archivedir) == true &&
+	 Fetcher.GetLock(archivedir) == true)
    {
-      Fetcher.GetLock(archivedir);
       Fetcher.Clean(archivedir);
       Fetcher.Clean(archivedir + "partial/");
    }
 
-   if (listsdir.empty() == false && FileExists(listsdir) == true)
+   if (listsdir.empty() == false && FileExists(listsdir) == true &&
+	 Fetcher.GetLock(listsdir) == true)
    {
-      Fetcher.GetLock(listsdir);
       Fetcher.Clean(listsdir + "partial/");
    }
 

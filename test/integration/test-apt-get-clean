@@ -36,6 +36,16 @@ testfailure test -e rootdir/var/cache/apt/archives/foo_2_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
 
+if [ "$(id -u)" != '0' ]; then
+	msgmsg 'No clean if lock can not be acquired'
+	touch rootdir/var/cache/apt/archives/foo_4_all.deb
+	touch rootdir/var/cache/apt/archives/lock
+	chmod 444 rootdir/var/cache/apt/archives/lock
+	testfailure apt clean
+	testsuccess test -e rootdir/var/cache/apt/archives/foo_4_all.deb
+	chmod 644 rootdir/var/cache/apt/archives/lock
+fi
+
 directorygone() {
 	rm -rf "$1"
 	testsuccess apt autoclean
