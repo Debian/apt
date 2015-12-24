@@ -919,7 +919,7 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 }
 									/*}}}*/
 
-class FileFdPrivate {							/*{{{*/
+class APT_HIDDEN FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
    size_t buffersize_max = 0;
@@ -1121,7 +1121,7 @@ public:
    virtual ~FileFdPrivate() {}
 };
 									/*}}}*/
-class GzipFileFdPrivate: public FileFdPrivate {				/*{{{*/
+class APT_HIDDEN GzipFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_ZLIB
 public:
    gzFile gz;
@@ -1249,7 +1249,7 @@ public:
 #endif
 };
 									/*}}}*/
-class Bz2FileFdPrivate: public FileFdPrivate {				/*{{{*/
+class APT_HIDDEN Bz2FileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_BZ2
    BZFILE* bz2;
 public:
@@ -1303,7 +1303,7 @@ public:
 #endif
 };
 									/*}}}*/
-class LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
+class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_LZMA
    struct LZMAFILE {
       FILE* file;
@@ -1496,7 +1496,7 @@ public:
 #endif
 };
 									/*}}}*/
-class PipedFileFdPrivate: public FileFdPrivate				/*{{{*/
+class APT_HIDDEN PipedFileFdPrivate: public FileFdPrivate				/*{{{*/
 /* if we don't have a specific class dealing with library calls, we (un)compress
    by executing a specified binary and pipe in/out what we need */
 {
@@ -1619,7 +1619,7 @@ public:
    virtual ~PipedFileFdPrivate() { InternalClose(""); }
 };
 									/*}}}*/
-class DirectFileFdPrivate: public FileFdPrivate				/*{{{*/
+class APT_HIDDEN DirectFileFdPrivate: public FileFdPrivate				/*{{{*/
 {
 public:
    virtual bool InternalOpen(int const, unsigned int const) override { return true; }
