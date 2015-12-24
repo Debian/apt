@@ -1,3 +1,25 @@
+apt (1.1.6) unstable; urgency=medium
+
+  Merry Christmas from the APT Team
+
+  [ Pino Toscano ]
+  * Fix FileUtlTest.GetTempDir failure when run as root (Closes: #808383)
+  * CopyFile: fix BufSize to a sane value (Closes: #808381)
+  * CopyFile: avoid failing on EOF on some systems (Closes: #808381)
+
+  [ Julian Andres Klode ]
+  * Do nothing in FileFd::Write() if Size is 0 (Closes: #808381)
+
+  [ David Kalnischkies ]
+  * avoid evaluating shell in paths used in apt-key
+  * avoid triggering gpg2 migration in apt-key
+  * follow dpkg and xz and use CRC64 for xz compression
+  * parse xz-compression level from configuration
+  * implement a buffer system for FileFd::ReadLine (Closes: 808579)
+  * ensure we got a lock in clean operation (Closes: 808561)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 24 Dec 2015 17:01:49 +0100
+
 apt (1.1.5) unstable; urgency=medium
 
   [ Julian Andres Klode ]
