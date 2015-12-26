@@ -922,9 +922,27 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 class APT_HIDDEN FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
-   const size_t buffersize_max = 4096;
-   std::unique_ptr<char[]> buffer;
-   unsigned long long buffersize = 0;
+   struct simple_buffer {
+         static constexpr size_t buffersize_max = 4096;
+	 unsigned long long bufferstart = 0;
+	 unsigned long long bufferend = 0;
+	 char buffer[buffersize_max];
+
+	 char *get() { return buffer + bufferstart; }
+	 bool empty() { return bufferend <= bufferstart; }
+	 unsigned long long size() { return bufferend-bufferstart; }
+	 void reset() { bufferend = bufferstart = 0; }
+	 ssize_t read(void *to, unsigned long long requested_size)
+	 {
+	    if (size() < requested_size)
+	       requested_size = size();
+	    memcpy(to, buffer + bufferstart, requested_size);
+	    bufferstart += requested_size;
+	    if (bufferstart == bufferend)
+	       bufferstart = bufferend = 0;
+	    return requested_size;
+	 }
+   } buffer;
 public:
    int compressed_fd;
    pid_t compressor_pid;
@@ -932,40 +950,19 @@ public:
    APT::Configuration::Compressor compressor;
    unsigned int openmode;
    unsigned long long seekpos;
-   explicit FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd), buffer(nullptr),
+   explicit FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd),
       compressed_fd(-1), compressor_pid(-1), is_pipe(false),
       openmode(0), seekpos(0) {};
 
    virtual bool InternalOpen(int const iFd, unsigned int const Mode) = 0;
    ssize_t InternalRead(void * To, unsigned long long Size)
    {
-      unsigned long long tmp = 0;
-      if (buffersize != 0)
+      // Drain the buffer if needed.
+      if (buffer.empty() == false)
       {
-	 if (buffersize >= Size)
-	 {
-	    memcpy(To, buffer.get(), Size);
-	    if (buffersize == Size)
-	    {
-	       buffersize = 0;
-	    }
-	    else
-	    {
-	       buffersize -= Size;
-	       memmove(buffer.get(), buffer.get() + Size, buffersize);
-	    }
-	    return Size;
-	 }
-	 else
-	 {
-	    memcpy(To, buffer.get(), buffersize);
-	    Size -= buffersize;
-	    To = static_cast<char *>(To) + buffersize;
-	    tmp = buffersize;
-	    buffersize = 0;
-	 }
+	 return buffer.read(To, Size);
       }
-      return InternalUnbufferedRead(To, Size) + tmp;
+      return InternalUnbufferedRead(To, Size);
    }
    virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) = 0;
    virtual bool InternalReadError() { return filefd->FileFdErrno("read",_("Read error")); }
@@ -980,19 +977,15 @@ public:
       char * const InitialTo = To;
 
       do {
-	 if (buffersize == 0)
+	 if (buffer.empty() == true)
 	 {
-	    if (buffer.get() == nullptr)
-	    {
-	       buffer.reset(new char[buffersize_max]);
-	    }
+	    buffer.reset();
 	    unsigned long long actualread = 0;
-	    if (filefd->Read(buffer.get(), buffersize_max, &actualread) == false)
+	    if (filefd->Read(buffer.get(), buffer.buffersize_max, &actualread) == false)
 	       return nullptr;
-	    buffersize = actualread;
-	    if (buffersize == 0)
+	    buffer.bufferend = actualread;
+	    if (buffer.size() == 0)
 	    {
-	       buffer.reset(nullptr);
 	       if (To == InitialTo)
 		  return nullptr;
 	       break;
@@ -1000,30 +993,20 @@ public:
 	    filefd->Flags &= ~FileFd::HitEof;
 	 }
 
-	 unsigned long long const OutputSize = std::min(Size, buffersize);
+	 unsigned long long const OutputSize = std::min(Size, buffer.size());
 	 char const * const newline = static_cast<char const * const>(memchr(buffer.get(), '\n', OutputSize));
 	 if (newline != nullptr)
 	 {
-	    size_t length = (newline - buffer.get());
-	    ++length;
-	    memcpy(To, buffer.get(), length);
+	    size_t length = (newline - buffer.get()) + 1;
+	    buffer.read(To, length);
 	    To += length;
-	    if (length < buffersize)
-	    {
-	       buffersize -= length;
-	       memmove(buffer.get(), buffer.get() + length, buffersize);
-	    }
-	    else
-	       buffersize = 0;
 	    break;
 	 }
 	 else
 	 {
-	    memcpy(To, buffer.get(), OutputSize);
+	    buffer.read(To, OutputSize);
 	    To += OutputSize;
 	    Size -= OutputSize;
-	    buffersize -= OutputSize;
-	    memmove(buffer.get(), buffer.get() + OutputSize, buffersize);
 	 }
       } while (Size > 0);
       *To = '\0';
@@ -1062,7 +1045,7 @@ public:
       if (filefd->OpenInternDescriptor(openmode, compressor) == false)
 	 return filefd->FileFdError("Seek on file %s because it couldn't be reopened", filefd->FileName.c_str());
 
-      buffersize = 0;
+      buffer.reset();
       if (To != 0)
 	 return filefd->Skip(To);
 
@@ -1092,7 +1075,7 @@ public:
       // seeking around, but not all users of FileFd use always Seek() and co
       // so d->seekpos isn't always true and we can just use it as a hint if
       // we have nothing else, but not always as an authority…
-      return seekpos - buffersize;
+      return seekpos - buffer.size();
    }
    virtual unsigned long long InternalSize()
    {
@@ -1168,20 +1151,19 @@ public:
       if (res != (off_t)To)
 	 return filefd->FileFdError("Unable to seek to %llu", To);
       seekpos = To;
-      buffersize = 0;
+      buffer.reset();
       return true;
    }
    virtual bool InternalSkip(unsigned long long Over) override
    {
-      if (Over >= buffersize)
+      if (Over >= buffer.size())
       {
-	 Over -= buffersize;
-	 buffersize = 0;
+	 Over -= buffer.size();
+	 buffer.reset();
       }
       else
       {
-	 buffersize -= Over;
-	 memmove(buffer.get(), buffer.get() + Over, buffersize);
+	 buffer.bufferstart += Over;
 	 return true;
       }
       if (Over == 0)
@@ -1194,7 +1176,7 @@ public:
    }
    virtual unsigned long long InternalTell() override
    {
-      return gztell(gz) - buffersize;
+      return gztell(gz) - buffer.size();
    }
    virtual unsigned long long InternalSize() override
    {
@@ -1628,10 +1610,10 @@ public:
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
    {
       // files opened read+write are strange and only really "supported" for direct files
-      if (buffersize != 0)
+      if (buffer.size() != 0)
       {
-	 lseek(filefd->iFd, -buffersize, SEEK_CUR);
-	 buffersize = 0;
+	 lseek(filefd->iFd, -buffer.size(), SEEK_CUR);
+	 buffer.reset();
       }
       return write(filefd->iFd, From, Size);
    }
@@ -1641,20 +1623,19 @@ public:
       if (res != (off_t)To)
 	 return filefd->FileFdError("Unable to seek to %llu", To);
       seekpos = To;
-      buffersize = 0;
+      buffer.reset();
       return true;
    }
    virtual bool InternalSkip(unsigned long long Over) override
    {
-      if (Over >= buffersize)
+      if (Over >= buffer.size())
       {
-	 Over -= buffersize;
-	 buffersize = 0;
+	 Over -= buffer.size();
+	 buffer.reset();
       }
       else
       {
-	 buffersize -= Over;
-	 memmove(buffer.get(), buffer.get() + Over, buffersize);
+	 buffer.bufferstart += Over;
 	 return true;
       }
       if (Over == 0)
@@ -1667,15 +1648,15 @@ public:
    }
    virtual bool InternalTruncate(unsigned long long const To) override
    {
-      if (buffersize != 0)
+      if (buffer.size() != 0)
       {
 	 unsigned long long const seekpos = lseek(filefd->iFd, 0, SEEK_CUR);
-	 if ((seekpos - buffersize) >= To)
-	    buffersize = 0;
+	 if ((seekpos - buffer.size()) >= To)
+	    buffer.reset();
 	 else if (seekpos >= To)
-	    buffersize = (To - seekpos);
+	    buffer.bufferend = (To - seekpos) + buffer.bufferstart;
 	 else
-	    buffersize = 0;
+	    buffer.reset();
       }
       if (ftruncate(filefd->iFd, To) != 0)
 	 return filefd->FileFdError("Unable to truncate to %llu",To);
@@ -1683,7 +1664,7 @@ public:
    }
    virtual unsigned long long InternalTell() override
    {
-      return lseek(filefd->iFd,0,SEEK_CUR) - buffersize;
+      return lseek(filefd->iFd,0,SEEK_CUR) - buffer.size();
    }
    virtual unsigned long long InternalSize() override
    {
