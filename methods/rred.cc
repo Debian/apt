@@ -689,6 +689,7 @@ int main(int argc, char **argv)
 {
    int i;
    bool just_diff = true;
+   bool test = false;
    Patch patch;
 
    if (argc <= 1) {
@@ -696,7 +697,12 @@ int main(int argc, char **argv)
       return Mth.Run();
    }
 
-   if (argc > 1 && strcmp(argv[1], "-f") == 0) {
+   // Usage: rred -t input output diff ...
+   if (argc > 1 && strcmp(argv[1], "-t") == 0) {
+      just_diff = false;
+      test = true;
+      i = 4;
+   } else if (argc > 1 && strcmp(argv[1], "-f") == 0) {
       just_diff = false;
       i = 2;
    } else {
@@ -716,7 +722,13 @@ int main(int argc, char **argv)
       }
    }
 
-   if (just_diff) {
+   if (test) {
+      FileFd out, inp;
+      std::cerr << "Patching " << argv[2] << " into " << argv[3] << "\n";
+      inp.Open(argv[2], FileFd::ReadOnly,FileFd::Extension);
+      out.Open(argv[3], FileFd::WriteOnly | FileFd::Create, FileFd::Extension);
+      patch.apply_against_file(out, inp);
+   } else if (just_diff) {
       FileFd out;
       out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
       patch.write_diff(out);
