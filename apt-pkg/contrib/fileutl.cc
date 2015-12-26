@@ -932,7 +932,7 @@ protected:
 	 bool empty() { return bufferend <= bufferstart; }
 	 unsigned long long size() { return bufferend-bufferstart; }
 	 void reset() { bufferend = bufferstart = 0; }
-	 ssize_t read(void *to, unsigned long long requested_size)
+	 ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
 	 {
 	    if (size() < requested_size)
 	       requested_size = size();
@@ -995,19 +995,15 @@ public:
 
 	 unsigned long long const OutputSize = std::min(Size, buffer.size());
 	 char const * const newline = static_cast<char const * const>(memchr(buffer.get(), '\n', OutputSize));
+	 // Read until end of line or up to Size bytes from the buffer.
+	 unsigned long long actualread = buffer.read(To,
+						     (newline != nullptr)
+						     ? (newline - buffer.get()) + 1
+						     : OutputSize);
+	 To += actualread;
+	 Size -= actualread;
 	 if (newline != nullptr)
-	 {
-	    size_t length = (newline - buffer.get()) + 1;
-	    buffer.read(To, length);
-	    To += length;
 	    break;
-	 }
-	 else
-	 {
-	    buffer.read(To, OutputSize);
-	    To += OutputSize;
-	    Size -= OutputSize;
-	 }
       } while (Size > 0);
       *To = '\0';
       return InitialTo;
