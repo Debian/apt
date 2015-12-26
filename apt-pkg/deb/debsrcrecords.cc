@@ -48,7 +48,7 @@ const char **debSrcRecordParser::Binaries()
    const char *Start, *End;
    if (Sect.Find("Binary", Start, End) == false)
       return NULL;
-   for (; isspace(*Start) != 0; ++Start);
+   for (; isspace_ascii(*Start) != 0; ++Start);
    if (Start >= End)
       return NULL;
 
@@ -60,13 +60,13 @@ const char **debSrcRecordParser::Binaries()
    do {
       char* binStartNext = strchrnul(bin, ',');
       char* binEnd = binStartNext - 1;
-      for (; isspace(*binEnd) != 0; --binEnd)
+      for (; isspace_ascii(*binEnd) != 0; --binEnd)
 	 binEnd = 0;
       StaticBinList.push_back(bin);
       if (*binStartNext != ',')
 	 break;
       *binStartNext = '\0';
-      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin)
+      for (bin = binStartNext + 1; isspace_ascii(*bin) != 0; ++bin)
          ;
    } while (*bin != '\0');
    StaticBinList.push_back(NULL);

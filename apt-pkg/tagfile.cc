@@ -353,7 +353,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
          return true;
 
       // Start a new index and add it to the hash
-      if (isspace(Stop[0]) == 0)
+      if (isspace_ascii(Stop[0]) == 0)
       {
 	 // store the last found tag
 	 if (lastTagData.EndTag != 0)
@@ -375,14 +375,14 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 // find the end of the tag (which might or might not be the colon)
 	 char const * EndTag = Colon;
 	 --EndTag;
-	 for (; EndTag > Stop && isspace(*EndTag) != 0; --EndTag)
+	 for (; EndTag > Stop && isspace_ascii(*EndTag) != 0; --EndTag)
 	    ;
 	 ++EndTag;
 	 lastTagData.EndTag = EndTag - Section;
 	 lastTagHash = AlphaHash(Stop, EndTag - Stop);
 	 // find the beginning of the value
 	 Stop = Colon + 1;
-	 for (; isspace(*Stop) != 0; ++Stop);
+	 for (; isspace_ascii(*Stop) != 0; ++Stop);
 	 if (Stop >= End)
 	    return false;
 	 lastTagData.StartValue = Stop - Section;
@@ -484,7 +484,7 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
    if (unlikely(Start > End))
       return _error->Error("Internal parsing error");
 
-   for (; isspace(End[-1]) != 0 && End > Start; --End);
+   for (; isspace_ascii(End[-1]) != 0 && End > Start; --End);
 
    return true;
 }
@@ -512,7 +512,7 @@ string pkgTagSection::FindRawS(const char *Tag) const
    if (unlikely(Start > End))
       return "";
 
-   for (; isspace(End[-1]) != 0 && End > Start; --End);
+   for (; isspace_ascii(End[-1]) != 0 && End > Start; --End);
 
    return std::string(Start, End - Start);
 }
@@ -672,7 +672,7 @@ pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::str
 }
 static bool WriteTag(FileFd &File, std::string Tag, std::string const &Value)
 {
-   if (Value.empty() || isspace(Value[0]) != 0)
+   if (Value.empty() || isspace_ascii(Value[0]) != 0)
       Tag.append(":");
    else
       Tag.append(": ");
@@ -826,7 +826,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
                Visited[J] |= 2;
                if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
                {
-                  if (isspace(Rewrite[J].Rewrite[0]))
+                  if (isspace_ascii(Rewrite[J].Rewrite[0]))
                      fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
                   else
                      fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
@@ -882,7 +882,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	    Visited[J] |= 2;
 	    if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
 	    {
-	       if (isspace(Rewrite[J].Rewrite[0]))
+	       if (isspace_ascii(Rewrite[J].Rewrite[0]))
 		  fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
 	       else
 		  fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
@@ -911,7 +911,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
       
       if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
       {
-	 if (isspace(Rewrite[J].Rewrite[0]))
+	 if (isspace_ascii(Rewrite[J].Rewrite[0]))
 	    fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
 	 else
 	    fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);

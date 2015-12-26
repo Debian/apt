@@ -399,10 +399,10 @@ std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
 	 char* tok_saveptr;
 	 char* arch = strtok_r(buf, " ", &tok_saveptr);
 	 while (arch != NULL) {
-	    for (; isspace(*arch) != 0; ++arch);
+	    for (; isspace_ascii(*arch) != 0; ++arch);
 	    if (arch[0] != '\0') {
 	       char const* archend = arch;
-	       for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
+	       for (; isspace_ascii(*archend) == 0 && *archend != '\0'; ++archend);
 	       string a(arch, (archend - arch));
 	       if (std::find(archs.begin(), archs.end(), a) == archs.end())
 		  archs.push_back(a);

@@ -7,6 +7,7 @@
 
 #include <config.h>
 
+#include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
@@ -691,6 +692,8 @@ int main(int argc, char **argv)
    bool just_diff = true;
    bool test = false;
    Patch patch;
+
+   pkgInitConfig(*_config);
 
    if (argc <= 1) {
       RredMethod Mth;

@@ -52,7 +52,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
    CURLUserPointer *me = static_cast<CURLUserPointer *>(userp);
    std::string line((char*) buffer, len);
    for (--len; len > 0; --len)
-      if (isspace(line[len]) == 0)
+      if (isspace_ascii(line[len]) == 0)
       {
 	 ++len;
 	 break;

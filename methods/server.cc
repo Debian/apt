@@ -114,7 +114,7 @@ bool ServerState::HeaderLine(string Line)
 
    // Parse off any trailing spaces between the : and the next word.
    string::size_type Pos2 = Pos;
-   while (Pos2 < Line.length() && isspace(Line[Pos2]) != 0)
+   while (Pos2 < Line.length() && isspace_ascii(Line[Pos2]) != 0)
       Pos2++;
 
    string Tag = string(Line,0,Pos);

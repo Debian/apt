@@ -353,7 +353,7 @@ unsigned short debListParser::VersionHash()
       char *J = S;
       for (; Start != End; ++Start)
       {
-	 if (isspace(*Start) != 0)
+	 if (isspace_ascii(*Start) != 0)
 	    continue;
 	 *J++ = tolower_ascii(*Start);
 
@@ -543,11 +543,11 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					bool const &ParseRestrictionsList)
 {
    // Strip off leading space
-   for (;Start != Stop && isspace(*Start) != 0; ++Start);
+   for (;Start != Stop && isspace_ascii(*Start) != 0; ++Start);
    
    // Parse off the package name
    const char *I = Start;
-   for (;I != Stop && isspace(*I) == 0 && *I != '(' && *I != ')' &&
+   for (;I != Stop && isspace_ascii(*I) == 0 && *I != '(' && *I != ')' &&
 	*I != ',' && *I != '|' && *I != '[' && *I != ']' &&
 	*I != '<' && *I != '>'; ++I);
    
@@ -573,19 +573,19 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    }
 
    // Skip white space to the '('
-   for (;I != Stop && isspace(*I) != 0 ; I++);
+   for (;I != Stop && isspace_ascii(*I) != 0 ; I++);
    
    // Parse a version
    if (I != Stop && *I == '(')
    {
       // Skip the '('
-      for (I++; I != Stop && isspace(*I) != 0 ; I++);
+      for (I++; I != Stop && isspace_ascii(*I) != 0 ; I++);
       if (I + 3 >= Stop)
 	 return 0;
       I = ConvertRelation(I,Op);
       
       // Skip whitespace
-      for (;I != Stop && isspace(*I) != 0; I++);
+      for (;I != Stop && isspace_ascii(*I) != 0; I++);
       Start = I;
       I = (const char*) memchr(I, ')', Stop - I);
       if (I == NULL || Start == I)
@@ -593,7 +593,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       
       // Skip trailing whitespace
       const char *End = I;
-      for (; End > Start && isspace(End[-1]); End--);
+      for (; End > Start && isspace_ascii(End[-1]); End--);
       
       Ver.assign(Start,End-Start);
       I++;
@@ -605,7 +605,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    }
    
    // Skip whitespace
-   for (;I != Stop && isspace(*I) != 0; I++);
+   for (;I != Stop && isspace_ascii(*I) != 0; I++);
 
    if (ParseArchFlags == true)
    {
@@ -625,7 +625,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 while (I != Stop)
 	 {
 	    // look for whitespace or ending ']'
-	    for (;End != Stop && !isspace(*End) && *End != ']'; ++End);
+	    for (;End != Stop && !isspace_ascii(*End) && *End != ']'; ++End);
 
 	    if (unlikely(End == Stop))
 	       return 0;
@@ -652,7 +652,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	    }
 
 	    I = End;
-	    for (;I != Stop && isspace(*I) != 0; I++);
+	    for (;I != Stop && isspace_ascii(*I) != 0; I++);
 	 }
 
 	 if (NegArch == true)
@@ -663,7 +663,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       }
 
       // Skip whitespace
-      for (;I != Stop && isspace(*I) != 0; I++);
+      for (;I != Stop && isspace_ascii(*I) != 0; I++);
    }
 
    if (ParseRestrictionsList == true)
@@ -696,7 +696,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	    for (;End != Stop && *End != '>'; ++End);
 	    I = ++End;
 	    // skip whitespace
-	    for (;I != Stop && isspace(*I) != 0; I++);
+	    for (;I != Stop && isspace_ascii(*I) != 0; I++);
 	 } else {
 	    bool applies2 = true;
 	    // all the conditions inside a restriction list have to be
@@ -706,7 +706,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	    {
 	       // look for whitespace or ending '>'
 	       // End now points to the character after the current term
-	       for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
+	       for (;End != Stop && !isspace_ascii(*End) && *End != '>'; ++End);
 
 	       if (unlikely(End == Stop))
 		  return 0;
@@ -739,13 +739,13 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       if (*End++ == '>') {
 		  I = End;
 		  // skip whitespace
-		  for (;I != Stop && isspace(*I) != 0; I++);
+		  for (;I != Stop && isspace_ascii(*I) != 0; I++);
 		  break;
 	       }
 
 	       I = End;
 	       // skip whitespace
-	       for (;I != Stop && isspace(*I) != 0; I++);
+	       for (;I != Stop && isspace_ascii(*I) != 0; I++);
 	    }
 	    if (applies2) {
 	       applies1 = true;
@@ -764,7 +764,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    if (I == Stop || *I == ',' || *I == '|')
    {
       if (I != Stop)
-	 for (I++; I != Stop && isspace(*I) != 0; I++);
+	 for (I++; I != Stop && isspace_ascii(*I) != 0; I++);
       return I;
    }
    
