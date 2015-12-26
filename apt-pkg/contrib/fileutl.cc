@@ -970,13 +970,12 @@ public:
    {
       if (unlikely(Size == 0))
 	 return nullptr;
+      // Read one byte less than buffer size to have space for trailing 0.
       --Size;
-      To[0] = '\0';
-      if (unlikely(Size == 0))
-	 return To;
+
       char * const InitialTo = To;
 
-      do {
+      while (Size > 0) {
 	 if (buffer.empty() == true)
 	 {
 	    buffer.reset();
@@ -1004,7 +1003,7 @@ public:
 	 Size -= actualread;
 	 if (newline != nullptr)
 	    break;
-      } while (Size > 0);
+      }
       *To = '\0';
       return InitialTo;
    }
