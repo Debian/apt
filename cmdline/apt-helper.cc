@@ -114,7 +114,8 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
    char buf[4096];
    unsigned long long read;
 
-   out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly);
+   if (out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly) == false)
+      return false;
 
    if (CmdL.FileSize() <= 1)
       return _error->Error("Must specify at least one file name");
