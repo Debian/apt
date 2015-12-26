@@ -922,7 +922,7 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 class APT_HIDDEN FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
-   size_t buffersize_max = 0;
+   const size_t buffersize_max = 4096;
    std::unique_ptr<char[]> buffer;
    unsigned long long buffersize = 0;
 public:
@@ -984,8 +984,7 @@ public:
 	 {
 	    if (buffer.get() == nullptr)
 	    {
-	       buffer.reset(new char[Size]);
-	       buffersize_max = Size;
+	       buffer.reset(new char[buffersize_max]);
 	    }
 	    unsigned long long actualread = 0;
 	    if (filefd->Read(buffer.get(), buffersize_max, &actualread) == false)
@@ -994,7 +993,6 @@ public:
 	    if (buffersize == 0)
 	    {
 	       buffer.reset(nullptr);
-	       buffersize_max = 0;
 	       if (To == InitialTo)
 		  return nullptr;
 	       break;
