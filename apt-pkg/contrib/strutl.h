@@ -106,6 +106,8 @@ void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);
 bool CheckDomainList(const std::string &Host, const std::string &List);
 int tolower_ascii(int const c) APT_CONST APT_HOT;
+int isspace_ascii(int const c) APT_CONST APT_HOT;
+
 std::string StripEpoch(const std::string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \

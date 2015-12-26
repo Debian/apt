@@ -1378,6 +1378,23 @@ int tolower_ascii(int const c)
 }
 									/*}}}*/
 
+// isspace_ascii - isspace() function that ignores the locale		/*{{{*/
+// ---------------------------------------------------------------------
+/* This little function is one of the most called methods we have and tries
+   therefore to do the absolut minimum - and is notable faster than
+   standard isspace() and as a bonus avoids problems with different
+   locales - we only operate on ascii chars anyway. */
+int isspace_ascii(int const c)
+{
+   return (c == ' '
+           || c == '\f'
+           || c == '\n'
+           || c == '\r'
+           || c == '\t'
+           || c == '\v');
+}
+									/*}}}*/
+
 // CheckDomainList - See if Host is in a , separate list		/*{{{*/
 // ---------------------------------------------------------------------
 /* The domain list is a comma separate list of domains that are suffix
