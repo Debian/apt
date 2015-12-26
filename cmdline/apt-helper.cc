@@ -107,10 +107,42 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
+static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
+{
+   FileFd fd;
+   FileFd out;
+   char buf[4096];
+   unsigned long long read;
+
+   out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly);
+
+   if (CmdL.FileSize() <= 1)
+      return _error->Error("Must specify at least one file name");
+
+   for(size_t i = 1; CmdL.FileList[i] != NULL; ++i)
+   {
+      std::string const name = CmdL.FileList[i];
+
+      if (fd.Open(name, FileFd::ReadOnly, FileFd::Extension) == false)
+         return false;
+
+      for (;;) {
+         if (fd.Read(buf, sizeof(buf), &read) == false)
+            return false;
+         if (read == 0)
+            break;
+         if (out.Write(buf, read) == false)
+            return false;
+      }
+   }
+   return true;
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
       _("Usage: apt-helper [options] command\n"
+	    "       apt-helper [options] cat-file file ...\n"
 	    "       apt-helper [options] download-file uri target-path\n"
 	    "\n"
 	    "apt-helper bundles a variety of commands for shell scripts to use\n"
@@ -123,6 +155,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
    return {
       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
       {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
+      {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
       {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
       {nullptr, nullptr, nullptr}
    };
