@@ -284,8 +284,10 @@ MD5SumValue debListParser::Description_md5()
    }
    else if (likely(value.size() == 32))
    {
-      if (likely(value.find_first_not_of("0123456789abcdefABCDEF") == string::npos))
-	 return MD5SumValue(value);
+      MD5SumValue sumvalue;
+      if (sumvalue.Set(value))
+	 return sumvalue;
+
       _error->Error("Malformed Description-md5 line; includes invalid character '%s'", value.c_str());
       return MD5SumValue();
    }
