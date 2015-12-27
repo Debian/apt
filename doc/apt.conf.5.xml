@@ -656,11 +656,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	  with <literal>Acquire::Changelogs::URI::Override::Label::<replaceable>LABEL</replaceable></literal>
 	  or <literal>Acquire::Changelogs::URI::Override::Origin::<replaceable>ORIGIN</replaceable></literal>.
 
-	  The value should be a normal URI to a text file, expect that package specific data is
+	  The value should be a normal URI to a text file, except that package specific data is
 	  replaced with the placeholder <literal>@CHANGEPATH@</literal>. The
 	  value for it is: 1. if the package is from a component (e.g. <literal>main</literal>)
 	  this is the first part otherwise it is omitted, 2. the first letter of source package name,
-	  expect if the source package name starts with '<literal>lib</literal>' in which case it will
+	  except if the source package name starts with '<literal>lib</literal>' in which case it will
 	  be the first four letters. 3. The complete source package name. 4. the complete name again and
 	  5. the source version.
 	  The first (if present), second, third and fourth part are separated by a slash ('<literal>/</literal>')
@@ -829,9 +829,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      by multiple <literal>key::=value</literal> lines with the same key. The
      configuration section ends with a blank line.</para>
 
-     <para>Package action lines consist of five fields in Version 2: old version, direction
-     of version change (&lt; for upgrades, &gt; for downgrades, = for no
-     change), new version, action. The version fields are "-" for no version
+     <para>Package action lines consist of five fields in Version 2: package
+     name (without architecture qualification even if foreign), old version,
+     direction of version change (&lt; for upgrades, &gt; for downgrades, = for
+     no change), new version, action. The version fields are "-" for no version
      at all (for example when installing a package for the first time; no
      version is treated as earlier than any real version, so that is an
      upgrade, indicated as <literal>- &lt; 1.23.4</literal>). The action field
@@ -841,7 +842,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <para>In Version 3 after each version field follows the architecture
      of this version, which is "-" if there is no version, and a field showing
-     the MultiArch type "same", foreign", "allowed" or "none". Note that "none"
+     the MultiArch type "same", "foreign", "allowed" or "none". Note that "none"
      is an incorrect typename which is just kept to remain compatible, it
      should be read as "no" and users are encouraged to support both.</para>
 
