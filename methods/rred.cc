@@ -693,8 +693,6 @@ int main(int argc, char **argv)
    bool test = false;
    Patch patch;
 
-   pkgInitConfig(*_config);
-
    if (argc <= 1) {
       RredMethod Mth;
       return Mth.Run();
@@ -702,6 +700,8 @@ int main(int argc, char **argv)
 
    // Usage: rred -t input output diff ...
    if (argc > 1 && strcmp(argv[1], "-t") == 0) {
+      // Read config files so we see compressors.
+      pkgInitConfig(*_config);
       just_diff = false;
       test = true;
       i = 4;
