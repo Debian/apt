@@ -186,6 +186,7 @@ TEST(TagFileTest, SpacesEverywhere)
       "Package: pkgA\n"
       "Package: pkgB\n"
       "NoSpaces:yes\n"
+      "NoValue:\n"
       "TagSpaces\t    :yes\n"
       "ValueSpaces:   \tyes\n"
       "BothSpaces     \t:\t   yes\n"
@@ -200,6 +201,7 @@ TEST(TagFileTest, SpacesEverywhere)
    EXPECT_TRUE(section.Scan(content.c_str(), content.size()));
    EXPECT_TRUE(section.Exists("Package"));
    EXPECT_TRUE(section.Exists("NoSpaces"));
+   EXPECT_TRUE(section.Exists("NoValue"));
    EXPECT_TRUE(section.Exists("TagSpaces"));
    EXPECT_TRUE(section.Exists("ValueSpaces"));
    EXPECT_TRUE(section.Exists("BothSpaces"));
@@ -209,6 +211,7 @@ TEST(TagFileTest, SpacesEverywhere)
    EXPECT_TRUE(section.Exists("Multi-Colon"));
    EXPECT_EQ("pkgC", section.FindS("Package"));
    EXPECT_EQ("yes", section.FindS("NoSpaces"));
+   EXPECT_EQ("", section.FindS("NoValue"));
    EXPECT_EQ("yes", section.FindS("TagSpaces"));
    EXPECT_EQ("yes", section.FindS("ValueSpaces"));
    EXPECT_EQ("yes", section.FindS("BothSpaces"));
@@ -217,5 +220,5 @@ TEST(TagFileTest, SpacesEverywhere)
    EXPECT_EQ("yes", section.FindS("Naming  Spaces"));
    EXPECT_EQ(":yes:", section.FindS("Multi-Colon"));
    // overridden values are still present, but not really accessible
-   EXPECT_EQ(11, section.Count());
+   EXPECT_EQ(12, section.Count());
 }
