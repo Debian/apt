@@ -66,6 +66,7 @@ class FileFd
 	Exclusive = (1 << 3),
 	Atomic = Exclusive | (1 << 4),
 	Empty = (1 << 5),
+	BufferedWrite = (1 << 6),
 
 	WriteEmpty = ReadWrite | Create | Empty,
 	WriteExists = ReadWrite,

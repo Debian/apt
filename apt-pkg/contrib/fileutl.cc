@@ -955,6 +955,7 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
 									/*}}}*/
 
 class APT_HIDDEN FileFdPrivate {							/*{{{*/
+   friend class BufferedWriteFileFdPrivate;
 protected:
    FileFd * const filefd;
    simple_buffer buffer;
@@ -1147,6 +1148,154 @@ public:
    virtual bool InternalAlwaysAutoClose() const { return true; }
 
    virtual ~FileFdPrivate() {}
+};
+									/*}}}*/
+class APT_HIDDEN BufferedWriteFileFdPrivate : public FileFdPrivate {							/*{{{*/
+protected:
+   FileFdPrivate *wrapped;
+   simple_buffer writebuffer;
+
+public:
+
+   explicit BufferedWriteFileFdPrivate(FileFdPrivate *Priv) :
+      FileFdPrivate(Priv->filefd), wrapped(Priv) {};
+
+   virtual APT::Configuration::Compressor get_compressor() const override
+   {
+      return wrapped->get_compressor();
+   }
+   virtual void set_compressor(APT::Configuration::Compressor const &compressor)  override
+   {
+      return wrapped->set_compressor(compressor);
+   }
+   virtual unsigned int get_openmode() const  override
+   {
+      return wrapped->get_openmode();
+   }
+   virtual void set_openmode(unsigned int openmode)  override
+   {
+      return wrapped->set_openmode(openmode);
+   }
+   virtual bool get_is_pipe() const  override
+   {
+      return wrapped->get_is_pipe();
+   }
+   virtual void set_is_pipe(bool is_pipe) override
+   {
+      FileFdPrivate::set_is_pipe(is_pipe);
+      wrapped->set_is_pipe(is_pipe);
+   }
+   virtual unsigned long long get_seekpos() const override
+   {
+      return wrapped->get_seekpos();
+   }
+   virtual void set_seekpos(unsigned long long seekpos) override
+   {
+      return wrapped->set_seekpos(seekpos);
+   }
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   {
+      if (InternalFlush() == false)
+	 return false;
+      return wrapped->InternalOpen(iFd, Mode);
+   }
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   {
+      if (InternalFlush() == false)
+	 return -1;
+      return wrapped->InternalUnbufferedRead(To, Size);
+
+   }
+   virtual bool InternalReadError() override
+   {
+      return wrapped->InternalReadError();
+   }
+   virtual char * InternalReadLine(char * To, unsigned long long Size) override
+   {
+      if (InternalFlush() == false)
+	 return nullptr;
+      return wrapped->InternalReadLine(To, Size);
+   }
+   virtual bool InternalFlush() override
+   {
+      size_t written = 0;
+      char *data = writebuffer.get();
+      auto size = writebuffer.size();
+
+      while (written <= size) {
+	 auto written_this_time = wrapped->InternalWrite(data + written, size - written);
+	 if (written_this_time < 0)
+	    return false;
+	 if (written_this_time == 0)
+	    break;
+
+	 written += written_this_time;
+      }
+
+      writebuffer.reset();
+      return true;
+   }
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   {
+      size_t written = 0;
+
+      while (written < Size) {
+	 auto buffered = writebuffer.write(static_cast<char const*>(From) + written, Size - written);
+
+	 written += buffered;
+
+	 if (writebuffer.full() && InternalFlush() == false)
+	       return -1;
+      }
+
+      return written;
+   }
+   virtual bool InternalWriteError()
+   {
+      return wrapped->InternalWriteError();
+   }
+   virtual bool InternalSeek(unsigned long long const To)
+   {
+      if (InternalFlush() == false)
+	 return false;
+      return wrapped->InternalSeek(To);
+   }
+   virtual bool InternalSkip(unsigned long long Over)
+   {
+      if (InternalFlush() == false)
+	 return false;
+      return wrapped->InternalSkip(Over);
+   }
+   virtual bool InternalTruncate(unsigned long long const Size)
+   {
+      if (InternalFlush() == false)
+	 return false;
+      return wrapped->InternalTruncate(Size);
+   }
+   virtual unsigned long long InternalTell()
+   {
+      if (InternalFlush() == false)
+	 return -1;
+      return wrapped->InternalTell();
+   }
+   virtual unsigned long long InternalSize()
+   {
+      if (InternalFlush() == false)
+	 return -1;
+      return wrapped->InternalSize();
+   }
+   virtual bool InternalClose(std::string const &FileName)
+   {
+      return wrapped->InternalClose(FileName);
+   }
+   virtual bool InternalAlwaysAutoClose() const
+   {
+      return wrapped->InternalAlwaysAutoClose();
+   }
+   virtual ~BufferedWriteFileFdPrivate()
+   {
+      delete wrapped;
+   }
 };
 									/*}}}*/
 class APT_HIDDEN GzipFileFdPrivate: public FileFdPrivate {				/*{{{*/
@@ -1984,6 +2133,9 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 d = new DirectFileFdPrivate(this);
       else
 	 d = new PipedFileFdPrivate(this);
+
+      if (Mode & BufferedWrite)
+	 d = new BufferedWriteFileFdPrivate(d);
 
       d->set_openmode(Mode);
       d->set_compressor(compressor);
