@@ -1106,7 +1106,7 @@ static int HexDigit(int c)
       return c - 'a' + 10;
    if (c >= 'A' && c <= 'F')
       return c - 'A' + 10;
-   return 0;
+   return -1;
 }
 									/*}}}*/
 // Hex2Num - Convert a long hex number into a buffer			/*{{{*/
@@ -1121,11 +1121,16 @@ bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length)
    int J = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end();J++, I += 2)
    {
-      if (isxdigit(*I) == 0 || isxdigit(I[1]) == 0)
+      int first_half = HexDigit(I[0]);
+      int second_half;
+      if (first_half < 0)
 	 return false;
       
-      Num[J] = HexDigit(I[0]) << 4;
-      Num[J] += HexDigit(I[1]);
+      second_half = HexDigit(I[1]);
+      if (second_half < 0)
+	 return false;
+      Num[J] = first_half << 4;
+      Num[J] += second_half;
    }
    
    return true;
