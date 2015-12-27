@@ -25,6 +25,9 @@ endif
 ifeq ($(HAVE_LZMA),yes)
 SLIBS+= -llzma
 endif
+ifeq ($(HAVE_LZ4),yes)
+SLIBS+= -llz4
+endif
 APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
 SOURCE = $(wildcard *.cc */*.cc)

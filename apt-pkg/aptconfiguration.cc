@@ -365,6 +365,12 @@ const Configuration::getCompressors(bool const Cached) {
 	setDefaultConfigurationForCompressors();
 
 	compressors.push_back(Compressor(".", "", "", NULL, NULL, 0));
+	if (_config->Exists("Dir::Bin::lz4") == false || FileExists(_config->FindFile("Dir::Bin::lz4")) == true)
+		compressors.push_back(Compressor("lz4",".lz4","lz4","-1","-d",50));
+#ifdef HAVE_LZ4
+	else
+		compressors.push_back(Compressor("lz4",".lz4","false", NULL, NULL, 50));
+#endif
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
 		compressors.push_back(Compressor("gzip",".gz","gzip","-6n","-d",100));
 #ifdef HAVE_ZLIB

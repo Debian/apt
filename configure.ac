@@ -108,6 +108,13 @@ if test "x$HAVE_ZLIB" = "xyes"; then
 	AC_DEFINE(HAVE_ZLIB)
 fi
 
+HAVE_LZ4=no
+AC_CHECK_LIB(lz4, LZ4F_createCompressionContext,[AC_CHECK_HEADER(lz4frame.h, [HAVE_LZ4=yes], [])], [])
+AC_SUBST(HAVE_LZ4)
+if test "x$HAVE_LZ4" = "xyes"; then
+	AC_DEFINE(HAVE_LZ4)
+fi
+
 HAVE_BZ2=no
 AC_CHECK_LIB(bz2, BZ2_bzopen,[AC_CHECK_HEADER(bzlib.h, [HAVE_BZ2=yes], [])], [])
 AC_SUBST(HAVE_BZ2)

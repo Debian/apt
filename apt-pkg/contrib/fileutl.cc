@@ -63,6 +63,9 @@
 #ifdef HAVE_LZMA
 	#include <lzma.h>
 #endif
+#ifdef HAVE_LZ4
+	#include <lz4frame.h>
+#endif
 #include <endian.h>
 #include <stdint.h>
 
@@ -1496,6 +1499,158 @@ public:
 #endif
 };
 									/*}}}*/
+class APT_HIDDEN Lz4FileFdPrivate: public FileFdPrivate {				/*{{{*/
+   static constexpr unsigned long long BLK_SIZE = 64 * 1024;
+   static constexpr unsigned long long LZ4_HEADER_SIZE = 19;
+   static constexpr unsigned long long LZ4_FOOTER_SIZE = 4;
+#ifdef HAVE_LZ4
+   LZ4F_decompressionContext_t dctx;
+   LZ4F_compressionContext_t cctx;
+   LZ4F_errorCode_t res;
+   FileFd backend;
+   simple_buffer lz4_buffer;
+   // Count of bytes that the decompressor expects to read next, or buffer size.
+   size_t next_to_load = BLK_SIZE;
+public:
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   {
+      if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
+	 return _error->Error("lz4 only supports write or read mode");
+
+      if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly) {
+	 res = LZ4F_createCompressionContext(&cctx, LZ4F_VERSION);
+	 lz4_buffer.reset(LZ4F_compressBound(BLK_SIZE, nullptr)
+			  + LZ4_HEADER_SIZE + LZ4_FOOTER_SIZE);
+      } else {
+	 res = LZ4F_createDecompressionContext(&dctx, LZ4F_VERSION);
+	 lz4_buffer.reset(64 * 1024);
+      }
+
+      filefd->Flags |= FileFd::Compressed;
+
+      if (LZ4F_isError(res))
+	 return false;
+
+      unsigned int flags = (Mode & (FileFd::WriteOnly|FileFd::ReadOnly));
+      if (backend.OpenDescriptor(iFd, flags) == false)
+	 return false;
+
+      // Write the file header
+      if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly)
+      {
+	 res = LZ4F_compressBegin(cctx, lz4_buffer.buffer, lz4_buffer.buffersize_max, nullptr);
+	 if (LZ4F_isError(res) || backend.Write(lz4_buffer.buffer, res) == false)
+	    return false;
+      }
+
+      return true;
+   }
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   {
+      /* Keep reading as long as the compressor still wants to read */
+      while (next_to_load) {
+	 // Fill compressed buffer;
+	 if (lz4_buffer.empty()) {
+	    unsigned long long read;
+	    /* Reset - if LZ4 decompressor wants to read more, allocate more */
+	    lz4_buffer.reset(next_to_load);
+	    if (backend.Read(lz4_buffer.getend(), lz4_buffer.free(), &read) == false)
+	       return -1;
+	    lz4_buffer.bufferend += read;
+
+	    /* Expected EOF */
+	    if (read == 0) {
+	       res = -1;
+	       return filefd->FileFdError("LZ4F: %s %s",
+					  filefd->FileName.c_str(),
+					  _("Unexpected end of file")), -1;
+	    }
+	 }
+	 // Drain compressed buffer as far as possible.
+	 size_t in = lz4_buffer.size();
+	 size_t out = Size;
+
+	 res = LZ4F_decompress(dctx, To, &out, lz4_buffer.get(), &in, nullptr);
+	 if (LZ4F_isError(res))
+	       return -1;
+
+	 next_to_load = res;
+	 lz4_buffer.bufferstart += in;
+
+	 if (out != 0)
+	    return out;
+      }
+
+      return 0;
+   }
+   virtual bool InternalReadError() override
+   {
+      char const * const errmsg = LZ4F_getErrorName(res);
+
+      return filefd->FileFdError("LZ4F: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Read error"), res, errmsg);
+   }
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   {
+      unsigned long long const towrite = std::min(BLK_SIZE, Size);
+
+      res = LZ4F_compressUpdate(cctx,
+				lz4_buffer.buffer, lz4_buffer.buffersize_max,
+				From, towrite, nullptr);
+
+      if (LZ4F_isError(res) || backend.Write(lz4_buffer.buffer, res) == false)
+	 return -1;
+
+      return towrite;
+   }
+   virtual bool InternalWriteError() override
+   {
+      char const * const errmsg = LZ4F_getErrorName(res);
+
+      return filefd->FileFdError("LZ4F: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Write error"), res, errmsg);
+   }
+   virtual bool InternalStream() const override { return true; }
+
+   virtual bool InternalFlush() override
+   {
+      return backend.Flush();
+   }
+
+   virtual bool InternalClose(std::string const &) override
+   {
+      /* Reset variables */
+      res = 0;
+      next_to_load = BLK_SIZE;
+
+      if (cctx != nullptr)
+      {
+	 res = LZ4F_compressEnd(cctx, lz4_buffer.buffer, lz4_buffer.buffersize_max, nullptr);
+	 if (LZ4F_isError(res) || backend.Write(lz4_buffer.buffer, res) == false)
+	    return false;
+	 if (!backend.Flush())
+	    return false;
+	 if (!backend.Close())
+	    return false;
+
+	 res = LZ4F_freeCompressionContext(cctx);
+	 cctx = nullptr;
+      }
+
+      if (dctx != nullptr)
+      {
+	 res = LZ4F_freeDecompressionContext(dctx);
+	 dctx = nullptr;
+      }
+
+      return LZ4F_isError(res) == false;
+   }
+
+   explicit Lz4FileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd), dctx(nullptr), cctx(nullptr) {}
+   virtual ~Lz4FileFdPrivate() {
+      InternalClose("");
+   }
+#endif
+};
+									/*}}}*/
 class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_LZMA
    struct LZMAFILE {
@@ -1968,6 +2123,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
       case Bzip2: name = "bzip2"; break;
       case Lzma: name = "lzma"; break;
       case Xz: name = "xz"; break;
+      case Lz4: name = "lz4"; break;
       case Auto:
       case Extension:
 	 // Unreachable
@@ -2084,6 +2240,7 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
    case Bzip2: name = "bzip2"; break;
    case Lzma: name = "lzma"; break;
    case Xz: name = "xz"; break;
+   case Lz4: name = "lz4"; break;
    case Auto:
    case Extension:
       if (AutoClose == true && Fd != -1)
@@ -2144,6 +2301,9 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #ifdef HAVE_LZMA
       APT_COMPRESS_INIT("xz", LzmaFileFdPrivate);
       APT_COMPRESS_INIT("lzma", LzmaFileFdPrivate);
+#endif
+#ifdef HAVE_LZ4
+      APT_COMPRESS_INIT("lz4", Lz4FileFdPrivate);
 #endif
 #undef APT_COMPRESS_INIT
       else if (compressor.Name == "." || compressor.Binary.empty() == true)
