@@ -928,6 +928,7 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
    const char *get() const { return buffer + bufferstart; }
    char *get() { return buffer + bufferstart; }
    bool empty() const { return bufferend <= bufferstart; }
+   bool full() const { return bufferend == buffersize_max; }
    unsigned long long size() const { return bufferend-bufferstart; }
    void reset() { bufferend = bufferstart = 0; }
    ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
@@ -936,6 +937,16 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
 	 requested_size = size();
       memcpy(to, buffer + bufferstart, requested_size);
       bufferstart += requested_size;
+      if (bufferstart == bufferend)
+	 bufferstart = bufferend = 0;
+      return requested_size;
+   }
+   ssize_t write(const void *from, unsigned long long requested_size) APT_MUSTCHECK
+   {
+      if (buffersize_max - size() < requested_size)
+	 requested_size = buffersize_max - size();
+      memcpy(buffer + bufferend, from, requested_size);
+      bufferend += requested_size;
       if (bufferstart == bufferend)
 	 bufferstart = bufferend = 0;
       return requested_size;
