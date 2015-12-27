@@ -919,30 +919,33 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 }
 									/*}}}*/
 
+struct APT_HIDDEN simple_buffer {							/*{{{*/
+   static constexpr size_t buffersize_max = 4096;
+   unsigned long long bufferstart = 0;
+   unsigned long long bufferend = 0;
+   char buffer[buffersize_max];
+
+   char *get() { return buffer + bufferstart; }
+   bool empty() { return bufferend <= bufferstart; }
+   unsigned long long size() { return bufferend-bufferstart; }
+   void reset() { bufferend = bufferstart = 0; }
+   ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
+   {
+      if (size() < requested_size)
+	 requested_size = size();
+      memcpy(to, buffer + bufferstart, requested_size);
+      bufferstart += requested_size;
+      if (bufferstart == bufferend)
+	 bufferstart = bufferend = 0;
+      return requested_size;
+   }
+};
+									/*}}}*/
+
 class APT_HIDDEN FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
-   struct simple_buffer {
-         static constexpr size_t buffersize_max = 4096;
-	 unsigned long long bufferstart = 0;
-	 unsigned long long bufferend = 0;
-	 char buffer[buffersize_max];
-
-	 char *get() { return buffer + bufferstart; }
-	 bool empty() { return bufferend <= bufferstart; }
-	 unsigned long long size() { return bufferend-bufferstart; }
-	 void reset() { bufferend = bufferstart = 0; }
-	 ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
-	 {
-	    if (size() < requested_size)
-	       requested_size = size();
-	    memcpy(to, buffer + bufferstart, requested_size);
-	    bufferstart += requested_size;
-	    if (bufferstart == bufferend)
-	       bufferstart = bufferend = 0;
-	    return requested_size;
-	 }
-   } buffer;
+   simple_buffer buffer;
 public:
    int compressed_fd;
    pid_t compressor_pid;
