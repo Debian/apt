@@ -531,6 +531,7 @@ class Patch {
 	 dump_mem(out, ch->add, ch->add_len, hash);
       }
       dump_rest(out, in, hash);
+      out.Flush();
    }
 };
 
@@ -643,7 +644,7 @@ class RredMethod : public aptMethod {
 	    std::cerr << "FAILED to open inp " << Path << std::endl;
 	    return _error->Error("Failed to open inp %s", Path.c_str());
 	 }
-	 if (out.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create, FileFd::Extension) == false)
+	 if (out.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite, FileFd::Extension) == false)
 	 {
 	    std::cerr << "FAILED to open out " << Itm->DestFile << std::endl;
 	    return _error->Error("Failed to open out %s", Itm->DestFile.c_str());
@@ -729,17 +730,20 @@ int main(int argc, char **argv)
       FileFd out, inp;
       std::cerr << "Patching " << argv[2] << " into " << argv[3] << "\n";
       inp.Open(argv[2], FileFd::ReadOnly,FileFd::Extension);
-      out.Open(argv[3], FileFd::WriteOnly | FileFd::Create, FileFd::Extension);
+      out.Open(argv[3], FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite, FileFd::Extension);
       patch.apply_against_file(out, inp);
+      out.Close();
    } else if (just_diff) {
       FileFd out;
       out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
       patch.write_diff(out);
+      out.Close();
    } else {
       FileFd out, inp;
-      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
+      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite);
       inp.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
       patch.apply_against_file(out, inp);
+      out.Close();
    }
    return 0;
 }
