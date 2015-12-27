@@ -609,7 +609,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    // Skip whitespace
    for (;I != Stop && isspace_ascii(*I) != 0; I++);
 
-   if (ParseArchFlags == true)
+   if (unlikely(ParseArchFlags == true))
    {
       string const arch = _config->Find("APT::Architecture");
       APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
@@ -669,7 +669,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       for (;I != Stop && isspace_ascii(*I) != 0; I++);
    }
 
-   if (ParseRestrictionsList == true)
+   if (unlikely(ParseRestrictionsList == true))
    {
       // Parse a restrictions formula which is in disjunctive normal form:
       // (foo AND bar) OR (blub AND bla)
