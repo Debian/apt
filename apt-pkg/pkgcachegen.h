@@ -26,7 +26,7 @@
 
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 class FileFd;
 class pkgSourceList;
@@ -41,10 +41,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
    APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
 
-   std::map<std::string,map_stringitem_t> strMixed;
-   std::map<std::string,map_stringitem_t> strSections;
-   std::map<std::string,map_stringitem_t> strPkgNames;
-   std::map<std::string,map_stringitem_t> strVersions;
+   std::unordered_map<std::string,map_stringitem_t> strMixed;
+   std::unordered_map<std::string,map_stringitem_t> strSections;
+   std::unordered_map<std::string,map_stringitem_t> strPkgNames;
+   std::unordered_map<std::string,map_stringitem_t> strVersions;
 
    friend class pkgCacheListParser;
    typedef pkgCacheListParser ListParser;

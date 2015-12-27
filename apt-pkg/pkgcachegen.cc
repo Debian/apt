@@ -1253,7 +1253,7 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
 {
    std::string const key(S, Size);
 
-   std::map<std::string,map_stringitem_t> * strings;
+   std::unordered_map<std::string,map_stringitem_t> * strings;
    switch(type) {
       case MIXED: strings = &strMixed; break;
       case PKGNAME: strings = &strPkgNames; break;
@@ -1262,7 +1262,7 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
       default: _error->Fatal("Unknown enum type used for string storage of '%s'", key.c_str()); return 0;
    }
 
-   std::map<std::string,map_stringitem_t>::const_iterator const item = strings->find(key);
+   std::unordered_map<std::string,map_stringitem_t>::const_iterator const item = strings->find(key);
    if (item != strings->end())
       return item->second;
 
