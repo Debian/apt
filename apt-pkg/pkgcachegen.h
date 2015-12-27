@@ -26,7 +26,9 @@
 
 #include <vector>
 #include <string>
+#if __cplusplus >= 201103L
 #include <unordered_map>
+#endif
 
 class FileFd;
 class pkgSourceList;
@@ -41,10 +43,13 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
    APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
 
+   // Dirty hack for public users that do not use C++11 yet
+#if __cplusplus >= 201103L
    std::unordered_map<std::string,map_stringitem_t> strMixed;
    std::unordered_map<std::string,map_stringitem_t> strSections;
    std::unordered_map<std::string,map_stringitem_t> strPkgNames;
    std::unordered_map<std::string,map_stringitem_t> strVersions;
+#endif
 
    friend class pkgCacheListParser;
    typedef pkgCacheListParser ListParser;
