@@ -925,9 +925,10 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
    unsigned long long bufferend = 0;
    char buffer[buffersize_max];
 
+   const char *get() const { return buffer + bufferstart; }
    char *get() { return buffer + bufferstart; }
-   bool empty() { return bufferend <= bufferstart; }
-   unsigned long long size() { return bufferend-bufferstart; }
+   bool empty() const { return bufferend <= bufferstart; }
+   unsigned long long size() const { return bufferend-bufferstart; }
    void reset() { bufferend = bufferstart = 0; }
    ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
    {
