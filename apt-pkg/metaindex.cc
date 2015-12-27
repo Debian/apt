@@ -111,3 +111,11 @@ bool metaIndex::IsArchitectureSupported(std::string const &arch) const	/*{{{*/
    return true;
 }
 									/*}}}*/
+bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*{{{*/
+{
+   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
+   if (deb != NULL)
+      return deb->IsArchitectureAllSupportedFor(target);
+   return true;
+}
+									/*}}}*/

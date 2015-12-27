@@ -50,6 +50,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    time_t ValidUntilMax;
 
    std::vector<std::string> Architectures;
+   std::vector<std::string> NoSupportForAll;
 
    debReleaseIndexPrivate() : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0) {}
 };
@@ -346,6 +347,11 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       if (archs.empty() == false)
 	 d->Architectures = VectorizeString(archs, ' ');
    }
+   {
+      std::string const targets = Section.FindS("No-Support-for-Architecture-all");
+      if (targets.empty() == false)
+	 d->NoSupportForAll = VectorizeString(targets, ' ');
+   }
 
    bool FoundHashSum = false;
    bool FoundStrongHashSum = false;
@@ -622,6 +628,13 @@ bool debReleaseIndex::IsArchitectureSupported(std::string const &arch) const/*{{
    if (d->Architectures.empty())
       return true;
    return std::find(d->Architectures.begin(), d->Architectures.end(), arch) != d->Architectures.end();
+}
+									/*}}}*/
+bool debReleaseIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*{{{*/
+{
+   if (d->NoSupportForAll.empty())
+      return true;
+   return std::find(d->NoSupportForAll.begin(), d->NoSupportForAll.end(), target.Option(IndexTarget::CREATED_BY)) == d->NoSupportForAll.end();
 }
 									/*}}}*/
 std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/

@@ -10,15 +10,26 @@ buildsimplenativepackage 'foo-1' 'all' '2' 'unstable'
 buildsimplenativepackage 'foo-2' 'amd64' '2' 'unstable'
 setupaptarchive --no-update
 
+cat >rootdir/etc/apt/apt.conf.d/get-contents <<EOF
+Acquire::IndexTargets::deb::Contents {
+	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
+	ShortDescription "Contents";
+	Description "\$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
+	KeepCompressed "true";
+};
+EOF
+
 msgmsg 'Releasefile with Architectures field and all included'
 testsuccess apt update
 cp rootdir/tmp/testsuccess.output aptupdate.output
 testsuccess grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 
 listcurrentlistsdirectory > lists.before
 testsuccess grep '_binary-all_Packages' lists.before
+testsuccess grep '_Contents-all\.' lists.before
 
 configarchitecture 'amd64' 'i386'
 testsuccessequal "All packages are up to date.
@@ -28,19 +39,34 @@ testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 
 rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile has all, but forbids its usage'
+configarchitecture 'amd64'
+sed -i '/^Architectures: / a\
+No-Support-for-Architecture-all: Packages' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testfailure grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
+sed -i '/^No-Support-for-Architecture-all: / d' $(find ./aptarchive -name 'Release')
+
+rm -rf rootdir/var/lib/apt/lists
 msgmsg 'Releasefile with Architectures field but without all'
+configarchitecture 'amd64' 'i386'
 getarchitecturesfromreleasefile() { echo "$(getarchitectures)"; }
 generatereleasefiles
 signreleasefiles
 testsuccessequal 'All packages are up to date.' apt update -o quiet::NoProgress=1
 cp rootdir/tmp/testsuccess.output aptupdate.output
 testfailure grep '^Get.* all Packages ' aptupdate.output
+testfailure grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-2' aptcache pkgnames foo-
 
 configarchitecture 'amd64'
 testsuccess apt update
 cp rootdir/tmp/testsuccess.output aptupdate.output
 testfailure grep '^Get.* all Packages ' aptupdate.output
+testfailure grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-2' aptcache pkgnames foo-
 
 rm -rf rootdir/var/lib/apt/lists
@@ -48,9 +74,11 @@ msgmsg 'Releasefile without Architectures field'
 getarchitecturesfromreleasefile() { echo -n ''; }
 generatereleasefiles
 signreleasefiles
+testfailure grep '^Architectures: ' $(find ./aptarchive -name 'Release')
 testsuccess apt update
 cp rootdir/tmp/testsuccess.output aptupdate.output
 testsuccess grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 
@@ -59,6 +87,18 @@ configarchitecture 'amd64' 'i386'
 testfailure apt update
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
+
+rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile no Architectures all, but forbids its usage'
+configarchitecture 'amd64'
+sed -i '/^Date: / a\
+No-Support-for-Architecture-all: Packages' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testfailure grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
+sed -i '/^No-Support-for-Architecture-all: / d' $(find ./aptarchive -name 'Release')
 
 msgmsg 'No Releasefile'
 rm -rf rootdir/var/lib/apt/lists

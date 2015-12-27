@@ -59,6 +59,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
    virtual bool IsTrusted() const APT_OVERRIDE;
    bool IsArchitectureSupported(std::string const &arch) const;
+   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
 
    void AddComponent(std::string const &sourcesEntry,
 	 bool const isSrc, std::string const &Name,

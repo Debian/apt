@@ -110,6 +110,7 @@ public:
 
    // FIXME: make virtual on next abi break
    bool IsArchitectureSupported(std::string const &arch) const;
+   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
 };
 
 #endif

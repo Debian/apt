@@ -1042,9 +1042,13 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
       // download time, bandwidth and diskspace for nothing, BUT Debian doesn't feature all
       // in the set of supported architectures, so we can filter based on this property rather
       // than invent an entirely new flag we would need to carry for all of eternity.
-      if (Target->Option(IndexTarget::ARCHITECTURE) == "all" &&
-	    TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false)
-	 continue;
+      if (Target->Option(IndexTarget::ARCHITECTURE) == "all")
+      {
+	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false)
+	    continue;
+	 if (TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(*Target) == false)
+	    continue;
+      }
 
       bool trypdiff = Target->OptionBool(IndexTarget::PDIFFS);
       if (verify == true)
