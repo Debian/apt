@@ -562,8 +562,8 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    Package.assign(Start,I - Start);
 
    // We don't want to confuse library users which can't handle MultiArch
-   string const arch = _config->Find("APT::Architecture");
    if (StripMultiArch == true) {
+      string const arch = _config->Find("APT::Architecture");
       size_t const found = Package.rfind(':');
       if (found != string::npos &&
 	  (strcmp(Package.c_str() + found, ":any") == 0 ||
@@ -609,6 +609,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseArchFlags == true)
    {
+      string const arch = _config->Find("APT::Architecture");
       APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
 
       // Parse an architecture
