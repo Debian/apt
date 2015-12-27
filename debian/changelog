@@ -1,3 +1,30 @@
+apt (1.1.9) unstable; urgency=medium
+
+  Highlights: buffered rred writes and slightly faster cache generation (~10%)
+
+  [ Julian Andres Klode ]
+  * Introduce isspace_ascii() for use by parsers
+  * Convert most callers of isspace() to isspace_ascii()
+  * pkgcachegen: Use std::unordered_map instead of std::map
+  * debListParser: ParseDepends: Only query native arch if needed
+  * debListParser: Do not validate Description-md5 for correctness twice
+  * ParseDepends: Mark branches for build-dep parsing as unlikely
+  * rred: Only call pkgInitConfig() in test mode
+  * FileFdPrivate: Add getter and setter for fields
+  * FildFd: Introduce a Flush() function and call it from Close()
+  * FileFd: Add a buffered writing mode
+  * rred: Use buffered writes
+  * pkgcachegen.h: Hack around unordered_map not existing before C++11
+  * doc/acquire-additional-files.txt: Mention apt-helper cat-file
+
+  [ Niels Thykier ]
+  * Hex2Digit: Do not use isxdigit()
+
+  [ David Kalnischkies ]
+  * allow repositories to forbid arch:all for specific index targets
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 27 Dec 2015 19:16:36 +0100
+
 apt (1.1.8) unstable; urgency=medium
 
   * apt-helper: Add a cat-file command for concatening files
