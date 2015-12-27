@@ -958,16 +958,49 @@ class APT_HIDDEN FileFdPrivate {							/*{{{*/
 protected:
    FileFd * const filefd;
    simple_buffer buffer;
-public:
    int compressed_fd;
    pid_t compressor_pid;
    bool is_pipe;
    APT::Configuration::Compressor compressor;
    unsigned int openmode;
    unsigned long long seekpos;
+public:
+
    explicit FileFdPrivate(FileFd * const pfilefd) : filefd(pfilefd),
       compressed_fd(-1), compressor_pid(-1), is_pipe(false),
       openmode(0), seekpos(0) {};
+   virtual APT::Configuration::Compressor get_compressor() const
+   {
+      return compressor;
+   }
+   virtual void set_compressor(APT::Configuration::Compressor const &compressor)
+   {
+      this->compressor = compressor;
+   }
+   virtual unsigned int get_openmode() const
+   {
+      return openmode;
+   }
+   virtual void set_openmode(unsigned int openmode)
+   {
+      this->openmode = openmode;
+   }
+   virtual bool get_is_pipe() const
+   {
+      return is_pipe;
+   }
+   virtual void set_is_pipe(bool is_pipe)
+   {
+      this->is_pipe = is_pipe;
+   }
+   virtual unsigned long long get_seekpos() const
+   {
+      return seekpos;
+   }
+   virtual void set_seekpos(unsigned long long seekpos)
+   {
+      this->seekpos = seekpos;
+   }
 
    virtual bool InternalOpen(int const iFd, unsigned int const Mode) = 0;
    ssize_t InternalRead(void * To, unsigned long long Size)
@@ -1526,7 +1559,7 @@ public:
 	 SetCloseExec(Pipe[J],true);
 
       compressed_fd = filefd->iFd;
-      is_pipe = true;
+      set_is_pipe(true);
 
       if (Comp == true)
 	 filefd->iFd = Pipe[1];
@@ -1948,8 +1981,8 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       else
 	 d = new PipedFileFdPrivate(this);
 
-      d->openmode = Mode;
-      d->compressor = compressor;
+      d->set_openmode(Mode);
+      d->set_compressor(compressor);
       if ((Flags & AutoClose) != AutoClose && d->InternalAlwaysAutoClose())
       {
 	 // Need to duplicate fd here or gz/bz2 close for cleanup will close the fd as well
@@ -2007,7 +2040,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       To = (char *)To + Res;
       Size -= Res;
       if (d != NULL)
-	 d->seekpos += Res;
+	 d->set_seekpos(d->get_seekpos() + Res);
       if (Actual != 0)
 	 *Actual += Res;
    }
@@ -2055,7 +2088,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       From = (char const *)From + Res;
       Size -= Res;
       if (d != NULL)
-	 d->seekpos += Res;
+	 d->set_seekpos(d->get_seekpos() + Res);
    }
 
    if (Size == 0)
@@ -2123,13 +2156,13 @@ unsigned long long FileFd::Tell()
    off_t const Res = d->InternalTell();
    if (Res == (off_t)-1)
       FileFdErrno("lseek","Failed to determine the current file position");
-   d->seekpos = Res;
+   d->set_seekpos(Res);
    return Res;
 }
 									/*}}}*/
 static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
 {
-   bool ispipe = (d != NULL && d->is_pipe == true);
+   bool ispipe = (d != NULL && d->get_is_pipe() == true);
    if (ispipe == false)
    {
       if (fstat(iFd,&Buf) != 0)
@@ -2146,7 +2179,7 @@ static bool StatFileFd(char const * const msg, int const iFd, std::string const 
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
       if (d != NULL)
-	 d->is_pipe = true;
+	 d->set_is_pipe(true);
       if (stat(FileName.c_str(), &Buf) != 0)
 	 return _error->Errno("fstat", "Unable to determine %s for file %s", msg, FileName.c_str());
    }
