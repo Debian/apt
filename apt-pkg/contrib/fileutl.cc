@@ -1055,6 +1055,10 @@ public:
       *To = '\0';
       return InitialTo;
    }
+   virtual bool InternalFlush()
+   {
+      return true;
+   }
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) = 0;
    virtual bool InternalWriteError() { return filefd->FileFdErrno("write",_("Write error")); }
    virtual bool InternalSeek(unsigned long long const To)
@@ -2070,6 +2074,15 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
    return d->InternalReadLine(To, Size);
 }
 									/*}}}*/
+// FileFd::Flush - Flush the file  					/*{{{*/
+bool FileFd::Flush()
+{
+   if (d == nullptr)
+      return true;
+
+   return d->InternalFlush();
+}
+									/*}}}*/
 // FileFd::Write - Write to the file					/*{{{*/
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
@@ -2223,6 +2236,8 @@ unsigned long long FileFd::Size()
 /* */
 bool FileFd::Close()
 {
+   if (Flush() == false)
+      return false;
    if (iFd == -1)
       return true;
 
