@@ -920,16 +920,32 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
 									/*}}}*/
 
 struct APT_HIDDEN simple_buffer {							/*{{{*/
-   static constexpr size_t buffersize_max = 4096;
+   size_t buffersize_max = 0;
    unsigned long long bufferstart = 0;
    unsigned long long bufferend = 0;
-   char buffer[buffersize_max];
+   char *buffer = nullptr;
+
+   simple_buffer() {
+      reset(4096);
+   }
+   ~simple_buffer() {
+      delete buffer;
+   }
 
    const char *get() const { return buffer + bufferstart; }
    char *get() { return buffer + bufferstart; }
    bool empty() const { return bufferend <= bufferstart; }
    bool full() const { return bufferend == buffersize_max; }
    unsigned long long size() const { return bufferend-bufferstart; }
+   void reset(size_t size)
+   {
+      if (size > buffersize_max) {
+	 delete[] buffer;
+	 buffersize_max = size;
+	 buffer = new char[size];
+      }
+      reset();
+   }
    void reset() { bufferend = bufferstart = 0; }
    ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
    {
