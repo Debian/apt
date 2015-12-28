@@ -42,7 +42,7 @@ static void setDefaultConfigurationForCompressors() {
 		_config->Set("APT::Compressor::lzma::Binary", "xz");
 		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
-			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-6");
 		}
 		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::UncompressArg::", "--format=lzma");
@@ -52,7 +52,7 @@ static void setDefaultConfigurationForCompressors() {
 		_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
 		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::CompressArg::", "--suffix=");
-			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-6");
 		}
 		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::UncompressArg::", "--suffix=");
@@ -366,7 +366,7 @@ const Configuration::getCompressors(bool const Cached) {
 
 	compressors.push_back(Compressor(".", "", "", NULL, NULL, 1));
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
-		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
+		compressors.push_back(Compressor("gzip",".gz","gzip","-6n","-d",2));
 #ifdef HAVE_ZLIB
 	else
 		compressors.push_back(Compressor("gzip",".gz","false", NULL, NULL, 2));
@@ -378,13 +378,13 @@ const Configuration::getCompressors(bool const Cached) {
 		compressors.push_back(Compressor("xz",".xz","false", NULL, NULL, 3));
 #endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
-		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",4));
+		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-6","-d",4));
 #ifdef HAVE_BZ2
 	else
 		compressors.push_back(Compressor("bzip2",".bz2","false", NULL, NULL, 4));
 #endif
 	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
-		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",5));
+		compressors.push_back(Compressor("lzma",".lzma","lzma","-6","-d",5));
 #ifdef HAVE_LZMA
 	else
 		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 5));
