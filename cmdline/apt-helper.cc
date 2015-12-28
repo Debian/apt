@@ -111,8 +111,6 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
 {
    FileFd fd;
    FileFd out;
-   char buf[4096];
-   unsigned long long read;
 
    if (out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly) == false)
       return false;
@@ -127,14 +125,8 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
       if (fd.Open(name, FileFd::ReadOnly, FileFd::Extension) == false)
          return false;
 
-      for (;;) {
-         if (fd.Read(buf, sizeof(buf), &read) == false)
-            return false;
-         if (read == 0)
-            break;
-         if (out.Write(buf, read) == false)
-            return false;
-      }
+      if (CopyFile(fd, out) == false)
+         return false;
    }
    return true;
 }
