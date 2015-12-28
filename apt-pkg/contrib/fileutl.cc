@@ -1218,16 +1218,16 @@ public:
    }
    virtual bool InternalFlush() override
    {
-      size_t written = 0;
-      char *data = writebuffer.get();
-      auto size = writebuffer.size();
-
-      while (written < size) {
-	 auto written_this_time = wrapped->InternalWrite(data + written, size - written);
-	 if (written_this_time < 0)
+      while (writebuffer.empty() == false) {
+	 auto written = wrapped->InternalWrite(writebuffer.get(),
+					       writebuffer.size());
+	 // Ignore interrupted syscalls
+	 if (written < 0 && errno == EINTR)
+	    continue;
+	 if (written < 0)
 	    return false;
 
-	 written += written_this_time;
+	 writebuffer.bufferstart += written;
       }
 
       writebuffer.reset();
