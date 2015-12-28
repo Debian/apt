@@ -1222,12 +1222,10 @@ public:
       char *data = writebuffer.get();
       auto size = writebuffer.size();
 
-      while (written <= size) {
+      while (written < size) {
 	 auto written_this_time = wrapped->InternalWrite(data + written, size - written);
 	 if (written_this_time < 0)
 	    return false;
-	 if (written_this_time == 0)
-	    break;
 
 	 written += written_this_time;
       }
