@@ -46,14 +46,14 @@ testsuccess aptcache dump
 cp rootdir/tmp/testsuccess.output dump.output
 testsuccess test -s dump.output
 
-testsuccessequal 'dpkg
-bar
+testsuccessequal 'foo
 fancy
+dpkg
 specific
-foo' aptcache pkgnames
+bar' aptcache pkgnames
 testsuccessequal 'bar' aptcache pkgnames bar
-testsuccessequal 'fancy
-foo' aptcache pkgnames f
+testsuccessequal 'foo
+fancy' aptcache pkgnames f
 
 testsuccessequal "       foo |          1 | file:$(readlink -f .)/aptarchive unstable/main all Packages" aptcache madison foo
 
