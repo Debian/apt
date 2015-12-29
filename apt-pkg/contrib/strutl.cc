@@ -1377,6 +1377,7 @@ string StripEpoch(const string &VerStr)
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 #undef tolower_ascii
+int tolower_ascii(int const c) APT_CONST APT_COLD;
 int tolower_ascii(int const c)
 {
    return tolower_ascii_inline(c);
@@ -1390,6 +1391,7 @@ int tolower_ascii(int const c)
    standard isspace() and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 #undef isspace_ascii
+int isspace_ascii(int const c) APT_CONST APT_COLD;
 int isspace_ascii(int const c)
 {
    return isspace_ascii_inline(c);
