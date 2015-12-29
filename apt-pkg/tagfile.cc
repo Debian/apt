@@ -382,7 +382,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 lastTagHash = AlphaHash(Stop, EndTag - Stop);
 	 // find the beginning of the value
 	 Stop = Colon + 1;
-	 for (; isspace_ascii(*Stop) != 0; ++Stop)
+	 for (; Stop < End && isspace_ascii(*Stop) != 0; ++Stop)
 	    if (*Stop == '\n' && Stop[1] != ' ')
 	       break;
 	 if (Stop >= End)
