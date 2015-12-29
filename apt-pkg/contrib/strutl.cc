@@ -1369,17 +1369,17 @@ string StripEpoch(const string &VerStr)
    return VerStr.substr(i+1);
 }
 									/*}}}*/
+
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
    therefore to do the absolut minimum - and is notable faster than
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
+#undef tolower_ascii
 int tolower_ascii(int const c)
 {
-   if (c >= 'A' && c <= 'Z')
-      return c + 32;
-   return c;
+   return tolower_ascii_inline(c);
 }
 									/*}}}*/
 
@@ -1389,14 +1389,10 @@ int tolower_ascii(int const c)
    therefore to do the absolut minimum - and is notable faster than
    standard isspace() and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
+#undef isspace_ascii
 int isspace_ascii(int const c)
 {
-   return (c == ' '
-           || c == '\f'
-           || c == '\n'
-           || c == '\r'
-           || c == '\t'
-           || c == '\v');
+   return isspace_ascii_inline(c);
 }
 									/*}}}*/
 

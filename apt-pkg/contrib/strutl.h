@@ -105,8 +105,22 @@ void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
 void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);
 bool CheckDomainList(const std::string &Host, const std::string &List);
-int tolower_ascii(int const c) APT_CONST APT_HOT;
-int isspace_ascii(int const c) APT_CONST APT_HOT;
+
+/* Do some compat mumbo jumbo */
+#define tolower_ascii  tolower_ascii_inline
+#define isspace_ascii  isspace_ascii_inline
+
+APT_CONST APT_HOT
+static inline int tolower_ascii_inline(int const c)
+{
+   return (c >= 'A' && c <= 'Z') ? c + 32 : c;
+}
+APT_CONST APT_HOT
+static inline int isspace_ascii_inline(int const c)
+{
+   // 9='\t',10='\n',11='\v',12='\f',13='\r',32=' '
+   return (c >= 9 && c <= 13) || c == ' ';
+}
 
 std::string StripEpoch(const std::string &VerStr);
 
