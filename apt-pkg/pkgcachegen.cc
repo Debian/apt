@@ -1285,7 +1285,8 @@ static bool CheckValidity(const string &CacheFile,
                           pkgSourceList &List,
                           FileIterator const Start,
                           FileIterator const End,
-                          MMap **OutMap = 0)
+                          MMap **OutMap = 0,
+			  pkgCache **OutCache = 0)
 {
    ScopedErrorRevert ser;
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
@@ -1309,7 +1310,8 @@ static bool CheckValidity(const string &CacheFile,
    std::unique_ptr<MMap> Map(new MMap(CacheF,0));
    if (unlikely(Map->validData()) == false)
       return false;
-   pkgCache Cache(Map.get());
+   std::unique_ptr<pkgCache> CacheP(new pkgCache(Map.get()));
+   pkgCache &Cache = *CacheP.get();
    if (_error->PendingError() || Map->Size() == 0)
    {
       if (Debug == true)
@@ -1399,6 +1401,8 @@ static bool CheckValidity(const string &CacheFile,
 
    if (OutMap != 0)
       *OutMap = Map.release();
+   if (OutCache != 0)
+      *OutCache = CacheP.release();
    return true;
 }
 									/*}}}*/
@@ -1563,6 +1567,11 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap,bool)
 {
+   return pkgCacheGenerator::MakeStatusCache(List, Progress, OutMap, nullptr, true);
+}
+bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
+			MMap **OutMap,pkgCache **OutCache, bool)
+{
    // FIXME: deprecate the ignored AllowMem parameter
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
 
@@ -1594,7 +1603,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    bool srcpkgcache_fine = false;
    bool volatile_fine = List.GetVolatileFiles().empty();
 
-   if (CheckValidity(CacheFile, List, Files.begin(), Files.end(), volatile_fine ? OutMap : NULL) == true)
+   if (CheckValidity(CacheFile, List, Files.begin(), Files.end(), volatile_fine ? OutMap : NULL,
+		     volatile_fine ? OutCache : NULL) == true)
    {
       if (Debug == true)
 	 std::clog << "pkgcache.bin is valid - no need to build any cache" << std::endl;

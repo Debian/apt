@@ -96,7 +96,8 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    BuildSourceList(Progress);
 
    // Read the caches
-   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map, true);
+   Cache = nullptr;
+   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map, &Cache, true);
    if (Progress != NULL)
       Progress->Done();
    if (Res == false)
@@ -106,7 +107,8 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    if (_error->PendingError() == true)
       _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
-   Cache = new pkgCache(Map);
+   if (Cache == nullptr)
+      Cache = new pkgCache(Map);
    if (_error->PendingError() == true)
       return false;
    return true;
