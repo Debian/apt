@@ -1535,7 +1535,6 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
    // Write out the main data
    if (SCacheF.Write(Map->Data(),Map->Size()) == false)
       return _error->Error(_("IO Error saving source cache"));
-   SCacheF.Sync();
 
    // Write out the proper header
    Gen->GetCache().HeaderP->Dirty = false;
@@ -1544,7 +1543,6 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
 	 SCacheF.Write(Map->Data(),sizeof(*Gen->GetCache().HeaderP)) == false)
       return _error->Error(_("IO Error saving source cache"));
    Gen->GetCache().HeaderP->Dirty = true;
-   SCacheF.Sync();
    return true;
 }
 static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
