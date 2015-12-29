@@ -57,7 +57,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    APT_HEADER_SET(MajorVersion, 10);
-   APT_HEADER_SET(MinorVersion, 2);
+   APT_HEADER_SET(MinorVersion, 3);
    APT_HEADER_SET(Dirty, false);
 
    APT_HEADER_SET(HeaderSz, sizeof(pkgCache::Header));
@@ -93,7 +93,7 @@ pkgCache::Header::Header()
    VerSysName = 0;
    Architecture = 0;
    SetArchitectures(0);
-   SetHashTableSize(_config->FindI("APT::Cache-HashTableSize", 10 * 1048));
+   SetHashTableSize(_config->FindI("APT::Cache-HashTableSize", 15013));
    memset(Pools,0,sizeof(Pools));
 
    CacheFileSize = 0;
@@ -203,17 +203,17 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    table (480 used items) */
 map_id_t pkgCache::sHash(const string &Str) const
 {
-   uint32_t Hash = 0;
+   uint32_t Hash = 5381;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
-      Hash = 41 * Hash + tolower_ascii(*I);
+      Hash = 33 * Hash + tolower_ascii(*I);
    return Hash % HeaderP->GetHashTableSize();
 }
 
 map_id_t pkgCache::sHash(const char *Str) const
 {
-   uint32_t Hash = tolower_ascii(*Str);
-   for (const char *I = Str + 1; *I != 0; ++I)
-      Hash = 41 * Hash + tolower_ascii(*I);
+   uint32_t Hash = 5381;
+   for (const char *I = Str; *I != 0; ++I)
+      Hash = 33 * Hash + tolower_ascii(*I);
    return Hash % HeaderP->GetHashTableSize();
 }
 									/*}}}*/
