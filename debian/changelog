@@ -1,3 +1,25 @@
+apt (1.1.10) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * deal with empty values properly in deb822 parser (Closes: 808102)
+
+  [ Beatrice Torracca ]
+  * fix 3 typos/omissions in apt.conf(5) (Closes: 809160)
+
+  [ Julian Andres Klode ]
+  * BufferedWriter: flushing: Check for written < size instead of <=
+  * aptconfiguration: Set default compression level to 6
+  * BufferedFileFdPrivate: Make InternalFlush() save against errors
+  * Switch to DJB hashing and use prime number as table size
+  * Turn tolower_ascii() and isspace_ascii() into inline functions
+  * Fix test case that was broken by switch of hash function
+  * pkgTagSection::Scan: Fix read of uninitialized value
+  * pkgCacheGenerator: Allow passing down an already created cache
+  * Add support for calculating hashes over the entire cache
+  * Do not sync the cache file
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 30 Dec 2015 00:40:53 +0100
+
 apt (1.1.9) unstable; urgency=medium
 
   Highlights: buffered rred writes and slightly faster cache generation (~10%)
