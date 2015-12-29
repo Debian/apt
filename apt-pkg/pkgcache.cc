@@ -39,6 +39,7 @@
 #include <vector>
 #include <string>
 #include <sys/stat.h>
+#include <zlib.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -173,9 +174,6 @@ bool pkgCache::ReMap(bool const &Errorchecks)
        HeaderP->CheckSizes(DefHeader) == false)
       return _error->Error(_("The package cache file is an incompatible version"));
 
-   if (Map.Size() < HeaderP->CacheFileSize)
-      return _error->Error(_("The package cache file is corrupted, it is too small"));
-
    if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->GetArchitectures() == 0)
       return _error->Error(_("The package cache file is corrupted"));
 
@@ -192,6 +190,13 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
 	 list != StrP + HeaderP->GetArchitectures())
       return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->GetArchitectures(), list.c_str());
+
+
+   auto hash = CacheHash();
+   if (_config->FindB("Debug::pkgCacheGen", false))
+      std::clog << "Opened cache with hash " << hash << ", expecting " <<  HeaderP->CacheFileSize << "\n";
+   if (hash != HeaderP->CacheFileSize)
+      return _error->Error(_("The package cache file is corrupted, it has the wrong hash"));
 
    return true;
 }
@@ -215,6 +220,31 @@ map_id_t pkgCache::sHash(const char *Str) const
    for (const char *I = Str; *I != 0; ++I)
       Hash = 33 * Hash + tolower_ascii(*I);
    return Hash % HeaderP->GetHashTableSize();
+}
+
+uint32_t pkgCache::CacheHash()
+{
+   pkgCache::Header header = {};
+   uLong adler = adler32(0L, Z_NULL, 0);
+
+   if (Map.Size() < sizeof(header))
+      return adler;
+   memcpy(&header, GetMap().Data(), sizeof(header));
+
+   header.Dirty = false;
+   header.CacheFileSize = 0;
+
+   adler = adler32(adler,
+		   reinterpret_cast<const unsigned char *>(&header),
+		   sizeof(header));
+
+   if (Map.Size() > sizeof(header)) {
+      adler = adler32(adler,
+		      static_cast<const unsigned char *>(GetMap().Data()) + sizeof(header),
+		      GetMap().Size() - sizeof(header));
+   }
+
+   return adler;
 }
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/

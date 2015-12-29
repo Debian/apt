@@ -224,6 +224,8 @@ class pkgCache								/*{{{*/
    inline map_id_t Hash(const std::string &S) const {return sHash(S);}
    inline map_id_t Hash(const char *S) const {return sHash(S);}
 
+   APT_HIDDEN uint32_t CacheHash();
+
    // Useful transformation things
    static const char *Priority(unsigned char Priority);
    
@@ -364,7 +366,7 @@ struct pkgCache::Header
    map_pointer_t * PkgHashTableP() const { return (map_pointer_t*) (this + 1); }
    map_pointer_t * GrpHashTableP() const { return PkgHashTableP() + GetHashTableSize(); }
 
-   /** \brief Size of the complete cache file */
+   /** \brief Hash of the file (TODO: Rename) */
    map_filesize_small_t CacheFileSize;
 
    bool CheckSizes(Header &Against) const APT_PURE;

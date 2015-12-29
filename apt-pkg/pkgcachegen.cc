@@ -101,6 +101,8 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       else
 	 Cache.HeaderP->SetArchitectures(idxArchitecture);
 
+      // Calculate the hash for the empty map, so ReMap does not fail
+      Cache.HeaderP->CacheFileSize = Cache.CacheHash();
       Cache.ReMap();
    }
    else
@@ -131,7 +133,10 @@ pkgCacheGenerator::~pkgCacheGenerator()
       return;
    
    Cache.HeaderP->Dirty = false;
-   Cache.HeaderP->CacheFileSize = Map.Size();
+   Cache.HeaderP->CacheFileSize = Cache.CacheHash();
+
+   if (_config->FindB("Debug::pkgCacheGen", false))
+      std::clog << "Produced cache with hash " << Cache.HeaderP->CacheFileSize << std::endl;
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/
@@ -1534,6 +1539,7 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
 
    // Write out the proper header
    Gen->GetCache().HeaderP->Dirty = false;
+   Gen->GetCache().HeaderP->CacheFileSize = Gen->GetCache().CacheHash();
    if (SCacheF.Seek(0) == false ||
 	 SCacheF.Write(Map->Data(),sizeof(*Gen->GetCache().HeaderP)) == false)
       return _error->Error(_("IO Error saving source cache"));
