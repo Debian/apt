@@ -1041,7 +1041,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	 return false;
    }
 
-   if (InstallPackages(Cache, false, true) == false)
+   if (_error->PendingError() || InstallPackages(Cache, false, true) == false)
       return _error->Error(_("Failed to process build dependencies"));
    return true;
 }
