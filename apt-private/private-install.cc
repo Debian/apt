@@ -346,6 +346,18 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
    }
 
+   // cleanup downloaded debs
+   if (_config->FindB("APT::Keep-Downloaded-Packages", true) == false)
+   {
+      std::string const archivedir = _config->FindDir("Dir::Cache::archives");
+      for (auto I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+      {
+	 if (flNotFile((*I)->DestFile) != archivedir || (*I)->Local)
+	    continue;
+         RemoveFile("Keep-Downloaded-Packages=false", (*I)->DestFile);
+      }
+   }
+
    return true;
 }
 									/*}}}*/
