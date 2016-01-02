@@ -971,16 +971,10 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    if (_config->FindB("APT::FTPArchive::Release::Default-Patterns", true) == true)
    {
       AddPattern("Packages");
-      AddPattern("Packages.gz");
-      AddPattern("Packages.bz2");
-      AddPattern("Packages.lzma");
-      AddPattern("Packages.xz");
+      AddPattern("Packages.*");
       AddPattern("Translation-*");
       AddPattern("Sources");
-      AddPattern("Sources.gz");
-      AddPattern("Sources.bz2");
-      AddPattern("Sources.lzma");
-      AddPattern("Sources.xz");
+      AddPattern("Sources.*");
       AddPattern("Release");
       AddPattern("Contents-*");
       AddPattern("Index");
