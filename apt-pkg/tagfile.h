@@ -140,9 +140,7 @@ class pkgTagSection
 };
 
 
-/* For user generated file the parser should be a bit more relaxed in exchange
-   for being a bit slower to allow comments and new lines all over the place */
-class pkgUserTagSection : public pkgTagSection
+class APT_DEPRECATED_MSG("Use pkgTagFile with the SUPPORT_COMMENTS flag instead") pkgUserTagSection : public pkgTagSection
 {
    virtual void TrimRecord(bool BeforeRecord, const char* &End) APT_OVERRIDE;
 };

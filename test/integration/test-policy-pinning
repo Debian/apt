@@ -315,3 +315,28 @@ Pin-Priority: 0
 testfailureequal "Reading package lists...
 E: No priority (or zero) specified for pin" \
  aptget install -s coolstuff -o PinPriority=0
+
+# Check with comments
+echo "#Package: coolstuff
+#Pin: release n=backports
+#Pin-Priority: 0
+
+# Test
+
+Package: coolstuff
+Pin: release n=backports
+#Pin: release n=unstable
+#Pin-Priority: 999
+Pin-Priority: 999
+#Pin-Priority: 999" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo2
+  Version table:
+     2.0~bpo2 999
+        100 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages" aptcache policy coolstuff

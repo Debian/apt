@@ -438,11 +438,11 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       return true;
    
    FileFd Fd(File,FileFd::ReadOnly);
-   pkgTagFile TF(&Fd);
+   pkgTagFile TF(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    if (Fd.IsOpen() == false || Fd.Failed())
       return false;
 
-   pkgUserTagSection Tags;
+   pkgTagSection Tags;
    while (TF.Step(Tags) == true)
    {
       // can happen when there are only comments in a record
