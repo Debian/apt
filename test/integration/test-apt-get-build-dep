@@ -9,6 +9,7 @@ configarchitecture 'i386'
 
 insertpackage 'stable' 'debhelper' 'i386' '7'
 insertpackage 'stable' 'build-essential' 'i386' '1'
+insertpackage 'stable' 'build-depends' 'i386' '1'
 insertinstalledpackage 'build-conflict' 'i386' '1'
 
 setupaptarchive
@@ -149,3 +150,37 @@ E: No architecture information available for armel. See apt.conf(5) APT::Archite
 testfailureequal 'Reading package lists...
 Building dependency tree...
 E: Unable to find a source package for foo' aptget build-dep --simulate foo
+
+msgmsg 'Test with a dsc' 'with comments'
+cat > comments.dsc <<EOF
+# I love comments
+# I love them so much, I give them their own paragraph
+
+#This is my first package
+Format: 3.0 (native)
+Source: comments
+Binary: comments
+Architecture: all
+Version: 1
+#Version: 2
+Maintainer: Joe Sixpack <joe@example.org>
+Build-Depends: debhelper (>= 5),
+# TODO: add more
+      build-depends (= 1),
+Standards-Version: 3.9.6
+# This is the end…
+
+# or this?
+EOF
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Note, using file './comments.dsc' to get the build dependencies
+The following NEW packages will be installed:
+  build-depends build-essential debhelper
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst build-depends (1 stable [i386])
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./comments.dsc

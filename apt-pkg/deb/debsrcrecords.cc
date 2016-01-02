@@ -33,8 +33,14 @@ using std::max;
 using std::string;
 
 debSrcRecordParser::debSrcRecordParser(std::string const &File,pkgIndexFile const *Index)
-   : Parser(Index), d(NULL), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),
-   iOffset(0), Buffer(NULL) {}
+   : Parser(Index), d(NULL), Tags(&Fd), iOffset(0), Buffer(NULL)
+{
+   if (File.empty() == false)
+   {
+      if (Fd.Open(File, FileFd::ReadOnly, FileFd::Extension))
+	 Tags.Init(&Fd, 102400);
+   }
+}
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
 // ---------------------------------------------------------------------
@@ -260,7 +266,7 @@ debSrcRecordParser::~debSrcRecordParser()
 
 
 debDscRecordParser::debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index)
-   : debSrcRecordParser(DscFile, Index)
+   : debSrcRecordParser("", Index)
 {
    // support clear signed files
    if (OpenMaybeClearSignedFile(DscFile, Fd) == false)
@@ -270,7 +276,7 @@ debDscRecordParser::debDscRecordParser(std::string const &DscFile, pkgIndexFile 
    }
 
    // re-init to ensure the updated Fd is used
-   Tags.Init(&Fd);
+   Tags.Init(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    // read the first (and only) record
    Step();
 
