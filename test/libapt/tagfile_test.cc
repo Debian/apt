@@ -40,6 +40,10 @@ TEST(TagFileTest,SingleField)
    EXPECT_EQ(0, section.Count());
    EXPECT_FALSE(section.Exists("FieldA-12345678"));
    EXPECT_FALSE(section.Exists("FieldB-12345678"));
+
+   createTemporaryFile("emptyfile", fd, NULL, NULL);
+   ASSERT_FALSE(tfile.Step(section));
+   EXPECT_EQ(0, section.Count());
 }
 
 TEST(TagFileTest,MultipleSections)
@@ -221,4 +225,61 @@ TEST(TagFileTest, SpacesEverywhere)
    EXPECT_EQ(":yes:", section.FindS("Multi-Colon"));
    // overridden values are still present, but not really accessible
    EXPECT_EQ(12, section.Count());
+}
+
+TEST(TagFileTest, Comments)
+{
+   FileFd fd;
+   createTemporaryFile("commentfile", fd, NULL, "# Leading comments should be ignored.\n"
+"\n"
+"Source: foo\n"
+"#Package: foo\n"
+"Section: bar\n"
+"#Section: overriden\n"
+"Priority: optional\n"
+"Build-Depends: debhelper,\n"
+"# apt-utils, (temporarily disabled)\n"
+" apt\n"
+"\n"
+"# Comments in the middle shouldn't result in extra blank paragraphs either.\n"
+"\n"
+"# Ditto.\n"
+"\n"
+"# A comment at the top of a paragraph should be ignored.\n"
+"Package: foo\n"
+"Architecture: any\n"
+"Description: An awesome package\n"
+"  # This should still appear in the result.\n"
+"# this one shouldn't\n"
+"  Blah, blah, blah. # but this again.\n"
+"# A comment at the end of a paragraph should be ignored.\n"
+"\n"
+"# Trailing comments shouldn't cause extra blank paragraphs."
+	 );
+
+   pkgTagFile tfile(&fd, pkgTagFile::SUPPORT_COMMENTS, 1);
+   pkgTagSection section;
+   EXPECT_TRUE(tfile.Step(section));
+   EXPECT_FALSE(section.Exists("Package"));
+   EXPECT_TRUE(section.Exists("Source"));
+   EXPECT_EQ("foo", section.FindS("Source"));
+   EXPECT_TRUE(section.Exists("Section"));
+   EXPECT_EQ("bar", section.FindS("Section"));
+   EXPECT_TRUE(section.Exists("Priority"));
+   EXPECT_EQ("optional", section.FindS("Priority"));
+   EXPECT_TRUE(section.Exists("Build-Depends"));
+   EXPECT_EQ("debhelper,\n apt", section.FindS("Build-Depends"));
+
+   EXPECT_TRUE(tfile.Step(section));
+   EXPECT_FALSE(section.Exists("Source"));
+   EXPECT_TRUE(section.Exists("Package"));
+   EXPECT_EQ("foo", section.FindS("Package"));
+   EXPECT_FALSE(section.Exists("Section"));
+   EXPECT_TRUE(section.Exists("Architecture"));
+   EXPECT_EQ("any", section.FindS("Architecture"));
+   EXPECT_FALSE(section.Exists("Build-Depends"));
+   EXPECT_TRUE(section.Exists("Description"));
+   EXPECT_EQ("An awesome package\n  # This should still appear in the result.\n  Blah, blah, blah. # but this again.", section.FindS("Description"));
+
+   EXPECT_FALSE(tfile.Step(section));
 }

@@ -34,7 +34,15 @@
 
 class FileFd;
 class pkgTagSectionPrivate;
+class pkgTagFilePrivate;
 
+/** \class pkgTagSection parses a single deb822 stanza and provides various Find methods
+ * to extract the included values. It can also be used to modify and write a
+ * valid deb822 stanza optionally (re)ordering the fields inside the stanza.
+ *
+ * Beware: This class does \b NOT support (#-)comments in in- or output!
+ * If the input contains comments they have to be stripped first like pkgTagFile
+ * does with SUPPORT_COMMENTS flag set. */
 class pkgTagSection
 {
    const char *Section;
@@ -139,7 +147,10 @@ class pkgUserTagSection : public pkgTagSection
    virtual void TrimRecord(bool BeforeRecord, const char* &End) APT_OVERRIDE;
 };
 
-class pkgTagFilePrivate;
+/** \class pkgTagFile reads and prepares a deb822 formatted file for parsing
+ * via #pkgTagSection. The default mode tries to be as fast as possible and
+ * assumes perfectly valid (machine generated) files like Packages. Support
+ * for comments e.g. needs to be enabled explicitly. */
 class pkgTagFile
 {
    pkgTagFilePrivate * const d;
@@ -148,14 +159,22 @@ class pkgTagFile
    APT_HIDDEN bool Resize();
    APT_HIDDEN bool Resize(unsigned long long const newSize);
 
-   public:
+public:
 
    bool Step(pkgTagSection &Section);
    unsigned long Offset();
    bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
+   enum Flags
+   {
+      STRICT = 0,
+      SUPPORT_COMMENTS = 1 << 0,
+   };
+
+   void Init(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = 32*1024);
    void Init(FileFd * const F,unsigned long long const Size = 32*1024);
 
+   pkgTagFile(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = 32*1024);
    pkgTagFile(FileFd * const F,unsigned long long Size = 32*1024);
    virtual ~pkgTagFile();
 };
