@@ -62,6 +62,9 @@
 #  APT::Periodic::AutocleanInterval "0";
 #  - Do "apt-get autoclean" every n-days (0=disable)
 #
+#  APT::Periodic::CleanInterval "0";
+#  - Do "apt-get clean" every n-days (0=disable)
+#
 #  APT::Periodic::Verbose "0";
 #  - Send report mail to root
 #      0:  no report             (or null string)
@@ -411,6 +414,9 @@ eval $(apt-config shell UnattendedUpgradeInterval APT::Periodic::Unattended-Upgr
 AutocleanInterval=0
 eval $(apt-config shell AutocleanInterval APT::Periodic::AutocleanInterval)
 
+CleanInterval=0
+eval $(apt-config shell CleanInterval APT::Periodic::CleanInterval)
+
 BackupArchiveInterval=0
 eval $(apt-config shell BackupArchiveInterval APT::Periodic::BackupArchiveInterval)
 
@@ -422,7 +428,8 @@ if [ $UpdateInterval -eq 0 ] &&
    [ $DownloadUpgradeableInterval -eq 0 ] &&
    [ $UnattendedUpgradeInterval -eq 0 ] &&
    [ $BackupArchiveInterval -eq 0 ] &&
-   [ $AutocleanInterval -eq 0 ]; then
+   [ $AutocleanInterval -eq 0 ] &&
+   [ $CleanInterval -eq 0 ]; then
 
     # check cache size
     check_size_constraints
@@ -496,6 +503,19 @@ if which unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $Unatt
     fi
 else
     debug_echo "unattended-upgrade (not run)"
+fi
+
+# clean package archive
+CLEAN_STAMP=/var/lib/apt/periodic/clean-stamp
+if check_stamp $CLEAN_STAMP $CleanInterval; then
+    if  eval apt-get $XAPTOPT -y clean $XSTDERR; then
+	debug_echo "clean (success)."
+	update_stamp $CLEAN_STAMP
+    else
+	debug_echo "clean (error)"
+    fi
+else
+    debug_echo "clean (not run)"
 fi
 
 # autoclean package archive
