@@ -60,6 +60,11 @@ ifeq ($(words $(BLD)),0)
 override BLD := ./build
 endif
 
+# When building without <nocheck>, the header is available and thus the test is
+# successful. When building with <nocheck>, the header is missing, but we still
+# pretend it to be available, because configure would fail otherwise.
+export ac_cv_header_gtest_gtest_h=yes
+
 # APT Programs in apt-utils
 APT_UTILS=ftparchive sortpkgs extracttemplates
 
