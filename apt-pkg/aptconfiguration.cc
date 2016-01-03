@@ -364,30 +364,30 @@ const Configuration::getCompressors(bool const Cached) {
 
 	setDefaultConfigurationForCompressors();
 
-	compressors.push_back(Compressor(".", "", "", NULL, NULL, 1));
+	compressors.push_back(Compressor(".", "", "", NULL, NULL, 0));
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
-		compressors.push_back(Compressor("gzip",".gz","gzip","-6n","-d",2));
+		compressors.push_back(Compressor("gzip",".gz","gzip","-6n","-d",100));
 #ifdef HAVE_ZLIB
 	else
-		compressors.push_back(Compressor("gzip",".gz","false", NULL, NULL, 2));
+		compressors.push_back(Compressor("gzip",".gz","false", NULL, NULL, 100));
 #endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
-		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",3));
+		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",200));
 #ifdef HAVE_LZMA
 	else
-		compressors.push_back(Compressor("xz",".xz","false", NULL, NULL, 3));
+		compressors.push_back(Compressor("xz",".xz","false", NULL, NULL, 200));
 #endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
-		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-6","-d",4));
+		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-6","-d",300));
 #ifdef HAVE_BZ2
 	else
-		compressors.push_back(Compressor("bzip2",".bz2","false", NULL, NULL, 4));
+		compressors.push_back(Compressor("bzip2",".bz2","false", NULL, NULL, 300));
 #endif
 	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
-		compressors.push_back(Compressor("lzma",".lzma","lzma","-6","-d",5));
+		compressors.push_back(Compressor("lzma",".lzma","lzma","-6","-d",400));
 #ifdef HAVE_LZMA
 	else
-		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 5));
+		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 400));
 #endif
 
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
