@@ -210,7 +210,7 @@ map_id_t pkgCache::sHash(const string &Str) const
 {
    uint32_t Hash = 5381;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
-      Hash = 33 * Hash + tolower_ascii(*I);
+      Hash = 33 * Hash + tolower_ascii((signed char)*I);
    return Hash % HeaderP->GetHashTableSize();
 }
 
@@ -218,7 +218,7 @@ map_id_t pkgCache::sHash(const char *Str) const
 {
    uint32_t Hash = 5381;
    for (const char *I = Str; *I != 0; ++I)
-      Hash = 33 * Hash + tolower_ascii(*I);
+      Hash = 33 * Hash + tolower_ascii((signed char)*I);
    return Hash % HeaderP->GetHashTableSize();
 }
 
