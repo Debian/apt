@@ -5,7 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
-configcompression '.' 'xz' 'bz2' 'lzma' 'gz'
+configcompression '.' $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Extension \.\(.*\)$#\1#p')
 configarchitecture 'i386'
 
 buildsimplenativepackage 'testpkg' 'i386' '1.0'
@@ -146,7 +146,7 @@ testsuccessequal "$GOODSHOWSRC" aptcache showsrc testpkg
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'file policy is broken'
 testsuccessequal "$GOODPOLICY" aptcache policy testpkg
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'file' $COMPRESSOR; done
+forallsupportedcompressors testovermethod 'file'
 
 rewritesourceslist "copy://${TMPWORKINGDIRECTORY}/aptarchive"
 rm -rf rootdir/var/lib/apt/lists
@@ -154,7 +154,7 @@ testsuccess aptget update
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 copy:/' | wc -l) -eq 4 || msgdie 'copy policy is broken'
 testsuccessequal "$GOODPOLICY" aptcache policy testpkg
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'copy' $COMPRESSOR; done
+forallsupportedcompressors testovermethod 'copy'
 
 changetowebserver
 rm -rf rootdir/var/lib/apt/lists
@@ -162,7 +162,7 @@ testsuccess aptget update
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4 || msgdie 'http policy is broken'
 testsuccessequal "$GOODPOLICY" aptcache policy testpkg
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'http' $COMPRESSOR; done
+forallsupportedcompressors testovermethod 'http'
 
 changetohttpswebserver
 rm -rf rootdir/var/lib/apt/lists
@@ -170,7 +170,7 @@ testsuccess aptget update
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 https://' | wc -l) -eq 4 || msgdie 'https policy is broken'
 testsuccessequal "$GOODPOLICY" aptcache policy testpkg
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'https' $COMPRESSOR; done
+forallsupportedcompressors testovermethod 'https'
 
 changetocdrom 'Debian APT Testdisk 0.8.15'
 rm -rf rootdir/var/lib/apt/lists
@@ -178,4 +178,4 @@ testsuccess aptcdrom add </dev/null
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 cdrom://' | wc -l) -eq 4 || msgdie 'cdrom policy is broken'
 testsuccessequal "$GOODPOLICY" aptcache policy testpkg
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'cdrom' $COMPRESSOR; done
+forallsupportedcompressors testovermethod 'cdrom'

@@ -76,9 +76,9 @@ W: Failed to fetch store:$(readlink -f rootdir/var/lib/apt/lists/partial/localho
 E: Some index files failed to download. They have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over http"
 }
 
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testoverfile $COMPRESSOR; done
+forallsupportedcompressors testoverfile
 
 # do the same again with http instead of file
 changetowebserver
 
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testoverhttp $COMPRESSOR; done
+forallsupportedcompressors testoverhttp

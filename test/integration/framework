@@ -95,7 +95,7 @@ msgfail() {
 	if [ $# -gt 0 ] && [ -n "$1" ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	if [ -n "$APT_DEBUG_TESTS" ]; then
-		$SHELL
+		APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" $SHELL
 	fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
@@ -526,7 +526,6 @@ configcompression() {
 		'gz') printf "gzip\tgz\tgzip\n";;
 		'bz2') printf "bzip2\tbz2\tbzip2\n";;
 		'lzma') printf "lzma\tlzma\txz --format=lzma\n";;
-		'xz') printf "xz\txz\txz\n";;
 		*) printf "$1\t$1\t$1\n";;
 		esac
 		shift
@@ -550,21 +549,18 @@ confighashes() {
 }
 forcecompressor() {
 	COMPRESSOR="$1"
+	COMPRESS="$1"
 	COMPRESSOR_CMD="$1"
 	case $COMPRESSOR in
 	gzip) COMPRESS='gz';;
 	bzip2) COMPRESS='bz2';;
-	lzma) COMPRESS='lzma';;
-	xz) COMPRESS='xz';;
-	*) msgdie "Compressor $COMPRESSOR is unknown to framework, so can't be forced by forcecompressor!";;
 	esac
 	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
-Dir::Bin::uncompressed \"/does/not/exist\";
-Dir::Bin::gzip \"/does/not/exist\";
-Dir::Bin::bzip2 \"/does/not/exist\";
-Dir::Bin::lzma \"/does/not/exist\";
-Dir::Bin::xz \"/does/not/exist\";" > "$CONFFILE"
+Dir::Bin::uncompressed \"/does/not/exist\";" > "$CONFFILE"
+	for COMP in $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Name \([^.].\+\)$#\1#p'); do
+		echo "Dir::Bin::${COMP} \"/does/not/exist\";"
+	done >> "$CONFFILE"
 	if [ -e "/bin/${COMPRESSOR}" ]; then
 		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> "$CONFFILE"
 	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
@@ -1827,6 +1823,12 @@ listcurrentlistsdirectory() {
 			stat --format '%U:%G:%a:%s:%y:%n' "$line"
 		done
 	} | sort
+}
+forallsupportedcompressors() {
+	for COMP in $(aptconfig dump 'APT::Compressor' --format '%f%n' | cut -d':' -f 5 | uniq); do
+		if [ -z "$COMP" -o "$COMP" = '.' -o "$COMP" = 'lz4' ]; then continue; fi
+		"$@" "$COMP"
+	done
 }
 
 ### convenience hacks ###
