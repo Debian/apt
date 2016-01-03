@@ -422,7 +422,7 @@ bool pkgAcqIndex::TransactionState(TransactionStates const state)
 	 {
 	    // keep the compressed file, but drop the decompressed
 	    EraseFileName.clear();
-	    if (PartialFile.empty() == false && flExtension(PartialFile) == "decomp")
+	    if (PartialFile.empty() == false && flExtension(PartialFile) != CurrentCompressionExtension)
 	       RemoveFile("TransactionAbort", PartialFile);
 	 }
 	 break;
@@ -2681,7 +2681,8 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
    {
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Local = true;
-      DestFile += ".decomp";
+      if (CurrentCompressionExtension != "uncompressed")
+	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
       SetActiveSubprocess("copy");
@@ -2703,6 +2704,18 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
 	 SetActiveSubprocess("copy");
 	 return;
       }
+      else
+      {
+	 // symlinking ensures that the filename can be used for compression detection
+	 // that is e.g. needed for by-hash over file
+	 if (symlink(FileName.c_str(),DestFile.c_str()) != 0)
+	    _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", FileName.c_str(), DestFile.c_str());
+	 else
+	 {
+	    EraseFileName = DestFile;
+	    FileName = DestFile;
+	 }
+      }
    }
    else
       EraseFileName = FileName;
@@ -2717,25 +2730,19 @@ void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const 
       return;
    }
 
-   // get the binary name for your used compression type
-   string decompProg;
-   if(CurrentCompressionExtension == "uncompressed")
-      decompProg = "copy";
-   else
-      decompProg = _config->Find(string("Acquire::CompressionTypes::").append(CurrentCompressionExtension),"");
-   if(decompProg.empty() == true)
-   {
-      _error->Error("Unsupported extension: %s", CurrentCompressionExtension.c_str());
-      return;
-   }
-
+   string decompProg = "store";
    if (Target.KeepCompressed == true)
    {
       DestFile = "/dev/null";
       EraseFileName.clear();
    }
    else
-      DestFile += ".decomp";
+   {
+      if (CurrentCompressionExtension == "uncompressed")
+	 decompProg = "copy";
+      else
+	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
+   }
 
    // queue uri for the next stage
    Stage = STAGE_DECOMPRESS_AND_VERIFY;

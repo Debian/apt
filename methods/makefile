@@ -23,11 +23,11 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = copy.cc
 include $(PROGRAM_H)
 
-# The gzip method
-PROGRAM=gzip
+# The store method
+PROGRAM=store
 SLIBS = -lapt-pkg $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = gzip.cc
+SOURCE = store.cc
 include $(PROGRAM_H)
 
 # The gpgv method
@@ -96,15 +96,15 @@ $(BIN)/ssh:
 clean-$(BIN)/ssh:
 	-rm $(BIN)/ssh
 
-# create links for all other compressors
-COMPRESSORS=bzip2 lzma xz
+# create compat links for all compressors
+COMPRESSORS=gzip bzip2 lzma xz
 
 binary: $(addprefix $(BIN)/,$(COMPRESSORS))
 veryclean: $(addprefix clean-$(BIN)/,$(COMPRESSORS))
 
-$(addprefix $(BIN)/,$(COMPRESSORS)): $(BIN)/gzip
+$(addprefix $(BIN)/,$(COMPRESSORS)): $(BIN)/store
 	echo "Installing $(notdir $@) method link"
-	ln -fs gzip $@
+	ln -fs store $@
 
 $(addprefix clean-$(BIN)/,$(COMPRESSORS)):
 	-rm $(BIN)/$(notdir $@)

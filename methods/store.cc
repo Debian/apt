@@ -1,11 +1,13 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: gzip.cc,v 1.17.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
-   GZip method - Take a file URI in and decompress it into the target 
-   file.
-   
+   Store method - Takes a file URI and stores its content (for which it will
+   calculate the hashes) in the given destination. The input file will be
+   extracted based on its file extension (or with the given compressor if
+   called with one of the compatible symlinks) and potentially recompressed
+   based on the file extension of the destination filename.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -29,20 +31,34 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class GzipMethod : public aptMethod
+class StoreMethod : public aptMethod
 {
    std::string const Prog;
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 
    public:
 
-   explicit GzipMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.1",SingleInstance | SendConfig), Prog(pProg) {};
+   explicit StoreMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.2",SingleInstance | SendConfig), Prog(pProg) {};
 };
 
-// GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool GzipMethod::Fetch(FetchItem *Itm)
+static bool OpenFileWithCompressorByName(FileFd &fileFd, std::string const &Filename, unsigned int const Mode, std::string const &Name)
+{
+   if (Name == "store")
+      return fileFd.Open(Filename, Mode, FileFd::Extension);
+
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
+   for (; compressor != compressors.end(); ++compressor)
+      if (compressor->Name == Name)
+	 break;
+   if (compressor == compressors.end())
+      return _error->Error("Extraction of file %s requires unknown compressor %s", Filename.c_str(), Name.c_str());
+   return fileFd.Open(Filename, Mode, *compressor);
+}
+
+
+									/*}}}*/
+bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
 {
    URI Get = Itm->Uri;
    std::string Path = Get.Host + Get.Path; // To account for relative paths
@@ -51,50 +67,42 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    URIStart(Res);
 
-   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
-   std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
-   for (; compressor != compressors.end(); ++compressor)
-      if (compressor->Name == Prog)
-	 break;
-   if (compressor == compressors.end())
-      return _error->Error("Extraction of file %s requires unknown compressor %s", Path.c_str(), Prog.c_str());
-
    // Open the source and destination files
    FileFd From;
    if (_config->FindB("Method::Compress", false) == false)
    {
-      From.Open(Path, FileFd::ReadOnly, *compressor);
+      if (OpenFileWithCompressorByName(From, Path, FileFd::ReadOnly, Prog) == false)
+	 return false;
       if(From.FileSize() == 0)
 	 return _error->Error(_("Empty files can't be valid archives"));
    }
    else
-      From.Open(Path, FileFd::ReadOnly);
+      From.Open(Path, FileFd::ReadOnly, FileFd::Extension);
    if (From.IsOpen() == false || From.Failed() == true)
       return false;
 
    FileFd To;
-   if (Itm->DestFile != "/dev/null")
+   if (Itm->DestFile != "/dev/null" && Itm->DestFile != Path)
    {
       if (_config->FindB("Method::Compress", false) == false)
-	 To.Open(Itm->DestFile, FileFd::WriteAtomic);
-      else
-	 To.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, *compressor);
+	 To.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Atomic, FileFd::Extension);
+      else if (OpenFileWithCompressorByName(To, Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, Prog) == false)
+	    return false;
 
       if (To.IsOpen() == false || To.Failed() == true)
 	 return false;
       To.EraseOnFailure();
    }
 
-
    // Read data from source, generate checksums and write
    Hashes Hash(Itm->ExpectedHashes);
    bool Failed = false;
    Res.Size = 0;
-   while (1) 
+   while (1)
    {
       unsigned char Buffer[4*1024];
       unsigned long long Count = 0;
-      
+
       if (!From.Read(Buffer,sizeof(Buffer),&Count))
       {
 	 if (To.IsOpen())
@@ -110,9 +118,9 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       {
 	 Failed = true;
 	 break;
-      }      
+      }
    }
-   
+
    From.Close();
    To.Close();
 
@@ -146,6 +154,6 @@ int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 
-   GzipMethod Mth(flNotDir(argv[0]));
+   StoreMethod Mth(flNotDir(argv[0]));
    return Mth.Run();
 }
