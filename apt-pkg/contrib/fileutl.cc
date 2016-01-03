@@ -934,8 +934,11 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
 
    const char *get() const { return buffer + bufferstart; }
    char *get() { return buffer + bufferstart; }
+   const char *getend() const { return buffer + bufferend; }
+   char *getend() { return buffer + bufferend; }
    bool empty() const { return bufferend <= bufferstart; }
    bool full() const { return bufferend == buffersize_max; }
+   unsigned long long free() const { return buffersize_max - bufferend; }
    unsigned long long size() const { return bufferend-bufferstart; }
    void reset(size_t size)
    {
