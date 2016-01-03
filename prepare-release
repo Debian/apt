@@ -147,7 +147,7 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get install -qy --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' | tr -d ',')
+	apt-get install -qy --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' -e 's#<.*>##g' | tr -d ',')
 	apt-get install -qy --no-install-recommends $(sed -n 's#^Depends: .*@, \(.*\)$#\1#p' debian/tests/control | tr -d ',')
 elif [ "$1" = 'coverage' ]; then
 	DIR="${2:-./coverage}"
