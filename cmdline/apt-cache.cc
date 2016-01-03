@@ -172,7 +172,7 @@ static void ShowHashTableStats(std::string Type,
    cout << "Total buckets in " << Type << ": " << NumBuckets << std::endl;
    cout << "  Unused: " << UnusedBuckets << std::endl;
    cout << "  Used: " << UsedBuckets  << std::endl;
-   cout << "  Average entries: " << Entries/(double)NumBuckets << std::endl;
+   cout << "  Average entries: " << Entries/(double)UsedBuckets << std::endl;
    cout << "  Longest: " << LongestBucket << std::endl;
    cout << "  Shortest: " << ShortestBucket << std::endl;
 }
