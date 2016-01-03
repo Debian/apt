@@ -46,11 +46,11 @@ testsuccess aptcache dump
 cp rootdir/tmp/testsuccess.output dump.output
 testsuccess test -s dump.output
 
-testsuccessequal 'foo
-fancy
+testsuccessequal 'bar
+foo
 dpkg
 specific
-bar' aptcache pkgnames
+fancy' aptcache pkgnames
 testsuccessequal 'bar' aptcache pkgnames bar
 testsuccessequal 'foo
 fancy' aptcache pkgnames f
