@@ -15,7 +15,7 @@ changetowebserver -o aptwebserver::support::modified-since=false
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 wasmergeused() {
-	testsuccess aptget update "$@"
+	testsuccess apt update "$@"
 
 	msgtest 'No intermediate patch files' 'still exist'
 	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
@@ -42,6 +42,7 @@ wasmergeused() {
 }
 
 testrun() {
+	configcompression '.' 'xz'
 	msgmsg "Testcase: setup the base with: $*"
 	local DOWNLOADHASH=true
 	if [ "$1" = 'nohash' ]; then DOWNLOADHASH=false; shift; fi
@@ -56,8 +57,10 @@ testrun() {
 	testnopackage newstuff
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt oldstuff
+	configcompression '.' 'gz'
 
 	msgmsg "Testcase: apply with one patch: $*"
+	find aptarchive -name 'Packages*' -type f -delete
 	cp "${PKGFILE}-new" aptarchive/Packages
 	compressfile 'aptarchive/Packages'
 	mkdir -p aptarchive/Packages.diff
@@ -194,9 +197,9 @@ SHA256-Download:
 	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
 	generatereleasefiles '+1hour'
 	signreleasefiles
-	testsuccess aptget update "$@"
-	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptgetupdate.output
-	testsuccess grep 'Hash Sum mismatch' rootdir/tmp/aptgetupdate.output
+	testsuccess apt update "$@"
+	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptupdate.output
+	testsuccess grep 'Hash Sum mismatch' rootdir/tmp/aptupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff
@@ -235,10 +238,9 @@ SHA256-Download:
 	fi
 	generatereleasefiles '+1hour'
 	signreleasefiles
-	#find aptarchive -name 'Packages*' -type f -delete
-	testsuccess aptget update -o Debug::pkgAcquire::Diffs=1 "$@"
-	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptgetupdate.output
-	testsuccess grep 'bytes (Limit is' rootdir/tmp/aptgetupdate.output
+	testsuccess apt update -o Debug::pkgAcquire::Diffs=1 "$@"
+	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptupdate.output
+	testsuccess grep 'bytes (Limit is' rootdir/tmp/aptupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff
@@ -270,5 +272,7 @@ testcase() {
 	testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA256 "$@"
 	unset -f sha1sum
 }
-testcase -o Acquire::GzipIndexes=0
-testcase -o Acquire::GzipIndexes=1
+aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages"; }
+testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=false
+aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages.gz"; }
+testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true

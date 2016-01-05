@@ -63,6 +63,21 @@ testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-amd64.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-all.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all 0 " aptget update --print-uris
 
+# apt believes the Contents files we faked are good
+testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
+Reading package lists..." aptget update
+testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+
+find rootdir/var/lib/apt/lists -name '*Contents*' -delete
+
+testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_unstable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-amd64.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-all.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all 0 " aptget update --print-uris
+
 testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
 Get:3 http://localhost:${APTHTTPPORT} unstable/main all Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-all.gz) B]

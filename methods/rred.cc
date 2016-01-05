@@ -663,7 +663,7 @@ class RredMethod : public aptMethod {
 	 struct stat bufbase, bufpatch;
 	 if (stat(Path.c_str(), &bufbase) != 0 ||
 	       stat(patch_name.c_str(), &bufpatch) != 0)
-	    return _error->Errno("stat", _("Failed to stat"));
+	    return _error->Errno("stat", _("Failed to stat %s"), Path.c_str());
 
 	 struct timeval times[2];
 	 times[0].tv_sec = bufbase.st_atime;
@@ -673,7 +673,7 @@ class RredMethod : public aptMethod {
 	    return _error->Errno("utimes",_("Failed to set modification time"));
 
 	 if (stat(Itm->DestFile.c_str(), &bufbase) != 0)
-	    return _error->Errno("stat", _("Failed to stat"));
+	    return _error->Errno("stat", _("Failed to stat %s"), Itm->DestFile.c_str());
 
 	 Res.LastModified = bufbase.st_mtime;
 	 Res.Size = bufbase.st_size;

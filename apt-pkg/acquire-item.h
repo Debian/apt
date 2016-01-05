@@ -841,10 +841,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    /** The current status of this patch. */
    enum DiffState
-     {
-	/** \brief The diff is in an unknown state. */
-	 StateFetchUnkown,
-
+   {
 	 /** \brief The diff is currently being fetched. */
 	 StateFetchDiff,
 
