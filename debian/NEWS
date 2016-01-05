@@ -1,3 +1,21 @@
+apt (1.1.11) unstable; urgency=medium
+
+  After packages are successfully installed by apt(1),
+  the corresponding .deb package files will be
+  removed from the /var/cache/apt/archives cache directory.
+
+  This can be changed by setting the apt configuration option
+    "APT::Keep-Downloaded-Packages" to "true". E.g:
+
+  # echo 'APT::Keep-Downloaded-Packages "true";' \
+      > /etc/apt/apt.conf.d/01keep-debs
+
+  Please note that the behavior of apt-get is unchanged. The
+  downloaded debs will be kept in the cache directory after they
+  are installed.
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 05 Jan 2016 19:22:16 +0100
+
 apt (1.1~exp9) experimental; urgency=medium
 
   A new algorithm for pinning has been implemented, it now assigns a
