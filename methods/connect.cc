@@ -288,12 +288,10 @@ bool Connect(std::string Host,int Port,const char *Service,
    // try to connect in the priority order of the srv records
    while(SrvRecords.size() > 0)
    {
+      // PopFromSrvRecs will also remove the server
       Host = PopFromSrvRecs(SrvRecords).target;
       if(ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner))
          return true;
-
-      // we couldn't connect to this one, use the next
-      SrvRecords.erase(SrvRecords.begin());
    }
 
    return false;
