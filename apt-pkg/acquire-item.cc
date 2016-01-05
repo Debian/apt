@@ -388,16 +388,43 @@ bool pkgAcqTransactionItem::TransactionState(TransactionStates const state)
 	 }
 	 break;
       case TransactionCommit:
-	 if(PartialFile != "")
+	 if(PartialFile.empty() == false)
 	 {
-	    if(Debug == true)
-	       std::clog << "mv " << PartialFile << " -> "<< DestFile << " # " << DescURI() << std::endl;
+	    if (PartialFile != DestFile)
+	    {
+	       // ensure that even without lists-cleanup all compressions are nuked
+	       std::string FinalFile = GetFinalFileNameFromURI(Target.URI);
+	       if (FileExists(FinalFile))
+	       {
+		  if(Debug == true)
+		     std::clog << "rm " << FinalFile << " # " << DescURI() << std::endl;
+		  if (RemoveFile("TransactionStates-Cleanup", FinalFile) == false)
+		     return false;
+	       }
+	       for (auto const &ext: APT::Configuration::getCompressorExtensions())
+	       {
+		  auto const Final = FinalFile + ext;
+		  if (FileExists(Final))
+		  {
+		     if(Debug == true)
+			std::clog << "rm " << Final << " # " << DescURI() << std::endl;
+		     if (RemoveFile("TransactionStates-Cleanup", Final) == false)
+			return false;
+		  }
+	       }
+	       if(Debug == true)
+		  std::clog << "mv " << PartialFile << " -> "<< DestFile << " # " << DescURI() << std::endl;
+	       if (Rename(PartialFile, DestFile) == false)
+		  return false;
+	    }
+	    else if(Debug == true)
+	       std::clog << "keep " << PartialFile << " # " << DescURI() << std::endl;
 
-	    Rename(PartialFile, DestFile);
 	 } else {
 	    if(Debug == true)
 	       std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
-	    RemoveFile("TransactionCommit", DestFile);
+	    if (RemoveFile("TransactionCommit", DestFile) == false)
+	       return false;
 	 }
 	 break;
    }
