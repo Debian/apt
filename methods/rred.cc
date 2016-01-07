@@ -684,7 +684,7 @@ class RredMethod : public aptMethod {
       }
 
    public:
-      RredMethod() : aptMethod("rred", "2.0",SingleInstance | SendConfig), Debug(false) {}
+      RredMethod() : aptMethod("rred", "2.0", SendConfig), Debug(false) {}
 };
 
 int main(int argc, char **argv)
