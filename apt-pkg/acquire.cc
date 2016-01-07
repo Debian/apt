@@ -351,8 +351,28 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
    if (Config->SingleInstance == true || QueueMode == QueueAccess)
       return U.Access;
 
-   string AccessSchema = U.Access + ':',
-	FullQueueName = AccessSchema + U.Host;
+   string AccessSchema = U.Access + ':';
+	string FullQueueName;
+
+   if (U.Host.empty())
+   {
+      long randomQueue = random();
+#ifdef _SC_NPROCESSORS_ONLN
+      long cpuCount = sysconf(_SC_NPROCESSORS_ONLN) * 2;
+#else
+      long cpuCount = _config->FindI("Acquire::QueueHost::Limit",10);
+#endif
+      if (cpuCount > 0)
+         randomQueue %= cpuCount;
+
+      strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), randomQueue);
+      if (Debug) {
+         clog << "Chose random queue " << FullQueueName << " for " << Uri << endl;
+      }
+   } else
+   {
+      FullQueueName = AccessSchema + U.Host;
+   }
    unsigned int Instances = 0, SchemaLength = AccessSchema.length();
 
    Queue *I = Queues;
