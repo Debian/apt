@@ -24,15 +24,15 @@ runtest() {
     rm -rf rootdir/var/lib/apt/lists/
 
     local TEST="test${1:-success}"
-    $TEST aptget update $APTOPT
+    $TEST aptget update $APTOPT -o Debug::pkgAcquire::Worker=1
     if [ "$1" = 'failure' ]; then
 	# accept the outdated Release file so we can check Hit behaviour
 	"test${2:-success}" aptget update -o Acquire::Min-ValidTime=9999999 $APTOPT
     fi
     listcurrentlistsdirectory > listsdir.lst
-    testsuccess grep '_Packages\(\.gz\)\?$' listsdir.lst
-    testsuccess grep '_Sources\(\.gz\)\?$' listsdir.lst
-    testsuccess grep '_Translation-en\(\.gz\)\?$' listsdir.lst
+    testsuccess grep '_Packages\(\.[0-9a-z]\+\)\?$' listsdir.lst
+    testsuccess grep '_Sources\(\.[0-9a-z]\+\)\?$' listsdir.lst
+    testsuccess grep '_Translation-en\(\.[0-9a-z]\+\)\?$' listsdir.lst
 
     # ensure no leftovers in partial
     testfailure ls 'rootdir/var/lib/apt/lists/partial/*'

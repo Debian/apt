@@ -138,6 +138,21 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 DefCompressionTypes = os.str();
       }
    }
+   std::string DefKeepCompressedAs;
+   {
+      std::vector<APT::Configuration::Compressor> comps = APT::Configuration::getCompressors();
+      if (comps.empty() == false)
+      {
+	 std::sort(comps.begin(), comps.end(),
+	       [](APT::Configuration::Compressor const &a, APT::Configuration::Compressor const &b) { return a.Cost < b.Cost; });
+	 std::ostringstream os;
+	 for (auto const &c : comps)
+	    if (c.Cost != 0)
+	       os << c.Extension.substr(1) << ' ';
+	 DefKeepCompressedAs = os.str();
+      }
+      DefKeepCompressedAs += "uncompressed";
+   }
    std::string const NativeArch = _config->Find("APT::Architecture");
    bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
@@ -155,10 +170,34 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 bool const UsePDiffs = APT_T_CONFIG_BOOL("PDiffs", E->UsePDiffs);
 	 std::string const UseByHash = APT_T_CONFIG_STR("By-Hash", E->UseByHash);
 	 std::string const CompressionTypes = APT_T_CONFIG_STR("CompressionTypes", DefCompressionTypes);
+	 std::string KeepCompressedAs = APT_T_CONFIG_STR("KeepCompressedAs", "");
 #undef APT_T_CONFIG_BOOL
 #undef APT_T_CONFIG_STR
 	 if (tplMetaKey.empty())
 	    continue;
+
+	 if (KeepCompressedAs.empty())
+	    KeepCompressedAs = DefKeepCompressedAs;
+	 else
+	 {
+	    std::vector<std::string> const defKeep = VectorizeString(DefKeepCompressedAs, ' ');
+	    std::vector<std::string> const valKeep = VectorizeString(KeepCompressedAs, ' ');
+	    std::vector<std::string> keep;
+	    for (auto const &val : valKeep)
+	    {
+	       if (val.empty())
+		  continue;
+	       if (std::find(defKeep.begin(), defKeep.end(), val) == defKeep.end())
+		  continue;
+	       keep.push_back(val);
+	    }
+	    if (std::find(keep.begin(), keep.end(), "uncompressed") == keep.end())
+	       keep.push_back("uncompressed");
+	    std::ostringstream os;
+	    std::copy(keep.begin(), keep.end()-1, std::ostream_iterator<std::string>(os, " "));
+	    os << *keep.rbegin();
+	    KeepCompressedAs = os.str();
+	 }
 
 	 for (std::vector<std::string>::const_iterator L = E->Languages.begin(); L != E->Languages.end(); ++L)
 	 {
@@ -253,6 +292,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	       Options.insert(std::make_pair("BY_HASH", UseByHash));
 	       Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
 	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
+	       Options.insert(std::make_pair("KEEPCOMPRESSEDAS", KeepCompressedAs));
 	       Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
 
 	       bool IsOpt = IsOptional;

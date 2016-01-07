@@ -144,6 +144,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(COMPRESSIONTYPES);
       APT_CASE(SOURCESENTRY);
       APT_CASE(BY_HASH);
+      APT_CASE(KEEPCOMPRESSEDAS);
 #undef APT_CASE
       case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
       case EXISTING_FILENAME:

@@ -914,16 +914,12 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    AllStages Stage;
 
    /** \brief Handle what needs to be done when the download is done */
-   void StageDownloadDone(std::string const &Message,
-                          HashStringList const &Hashes,
-                          pkgAcquire::MethodConfig const * const Cfg);
+   void StageDownloadDone(std::string const &Message);
 
    /** \brief Handle what needs to be done when the decompression/copy is
     *         done 
     */
-   void StageDecompressDone(std::string const &Message,
-                            HashStringList const &Hashes,
-                            pkgAcquire::MethodConfig const * const Cfg);
+   void StageDecompressDone();
 
    /** \brief If \b set, this partially downloaded file will be
     *  removed when the download completes.
@@ -940,9 +936,6 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
 
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded();
-
-   /** \brief Schedule file for verification after a IMS hit */
-   void ReverifyAfterIMS();
 
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const APT_OVERRIDE;

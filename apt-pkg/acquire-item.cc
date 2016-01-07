@@ -85,30 +85,14 @@ static std::string GetKeepCompressedFileName(std::string file, IndexTarget const
    if (Target.KeepCompressed == false)
       return file;
 
-   std::string const CompressionTypes = Target.Option(IndexTarget::COMPRESSIONTYPES);
-   if (CompressionTypes.empty() == false)
+   std::string const KeepCompressedAs = Target.Option(IndexTarget::KEEPCOMPRESSEDAS);
+   if (KeepCompressedAs.empty() == false)
    {
-      std::string const ext = CompressionTypes.substr(0, CompressionTypes.find(' '));
+      std::string const ext = KeepCompressedAs.substr(0, KeepCompressedAs.find(' '));
       if (ext != "uncompressed")
 	 file.append(".").append(ext);
    }
    return file;
-}
-									/*}}}*/
-static std::string GetCompressedFileName(IndexTarget const &Target, std::string const &Name, std::string const &Ext) /*{{{*/
-{
-   if (Ext.empty() || Ext == "uncompressed")
-      return Name;
-
-   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
-   // file when its doing the indexcopy
-   if (Target.URI.substr(0,6) == "cdrom:")
-      return Name;
-
-   // adjust DestFile if its compressed on disk
-   if (Target.KeepCompressed == true)
-      return Name + '.' + Ext;
-   return Name;
 }
 									/*}}}*/
 static std::string GetMergeDiffsPatchFileName(std::string const &Final, std::string const &Patch)/*{{{*/
@@ -326,7 +310,7 @@ std::string pkgAcqDiffIndex::GetFinalFilename() const
 std::string pkgAcqIndex::GetFinalFilename() const
 {
    std::string const FinalFile = GetFinalFileNameFromURI(Target.URI);
-   return GetCompressedFileName(Target, FinalFile, CurrentCompressionExtension);
+   return GetKeepCompressedFileName(FinalFile, Target);
 }
 std::string pkgAcqMetaSig::GetFinalFilename() const
 {
@@ -379,7 +363,30 @@ bool pkgAcqTransactionItem::TransactionState(TransactionStates const state)
       case TransactionCommit:
 	 if(PartialFile.empty() == false)
 	 {
-	    if (PartialFile != DestFile)
+	    bool sameFile = (PartialFile == DestFile);
+	    // we use symlinks on IMS-Hit to avoid copies
+	    if (RealFileExists(DestFile))
+	    {
+	       struct stat Buf;
+	       if (lstat(PartialFile.c_str(), &Buf) != -1)
+	       {
+		  if (S_ISLNK(Buf.st_mode) && Buf.st_size > 0)
+		  {
+		     char partial[Buf.st_size + 1];
+		     ssize_t const sp = readlink(PartialFile.c_str(), partial, Buf.st_size);
+		     if (sp == -1)
+			_error->Errno("pkgAcqTransactionItem::TransactionState-sp", _("Failed to readlink %s"), PartialFile.c_str());
+		     else
+		     {
+			partial[sp] = '\0';
+			sameFile = (DestFile == partial);
+		     }
+		  }
+	       }
+	       else
+		  _error->Errno("pkgAcqTransactionItem::TransactionState-stat", _("Failed to stat %s"), PartialFile.c_str());
+	    }
+	    if (sameFile == false)
 	    {
 	       // ensure that even without lists-cleanup all compressions are nuked
 	       std::string FinalFile = GetFinalFileNameFromURI(Target.URI);
@@ -2621,20 +2628,6 @@ void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * 
       TransactionManager->AbortTransaction();
 }
 									/*}}}*/
-// AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit		/*{{{*/
-void pkgAcqIndex::ReverifyAfterIMS()
-{
-   // update destfile to *not* include the compression extension when doing
-   // a reverify (as its uncompressed on disk already)
-   DestFile = GetCompressedFileName(Target, GetPartialFileNameFromURI(Target.URI), CurrentCompressionExtension);
-
-   // copy FinalFile into partial/ so that we check the hash again
-   string FinalFile = GetFinalFilename();
-   Stage = STAGE_DECOMPRESS_AND_VERIFY;
-   Desc.URI = "copy:" + FinalFile;
-   QueueURI(Desc);
-}
-									/*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -2651,107 +2644,93 @@ void pkgAcqIndex::Done(string const &Message,
    switch(Stage) 
    {
       case STAGE_DOWNLOAD:
-         StageDownloadDone(Message, Hashes, Cfg);
+         StageDownloadDone(Message);
          break;
       case STAGE_DECOMPRESS_AND_VERIFY:
-         StageDecompressDone(Message, Hashes, Cfg);
+         StageDecompressDone();
          break;
    }
 }
 									/*}}}*/
 // AcqIndex::StageDownloadDone - Queue for decompress and verify	/*{{{*/
-void pkgAcqIndex::StageDownloadDone(string const &Message, HashStringList const &,
-                                    pkgAcquire::MethodConfig const * const)
+void pkgAcqIndex::StageDownloadDone(string const &Message)
 {
+   Local = true;
    Complete = true;
 
-   // Handle the unzipd case
-   std::string FileName = LookupTag(Message,"Alt-Filename");
-   if (FileName.empty() == false)
-   {
-      Stage = STAGE_DECOMPRESS_AND_VERIFY;
-      Local = true;
-      if (CurrentCompressionExtension != "uncompressed")
-	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      SetActiveSubprocess("copy");
-      return;
-   }
-   FileName = LookupTag(Message,"Filename");
-
-   // Methods like e.g. "file:" will give us a (compressed) FileName that is
-   // not the "DestFile" we set, in this case we uncompress from the local file
-   if (FileName != DestFile && RealFileExists(DestFile) == false)
-   {
-      Local = true;
-      if (Target.KeepCompressed == true)
-      {
-	 // but if we don't keep the uncompress we copy the compressed file first
-	 Stage = STAGE_DOWNLOAD;
-	 Desc.URI = "copy:" + FileName;
-	 QueueURI(Desc);
-	 SetActiveSubprocess("copy");
-	 return;
-      }
-      else
-      {
-	 // symlinking ensures that the filename can be used for compression detection
-	 // that is e.g. needed for by-hash over file
-	 if (symlink(FileName.c_str(),DestFile.c_str()) != 0)
-	    _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", FileName.c_str(), DestFile.c_str());
-	 else
-	 {
-	    EraseFileName = DestFile;
-	    FileName = DestFile;
-	 }
-      }
-   }
-   else
-      EraseFileName = FileName;
+   std::string const AltFilename = LookupTag(Message,"Alt-Filename");
+   std::string Filename = LookupTag(Message,"Filename");
 
    // we need to verify the file against the current Release file again
    // on if-modfied-since hit to avoid a stale attack against us
    if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
-      // The files timestamp matches, reverify by copy into partial/
-      EraseFileName = "";
-      ReverifyAfterIMS();
+      // copy FinalFile into partial/ so that we check the hash again
+      string const FinalFile = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
+      if (symlink(FinalFile.c_str(), DestFile.c_str()) != 0)
+	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking final file %s back to %s failed", FinalFile.c_str(), DestFile.c_str());
+      else
+      {
+	 EraseFileName = DestFile;
+	 Filename = DestFile;
+      }
+      Stage = STAGE_DECOMPRESS_AND_VERIFY;
+      Desc.URI = "store:" + Filename;
+      QueueURI(Desc);
+      SetActiveSubprocess(::URI(Desc.URI).Access);
       return;
    }
-
-   string decompProg = "store";
-   if (Target.KeepCompressed == true)
+   // methods like file:// give us an alternative (uncompressed) file
+   else if (Target.KeepCompressed == false && AltFilename.empty() == false)
    {
-      DestFile = "/dev/null";
-      EraseFileName.clear();
+      if (CurrentCompressionExtension != "uncompressed")
+	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
+      Filename = AltFilename;
    }
+   // Methods like e.g. "file:" will give us a (compressed) FileName that is
+   // not the "DestFile" we set, in this case we uncompress from the local file
+   else if (Filename != DestFile && RealFileExists(DestFile) == false)
+   {
+      // symlinking ensures that the filename can be used for compression detection
+      // that is e.g. needed for by-hash which has no extension over file
+      if (symlink(Filename.c_str(),DestFile.c_str()) != 0)
+	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", Filename.c_str(), DestFile.c_str());
+      else
+      {
+	 EraseFileName = DestFile;
+	 Filename = DestFile;
+      }
+   }
+
+   Stage = STAGE_DECOMPRESS_AND_VERIFY;
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
+   if (Filename != DestFile && flExtension(Filename) == flExtension(DestFile))
+      Desc.URI = "copy:" + Filename;
    else
+      Desc.URI = "store:" + Filename;
+   if (DestFile == Filename)
    {
       if (CurrentCompressionExtension == "uncompressed")
-	 decompProg = "copy";
-      else
-	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
+	 return StageDecompressDone();
+      DestFile = "/dev/null";
    }
 
+   if (EraseFileName.empty())
+      EraseFileName = Filename;
+
    // queue uri for the next stage
-   Stage = STAGE_DECOMPRESS_AND_VERIFY;
-   Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
-   SetActiveSubprocess(decompProg);
+   SetActiveSubprocess(::URI(Desc.URI).Access);
 }
 									/*}}}*/
 // AcqIndex::StageDecompressDone - Final verification			/*{{{*/
-void pkgAcqIndex::StageDecompressDone(string const &,
-                                      HashStringList const &,
-                                      pkgAcquire::MethodConfig const * const)
+void pkgAcqIndex::StageDecompressDone()
 {
-   if (Target.KeepCompressed == true && DestFile == "/dev/null")
-      DestFile = GetPartialFileNameFromURI(Target.URI + '.' + CurrentCompressionExtension);
+   if (DestFile == "/dev/null")
+      DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
 
    // Done, queue for rename on transaction finished
    TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
-   return;
 }
 									/*}}}*/
 pkgAcqIndex::~pkgAcqIndex() {}

@@ -1826,7 +1826,7 @@ listcurrentlistsdirectory() {
 }
 forallsupportedcompressors() {
 	for COMP in $(aptconfig dump 'APT::Compressor' --format '%f%n' | cut -d':' -f 5 | uniq); do
-		if [ -z "$COMP" -o "$COMP" = '.' -o "$COMP" = 'lz4' ]; then continue; fi
+		if [ -z "$COMP" -o "$COMP" = '.' ]; then continue; fi
 		"$@" "$COMP"
 	done
 }

@@ -7,6 +7,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configcompression '.' $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Extension \.\(.*\)$#\1#p')
 configarchitecture 'i386'
+LOWCOSTEXT='lz4'
 
 buildsimplenativepackage 'testpkg' 'i386' '1.0'
 
@@ -35,10 +36,10 @@ testrun() {
 		! test -e rootdir/var/lib/apt/lists/*all_Packages || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
-		test -e rootdir/var/lib/apt/lists/*i386_Packages.${COMPRESS} || F=1
-		test -e rootdir/var/lib/apt/lists/*all_Packages.${COMPRESS} || F=1
-		test -e rootdir/var/lib/apt/lists/*_Sources.${COMPRESS} || F=1
-		test -e rootdir/var/lib/apt/lists/*_Translation-en.${COMPRESS} || F=1
+		test -e rootdir/var/lib/apt/lists/*i386_Packages.$LOWCOSTEXT || F=1
+		test -e rootdir/var/lib/apt/lists/*all_Packages.$LOWCOSTEXT || F=1
+		test -e rootdir/var/lib/apt/lists/*_Sources.$LOWCOSTEXT || F=1
+		test -e rootdir/var/lib/apt/lists/*_Translation-en.$LOWCOSTEXT || F=1
 		# there is no point in trying pdiff if we have compressed indexes
 		# as we can't patch compressed files (well, we can, but what is the point?)
 		! test -e rootdir/var/lib/apt/lists/*diff_Index || F=1

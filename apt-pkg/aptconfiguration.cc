@@ -37,6 +37,7 @@ static void setDefaultConfigurationForCompressors() {
 	// Set default application paths to check for optional compression types
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
+	_config->CndSet("Dir::Bin::lz4", "/usr/bin/lz4");
 	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
 		_config->Set("Dir::Bin::lzma", _config->FindFile("Dir::Bin::xz"));
 		_config->Set("APT::Compressor::lzma::Binary", "xz");
@@ -79,6 +80,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
 	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
+	_config->CndSet("Acquire::CompressionTypes::lz4","lz4");
 
 	setDefaultConfigurationForCompressors();
 	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();

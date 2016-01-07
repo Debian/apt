@@ -12,6 +12,7 @@ umask 022
 
 setupenvironment
 configarchitecture "i386"
+configcompression '.' 'xz'
 
 insertpackage 'unstable' 'foo' 'i386' '1.0'
 insertsource 'unstable' 'foo' 'any' '1.0'
@@ -45,7 +46,7 @@ runtest() {
     listcurrentlistsdirectory > lists.before
 
     # update and ensure all is reverted on the hashsum failure
-    testfailure aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0
+    testfailure aptget update -o Debug::Acquire::Transaction=1 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0
 
     # ensure we have before what we have after
     msgtest 'Check rollback on going from' 'unauth -> auth'
@@ -53,10 +54,13 @@ runtest() {
     if cmp lists.before lists.after; then
         msgpass
     else
+	echo >&2
 	echo >&2 '### Output of previous apt-get update ###'
-	cat >&2 rootdir/tmp/testfailure.output
+	cat >&2 rootdir/tmp/testfailure.output || true
 	echo >&2 '### Changes in the lists-directory: ###'
-	diff -u >&2 lists.before lists.after
+	diff -u >&2 lists.before lists.after || true
+	echo >&2 '### Contents of the lists-directory: ###'
+	ls -l rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists/partial || true
 	msgfail
     fi
 

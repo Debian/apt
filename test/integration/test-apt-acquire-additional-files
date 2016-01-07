@@ -10,6 +10,7 @@ configarchitecture 'amd64'
 # note that in --print-uri we talk about .xz because that is the default.
 # This doesn't mean it is actually attempt to download it.
 configcompression '.' 'gz'
+LOWCOSTEXT='lz4'
 
 buildsimplenativepackage 'foo' 'amd64' '1' 'unstable'
 
@@ -101,14 +102,14 @@ Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents [$(stat -c%s 
 Get:3 http://localhost:${APTHTTPPORT} unstable/main all Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-all.gz) B]
 Reading package lists..." aptget update
 
-testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
-testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" find rootdir/var/lib/apt/lists -name '*Contents-all*'
-testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
-testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" 'aptarchive/dists/unstable/main/Contents-amd64.gz'
-testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" 'aptarchive/dists/unstable/main/Contents-all.gz'
+testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
+testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT" find rootdir/var/lib/apt/lists -name '*Contents-all*'
+testequal "$(readfile Contents-amd64.$LOWCOSTEXT Contents-all.$LOWCOSTEXT)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT)" apthelper cat-file 'aptarchive/dists/unstable/main/Contents-amd64.gz'
+testempty apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT
 
-rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz
-rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT
 testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 msgmsg "Compressed Contents file"

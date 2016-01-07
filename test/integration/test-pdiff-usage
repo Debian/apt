@@ -7,6 +7,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386'
 confighashes 'SHA1' 'SHA256'
+LOWCOSTEXT='lz4'
 
 buildaptarchive
 setupflataptarchive
@@ -274,5 +275,5 @@ testcase() {
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=false
-aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages.gz"; }
+aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages.$LOWCOSTEXT"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
