@@ -57,7 +57,7 @@ public:
 
     size_t rfind(int c, size_t pos=0) const {
         if (pos != 0)
-            return substr(pos).find(c);
+            return substr(pos).rfind(c);
 
         const char *found = static_cast<const char*>(memrchr(data_, c, size_));
 
