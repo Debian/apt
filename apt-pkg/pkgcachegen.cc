@@ -1257,7 +1257,7 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
 map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, const char *S,
 						 unsigned int Size)
 {
-   std::string const key(S, Size);
+   std::string key(S, Size);
 
    std::unordered_map<std::string,map_stringitem_t> * strings;
    switch(type) {
@@ -1273,7 +1273,7 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
       return item->second;
 
    map_stringitem_t const idxString = WriteStringInMap(S,Size);
-   strings->insert(std::make_pair(key, idxString));
+   strings->insert(std::make_pair(std::move(key), idxString));
    return idxString;
 }
 									/*}}}*/
