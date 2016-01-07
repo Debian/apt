@@ -520,13 +520,13 @@ EOF
 	testsuccess --nomsg gcc -Wall -fPIC -shared -o noopchroot.so noopchroot.c -ldl
 }
 configcompression() {
+	local CMD='apthelper cat-file -C'
 	while [ -n "$1" ]; do
 		case "$1" in
 		'.') printf ".\t.\tcat\n";;
-		'gz') printf "gzip\tgz\tgzip\n";;
-		'bz2') printf "bzip2\tbz2\tbzip2\n";;
-		'lzma') printf "lzma\tlzma\txz --format=lzma\n";;
-		*) printf "$1\t$1\t$1\n";;
+		'gz') printf "gzip\tgz\t$CMD $1\n";;
+		'bz2') printf "bzip2\tbz2\t$CMD $1\n";;
+		*) printf "$1\t$1\t$CMD $1\n";;
 		esac
 		shift
 	done > "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf"
@@ -550,7 +550,7 @@ confighashes() {
 forcecompressor() {
 	COMPRESSOR="$1"
 	COMPRESS="$1"
-	COMPRESSOR_CMD="$1"
+	COMPRESSOR_CMD="apthelper cat-file -C $1"
 	case $COMPRESSOR in
 	gzip) COMPRESS='gz';;
 	bzip2) COMPRESS='bz2';;
@@ -558,20 +558,6 @@ forcecompressor() {
 	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
 Dir::Bin::uncompressed \"/does/not/exist\";" > "$CONFFILE"
-	for COMP in $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Name \([^.].\+\)$#\1#p'); do
-		echo "Dir::Bin::${COMP} \"/does/not/exist\";"
-	done >> "$CONFFILE"
-	if [ -e "/bin/${COMPRESSOR}" ]; then
-		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> "$CONFFILE"
-	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
-		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> "$CONFFILE"
-	elif [ "${COMPRESSOR}" = 'lzma' ]; then
-		echo 'Dir::Bin::xz "/usr/bin/xz";' >> "$CONFFILE"
-		COMPRESSOR_CMD='xz --format=lzma'
-	else
-		msgtest 'Test for availability of compressor' "${COMPRESSOR}"
-		msgfail "${COMPRESSOR} not available"
-	fi
 }
 
 setupsimplenativepackage() {

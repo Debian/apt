@@ -145,14 +145,28 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
    }
 
    if (CmdL.FileSize() <= 1)
-      return _error->Error("Must specify at least one file name");
+   {
+      if (fd.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
+	 return false;
+      if (CopyFile(fd, out) == false)
+         return false;
+      return true;
+   }
 
    for(size_t i = 1; CmdL.FileList[i] != NULL; ++i)
    {
       std::string const name = CmdL.FileList[i];
 
-      if (fd.Open(name, FileFd::ReadOnly, FileFd::Extension) == false)
-         return false;
+      if (name != "-")
+      {
+	 if (fd.Open(name, FileFd::ReadOnly, FileFd::Extension) == false)
+	    return false;
+      }
+      else
+      {
+	 if (fd.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
+	    return false;
+      }
 
       if (CopyFile(fd, out) == false)
          return false;
