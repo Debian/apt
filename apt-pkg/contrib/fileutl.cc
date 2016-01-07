@@ -78,6 +78,9 @@
 
 using namespace std;
 
+/* Should be a multiple of the common page size (4096) */
+static constexpr unsigned long long APT_BUFFER_SIZE = 64 * 1024;
+
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -163,7 +166,7 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
 
    // Buffered copy between fds
-   constexpr size_t BufSize = 64000;
+   constexpr size_t BufSize = APT_BUFFER_SIZE;
    std::unique_ptr<unsigned char[]> Buf(new unsigned char[BufSize]);
    unsigned long long ToRead = 0;
    do {
@@ -1500,7 +1503,6 @@ public:
 };
 									/*}}}*/
 class APT_HIDDEN Lz4FileFdPrivate: public FileFdPrivate {				/*{{{*/
-   static constexpr unsigned long long BLK_SIZE = 64 * 1024;
    static constexpr unsigned long long LZ4_HEADER_SIZE = 19;
    static constexpr unsigned long long LZ4_FOOTER_SIZE = 4;
 #ifdef HAVE_LZ4
@@ -1510,7 +1512,7 @@ class APT_HIDDEN Lz4FileFdPrivate: public FileFdPrivate {				/*{{{*/
    FileFd backend;
    simple_buffer lz4_buffer;
    // Count of bytes that the decompressor expects to read next, or buffer size.
-   size_t next_to_load = BLK_SIZE;
+   size_t next_to_load = APT_BUFFER_SIZE;
 public:
    virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
    {
@@ -1519,11 +1521,11 @@ public:
 
       if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly) {
 	 res = LZ4F_createCompressionContext(&cctx, LZ4F_VERSION);
-	 lz4_buffer.reset(LZ4F_compressBound(BLK_SIZE, nullptr)
+	 lz4_buffer.reset(LZ4F_compressBound(APT_BUFFER_SIZE, nullptr)
 			  + LZ4_HEADER_SIZE + LZ4_FOOTER_SIZE);
       } else {
 	 res = LZ4F_createDecompressionContext(&dctx, LZ4F_VERSION);
-	 lz4_buffer.reset(64 * 1024);
+	 lz4_buffer.reset(APT_BUFFER_SIZE);
       }
 
       filefd->Flags |= FileFd::Compressed;
@@ -1591,7 +1593,7 @@ public:
    }
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
    {
-      unsigned long long const towrite = std::min(BLK_SIZE, Size);
+      unsigned long long const towrite = std::min(APT_BUFFER_SIZE, Size);
 
       res = LZ4F_compressUpdate(cctx,
 				lz4_buffer.buffer, lz4_buffer.buffersize_max,
@@ -1619,7 +1621,7 @@ public:
    {
       /* Reset variables */
       res = 0;
-      next_to_load = BLK_SIZE;
+      next_to_load = APT_BUFFER_SIZE;
 
       if (cctx != nullptr)
       {
