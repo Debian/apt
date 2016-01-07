@@ -1014,7 +1014,7 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
    {
       int const CmpOp = Op & 0x0F;
       // =-deps are used (79:1) for lockstep on same-source packages (e.g. data-packages)
-      if (CmpOp == pkgCache::Dep::Equals && Version.compare(Ver.VerStr()) == 0)
+      if (CmpOp == pkgCache::Dep::Equals && Version == Ver.VerStr())
 	 idxVersion = Ver->VerStr;
 
       if (idxVersion == 0)

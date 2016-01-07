@@ -591,9 +591,9 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       string const arch = _config->Find("APT::Architecture");
       size_t const found = Package.rfind(':');
       if (found != StringView::npos &&
-	  (Package.compare(found, Package.size(), ":any") == 0 ||
-	   Package.compare(found, Package.size(), ":native") == 0||
-	   Package.compare(found +1, Package.size(), arch) == 0))
+	  (Package.substr(found) == ":any" ||
+	   Package.substr(found) == ":native" ||
+	   Package.substr(found +1) == arch))
 	 Package = Package.substr(0,found);
    }
 
@@ -827,7 +827,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	    return false;
       }
-      else if (Package.compare(found, Package.npos, ":any") == 0)
+      else if (Package.substr(found) == ":any")
       {
 	 if (NewDepends(Ver,Package,"any",Version,Op,Type) == false)
 	    return false;
