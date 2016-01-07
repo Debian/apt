@@ -156,8 +156,12 @@ static bool addArgumentsAPTInternalSolver(std::vector<CommandLine::Args> &, char
    return true;
 }
 									/*}}}*/
-static bool addArgumentsAPTHelper(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+static bool addArgumentsAPTHelper(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
+   if (CmdMatches("cat-file"))
+   {
+      addArg('C', "compress", "Apt-Helper::Cat-File::Compress",CommandLine::HasArg);
+   }
    return true;
 }
 									/*}}}*/

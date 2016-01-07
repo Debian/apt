@@ -107,13 +107,42 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
+static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const & compressors, std::string name)				/*{{{*/
+{
+   APT::Configuration::Compressor const * compressor = NULL;
+   for (auto const & c : compressors)
+   {
+      if (compressor != NULL && c.Cost >= compressor->Cost)
+         continue;
+      if (c.Name == name || c.Extension == name || (!c.Extension.empty() && c.Extension.substr(1) == name))
+         compressor = &c;
+   }
+
+   return compressor;
+}
+									/*}}}*/
 static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
 {
    FileFd fd;
    FileFd out;
+   std::string const compressorName = _config->Find("Apt-Helper::Cat-File::Compress", "");
 
-   if (out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly) == false)
-      return false;
+   if (compressorName.empty() == false)
+   {
+
+      auto const compressors = APT::Configuration::getCompressors();
+      auto const compressor = FindCompressor(compressors, compressorName);
+
+      if (compressor == NULL)
+         return _error->Error("Could not find compressor: %s", compressorName.c_str());
+
+      if (out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, *compressor) == false)
+         return false;
+   } else
+   {
+      if (out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly) == false)
+         return false;
+   }
 
    if (CmdL.FileSize() <= 1)
       return _error->Error("Must specify at least one file name");
