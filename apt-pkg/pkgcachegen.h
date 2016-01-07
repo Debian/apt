@@ -104,7 +104,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    enum StringType { MIXED, PKGNAME, VERSIONNUMBER, SECTION };
    map_stringitem_t StoreString(StringType const type, const char * S, unsigned int const Size);
-   inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
+
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   inline map_stringitem_t StoreString(enum StringType const type, APT::StringView S) {return StoreString(type, S.data(),S.length());};
+#endif
 
    void DropProgress() {Progress = 0;};
    bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, unsigned long Flags = 0);
@@ -156,8 +159,10 @@ class APT_HIDDEN pkgCacheListParser
 
    protected:
 
-   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string const &S) {return Owner->StoreString(type, S);};
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, APT::StringView S) {return Owner->StoreString(type, S);};
+#endif
 
    inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};

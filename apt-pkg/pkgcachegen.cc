@@ -514,7 +514,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
       return false;
 
    Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-   map_stringitem_t const idxName = StoreString(PKGNAME, Name.to_string());
+   map_stringitem_t const idxName = StoreString(PKGNAME, Name);
    if (unlikely(idxName == 0))
       return false;
    Grp->Name = idxName;
@@ -555,7 +555,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    APT_IGNORE_DEPRECATED(Pkg->Name = Grp->Name;)
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
-   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch.to_string());
+   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
    if (unlikely(idxArch == 0))
       return false;
    Pkg->Arch = idxArch;
@@ -1019,7 +1019,7 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
 
       if (idxVersion == 0)
       {
-	 idxVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
+	 idxVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
 	 if (unlikely(idxVersion == 0))
 	    return false;
       }
@@ -1088,7 +1088,7 @@ bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
 
    map_stringitem_t idxProvideVersion = 0;
    if (Version.empty() == false) {
-      idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
+      idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
       if (unlikely(idxProvideVersion == 0))
 	 return false;
    }
@@ -1133,7 +1133,7 @@ bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringVi
    {
       map_stringitem_t idxProvideVersion = 0;
       if (Version.empty() == false) {
-	 idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
+	 idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
 	 if (unlikely(idxProvideVersion == 0))
 	    return false;
       }
