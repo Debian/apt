@@ -13,6 +13,9 @@
 
 #include <string>
 #include <cstring>
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+#include <apt-pkg/string_view.h>
+#endif
 
 #include <apt-pkg/strutl.h>
 
@@ -80,7 +83,16 @@ class HashSumValue
    {
       return Hex2Num(Str,Sum,sizeof(Sum));
    }
-
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN bool Set(APT::StringView Str)
+   {
+      return Hex2Num(Str,Sum,sizeof(Sum));
+   }
+   APT_HIDDEN bool Set(const char *Str)
+   {
+      return Hex2Num(APT::StringView(Str),Sum,sizeof(Sum));
+   }
+#endif
    inline void Set(unsigned char S[N/8])
    {
       for (int I = 0; I != sizeof(Sum); ++I)
@@ -92,6 +104,18 @@ class HashSumValue
          memset(Sum,0,sizeof(Sum));
          Set(Str);
    }
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN explicit HashSumValue(APT::StringView const &Str)
+   {
+         memset(Sum,0,sizeof(Sum));
+         Set(Str);
+   }
+   APT_HIDDEN explicit HashSumValue(const char *Str)
+   {
+         memset(Sum,0,sizeof(Sum));
+         Set(Str);
+   }
+#endif
    HashSumValue()
    {
       memset(Sum,0,sizeof(Sum));

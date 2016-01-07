@@ -81,6 +81,10 @@
 #include <time.h>
 #include <stdint.h>
 
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+#include <apt-pkg/string_view.h>
+#endif
+
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 #endif
@@ -193,7 +197,9 @@ class pkgCache								/*{{{*/
    // Memory mapped cache file
    std::string CacheFile;
    MMap &Map;
-
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN map_id_t sHash(APT::StringView S) const APT_PURE;
+#endif
    map_id_t sHash(const std::string &S) const APT_PURE;
    map_id_t sHash(const char *S) const APT_PURE;
    
@@ -221,6 +227,9 @@ class pkgCache								/*{{{*/
    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();}
       
    // String hashing function (512 range)
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN inline map_id_t Hash(APT::StringView S) const {return sHash(S);}
+#endif
    inline map_id_t Hash(const std::string &S) const {return sHash(S);}
    inline map_id_t Hash(const char *S) const {return sHash(S);}
 
@@ -230,6 +239,12 @@ class pkgCache								/*{{{*/
    static const char *Priority(unsigned char Priority);
    
    // Accessors
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN GrpIterator FindGrp(APT::StringView Name);
+   APT_HIDDEN PkgIterator FindPkg(APT::StringView Name);
+   APT_HIDDEN PkgIterator FindPkg(APT::StringView Name, APT::StringView Arch);
+#endif
+
    GrpIterator FindGrp(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name, const std::string &Arch);

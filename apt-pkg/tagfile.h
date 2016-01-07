@@ -27,6 +27,9 @@
 #include <string>
 #include <vector>
 #include <list>
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+#include <apt-pkg/string_view.h>
+#endif
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
@@ -58,19 +61,40 @@ class pkgTagSection
    inline bool operator ==(const pkgTagSection &rhs) {return Section == rhs.Section;};
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
 
+#if !defined(APT_PKG_EXPOSE_STRING_VIEW) || defined(APT_COMPILING_TAGFILE_COMPAT_CC)
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned int &Pos) const;
-   std::string FindS(const char *Tag) const;
-   std::string FindRawS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const;
    bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char * const Tag,uint8_t &Flags,
 		 uint8_t const Flag) const;
-   bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
-				const char* const Start, const char* const Stop);
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
+   bool Exists(const char* const Tag) const;
+#endif
+   // TODO: Remove internally
+   std::string FindS(const char *Tag) const;
+   std::string FindRawS(const char *Tag) const;
+
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
+   APT_HIDDEN bool Find(APT::StringView Tag,unsigned int &Pos) const;
+   APT_HIDDEN APT::StringView Find(APT::StringView Tag) const;
+   APT_HIDDEN APT::StringView FindRaw(APT::StringView Tag) const;
+   APT_HIDDEN signed int FindI(APT::StringView Tag,signed long Default = 0) const;
+   APT_HIDDEN bool FindB(APT::StringView, bool Default = false) const;
+   APT_HIDDEN unsigned long long FindULL(APT::StringView Tag, unsigned long long const &Default = 0) const;
+
+   APT_HIDDEN bool FindFlag(APT::StringView Tag,uint8_t &Flags,
+		 uint8_t const Flag) const;
+   APT_HIDDEN bool FindFlag(APT::StringView Tag,unsigned long &Flags,
+		 unsigned long Flag) const;
+   APT_HIDDEN bool Exists(APT::StringView Tag) const;
+#endif
+
+   bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
+				const char* const Start, const char* const Stop);
    bool static FindFlag(unsigned long &Flags, unsigned long Flag,
 				const char* Start, const char* Stop);
 
@@ -102,7 +126,6 @@ class pkgTagSection
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
-   bool Exists(const char* const Tag) const;
 
    void Get(const char *&Start,const char *&Stop,unsigned int I) const;
 

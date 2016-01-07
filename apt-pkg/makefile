@@ -12,6 +12,7 @@ include ../buildlib/defaults.mak
 # The library name and version (indirectly used from init.h)
 include ../buildlib/libversion.mak
 
+CXXFLAGS+=-DAPT_PKG_EXPOSE_STRING_VIEW
 LIBRARY=apt-pkg
 MAJOR=$(LIBAPTPKG_MAJOR)
 MINOR=$(LIBAPTPKG_RELEASE)

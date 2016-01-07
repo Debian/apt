@@ -45,6 +45,7 @@
 									/*}}}*/
 
 using std::string;
+using APT::StringView;
 
 
 // Cache::Header::Header - Constructor					/*{{{*/
@@ -206,6 +207,13 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 /* This is used to generate the hash entries for the HashTable. With my
    package list from bo this function gets 94% table usage on a 512 item
    table (480 used items) */
+map_id_t pkgCache::sHash(StringView Str) const
+{
+   uint32_t Hash = 5381;
+   for (auto I = Str.begin(); I != Str.end(); ++I)
+      Hash = 33 * Hash + tolower_ascii(*I);
+   return Hash % HeaderP->GetHashTableSize();
+}
 map_id_t pkgCache::sHash(const string &Str) const
 {
    uint32_t Hash = 5381;
@@ -251,10 +259,14 @@ uint32_t pkgCache::CacheHash()
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
-	size_t const found = Name.find(':');
+   return FindPkg(StringView(Name));
+}
+
+pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
+	auto const found = Name.find(':');
 	if (found == string::npos)
 	   return FindPkg(Name, "native");
-	string const Arch = Name.substr(found+1);
+	auto const Arch = Name.substr(found+1);
 	/* Beware: This is specialcased to handle pkg:any in dependencies
 	   as these are linked to virtual pkg:any named packages.
 	   If you want any arch from a pkg, use FindPkg(pkg,"any") */
@@ -267,6 +279,10 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
+   return FindPkg(StringView(Name), StringView(Arch));
+}
+
+pkgCache::PkgIterator pkgCache::FindPkg(StringView Name, StringView Arch) {
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
 	   find than a package (less entries in the buckets) */
@@ -281,13 +297,17 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) 
 // ---------------------------------------------------------------------
 /* Returns End-Pointer on error, pointer to the group otherwise */
 pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
+   return FindGrp(StringView(Name));
+}
+
+pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
 	if (unlikely(Name.empty() == true))
 		return GrpIterator(*this,0);
 
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTableP()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
+		int const cmp = Name.compare(StrP + Grp->Name);
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
 		else if (cmp < 0)
@@ -350,6 +370,12 @@ const char *pkgCache::Priority(unsigned char Prio)
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
+   return FindPkg(StringView(Arch));
+}
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(const char *Arch) const {
+   return FindPkg(StringView(Arch));
+}
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(StringView Arch) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0))
 		return PkgIterator(*Owner, 0);
 
@@ -363,7 +389,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->NextPackage) {
-		if (stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+		if (Arch.compare(Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
 			break;
@@ -376,7 +402,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &PreferNonVirtual) const {
-	pkgCache::PkgIterator Pkg = FindPkg("native");
+	pkgCache::PkgIterator Pkg = FindPkg(StringView("native", 6));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
 
@@ -388,7 +414,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 			return Pkg;
 	}
 	// packages without an architecture
-	Pkg = FindPkg("none");
+	Pkg = FindPkg(StringView("none", 4));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
 

@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/string_view.h>
 
 #include <list>
 
@@ -30,6 +31,7 @@
 									/*}}}*/
 
 using std::string;
+using APT::StringView;
 
 class APT_HIDDEN pkgTagFilePrivate					/*{{{*/
 {
@@ -607,7 +609,7 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
-bool pkgTagSection::Exists(const char* const Tag) const
+bool pkgTagSection::Exists(StringView Tag) const
 {
    unsigned int tmp;
    return Find(Tag, tmp);
@@ -616,9 +618,10 @@ bool pkgTagSection::Exists(const char* const Tag) const
 // TagSection::Find - Locate a tag					/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the section for a tag that matches the given string. */
-bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
+bool pkgTagSection::Find(StringView TagView,unsigned int &Pos) const
 {
-   size_t const Length = strlen(Tag);
+   const char * const Tag = TagView.data();
+   size_t const Length = TagView.length();
    unsigned int Bucket = AlphaIndexes[AlphaHash(Tag, Length)];
    if (Bucket == 0)
       return false;
@@ -639,7 +642,8 @@ bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
    Pos = 0;
    return false;
 }
-bool pkgTagSection::Find(const char *Tag,const char *&Start,
+
+bool pkgTagSection::Find(StringView Tag,const char *&Start,
 		         const char *&End) const
 {
    unsigned int Pos;
@@ -658,17 +662,17 @@ bool pkgTagSection::Find(const char *Tag,const char *&Start,
 }
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
-string pkgTagSection::FindS(const char *Tag) const
+StringView pkgTagSection::Find(StringView Tag) const
 {
    const char *Start;
    const char *End;
    if (Find(Tag,Start,End) == false)
-      return string();
-   return string(Start,End);      
+      return StringView();
+   return StringView(Start, End - Start);
 }
 									/*}}}*/
 // TagSection::FindRawS - Find a string					/*{{{*/
-string pkgTagSection::FindRawS(const char *Tag) const
+StringView pkgTagSection::FindRaw(StringView Tag) const
 {
    unsigned int Pos;
    if (Find(Tag, Pos) == false)
@@ -682,13 +686,13 @@ string pkgTagSection::FindRawS(const char *Tag) const
 
    for (; isspace_ascii(End[-1]) != 0 && End > Start; --End);
 
-   return std::string(Start, End - Start);
+   return StringView(Start, End - Start);
 }
 									/*}}}*/
 // TagSection::FindI - Find an integer					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-signed int pkgTagSection::FindI(const char *Tag,signed long Default) const
+signed int pkgTagSection::FindI(StringView Tag,signed long Default) const
 {
    const char *Start;
    const char *Stop;
@@ -718,7 +722,7 @@ signed int pkgTagSection::FindI(const char *Tag,signed long Default) const
 // TagSection::FindULL - Find an unsigned long long integer		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long long pkgTagSection::FindULL(const char *Tag, unsigned long long const &Default) const
+unsigned long long pkgTagSection::FindULL(StringView Tag, unsigned long long const &Default) const
 {
    const char *Start;
    const char *Stop;
@@ -742,7 +746,7 @@ unsigned long long pkgTagSection::FindULL(const char *Tag, unsigned long long co
 // TagSection::FindB - Find boolean value                		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgTagSection::FindB(const char *Tag, bool const &Default) const
+bool pkgTagSection::FindB(StringView Tag, bool Default) const
 {
    const char *Start, *Stop;
    if (Find(Tag, Start, Stop) == false)
@@ -753,7 +757,7 @@ bool pkgTagSection::FindB(const char *Tag, bool const &Default) const
 // TagSection::FindFlag - Locate a yes/no type flag			/*{{{*/
 // ---------------------------------------------------------------------
 /* The bits marked in Flag are masked on/off in Flags */
-bool pkgTagSection::FindFlag(const char * const Tag, uint8_t &Flags,
+bool pkgTagSection::FindFlag(StringView Tag, uint8_t &Flags,
 			     uint8_t const Flag) const
 {
    const char *Start;
@@ -781,7 +785,7 @@ bool pkgTagSection::FindFlag(uint8_t &Flags, uint8_t const Flag,
    }
    return true;
 }
-bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
+bool pkgTagSection::FindFlag(StringView Tag,unsigned long &Flags,
 			     unsigned long Flag) const
 {
    const char *Start;
@@ -839,13 +843,13 @@ pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::str
    else
       return Tag(REWRITE, Name, Data);
 }
-static bool WriteTag(FileFd &File, std::string Tag, std::string const &Value)
+static bool WriteTag(FileFd &File, std::string Tag, StringView Value)
 {
    if (Value.empty() || isspace_ascii(Value[0]) != 0)
       Tag.append(":");
    else
       Tag.append(": ");
-   Tag.append(Value);
+   Tag.append(Value.data(), Value.length());
    Tag.append("\n");
    return File.Write(Tag.c_str(), Tag.length());
 }
@@ -865,7 +869,7 @@ static bool RewriteTags(FileFd &File, pkgTagSection const * const This, char con
       }
       else if(R->Action == pkgTagSection::Tag::RENAME && R->Data.length() == TagLen &&
 	    strncasecmp(R->Data.c_str(), Tag, R->Data.length()) == 0)
-	 data = This->FindRawS(R->Name.c_str());
+	 data = This->FindRaw(R->Name.c_str()).to_string();
       else
 	 continue;
 
@@ -889,7 +893,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	 if (Exists(Order[I]) == false)
 	    continue;
 
-	 if (WriteTag(File, Order[I], FindRawS(Order[I])) == false)
+	 if (WriteTag(File, Order[I], FindRaw(Order[I])) == false)
 	    return false;
       }
    }
@@ -919,7 +923,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	 if (R != Rewrite.end())
 	    continue;
 
-	 if (WriteTag(File, name, FindRawS(name.c_str())) == false)
+	 if (WriteTag(File, name, FindRaw(name)) == false)
 	    return false;
       }
    }
@@ -943,7 +947,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	    continue;
       }
 
-      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRawS(R->Name.c_str()) : R->Data)) == false)
+      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRaw(R->Name) : R->Data)) == false)
 	 return false;
    }
    return true;
@@ -1007,7 +1011,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	    
          // See if it is in the fragment
          unsigned Pos;
-         if (Tags.Find(Order[I],Pos) == false)
+         if (Tags.Find(StringView(Order[I]),Pos) == false)
             continue;
          Visited[Pos] |= 1;
 

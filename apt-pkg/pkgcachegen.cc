@@ -49,6 +49,7 @@ static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang);
 
 using std::string;
+using APT::StringView;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -501,7 +502,7 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
 // CacheGenerator::NewGroup - Add a new group				/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new group structure and adds it to the hash table */
-bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
+bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
 {
    Grp = Cache.FindGrp(Name);
    if (Grp.end() == false)
@@ -513,7 +514,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
       return false;
 
    Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-   map_stringitem_t const idxName = StoreString(PKGNAME, Name);
+   map_stringitem_t const idxName = StoreString(PKGNAME, Name.to_string());
    if (unlikely(idxName == 0))
       return false;
    Grp->Name = idxName;
@@ -521,7 +522,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
    map_pointer_t *insertAt = &Cache.HeaderP->GrpHashTableP()[Hash];
-   while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
+   while (*insertAt != 0 && Name.compare(Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
       insertAt = &(Cache.GrpP + *insertAt)->Next;
    Grp->Next = *insertAt;
    *insertAt = Group;
@@ -533,8 +534,8 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 // CacheGenerator::NewPackage - Add a new package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new package structure and adds it to the hash table */
-bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name,
-					const string &Arch) {
+bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
+					StringView Arch) {
    pkgCache::GrpIterator Grp;
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
    if (unlikely(NewGroup(Grp, Name) == false))
@@ -554,7 +555,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    APT_IGNORE_DEPRECATED(Pkg->Name = Grp->Name;)
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
-   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
+   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch.to_string());
    if (unlikely(idxArch == 0))
       return false;
    Pkg->Arch = idxArch;
@@ -567,7 +568,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       // Insert it into the hash table
       map_id_t const Hash = Cache.Hash(Name);
       map_pointer_t *insertAt = &Cache.HeaderP->PkgHashTableP()[Hash];
-      while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name) > 0)
+      while (*insertAt != 0 && Name.compare(Cache.StrP + (Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name) > 0)
 	 insertAt = &(Cache.PkgP + *insertAt)->NextPackage;
       Pkg->NextPackage = *insertAt;
       *insertAt = Package;
@@ -640,8 +641,8 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    if (Arch == "any")
    {
       size_t const found = Name.find(':');
-      std::string const NameA = Name.substr(0, found);
-      std::string const ArchA = Name.substr(found + 1);
+      StringView const NameA = Name.substr(0, found);
+      StringView const ArchA = Name.substr(found + 1);
       pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
       if (PkgA.end() == false)
       {
@@ -997,9 +998,9 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 /* This creates a Group and the Package to link this dependency to if
    needed and handles also the caching of the old endpoint */
 bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
-					       const string &PackageName,
-					       const string &Arch,
-					       const string &Version,
+					       StringView PackageName,
+					       StringView Arch,
+					       StringView Version,
 					       uint8_t const Op,
 					       uint8_t const Type)
 {
@@ -1013,12 +1014,12 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
    {
       int const CmpOp = Op & 0x0F;
       // =-deps are used (79:1) for lockstep on same-source packages (e.g. data-packages)
-      if (CmpOp == pkgCache::Dep::Equals && strcmp(Version.c_str(), Ver.VerStr()) == 0)
+      if (CmpOp == pkgCache::Dep::Equals && Version.compare(Ver.VerStr()) == 0)
 	 idxVersion = Ver->VerStr;
 
       if (idxVersion == 0)
       {
-	 idxVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
+	 idxVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
 	 if (unlikely(idxVersion == 0))
 	    return false;
       }
@@ -1066,9 +1067,9 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
 									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
 bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
-						const string &PkgName,
-						const string &PkgArch,
-						const string &Version,
+						StringView PkgName,
+						StringView PkgArch,
+						StringView Version,
 						uint8_t const Flags)
 {
    pkgCache const &Cache = Owner->Cache;
@@ -1087,7 +1088,7 @@ bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
 
    map_stringitem_t idxProvideVersion = 0;
    if (Version.empty() == false) {
-      idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
+      idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
       if (unlikely(idxProvideVersion == 0))
 	 return false;
    }
@@ -1120,8 +1121,8 @@ bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
 }
 									/*}}}*/
 // ListParser::NewProvidesAllArch - add provides for all architectures	/*{{{*/
-bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
-				string const &Version, uint8_t const Flags) {
+bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringView Package,
+				StringView Version, uint8_t const Flags) {
    pkgCache &Cache = Owner->Cache;
    pkgCache::GrpIterator Grp = Cache.FindGrp(Package);
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
@@ -1132,7 +1133,7 @@ bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string c
    {
       map_stringitem_t idxProvideVersion = 0;
       if (Version.empty() == false) {
-	 idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version);
+	 idxProvideVersion = StoreString(pkgCacheGenerator::VERSIONNUMBER, Version.to_string());
 	 if (unlikely(idxProvideVersion == 0))
 	    return false;
       }

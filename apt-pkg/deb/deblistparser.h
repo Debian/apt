@@ -19,6 +19,9 @@
 
 #include <string>
 #include <vector>
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+#include <apt-pkg/string_view.h>
+#endif
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/indexfile.h>
@@ -50,7 +53,10 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
-   static bool GrabWord(std::string Word,const WordList *List,unsigned char &Out);
+
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN static bool GrabWord(APT::StringView Word,const WordList *List,unsigned char &Out);
+#endif
    APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
 
    public:
@@ -64,6 +70,9 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    virtual std::string Version() APT_OVERRIDE;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::string Description(std::string const &lang) APT_OVERRIDE;
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT::StringView Description(APT::StringView lang);
+#endif
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual MD5SumValue Description_md5() APT_OVERRIDE;
    virtual unsigned short VersionHash() APT_OVERRIDE;
@@ -90,6 +99,14 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 	 std::string &Package,std::string &Ver,unsigned int &Op,
 	 bool const &ParseArchFlags, bool const &StripMultiArch,
 	 bool const &ParseRestrictionsList);
+
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN static const char *ParseDepends(const char *Start,const char *Stop,
+	 APT::StringView &Package,
+    APT::StringView &Ver,unsigned int &Op,
+	 bool const ParseArchFlags = false, bool StripMultiArch = true,
+	 bool const ParseRestrictionsList = false);
+#endif
 
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 

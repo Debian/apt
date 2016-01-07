@@ -29,6 +29,9 @@
 #if __cplusplus >= 201103L
 #include <unordered_map>
 #endif
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+#include <apt-pkg/string_view.h>
+#endif
 
 class FileFd;
 class pkgSourceList;
@@ -79,8 +82,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
 
-   bool NewGroup(pkgCache::GrpIterator &Grp,const std::string &Name);
-   bool NewPackage(pkgCache::PkgIterator &Pkg,const std::string &Name, const std::string &Arch);
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name);
+   bool NewPackage(pkgCache::PkgIterator &Pkg, APT::StringView Name, APT::StringView Arch);
+#endif
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
@@ -156,15 +161,16 @@ class APT_HIDDEN pkgCacheListParser
 
    inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
-   bool NewDepends(pkgCache::VerIterator &Ver,const std::string &Package, const std::string &Arch,
-		   const std::string &Version,uint8_t const Op,
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   bool NewDepends(pkgCache::VerIterator &Ver,APT::StringView Package, APT::StringView Arch,
+		   APT::StringView Version,uint8_t const Op,
 		   uint8_t const Type);
-   bool NewProvides(pkgCache::VerIterator &Ver,const std::string &PkgName,
-		    const std::string &PkgArch, const std::string &Version,
+   bool NewProvides(pkgCache::VerIterator &Ver,APT::StringView PkgName,
+		    APT::StringView PkgArch, APT::StringView Version,
 		    uint8_t const Flags);
-   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string const &Package,
-			   std::string const &Version, uint8_t const Flags);
-   
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, APT::StringView Package,
+			   APT::StringView Version, uint8_t const Flags);
+#endif
    public:
    
    // These all operate against the current section

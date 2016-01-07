@@ -1114,12 +1114,17 @@ static int HexDigit(int c)
 /* The length of the buffer must be exactly 1/2 the length of the string. */
 bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length)
 {
+   return Hex2Num(APT::StringView(Str), Num, Length);
+}
+
+bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length)
+{
    if (Str.length() != Length*2)
       return false;
    
    // Convert each digit. We store it in the same order as the string
    int J = 0;
-   for (string::const_iterator I = Str.begin(); I != Str.end();J++, I += 2)
+   for (auto I = Str.begin(); I != Str.end();J++, I += 2)
    {
       int first_half = HexDigit(I[0]);
       int second_half;
