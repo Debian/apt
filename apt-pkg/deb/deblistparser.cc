@@ -809,7 +809,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 /* This is the higher level depends parser. It takes a tag and generates
    a complete depends tree for the given version. */
 bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
-				 const char *Tag,unsigned int Type)
+				 StringView Tag,unsigned int Type)
 {
    const char *Start;
    const char *Stop;
@@ -826,7 +826,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 
       Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false);
       if (Start == 0)
-	 return _error->Error("Problem parsing dependency %s",Tag);
+	 return _error->Error("Problem parsing dependency %.*s",(int)Tag.length(), Tag.data());
       size_t const found = Package.rfind(':');
 
       if (found == string::npos)

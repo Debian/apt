@@ -50,8 +50,10 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    map_filesize_t iOffset;
 
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
-   bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   bool ParseDepends(pkgCache::VerIterator &Ver, APT::StringView Tag,
 		     unsigned int Type);
+#endif
    bool ParseProvides(pkgCache::VerIterator &Ver);
 
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
