@@ -1,5 +1,6 @@
-apt (1.1.11) unstable; urgency=medium
+apt (1.2) unstable; urgency=medium
 
+  [ Automatic removal of debs after install ]
   After packages are successfully installed by apt(1),
   the corresponding .deb package files will be
   removed from the /var/cache/apt/archives cache directory.
@@ -13,6 +14,11 @@ apt (1.1.11) unstable; urgency=medium
   Please note that the behavior of apt-get is unchanged. The
   downloaded debs will be kept in the cache directory after they
   are installed.
+
+  [ Compressed indices ]
+  If you use Acquire::gzipIndexes, or any other compressed index targets,
+  those will now be compressed with the fastest supported algorithm,
+  currently lz4.
 
  -- Michael Vogt <mvo@debian.org>  Tue, 05 Jan 2016 19:22:16 +0100
 
