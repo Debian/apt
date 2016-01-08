@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -1596,11 +1596,11 @@ msgstr "'%s:%s' (%i - %s) の解決中に何か問題が起こりました"
 msgid "Unable to connect to %s:%s:"
 msgstr "%s:%s へ接続できません:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "状態の取得に失敗しました"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "変更時刻の設定に失敗しました"
 
@@ -1794,10 +1794,6 @@ msgid ""
 "available:\n"
 msgstr "公開鍵を利用できないため、以下の署名は検証できませんでした:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "空のファイルは有効なアーカイブと認められません"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "ファイルへの書き込みでエラーが発生しました"
@@ -1865,6 +1861,12 @@ msgstr "ミラーファイル '%s' のエントリが見つかりません"
 msgid "[Mirror: %s]"
 msgstr "[ミラー: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s の状態を取得するのに失敗しました"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "子プロセスへの IPC パイプの作成に失敗しました"
@@ -1919,6 +1921,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "内部エラー"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "空のファイルは有効なアーカイブと認められません"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2158,11 +2164,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "DB ファイル %s を開くことができません: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s の状態を取得するのに失敗しました"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr ".dsc の読み取りに失敗しました"
@@ -2288,7 +2289,7 @@ msgstr "%s のオープンに失敗しました"
 msgid " DeLink %s [%s]\n"
 msgstr " リンク %s [%s] を外します\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s のリンク読み取りに失敗しました"
@@ -3074,6 +3075,10 @@ msgstr "子プロセス %s が予期せず終了しました"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "gzip ファイル %s のクローズ中に問題が発生しました"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

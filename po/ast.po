@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -1575,11 +1575,11 @@ msgstr "Daqué raro asocedió resolviendo '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nun pudo coneutase a %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Falló al lleer"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Nun se pudo afitar la hora de modificación"
 
@@ -1773,10 +1773,6 @@ msgstr ""
 "Les robles siguientes nun pudieron verificase porque la to llave pública nun "
 "ta a mano:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Fallu al escribir nel ficheru"
@@ -1844,6 +1840,12 @@ msgstr "Nun s'alcontró ficheru espeyu '%s'"
 msgid "[Mirror: %s]"
 msgstr "[Espeyu: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Nun pudo lleese %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Falló criar un tubu IPC al soprocesu"
@@ -1898,6 +1900,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Fallu internu"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2143,11 +2149,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Nun pudo abrise'l ficheru de BD %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Nun pudo lleese %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2274,7 +2275,7 @@ msgstr "Nun pudo abrise %s"
 msgid " DeLink %s [%s]\n"
 msgstr " Desenllazar %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Nun pudo lleese l'enllaz %s"
@@ -3049,6 +3050,10 @@ msgstr "El subprocesu %s terminó de manera inesperada"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problemes zarrando'l ficheru gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -1579,11 +1579,11 @@ msgstr "Algo estranho aconteceu resolvendo '%s:%s' (%i)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Impossível conectar em %s %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Falhou ao executar \"stat\""
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Falhou ao definir hora de modificação"
 
@@ -1780,10 +1780,6 @@ msgstr ""
 "As assinaturas a seguir não puderam ser verificadas devido à chave pública "
 "não estar disponível:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Erro escrevendo para o arquivo"
@@ -1851,6 +1847,12 @@ msgstr "Não foi possível abrir arquivo %s"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Falhou ao executar \"stat\" %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Falhou ao criar pipe IPC para sub-processo"
@@ -1905,6 +1907,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Erro interno"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2155,11 +2161,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Impossível abrir o arquivo BD %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Falhou ao executar \"stat\" %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2286,7 +2287,7 @@ msgstr "Falhou ao abrir %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Falhou ao executar \"readlink\" %s"
@@ -3053,6 +3054,10 @@ msgstr "Sub-processo %s finalizou inesperadamente"
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problema fechando o arquivo"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

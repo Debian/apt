@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -1616,12 +1616,12 @@ msgstr "Сталося щось дивне при спробі отримати 
 msgid "Unable to connect to %s:%s:"
 msgstr "Неможливо під'єднатися до %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 #, fuzzy
 msgid "Failed to stat"
 msgstr "Не вдалося одержати атрибути (stat)"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Не вдалося встановити час модифікації"
 
@@ -1816,10 +1816,6 @@ msgstr ""
 "Наступні підписи не можуть бути перевірені, тому що публічний ключ "
 "відсутній:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Пусті файли не можуть бути правильними архівами"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Помилка запису у файл"
@@ -1887,6 +1883,12 @@ msgstr "Неможливо прочитати файл дзеркала '%s'"
 msgid "[Mirror: %s]"
 msgstr "[Дзеркало: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Не вдалося одержати атрибути %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Не вдалося створити IPC канал для підпроцесу"
@@ -1941,6 +1943,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Внутрішня помилка"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Пусті файли не можуть бути правильними архівами"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2195,11 +2201,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Не вдалося відкрити файл БД %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Не вдалося одержати атрибути %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2326,7 +2327,7 @@ msgstr "Не вдалося відкрити %s"
 msgid " DeLink %s [%s]\n"
 msgstr "DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Не вдалося прочитати посилання (readlink) %s"
@@ -3113,6 +3114,10 @@ msgstr "Підпроцес %s раптово завершився"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Проблема з закриттям gzip файла %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

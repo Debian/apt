@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -1569,11 +1569,11 @@ msgstr "Jotain kenkkua tapahtui selvitettäessä \"%s: %s\" (%i)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Ei ole mahdollista muodostaa yhteyttä %s %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Komento stat ei toiminut"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Tiedoston muutospäivämäärää ei saatu vaihdettua"
 
@@ -1768,10 +1768,6 @@ msgstr ""
 "Seuraavia allekirjoituksia ei voinut varmentaa koska julkista avainta ei ole "
 "saatavilla:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Tapahtui virhe kirjoitettaessa tiedostoon"
@@ -1839,6 +1835,12 @@ msgstr "Tiedostoa %s ei voitu avata"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Tiedostolle %s ei toimi stat"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "IPC-putken luominen aliprosessiin ei onnistunut"
@@ -1893,6 +1895,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Sisäinen virhe"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2139,11 +2145,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Tietokantatiedostoa %s ei saatu avattua: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Tiedostolle %s ei toimi stat"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2270,7 +2271,7 @@ msgstr "Tiedoston %s avaaminen ei onnistunut"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "readlink %s ei onnistunut"
@@ -3029,6 +3030,10 @@ msgstr "Aliprosessi %s lopetti odottamatta"
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Pulmia tiedoston sulkemisessa"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

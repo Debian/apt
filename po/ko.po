@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -1563,11 +1563,11 @@ msgstr "'%s:%s'의 주소를 알아내는데 무언가 이상한 일이 발생�
 msgid "Unable to connect to %s:%s:"
 msgstr "%s:%s에 연결할 수 없습니다:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "파일 정보를 읽는데 실패했습니다"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "파일 변경 시각을 설정하는데 실패했습니다"
 
@@ -1759,10 +1759,6 @@ msgid ""
 "available:\n"
 msgstr "다음 서명들은 공개키가 없기 때문에 인증할 수 없습니다:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "해당 파일에 쓰는데 오류가 발생했습니다"
@@ -1830,6 +1826,12 @@ msgstr "'%s' 미러 파일이 없습니다 "
 msgid "[Mirror: %s]"
 msgstr "[미러 사이트: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s의 정보를 읽는데 실패했습니다"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "하위 프로세스에 대한 IPC 파이프를 만드는데 실패했습니다"
@@ -1884,6 +1886,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "내부 오류"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2123,11 +2129,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "DB 파일, %s 파일을 열 수 없습니다: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s의 정보를 읽는데 실패했습니다"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2256,7 +2257,7 @@ msgstr "%s 파일을 여는데 실패했습니다"
 msgid " DeLink %s [%s]\n"
 msgstr " 링크 %s [%s] 없애기\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s 파일에 readlink하는데 실패했습니다"
@@ -3019,6 +3020,10 @@ msgstr "하위 프로세스 %s 프로세스가 예상치 못하게 끝났습니�
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "%s gzip 파일을 닫는데 문제가 있습니다"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

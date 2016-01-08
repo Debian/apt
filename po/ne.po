@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -1556,11 +1556,11 @@ msgstr " '%s:%s' (%i) हल गर्दा केही दुष्ट घट
 msgid "Unable to connect to %s:%s:"
 msgstr "%s %s मा जडान गर्न असफल भयो:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "स्थिर गर्न असफल भयो"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "परिमार्जन समय सेट असफल भयो"
 
@@ -1751,10 +1751,6 @@ msgid ""
 "available:\n"
 msgstr "निम्न हस्ताक्षरहरू रूजू हुन सक्दैन किन भने सार्वजनिक कुञ्जी उपलब्ध छैन:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "फाइलमा त्रुटि लेखिदैछ"
@@ -1822,6 +1818,12 @@ msgstr "फाइल %s खोल्न सकिएन"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr " %s स्थिर गर्न असफल"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "सहायक प्रक्रियामा IPC पाइप सिर्जना गर्न असफल"
@@ -1876,6 +1878,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "आन्तरिक त्रुटि"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2118,11 +2124,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "DB फाइल %s असक्षम भयो: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr " %s स्थिर गर्न असफल"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2249,7 +2250,7 @@ msgstr "%s खोल्न असफल"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "लिङ्क पढ्न असफल %s"
@@ -3005,6 +3006,10 @@ msgstr "सहायक प्रक्रिया %s अनपेक्षि�
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "फाइल बन्द गर्दा समस्या"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

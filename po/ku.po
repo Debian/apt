@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2008-05-08 12:48+0200\n"
 "Last-Translator: Erdal Ronahi <erdal.ronahi@gmail.com>\n"
 "Language-Team: ku <ubuntu-l10n-kur@lists.ubuntu.com>\n"
@@ -1520,12 +1520,12 @@ msgstr ""
 msgid "Unable to connect to %s:%s:"
 msgstr "Nikare bi %s re girêdan pêk bîne %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 #, fuzzy
 msgid "Failed to stat"
 msgstr "%s venebû"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr ""
 
@@ -1715,10 +1715,6 @@ msgid ""
 "available:\n"
 msgstr ""
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Dema li pelî dihate nivîsîn çewtî"
@@ -1787,6 +1783,12 @@ msgstr "Nikarî pelê %s veke"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr ""
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr ""
@@ -1841,6 +1843,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Çewtiya hundirîn"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2029,11 +2035,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Danegira %s nehate vekirin: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr ""
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2160,7 +2161,7 @@ msgstr "%s venebû"
 msgid " DeLink %s [%s]\n"
 msgstr ""
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr ""
@@ -2911,6 +2912,10 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Di girtina pelî de pirsgirêkek derket"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

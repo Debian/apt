@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1592,11 +1592,11 @@ msgstr "Một số hư hỏng đã xảy ra khi phân giải “%s:%s” (%i - %
 msgid "Unable to connect to %s:%s:"
 msgstr "Không thể kết nối đến %s: %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Gặp lỗi khi lấy thống kê"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Gặp lỗi khi đặt giờ sửa đổi"
 
@@ -1791,10 +1791,6 @@ msgid ""
 msgstr ""
 "Không thể kiểm chứng những chữ ký theo đây, vì khóa công không sẵn có:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Gặp lỗi khi ghi vào tập tin"
@@ -1862,6 +1858,12 @@ msgstr "Không tìm thấy điểm vào trong tập tin bản sao “%s”"
 msgid "[Mirror: %s]"
 msgstr "[Bản sao: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Việc lấy thông tin thống kê cho %s bị lỗi"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Gặp lỗi khi tạo ống IPC đến tiến trình con"
@@ -1920,6 +1922,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Gặp lỗi nội bộ"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2180,11 +2186,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Không thể mở tập tin cơ sở dữ liệu %s: %s."
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Việc lấy thông tin thống kê cho %s bị lỗi"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "Gặp lỗi khi đọc .dsc"
@@ -2310,7 +2311,7 @@ msgstr "Gặp lỗi khi mở %s"
 msgid " DeLink %s [%s]\n"
 msgstr " Bỏ liên kết %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Gặp lỗi khi đọc liên kết %s"
@@ -3087,6 +3088,10 @@ msgstr "Tiến trình con %s đã thoát bất thường"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Gặp vấn đề khi đóng tập tin gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

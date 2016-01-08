@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2004-05-06 15:25+0100\n"
 "Last-Translator: Safir Šećerović <sapphire@linux.org.ba>\n"
 "Language-Team: Bosnian <lokal@lugbih.org>\n"
@@ -1520,11 +1520,11 @@ msgstr ""
 msgid "Unable to connect to %s:%s:"
 msgstr "Ne mogu se povezati sa %s %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr ""
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr ""
 
@@ -1714,10 +1714,6 @@ msgid ""
 "available:\n"
 msgstr ""
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr ""
@@ -1785,6 +1781,12 @@ msgstr "Ne mogu otvoriti %s"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr ""
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr ""
@@ -1839,6 +1841,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Unutrašnja greška"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2015,11 +2021,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Ne mogu otvoriti DB datoteku %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr ""
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2146,7 +2147,7 @@ msgstr "Ne mogu otvoriti %s"
 msgid " DeLink %s [%s]\n"
 msgstr ""
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr ""
@@ -2895,6 +2896,10 @@ msgstr ""
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Problem closing the gzip file %s"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
 msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc

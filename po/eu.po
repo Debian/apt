@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -1575,11 +1575,11 @@ msgstr "Zerbait arraroa pasatu da '%s:%s' (%i) ebaztean"
 msgid "Unable to connect to %s:%s:"
 msgstr "Ezin da konektatu -> %s %s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Huts egin du atzitzean"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Huts egin du aldaketa ordua ezartzean"
 
@@ -1776,10 +1776,6 @@ msgstr ""
 "Ondorengo sinadurak ezin dira egiaztatu gako publikoa ez bait dago "
 "eskuragarri:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Errorea fitxategian idaztean"
@@ -1847,6 +1843,12 @@ msgstr "%s fitxategia ezin izan da ireki"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Huts egin du %s(e)tik datuak lortzean"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Huts egin du azpiprozesuarentzako IPC kanalizazio bat sortzean"
@@ -1901,6 +1903,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Barne errorea"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2142,11 +2148,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Ezin da ireki %s datu-base fitxategia: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Huts egin du %s(e)tik datuak lortzean"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2273,7 +2274,7 @@ msgstr "Huts egin du %s irekitzean"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Huts egin du %s esteka irakurtzean"
@@ -3036,6 +3037,10 @@ msgstr "%s azpiprozesua ustekabean amaitu da"
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Arazoa fitxategia ixtean"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

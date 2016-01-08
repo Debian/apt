@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -1570,11 +1570,11 @@ msgstr "'%s:%s' (%i)་མོས་མཐུན་འབདཝ་ད་ངན་
 msgid "Unable to connect to %s:%s:"
 msgstr "%s %s:ལུ་མཐུད་མ་ཚུགས།"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
@@ -1770,10 +1770,6 @@ msgid ""
 msgstr ""
 "འོག་གི་མིང་རྟགས་ཚུ་བདེན་སྦྱོར་་འབད་མ་ཚུགས་ག་ཅི་སྦེ་ཟེར་བ་ཅིན་མི་དམང་ལྡེ་མིག་དེ་འཐོབ་མི་ཚུགས་པས:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "ཡིག་སྣོད་འདི་ལུ་འབྲིཝ་ད་འཛོལ་བ།"
@@ -1841,6 +1837,12 @@ msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚ�
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s་སིཊེཊི་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "ཡན་ལག་ལས་སྦྱོར་ལུ་ཨའི་པི་སི་རྒྱུད་དུང་གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
@@ -1895,6 +1897,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "ནང་འཁོད་འཛོལ་བ།"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2143,11 +2149,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "%s: %s་ཌི་བི་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s་སིཊེཊི་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2274,7 +2275,7 @@ msgstr "%s་ག་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་བ�
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s་འབྲེལ་ལམ་ལྷག་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
@@ -3034,6 +3035,10 @@ msgstr "ཡན་ལག་ལས་སྦྱོར་་%s་གིས་རེ�
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "ཡིག་སྣོད་འདི་ཁ་བསྡམས་པའི་བསྒང་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2013-12-15 16:45+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1626,11 +1626,11 @@ msgstr ""
 msgid "Unable to connect to %s:%s:"
 msgstr "Impossible de se connecter à %s:%s :"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Impossible de statuer"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Impossible de modifier l'heure "
 
@@ -1830,10 +1830,6 @@ msgstr ""
 "Les signatures suivantes n'ont pas pu être vérifiées car la clé publique "
 "n'est pas disponible :\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Les fichiers vides ne peuvent être des archives valables"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Erreur d'écriture sur le fichier"
@@ -1901,6 +1897,12 @@ msgstr "Pas d'entrée trouvée dans le fichier de miroir « %s »."
 msgid "[Mirror: %s]"
 msgstr "[Miroir : %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Impossible de statuer %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Impossible de créer le tube IPC sur le sous-processus"
@@ -1955,6 +1957,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Erreur interne"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Les fichiers vides ne peuvent être des archives valables"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2206,11 +2212,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Impossible d'ouvrir le fichier de base de données %s : %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Impossible de statuer %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2337,7 +2338,7 @@ msgstr "Impossible d'ouvrir %s"
 msgid " DeLink %s [%s]\n"
 msgstr " Délier %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Impossible de lire le lien %s"
@@ -3141,6 +3142,10 @@ msgstr "Le sous-processus %s s'est arrêté prématurément"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problème de fermeture du fichier gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

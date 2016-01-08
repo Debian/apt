@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -1594,11 +1594,11 @@ msgstr "Algo estranho aconteceu ao resolver '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Não foi possível ligar a %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Falhou o stat"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Falhou definir hora de modificação"
 
@@ -1794,10 +1794,6 @@ msgstr ""
 "As seguintes assinaturas não puderam ser verificadas porque a chave pública "
 "não está disponível:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Ficheiros vazios não podem ser arquivos válidos"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Erro ao escrever para o ficheiro"
@@ -1865,6 +1861,12 @@ msgstr "Não pode ler ficheiro de mirror '%s'"
 msgid "[Mirror: %s]"
 msgstr "[Mirror: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Falha stat %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Falha ao criar pipe IPC para subprocesso"
@@ -1919,6 +1921,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Erro interno"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Ficheiros vazios não podem ser arquivos válidos"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2164,11 +2170,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Não foi possível abrir o ficheiro %s da base de dados: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Falha stat %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2295,7 +2296,7 @@ msgstr "Falhou abrir %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Falhou o readlink %s"
@@ -3092,6 +3093,10 @@ msgstr "O sub-processo %s terminou inesperadamente"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problema ao fechar o ficheiro gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

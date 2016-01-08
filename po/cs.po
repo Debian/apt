@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -1587,11 +1587,11 @@ msgstr "Něco hodně ošklivého se přihodilo při překladu „%s:%s“ (%i - 
 msgid "Unable to connect to %s:%s:"
 msgstr "Nelze se připojit k %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Selhalo vyhodnocení"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Nelze nastavit čas modifikace"
 
@@ -1785,10 +1785,6 @@ msgstr ""
 "Následující podpisy nemohly být ověřeny, protože není dostupný veřejný "
 "klíč:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Prázdné soubory nejsou platnými archivy"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Chyba zápisu do souboru"
@@ -1856,6 +1852,12 @@ msgstr "V souboru se zrcadly „%s“ nebyl nalezen žádný záznam"
 msgid "[Mirror: %s]"
 msgstr "[Zrcadlo: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Nelze vyhodnotit %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Selhalo vytvoření meziprocesové roury k podprocesu"
@@ -1912,6 +1914,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Vnitřní chyba"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Prázdné soubory nejsou platnými archivy"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2147,11 +2153,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Nelze otevřít DB soubor %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Nelze vyhodnotit %s"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "Nelze přečíst .dsc"
@@ -2277,7 +2278,7 @@ msgstr "Nelze otevřít %s"
 msgid " DeLink %s [%s]\n"
 msgstr "Odlinkování %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Nelze přečíst link %s"
@@ -3053,6 +3054,10 @@ msgstr "Podproces %s neočekávaně skončil"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problém při zavírání gzip souboru %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

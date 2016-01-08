@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -1597,11 +1597,11 @@ msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nedá sa pripojiť k %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Vyhodnotenie zlyhalo"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Zlyhalo nastavenie času zmeny"
 
@@ -1794,10 +1794,6 @@ msgstr ""
 "Nasledovné signatúry sa nedajú overiť, pretože nie je dostupný verejný "
 "kľúč:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Prázdne súbory nemôžu byť platné archívy"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Chyba zápisu do tohto súboru"
@@ -1865,6 +1861,12 @@ msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
 msgid "[Mirror: %s]"
 msgstr "[Zrkadlo: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s sa nedá vyhodnotiť"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Zlyhalo vytvorenie IPC rúry k podprocesu"
@@ -1919,6 +1921,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Vnútorná chyba"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Prázdne súbory nemôžu byť platné archívy"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2158,11 +2164,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Nedá sa otvoriť DB súbor %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s sa nedá vyhodnotiť"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2289,7 +2290,7 @@ msgstr "%s sa nedá otvoriť"
 msgid " DeLink %s [%s]\n"
 msgstr " Odlinkovanie %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Nie je možné vykonať readlink %s"
@@ -3063,6 +3064,10 @@ msgstr "Podproces %s neočakávane skončil"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problém pri zatváraní gzip súboru %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

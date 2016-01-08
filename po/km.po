@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -1559,11 +1559,11 @@ msgstr "ការ​ដោះស្រាយ​អ្វី​អាក្រក
 msgid "Unable to connect to %s:%s:"
 msgstr "មិន​អាច​តភ្ជាប់​ទៅកាន់​​ %s %s ៖"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "បរាជ័យ​ក្នុងការថ្លែង"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "បរាជ័យក្នុងការកំណត់​ពេលវេលា​ការកែប្រែ​"
 
@@ -1753,10 +1753,6 @@ msgid ""
 "available:\n"
 msgstr "ហត្ថលេខា​ខាងក្រោម​មិន​អាចផ្ទៀងផ្ទាត់បាន​ទេ​ ព្រោះកូនសោ​សាធារណៈមិន​អាច​ប្រើ​បាន​ ៖\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "កំហុសក្នុងការ​សរសេរ​ទៅកាន់​ឯកសារ"
@@ -1824,6 +1820,12 @@ msgstr "មិន​អាច​បើក​ឯកសារ​ %s បានឡ�
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "បាន​បរាជ័យ​ក្នុង​ការថ្លែង  %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "បរាជ័យ​ក្នុង​ការ​បង្កើត​បំពង់​ IPC សម្រាប់​ដំណើរ​ការ​រង​"
@@ -1878,6 +1880,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "កំហុស​ខាង​ក្នុង​"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2119,11 +2125,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "មិន​អាច​បើក​ឯកសារ​ DB បានទេ %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "បាន​បរាជ័យ​ក្នុង​ការថ្លែង  %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2250,7 +2251,7 @@ msgstr "បរាជ័យ​ក្នុង​ការ​បើក %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "បាន​បរាជ័យ​ក្នុង​ការ​អាន​តំណ​ %s"
@@ -3006,6 +3007,10 @@ msgstr "ដំណើរការ​រង​ %s បានចេញ ដោយ​�
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "មាន​បញ្ហា​ក្នុងការ​បិទ​ឯកសារ"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1590,11 +1590,11 @@ msgstr "Hiba történt „%s:%s” feloldásakor (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nem lehet csatlakozni ehhez: %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Nem érhető el"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "A módosítási idő beállítása sikertelen"
 
@@ -1791,10 +1791,6 @@ msgstr ""
 "Az alábbi aláírások nem ellenőrizhetők, mert a nyilvános kulcs nem érhető "
 "el:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Az üres fájlok biztosan nem érvényes csomagok"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Hiba a fájl írásakor"
@@ -1862,6 +1858,12 @@ msgstr "A(z) „%s” tükörfájl nem olvasható"
 msgid "[Mirror: %s]"
 msgstr "[Tükör: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s elérése sikertelen"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nem sikerült IPC-adatcsatornát létrehozni az alfolyamathoz"
@@ -1916,6 +1918,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Belső hiba"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2159,11 +2165,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "A(z) %s DB fájlt nem lehet megnyitni: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s elérése sikertelen"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2290,7 +2291,7 @@ msgstr "%s megnyitása sikertelen"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "readlink nem hajtható végre erre: %s"
@@ -3073,6 +3074,10 @@ msgstr "%s alfolyamat váratlanul kilépett"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Hiba a(z) %s gzip fájl bezárásakor"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1618,11 +1618,11 @@ msgstr "Er gebeurde iets raars bij het omzetten van '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kan geen verbinding maken met %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Kon status niet bepalen"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Instellen van de aanpassingstijd is mislukt"
 
@@ -1821,10 +1821,6 @@ msgstr ""
 "De volgende ondertekeningen konden niet geverifieerd worden omdat de "
 "publieke sleutel niet beschikbaar is:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Lege bestanden kunnen geen geldige archieven zijn"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Fout bij het schrijven naar het bestand"
@@ -1893,6 +1889,12 @@ msgstr "Geen vermelding gevonden in spiegelbestand '%s'"
 msgid "[Mirror: %s]"
 msgstr "[Spiegelserver: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Opvragen van de status van %s is mislukt"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Aanmaken van IPC-pijp naar subproces is mislukt"
@@ -1947,6 +1949,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Interne fout"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Lege bestanden kunnen geen geldige archieven zijn"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2196,11 +2202,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Kan het DB-bestand %s niet openen: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Opvragen van de status van %s is mislukt"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "Lezen van .dsc is mislukt"
@@ -2326,7 +2327,7 @@ msgstr "Openen van %s is mislukt"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Opdracht readlink %s is mislukt"
@@ -3121,6 +3122,10 @@ msgstr "Subproces %s sloot onverwacht af"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Probleem bij het sluiten van het gzip-bestand %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

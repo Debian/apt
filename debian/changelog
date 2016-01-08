@@ -1,3 +1,53 @@
+apt (1.2~exp1) experimental; urgency=medium
+
+  [ Beatrice Torracca ]
+  * Italian manpages translation update (Closes: 809522)
+
+  [ David Kalnischkies ]
+  * add optional support for comments in pkgTagFile
+  * support comments in debian/control parsing (Closes: 806775)
+  * properly parse comments in apt_preferences and deb822-style sources
+  * include all compressed Packages/Sources files in Release file
+  * use one 'store' method to rule all (de)compressors
+  * ensure compression cleanup even without lists-cleanup
+  * allow pdiff bootstrap from all supported compressors
+  * keep compressed indexes in a low-cost format
+  * support '-' and no parameter for stdin in apt-helper cat-file
+  * tests: limit autotest-functionname generation to sane characters
+  * use filesize of compressed pdiffs for the limit if possible
+  * remove uncompressed leftover partial file before pdiff bootstrap
+
+  [ Michael Vogt ]
+  * Add support for APT::Periodic::CleanInterval.
+    Thanks to Martin-Éric Racine
+  * Add bash-completion support for the "apt" command (Closes: #747094)
+  * Add new APT::Keep-Downloaded-Packages option (Closes: #160743)
+
+  [ Julian Andres Klode ]
+  * Change compressor costs to be 100 apart
+  * apt-cache: stats: Average is over used, not all, buckets
+  * Increase APT::Cache-HashTableSize default to 50503
+  * travis: pull liblz4-dev from wily
+  * FileFd: (native) LZ4 support
+  * apt-helper: cat-file: Add -C/--compress option
+  * CopyFile: Use 64 * 1024 instead of 64000 as buffer size
+  * acquire: Allow parallelizing methods without hosts
+  * rred: Run in parallel
+  * Introduce internal APT::StringView class
+  * Switch performance critical code to use APT::StringView
+  * pkgCacheGenerator::StoreString: Get rid of std::string
+  * pkgCacheGenerator: CurMd5.Value() cannot be empty
+  * AvailableDescriptionLanguages: Use one string for all iterations
+  * NEWS: Document recompression of indices
+  * Store the size of strings in the cache
+  * libapt-pkg5.0: Add Breaks appstream (<< 0.9.0-3~)
+
+  [ Helmut Grohne ]
+  * Allow building without libgtest-dev under <nocheck> build profile
+    (Closes: #809726)
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 08 Jan 2016 21:41:10 +0100
+
 apt (1.1.10) unstable; urgency=medium
 
   [ David Kalnischkies ]

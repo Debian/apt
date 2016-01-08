@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2011-05-12 15:28+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
@@ -1591,11 +1591,11 @@ msgstr "Aconteceu algo malo, buscando «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Non é posíbel conectar %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Non foi posíbel determinar o estado"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Non foi posíbel estabelecer a hora de modificación"
 
@@ -1792,10 +1792,6 @@ msgstr ""
 "Non se puideron verificar as seguintes sinaturas porque a chave pública non "
 "está dispoñíbel:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Os ficheiros baleiros non poden ser arquivadores válidos"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Produciuse un erro ao escribir no ficheiro"
@@ -1864,6 +1860,12 @@ msgstr "Non é posíbel ler o ficheiro de replica «%s»"
 msgid "[Mirror: %s]"
 msgstr "[Replica: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Non foi posíbel determinar o estado %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Non foi posíbel crear a canle IPC ao subproceso"
@@ -1919,6 +1921,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Produciuse un erro interno"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Os ficheiros baleiros non poden ser arquivadores válidos"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2164,11 +2170,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Non é posíbel abrir o ficheiro de base de datos %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Non foi posíbel determinar o estado %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2295,7 +2296,7 @@ msgstr "Non foi posíbel abrir %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DesLig %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Non foi posíbel ler a ligazón %s"
@@ -3082,6 +3083,10 @@ msgstr "O subproceso %s saíu de xeito inesperado"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Produciuse un problema ao pechar o arquivo gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

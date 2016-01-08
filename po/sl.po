@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -1600,11 +1600,11 @@ msgstr "Nekaj čudnega se je zgodilo med razreševanjem '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Ni se mogoče povezati z %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Določitev ni uspela"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Nastavitev časa spremembe je spodletela"
 
@@ -1797,10 +1797,6 @@ msgid ""
 msgstr ""
 "Naslednjih podpisov ni mogoče preveriti, ker javni ključ ni na voljo:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Napaka med pisanjem v datoteko"
@@ -1868,6 +1864,12 @@ msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
 msgid "[Mirror: %s]"
 msgstr "[Zrcalni strežnik: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Napaka med določitvijo %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Ustvarjanje cevi IPC do podopravila je spodletelo"
@@ -1922,6 +1924,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Notranja napaka"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2163,11 +2169,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Ni mogoče odprti datoteke PZ %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Napaka med določitvijo %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2294,7 +2295,7 @@ msgstr "Ni mogoče odprti %s"
 msgid " DeLink %s [%s]\n"
 msgstr " RazVeži %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Napaka med branjem povezave %s"
@@ -3067,6 +3068,10 @@ msgstr "Pod-opravilo %s se je nepričakovano zaključilo"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Težava med zapiranjem gzip datoteke %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

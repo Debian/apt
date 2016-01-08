@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-07-06 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -1595,11 +1595,11 @@ msgstr "Der skete noget underligt under opløsning af »%s:%s« (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kunne ikke forbinde til %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Kunne ikke finde"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Kunne ikke angive ændringstidspunkt"
 
@@ -1796,10 +1796,6 @@ msgstr ""
 "Følgende signaturer kunne ikke verificeret, da den offentlige nøgle ikke er "
 "tilgængelig:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Tomme filer kan ikke være gyldige arkiver"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Fejl ved skrivning til filen"
@@ -1867,6 +1863,12 @@ msgstr "Ingen post fundet i spejlfil »%s«"
 msgid "[Mirror: %s]"
 msgstr "[Spejl: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Kunne ikke finde %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Kunne ikke oprette IPC-videreførsel til underproces"
@@ -1922,6 +1924,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Intern fejl"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Tomme filer kan ikke være gyldige arkiver"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2165,11 +2171,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Kunne ikke åbne DB-filen %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Kunne ikke finde %s"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "Kunne ikke læse .dsc"
@@ -2295,7 +2296,7 @@ msgstr "Kunne ikke åbne %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Kunne ikke »readlink« %s"
@@ -3066,6 +3067,10 @@ msgstr "Underprocessen %s afsluttedes uventet"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problem under lukning af gzip-filen %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

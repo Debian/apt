@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1597,11 +1597,11 @@ msgstr "Ha passat alguna cosa estranya en resoldre «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "No es pot connectar amb %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "L'estat ha fallat"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "No s'ha pogut establir el temps de modificació"
 
@@ -1798,10 +1798,6 @@ msgstr ""
 "Les signatures següents no s'han pogut verificar perquè la clau pública no "
 "està disponible:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Els fitxers buits no poden ser arxius vàlids"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "S'ha produït un error en escriure al fitxer"
@@ -1870,6 +1866,12 @@ msgstr "No es pot llegir el fitxer rèplica «%s»"
 msgid "[Mirror: %s]"
 msgstr "[Rèplica: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "No es pot determinar l'estat de %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "No s'ha pogut crear el conducte IPC al subprocés"
@@ -1924,6 +1926,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Error intern"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Els fitxers buits no poden ser arxius vàlids"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2167,11 +2173,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "No es pot obrir el fitxer de DB %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "No es pot determinar l'estat de %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2298,7 +2299,7 @@ msgstr "No s'ha pogut obrir %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "No s'ha pogut llegir l'enllaç %s"
@@ -3088,6 +3089,10 @@ msgstr "El sub-procés %s ha sortit inesperadament"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Ha hagut un problema en tancar el fitxer gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

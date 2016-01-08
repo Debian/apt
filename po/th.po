@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -1551,11 +1551,11 @@ msgstr "เกิดปัญหาร้ายแรงบางอย่าง
 msgid "Unable to connect to %s:%s:"
 msgstr "ไม่สามารถเชื่อมต่อไปยัง %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "stat ไม่สำเร็จ"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "กำหนดเวลาแก้ไขไม่สำเร็จ"
 
@@ -1745,10 +1745,6 @@ msgid ""
 "available:\n"
 msgstr "ลายเซ็นต่อไปนี้ไม่สามารถตรวจสอบได้ เพราะไม่มีกุญแจสาธารณะ:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "เกิดข้อผิดพลาดขณะเขียนลงแฟ้ม"
@@ -1816,6 +1812,12 @@ msgstr "ไม่พบรายการในแฟ้มแหล่งสำ
 msgid "[Mirror: %s]"
 msgstr "[แหล่งสำเนา: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "stat %s ไม่สำเร็จ"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "ไม่สามารถสร้างไปป์ IPC ไปยังโพรเซสย่อย"
@@ -1870,6 +1872,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "ข้อผิดพลาดภายใน"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2103,11 +2109,6 @@ msgstr "ฟอร์แมตของ DB ผิด ถ้าคุณเพิ�
 msgid "Unable to open DB file %s: %s"
 msgstr "ไม่สามารถเปิดแฟ้ม DB %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "stat %s ไม่สำเร็จ"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "อ่าน .dsc ไม่สำเร็จ"
@@ -2233,7 +2234,7 @@ msgstr "เปิด %s ไม่สำเร็จ"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "readlink %s ไม่สำเร็จ"
@@ -2993,6 +2994,10 @@ msgstr "โพรเซสย่อย %s จบการทำงานกะ�
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "เกิดปัญหาขณะปิดแฟ้ม gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

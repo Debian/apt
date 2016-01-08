@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -1606,11 +1606,11 @@ msgstr "'%s:%s' (%i - %s) adresi çözümlenirken bir şeyler kötü gitti"
 msgid "Unable to connect to %s:%s:"
 msgstr "Bağlanılamadı %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Durum bilgisi okunamadı"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Değişiklik zamanı ayarlanamadı"
 
@@ -1802,10 +1802,6 @@ msgid ""
 "available:\n"
 msgstr "Aşağıdaki imzalar doğrulanamadı, çünkü genel anahtar mevcut değil:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Dosyaya yazılamadı"
@@ -1873,6 +1869,12 @@ msgstr "'%s' yansı dosyasında hiç girdi bulunmuyor"
 msgid "[Mirror: %s]"
 msgstr "[Yansı: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s durum bilgisi alınamadı"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Altsürece IPC borusu oluşturulamadı"
@@ -1929,6 +1931,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "İç hata"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2174,11 +2180,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Veritabanı dosyası %s açılamadı: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s durum bilgisi alınamadı"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr ".dsc dosyası okunamadı"
@@ -2304,7 +2305,7 @@ msgstr "%s açılamadı"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s readlink çağrısı başarısız oldu"
@@ -3089,6 +3090,10 @@ msgstr "%s altsüreci beklenmeyen bir şekilde sona erdi"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Gzip dosyası %s kapatılamadı"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

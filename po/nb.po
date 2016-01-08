@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2010-09-01 21:10+0200\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
@@ -1578,11 +1578,11 @@ msgstr "Noe galt skjedde ved oppslag av «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Klarte ikke koble til %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Klarte ikke å få status"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Klarte ikke å sette endringstidspunkt"
 
@@ -1776,10 +1776,6 @@ msgstr ""
 "De følgende signaturene kunne ikke verifiseres fordi den offentlige nøkkelen "
 "ikke er tilgjengelig:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Feil ved skriving til fila"
@@ -1847,6 +1843,12 @@ msgstr "Ingen speilfil «%s» funnet"
 msgid "[Mirror: %s]"
 msgstr "[Speil: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Klarte ikke å få statusen på %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Klarte ikke å opprette IPC-rør til underprosessen"
@@ -1901,6 +1903,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Intern feil"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2145,11 +2151,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Klarte ikke å åpne Databasefila %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Klarte ikke å få statusen på %s"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2276,7 +2277,7 @@ msgstr "Klarte ikke å åpne %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Klarte ikke å lese lenken %s"
@@ -3046,6 +3047,10 @@ msgstr "Underprosessen %s avsluttet uventet"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problem ved låsing av gzip-fila %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

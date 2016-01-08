@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -1548,11 +1548,11 @@ msgstr "在解析 '%s:%s' (%i) 時出了怪事"
 msgid "Unable to connect to %s:%s:"
 msgstr "無法連線至 %s %s："
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "無法取得狀態"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "無法設定修改時間"
 
@@ -1742,10 +1742,6 @@ msgid ""
 "available:\n"
 msgstr "由於無法取得它們的公鑰，以下簽章無法進行驗證：\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "在寫入該檔時發生錯誤"
@@ -1813,6 +1809,12 @@ msgstr "無法開啟檔案 %s"
 msgid "[Mirror: %s]"
 msgstr ""
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "無法取得 %s 的狀態"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "無法和子程序建立 IPC 管線"
@@ -1867,6 +1869,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "內部錯誤"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2104,11 +2110,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "無法開啟 DB 檔 %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "無法取得 %s 的狀態"
-
 #: ftparchive/cachedb.cc
 #, fuzzy
 msgid "Failed to read .dsc"
@@ -2235,7 +2236,7 @@ msgstr "無法開啟 %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "無法讀取連結 %s"
@@ -2989,6 +2990,10 @@ msgstr "子程序 %s 不預期得結束"
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "在關閉檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

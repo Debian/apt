@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -1603,11 +1603,11 @@ msgstr "Något konstigt hände när ”%s:%s” slogs upp (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kunde inte ansluta till %s:%s:"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "Misslyckades med att ta status"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "Misslyckades med att ställa in ändringstid"
 
@@ -1805,10 +1805,6 @@ msgstr ""
 "Följande signaturer kunde inte verifieras för att den öppna nyckeln inte är "
 "tillgänglig:\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "Tomma filer kan inte vara giltiga arkiv"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "Fel vid skrivning till filen"
@@ -1877,6 +1873,12 @@ msgstr "Ingen post funnen i spegelfilen ”%s”"
 msgid "[Mirror: %s]"
 msgstr "[Spegel: %s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Misslyckades med att ta status på %s"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Misslyckades med att skapa IPC-rör till underprocess"
@@ -1933,6 +1935,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "Internt fel"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Tomma filer kan inte vara giltiga arkiv"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2176,11 +2182,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Kunde inte öppna DB-filen %s: %s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Misslyckades med att ta status på %s"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "Misslyckades med att läsa .dsc"
@@ -2310,7 +2311,7 @@ msgstr "Misslyckades med att öppna %s"
 msgid " DeLink %s [%s]\n"
 msgstr " Avlänka %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Misslyckades med att läsa länken %s"
@@ -3092,6 +3093,10 @@ msgstr "Underprocessen %s avslutades oväntat"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problem med att stänga gzip-filen %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"

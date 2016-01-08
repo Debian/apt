@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2015-12-30 00:41+0100\n"
+"POT-Creation-Date: 2016-01-08 21:45+0100\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1550,11 +1550,11 @@ msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "不能连接到 %s：%s："
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/store.cc
 msgid "Failed to stat"
 msgstr "无法读取状态"
 
-#: methods/copy.cc methods/gzip.cc methods/rred.cc
+#: methods/copy.cc methods/rred.cc methods/store.cc
 msgid "Failed to set modification time"
 msgstr "无法设置文件的修改日期"
 
@@ -1743,10 +1743,6 @@ msgid ""
 "available:\n"
 msgstr "由于没有公钥，无法验证下列签名：\n"
 
-#: methods/gzip.cc
-msgid "Empty files can't be valid archives"
-msgstr "空文件不能当作有效归档"
-
 #: methods/http.cc
 msgid "Error writing to the file"
 msgstr "写入文件出错"
@@ -1814,6 +1810,12 @@ msgstr "在镜像文件 %s 中未找到所需条目"
 msgid "[Mirror: %s]"
 msgstr "[镜像：%s]"
 
+#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "无法获得 %s 的状态"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "无法为子进程创建 IPC 管道"
@@ -1868,6 +1870,10 @@ msgstr ""
 #: methods/server.cc
 msgid "Internal error"
 msgstr "内部错误"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "空文件不能当作有效归档"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -2104,11 +2110,6 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "无法打开数据库文件 %s：%s"
 
-#: ftparchive/cachedb.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "无法获得 %s 的状态"
-
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
 msgstr "读取 .dsc 文件失败"
@@ -2234,7 +2235,7 @@ msgstr "无法打开 %s"
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc
+#: ftparchive/writer.cc apt-pkg/acquire-item.cc
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "无法读取符号链接 %s"
@@ -2996,6 +2997,10 @@ msgstr "子进程 %s 异常退出"
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "关闭 gzip %s 文件出错"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid "Unexpected end of file"
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
