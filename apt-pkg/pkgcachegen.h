@@ -27,7 +27,7 @@
 #include <vector>
 #include <string>
 #if __cplusplus >= 201103L
-#include <unordered_map>
+#include <unordered_set>
 #endif
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
@@ -48,10 +48,34 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    // Dirty hack for public users that do not use C++11 yet
 #if __cplusplus >= 201103L
-   std::unordered_map<std::string,map_stringitem_t> strMixed;
-   std::unordered_map<std::string,map_stringitem_t> strSections;
-   std::unordered_map<std::string,map_stringitem_t> strPkgNames;
-   std::unordered_map<std::string,map_stringitem_t> strVersions;
+   struct string_pointer {
+      const char *data_;
+      size_t size;
+      pkgCacheGenerator *generator;
+      map_stringitem_t item;
+
+      const char *data() const {
+	 return data_ != nullptr ? data_ : static_cast<char*>(generator->Map.Data()) + item;
+      }
+
+      bool operator ==(string_pointer const &other) const {
+	 return size == other.size && memcmp(data(), other.data(), size) == 0;
+      }
+   };
+   struct hash {
+      uint32_t operator()(string_pointer const &that) const {
+	 uint32_t Hash = 5381;
+	 const char * const end = that.data() + that.size;
+	 for (const char *I = that.data(); I != end; ++I)
+	    Hash = 33 * Hash + tolower_ascii((signed char)*I);
+	 return Hash;
+      }
+   };
+
+   std::unordered_set<string_pointer, hash> strMixed;
+   std::unordered_set<string_pointer, hash> strPkgNames;
+   std::unordered_set<string_pointer, hash> strVersions;
+   std::unordered_set<string_pointer, hash> strSections;
 #endif
 
    friend class pkgCacheListParser;

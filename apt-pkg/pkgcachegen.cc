@@ -1257,23 +1257,21 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
 map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, const char *S,
 						 unsigned int Size)
 {
-   std::string key(S, Size);
-
-   std::unordered_map<std::string,map_stringitem_t> * strings;
+   auto strings = &strMixed;
    switch(type) {
       case MIXED: strings = &strMixed; break;
       case PKGNAME: strings = &strPkgNames; break;
       case VERSIONNUMBER: strings = &strVersions; break;
       case SECTION: strings = &strSections; break;
-      default: _error->Fatal("Unknown enum type used for string storage of '%s'", key.c_str()); return 0;
+      default: _error->Fatal("Unknown enum type used for string storage of '%.*s'", Size, S); return 0;
    }
 
-   std::unordered_map<std::string,map_stringitem_t>::const_iterator const item = strings->find(key);
+   auto const item = strings->find({S, Size, nullptr, 0});
    if (item != strings->end())
-      return item->second;
+      return item->item;
 
    map_stringitem_t const idxString = WriteStringInMap(S,Size);
-   strings->insert(std::make_pair(std::move(key), idxString));
+   strings->insert({nullptr, Size, this, idxString});
    return idxString;
 }
 									/*}}}*/
