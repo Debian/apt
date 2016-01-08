@@ -2032,18 +2032,55 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    }
 
    // calculate the size of all patches we have to get
-   // note that all sizes are uncompressed, while we download compressed files
-   unsigned long long patchesSize = 0;
-   for (std::vector<DiffInfo>::const_iterator cur = available_patches.begin();
-	 cur != available_patches.end(); ++cur)
-      patchesSize += cur->patch_hashes.FileSize();
-   unsigned long long const sizeLimit = ServerSize * _config->FindI("Acquire::PDiffs::SizeLimit", 100);
-   if (sizeLimit > 0 && (sizeLimit/100) < patchesSize)
+   unsigned short const sizeLimitPercent = _config->FindI("Acquire::PDiffs::SizeLimit", 100);
+   if (sizeLimitPercent > 0 && TransactionManager->MetaIndexParser != nullptr)
    {
-      if (Debug)
-	 std::clog << "Need " << patchesSize << " bytes (Limit is " << sizeLimit/100
-	    << ") so fallback to complete download" << std::endl;
-      return false;
+      // compressed case
+      unsigned long long downloadSize = std::accumulate(available_patches.begin(),
+	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
+	    return T + I.download_hashes.FileSize();
+	    });
+      if (downloadSize != 0)
+      {
+	 unsigned long long downloadSizeIdx = 0;
+	 auto const types = VectorizeString(Target.Option(IndexTarget::COMPRESSIONTYPES), ' ');
+	 for (auto const &t : types)
+	 {
+	    std::string MetaKey = Target.MetaKey;
+	    if (t != "uncompressed")
+	       MetaKey += '.' + t;
+	    HashStringList const hsl = GetExpectedHashesFor(MetaKey);
+	    if (unlikely(hsl.usable() == false))
+	       continue;
+	    downloadSizeIdx = hsl.FileSize();
+	    break;
+	 }
+	 unsigned long long const sizeLimit = downloadSizeIdx * sizeLimitPercent;
+	 if ((sizeLimit/100) < downloadSize)
+	 {
+	    if (Debug)
+	       std::clog << "Need " << downloadSize << " compressed bytes (Limit is " << (sizeLimit/100) << ", "
+		  << "original is " << downloadSizeIdx << ") so fallback to complete download" << std::endl;
+	    return false;
+	 }
+      }
+      // uncompressed case
+      downloadSize = std::accumulate(available_patches.begin(),
+	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
+	    return T + I.patch_hashes.FileSize();
+	    });
+      if (downloadSize != 0)
+      {
+	 unsigned long long const downloadSizeIdx = ServerSize;
+	 unsigned long long const sizeLimit = downloadSizeIdx * sizeLimitPercent;
+	 if ((sizeLimit/100) < downloadSize)
+	 {
+	    if (Debug)
+	       std::clog << "Need " << downloadSize << " uncompressed bytes (Limit is " << (sizeLimit/100) << ", "
+		  << "original is " << downloadSizeIdx << ") so fallback to complete download" << std::endl;
+	    return false;
+	 }
+      }
    }
 
    // we have something, queue the diffs

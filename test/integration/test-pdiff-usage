@@ -215,20 +215,24 @@ SHA256-Download:
 	diff -e "${PKGFILE}" "${PKGFILE}-new" > "${PATCHFILE}" || true
 	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
 	PATCHINDEX='aptarchive/Packages.diff/Index'
+	BIGSIZE="$(stat -c%s "$PATCHFILE")"
+	if ! $DOWNLOADHASH; then
+		BIGSIZE="${BIGSIZE}000"
+	fi
 	echo "SHA1-Current: $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA1-History:
  9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
  $(sha1sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
 SHA1-Patches:
  7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
- $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE")000 $(basename "$PATCHFILE")
+ $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $BIGSIZE $(basename "$PATCHFILE")
 SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA256-History:
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
 SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
- $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE")000 $(basename "$PATCHFILE")" > "$PATCHINDEX"
+ $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $BIGSIZE $(basename "$PATCHFILE")" > "$PATCHINDEX"
 	if $DOWNLOADHASH; then
 		echo "SHA1-Download:
  2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
