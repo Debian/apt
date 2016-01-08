@@ -107,6 +107,6 @@ public:
 }
 
 inline bool operator ==(const char *other, APT::StringView that);
-inline bool operator ==(const char *other, APT::StringView that) { return that.compare(other) == 0; }
+inline bool operator ==(const char *other, APT::StringView that) { return that.operator==(other); }
 
 #endif
