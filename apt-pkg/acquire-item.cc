@@ -2103,22 +2103,35 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    // clean the plate
    {
-      std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
-      std::vector<std::string> exts = APT::Configuration::getCompressorExtensions();
-      for (auto const &ext : exts)
-      {
-	 std::string const Partial = PartialFile + ext;
-	 if (FileExists(Partial))
-	    RemoveFile("PDiffs-Bootstrap", Partial);
-      }
       std::string const Final = GetExistingFilename(CurrentPackagesFile);
       if (unlikely(Final.empty())) // because we wouldn't be called in such a case
 	 return false;
+      std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
+      if (FileExists(PartialFile) && RemoveFile("Bootstrap-linking", PartialFile) == false)
+      {
+	 if (Debug)
+	    std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
+	       << " by removing stale " << PartialFile << " failed!" << std::endl;
+	 return false;
+      }
+      for (auto const &ext : APT::Configuration::getCompressorExtensions())
+      {
+	 std::string const Partial = PartialFile + ext;
+	 if (FileExists(Partial) && RemoveFile("Bootstrap-linking", Partial) == false)
+	 {
+	    if (Debug)
+	       std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
+		  << " by removing stale " << Partial << " failed!" << std::endl;
+	    return false;
+	 }
+      }
       std::string const Ext = Final.substr(CurrentPackagesFile.length());
       std::string const Partial = PartialFile + Ext;
       if (symlink(Final.c_str(), Partial.c_str()) != 0)
       {
-	 std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile << " by linking " << Final << " to " << Partial << " failed!" << std::endl;
+	 if (Debug)
+	    std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
+	       << " by linking " << Final << " to " << Partial << " failed!" << std::endl;
 	 return false;
       }
    }

@@ -60,6 +60,9 @@ testrun() {
 " aptcache show apt oldstuff
 	configcompression '.' 'gz'
 
+	# see if the code deals properly with leftover partial files
+	touch rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_Packages
+
 	msgmsg "Testcase: apply with one patch: $*"
 	find aptarchive -name 'Packages*' -type f -delete
 	cp "${PKGFILE}-new" aptarchive/Packages
@@ -208,6 +211,9 @@ SHA256-Download:
 	msgmsg "Testcase: pdiff patch bigger than index itself: $*"
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	# the general testcode checks for leftovers in partial, but as this file
+	# is never touched in this test as it exits earlier its not a leftover…
+	rm -f rootdir/var/lib/apt/lists/partial/localhost:${APTHTTPPORT}_Packages
 	cp "${PKGFILE}-new" aptarchive/Packages
 	compressfile 'aptarchive/Packages'
 	mkdir -p aptarchive/Packages.diff
