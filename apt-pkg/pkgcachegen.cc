@@ -308,8 +308,6 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
    // Find the right version to write the description
    MD5SumValue CurMd5 = List.Description_md5();
-   if (CurMd5.Value().empty() == true && List.Description("").empty() == true)
-      return true;
    std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
@@ -444,8 +442,6 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    /* Record the Description(s) based on their master md5sum */
    MD5SumValue CurMd5 = List.Description_md5();
-   if (CurMd5.Value().empty() == true && List.Description("").empty() == true)
-      return true;
 
    /* Before we add a new description we first search in the group for
       a version with a description of the same MD5 - if so we reuse this
