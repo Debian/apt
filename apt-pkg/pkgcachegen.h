@@ -67,7 +67,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 	 uint32_t Hash = 5381;
 	 const char * const end = that.data() + that.size;
 	 for (const char *I = that.data(); I != end; ++I)
-	    Hash = 33 * Hash + tolower_ascii((signed char)*I);
+	    Hash = 33 * Hash + *I;
 	 return Hash;
       }
    };
