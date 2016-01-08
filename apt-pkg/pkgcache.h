@@ -245,6 +245,16 @@ class pkgCache								/*{{{*/
    APT_HIDDEN PkgIterator FindPkg(APT::StringView Name, APT::StringView Arch);
 #endif
 
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT::StringView ViewString(map_stringitem_t idx) const
+   {
+      char *name = StrP + idx;
+      uint16_t len = *reinterpret_cast<const uint16_t*>(name - sizeof(uint16_t));
+      return APT::StringView(name, len);
+   }
+#endif
+
+
    GrpIterator FindGrp(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name, const std::string &Arch);

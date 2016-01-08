@@ -411,7 +411,7 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 									/*}}}*/
 // DynamicMMap::WriteString - Write a string to the file		/*{{{*/
 // ---------------------------------------------------------------------
-/* Strings are not aligned to anything */
+/* Strings are aligned to 16 bytes */
 unsigned long DynamicMMap::WriteString(const char *String,
 				       unsigned long Len)
 {
@@ -419,12 +419,19 @@ unsigned long DynamicMMap::WriteString(const char *String,
       Len = strlen(String);
 
    _error->PushToStack();
-   unsigned long const Result = RawAllocate(Len+1,0);
+   unsigned long Result = RawAllocate(Len+1+sizeof(uint16_t),sizeof(uint16_t));
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
 
    if (Base == NULL || (Result == 0 && newError))
       return 0;
+
+   if (Len >= std::numeric_limits<uint16_t>::max())
+      abort();
+
+   uint16_t LenToWrite = Len;
+   memcpy((char *)Base + Result, &LenToWrite, sizeof(LenToWrite));
+   Result += + sizeof(LenToWrite);
 
    memcpy((char *)Base + Result,String,Len);
    ((char *)Base)[Result + Len] = 0;

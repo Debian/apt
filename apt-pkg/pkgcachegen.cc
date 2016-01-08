@@ -518,7 +518,8 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
    map_pointer_t *insertAt = &Cache.HeaderP->GrpHashTableP()[Hash];
-   while (*insertAt != 0 && Name.compare(Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
+
+   while (*insertAt != 0 && Name.compare(Cache.ViewString((Cache.GrpP + *insertAt)->Name)) > 0)
       insertAt = &(Cache.GrpP + *insertAt)->Next;
    Grp->Next = *insertAt;
    *insertAt = Group;

@@ -59,7 +59,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    APT_HEADER_SET(MajorVersion, 10);
-   APT_HEADER_SET(MinorVersion, 3);
+   APT_HEADER_SET(MinorVersion, 4);
    APT_HEADER_SET(Dirty, false);
 
    APT_HEADER_SET(HeaderSz, sizeof(pkgCache::Header));
@@ -307,7 +307,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTableP()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		int const cmp = Name.compare(StrP + Grp->Name);
+		int const cmp = Name.compare(ViewString(Grp->Name));
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
 		else if (cmp < 0)
@@ -389,7 +389,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(StringView Arch) const {
 	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->NextPackage) {
-		if (Arch.compare(Owner->StrP + Pkg->Arch) == 0)
+		if (Arch == Owner->ViewString(Pkg->Arch))
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
 			break;
