@@ -95,7 +95,7 @@ msgfail() {
 	if [ $# -gt 0 ] && [ -n "$1" ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	if [ -n "$APT_DEBUG_TESTS" ]; then
-		APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" $SHELL
+		runapt $SHELL
 	fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
@@ -173,7 +173,7 @@ runapt() {
 	sh|aptitude|*/*|command) ;;
 	*) CMD="${BUILDDIRECTORY}/$CMD";;
 	esac
-	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${LIBRARYPATH} "$CMD" "$@"
+	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" "$CMD" "$@"
 }
 aptconfig() { runapt apt-config "$@"; }
 aptcache() { runapt apt-cache "$@"; }
@@ -1842,7 +1842,7 @@ aptautotest() {
 	local TESTCALL="$1"
 	local CMD="$2"
 	local FIRSTOPT="$3"
-	local AUTOTEST="aptautotest_$(echo "${CMD##*/}_${FIRSTOPT}" | tr -d '-')"
+	local AUTOTEST="aptautotest_$(echo "${CMD##*/}_${FIRSTOPT}" | tr -d -c 'A-za-z0-9')"
 	if command -v $AUTOTEST >/dev/null; then
 		shift 3
 		# save and restore the *.output files from other tests
