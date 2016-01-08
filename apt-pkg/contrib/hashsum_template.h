@@ -79,18 +79,15 @@ class HashSumValue
       return Value();
    }
 
-   bool Set(std::string Str)
-   {
-      return Hex2Num(Str,Sum,sizeof(Sum));
-   }
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
    APT_HIDDEN bool Set(APT::StringView Str)
    {
       return Hex2Num(Str,Sum,sizeof(Sum));
    }
-   APT_HIDDEN bool Set(const char *Str)
+#else
+   bool Set(std::string Str)
    {
-      return Hex2Num(APT::StringView(Str),Sum,sizeof(Sum));
+      return Hex2Num(Str,Sum,sizeof(Sum));
    }
 #endif
    inline void Set(unsigned char S[N/8])
