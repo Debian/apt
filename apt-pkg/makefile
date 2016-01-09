@@ -31,7 +31,7 @@ SLIBS+= -llz4
 endif
 APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
-SOURCE = $(wildcard *.cc */*.cc)
-HEADERS = $(addprefix apt-pkg/,$(notdir $(wildcard *.h */*.h)))
+SOURCE = $(sort $(wildcard *.cc */*.cc))
+HEADERS = $(addprefix apt-pkg/,$(notdir $(sort $(wildcard *.h */*.h))))
 
 include $(LIBRARY_H)

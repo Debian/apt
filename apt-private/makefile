@@ -15,7 +15,7 @@ MINOR=0
 SLIBS=$(PTHREADLIB) -lapt-pkg
 CXXFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
 
-SOURCE = $(wildcard *.cc)
-HEADERS = $(addprefix apt-private/,$(wildcard *.h))
+SOURCE = $(sort $(wildcard *.cc))
+HEADERS = $(addprefix apt-private/,$(sort $(wildcard *.h)))
 
 include $(LIBRARY_H)

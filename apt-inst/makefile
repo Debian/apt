@@ -20,7 +20,7 @@ SLIBS=$(PTHREADLIB) -lapt-pkg
 APT_DOMAIN:=libapt-inst$(MAJOR)
 LIBRARYDEPENDS=$(LIB)/libapt-pkg.so
 
-SOURCE = $(wildcard *.cc */*.cc)
-HEADERS = $(addprefix apt-pkg/,$(notdir $(wildcard *.h */*.h)))
+SOURCE = $(sort $(wildcard *.cc */*.cc))
+HEADERS = $(addprefix apt-pkg/,$(notdir $(sort $(wildcard *.h */*.h))))
 
 include $(LIBRARY_H)
