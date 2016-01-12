@@ -150,9 +150,15 @@ bool ServerState::HeaderLine(string Line)
       else
       {
 	 if (Major == 1 && Minor == 0)
+	 {
 	    Persistent = false;
+	 }
 	 else
+	 {
 	    Persistent = true;
+	    if (PipelineAllowed)
+	       Pipeline = true;
+	 }
       }
 
       return true;
@@ -532,6 +538,7 @@ int ServerMethod::Loop()
 	    _error->Discard();
 	    Server->Close();
 	    Server->Pipeline = false;
+	    Server->PipelineAllowed = false;
 	    
 	    if (FailCounter >= 2)
 	    {
@@ -604,6 +611,7 @@ int ServerMethod::Loop()
 			   strprintf(out, _("Automatically disabled %s due to incorrect response from server/proxy. (man 5 apt.conf)"), "Acquire::http::PipelineDepth");
 			   std::cerr << "W: " << out << std::endl;
 			   Server->Pipeline = false;
+			   Server->PipelineAllowed = false;
 			   // we keep the PipelineDepth value so that the rest of the queue can be fixed up as well
 			}
 			Rename(Res.Filename, I->DestFile);

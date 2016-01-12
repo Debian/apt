@@ -51,6 +51,7 @@ struct ServerState
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
    bool Persistent;
+   bool PipelineAllowed;
    std::string Location;
 
    // This is a Persistent attribute of the server itself.
@@ -86,7 +87,7 @@ struct ServerState
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; TotalFileSize = 0; JunkSize = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
-		 State = Header; Persistent = false; Pipeline = true; MaximumSize = 0;};
+		 State = Header; Persistent = false; Pipeline = false; MaximumSize = 0; PipelineAllowed = true;};
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */

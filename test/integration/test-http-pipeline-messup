@@ -8,6 +8,7 @@ setupenvironment
 configarchitecture "i386"
 
 # try a little harder to create a size mismatch
+buildsimplenativepackage 'pkg0' 'all' '1.0' 'stable' "Depends: foo" '' '' '' '' 'none'
 buildsimplenativepackage 'pkga' 'all' '1.0' 'stable' "Depends: foo" '' '' '' '' 'none'
 buildsimplenativepackage 'pkgb' 'all' '1.0' 'stable' "Depends: foo" '' '' '' '' 'none'
 buildsimplenativepackage 'pkgc' 'all' '1.0' 'stable' "Depends: f$(for i in $(seq 0 1000); do printf 'o'; done)" '' '' '' '' 'none'
@@ -43,8 +44,8 @@ done
 echo 'Acquire::http::Pipeline-Depth 10;' > ../rootdir/etc/apt/apt.conf.d/99enable-pipeline
 
 # the output is a bit strange: it looks like it has downloaded pkga 4 times
-testwarning aptget download pkga pkgb pkgc pkgd
-for pkg in 'pkga' 'pkgb' 'pkgc' 'pkgd'; do
+testwarning aptget download pkg0 pkga pkgb pkgc pkgd
+for pkg in 'pkg0' 'pkga' 'pkgb' 'pkgc' 'pkgd'; do
 	testsuccess test -f ${pkg}_1.0_all.deb
 	testsuccess cmp ../incoming/${pkg}_1.0_all.deb ${pkg}_1.0_all.deb
 	rm -f ${pkg}_1.0_all.deb
