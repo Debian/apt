@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+# Cause umask failures
+umask 000
 
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
@@ -52,8 +54,10 @@ testequal "$(readfile Contents-amd64 Contents-all)" aptget indextargets --no-rel
 testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 # lets fake the existence of a compressed Contents file
 touch "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz"
+chmod 644 "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz"
 testequal "$(readfile Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 touch "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz"
+chmod 644 "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz"
 testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
