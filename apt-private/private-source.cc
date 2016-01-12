@@ -959,16 +959,6 @@ bool DoBuildDep(CommandLine &CmdL)
    if (CmdL.FileSize() <= 1 && VolatileCmdL.empty())
       return _error->Error(_("Must specify at least one package to check builddeps for"));
 
-   // Read the source list
-   if (Cache.BuildSourceList() == false)
-      return false;
-   pkgSourceList *List = Cache.GetSourceList();
-
-   // Create the text record parsers
-   pkgSrcRecords SrcRecs(*List);
-   if (_error->PendingError() == true)
-      return false;
-
    bool StripMultiArch;
    std::string hostArch = _config->Find("APT::Get::Host-Architecture");
    if (hostArch.empty() == false)
@@ -1004,6 +994,11 @@ bool DoBuildDep(CommandLine &CmdL)
 	 return false;
    }
 
+   // Read the source list
+   if (Cache.BuildSourceList() == false)
+      return false;
+   pkgSourceList *List = Cache.GetSourceList();
+
    // FIXME: Avoid volatile sources == cmdline assumption
    {
       auto const VolatileSources = List->GetVolatileFiles();
@@ -1029,16 +1024,23 @@ bool DoBuildDep(CommandLine &CmdL)
 	 _error->Error("Implementation error: Volatile sources (%lu) and commandline elements (%lu) do not match!", VolatileSources.size(), VolatileCmdL.size());
    }
 
-   for (const char **I = CmdL.FileList + 1; *I != 0; ++I)
+   if (CmdL.FileList[1] != 0)
    {
-      std::string Src;
-      pkgSrcRecords::Parser * const Last = FindSrc(*I,SrcRecs,Src,Cache);
-      if (Last == nullptr)
-	 return _error->Error(_("Unable to find a source package for %s"), *I);
-
-      auto const BuildDeps = GetBuildDeps(Last, Src.c_str(), StripMultiArch, hostArch);
-      if (InstallBuildDepsLoop(Cache, Src, BuildDeps, StripMultiArch, hostArch) == false)
+      // Create the text record parsers
+      pkgSrcRecords SrcRecs(*List);
+      if (_error->PendingError() == true)
 	 return false;
+      for (const char **I = CmdL.FileList + 1; *I != 0; ++I)
+      {
+	 std::string Src;
+	 pkgSrcRecords::Parser * const Last = FindSrc(*I,SrcRecs,Src,Cache);
+	 if (Last == nullptr)
+	    return _error->Error(_("Unable to find a source package for %s"), *I);
+
+	 auto const BuildDeps = GetBuildDeps(Last, Src.c_str(), StripMultiArch, hostArch);
+	 if (InstallBuildDepsLoop(Cache, Src, BuildDeps, StripMultiArch, hostArch) == false)
+	    return false;
+      }
    }
 
    if (_error->PendingError() || InstallPackages(Cache, false, true) == false)
