@@ -92,7 +92,8 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
       char const * const PkgName = P.Name();
       pkgCache::DescIterator Desc = V.TranslatedDescription();
       std::string LongDesc = "";
-      if (!Desc.end()) {
+      if (Desc.end() == false)
+      {
 	 pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
 	 LongDesc = parser.LongDesc();
       }
