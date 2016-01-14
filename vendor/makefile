@@ -50,6 +50,9 @@ current:
 .PHONY: clean veryclean all binary vendor
 
 clean: clean/current
-
 clean/current: clean/subdirs
+	rm -f current/makefile.auto current
+
+veryclean: veryclean/current
+veryclean/current: veryclean/subdirs
 	rm -f current/makefile.auto current

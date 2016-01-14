@@ -11,7 +11,7 @@ if [ -z "$INFO" ] || [ ! -e "$INFO" ]; then
 fi
 
 getrawfield() {
-	grep --max-count=1 "^<!ENTITY $1 \"" "${2:-$INFO}" | cut -d'"' -f 2
+	awk "/<!ENTITY $1/ {f=NR} f && NR-1==f { print; exit 0 }" RS='"' "${2:-$INFO}"
 }
 
 getfield() {
