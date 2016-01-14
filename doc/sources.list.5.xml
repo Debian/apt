@@ -126,7 +126,7 @@
    archive, <filename>distribution/component</filename>. The
    <literal>distribution</literal> is generally a suite name like
    <literal>stable</literal> or <literal>testing</literal> or a codename like
-   <literal>&stable-codename;</literal> or <literal>&testing-codename;</literal>
+   <literal>&debian-stable-codename;</literal> or <literal>&debian-testing-codename;</literal>
    while component is one of <literal>main</literal>, <literal>contrib</literal> or
    <literal>non-free</literal>. The
    <literal>deb-src</literal> type references a Debian distribution's source
@@ -429,16 +429,16 @@ Components: main contrib non-free</literallayout>
 
    <para>The first line gets package information for the architectures in <literal>APT::Architectures</literal>
    while the second always retrieves <literal>amd64</literal> and <literal>armel</literal>.</para>
-   <literallayout>deb http://httpredir.debian.org/debian &stable-codename; main
-deb [ arch=amd64,armel ] http://httpredir.debian.org/debian &stable-codename; main</literallayout>
+   <literallayout>deb http://httpredir.debian.org/debian &debian-stable-codename; main
+deb [ arch=amd64,armel ] http://httpredir.debian.org/debian &debian-stable-codename; main</literallayout>
    <literallayout>Types: deb
 URIs: http://httpredir.debian.org/debian
-Suites: &stable-codename;
+Suites: &debian-stable-codename;
 Components: main
 
 Types: deb
 URIs: http://httpredir.debian.org/debian
-Suites: &stable-codename;
+Suites: &debian-stable-codename;
 Components: main
 Architectures: amd64 armel
 </literallayout>
@@ -452,11 +452,11 @@ Suites: hamm
 Components: main</literallayout>
 
    <para>Uses FTP to access the archive at ftp.debian.org, under the debian
-   directory, and uses only the &stable-codename;/contrib area.</para>
-   <literallayout>deb ftp://ftp.debian.org/debian &stable-codename; contrib</literallayout>
+   directory, and uses only the &debian-stable-codename;/contrib area.</para>
+   <literallayout>deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib</literallayout>
    <literallayout>Types: deb
 URIs: ftp://ftp.debian.org/debian
-Suites: &stable-codename;
+Suites: &debian-stable-codename;
 Components: contrib</literallayout>
 
    <para>Uses FTP to access the archive at ftp.debian.org, under the debian

@@ -21,10 +21,7 @@ getfield() {
 }
 
 case "$1" in
-debian-stable-codename|debian-oldstable-codename|debian-testing-codename)
-	getrawfield "${1#*-}" "$VERBATIM"
-	;;
-ubuntu-codename)
+debian-stable-codename|debian-oldstable-codename|debian-testing-codename|ubuntu-codename)
 	getrawfield "$1" "$VERBATIM"
 	;;
 keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
