@@ -255,7 +255,9 @@ configarchitecture 'amd64' 'i386'
 insertinstalledpackage 'foo' 'armel' '1' 'Multi-Arch: allowed'
 insertinstalledpackage 'coolfoo' 'armel' '1' 'Multi-Arch:allowed
 Provides: coolbar'
+insertinstalledpackage 'bar-needer' 'armel' '1.0' 'Depends: coolbar:any'
 
+testsuccess aptget check
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
@@ -293,7 +295,7 @@ The following packages will be REMOVED:
 The following NEW packages will be installed:
   coolfoo needscoolfoover0
 0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
-Remv coolfoo:armel [1]
+Remv coolfoo:armel [1] [bar-needer:armel ]
 Inst coolfoo (1 unstable [amd64])
 Inst needscoolfoover0 (1 unstable [amd64])
 Conf coolfoo (1 unstable [amd64])

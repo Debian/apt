@@ -250,7 +250,9 @@ msgmsg 'switch to multi-arch with barbarian architecture'
 insertinstalledpackage 'foo' 'armhf' '1.0' 'Multi-Arch: foreign'
 insertinstalledpackage 'bar' 'armhf' '1.0' 'Provides: bar-provider
 Multi-Arch: foreign'
+insertinstalledpackage 'bar-needer' 'armhf' '1.0' 'Depends: bar-provider'
 
+testsuccess aptget check
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
@@ -274,8 +276,12 @@ The following packages will be REMOVED:
 The following NEW packages will be installed:
   bar cool-bar
 0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
-Remv bar:armhf [1.0]
+Remv bar:armhf [1.0] [bar-needer:armhf ]
 Inst bar (1.0 unstable [amd64])
 Inst cool-bar (1.0 unstable [amd64])
 Conf bar (1.0 unstable [amd64])
 Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar -s
+
+# a barbarian doesn't satisfy another either
+insertinstalledpackage 'bar-needer2' 's390x' '1.0' 'Depends: bar-provider'
+testfailure aptget check

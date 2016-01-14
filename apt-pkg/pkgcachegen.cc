@@ -572,8 +572,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    }
    else // Group the Packages together
    {
-      // but first get implicit provides done
-      if (APT::Configuration::checkArchitecture(Pkg.Arch()) == true)
+      // if sibling is provided by another package, this one is too
       {
 	 pkgCache::PkgIterator const M = Grp.FindPreferredPkg(false); // native or any foreign pkg will do
 	 if (M.end() == false) {
@@ -588,22 +587,31 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
 	       if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed ||
 	           ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign &&
 			(Prv->Flags & pkgCache::Flag::MultiArchImplicit) == 0))
+	       {
+		  if (APT::Configuration::checkArchitecture(Ver.ParentPkg().Arch()) == false)
+		     continue;
 		  if (NewProvides(Ver, Pkg, Prv->ProvideVersion, Prv->Flags) == false)
 		     return false;
+	       }
 	    }
 	 }
-
-
+      }
+      // let M-A:foreign package siblings provide this package
+      {
 	 pkgCache::PkgIterator P;
 	 pkgCache::VerIterator Ver;
 	 Dynamic<pkgCache::PkgIterator> DynP(P);
 	 Dynamic<pkgCache::VerIterator> DynVer(Ver);
 
 	 for (P = Grp.PackageList(); P.end() == false;  P = Grp.NextPkg(P))
+	 {
+	    if (APT::Configuration::checkArchitecture(P.Arch()) == false)
+	       continue;
 	    for (Ver = P.VersionList(); Ver.end() == false; ++Ver)
 	       if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
 		  if (NewProvides(Ver, Pkg, Ver->VerStr, pkgCache::Flag::MultiArchImplicit) == false)
 		     return false;
+	 }
       }
       // and negative dependencies, don't forget negative dependencies
       {

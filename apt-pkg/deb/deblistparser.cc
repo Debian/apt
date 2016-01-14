@@ -907,8 +907,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (APT::Configuration::checkArchitecture(Arch))
+	    {
 	       if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
 		  return false;
+	    }
+	    else if (NewProvides(Ver, Package, Arch, Version, 0) == false)
+	       return false;
 	 } else {
 	    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
 	    {
