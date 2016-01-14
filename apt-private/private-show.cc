@@ -299,9 +299,9 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    return true;
 }
 									/*}}}*/
-// XXX: move to hashes.h: HashString::FromString() ?			/*{{{*/
-std::string Sha1FromString(std::string input)
+static std::string Sha1FromString(std::string const &input)		/*{{{*/
 {
+   // XXX: move to hashes.h: HashString::FromString() ?
    SHA1Summation sha1;
    sha1.Add(input.c_str(), input.length());
    return sha1.Result().Value();
