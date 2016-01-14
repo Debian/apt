@@ -299,6 +299,14 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    return true;
 }
 									/*}}}*/
+// XXX: move to hashes.h: HashString::FromString() ?			/*{{{*/
+std::string Sha1FromString(std::string input)
+{
+   SHA1Summation sha1;
+   sha1.Add(input.c_str(), input.length());
+   return sha1.Result().Value();
+}
+									/*}}}*/
 bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
@@ -312,6 +320,8 @@ bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
       return false;
 
    bool found = false;
+   // avoid showing identical records
+   std::set<std::string> seen;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       SrcRecs.Restart();
@@ -323,9 +333,14 @@ bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
 	 if (_config->FindB("APT::Cache::Only-Source", false) == true)
 	    if (Parse->Package() != *I)
 	       continue;
-	 std::cout << Parse->AsStr() << std::endl;;
-	 found = true;
-	 found_this = true;
+         std::string sha1str = Sha1FromString(Parse->AsStr());
+         if (std::find(seen.begin(), seen.end(), sha1str) == seen.end())
+         {
+            std::cout << Parse->AsStr() << std::endl;;
+            found = true;
+            found_this = true;
+            seen.insert(sha1str);
+         }
       }
       if (found_this == false) {
 	 _error->Warning(_("Unable to locate package %s"),*I);

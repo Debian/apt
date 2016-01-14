@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386' 
+
+# foo is identical, show it only once in showsrc
+insertpackage "unstable" "foo" "i386" "1.0"
+insertpackage "testing" "foo" "i386" "1.0"
+insertsource "unstable" "foo" "i386" "1.0"
+insertsource "testing" "foo" "i386" "1.0"
+
+# bar is different, show twice
+insertsource "unstable" "bar" "i386" "1.0"
+insertsource "testing" "bar" "i386" "2.0"
+
+setupaptarchive
+
+# ensure "foo" is not shown twice
+aptcache showsrc foo bar|grep ^Package: > out.txt
+testequal "Package: foo
+Package: bar
+Package: bar" cat out.txt
