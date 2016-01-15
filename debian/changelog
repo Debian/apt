@@ -1,3 +1,30 @@
+apt (1.2) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Do not break apt-file (<< 3.0~exp1~), 2.X works fine
+  * Version the build-depends on liblz4-dev to >= 0.0~r126
+  * search: Handle packages without description (Closes: #810622)
+  * Only enable pipelining if server is HTTP/1.1 (Closes: #810796)
+
+  [ Mattia Rizzolo ]
+  * Sort the list of sources to be built and linked (Closes: #810509)
+
+  [ Michael Vogt ]
+  * Do not show multiple identical apt-cache showsrc entries (Closes: #734922)
+
+  [ David Kalnischkies ]
+  * evaluate sourceslist-list-format entity in vendors sources.list.
+    Thanks to Niels Thykier for reporting on IRC
+  * update symbols file
+  * fix M-A:foreign provides creation for unknown archs
+  * revert file-hash based action-merging in acquire (Closes: 810046)
+  * return correct position in APT::StringView::(r)find
+
+  [ Zhou Mo ]
+  * po: update simplified chinese programs translation
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 15 Jan 2016 19:52:19 +0100
+
 apt (1.2~exp1) experimental; urgency=medium
 
   [ Beatrice Torracca ]
