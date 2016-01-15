@@ -27,6 +27,10 @@ class StringView {
     const char *data_;
     size_t size_;
 
+    // without this little stunt the "char const *" overload is always preferred
+    // over char[], but if we got a char[] we can deduct the length at compile time
+    #define APT_T_IS_CHARPOINTER template<class T, typename std::enable_if<std::is_pointer<T>{} && !std::is_array<T>{}>::type* = nullptr>
+
 public:
     static constexpr size_t npos = static_cast<size_t>(-1);
     static_assert(APT::StringView::npos == std::string::npos, "npos values are different");
@@ -35,9 +39,10 @@ public:
     constexpr StringView() : data_(""), size_(0) {}
     constexpr StringView(const char *data, size_t size) : data_(data), size_(size) {}
 
-    StringView(const char *data) : data_(data), size_(strlen(data)) {}
-    StringView(std::string const & str): data_(str.data()), size_(str.size()) {}
+    template<size_t N> constexpr StringView(char const (&data)[N]) : StringView(data, N-1) {}
+    APT_T_IS_CHARPOINTER StringView(T data) : data_(data), size_(strlen(data)) {}
 
+    StringView(std::string const & str): data_(str.data()), size_(str.size()) {}
 
     /* Viewers */
     constexpr StringView substr(size_t pos, size_t n = npos) const {
@@ -114,7 +119,8 @@ public:
 
 }
 
-inline bool operator ==(const char *other, APT::StringView that);
-inline bool operator ==(const char *other, APT::StringView that) { return that.operator==(other); }
+template<size_t N> inline bool operator ==(char const (&other)[N], APT::StringView that) { return that.operator==(other); }
+APT_T_IS_CHARPOINTER inline bool operator ==(T other, APT::StringView that) { return that.operator==(other); }
 
+#undef APT_T_IS_CHARPOINTER
 #endif
