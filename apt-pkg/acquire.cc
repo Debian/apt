@@ -839,9 +839,8 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
    QItem **I = &Items;
    // move to the end of the queue and check for duplicates here
-   HashStringList const hsl = Item.Owner->GetExpectedHashes();
    for (; *I != 0; I = &(*I)->Next)
-      if (Item.URI == (*I)->URI || hsl == (*I)->Owner->GetExpectedHashes())
+      if (Item.URI == (*I)->URI)
       {
 	 if (_config->FindB("Debug::pkgAcquire::Worker",false) == true)
 	    std::cerr << " @ Queue: Action combined for " << Item.URI << " and " << (*I)->URI << std::endl;
