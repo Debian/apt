@@ -42,7 +42,7 @@ static const debListParser::WordList PrioList[] = {
    {"standard",pkgCache::State::Standard},
    {"optional",pkgCache::State::Optional},
    {"extra",pkgCache::State::Extra},
-   {NULL, 0}};
+   {"", 0}};
 
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -284,10 +284,10 @@ std::vector<std::string> debListParser::AvailableDescriptionLanguages()
  */
 MD5SumValue debListParser::Description_md5()
 {
-   auto const value = Section.Find("Description-md5");
+   StringView const value = Section.Find("Description-md5");
    if (value.empty() == true)
    {
-      StringView desc = Description(StringView("", 0));
+      StringView const desc = Description(StringView());
       if (desc == "\n")
 	 return MD5SumValue();
 
@@ -423,7 +423,7 @@ bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"hold",pkgCache::State::Hold},
                           {"deinstall",pkgCache::State::DeInstall},
                           {"purge",pkgCache::State::Purge},
-                          {NULL, 0}};
+                          {"", 0}};
    if (GrabWord(StringView(Start,I-Start),WantList,Pkg->SelectedState) == false)
       return _error->Error("Malformed 1st word in the Status line");
 
@@ -439,7 +439,7 @@ bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"reinstreq",pkgCache::State::ReInstReq},
                           {"hold",pkgCache::State::HoldInst},
                           {"hold-reinstreq",pkgCache::State::HoldReInstReq},
-                          {NULL, 0}};
+                          {"", 0}};
    if (GrabWord(StringView(Start,I-Start),FlagList,Pkg->InstState) == false)
       return _error->Error("Malformed 2nd word in the Status line");
 
@@ -459,7 +459,7 @@ bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                             {"triggers-awaited",pkgCache::State::TriggersAwaited},
                             {"triggers-pending",pkgCache::State::TriggersPending},
                             {"installed",pkgCache::State::Installed},
-                            {NULL, 0}};
+                            {"", 0}};
    if (GrabWord(StringView(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
 
@@ -967,12 +967,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 // ListParser::GrabWord - Matches a word and returns			/*{{{*/
 // ---------------------------------------------------------------------
 /* Looks for a word in a list of words - for ParseStatus */
-bool debListParser::GrabWord(StringView Word,const WordList *List,unsigned char &Out)
+bool debListParser::GrabWord(StringView Word, WordList const *List, unsigned char &Out)
 {
-   for (unsigned int C = 0; List[C].Str != 0; C++)
+   for (unsigned int C = 0; List[C].Str.empty() == false; C++)
    {
-      if (Word.length() == strlen(List[C].Str) &&
-	  strncasecmp(Word.data(),List[C].Str,Word.length()) == 0)
+      if (Word.length() == List[C].Str.length() &&
+	  strncasecmp(Word.data(), List[C].Str.data(), Word.length()) == 0)
       {
 	 Out = List[C].Val;
 	 return true;

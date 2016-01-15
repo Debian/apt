@@ -33,12 +33,14 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 {
    public:
 
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
    // Parser Helper
    struct WordList
    {
-      const char *Str;
+      APT::StringView Str;
       unsigned char Val;
    };
+#endif
 
    private:
    /** \brief dpointer placeholder (for later in case we need it) */
