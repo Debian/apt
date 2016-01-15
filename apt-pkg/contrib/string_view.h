@@ -29,6 +29,7 @@ class StringView {
 
 public:
     static constexpr size_t npos = static_cast<size_t>(-1);
+    static_assert(APT::StringView::npos == std::string::npos, "npos values are different");
 
     /* Constructors */
     constexpr StringView() : data_(""), size_(0) {}
@@ -43,10 +44,15 @@ public:
         return StringView(data_ + pos, n > (size_ - pos) ? (size_ - pos) : n);
     }
 
-    size_t find(int c, size_t pos=0) const {
-        if (pos != 0)
-            return substr(pos).find(c);
-
+    size_t find(int c, size_t pos) const {
+       if (pos == 0)
+	  return find(c);
+       size_t const found = substr(pos).find(c);
+       if (found == npos)
+	  return npos;
+       return pos + found;
+    }
+    size_t find(int c) const {
         const char *found = static_cast<const char*>(memchr(data_, c, size_));
 
         if (found == NULL)
@@ -55,10 +61,12 @@ public:
         return found - data_;
     }
 
-    size_t rfind(int c, size_t pos=npos) const {
-        if (pos != npos)
-            return substr(0, pos).rfind(c);
-
+    size_t rfind(int c, size_t pos) const {
+       if (pos == npos)
+	  return rfind(c);
+       return APT::StringView(data_, pos).rfind(c);
+    }
+    size_t rfind(int c) const {
         const char *found = static_cast<const char*>(memrchr(data_, c, size_));
 
         if (found == NULL)
