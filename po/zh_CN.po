@@ -4,14 +4,14 @@
 # Tchaikov <tchaikov@sjtu.org>, 2005, 2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
-# Zhou Mo <cdluminate@gmail.com>, 2014, 2015.
+# Zhou Mo <cdluminate@gmail.com>, 2014, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2016-01-08 21:45+0100\n"
-"PO-Revision-Date: 2014-12-04 04:42+0000\n"
+"PO-Revision-Date: 2016-01-15 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -50,26 +50,26 @@ msgstr "错误:%lu %s"
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "下载 %sB，耗时 %s (%sB/s)\n"
+msgstr "已下载 %sB，耗时 %s (%sB/s)\n"
 
 #: apt-private/acqprogress.cc
 msgid " [Working]"
 msgstr " [执行中]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press [Enter]\n"
 msgstr ""
 "更换介质：请把标有\n"
-"“%s”\n"
-"的盘片插入驱动器“%s”再按回车键\n"
+" “%s”\n"
+"的盘片插入驱动器“%s”再按「回车」键\n"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
-msgstr "正在更正依赖关系..."
+msgstr "正在修复依赖关系..."
 
 #: apt-private/private-cachefile.cc
 msgid " failed."
@@ -77,11 +77,11 @@ msgstr " 失败。"
 
 #: apt-private/private-cachefile.cc
 msgid "Unable to correct dependencies"
-msgstr "无法更正依赖关系"
+msgstr "无法修复依赖关系"
 
 #: apt-private/private-cachefile.cc
 msgid "Unable to minimize the upgrade set"
-msgstr "无法最小化要升级的软件包集合"
+msgstr "无法最小化待升级软件包集合"
 
 #: apt-private/private-cachefile.cc
 msgid " Done"
@@ -102,35 +102,34 @@ msgstr "正在排序"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "注意，为任务 %2$s 选中了 %1$s\n"
+msgstr "注意，根据任务 '%2$s' 选中了 '%1$s'\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "注意，根据正则表达式 %2$s 选中了 %1$s\n"
+msgstr "注意，根据Glob '%2$s' 选中了 '%1$s'\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "注意，根据正则表达式 %2$s 选中了 %1$s\n"
+msgstr "注意，根据正则表达式 '%2$s' 选中了 '%1$s'\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
-msgstr "软件包 %s 是一个由下面的软件包提供的虚拟软件包：\n"
+msgstr "虚拟软件包 %s 由下面的软件包提供：\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
 msgstr "[已安装]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
-msgstr " [无候选版本]"
+msgstr " [无候选]"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
-msgstr "请您明确地选择一个来进行安装。"
+msgstr "请您明确地选择安装其中一个。"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -139,48 +138,48 @@ msgid ""
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"现在没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
+"没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
 "这可能意味着这个缺失的软件包可能已被废弃，\n"
 "或者只能在其他发布源中找到\n"
 
 #: apt-private/private-cacheset.cc
 msgid "However the following packages replace it:"
-msgstr "可是下列软件包取代了它："
+msgstr "然而下列软件包会取代它："
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "软件包 %s 没有可供安装的候选者"
+msgstr "软件包 %s 没有可安装候选"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "类似 %s 的虚拟软件包可以卸载\n"
+msgstr "类似 '%s' 的虚拟软件包「不」可以卸载\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "软件包 %s 还未安装，因而不会被卸载。您的意思是 ‘%s’ 吗？\n"
+msgstr "软件包 %s 未安装，所以不会被卸载。您的意思是 ‘%s’ 吗？\n"
 
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "软件包 %s 还未安装，因而不会被卸载\n"
+msgstr "软件包 %s 未安装，所以不会被卸载\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "注意，选取 %s 而非 %s\n"
+msgstr "注意，选中 '%s' 而非 '%s'\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "常用命令："
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "参见 %s 以获取更多关于可用命令的信息。"
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -189,6 +188,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"程序配置选项及语法都已经在 apt.conf(5) 中阐明。\n"
+"欲知如何配置软件源，请参阅 sources.list(5)。\n"
+"软件包及其版本偏好可以通过 apt_preferences(5) 来设置。\n"
+"关于安全方面的细节可以参考 apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -205,11 +208,11 @@ msgstr "没有发现匹配的软件包"
 
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "【警告】：下列软件包不能通过验证！"
+msgstr "【警告】：下列软件包不能通过认证！"
 
 #: apt-private/private-download.cc
 msgid "Authentication warning overridden.\n"
-msgstr "忽略了认证警告。\n"
+msgstr "已忽略认证警告。\n"
 
 #: apt-private/private-download.cc
 msgid "Some packages could not be authenticated"
@@ -217,25 +220,27 @@ msgstr "有些软件包不能通过验证"
 
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
-msgstr "不经验证就安装这些软件包吗？"
+msgstr "没有验证的情况下就安装这些软件包吗？"
 
 #: apt-private/private-download.cc apt-private/private-install.cc
 msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes 已经被废弃，请使用以 --allow 开头的选项来代替。"
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes"
+msgstr ""
+"存在未认证的软件包同时使用了 -y 选项，然而未搭配 "
+" --allow-unauthenticated"
 
 #: apt-private/private-download.cc
 #, c-format
 msgid "Failed to fetch %s  %s\n"
-msgstr "无法下载 %s  %s\n"
+msgstr "下载 %s  %s 失败\n"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -253,33 +258,34 @@ msgstr "无法锁定下载目录"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "内部错误，InstallPackages 被用在了无法安装的软件包上！"
+msgstr "内部错误，InstallPackages 被用在了损坏的软件包上！"
 
 #: apt-private/private-install.cc
 msgid "Packages need to be removed but remove is disabled."
-msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止。"
+msgstr "有软件包需要被卸载，但是卸载被设置为禁止。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes"
+msgstr ""
+"关键软件包被移除同时使用了 -y 选项，但是没有搭配"
+" --allow-remove-essential。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes"
+msgstr "降级软件包同时使用了 -y 选项，但是没有用 --allow-downgrades."
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"在更改保留软件包的同时使用了 -y 选项，但没有搭配 --allow-change-held-packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
-msgstr "内部错误，Ordering 未能完成"
+msgstr "内部错误，排序未完成"
 
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
@@ -290,21 +296,21 @@ msgstr "怪了……文件大小不符，请发信给 apt@packages.debian.org �
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "需要下载 %sB/%sB 的软件包。\n"
+msgstr "需要下载 %sB/%sB 的归档。\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "需要下载 %sB 的软件包。\n"
+msgstr "需要下载 %sB 的归档。\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
+msgstr "解压缩后会消耗 %sB 的额外空间。\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -315,7 +321,7 @@ msgstr "解压缩后将会空出 %sB 的空间。\n"
 
 #: apt-private/private-install.cc
 msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "虽然您指定了仅执行常规操作，但这不是个常规操作。"
+msgstr "虽然您指定了仅执行常规操作，但这并不是常规操作。"
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
@@ -330,13 +336,13 @@ msgid ""
 "To continue type in the phrase '%s'\n"
 " ?] "
 msgstr ""
-"您的操作会导致潜在的危害。\n"
-"若还想继续的话，就输入下面的短句“%s”\n"
+"您的操作有潜在的危害性。\n"
+"若要继续，请输入下面的短句“%s”\n"
 " ?] "
 
 #: apt-private/private-install.cc
 msgid "Abort."
-msgstr "中止执行。"
+msgstr "中止。"
 
 #: apt-private/private-install.cc
 msgid "Do you want to continue?"
@@ -344,27 +350,27 @@ msgstr "您希望继续执行吗？"
 
 #: apt-private/private-install.cc
 msgid "Some files failed to download"
-msgstr "有一些文件无法下载"
+msgstr "有一些文件下载失败"
 
 #: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
-msgstr "下载完毕，目前是“仅下载”模式"
+msgstr "于“仅下载”模式中下载完毕"
 
 #: apt-private/private-install.cc
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"有几个软件包无法下载，您可以运行 apt-get update 或者加上 --fix-missing 的选项"
+"有几个软件包无法下载，要不运行 apt-get update 或者加上 --fix-missing 的选项"
 "再试试？"
 
 #: apt-private/private-install.cc
 msgid "--fix-missing and media swapping is not currently supported"
-msgstr "目前还不支持 --fix-missing 和介质交换"
+msgstr "目前不支持 --fix-missing 和介质交换"
 
 #: apt-private/private-install.cc
 msgid "Unable to correct missing packages."
-msgstr "无法更正缺少的软件包。"
+msgstr "无法修复缺失的软件包。"
 
 #: apt-private/private-install.cc
 msgid "Aborting install."
@@ -741,7 +747,7 @@ msgstr "(没有找到)"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s ，其优先级为 %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -937,7 +943,7 @@ msgstr ""
 #: apt-private/private-source.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "注意，正使用 '%s' 目录下载编译依赖\n"
 
 #: apt-private/private-source.cc
 #, fuzzy, c-format
@@ -998,7 +1004,7 @@ msgstr "  普通软件包："
 
 #: cmdline/apt-cache.cc
 msgid "  Pure virtual packages: "
-msgstr "  完全虚拟软件包："
+msgstr "  纯虚拟软件包："
 
 #: cmdline/apt-cache.cc
 msgid "  Single virtual packages: "
@@ -1105,7 +1111,7 @@ msgstr "请把盘片插入驱动器再按回车键"
 #: cmdline/apt-cdrom.cc
 #, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "无法将 %s 挂载到 %s"
+msgstr "无法将 ‘%s’ 挂载到 ‘%s’"
 
 #: cmdline/apt-cdrom.cc
 msgid ""
@@ -1149,11 +1155,11 @@ msgstr ""
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "通过shell求值来获取设置值"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "显示活动的设置选项"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1264,7 +1270,7 @@ msgstr "需要一个 URL 作为参数"
 
 #: cmdline/apt-helper.cc
 msgid "Must specify at least one pair url/filename"
-msgstr "必须指定至少一对URL或者文件名"
+msgstr "必须指定至少一对URL或文件名"
 
 #: cmdline/apt-helper.cc
 msgid "Download Failed"
@@ -1273,7 +1279,7 @@ msgstr "下载失败"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec 失败，因为 %s"
 
 #: cmdline/apt-helper.cc
 #, fuzzy
@@ -1296,11 +1302,11 @@ msgstr "将 URI 指定的文件下载到目标路径"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "查阅一个 SRV 记录 (如： _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "自动解压并连接文件"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -1348,17 +1354,17 @@ msgstr "取消保留 %s 的设置。\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "选中 %s 以待彻底卸载。\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "选中 %s 以待卸载。\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "选中 %s 以待安装。\n"
 
 #: cmdline/apt-mark.cc
 #, fuzzy
@@ -1464,7 +1470,7 @@ msgid ""
 "Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
 "cannot be used to add new CD-ROMs"
 msgstr ""
-"请使用 apt-cdrom，通过它就可以让 APT 能识别该盘片。apt-get upgdate 不能被用来"
+"请使用 apt-cdrom，通过它可以让 APT 识别该盘片。apt-get upgdate 不能被用来"
 "加入新的盘片。"
 
 #: methods/cdrom.cc
@@ -1474,7 +1480,7 @@ msgstr "错误的 CD-ROM"
 #: methods/cdrom.cc
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "无法卸载现在挂载于 %s 的 CD-ROM，它可能正在使用中。"
+msgstr "无法卸载挂载于 %s 的 CD-ROM，它可能正被使用。"
 
 #: methods/cdrom.cc
 msgid "Disk not found."
@@ -1482,7 +1488,7 @@ msgstr "找不到盘片。"
 
 #: methods/cdrom.cc methods/file.cc methods/rsh.cc
 msgid "File not found"
-msgstr "无法找到该文件"
+msgstr "无法找到文件"
 
 #: methods/connect.cc
 #, c-format
@@ -1560,7 +1566,7 @@ msgstr "无法设置文件的修改日期"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
-msgstr "无效的 URI，本地的 URI 不能以 // 开头"
+msgstr "无效的 URI，本地 URI 不能以 // 开头"
 
 #. Login must be before getpeername otherwise dante won't work.
 #: methods/ftp.cc
@@ -1637,7 +1643,7 @@ msgstr "无法创建套接字"
 
 #: methods/ftp.cc
 msgid "Could not connect data socket, connection timed out"
-msgstr "无法连接上数据套接字，连接超时"
+msgstr "无法连接数据套接字，连接超时"
 
 #: methods/ftp.cc
 msgid "Could not connect passive socket."
@@ -1671,7 +1677,7 @@ msgstr "无法识别的地址族 %u (AF_*)"
 #: methods/ftp.cc
 #, c-format
 msgid "EPRT failed, server said: %s"
-msgstr "EPRT 指令出错，服务器响应信息为：%s"
+msgstr "EPRT 指令失败，服务器响应为：%s"
 
 #: methods/ftp.cc
 msgid "Data socket connect timed out"
@@ -1688,7 +1694,7 @@ msgstr "把文件加入哈希表时出错"
 #: methods/ftp.cc
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "无法获取文件，服务器响应信息为“%s”"
+msgstr "无法获取文件，服务器响应为“%s”"
 
 #: methods/ftp.cc methods/rsh.cc
 msgid "Data socket timed out"
@@ -1697,7 +1703,7 @@ msgstr "数据套接字超时"
 #: methods/ftp.cc
 #, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "数据传送出错，服务器响应信息为“%s”"
+msgstr "数据传送出错，服务器响应为“%s”"
 
 #. Get the files information
 #: methods/ftp.cc
@@ -1866,6 +1872,7 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"由于服务器或代理的响应错误，因此自动禁止 %s。（参见 man 5 apt.conf）"
 
 #: methods/server.cc
 msgid "Internal error"
@@ -1873,7 +1880,7 @@ msgstr "内部错误"
 
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
-msgstr "空文件不能当作有效归档"
+msgstr "空文件不是有效归档"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -1891,7 +1898,7 @@ msgstr "您想要删除之前下载的所有 .deb 文件吗？"
 
 #: dselect/install:102
 msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "在解包时发生了一些错误。已经安装的软件包"
+msgstr "在解压时发生了一些错误。已经安装的软件包"
 
 #: dselect/install:103
 msgid "will be configured. This may result in duplicate errors"
@@ -2349,7 +2356,7 @@ msgstr "路径名 %s 太长"
 #: apt-inst/extract.cc
 #, c-format
 msgid "Unpacking %s more than once"
-msgstr "%s 被解包了不只一次"
+msgstr "%s 被解压了不只一次"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -4052,7 +4059,7 @@ msgstr "正在对升级进行计算"
 #~ "Could not perform immediate configuration on already unpacked '%s'. "
 #~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
 #~ msgstr ""
-#~ "无法立即对已经解包的 %s 进行配置。请查看 man 5 apt.conf 中的 APT::"
+#~ "无法立即对已经解压的 %s 进行配置。请查看 man 5 apt.conf 中的 APT::"
 #~ "Immediate-Configure。"
 
 #~ msgid "Error occurred while processing %s (NewPackage)"
