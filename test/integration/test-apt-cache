@@ -120,9 +120,12 @@ bar
   Depends: bar
   Breaks: foo
   Replaces: foo
+  Breaks: <foo:i386>
+  Replaces: <foo:i386>
 <foobar>
 <cool>
-<cooler>' aptcache depends foo --recurse --implicit
+<cooler>
+<foo:i386>' aptcache depends foo --recurse --implicit
 testsuccessequal 'foo
   Depends: bar
 bar
@@ -132,7 +135,9 @@ testsuccessequal 'foo
   Depends: bar
 bar
   Depends: bar
-  Replaces: foo' aptcache depends foo --recurse --important --replaces --implicit
+  Replaces: foo
+  Replaces: <foo:i386>
+<foo:i386>' aptcache depends foo --recurse --important --replaces --implicit
 testsuccessequal 'bar
   Depends: bar
   Breaks: foo
@@ -140,7 +145,9 @@ testsuccessequal 'bar
 testsuccessequal 'bar
   Depends: bar
   Breaks: foo
-  Replaces: foo' aptcache depends bar --implicit
+  Replaces: foo
+  Breaks: <foo:i386>
+  Replaces: <foo:i386>' aptcache depends bar --implicit
 
 testsuccessequal 'specific
   Depends: <bar:i386>

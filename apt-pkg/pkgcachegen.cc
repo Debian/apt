@@ -660,31 +660,44 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    if (Arch == "any")
    {
       size_t const found = Name.find(':');
-      StringView const NameA = Name.substr(0, found);
       StringView ArchA = Name.substr(found + 1);
-      pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
-      if (PkgA.end() == false)
+      if (ArchA != "any")
       {
 	 // ArchA is used inside the loop which might remap (NameA is not used)
 	 Dynamic<StringView> DynArchA(ArchA);
+	 StringView NameA = Name.substr(0, found);
+	 pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
 	 Dynamic<pkgCache::PkgIterator> DynPkgA(PkgA);
-	 pkgCache::PrvIterator Prv = PkgA.ProvidesList();
-	 for (; Prv.end() == false; ++Prv)
+	 if (PkgA.end())
 	 {
-	    if (Prv.IsMultiArchImplicit())
-	       continue;
-	    pkgCache::VerIterator V = Prv.OwnerVer();
-	    if (ArchA != V.ParentPkg().Arch())
-	       continue;
-	    if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+	    Dynamic<StringView> DynNameA(NameA);
+	    if (NewPackage(PkgA, NameA, ArchA) == false)
 	       return false;
 	 }
-	 pkgCache::VerIterator V = PkgA.VersionList();
-	 Dynamic<pkgCache::VerIterator> DynV(V);
-	 for (; V.end() == false; ++V)
+	 if (unlikely(PkgA.end()))
+	    return _error->Fatal("NewPackage was successful for %s:%s,"
+		  "but the package doesn't exist anyhow!",
+		  NameA.to_string().c_str(), ArchA.to_string().c_str());
+	 else
 	 {
-	    if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
-	       return false;
+	    pkgCache::PrvIterator Prv = PkgA.ProvidesList();
+	    for (; Prv.end() == false; ++Prv)
+	    {
+	       if (Prv.IsMultiArchImplicit())
+		  continue;
+	       pkgCache::VerIterator V = Prv.OwnerVer();
+	       if (ArchA != V.ParentPkg().Arch())
+		  continue;
+	       if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+		  return false;
+	    }
+	    pkgCache::VerIterator V = PkgA.VersionList();
+	    Dynamic<pkgCache::VerIterator> DynV(V);
+	    for (; V.end() == false; ++V)
+	    {
+	       if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+		  return false;
+	    }
 	 }
       }
    }
