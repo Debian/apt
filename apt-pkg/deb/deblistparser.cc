@@ -813,7 +813,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 {
    const char *Start;
    const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
+   if (Section.Find(Tag,Start,Stop) == false || Start == Stop)
       return true;
 
    string const pkgArch = Ver.Arch();
