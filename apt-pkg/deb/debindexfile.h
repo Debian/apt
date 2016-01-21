@@ -176,4 +176,23 @@ public:
    virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
 };
 
+class debStringPackageIndex : public pkgDebianIndexRealFile
+{
+   void * const d;
+protected:
+   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   virtual std::string GetComponent() const APT_OVERRIDE;
+   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
+
+public:
+   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+
+   // Interface for the Cache Generator
+   virtual bool HasPackages() const APT_OVERRIDE {return true;};
+   // Abort if the file does not exist.
+   virtual bool Exists() const APT_OVERRIDE {return true;};
+
+   debStringPackageIndex(std::string const &content);
+   virtual ~debStringPackageIndex();
+};
 #endif

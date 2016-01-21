@@ -33,6 +33,7 @@ Reverse Provides: ' aptcache showpkg po-debconf:armel
 testsuccessequal 'N: Unable to locate package texi2html:armel' aptcache showpkg texi2html:armel
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   po-debconf
@@ -41,16 +42,33 @@ Inst po-debconf (1 unstable [all])
 Conf po-debconf (1 unstable [all])' aptget build-dep dash -s
 
 testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for dash cannot be satisfied because the package po-debconf cannot be found' aptget build-dep -aarmel dash -s
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
 
+The following packages have unmet dependencies:
+ builddeps:dash:armel : Depends: po-debconf:armel but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel dash -s
 testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for diffutils cannot be satisfied because the package texi2html cannot be found' aptget build-dep -aarmel diffutils -s
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:diffutils:armel : Depends: texi2html:armel but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel diffutils -s
 
 testsuccessequal "Reading package lists...
+Reading package lists...
 Building dependency tree...
-Note, selecting 'libselinux1-dev' instead of 'libselinux-dev'
 The following NEW packages will be installed:
   libselinux1-dev
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -58,12 +76,21 @@ Inst libselinux1-dev (1 unstable [amd64])
 Conf libselinux1-dev (1 unstable [amd64])" aptget build-dep sed -s
 
 testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for sed cannot be satisfied because the package libselinux-dev cannot be found' aptget build-dep -aarmel sed -s
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:sed:armel : Depends: libselinux-dev:armel but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel sed -s
 
 testsuccessequal "Reading package lists...
+Reading package lists...
 Building dependency tree...
-Note, selecting 'libsehurd1-dev' instead of 'libsehurd-dev'
 The following NEW packages will be installed:
   libsehurd1-dev
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -71,8 +98,8 @@ Inst libsehurd1-dev (1 unstable [amd64])
 Conf libsehurd1-dev (1 unstable [amd64])" aptget build-dep sed2 -s
 
 testsuccessequal "Reading package lists...
+Reading package lists...
 Building dependency tree...
-Note, selecting 'libsehurd1-dev:armel' instead of 'libsehurd-dev:armel'
 The following NEW packages will be installed:
   libsehurd1-dev:armel
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.

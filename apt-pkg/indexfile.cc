@@ -267,7 +267,9 @@ std::string pkgDebianIndexTargetFile::GetProgressDescription() const
 pkgDebianIndexRealFile::pkgDebianIndexRealFile(std::string const &pFile, bool const Trusted) :/*{{{*/
    pkgDebianIndexFile(Trusted), d(NULL)
 {
-   if (pFile == "/nonexistent/stdin")
+   if (pFile.empty())
+      ;
+   else if (pFile == "/nonexistent/stdin")
       File = pFile;
    else
       File = flAbsPath(pFile);

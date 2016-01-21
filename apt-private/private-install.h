@@ -26,6 +26,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int
 APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
                         bool Safety = true);
 
+bool CheckNothingBroken(CacheFile &Cache);
+bool DoAutomaticRemove(CacheFile &Cache);
 
 // TryToInstall - Mark a package for installation			/*{{{*/
 struct TryToInstall {

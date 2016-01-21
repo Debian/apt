@@ -297,6 +297,39 @@ std::string debDebianSourceDirIndex::GetComponent() const
    return "local-control";
 }
 									/*}}}*/
+// String Package Index - a string of Packages file content		/*{{{*/
+std::string debStringPackageIndex::GetArchitecture() const
+{
+   return std::string();
+}
+std::string debStringPackageIndex::GetComponent() const
+{
+   return "apt-tmp-index";
+}
+uint8_t debStringPackageIndex::GetIndexFlags() const
+{
+   return pkgCache::Flag::NotSource;
+}
+const pkgIndexFile::Type *debStringPackageIndex::GetType() const
+{
+   return pkgIndexFile::Type::GetType("Debian Package Index");
+}
+debStringPackageIndex::debStringPackageIndex(std::string const &content) :
+   pkgDebianIndexRealFile("", false), d(NULL)
+{
+   char fn[1024];
+   std::string const tempdir = GetTempDir();
+   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", tempdir.c_str(), "apt-tmp-index");
+   int const fd = mkstemp(fn);
+   File = fn;
+   FileFd::Write(fd, content.data(), content.length());
+   close(fd);
+}
+debStringPackageIndex::~debStringPackageIndex()
+{
+   RemoveFile("~debStringPackageIndex", File);
+}
+									/*}}}*/
 
 // Index File types for Debian						/*{{{*/
 class APT_HIDDEN debIFTypeSrc : public pkgIndexFile::Type

@@ -1735,7 +1735,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    }
 
    if (Debug == true)
-      std::clog << "Caches done. Now bring in the volatile files (if any)" << std::endl;
+      std::clog << "Caches done. " << (volatile_fine ? "No volatile files, so we are done here." : "Now bring in the volatile files") << std::endl;
 
    if (volatile_fine == false)
    {

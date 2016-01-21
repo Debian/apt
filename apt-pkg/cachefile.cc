@@ -26,6 +26,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/indexfile.h>
 
 #include <string.h>
 #include <unistd.h>
@@ -183,6 +184,60 @@ bool pkgCacheFile::Open(OpProgress *Progress, bool WithLock)
    if (_error->PendingError() == true)
       return false;
    
+   return true;
+}
+									/*}}}*/
+bool pkgCacheFile::AddIndexFile(pkgIndexFile * const File)		/*{{{*/
+{
+   if (SrcList == NULL)
+      if (BuildSourceList() == false)
+	 return false;
+   SrcList->AddVolatileFile(File);
+
+   if (Cache == nullptr || File->HasPackages() == false || File->Exists() == false)
+      return true;
+
+   if (File->FindInCache(*Cache).end() == false)
+      return _error->Warning("Duplicate sources.list entry %s",
+	    File->Describe().c_str());
+
+   if (ExternOwner == false)
+   {
+      delete DCache;
+      delete Cache;
+   }
+   delete Policy;
+   DCache = NULL;
+   Policy = NULL;
+   Cache = NULL;
+
+   if (ExternOwner == false)
+   {
+      // a dynamic mmap means that we have build at least parts of the cache
+      // in memory – which we might or might not have written to disk.
+      // Throwing away would therefore be a very costly operation we want to avoid
+      DynamicMMap * dynmmap = dynamic_cast<DynamicMMap*>(Map);
+      if (dynmmap != nullptr)
+      {
+	 {
+	    pkgCacheGenerator Gen(dynmmap, nullptr);
+	    if (File->Merge(Gen, nullptr) == false)
+	       return false;
+	 }
+	 Cache = new pkgCache(Map);
+	 return _error->PendingError() == false;
+      }
+      else
+      {
+	 delete Map;
+	 Map = NULL;
+      }
+   }
+   else
+   {
+      ExternOwner = false;
+      Map = NULL;
+   }
    return true;
 }
 									/*}}}*/

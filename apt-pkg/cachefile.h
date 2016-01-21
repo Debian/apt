@@ -32,6 +32,7 @@
 class MMap;
 class pkgPolicy;
 class pkgSourceList;
+class pkgIndexFile;
 class OpProgress;
 
 class pkgCacheFile
@@ -73,6 +74,8 @@ class pkgCacheFile
    APT_DEPRECATED_MSG("Pass Progress in as a pointer") bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
    static void RemoveCaches();
    void Close();
+
+   bool AddIndexFile(pkgIndexFile * const File);
 
    inline pkgCache* GetPkgCache() { BuildCaches(NULL, false); return Cache; };
    inline pkgDepCache* GetDepCache() { BuildDepCache(); return DCache; };

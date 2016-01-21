@@ -38,9 +38,9 @@ Files:
 EOF
 
 test2vcardbuilddep() {
-	testsuccessequal "Reading package lists...
+	testsuccessequal "Note, using file './2vcard_0.5-3.dsc' to get the build dependencies
+Reading package lists...
 Building dependency tree...
-Note, using file './2vcard_0.5-3.dsc' to get the build dependencies
 The following packages will be REMOVED:
   build-conflict
 The following NEW packages will be installed:
@@ -125,9 +125,9 @@ Description: install packages using the apt protocol - common data
 
 EOF
 
-testsuccessequal "Reading package lists...
+testsuccessequal "Note, using directory './foo-1.0' to get the build dependencies
+Reading package lists...
 Building dependency tree...
-Note, using directory './foo-1.0' to get the build dependencies
 The following NEW packages will be installed:
   build-essential debhelper
 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
@@ -141,14 +141,9 @@ testsuccess aptget build-dep --simulate ../foo-1.0
 testsuccess aptget build-dep --simulate "$(readlink -f ../foo-1.0)"
 cd ..
 
+testfailureequal 'E: Must specify at least one package to check builddeps for' aptget build-dep
+testfailureequal 'E: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup' aptget build-dep --simulate ./foo-1.0 -a armel
 testfailureequal 'Reading package lists...
-Building dependency tree...
-E: Must specify at least one package to check builddeps for' aptget build-dep
-testfailureequal 'Reading package lists...
-Building dependency tree...
-E: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup' aptget build-dep --simulate ./foo-1.0 -a armel
-testfailureequal 'Reading package lists...
-Building dependency tree...
 E: Unable to find a source package for foo' aptget build-dep --simulate foo
 
 msgmsg 'Test with a dsc' 'with comments'
@@ -172,9 +167,9 @@ Standards-Version: 3.9.6
 
 # or this?
 EOF
-testsuccessequal "Reading package lists...
+testsuccessequal "Note, using file './comments.dsc' to get the build dependencies
+Reading package lists...
 Building dependency tree...
-Note, using file './comments.dsc' to get the build dependencies
 The following NEW packages will be installed:
   build-depends build-essential debhelper
 0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
@@ -184,3 +179,16 @@ Inst debhelper (7 stable [i386])
 Conf build-depends (1 stable [i386])
 Conf build-essential (1 stable [i386])
 Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./comments.dsc
+testsuccessequal "Note, using file './comments.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+Execute external solver...
+The following NEW packages will be installed:
+  build-depends build-essential debhelper
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst build-depends (1 stable [i386])
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./comments.dsc --solver apt

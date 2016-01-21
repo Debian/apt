@@ -35,17 +35,45 @@ insertsource 'unstable' 'source-specific-armel' 'armel' '1' 'Build-Depends: spec
 
 setupaptarchive
 
-testfailureequal "Reading package lists...
+testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for forbidden-no can't be satisfied because amdboot:any is not allowed on 'Multi-Arch: no' packages" aptget build-dep forbidden-no -s -a armel
-testfailureequal "Reading package lists...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:forbidden-no:armel : Depends: amdboot:any but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep forbidden-no -s -a armel
+testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for forbidden-same can't be satisfied because libc6:any is not allowed on 'Multi-Arch: same' packages" aptget build-dep forbidden-same -s -a armel
-testfailureequal "Reading package lists...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:forbidden-same:armel : Depends: libc6:any but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep forbidden-same -s -a armel
+testfailureequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
-E: Build-Depends dependency for forbidden-foreign can't be satisfied because doxygen:any is not allowed on 'Multi-Arch: foreign' packages" aptget build-dep forbidden-foreign -s -a armel
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:forbidden-foreign:armel : Depends: doxygen:any but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget build-dep forbidden-foreign -s -a armel
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   libc6 specific
@@ -55,6 +83,7 @@ Inst specific (1.0 unstable [amd64])
 Conf libc6 (1.0 unstable [amd64])
 Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   libc6 specific
@@ -65,6 +94,7 @@ Conf libc6 (1.0 unstable [amd64])
 Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s -a armel
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   libc6:armel specific:armel
@@ -74,6 +104,7 @@ Inst specific:armel (1.0 unstable [armel])
 Conf libc6:armel (1.0 unstable [armel])
 Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   libc6:armel specific:armel
@@ -84,6 +115,7 @@ Conf libc6:armel (1.0 unstable [armel])
 Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s -a armel
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot cool doxygen foreigner libc6 libc6-dev libfwibble-dev libfwibble1
@@ -109,6 +141,7 @@ Conf libfwibble-dev (1.0 unstable [amd64])
 Conf linux-stuff (1.0 unstable [amd64])' aptget build-dep apt -s
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot arm-stuff:armel cool doxygen foreigner libc6 libc6:armel libc6-dev
@@ -165,6 +198,7 @@ Conf libfwibble1 (1.0 unstable [armel])
 Conf libfwibble-dev (1.0 unstable [armel])' aptget build-dep apt -s
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot:amd64 cool doxygen foreigner libc6 libc6:amd64 libc6-dev
@@ -202,9 +236,12 @@ testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot doxygen libc6 libc6-dev libfwibble-dev libfwibble1 linux-stuff
-0 upgraded, 7 newly installed, 0 to remove and 2 not upgraded.
+The following packages will be upgraded:
+  foreigner:armel
+1 upgraded, 7 newly installed, 0 to remove and 1 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
+Inst foreigner:armel [0.5] (1.0 unstable [armel])
 Inst libc6 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [amd64])
 Inst libfwibble1 (1.0 unstable [amd64])
@@ -212,6 +249,7 @@ Inst libfwibble-dev (1.0 unstable [amd64])
 Inst linux-stuff (1.0 unstable [amd64])
 Conf amdboot (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
+Conf foreigner:armel (1.0 unstable [armel])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [amd64])
 Conf libfwibble1 (1.0 unstable [amd64])
@@ -219,13 +257,17 @@ Conf libfwibble-dev (1.0 unstable [amd64])
 Conf linux-stuff (1.0 unstable [amd64])' aptget build-dep apt -s
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot arm-stuff:armel doxygen libc6 libc6:armel libc6-dev libc6-dev:armel
   libfwibble-dev:armel libfwibble1:armel
-0 upgraded, 9 newly installed, 0 to remove and 2 not upgraded.
+The following packages will be upgraded:
+  cool
+1 upgraded, 9 newly installed, 0 to remove and 1 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
 Inst arm-stuff:armel (1.0 unstable [armel])
+Inst cool [0.5] (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
 Inst libc6 (1.0 unstable [amd64])
 Inst libc6:armel (1.0 unstable [armel])
@@ -235,6 +277,7 @@ Inst libfwibble1:armel (1.0 unstable [armel])
 Inst libfwibble-dev:armel (1.0 unstable [armel])
 Conf amdboot (1.0 unstable [amd64])
 Conf arm-stuff:armel (1.0 unstable [armel])
+Conf cool (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6:armel (1.0 unstable [armel])
@@ -273,13 +316,18 @@ Conf libfwibble1 (1.0 unstable [armel])
 Conf libfwibble-dev (1.0 unstable [armel])' aptget build-dep apt -s
 
 testsuccessequal 'Reading package lists...
+Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot:amd64 doxygen libc6 libc6:amd64 libc6-dev libc6-dev:amd64
   libfwibble-dev:amd64 libfwibble1:amd64 linux-stuff:amd64
-0 upgraded, 9 newly installed, 0 to remove and 2 not upgraded.
+The following packages will be upgraded:
+  cool:amd64 foreigner
+2 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst cool:amd64 [0.5] (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [armel])
+Inst foreigner [0.5] (1.0 unstable [armel])
 Inst libc6 (1.0 unstable [armel])
 Inst libc6:amd64 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [armel])
@@ -288,7 +336,9 @@ Inst libfwibble1:amd64 (1.0 unstable [amd64])
 Inst libfwibble-dev:amd64 (1.0 unstable [amd64])
 Inst linux-stuff:amd64 (1.0 unstable [amd64])
 Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf cool:amd64 (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [armel])
+Conf foreigner (1.0 unstable [armel])
 Conf libc6 (1.0 unstable [armel])
 Conf libc6:amd64 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [armel])

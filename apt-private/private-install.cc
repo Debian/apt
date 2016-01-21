@@ -41,6 +41,37 @@
 									/*}}}*/
 class pkgSourceList;
 
+bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
+{
+   // Now we check the state of the packages,
+   if (Cache->BrokenCount() == 0)
+      return true;
+
+   c1out <<
+      _("Some packages could not be installed. This may mean that you have\n"
+	    "requested an impossible situation or if you are using the unstable\n"
+	    "distribution that some required packages have not yet been created\n"
+	    "or been moved out of Incoming.") << std::endl;
+   /*
+   if (Packages == 1)
+   {
+      c1out << std::endl;
+      c1out <<
+	 _("Since you only requested a single operation it is extremely likely that\n"
+	       "the package is simply not installable and a bug report against\n"
+	       "that package should be filed.") << std::endl;
+   }
+   */
+
+   c1out << _("The following information may help to resolve the situation:") << std::endl;
+   c1out << std::endl;
+   ShowBroken(c1out,Cache,false);
+   if (_error->PendingError() == true)
+      return false;
+   else
+      return _error->Error(_("Broken packages"));
+}
+									/*}}}*/
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -364,7 +395,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 // DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* Remove unused automatic packages */
-static bool DoAutomaticRemove(CacheFile &Cache)
+bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
@@ -628,33 +659,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const cha
 	    return false;
       }
 
-      // Now we check the state of the packages,
-      if (Cache->BrokenCount() != 0)
-      {
-	 c1out << 
-	    _("Some packages could not be installed. This may mean that you have\n" 
-	      "requested an impossible situation or if you are using the unstable\n" 
-	      "distribution that some required packages have not yet been created\n"
-	      "or been moved out of Incoming.") << std::endl;
-	 /*
-	 if (Packages == 1)
-	 {
-	    c1out << std::endl;
-	    c1out << 
-	       _("Since you only requested a single operation it is extremely likely that\n"
-		 "the package is simply not installable and a bug report against\n" 
-		 "that package should be filed.") << std::endl;
-	 }
-	 */
-
-	 c1out << _("The following information may help to resolve the situation:") << std::endl;
-	 c1out << std::endl;
-	 ShowBroken(c1out,Cache,false);
-	 if (_error->PendingError() == true)
-	    return false;
-	 else
-	    return _error->Error(_("Broken packages"));
-      }
+      if (CheckNothingBroken(Cache) == false)
+	 return false;
    }
    if (!DoAutomaticRemove(Cache)) 
       return false;
@@ -811,7 +817,17 @@ bool DoInstall(CommandLine &CmdL)
 
 // TryToInstall - Mark a package for installation			/*{{{*/
 void TryToInstall::operator() (pkgCache::VerIterator const &Ver) {
+   if (unlikely(Ver.end()))
+   {
+      _error->Fatal("The given version to TryToInstall is invalid!");
+      return;
+   }
    pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+   if (unlikely(Pkg.end()))
+   {
+      _error->Fatal("The given version to TryToInstall has an invalid parent package!");
+      return;
+   }
 
    Cache->GetDepCache()->SetCandidateVersion(Ver);
    pkgDepCache::StateCache &State = (*Cache)[Pkg];
