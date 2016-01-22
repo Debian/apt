@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.8.0~pre1\n"
+"Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2016-01-15 19:53+0100\n"
-"PO-Revision-Date: 2016-01-15 04:42+0000\n"
+"PO-Revision-Date: 2016-01-22 02:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -464,17 +464,16 @@ msgid "Broken packages"
 msgstr "破损的软件包"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
-msgstr "将会安装下列额外的软件包："
+msgstr "将会同时安装下列软件："
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
-msgstr "建议安装的软件包："
+msgstr "建议安装："
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
-msgstr "推荐安装的软件包："
+msgstr "推荐安装："
 
 #: apt-private/private-install.cc
 #, c-format
@@ -493,9 +492,9 @@ msgstr "不能重新安装 %s，因为无法下载它。\n"
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s 已经是最新的版本。\n"
+msgstr "%s 已经是最新版 (%s)。\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -944,9 +943,9 @@ msgid "Note, using directory '%s' to get the build dependencies\n"
 msgstr "注意，正使用 '%s' 目录下载编译依赖\n"
 
 #: apt-private/private-source.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "无法处理构建依赖关系"
+msgstr "注意，正使用 '%s' 文件来获取编译依赖\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to process build dependencies"
@@ -984,9 +983,8 @@ msgid "All packages are up to date."
 msgstr "所有软件包均为最新。"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr " update 命令不需要参数"
+msgstr "apt-cache stats 命令不需要参数"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -1102,9 +1100,8 @@ msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "请给这张盘片起个名字，比如“Debian 5.0.3 Disk 1”"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "请把盘片插入驱动器再按回车键"
+msgstr "请把盘片插入驱动器再按「回车键」"
 
 #: cmdline/apt-cdrom.cc
 #, c-format
@@ -1140,7 +1137,6 @@ msgid "Arguments not in pairs"
 msgstr "参数不成对"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -1149,7 +1145,7 @@ msgid ""
 msgstr ""
 "用法：apt-config [选项] 命令\n"
 "\n"
-"apt-config 是一个用于读取APT 配置文件的简单工具\n"
+"apt-config 是所有 APT 工具的配置接口，主要用于Debug和编写Shell脚本。\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -1417,6 +1413,11 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"用法： apt [选项] 命令\n"
+"\n"
+"命令行软件包管理器 apt 提供软件包搜索，管理和信息查询等功能。\n"
+"它提供的功能与其他 APT 工具相同（像 apt-get 和 apt-cache），\n"
+"但是默认情况下被设置得更适合交互。\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1885,9 +1886,8 @@ msgstr "错误的默认设置！"
 
 #: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
 #: dselect/install:106 dselect/update:45
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "按回车键继续。"
+msgstr "按「回车键」继续。"
 
 #: dselect/install:92
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -1980,6 +1980,11 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"用法： apt-sortpkgs [选项] 文件1 [文件2 ...]\n"
+"\n"
+"简易工具 apt-sortpkgs 用于排序软件包信息。\n"
+"它默认对二进制包信息排序，但是 -s 选项可以将其切换为\n"
+"对源码包排序。\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -2304,9 +2309,9 @@ msgid "Failed to read the archive headers"
 msgstr "无法读取归档文件的数据头"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "无法找到认证记录：%s"
+msgstr "找不到对应于 '%s' 的已配置压缩工具"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -2433,18 +2438,21 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"无法安全地用该源进行更新，所以默认禁用该源。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"无法认证来自该源的数据，所以使用它会带来潜在风险。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"参见 apt-secure(8) 手册以了解仓库创建和用户配置方面的细节。"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2464,17 +2472,16 @@ msgid "Invalid file format"
 msgstr "无效的文件格式 %s"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "写出错"
+msgstr "数字签名错误"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
-"校验签名出错。此仓库未被更新，仍然使用以前的索引文件。GPG 错误：%s: %s\n"
+"校验数字签名时出错。此仓库未被更新，所以仍然使用此前的索引文件。GPG 错误：%s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -2528,22 +2535,22 @@ msgstr "冲突的发行版：%s (期望 %s 但得到 %s)"
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "目录 %s 已被转移"
+msgstr "仓库 “%s” 没有数字签名。"
 
 #. No Release file was present so fall
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "目录 %s 已被转移"
+msgstr "仓库 “%s” 没有 Release 文件。"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "目录 %s 已被转移"
+msgstr "仓库 “%s” 的签名不再生效。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -2573,9 +2580,9 @@ msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 File
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "%s (%s) 的 Changelog"
+msgstr "%s=%s 的 Changelog 不可用"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -2593,10 +2600,10 @@ msgid "Method %s did not start correctly"
 msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "请把标有“%s”的盘片插入驱动器“%s”再按回车键。"
+msgstr "请把标有 “%s” 的盘片插入驱动器 “%s” 再按「回车键」。"
 
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
@@ -2823,18 +2830,18 @@ msgid "Failed to stat the cdrom"
 msgstr "无法读取盘片的状态"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "未知的命令行选项“%c” [来自 %s]"
+msgstr "不能理解命令行选项 “%c” [来自 %s] 与其他选项的搭配。"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "无法识别命令行选项 %s"
+msgstr "不能理解命令行选项 “%s” 与其他选项的搭配。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -3506,14 +3513,13 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "本程序目前不支持“%s”版本系统"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "软件包缓存区是为其它架构的硬件构建的"
+msgstr "软件包缓存是为其它架构的硬件构建的: %s vs %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "软件包缓存文件损坏，它太小了"
+msgstr "软件包缓存文件损坏，散列值错误"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -3632,7 +3638,7 @@ msgstr "无法识别锁定的类型 %s"
 #: apt-pkg/policy.cc
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
-msgstr ""
+msgstr "%s: 值 %s 超出锁定优先级有效范围 (%d 到 %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -3640,9 +3646,9 @@ msgstr "没有为版本锁定指定优先级(或为零)"
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "override 文件 %s 第 %llu (%s) 行的格式有误"
+msgstr "文件 %2$s 第 %1$u 行的记录格式有误 %3$s (%4$s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3652,41 +3658,41 @@ msgstr "正在打开 %s"
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
-msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
+msgstr "在源列表 %2$s 中第 %1$u 行有误 (类型)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
+msgstr "软件源列表 %3$s 第 %2$u 行中的类别 “%1$s” 无法识别"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
+msgstr "软件源列表 %2$s 中第 %1$u 行的小节格式有误 (类型)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "无法识别在源列表 %3$s 里，第 %2$u 节中的软件包类别“%1$s”"
+msgstr "软件源列表 %3$s 第 %2$u 小节的类别 “%1$s” 无法识别"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "命令行中有不支持的文件 %s"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr "您必须在您的 sources.list 写入一些“软件源”的 URI"
+msgstr "您必须在 sources.list 写入一些“软件源”的 URI"
 
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "无法将 %s 转换为整数：超出范围"
 
 #: apt-pkg/update.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "无法下载 %s  %s\n"
+msgstr "无法下载 %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3696,7 +3702,7 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
-msgstr "正在对升级进行计算"
+msgstr "正在计算更新"
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "在使用 unlink 删除 %s 时出错"
