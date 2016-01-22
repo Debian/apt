@@ -263,7 +263,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 }
 
 pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
-	auto const found = Name.find(':');
+	auto const found = Name.rfind(':');
 	if (found == string::npos)
 	   return FindPkg(Name, "native");
 	auto const Arch = Name.substr(found+1);

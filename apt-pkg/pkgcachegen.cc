@@ -659,7 +659,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    // lazy-create foo (of amd64) provides foo:amd64 at the time we first need it
    if (Arch == "any")
    {
-      size_t const found = Name.find(':');
+      size_t const found = Name.rfind(':');
       StringView ArchA = Name.substr(found + 1);
       if (ArchA != "any")
       {
