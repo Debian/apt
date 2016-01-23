@@ -661,10 +661,12 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    {
       size_t const found = Name.find(':');
       StringView const NameA = Name.substr(0, found);
-      StringView const ArchA = Name.substr(found + 1);
+      StringView ArchA = Name.substr(found + 1);
       pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
       if (PkgA.end() == false)
       {
+	 // ArchA is used inside the loop which might remap (NameA is not used)
+	 Dynamic<StringView> DynArchA(ArchA);
 	 Dynamic<pkgCache::PkgIterator> DynPkgA(PkgA);
 	 pkgCache::PrvIterator Prv = PkgA.ProvidesList();
 	 for (; Prv.end() == false; ++Prv)
