@@ -141,7 +141,7 @@ pkgCacheGenerator::~pkgCacheGenerator()
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/
-void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newMap) {/*{{{*/
+void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newMap, size_t oldSize) {/*{{{*/
    if (oldMap == newMap)
       return;
 
@@ -181,27 +181,30 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
 // CacheGenerator::WriteStringInMap					/*{{{*/
 map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
 					const unsigned long &Len) {
+   size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
    map_stringitem_t const index = Map.WriteString(String, Len);
    if (index != 0)
-      ReMap(oldMap, Map.Data());
+      ReMap(oldMap, Map.Data(), oldSize);
    return index;
 }
 									/*}}}*/
 // CacheGenerator::WriteStringInMap					/*{{{*/
 map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String) {
+   size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
    map_stringitem_t const index = Map.WriteString(String);
    if (index != 0)
-      ReMap(oldMap, Map.Data());
+      ReMap(oldMap, Map.Data(), oldSize);
    return index;
 }
 									/*}}}*/
 map_pointer_t pkgCacheGenerator::AllocateInMap(const unsigned long &size) {/*{{{*/
+   size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
    map_pointer_t const index = Map.Allocate(size);
    if (index != 0)
-      ReMap(oldMap, Map.Data());
+      ReMap(oldMap, Map.Data(), oldSize);
    return index;
 }
 									/*}}}*/
