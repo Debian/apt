@@ -177,6 +177,14 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
    for (std::vector<pkgCache::RlsFileIterator*>::const_iterator i = Dynamic<pkgCache::RlsFileIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::RlsFileIterator>::toReMap.end(); ++i)
       (*i)->ReMap(oldMap, newMap);
+   for (APT::StringView* ViewP : Dynamic<APT::StringView>::toReMap) {
+      // Ignore views outside of the cache.
+      if (ViewP->data() < static_cast<const char*>(oldMap)
+	 || ViewP->data() > static_cast<const char*>(oldMap) + oldSize)
+	 continue;
+      const char *data = ViewP->data() + (static_cast<const char*>(newMap) - static_cast<const char*>(oldMap));
+      *ViewP = StringView(data , ViewP->size());
+   }
 }									/*}}}*/
 // CacheGenerator::WriteStringInMap					/*{{{*/
 map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
@@ -503,6 +511,7 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
 /* This creates a new group structure and adds it to the hash table */
 bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
 {
+   Dynamic<StringView> DName(Name);
    Grp = Cache.FindGrp(Name);
    if (Grp.end() == false)
       return true;
@@ -537,6 +546,8 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
 bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
 					StringView Arch) {
    pkgCache::GrpIterator Grp;
+   Dynamic<StringView> DName(Name);
+   Dynamic<StringView> DArch(Arch);
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
    if (unlikely(NewGroup(Grp, Name) == false))
       return false;
@@ -1014,6 +1025,9 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
 {
    pkgCache::GrpIterator Grp;
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
+   Dynamic<StringView> DynPackageName(PackageName);
+   Dynamic<StringView> DynArch(Arch);
+   Dynamic<StringView> DynVersion(Version);
    if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
 
@@ -1081,6 +1095,9 @@ bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
 						uint8_t const Flags)
 {
    pkgCache const &Cache = Owner->Cache;
+   Dynamic<StringView> DynPkgName(PkgName);
+   Dynamic<StringView> DynArch(PkgArch);
+   Dynamic<StringView> DynVersion(Version);
 
    // We do not add self referencing provides
    if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
@@ -1134,6 +1151,8 @@ bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringVi
    pkgCache &Cache = Owner->Cache;
    pkgCache::GrpIterator Grp = Cache.FindGrp(Package);
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
+   Dynamic<StringView> DynPackage(Package);
+   Dynamic<StringView> DynVersion(Version);
 
    if (Grp.end() == true)
       return NewProvides(Ver, Package, Cache.NativeArch(), Version, Flags);
