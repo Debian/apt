@@ -56,18 +56,30 @@
 using namespace std;
 
 APT_PURE static string
-AptHistoryUser()
+AptHistoryRequestingUser()
 {
-   stringstream out;
-   const char* env[]{"SUDO_USER", "PKEXEC_UID", nullptr};
+   const char* env[]{
+      "SUDO_UID", "PKEXEC_UID", "PACKAGEKIT_CALLER_UID", nullptr
+   };
+
    for (int i=0; env[i] != nullptr; i++)
    {
       if (getenv(env[i]) != nullptr)
       {
-         out << env[i] << "=" << getenv(env[i]) << " ";
+         int uid = atoi(getenv(env[i]));
+         if (uid > 0) {
+            struct passwd pwd;
+            struct passwd *result;
+            char buf[255];
+            if (getpwuid_r(uid, &pwd, buf, sizeof(buf), &result) == 0 && result != NULL) {
+               std::string res;
+               strprintf(res, "%s (%d)", pwd.pw_name, uid);
+               return res;
+            }
+         }
       }
    }
-   return out.str();
+   return "";
 }
 
 APT_PURE static unsigned int
@@ -892,8 +904,9 @@ bool pkgDPkgPM::OpenLog()
       }
       if (_config->Exists("Commandline::AsString") == true)
 	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
-      if (AptHistoryUser() != "")
-         WriteHistoryTag("Requested-By", AptHistoryUser());
+      std::string RequestingUser = AptHistoryRequestingUser();
+      if (RequestingUser != "")
+         WriteHistoryTag("Requested-By", RequestingUser);
       WriteHistoryTag("Install", install);
       WriteHistoryTag("Reinstall", reinstall);
       WriteHistoryTag("Upgrade", upgrade);
