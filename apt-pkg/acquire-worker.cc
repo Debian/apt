@@ -42,29 +42,16 @@
 using namespace std;
 
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::Worker::Worker(Queue *Q,MethodConfig *Cnf,
-			   pkgAcquireStatus *log) : d(NULL), Log(log)
+pkgAcquire::Worker::Worker(Queue *Q, MethodConfig *Cnf, pkgAcquireStatus *log) :
+   d(NULL), OwnerQ(Q), Log(log), Config(Cnf), Access(Cnf->Access),
+   CurrentItem(nullptr), CurrentSize(0), TotalSize(0)
 {
-   OwnerQ = Q;
-   Config = Cnf;
-   Access = Cnf->Access;
-   CurrentItem = 0;
-   TotalSize = 0;
-   CurrentSize = 0;
-
    Construct();
 }
 									/*}}}*/
 // Worker::Worker - Constructor for method config startup		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::Worker::Worker(MethodConfig *Cnf) : d(NULL), OwnerQ(NULL), Config(Cnf),
-						Access(Cnf->Access), CurrentItem(NULL),
-						CurrentSize(0), TotalSize(0)
+pkgAcquire::Worker::Worker(MethodConfig *Cnf) : Worker(nullptr, Cnf, nullptr)
 {
-   Construct();
 }
 									/*}}}*/
 // Worker::Construct - Constructor helper				/*{{{*/

@@ -480,7 +480,10 @@ void pkgAcqMethod::Dequeue() {						/*{{{*/
 									/*}}}*/
 pkgAcqMethod::~pkgAcqMethod() {}
 
-pkgAcqMethod::FetchItem::FetchItem() : d(NULL) {}
+pkgAcqMethod::FetchItem::FetchItem() :
+   Next(nullptr), DestFileFd(-1), LastModified(0), IndexFile(false),
+   FailIgnore(false), MaximumSize(0), d(nullptr)
+{}
 pkgAcqMethod::FetchItem::~FetchItem() {}
 
 pkgAcqMethod::FetchResult::~FetchResult() {}

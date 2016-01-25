@@ -246,7 +246,8 @@ bool ServerState::HeaderLine(string Line)
 }
 									/*}}}*/
 // ServerState::ServerState - Constructor				/*{{{*/
-ServerState::ServerState(URI Srv, ServerMethod *Owner) : ServerName(Srv), TimeOut(120), Owner(Owner)
+ServerState::ServerState(URI Srv, ServerMethod *Owner) :
+   DownloadSize(0), ServerName(Srv), TimeOut(120), Owner(Owner)
 {
    Reset();
 }

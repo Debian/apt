@@ -491,7 +491,11 @@ class Patch {
       for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
 	 std::list<struct Change>::reverse_iterator mg_i, mg_e = ch;
 	 while (ch->del_cnt == 0 && ch->offset == 0)
+	 {
 	    ++ch;
+	    if (unlikely(ch == filechanges.rend()))
+	       return;
+	 }
 	 line -= ch->del_cnt;
 	 std::string buf;
 	 if (ch->add_cnt > 0) {
