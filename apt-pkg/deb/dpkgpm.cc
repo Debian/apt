@@ -48,11 +48,27 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <sstream>
 
 #include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
+
+APT_PURE static string
+AptHistoryUser()
+{
+   stringstream out;
+   const char* env[]{"SUDO_USER", "PKEXEC_UID", nullptr};
+   for (int i=0; env[i] != nullptr; i++)
+   {
+      if (getenv(env[i]) != nullptr)
+      {
+         out << env[i] << "=" << getenv(env[i]) << " ";
+      }
+   }
+   return out.str();
+}
 
 APT_PURE static unsigned int
 EnvironmentSize()
@@ -876,6 +892,8 @@ bool pkgDPkgPM::OpenLog()
       }
       if (_config->Exists("Commandline::AsString") == true)
 	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
+      if (AptHistoryUser() != "")
+         WriteHistoryTag("Requested-By", AptHistoryUser());
       WriteHistoryTag("Install", install);
       WriteHistoryTag("Reinstall", reinstall);
       WriteHistoryTag("Upgrade", upgrade);
