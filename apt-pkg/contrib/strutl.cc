@@ -788,7 +788,11 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 return false;
 
       // No data
+#if EAGAIN != EWOULDBLOCK
       if (Res < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+#else
+      if (Res < 0 && errno == EAGAIN)
+#endif
 	 return true;
       if (Res < 0)
 	 return false;
