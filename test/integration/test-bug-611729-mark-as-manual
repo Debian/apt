@@ -56,8 +56,14 @@ testdpkginstalled b c
 testmarkedauto 'b'
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
-testfileequal 'rootdir/var/log/apt/history.log' '
+if [ -n "$SUDO_USER" ]; then
+	testfileequal 'rootdir/var/log/apt/history.log' "
+Requested-By: $SUDO_USER ($(id -u "$SUDO_USER"))
+Reinstall: b:i386 (1.0)"
+else
+	testfileequal 'rootdir/var/log/apt/history.log' '
 Reinstall: b:i386 (1.0)'
+fi
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...

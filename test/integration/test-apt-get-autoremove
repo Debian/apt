@@ -59,7 +59,10 @@ testsuccess aptget autoremove -y
 testdpkgnotinstalled 'po-debconf'
 testmarkedauto
 
-sed rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e 's#), #)\nInstall: #g' | sort -u > apt-history.log
+sed rootdir/var/log/apt/history.log -e '/^Commandline: / d' \
+	-e '/^Start-Date: / d' -e '/^End-Date: / d' \
+	-e '/^Requested-By: / d' \
+	-e 's#), #)\nInstall: #g' | sort -u > apt-history.log
 testfileequal 'apt-history.log' '
 Install: debhelper:i386 (8.0.0)
 Install: po-debconf:i386 (1.0.16, automatic)
