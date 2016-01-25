@@ -58,15 +58,13 @@ using namespace std;
 APT_PURE static string
 AptHistoryRequestingUser()
 {
-   const char* env[]{
-      "SUDO_UID", "PKEXEC_UID", "PACKAGEKIT_CALLER_UID", nullptr
-   };
+   const char* EnvKeys[]{"SUDO_UID", "PKEXEC_UID", "PACKAGEKIT_CALLER_UID"};
 
-   for (int i=0; env[i] != nullptr; i++)
+   for (const auto &Key: EnvKeys)
    {
-      if (getenv(env[i]) != nullptr)
+      if (getenv(Key) != nullptr)
       {
-         int uid = atoi(getenv(env[i]));
+         int uid = atoi(getenv(Key));
          if (uid > 0) {
             struct passwd pwd;
             struct passwd *result;
