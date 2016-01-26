@@ -58,6 +58,9 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
 		     CurrentRlsFile(NULL), CurrentFile(NULL), d(NULL)
 {
+}
+bool pkgCacheGenerator::Start()
+{
    if (Map.Size() == 0)
    {
       // Setup the map interface..
@@ -67,7 +70,9 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       bool const newError = _error->PendingError();
       _error->MergeWithStack();
       if (newError)
-	 return;
+	 return false;
+      if (Map.Size() <= 0)
+	 return false;
 
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
 
@@ -76,16 +81,15 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 
       // make room for the hashtables for packages and groups
       if (Map.RawAllocate(2 * (Cache.HeaderP->GetHashTableSize() * sizeof(map_pointer_t))) == 0)
-	 return;
+	 return false;
 
       map_stringitem_t const idxVerSysName = WriteStringInMap(_system->VS->Label);
       if (unlikely(idxVerSysName == 0))
-	 return;
-      Cache.HeaderP->VerSysName = idxVerSysName;
+	 return false;
       map_stringitem_t const idxArchitecture = StoreString(MIXED, _config->Find("APT::Architecture"));
       if (unlikely(idxArchitecture == 0))
-	 return;
-      Cache.HeaderP->Architecture = idxArchitecture;
+	 return false;
+      map_stringitem_t idxArchitectures;
 
       std::vector<std::string> archs = APT::Configuration::getArchitectures();
       if (archs.size() > 1)
@@ -94,13 +98,17 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 	 std::string list = *a;
 	 for (++a; a != archs.end(); ++a)
 	    list.append(",").append(*a);
-	 map_stringitem_t const idxArchitectures = WriteStringInMap(list);
+	 idxArchitectures = WriteStringInMap(list);
 	 if (unlikely(idxArchitectures == 0))
-	    return;
-	 Cache.HeaderP->SetArchitectures(idxArchitectures);
+	    return false;
       }
       else
-	 Cache.HeaderP->SetArchitectures(idxArchitecture);
+	 idxArchitectures = idxArchitecture;
+
+      Cache.HeaderP = (pkgCache::Header *)Map.Data();
+      Cache.HeaderP->VerSysName = idxVerSysName;
+      Cache.HeaderP->Architecture = idxArchitecture;
+      Cache.HeaderP->SetArchitectures(idxArchitectures);
 
       // Calculate the hash for the empty map, so ReMap does not fail
       Cache.HeaderP->CacheFileSize = Cache.CacheHash();
@@ -112,14 +120,12 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       Cache.ReMap(); 
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
       if (Cache.VS != _system->VS)
-      {
-	 _error->Error(_("Cache has an incompatible versioning system"));
-	 return;
-      }
+	 return _error->Error(_("Cache has an incompatible versioning system"));
    }
 
    Cache.HeaderP->Dirty = true;
    Map.Sync(0,sizeof(pkgCache::Header));
+   return true;
 }
 									/*}}}*/
 // CacheGenerator::~pkgCacheGenerator - Destructor 			/*{{{*/
@@ -1607,7 +1613,7 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
    if (CacheF.Read((unsigned char *)Map->Data() + alloc, CacheF.Size()) == false)
       return false;
    Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
-   return true;
+   return Gen->Start();
 }
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap, bool AllowMem)
@@ -1713,6 +1719,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       if (Debug == true)
 	 std::clog << "srcpkgcache.bin is NOT valid - rebuild" << std::endl;
       Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
+      if (Gen->Start() == false)
+	 return false;
 
       TotalSize += ComputeSize(&List, Files.begin(),Files.end());
       if (BuildCache(*Gen, Progress, CurrentSize, TotalSize, &List,
@@ -1790,7 +1798,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (Progress != NULL)
       Progress->OverallProgress(0,1,1,_("Reading package lists"));
    pkgCacheGenerator Gen(Map.get(),Progress);
-   if (_error->PendingError() == true)
+   if (Gen.Start() == false || _error->PendingError() == true)
       return false;
    if (BuildCache(Gen,Progress,CurrentSize,TotalSize, NULL,
 		  Files.begin(), Files.end()) == false)

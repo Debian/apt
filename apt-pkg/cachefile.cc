@@ -221,7 +221,7 @@ bool pkgCacheFile::AddIndexFile(pkgIndexFile * const File)		/*{{{*/
       {
 	 {
 	    pkgCacheGenerator Gen(dynmmap, nullptr);
-	    if (File->Merge(Gen, nullptr) == false)
+	    if (Gen.Start() == false || File->Merge(Gen, nullptr) == false)
 	       return false;
 	 }
 	 Cache = new pkgCache(Map);
