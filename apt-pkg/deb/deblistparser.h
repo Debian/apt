@@ -69,9 +69,11 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
       
    // These all operate against the current section
    virtual std::string Package() APT_OVERRIDE;
-   virtual std::string Architecture() APT_OVERRIDE;
    virtual bool ArchitectureAll() APT_OVERRIDE;
-   virtual std::string Version() APT_OVERRIDE;
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   virtual APT::StringView Architecture() APT_OVERRIDE;
+   virtual APT::StringView Version() APT_OVERRIDE;
+#endif
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual MD5SumValue Description_md5() APT_OVERRIDE;
@@ -128,9 +130,11 @@ class APT_HIDDEN debDebFileParser : public debListParser
 class APT_HIDDEN debTranslationsParser : public debListParser
 {
  public:
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
    // a translation can never be a real package
-   virtual std::string Architecture() APT_OVERRIDE { return ""; }
-   virtual std::string Version() APT_OVERRIDE { return ""; }
+   virtual APT::StringView Architecture() APT_OVERRIDE { return ""; }
+   virtual APT::StringView Version() APT_OVERRIDE { return ""; }
+#endif
 
    debTranslationsParser(FileFd *File)
       : debListParser(File) {};

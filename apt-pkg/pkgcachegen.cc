@@ -40,8 +40,8 @@
 #include <unistd.h>
 
 #include <apti18n.h>
-
-template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;							/*}}}*/
+									/*}}}*/
+template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
@@ -236,8 +236,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
 
-      string Arch = List.Architecture();
-      string const Version = List.Version();
+      APT::StringView Arch = List.Architecture();
+      Dynamic<APT::StringView> DynArch(Arch);
+      APT::StringView Version = List.Version();
+      Dynamic<APT::StringView> DynVersion(Version);
       if (Version.empty() == true && Arch.empty() == true)
       {
 	 // package descriptions
@@ -348,7 +350,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 									/*}}}*/
 // CacheGenerator::MergeListVersion					/*{{{*/
 bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-					 std::string const &Version, pkgCache::VerIterator* &OutVer)
+					 APT::StringView const &Version, pkgCache::VerIterator* &OutVer)
 {
    pkgCache::VerIterator Ver = Pkg.VersionList();
    Dynamic<pkgCache::VerIterator> DynVer(Ver);
@@ -363,7 +365,9 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       int Res = 1;
       for (; Ver.end() == false; LastVer = &Ver->NextVer, ++Ver)
       {
-	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
+	 char const * const VerStr = Ver.VerStr();
+	 Res = Cache.VS->DoCmpVersion(Version.data(), Version.data() + Version.length(),
+	       VerStr, VerStr + strlen(VerStr));
 	 // Version is higher as current version - insert here
 	 if (Res > 0)
 	    break;
@@ -709,9 +713,8 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
 					   pkgCache::PkgIterator &P,
 					   pkgCache::VerIterator &V)
 {
-   // copy P.Arch() into a string here as a cache remap
-   // in NewDepends() later may alter the pointer location
-   string Arch = P.Arch() == NULL ? "" : P.Arch();
+   APT::StringView Arch = P.Arch() == NULL ? "" : P.Arch();
+   Dynamic<APT::StringView> DynArch(Arch);
    map_pointer_t *OldDepLast = NULL;
    /* MultiArch handling introduces a lot of implicit Dependencies:
       - MultiArch: same → Co-Installable if they have the same version
@@ -812,7 +815,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 // ---------------------------------------------------------------------
 /* This puts a version structure in the linked list */
 map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
-					    const string &VerStr,
+					    APT::StringView const &VerStr,
 					    map_pointer_t const ParentPkg,
 					    unsigned short const Hash,
 					    map_pointer_t const Next)
@@ -841,8 +844,8 @@ map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
 	    continue;
 	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 	 {
-	    int const cmp = strcmp(V.VerStr(), VerStr.c_str());
-	    if (cmp == 0)
+	    int const cmp = strncmp(V.VerStr(), VerStr.data(), VerStr.length());
+	    if (cmp == 0 && V.VerStr()[VerStr.length()] == '\0')
 	    {
 	       Ver->VerStr = V->VerStr;
 	       return Version;

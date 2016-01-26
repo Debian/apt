@@ -114,17 +114,15 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
    bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg, APT::StringView Name, APT::StringView Arch);
+   map_pointer_t NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
+			    map_pointer_t const ParentPkg, unsigned short const Hash,
+			    map_pointer_t const Next);
 #endif
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   map_pointer_t const Version, uint8_t const Op,
 		   uint8_t const Type, map_pointer_t* &OldDepLast);
-   map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,map_pointer_t const Next) APT_DEPRECATED
-   { return NewVersion(Ver, VerStr, 0, 0, Next); }
-   map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
-			    map_pointer_t const ParentPkg, unsigned short const Hash,
-			    map_pointer_t const Next);
    map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_stringitem_t const idxmd5str);
    bool NewProvides(pkgCache::VerIterator &Ver, pkgCache::PkgIterator &Pkg,
 		    map_stringitem_t const ProvidesVersion, uint8_t const Flags);
@@ -163,8 +161,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    void * const d;
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-			 std::string const &Version, pkgCache::VerIterator* &OutVer);
+			 APT::StringView const &Version, pkgCache::VerIterator* &OutVer);
+#endif
 
    APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
@@ -209,9 +209,11 @@ class APT_HIDDEN pkgCacheListParser
    
    // These all operate against the current section
    virtual std::string Package() = 0;
-   virtual std::string Architecture() = 0;
    virtual bool ArchitectureAll() = 0;
-   virtual std::string Version() = 0;
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   virtual APT::StringView Architecture() = 0;
+   virtual APT::StringView Version() = 0;
+#endif
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
    virtual MD5SumValue Description_md5() = 0;

@@ -72,9 +72,9 @@ string debListParser::Package() {
 // ListParser::Architecture - Return the package arch			/*{{{*/
 // ---------------------------------------------------------------------
 /* This will return the Architecture of the package this section describes */
-string debListParser::Architecture() {
+APT::StringView debListParser::Architecture() {
    auto const Arch = Section.Find("Architecture");
-   return Arch.empty() ? "none" : Arch.to_string();
+   return Arch.empty() ? "none" : Arch;
 }
 									/*}}}*/
 // ListParser::ArchitectureAll						/*{{{*/
@@ -89,9 +89,9 @@ bool debListParser::ArchitectureAll() {
 /* This is to return the string describing the version in debian form,
    epoch:upstream-release. If this returns the blank string then the 
    entry is assumed to only describe package properties */
-string debListParser::Version()
+APT::StringView debListParser::Version()
 {
-   return Section.Find("Version").to_string();
+   return Section.Find("Version");
 }
 									/*}}}*/
 unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
@@ -160,7 +160,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	    const char * const Close = (const char * const) memchr(Open, ')', Stop - Open);
 	    if (likely(Close != NULL))
 	    {
-	       std::string const version(Open + 1, (Close - Open) - 1);
+	       APT::StringView const version(Open + 1, (Close - Open) - 1);
 	       if (version != Ver.VerStr())
 	       {
 		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
@@ -171,7 +171,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 Stop = Space;
       }
 
-      std::string const pkgname(Start, Stop - Start);
+      APT::StringView const pkgname(Start, Stop - Start);
       if (pkgname != G.Name())
       {
 	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
@@ -651,7 +651,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       ++I;
 	    }
 
-	    std::string arch(I, End);
+	    std::string const arch(I, End);
 	    if (arch.empty() == false && matchesArch(arch.c_str()) == true)
 	    {
 	       Found = true;
@@ -733,8 +733,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 		  ++I;
 	       }
 
-	       std::string restriction(I, End);
-
+	       std::string const restriction(I, End);
 	       if (restriction.empty() == false && profiles.empty() == false &&
 		  std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
 	       {
@@ -825,12 +824,13 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       {
 	 // Such dependencies are not supposed to be accepted …
 	 // … but this is probably the best thing to do anyway
-	 std::string Pkg;
 	 if (Package.substr(found + 1) == "native")
-	    Pkg = Package.substr(0, found).to_string() + ':' + Ver.Cache()->NativeArch();
-	 else
-	    Pkg = Package.to_string();
-	 if (NewDepends(Ver, Pkg, "any", Version, Op | pkgCache::Dep::ArchSpecific, Type) == false)
+	 {
+	    std::string const Pkg = Package.substr(0, found).to_string() + ':' + Ver.Cache()->NativeArch();
+	    if (NewDepends(Ver, Pkg, "any", Version, Op | pkgCache::Dep::ArchSpecific, Type) == false)
+	       return false;
+	 }
+	 else if (NewDepends(Ver, Package, "any", Version, Op | pkgCache::Dep::ArchSpecific, Type) == false)
 	    return false;
       }
 
