@@ -93,6 +93,11 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
       ~Dynamic() {
 	 toReMap.pop_back();
       }
+
+#if __cplusplus >= 201103L
+      Dynamic(const Dynamic&) = delete;
+      void operator=(const Dynamic&) = delete;
+#endif
    };
 
    protected:
