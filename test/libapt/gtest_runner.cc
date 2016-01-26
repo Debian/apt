@@ -1,10 +1,15 @@
 #include <gtest/gtest.h>
 
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/init.h>
 
 int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);
-   int result = RUN_ALL_TESTS();
+   if (pkgInitSystem(*_config, _system) == false)
+      return 42;
+   int const result = RUN_ALL_TESTS();
    if (_error->empty() == false)
    {
       std::cerr << "The test generated the following global messages:" << std::endl;

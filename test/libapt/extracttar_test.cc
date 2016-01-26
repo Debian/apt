@@ -20,7 +20,7 @@ class Stream : public pkgDirStream
 
 TEST(ExtractTar, ExtractTar)
 {
-    EXPECT_EQ(system("tar c makefile | gzip > tar.tgz"), 0);
+    EXPECT_EQ(system("tar c /etc/passwd 2>/dev/null | gzip > tar.tgz"), 0);
 
     FileFd fd("tar.tgz", FileFd::ReadOnly);
     unlink("tar.tgz");

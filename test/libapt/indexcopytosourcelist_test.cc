@@ -9,9 +9,9 @@
 
 #include <gtest/gtest.h>
 
-class NoCopy : public IndexCopy {
+class NoCopy : private IndexCopy {
    public:
-      std::string ConvertToSourceList(std::string CD,std::string Path) {
+      std::string ConvertToSourceList(std::string const &CD,std::string &&Path) {
 	 IndexCopy::ConvertToSourceList(CD, Path);
 	 return Path;
       }
@@ -44,13 +44,20 @@ TEST(IndexCopyTest, ConvertToSourceList)
 	 std::string const S = Path + "source/";
 	 std::string const List = std::string(*Release) + " " + *Component;
 
+	 {
+	 SCOPED_TRACE("no archs configured");
 	 _config->Clear("APT");
+	 _config->Set("APT::Architecture", "all");
+	 _config->Set("APT::Architectures::", "all");
 	 APT::Configuration::getArchitectures(false);
 	 EXPECT_EQ(A, ic.ConvertToSourceList("/media/cdrom/", CD + A));
 	 EXPECT_EQ(B, ic.ConvertToSourceList("/media/cdrom/", CD + B));
 	 EXPECT_EQ(C, ic.ConvertToSourceList("/media/cdrom/", CD + C));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + S));
+	 }
 
+	 {
+	 SCOPED_TRACE("mips configured");
 	 _config->Clear("APT");
 	 _config->Set("APT::Architecture", "mips");
 	 _config->Set("APT::Architectures::", "mips");
@@ -59,7 +66,10 @@ TEST(IndexCopyTest, ConvertToSourceList)
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + B));
 	 EXPECT_EQ(C, ic.ConvertToSourceList("/media/cdrom/", CD + C));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + S));
+	 }
 
+	 {
+	 SCOPED_TRACE("kfreebsd-mips configured");
 	 _config->Clear("APT");
 	 _config->Set("APT::Architecture", "kfreebsd-mips");
 	 _config->Set("APT::Architectures::", "kfreebsd-mips");
@@ -68,7 +78,10 @@ TEST(IndexCopyTest, ConvertToSourceList)
 	 EXPECT_EQ(B, ic.ConvertToSourceList("/media/cdrom/", CD + B));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + C));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + S));
+	 }
 
+	 {
+	 SCOPED_TRACE("armel configured");
 	 _config->Clear("APT");
 	 _config->Set("APT::Architecture", "armel");
 	 _config->Set("APT::Architectures::", "armel");
@@ -77,7 +90,10 @@ TEST(IndexCopyTest, ConvertToSourceList)
 	 EXPECT_EQ(B, ic.ConvertToSourceList("/media/cdrom/", CD + B));
 	 EXPECT_EQ(C, ic.ConvertToSourceList("/media/cdrom/", CD + C));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + S));
+	 }
 
+	 {
+	 SCOPED_TRACE("armel+mips configured");
 	 _config->Clear("APT");
 	 _config->Set("APT::Architecture", "armel");
 	 _config->Set("APT::Architectures::", "armel");
@@ -87,6 +103,7 @@ TEST(IndexCopyTest, ConvertToSourceList)
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + B));
 	 EXPECT_EQ(C, ic.ConvertToSourceList("/media/cdrom/", CD + C));
 	 EXPECT_EQ(List, ic.ConvertToSourceList("/media/cdrom/", CD + S));
+	 }
       }
    }
 }
