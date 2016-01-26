@@ -235,24 +235,6 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    return true;
 }
 									/*}}}*/
-// ListParser::Description - Return the description string		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is to return the string describing the package in debian
-   form. If this returns the blank string then the entry is assumed to
-   only describe package properties */
-string debListParser::Description(std::string const &lang)
-{
-   return Description(StringView(lang)).to_string();
-}
-
-StringView debListParser::Description(StringView lang)
-{
-   if (lang.empty())
-      return Section.Find("Description");
-   else
-      return Section.Find(string("Description-").append(lang.data(), lang.size()));
-}
-									/*}}}*/
 // ListParser::AvailableDescriptionLanguages				/*{{{*/
 std::vector<std::string> debListParser::AvailableDescriptionLanguages()
 {
@@ -287,7 +269,7 @@ MD5SumValue debListParser::Description_md5()
    StringView const value = Section.Find("Description-md5");
    if (value.empty() == true)
    {
-      StringView const desc = Description(StringView());
+      StringView const desc = Section.Find("Description");
       if (desc == "\n")
 	 return MD5SumValue();
 

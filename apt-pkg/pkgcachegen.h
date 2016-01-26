@@ -213,7 +213,6 @@ class APT_HIDDEN pkgCacheListParser
    virtual bool ArchitectureAll() = 0;
    virtual std::string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
-   virtual std::string Description(std::string const &lang) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;

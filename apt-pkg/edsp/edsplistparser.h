@@ -31,8 +31,7 @@ class APT_HIDDEN edspListParser : public debListParser
    edspListParserPrivate * const d;
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
-   virtual std::string Description();
-   virtual std::string DescriptionLanguage();
+   virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual MD5SumValue Description_md5() APT_OVERRIDE;
    virtual unsigned short VersionHash() APT_OVERRIDE;
 

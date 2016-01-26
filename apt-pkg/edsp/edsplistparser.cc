@@ -54,13 +54,9 @@ bool edspListParser::NewVersion(pkgCache::VerIterator &Ver)
 // ListParser::Description - Return the description string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Sorry, no description for the resolvers… */
-std::string edspListParser::Description()
+std::vector<std::string> edspListParser::AvailableDescriptionLanguages()
 {
-   return "";
-}
-std::string edspListParser::DescriptionLanguage()
-{
-   return "";
+   return {};
 }
 MD5SumValue edspListParser::Description_md5()
 {
