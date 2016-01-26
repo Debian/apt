@@ -122,7 +122,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
       return 0;
    }
 
-   if (MatchSrcOnly == false && Pkg.end() == false) 
+   if (MatchSrcOnly == false && Pkg.end() == false)
    {
       if(VerTag != "" || RelTag != "" || ArchTag != "")
       {
@@ -176,7 +176,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	       // or we match against a release
 	       if(VerTag.empty() == false ||
 		     (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
-		     (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
+		     (VF.File().Codename() != 0 && VF.File().Codename() == RelTag))
 	       {
 		  // the Version we have is possibly fuzzy or includes binUploads,
 		  // so we use the Version of the SourcePkg (empty if same as package)
@@ -190,12 +190,12 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	 }
       }
 
-      if (Src == "" && ArchTag != "")
+      if (Src.empty() == true && ArchTag.empty() == false)
       {
-	 if (VerTag != "")
+	 if (VerTag.empty() == false)
 	    _error->Error(_("Can not find a package '%s' with version '%s'"),
 		  Pkg.FullName().c_str(), VerTag.c_str());
-	 if (RelTag != "")
+	 if (RelTag.empty() == false)
 	    _error->Error(_("Can not find a package '%s' with release '%s'"),
 		  Pkg.FullName().c_str(), RelTag.c_str());
 	 Src = Name;
@@ -254,26 +254,24 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
 	       pkgSrcRecords::Parser *Parse;
-	       while (true) 
+	       while (true)
 	       {
 		  SrcRecs.Restart();
-		  while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0) 
+		  while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0)
 		  {
 		     const std::string Ver = Parse->Version();
-		     bool CorrectRelTag = false;
 
 		     // See if we need to look for a specific release tag
-		     if (RelTag != "" && UserRequestedVerTag == "")
+		     if (RelTag.empty() == false && UserRequestedVerTag.empty() == true)
 		     {
 			pkgCache::RlsFileIterator const Rls = GetReleaseFileForSourceRecord(Cache, SrcList, Parse);
 			if (Rls.end() == false)
 			{
-			   if ((Rls->Archive != 0 && RelTag == Rls.Archive()) ||
-				 (Rls->Codename != 0 && RelTag == Rls.Codename()))
-			      CorrectRelTag = true;
+			   if ((Rls->Archive != 0 && RelTag != Rls.Archive()) &&
+				 (Rls->Codename != 0 && RelTag != Rls.Codename()))
+			      continue;
 			}
-		     } else
-			CorrectRelTag = true;
+		     }
 
 		     // Ignore all versions which doesn't fit
 		     if (VerTag.empty() == false &&
@@ -281,7 +279,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			continue;
 
 		     // Newer version or an exact match? Save the hit
-		     if (CorrectRelTag && (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0)) {
+		     if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
 			Last = Parse;
 			Offset = Parse->Offset();
 			Version = Ver;
@@ -293,7 +291,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			break;
 		  }
 		  if (UserRequestedVerTag == "" && Version != "" && RelTag != "")
-		     ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
+		     ioprintf(c1out, "Selected version '%s' (%s) for %s\n",
 			   Version.c_str(), RelTag.c_str(), Src.c_str());
 
 		  if (Last != 0 || VerTag.empty() == true)

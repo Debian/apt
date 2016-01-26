@@ -849,31 +849,33 @@ Description-en: $DESCRIPTION
 }
 
 insertsource() {
-	local RELEASE="$1"
+	local RELEASES="$1"
 	local NAME="$2"
 	local ARCH="$3"
 	local VERSION="$4"
 	local DEPENDENCIES="$5"
-        local BINARY="${6:-$NAME}"
+	local BINARY="${6:-$NAME}"
 	local ARCHS=""
-	local SPATH="aptarchive/dists/${RELEASE}/main/source"
-	mkdir -p $SPATH
-	local FILE="${SPATH}/Sources"
-	local DSCFILE="${NAME}_${VERSION}.dsc"
-	local TARFILE="${NAME}_${VERSION}.tar.gz"
-	echo "Package: $NAME
+	for RELEASE in $(printf '%s' "$RELEASES" | tr ',' '\n'); do
+		local SPATH="aptarchive/dists/${RELEASE}/main/source"
+		mkdir -p $SPATH
+		local FILE="${SPATH}/Sources"
+		local DSCFILE="${NAME}_${VERSION}.dsc"
+		local TARFILE="${NAME}_${VERSION}.tar.gz"
+		echo "Package: $NAME
 Binary: $BINARY
 Version: $VERSION
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
-	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
-	echo "Files:
+		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
+		echo "Files:
  $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
  $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
 Checksums-Sha256:
  $(echo -n "$DSCFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
  $(echo -n "$TARFILE" | sha256sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
 " >> "$FILE"
+	done
 }
 
 insertinstalledpackage() {
