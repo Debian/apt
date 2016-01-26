@@ -154,7 +154,6 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 
       if (Space != NULL)
       {
-	 Stop = Space;
 	 const char * const Open = (const char * const) memchr(Space, '(', Stop - Space);
 	 if (likely(Open != NULL))
 	 {
@@ -169,6 +168,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	       }
 	    }
 	 }
+	 Stop = Space;
       }
 
       std::string const pkgname(Start, Stop - Start);
