@@ -60,3 +60,42 @@ redatereleasefiles 'now - 2 days'
 find aptarchive -name 'Release.gpg' -delete
 testsuccess aptget update
 testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+msgmsg 'Release file has' 'no Date and no Valid-Until field'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now'
+sed -i '/^Date: / d' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testwarning aptget update
+listcurrentlistsdirectory > listsdir.lst
+# have no effect as Date is unknown
+testwarning aptget update -o Acquire::Min-ValidTime=$((3600*24*30))
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+testwarning aptget update -o Acquire::Max-ValidTime=1
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+sed -i '/^Codename: / a\
+Another-Field: yes' $(find aptarchive/ -name 'Release')
+touch -d 'now + 1 day' $(find aptarchive/ -name 'Release')
+signreleasefiles "${2:-Joe Sixpack}"
+testwarning aptget update
+testsuccess cmp $(find aptarchive/ -name 'InRelease')  $(find rootdir/var/lib/apt/ -name '*_InRelease')
+
+msgmsg 'Release file has' 'no Date field, but Valid-Until expired'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now - 2 days'
+sed -i '/^Date: / d' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailure aptget update
+listcurrentlistsdirectory > listsdir.lst
+# have no effect as Date is unknown
+testfailure aptget update -o Acquire::Min-ValidTime=$((3600*24*30))
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+testfailure aptget update -o Acquire::Max-ValidTime=1
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+
+msgmsg 'Release file has' 'no Date field, but Valid-Until is good'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 2 days'
+sed -i '/^Date: / d' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testwarning aptget update

@@ -442,9 +442,8 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    std::string const StrDate = Section.FindS("Date");
    if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
    {
-      if (ErrorText != NULL)
-	 strprintf(*ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
-      return false;
+      _error->Warning( _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      Date = 0;
    }
 
    bool CheckValidUntil = _config->FindB("Acquire::Check-Valid-Until", true);
@@ -484,15 +483,18 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	    MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
       }
 
-      if (MinAge != 0 && ValidUntil != 0) {
-	 time_t const min_date = Date + MinAge;
-	 if (ValidUntil < min_date)
-	    ValidUntil = min_date;
-      }
-      if (MaxAge != 0) {
-	 time_t const max_date = Date + MaxAge;
-	 if (ValidUntil == 0 || ValidUntil > max_date)
-	    ValidUntil = max_date;
+      if (MinAge != 0 || ValidUntil != 0 || MaxAge != 0)
+      {
+	 if (MinAge != 0 && ValidUntil != 0) {
+	    time_t const min_date = Date + MinAge;
+	    if (ValidUntil < min_date)
+	       ValidUntil = min_date;
+	 }
+	 if (MaxAge != 0 && Date != 0) {
+	    time_t const max_date = Date + MaxAge;
+	    if (ValidUntil == 0 || ValidUntil > max_date)
+	       ValidUntil = max_date;
+	 }
       }
    }
 

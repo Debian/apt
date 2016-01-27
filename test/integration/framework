@@ -1522,6 +1522,14 @@ msgfailoutput() {
 			msgfailoutputstatfile "$2" "$3"
 		done
 		echo '#### test output ####'
+	elif [ "$1" = 'cmp' ]; then
+		echo >&2
+		while [ -n "$2" ]; do
+			echo "#### Complete file: $2 ####"
+			cat >&2 "$2" || true
+			shift
+		done
+		echo '#### cmp output ####'
 	fi
 	cat >&2 "$OUTPUT"
 	msgfail "$MSG"
