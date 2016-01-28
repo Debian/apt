@@ -16,21 +16,29 @@ mv aptarchive/pool aptarchive/newpool
 mv aptarchive/dists aptarchive/newdists
 
 testrun() {
-	msgmsg 'Test redirection works in method boundaries' "$1"
+	msgmsg "Test $1 redirection works in method boundaries" "$2"
 	msgtest 'Test redirection works in' 'apt-get update'
 	testsuccess --nomsg aptget update
 
 	# check that I-M-S header is kept in redirections
-	testsuccessequal "Hit:1 $1 unstable InRelease
+	testsuccessequal "Hit:1 $2 unstable InRelease
 Reading package lists..." aptget update
 
 	msgtest 'Test redirection works in' 'package download'
 	testsuccess --nomsg aptget install unrelated --download-only -y
 }
 
-testrun "http://localhost:${APTHTTPPORT}"
+for CODE in 301 302 307; do
+	webserverconfig 'aptwebserver::redirect::httpcode' "$CODE"
+	testrun "$CODE" "http://localhost:${APTHTTPPORT}"
+	testsuccess grep "^HTTP/1.1 $CODE " aptarchive/webserver.log
+	rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
+done
 
-rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
 changetohttpswebserver
 
-testrun "https://localhost:${APTHTTPSPORT}"
+for CODE in 301 302 307; do
+	webserverconfig 'aptwebserver::redirect::httpcode' "$CODE"
+	testrun "$CODE" "https://localhost:${APTHTTPSPORT}"
+	rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
+done

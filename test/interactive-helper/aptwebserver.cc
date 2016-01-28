@@ -652,7 +652,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       redirect.erase(0,1);
 	    if (redirect != filename)
 	    {
-	       sendRedirect(client, 301, redirect, *m, sendContent);
+	       sendRedirect(client, _config->FindI("aptwebserver::redirect::httpcode", 301), redirect, *m, sendContent);
 	       continue;
 	    }
 	 }
