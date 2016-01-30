@@ -935,7 +935,7 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
       reset(4096);
    }
    ~simple_buffer() {
-      delete buffer;
+      delete[] buffer;
    }
 
    const char *get() const { return buffer + bufferstart; }
