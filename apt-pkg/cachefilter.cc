@@ -68,28 +68,47 @@ bool PackageNameMatchesFnmatch::operator() (pkgCache::GrpIterator const &Grp) {
    return fnmatch(Pattern.c_str(), Grp.Name(), FNM_CASEFOLD) == 0;
 }
 									/*}}}*/
-// Architecture matches <kernel>-<cpu> specification			/*{{{*/
+// Architecture matches <libc>-<kernel>-<cpu> specification		/*{{{*/
 //----------------------------------------------------------------------
-/* The complete architecture, consisting of <kernel>-<cpu>. */
-static std::string CompleteArch(std::string const &arch) {
-	if (arch.find('-') != std::string::npos) {
-		// ensure that only -any- is replaced and not something like company-
-		std::string complete = std::string("-").append(arch).append("-");
-		complete = SubstVar(complete, "-any-", "-*-");
-		complete = complete.substr(1, complete.size()-2);
-		return complete;
-	}
-	else if (arch == "any")			return "*-*";
-	else					return "linux-" + arch;
+/* The complete architecture, consisting of <libc>-<kernel>-<cpu>. */
+static std::string CompleteArch(std::string const &arch, bool const isPattern) {
+   auto const found = arch.find('-');
+   if (found != std::string::npos)
+   {
+      // ensure that only -any- is replaced and not something like company-
+      std::string complete = std::string("-").append(arch).append("-");
+      size_t pos = 0;
+      char const * const search = "-any-";
+      auto const search_len = strlen(search) - 2;
+      while((pos = complete.find(search, pos)) != std::string::npos) {
+	 complete.replace(pos + 1, search_len, "*");
+	 pos += 2;
+      }
+      complete = complete.substr(1, complete.size()-2);
+      if (arch.find('-', found+1) != std::string::npos)
+	 // <libc>-<kernel>-<cpu> format
+	 return complete;
+      // <kernel>-<cpu> format
+      else if (isPattern)
+	 return "*-" + complete;
+      else
+	 return "gnu-" + complete;
+   }
+   else if (arch == "any")
+      return "*-*-*";
+   else if (isPattern)
+      return "*-linux-" + arch;
+   else
+      return "gnu-linux-" + arch;
 }
-PackageArchitectureMatchesSpecification::PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern) :
-					literal(pattern), complete(CompleteArch(pattern)), isPattern(isPattern) {
+PackageArchitectureMatchesSpecification::PackageArchitectureMatchesSpecification(std::string const &pattern, bool const pisPattern) :
+					literal(pattern), complete(CompleteArch(pattern, pisPattern)), isPattern(pisPattern) {
 }
 bool PackageArchitectureMatchesSpecification::operator() (char const * const &arch) {
 	if (strcmp(literal.c_str(), arch) == 0 ||
 	    strcmp(complete.c_str(), arch) == 0)
 		return true;
-	std::string const pkgarch = CompleteArch(arch);
+	std::string const pkgarch = CompleteArch(arch, !isPattern);
 	if (isPattern == true)
 		return fnmatch(complete.c_str(), pkgarch.c_str(), 0) == 0;
 	return fnmatch(pkgarch.c_str(), complete.c_str(), 0) == 0;

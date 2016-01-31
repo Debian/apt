@@ -31,6 +31,8 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
       "not-for-darwin [ !darwin-any ], "
       "cpu-for-me [ any-amd64 ], "
       "os-for-me [ linux-any ], "
+      "libc-for-me [ gnu-linux-any ], "
+      "libc-not-for-me [ musl-linux-any ], "
       "cpu-not-for-me [ any-armel ], "
       "os-not-for-me [ kfreebsd-any ], "
       "not-in-stage1 <!stage1>, "
@@ -150,6 +152,26 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
       EXPECT_EQ("os-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
+   } else {
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      Start = strstr(Start, ",");
+      Start++;
+   }
+
+   if (ParseArchFlags == true) {
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      EXPECT_EQ("libc-for-me", Package);
+      EXPECT_EQ("", Version);
+      EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
+   } else {
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      Start = strstr(Start, ",");
+      Start++;
+   }
+
+   if (ParseArchFlags == true) {
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      EXPECT_EQ("", Package); // libc-not-for-me
    } else {
       EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
       Start = strstr(Start, ",");

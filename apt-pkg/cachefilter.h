@@ -115,11 +115,11 @@ class PackageArchitectureMatchesSpecification : public PackageMatcher {	/*{{{*/
 /** \class PackageArchitectureMatchesSpecification
    \brief matching against architecture specification strings
 
-   The strings are of the format <kernel>-<cpu> where either component,
+   The strings are of the format <libc>-<kernel>-<cpu> where either component,
    or the whole string, can be the wildcard "any" as defined in
    debian-policy §11.1 "Architecture specification strings".
 
-   Examples: i386, mipsel, linux-any, any-amd64, any */
+   Examples: i386, mipsel, musl-linux-amd64, linux-any, any-amd64, any */
 	std::string literal;
 	std::string complete;
 	bool isPattern;
