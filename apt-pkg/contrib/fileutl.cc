@@ -1260,16 +1260,10 @@ public:
    }
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
    {
-      size_t written = 0;
+      auto written = writebuffer.write(From, Size);
 
-      while (written < Size) {
-	 auto buffered = writebuffer.write(static_cast<char const*>(From) + written, Size - written);
-
-	 written += buffered;
-
-	 if (writebuffer.full() && InternalFlush() == false)
-	       return -1;
-      }
+      if (writebuffer.full() && InternalFlush() == false)
+	 return -1;
 
       return written;
    }
