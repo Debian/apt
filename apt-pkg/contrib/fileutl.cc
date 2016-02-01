@@ -1260,6 +1260,12 @@ public:
    }
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
    {
+      // Optimisation: If the buffer is empty and we have more to write than
+      // would fit in the buffer (or equal number of bytes), write directly.
+      if (writebuffer.empty() == true && Size >= writebuffer.free())
+	 return wrapped->InternalWrite(From, Size);
+
+      // Write as much into the buffer as possible and then flush if needed
       auto written = writebuffer.write(From, Size);
 
       if (writebuffer.full() && InternalFlush() == false)
