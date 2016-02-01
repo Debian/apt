@@ -968,9 +968,9 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
    }
    ssize_t write(const void *from, unsigned long long requested_size) APT_MUSTCHECK
    {
-      if (buffersize_max - size() < requested_size)
-	 requested_size = buffersize_max - size();
-      memcpy(buffer + bufferend, from, requested_size);
+      if (free() < requested_size)
+	 requested_size = free();
+      memcpy(getend(), from, requested_size);
       bufferend += requested_size;
       if (bufferstart == bufferend)
 	 bufferstart = bufferend = 0;
