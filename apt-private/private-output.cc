@@ -290,7 +290,8 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
    output = SubstVar(output, "${color:highlight}", _config->Find("APT::Color::Highlight", ""));
    output = SubstVar(output, "${color:neutral}", _config->Find("APT::Color::Neutral", ""));
    output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
-   output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
+   if (output.find("${LongDescription}") != string::npos)
+      output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
    output = SubstVar(output, "${ }${ }", "${ }");
    output = SubstVar(output, "${ }\n", "\n");
    output = SubstVar(output, "${ }", " ");
