@@ -464,7 +464,9 @@ string SubstVar(const string &Str,const string &Subst,const string &Contents)
 
    if (OldPos >= Str.length())
       return Temp;
-   return Temp + string(Str,OldPos);
+
+   Temp.append(Str, OldPos, string::npos);
+   return Temp;
 }
 string SubstVar(string Str,const struct SubstVar *Vars)
 {
