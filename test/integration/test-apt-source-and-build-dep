@@ -55,8 +55,7 @@ setupaptarchive
 APTARCHIVE=$(readlink -f ./aptarchive)
 
 # normal operation gets highest version number
-HEADER="Reading package lists...
-Building dependency tree..."
+HEADER='Reading package lists...'
 DOWNLOAD1="Need to get 0 B/25 B of source archives.
 'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
 'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
@@ -161,13 +160,10 @@ Need to get 0 B/25 B of source archives.
 Fetch source foo" apt source -q -s foo
 testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo -s
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-E: Must specify at least one package to fetch source for' apt source
+testfailureequal 'E: Must specify at least one package to fetch source for' apt source
 testfailureequal 'E: Must specify at least one package to check builddeps for' apt build-dep
 
 testsuccessequal "Reading package lists...
-Building dependency tree...
 NOTICE: 'bar' packaging is maintained in the 'Git' version control system at:
 git://anonscm.debian.org/bar/bar.git -b debian/experimental
 Please use:

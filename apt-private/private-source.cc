@@ -317,13 +317,10 @@ struct DscFile
 };
 bool DoSource(CommandLine &CmdL)
 {
-   CacheFile Cache;
-   if (Cache.Open(false) == false)
-      return false;
-
    if (CmdL.FileSize() <= 1)
       return _error->Error(_("Must specify at least one package to fetch source for"));
 
+   CacheFile Cache;
    // Read the source list
    if (Cache.BuildSourceList() == false)
       return false;
