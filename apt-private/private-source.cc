@@ -152,12 +152,12 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	    // pick highest version for the arch unless the user wants
 	    // something else
 	    if (ArchTag != "" && VerTag == "" && RelTag == "")
-	       if(Cache->VS().CmpVersion(VerTag, Ver.VerStr()) < 0)
+	       if(Cache.GetPkgCache()->VS->CmpVersion(VerTag, Ver.VerStr()) < 0)
 		  VerTag = Ver.VerStr();
 
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
-		  (fuzzy == true || Cache->VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
+		  (fuzzy == true || Cache.GetPkgCache()->VS->CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
 		  (fuzzy == false || strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)) // fuzzy match
 	       continue;
 
@@ -275,11 +275,11 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 
 		     // Ignore all versions which doesn't fit
 		     if (VerTag.empty() == false &&
-			   Cache->VS().CmpVersion(VerTag, Ver) != 0) // exact match
+			   Cache.GetPkgCache()->VS->CmpVersion(VerTag, Ver) != 0) // exact match
 			continue;
 
 		     // Newer version or an exact match? Save the hit
-		     if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
+		     if (Last == 0 || Cache.GetPkgCache()->VS->CmpVersion(Version,Ver) < 0) {
 			Last = Parse;
 			Offset = Parse->Offset();
 			Version = Ver;
@@ -514,7 +514,7 @@ bool DoSource(CommandLine &CmdL)
       bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
       for (unsigned I = 0; I != J; ++I)
       {
-	 std::string Dir = Dsc[I].Package + '-' + Cache->VS().UpstreamVersion(Dsc[I].Version.c_str());
+	 std::string Dir = Dsc[I].Package + '-' + Cache.GetPkgCache()->VS->UpstreamVersion(Dsc[I].Version.c_str());
 
 	 // Diff only mode only fetches .diff files
 	 if (_config->FindB("APT::Get::Diff-Only",false) == true ||

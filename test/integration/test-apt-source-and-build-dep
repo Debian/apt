@@ -5,11 +5,11 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
 # we need to insert a package into "unstable" so that a Release file is
 # create for the test
-insertpackage 'wheezy' 'unreleated-package' 'all' '1.0'
+insertpackage 'wheezy' 'build-essential' 'all' '1.0'
 
 # a "normal" package with source and binary
 insertpackage 'unstable' 'foo' 'all' '2.0'
@@ -70,41 +70,65 @@ DOWNLOAD4="Need to get 0 B/25 B of source archives.
 'file://${APTARCHIVE}/baz_2.0.dsc' baz_2.0.dsc 11 SHA256:47d062d29070b3f592d1c8aed8c1e7913804bbb67ca1d64877c8219dac5e0420
 'file://${APTARCHIVE}/baz_2.0.tar.gz' baz_2.0.tar.gz 14 SHA256:11c1b202c94a64ab6433d9f0ed5515fce1dc7b20e6bcf51cec9ef8b9455f5a41"
 testsuccessequal "$HEADER
-$DOWNLOAD2" aptget source -q --print-uris foo
+$DOWNLOAD2" apt source -q --print-uris foo
 testsuccessequal "$HEADER
-$DOWNLOAD2" aptget source -q --print-uris foo foo
+$DOWNLOAD2" apt source -q --print-uris foo foo
+getbuilddep() {
+	echo 'Reading package lists...'
+	if [ -n "$2" ]; then
+		echo "$2"
+	fi
+	echo "${1} has no build depends.
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  build-essential
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst build-essential (1.0 wheezy [all])
+Conf build-essential (1.0 wheezy [all])"
+}
+testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo -s
 
 # select by release: suite
 testsuccessequal "$HEADER
 Selected version '1.0' (stable) for foo
-$DOWNLOAD1" aptget source -q --print-uris foo/stable
+$DOWNLOAD1" apt source -q --print-uris foo/stable
+testsuccessequal "$(getbuilddep 'foo' "Selected version '1.0' (stable) for foo")" apt build-dep foo/stable -s
 testsuccessequal "$HEADER
 Selected version '2.0' (unstable) for foo
-$DOWNLOAD2" aptget source -q --print-uris foo/unstable
+$DOWNLOAD2" apt source -q --print-uris foo/unstable
+testsuccessequal "$(getbuilddep 'foo' "Selected version '2.0' (unstable) for foo")" apt build-dep foo/unstable -s
 testsuccessequal "$HEADER
 Selected version '1.0' (stable) for foo
-$DOWNLOAD1" aptget source -q --print-uris foo -t stable
+$DOWNLOAD1" apt source -q --print-uris foo -t stable
+testsuccessequal "$(getbuilddep 'foo' "Selected version '1.0' (stable) for foo")" apt build-dep foo -t stable -s
 testsuccessequal "$HEADER
 Selected version '2.0' (unstable) for foo
-$DOWNLOAD2" aptget source -q --print-uris foo -t unstable
+$DOWNLOAD2" apt source -q --print-uris foo -t unstable
+testsuccessequal "$(getbuilddep 'foo' "Selected version '2.0' (unstable) for foo")" apt build-dep foo -t unstable -s
 testsuccessequal "$HEADER
 Selected version '1.0' (stable) for baz
-$DOWNLOAD3" aptget source -q --print-uris baz -t stable
+$DOWNLOAD3" apt source -q --print-uris baz -t stable
+testsuccessequal "$(getbuilddep 'baz' "Selected version '1.0' (stable) for baz")" apt build-dep baz -t stable -s
 
 # select by release: codename
 testsuccessequal "$HEADER
 Selected version '2.0' (sid) for foo
-$DOWNLOAD2" aptget source -q --print-uris foo/sid
+$DOWNLOAD2" apt source -q --print-uris foo/sid
+testsuccessequal "$(getbuilddep 'foo' "Selected version '2.0' (sid) for foo")" apt build-dep foo/sid -s
 testsuccessequal "$HEADER
 Selected version '2.0' (sid) for foo
-$DOWNLOAD2" aptget source -q --print-uris foo -t sid
+$DOWNLOAD2" apt source -q --print-uris foo -t sid
+testsuccessequal "$(getbuilddep 'foo' "Selected version '2.0' (sid) for foo")" apt build-dep foo -t sid -s
 testsuccessequal "$HEADER
 Selected version '2.0' (sid) for baz
-$DOWNLOAD4" aptget source -q --print-uris baz -t sid
+$DOWNLOAD4" apt source -q --print-uris baz -t sid
+testsuccessequal "$(getbuilddep 'baz' "Selected version '2.0' (sid) for baz")" apt build-dep baz -t sid -s
 
 # select by version
 testsuccessequal "$HEADER
-$DOWNLOAD1" aptget source -q --print-uris foo=1.0
+$DOWNLOAD1" apt source -q --print-uris foo=1.0
+testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo=1.0 -s
 
 # select by release with no binary package (Bug#731102) but ensure to get
 # highest version
@@ -113,27 +137,34 @@ DOWNLOAD01="Need to get 0 B/25 B of source archives.
 'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585"
 testsuccessequal "$HEADER
 Selected version '0.1' (wheezy) for foo
-$DOWNLOAD01" aptget source -q --print-uris foo/wheezy
+$DOWNLOAD01" apt source -q --print-uris foo/wheezy
+testsuccessequal "$(getbuilddep 'foo' "Selected version '0.1' (wheezy) for foo")" apt build-dep foo/wheezy -s
 
 # unavailable one
 testfailureequal "$HEADER
 E: Can not find version '9.9-not-there' of package 'foo'
-E: Unable to find a source package for foo" aptget source -q --print-uris foo=9.9-not-there
+E: Unable to find a source package for foo" apt source -q --print-uris foo=9.9-not-there
+testfailureequal "Reading package lists...
+E: Can not find version '9.9-not-there' of package 'foo'
+E: Unable to find a source package for foo=9.9-not-there" apt build-dep -s foo=9.9-not-there
 
 # version and release
 DOWNLOAD001="Need to get 0 B/29 B of source archives.
 'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 13 SHA256:649dfe03bbb70cebdfe7c6bf9036f9f2472510b8f52e823bdf5ade362ebaa76f
 'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 16 SHA256:ab7ba789d178362ecc808e49705e2338988a7f5b9410ec11a6c9555c017de907"
 testsuccessequal "$HEADER
-$DOWNLOAD001" aptget source -q --print-uris -t unstable foo=0.0.1
+$DOWNLOAD001" apt source -q --print-uris -t unstable foo=0.0.1
+testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo=0.0.1 -s
 
 testsuccessequal "$HEADER
 Need to get 0 B/25 B of source archives.
-Fetch source foo" aptget source -q -s foo
+Fetch source foo" apt source -q -s foo
+testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo -s
 
 testfailureequal 'Reading package lists...
 Building dependency tree...
-E: Must specify at least one package to fetch source for' aptget source
+E: Must specify at least one package to fetch source for' apt source
+testfailureequal 'E: Must specify at least one package to check builddeps for' apt build-dep
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -143,17 +174,22 @@ Please use:
 git clone git://anonscm.debian.org/bar/bar.git -b debian/experimental
 to retrieve the latest (possibly unreleased) updates to the package.
 Need to get 0 B/25 B of source archives.
-Fetch source bar" aptget source bar -s
+Fetch source bar" apt source bar -s
+testsuccessequal "$(getbuilddep 'bar')" apt build-dep bar -s
 
 testsuccessequal "$HEADER
 Need to get 0 B/25 B of source archives.
-Fetch source bin" aptget source bin -s -q
+Fetch source bin" apt source bin -s -q
+testsuccessequal "$(getbuilddep 'bin')" apt build-dep bin -s
 testsuccessequal "$HEADER
 Selected version '3-2' (unstable) for bin
 Need to get 0 B/25 B of source archives.
-Fetch source bin" aptget source bin/unstable -s -q
+Fetch source bin" apt source bin/unstable -s -q
+testsuccessequal "$(getbuilddep 'bin' "Selected version '3-2' (unstable) for bin")" apt build-dep bin/unstable -s
 testsuccessequal "$HEADER
 Picking 'bin-backport' as source package instead of 'bin'
 Selected version '2-2' (stable) for bin-backport
 Need to get 0 B/43 B of source archives.
-Fetch source bin-backport" aptget source bin/stable -s -q
+Fetch source bin-backport" apt source bin/stable -s -q
+testsuccessequal "$(getbuilddep 'bin-backport' "Picking 'bin-backport' as source package instead of 'bin'
+Selected version '2-2' (stable) for bin-backport")" apt build-dep bin/stable -s
