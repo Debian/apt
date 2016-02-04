@@ -660,6 +660,11 @@ class RredMethod : public aptMethod {
 	 out.Close();
 	 inp.Close();
 
+	 if (_error->PendingError() == true) {
+	    std::cerr << "FAILED to read or write files" << std::endl;
+	    return false;
+	 }
+
 	 if (Debug == true) {
 	    std::clog << "rred: finished file patching of " << Path  << "." << std::endl;
 	 }
