@@ -1054,7 +1054,7 @@ public:
 	 {
 	    buffer.reset();
 	    unsigned long long actualread = 0;
-	    if (filefd->Read(buffer.get(), buffer.buffersize_max, &actualread) == false)
+	    if (filefd->Read(buffer.getend(), buffer.free(), &actualread) == false)
 	       return nullptr;
 	    buffer.bufferend = actualread;
 	    if (buffer.size() == 0)
