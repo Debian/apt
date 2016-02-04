@@ -1,3 +1,39 @@
+apt (1.2.2) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * always create pkg at the time pkg:arch is created
+  * reimplement build-dep via apts normal resolver
+    (Closes: #137560, #444930, #489911, #583914, #728317, #812173)
+  * parse version correctly from binary Source field (Closes: 812492)
+  * get sources for packages in multiple releases again (Closes: 812497)
+  * only warn about missing/invalid Date field for now (Closes: 809329)
+  * support <libc>-<kernel>-<cpu> in architecture specs.
+    Thanks to Bálint Réczey for initial patch (Closes: #812212)
+  * avoid building dependency tree in 'source' command
+
+  [ Stefan Bühler ]
+  * fix "Mismatched free() / delete / delete []" in simple_buffer
+
+  [ Julian Andres Klode ]
+  * Do not buffer writes larger than the buffer if possible
+  * Drop the g++ build-dep, transition is done
+  * NEWS: Prefix the keep deb option with Binary::apt:: (Closes: #812111)
+  * rred: If there were I/O errors, fail
+  * Correctly report write errors when flushing buffered writer
+  * test: Fix apt-key tests to work with current gpg 2.1
+
+  [ Manuel "Venturi" Porras Peralta ]
+  * Spanish program translation update (Closes: 813467)
+
+  [ Adrian Wielgosik ]
+  * Try avoiding loading long package description
+  * Avoid temporary strings in SubstVar.
+
+  [ Fredrik Fornwall ]
+  * edspsystem.cc: include <stdlib.h> for mkdtemp (Closes: #807367)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 04 Feb 2016 22:50:43 +0100
+
 apt (1.2.1) unstable; urgency=high
 
   [ Zhou Mo ]
