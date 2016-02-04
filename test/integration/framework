@@ -1773,8 +1773,18 @@ createlistofkeys() {
 	local OUTPUT="$1"
 	shift
 	while [ -n "$1" ]; do
+		# gpg 2.1.something starts printing [SC] at some point
+		if grep -q ' rsa2048/' "$OUTPUT" && grep -qF '[SC]' "$OUTPUT"; then
+			case "$1" in
+				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18 [SC]';;
+				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [SC] [expired: 2013-07-13]';;
+				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16 [SC]';;
+				oldarchive) echo 'pub   rsa1024/F68C85A3 2013-12-19 [SC]';;
+				newarchive) echo 'pub   rsa2048/DBAC8DAE 2010-08-18 [SC]';;
+				*) echo 'UNKNOWN KEY';;
+			esac
 		# gpg 2.1 has a slightly different output format
-		if grep -q ' rsa2048/' "$OUTPUT"; then
+		elif grep -q ' rsa2048/' "$OUTPUT"; then
 			case "$1" in
 				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
 				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
