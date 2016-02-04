@@ -6,14 +6,15 @@ apt (1.2~exp1) experimental; urgency=medium
   removed from the /var/cache/apt/archives cache directory.
 
   This can be changed by setting the apt configuration option
-    "APT::Keep-Downloaded-Packages" to "true". E.g:
+    "Binary::apt::APT::Keep-Downloaded-Packages" to "true". E.g:
 
-  # echo 'APT::Keep-Downloaded-Packages "true";' \
+  # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
       > /etc/apt/apt.conf.d/01keep-debs
 
   Please note that the behavior of apt-get is unchanged. The
   downloaded debs will be kept in the cache directory after they
-  are installed.
+  are installed. To enable the behavior for other tools, you can set
+  "APT::Keep-Downloaded-Packages" to false.
 
   [ Compressed indices ]
   If you use Acquire::gzipIndexes, or any other compressed index targets,
