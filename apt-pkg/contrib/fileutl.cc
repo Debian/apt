@@ -1250,7 +1250,7 @@ public:
 	 if (written < 0 && errno == EINTR)
 	    continue;
 	 if (written < 0)
-	    return false;
+	    return wrapped->InternalWriteError();
 
 	 writebuffer.bufferstart += written;
       }
