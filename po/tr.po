@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -260,6 +260,36 @@ msgid "Unable to lock the download directory"
 msgstr "İndirme dizini kilitlenemiyor"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Bazı paketler kurulamadı. Bu durum, olanaksız bir durum istemiş\n"
+"olduğunuzu ya da kararsız (unstable) dağıtımı kullandığınızı ve\n"
+"bazı paketlerin henüz oluşturulamamış  ya da oluşturulmakta\n"
+"olduğunu gösterir."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Aşağıdaki bilgiler durumu çözmenize yardımcı olabilir:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Bozuk paketler"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "İç hata, InstallPackages bozuk paketler ile çağrıldı!"
 
@@ -416,20 +446,6 @@ msgstr ""
 "AutoRemover yapmaması gereken bir yıkıma\n"
 "sebep oldu. Lütfen apt hakkında bir hata raporu doldurun."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Aşağıdaki bilgiler durumu çözmenize yardımcı olabilir:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "İç hata, AutoRemover bazı şeyleri bozdu"
@@ -474,22 +490,6 @@ msgid ""
 msgstr ""
 "Karşılanmamış bağımlılıklar. 'apt-get -f install' komutunu paket seçeneği "
 "vermeden deneyin (ya da bir çözüm belirtin)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Bazı paketler kurulamadı. Bu durum, olanaksız bir durum istemiş\n"
-"olduğunuzu ya da kararsız (unstable) dağıtımı kullandığınızı ve\n"
-"bazı paketlerin henüz oluşturulamamış  ya da oluşturulmakta\n"
-"olduğunu gösterir."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Bozuk paketler"
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -908,55 +908,6 @@ msgstr "'dpkg-dev' paketinin kurulu olduğundan emin olun.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "İnşa komutu '%s' başarısız oldu.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"'%4$s' paketlerinde %3$s paketine izin verilmediği için %2$s kaynağının %1$s "
-"bağımlılığı karşılanamıyor"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%2$s için %1$s bağımlılığı, %3$s paketi bulunamadığı için karşılanamadı"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "%2$s için %1$s bağımlılığı karşılanamadı: Kurulu %3$s paketi çok yeni"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü "
-"gerekli sürüm şartlarını karşılamıyor"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü yok"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%2$s için %1$s bağımlılığı karşılanamadı: %3$s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s için inşa bağımlılıkları karşılanamadı."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3807,6 +3758,44 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Yükseltme hesaplanıyor"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "'%4$s' paketlerinde %3$s paketine izin verilmediği için %2$s kaynağının "
+#~ "%1$s bağımlılığı karşılanamıyor"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "%2$s için %1$s bağımlılığı, %3$s paketi bulunamadığı için karşılanamadı"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "%2$s için %1$s bağımlılığı karşılanamadı: Kurulu %3$s paketi çok yeni"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü "
+#~ "gerekli sürüm şartlarını karşılamıyor"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%2$s için %1$s bağımlılığı sağlanamıyor, çünkü %3$s paketinin aday sürümü "
+#~ "yok"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "%2$s için %1$s bağımlılığı karşılanamadı: %3$s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "%s için inşa bağımlılıkları karşılanamadı."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "%s bağı koparılırken sorun çıktı"

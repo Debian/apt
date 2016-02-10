@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -251,6 +251,36 @@ msgid "Unable to lock the download directory"
 msgstr "डाऊनलोड डिरेक्टरी कुलूपबंद करण्यास असमर्थ"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"काही पॅकेजेस संस्थापित होत नाहीत. याचा अर्थ असा आहे की तुम्ही\n"
+"अशक्य परिस्थितीची विनंती केली होती. किंवा जर तुम्ही अस्थिर\n"
+"विभागणी असणारी पण हवी असणारी, तयार केली नसलेली पॅकेजेस वापरत असाल \n"
+"किंवा ती येणाऱ्यांपैकी बाहेर हलविली असतील."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "खालील माहिती परिस्थिती निवळण्यासाठी मदत ठरू शकेल:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "तुटलेली पॅकेजेस"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "अंतर्गत त्रुटी, तुटलेल्या पॅकेजेस बरोबर  संस्थापित पॅकेजला आवाहन केले गेले/बोलावले गेले!"
 
@@ -397,20 +427,6 @@ msgstr ""
 "हूं,  AutoRemover ने काहीतरी नष्ट केल्याचे दिसतेय, खरेतर असे व्हायला नको\n"
 "कृपया apt कडे बग रिपोर्ट दाखल करा. "
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "खालील माहिती परिस्थिती निवळण्यासाठी मदत ठरू शकेल:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "अंतर्गत त्रुटी, AutoRemoverने स्टफला तोडले"
@@ -453,22 +469,6 @@ msgid ""
 msgstr ""
 "अनमेट डिपेंडन्सीज.एपीटी-गेट -एफ संस्थापन ('apt-get -f install') पॅकेजशिवाय प्रयत्न करा "
 "(किंवा पर्याय सांगा)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"काही पॅकेजेस संस्थापित होत नाहीत. याचा अर्थ असा आहे की तुम्ही\n"
-"अशक्य परिस्थितीची विनंती केली होती. किंवा जर तुम्ही अस्थिर\n"
-"विभागणी असणारी पण हवी असणारी, तयार केली नसलेली पॅकेजेस वापरत असाल \n"
-"किंवा ती येणाऱ्यांपैकी बाहेर हलविली असतील."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "तुटलेली पॅकेजेस"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -874,51 +874,6 @@ msgstr "'dpkg-dev' पॅकेज संस्थापित केले आ�
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "बांधणी करणाऱ्या आज्ञा '%s' अयशस्वी.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "%s अवलंबित्व %s साठी पूर्ण होण्यास असमर्थ: संस्थापित पॅकेज %s खूपच नवीन आहे"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"आवृतीची मागणी पूर्ण करण्यासाठी %s पॅकेजची आवृत्ती उपलब्ध नाही,त्यामुळे %s साठी %s "
-"डिपेंडन्सी पूर्ण होऊ शकत नाही"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%s साठी %s डिपेंडन्सी पूर्ण होण्यास असमर्थ: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s साठी बांधणी-डिपेंडन्सीज पूर्ण होऊ शकत नाही."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3708,6 +3663,41 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "पुढिल आवृत्तीची गणती करीत आहे"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr "%s अवलंबित्व %s साठी पूर्ण होण्यास असमर्थ: संस्थापित पॅकेज %s खूपच नवीन आहे"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "आवृतीची मागणी पूर्ण करण्यासाठी %s पॅकेजची आवृत्ती उपलब्ध नाही,त्यामुळे %s साठी %s "
+#~ "डिपेंडन्सी पूर्ण होऊ शकत नाही"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr "%s पॅकेज न सापडल्याने %s साठी %s डिपेंडन्सी पूर्ण होऊ शकत नाही"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "%s साठी %s डिपेंडन्सी पूर्ण होण्यास असमर्थ: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "%s साठी बांधणी-डिपेंडन्सीज पूर्ण होऊ शकत नाही."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "%s दुवा मोकळा/सुटा करण्यास अडचण"

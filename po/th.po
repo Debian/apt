@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -249,6 +249,35 @@ msgid "Unable to lock the download directory"
 msgstr "ไม่สามารถล็อคไดเรกทอรีดาวน์โหลด"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"ไม่สามารถติดตั้งบางแพกเกจได้ คุณอาจระบุเงื่อนไขการติดตั้งที่เป็นไปไม่ได้\n"
+"หรือถ้าคุณกำลังใช้รุ่น unstable ก็เป็นไปได้ว่าแพกเกจที่จำเป็นบางรายการ\n"
+"ยังไม่ถูกสร้างขึ้น หรือถูกย้ายออกจาก Incoming"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "ข้อมูลต่อไปนี้อาจช่วยแก้ปัญหาได้:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "แพกเกจมีปัญหา"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "เกิดข้อผิดพลาดภายใน: มีการเรียก InstallPackages ด้วยแพกเกจที่เสีย!"
 
@@ -394,20 +423,6 @@ msgstr ""
 "ดูเหมือนการถอดถอนอัตโนมัติได้สร้างความเสียหายบางอย่าง ซึ่งไม่ควรเกิดขึ้น\n"
 "กรุณารายงานบั๊กนี้ของแพกเกจ apt"
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "ข้อมูลต่อไปนี้อาจช่วยแก้ปัญหาได้:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "เกิดข้อผิดพลาดภายใน: AutoRemover ทำความเสียหาย"
@@ -444,21 +459,6 @@ msgid ""
 msgstr ""
 "มีปัญหาความขึ้นต่อกันระหว่างแพกเกจ กรุณาลองใช้ 'apt-get -f install' โดยไม่ระบุแพกเกจ "
 "(หรือจะระบุทางแก้ก็ได้)"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"ไม่สามารถติดตั้งบางแพกเกจได้ คุณอาจระบุเงื่อนไขการติดตั้งที่เป็นไปไม่ได้\n"
-"หรือถ้าคุณกำลังใช้รุ่น unstable ก็เป็นไปได้ว่าแพกเกจที่จำเป็นบางรายการ\n"
-"ยังไม่ถูกสร้างขึ้น หรือถูกย้ายออกจาก Incoming"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "แพกเกจมีปัญหา"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -867,52 +867,6 @@ msgstr "กรุณาตรวจสอบว่าได้ติดตั้
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "คำสั่ง build '%s' ล้มเหลว\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่สามารถใช้ %s กับแพกเกจ '%s' ได้"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่พบแพกเกจ %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: แพกเกจ %s ที่ติดตั้งไว้ใหม่เกินไป"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่มีแพกเกจ %s "
-"รุ่นที่จะสอดคล้องกับความต้องการรุ่นของแพกเกจได้"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะ %s ไม่มีรุ่นที่ติดตั้งได้"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "ไม่สามารถติดตั้งสิ่งที่จำเป็นสำหรับการ build ของ %s ได้"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3693,6 +3647,39 @@ msgstr "ดาวน์โหลดแฟ้มดัชนีบางแฟ้
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "กำลังคำนวณการปรับรุ่น"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่สามารถใช้ %s กับแพกเกจ '%s' ได้"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่พบแพกเกจ %s"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: แพกเกจ %s ที่ติดตั้งไว้ใหม่เกินไป"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะไม่มีแพกเกจ %s "
+#~ "รุ่นที่จะสอดคล้องกับความต้องการรุ่นของแพกเกจได้"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้ เพราะ %s ไม่มีรุ่นที่ติดตั้งได้"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "ไม่สามารถติดตั้งสิ่งที่จำเป็นสำหรับการ build ของ %s ได้"
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "มีปัญหาขณะลบแฟ้ม %s"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -253,6 +253,36 @@ msgid "Unable to lock the download directory"
 msgstr "Nem lehet zárolni a letöltési könyvtárat"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Néhány csomagot nem lehetett telepíteni. Ez azt jelentheti, hogy\n"
+"egy lehetetlen állapotot kért, vagy ha az unstable disztribúciót\n"
+"használja, akkor néhány igényelt csomag még nem készült el vagy ki\n"
+"lett mozdítva az Incoming-ból."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Az alábbi információk segíthetnek megoldani a problémát:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Törött csomagok"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Belső hiba, az InstallPackages törött csomagokkal lett meghívva!"
 
@@ -401,20 +431,6 @@ msgstr ""
 "Úgy tűnik, az AutoRemover hibát okozott, ez nem történhetne meg.\n"
 "Küldjön hibajelentést az apt csomaghoz."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Az alábbi információk segíthetnek megoldani a problémát:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Belső hiba, az AutoRemover sérült"
@@ -459,22 +475,6 @@ msgid ""
 msgstr ""
 "Teljesítetlen függőségek. Próbálja kiadni az „apt-get -f install” parancsot "
 "csomagok nélkül (vagy telepítse a függőségeket is!)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Néhány csomagot nem lehetett telepíteni. Ez azt jelentheti, hogy\n"
-"egy lehetetlen állapotot kért, vagy ha az unstable disztribúciót\n"
-"használja, akkor néhány igényelt csomag még nem készült el vagy ki\n"
-"lett mozdítva az Incoming-ból."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Törött csomagok"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -892,59 +892,6 @@ msgstr "Ellenőrizze, hogy a „dpkg-dev” csomag telepítve van-e.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "„%s” elkészítési parancs nem sikerült.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s nem "
-"engedélyezett a(z) „%4$s” csomagokon"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomag nem "
-"található"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"%2$s csomag %1$s függősége nem elégíthető ki: a telepített %3$s csomag túl "
-"friss"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomag elérhető "
-"verziója nem elégíti ki a verziókövetelményeket"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomagnak nincs "
-"jelölt verziója"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%2$s csomag %1$s függősége nem elégíthető ki: %3$s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s építési függőségei nem elégíthetők ki."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3791,6 +3738,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Frissítés kiszámítása"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s nem "
+#~ "engedélyezett a(z) „%4$s” csomagokon"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomag nem "
+#~ "található"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "%2$s csomag %1$s függősége nem elégíthető ki: a telepített %3$s csomag "
+#~ "túl friss"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomag "
+#~ "elérhető verziója nem elégíti ki a verziókövetelményeket"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%2$s csomag %1$s függősége nem elégíthető ki, mert a(z) %3$s csomagnak "
+#~ "nincs jelölt verziója"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "%2$s csomag %1$s függősége nem elégíthető ki: %3$s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "%s építési függőségei nem elégíthetők ki."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Hiba %s törlésekor"

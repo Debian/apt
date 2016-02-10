@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -251,6 +251,37 @@ msgstr "Does dim digon o le rhydd gennych yn %s."
 msgid "Unable to lock the download directory"
 msgstr "Ni ellir cloi'r cyfeiriadur lawrlwytho"
 
+# FIXME: needs commas
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Methwyd sefydlu rhai pecynnau. Gall hyn olygu eich bod chi wedi gofyn\n"
+"am sefyllfa amhosib neu, os ydych chi'n defnyddio'r dosraniad\n"
+"ansefydlog, fod rhai pecynnau angenrheidiol heb gael eu creu eto neu\n"
+"heb gael eu symud allan o Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Gall y wybodaeth canlynol gynorthwyo'n datrys y sefyllfa:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Pecynnau wedi torri"
+
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
@@ -397,20 +428,6 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Gall y wybodaeth canlynol gynorthwyo'n datrys y sefyllfa:"
-
 #: apt-private/private-install.cc
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
@@ -453,23 +470,6 @@ msgid ""
 msgstr ""
 "Dibyniaethau heb eu bodloni. Ceisiwch rhedeg 'apt-get -f install' efo dim "
 "pecyn (neu penodwch ddatrys)"
-
-# FIXME: needs commas
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Methwyd sefydlu rhai pecynnau. Gall hyn olygu eich bod chi wedi gofyn\n"
-"am sefyllfa amhosib neu, os ydych chi'n defnyddio'r dosraniad\n"
-"ansefydlog, fod rhai pecynnau angenrheidiol heb gael eu creu eto neu\n"
-"heb gael eu symud allan o Incoming."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Pecynnau wedi torri"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -884,59 +884,6 @@ msgstr ""
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Methodd y gorchymyn adeiladu '%s'.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y pecyn "
-"%s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y pecyn "
-"%s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Methwyd bodloni dibynniaeth %s am %s: Mae'r pecyn sefydliedig %s yn rhy "
-"newydd"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Ni ellir bodloni'r dibyniaeth %s ar gyfer %s oherwydd does dim fersiwn sydd "
-"ar gael o'r pecyn %s yn gallu bodloni'r gofynion ferswin"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y pecyn "
-"%s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Methwyd bodloni dibyniaeth %s am %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Methwyd bodloni'r dibyniaethau adeiladu ar gyfer %s."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3802,6 +3749,49 @@ msgstr ""
 #, fuzzy
 msgid "Calculating upgrade"
 msgstr "Yn Cyfrifo'r Uwchraddiad"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y "
+#~ "pecyn %s"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y "
+#~ "pecyn %s"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Methwyd bodloni dibynniaeth %s am %s: Mae'r pecyn sefydliedig %s yn rhy "
+#~ "newydd"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "Ni ellir bodloni'r dibyniaeth %s ar gyfer %s oherwydd does dim fersiwn "
+#~ "sydd ar gael o'r pecyn %s yn gallu bodloni'r gofynion ferswin"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "Ni ellir bodloni dibyniaeth %s ar gyfer %s oherwydd ni ellir canfod y "
+#~ "pecyn %s"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Methwyd bodloni dibyniaeth %s am %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Methwyd bodloni'r dibyniaethau adeiladu ar gyfer %s."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Gwall wrth datgysylltu %s"

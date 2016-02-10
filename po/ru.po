@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -260,6 +260,35 @@ msgid "Unable to lock the download directory"
 msgstr "Невозможно заблокировать каталог, куда складываются скачиваемые файлы"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Некоторые пакеты невозможно установить. Возможно, вы просите невозможного,\n"
+"или же используете нестабильную версию дистрибутива, где запрошенные вами\n"
+"пакеты ещё не созданы или были удалены из Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Следующая информация, возможно, поможет вам:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Сломанные пакеты"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "Внутренняя ошибка, InstallPackages была вызвана с неработоспособными "
@@ -419,20 +448,6 @@ msgstr ""
 "Хм, кажется, что AutoRemover был как-то удалён, чего не должно\n"
 "было случиться. Пожалуйста, отправьте сообщение об ошибке в пакете apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Следующая информация, возможно, поможет вам:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Внутренняя ошибка, AutoRemover всё поломал"
@@ -479,21 +494,6 @@ msgid ""
 msgstr ""
 "Неудовлетворённые зависимости. Попытайтесь выполнить «apt-get -f install», "
 "не указывая имени пакета, (или найдите другое решение)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Некоторые пакеты невозможно установить. Возможно, вы просите невозможного,\n"
-"или же используете нестабильную версию дистрибутива, где запрошенные вами\n"
-"пакеты ещё не созданы или были удалены из Incoming."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Сломанные пакеты"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -909,59 +909,6 @@ msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Команда сборки «%s» завершилась неудачно.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Зависимость типа %s для %s не может быть удовлетворена, так как %s не "
-"разрешён для пакетов «%s»"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Зависимость типа %s для %s не может быть удовлетворена, так как пакет %s не "
-"найден"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Не удалось удовлетворить зависимость типа %s для пакета %s: Установленный "
-"пакет %s новее, чем надо"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Зависимость типа %s для %s не может быть удовлетворена, так как версия-"
-"кандидат пакета %s не может удовлетворить требованиям по версии"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Зависимость типа %s для %s не может быть удовлетворена, так как пакет %s не "
-"имеет версии-кандидата"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Невозможно удовлетворить зависимость типа %s для пакета %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Зависимости для сборки %s не могут быть удовлетворены."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3842,6 +3789,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Расчёт обновлений"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "Зависимость типа %s для %s не может быть удовлетворена, так как %s не "
+#~ "разрешён для пакетов «%s»"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "Зависимость типа %s для %s не может быть удовлетворена, так как пакет %s "
+#~ "не найден"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Не удалось удовлетворить зависимость типа %s для пакета %s: Установленный "
+#~ "пакет %s новее, чем надо"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "Зависимость типа %s для %s не может быть удовлетворена, так как версия-"
+#~ "кандидат пакета %s не может удовлетворить требованиям по версии"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "Зависимость типа %s для %s не может быть удовлетворена, так как пакет %s "
+#~ "не имеет версии-кандидата"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Невозможно удовлетворить зависимость типа %s для пакета %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Зависимости для сборки %s не могут быть удовлетворены."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Не удалось удалить %s"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -253,6 +253,36 @@ msgid "Unable to lock the download directory"
 msgstr "Adresár pre sťahovanie sa nedá zamknúť"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Niektoré balíky sa nedajú nainštalovať. To môže znamenať, že požadujete\n"
+"nemožnú situáciu, alebo ak používate nestabilnú distribúciu, že\n"
+"požadované balíky ešte neboli vytvorené alebo presunuté z fronty\n"
+"Novoprichádzajúcich (Incoming) balíkov."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Nasledovné informácie vám možno pomôžu vyriešiť túto situáciu:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Poškodené balíky"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Vnútorná chyba, InstallPackages bolo volané s poškodenými balíkmi!"
 
@@ -406,20 +436,6 @@ msgstr ""
 "Hmm, zdá sa, že AutoRemover niečo zničil, čo sa naozaj nemalo stať.\n"
 "Prosím, pošlite hlásenie o chybe balíka apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Nasledovné informácie vám možno pomôžu vyriešiť túto situáciu:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Vnútorná chyba, AutoRemover niečo pokazil"
@@ -468,22 +484,6 @@ msgid ""
 msgstr ""
 "Nesplnené závislosti. Skúste spustiť „apt-get -f install“ bez balíkov (alebo "
 "navrhnite riešenie)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Niektoré balíky sa nedajú nainštalovať. To môže znamenať, že požadujete\n"
-"nemožnú situáciu, alebo ak používate nestabilnú distribúciu, že\n"
-"požadované balíky ešte neboli vytvorené alebo presunuté z fronty\n"
-"Novoprichádzajúcich (Incoming) balíkov."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Poškodené balíky"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -902,55 +902,6 @@ msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Príkaz na zostavenie „%s“ zlyhal.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%s závislosť pre %s nemožno splniť, pretože %s nie je povolené na balíkoch "
-"„%s“"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "%s závislosť pre %s nemožno splniť, pretože sa nedá nájsť balík %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Zlyhalo splnenie %s závislosti pre %s: Inštalovaný balík %s je príliš nový"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s závislosť pre %s nemožno splniť, pretože kandidátska verzia balíka %s, "
-"nedokáže splniť požiadavky na verziu"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%s závislosť pre %s nemožno splniť, pretože balík %s nemá kandidátsku verziu"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Zlyhalo splnenie %s závislosti pre %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Závislosti na zostavenie %s nemožno splniť."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3778,6 +3729,43 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Prepočítava sa aktualizácia"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "%s závislosť pre %s nemožno splniť, pretože %s nie je povolené na "
+#~ "balíkoch „%s“"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr "%s závislosť pre %s nemožno splniť, pretože sa nedá nájsť balík %s"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Zlyhalo splnenie %s závislosti pre %s: Inštalovaný balík %s je príliš nový"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%s závislosť pre %s nemožno splniť, pretože kandidátska verzia balíka %s, "
+#~ "nedokáže splniť požiadavky na verziu"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%s závislosť pre %s nemožno splniť, pretože balík %s nemá kandidátsku "
+#~ "verziu"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Zlyhalo splnenie %s závislosti pre %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Závislosti na zostavenie %s nemožno splniť."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problém s odlinkovaním %s"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -252,6 +252,37 @@ msgid "Unable to lock the download directory"
 msgstr "Nu s-a putut bloca directorul de descărcare"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Unele pachete n-au putut fi instalate. Aceasta ar putea însemna că ați "
+"cerut\n"
+"o situație imposibilă sau că folosiți distribuția instabilă în care unele "
+"pachete\n"
+"cerute n-au fost create încă sau au fost mutate din Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Următoarele informații ar putea să vă ajute la rezolvarea situației:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Pachete deteriorate"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Eroare internă, InstallPackages a fost apelat cu pachete deteriorate!"
 
@@ -401,20 +432,6 @@ msgstr ""
 "întâmple. Sunteți rugat să trimiteți un raportați de defect pentru pachetul "
 "apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Următoarele informații ar putea să vă ajute la rezolvarea situației:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Eroare internă, AutoRemover a deteriorat diverse chestiuni"
@@ -464,23 +481,6 @@ msgid ""
 msgstr ""
 "Dependențe neîndeplinite. Încercați 'apt-get -f install' fără nici un pachet "
 "(sau oferiți o altă soluție)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Unele pachete n-au putut fi instalate. Aceasta ar putea însemna că ați "
-"cerut\n"
-"o situație imposibilă sau că folosiți distribuția instabilă în care unele "
-"pachete\n"
-"cerute n-au fost create încă sau au fost mutate din Incoming."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Pachete deteriorate"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -889,59 +889,6 @@ msgstr "Verificați dacă pachetul 'dpkg-dev' este instalat.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Comanda de construire '%s' eșuată.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Eșec la satisfacerea dependenței %s pentru %s: Pachetul instalat %s este "
-"prea nou"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece nici o versiune "
-"disponibilă a pachetului %s nu poate satisface versiunile cerute"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
-"poate fi găsit"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Eșec la satisfacerea dependenței %s pentru %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Dependențele înglobate pentru %s nu pot fi satisfăcute."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3773,6 +3720,49 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Calculez înnoirea"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+#~ "poate fi găsit"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+#~ "poate fi găsit"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Eșec la satisfacerea dependenței %s pentru %s: Pachetul instalat %s este "
+#~ "prea nou"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "Dependența lui %s de %s nu poate fi satisfăcută deoarece nici o versiune "
+#~ "disponibilă a pachetului %s nu poate satisface versiunile cerute"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "Dependența lui %s de %s nu poate fi satisfăcută deoarece pachetul %s nu "
+#~ "poate fi găsit"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Eșec la satisfacerea dependenței %s pentru %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Dependențele înglobate pentru %s nu pot fi satisfăcute."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problemă la desfacerea %s"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -255,6 +255,36 @@ msgid "Unable to lock the download directory"
 msgstr "Hindi maaldaba ang directory ng download"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"May mga paketeng hindi ma-instol. Maaring may hiniling kayong imposible\n"
+"o kung kayo'y gumagamit ng pamudmod na unstable ay may ilang mga paketeng\n"
+"kailangan na hindi pa nalikha o linipat mula sa Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr ""
+"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Sirang mga pakete"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "Error na internal, tinawagan ang InstallPackages na may sirang mga pakete!"
@@ -402,21 +432,6 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr ""
-"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
-
 #: apt-private/private-install.cc
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
@@ -459,21 +474,6 @@ msgid ""
 msgstr ""
 "May mga dependensiyang kulang. Subukan ang 'apt-get -f install' na walang "
 "mga pakete (o magtakda ng solusyon)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"May mga paketeng hindi ma-instol. Maaring may hiniling kayong imposible\n"
-"o kung kayo'y gumagamit ng pamudmod na unstable ay may ilang mga paketeng\n"
-"kailangan na hindi pa nalikha o linipat mula sa Incoming."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Sirang mga pakete"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -881,59 +881,6 @@ msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Utos na build '%s' ay bigo.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Bigo sa pagbuo ng dependensiyang %s para sa %s: Ang naka-instol na paketeng "
-"%s ay bagong-bago pa lamang."
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na bersyon "
-"ng paketeng %s na tumutugon sa kinakailangang bersyon"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
-"mahanap"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Bigo sa pagbuo ng dependensiyang %s para sa %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Hindi mabuo ang build-dependencies para sa %s."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3752,6 +3699,49 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Sinusuri ang pag-upgrade"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay "
+#~ "hindi mahanap"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay "
+#~ "hindi mahanap"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Bigo sa pagbuo ng dependensiyang %s para sa %s: Ang naka-instol na "
+#~ "paketeng %s ay bagong-bago pa lamang."
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na "
+#~ "bersyon ng paketeng %s na tumutugon sa kinakailangang bersyon"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay "
+#~ "hindi mahanap"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Bigo sa pagbuo ng dependensiyang %s para sa %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Hindi mabuo ang build-dependencies para sa %s."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problema sa pag-unlink ng %s"

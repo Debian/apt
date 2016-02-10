@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -254,6 +254,36 @@ msgid "Unable to lock the download directory"
 msgstr "Kunde inte låsa hämtningskatalogen"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Några paket kunde inte installeras. Det kan betyda att du har begärt\n"
+"en omöjlig situation eller, om du använder den instabila utgåvan\n"
+"att några nödvändiga paket ännu inte har skapats eller flyttats\n"
+"ut från ”Incoming”."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Följande information kan vara till hjälp för att lösa situationen:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Trasiga paket"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Internt fel. InstallPackages anropades med trasiga paket!"
 
@@ -408,20 +438,6 @@ msgstr ""
 "Hmm, det verkar som AutoRemover förstörde något som verkligen\n"
 "inte skulle hända. Skicka in en felrapport mot paketet apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Följande information kan vara till hjälp för att lösa situationen:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Internt fel, AutoRemover förstörde något"
@@ -465,22 +481,6 @@ msgid ""
 msgstr ""
 "Otillfredsställda beroenden. Prova med ”apt-get -f install” utan paket "
 "(eller ange en lösning)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Några paket kunde inte installeras. Det kan betyda att du har begärt\n"
-"en omöjlig situation eller, om du använder den instabila utgåvan\n"
-"att några nödvändiga paket ännu inte har skapats eller flyttats\n"
-"ut från ”Incoming”."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Trasiga paket"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -899,59 +899,6 @@ msgstr "Försäkra dig om att paketet ”dpkg-dev” är installerat.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Byggkommandot ”%s” misslyckades.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom %s inte är tillåtet på "
-"”%s”-paket"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
-"hittas"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Misslyckades med att tillfredsställa %s-beroendet för %s: Det installerade "
-"paketet %s är för nytt"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom kandidatversionen av "
-"paketet %s inte tillfredsställer versionskraven"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte har "
-"någon kandidatversion"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Byggberoenden för %s kunde inte tillfredsställas."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3816,6 +3763,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Beräknar uppgradering"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "%s-beroendet på %s kan inte tillfredsställas eftersom %s inte är tillåtet "
+#~ "på ”%s”-paket"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
+#~ "hittas"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Misslyckades med att tillfredsställa %s-beroendet för %s: Det "
+#~ "installerade paketet %s är för nytt"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%s-beroendet på %s kan inte tillfredsställas eftersom kandidatversionen "
+#~ "av paketet %s inte tillfredsställer versionskraven"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte har "
+#~ "någon kandidatversion"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Byggberoenden för %s kunde inte tillfredsställas."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problem med att länka ut %s"

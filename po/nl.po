@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2014-11-09 23:47+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -257,6 +257,36 @@ msgid "Unable to lock the download directory"
 msgstr "Kon de ophaalmap niet vergrendelen"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Sommige pakketten konden niet geïnstalleerd worden. Dit kan betekenen\n"
+"dat u om een onmogelijke situatie gevraagd heeft, of, indien u\n"
+"de distributie 'unstable' gebruikt, dat sommige benodigde pakketten nog "
+"gemaakt moeten worden of uit 'Incoming' verwijderd werden."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "De volgende informatie kan misschien helpen de situatie op te lossen:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Niet-werkende pakketten"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Interne fout. InstallPackages is aangeroepen met defecte pakketten!"
 
@@ -407,20 +437,6 @@ msgstr ""
 "Hmm, het lijkt erop dat de AutoRemover iets vernietigd heeft. Dit zou\n"
 "niet mogen kunnen. Gelieve een bug-rapport voor apt in te sturen."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "De volgende informatie kan misschien helpen de situatie op te lossen:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Interne fout. AutoRemover heeft dingen stukgemaakt"
@@ -466,22 +482,6 @@ msgid ""
 msgstr ""
 "Er zijn niet-voldane vereisten. U kunt best 'apt-get -f install' uitvoeren "
 "zonder pakketten op te geven, (of u kunt zelf een oplossing specificeren)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Sommige pakketten konden niet geïnstalleerd worden. Dit kan betekenen\n"
-"dat u om een onmogelijke situatie gevraagd heeft, of, indien u\n"
-"de distributie 'unstable' gebruikt, dat sommige benodigde pakketten nog "
-"gemaakt moeten worden of uit 'Incoming' verwijderd werden."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Niet-werkende pakketten"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -905,58 +905,6 @@ msgstr "Gelieve na te gaan of het pakket 'dpkg-dev' geïnstalleerd is.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Bouwopdracht '%s' is mislukt.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat %s niet toegestaan is "
-"voor de pakketten van '%s'"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat pakket %s onvindbaar is"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Voldoen van vereiste %s van %s is mislukt: geïnstalleerd pakket %s is te "
-"nieuw"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat de beschikbare versie "
-"van pakket %s niet aan de versievereisten voldoet"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"De vereiste %s van %s kan niet voldaan worden omdat er geen geschikte versie "
-"is van pakket %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Voldoen van de vereiste %s van %s is mislukt: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Bouwvereisten voor %s konden niet voldaan worden."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3853,6 +3801,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Opwaardering wordt doorgerekend"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "De vereiste %s van %s kan niet voldaan worden omdat %s niet toegestaan is "
+#~ "voor de pakketten van '%s'"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "De vereiste %s van %s kan niet voldaan worden omdat pakket %s onvindbaar "
+#~ "is"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Voldoen van vereiste %s van %s is mislukt: geïnstalleerd pakket %s is te "
+#~ "nieuw"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "De vereiste %s van %s kan niet voldaan worden omdat de beschikbare versie "
+#~ "van pakket %s niet aan de versievereisten voldoet"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "De vereiste %s van %s kan niet voldaan worden omdat er geen geschikte "
+#~ "versie is van pakket %s"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Voldoen van de vereiste %s van %s is mislukt: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Bouwvereisten voor %s konden niet voldaan worden."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Probleem bij het ontkoppelen van %s"

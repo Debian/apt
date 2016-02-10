@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -255,6 +255,36 @@ msgid "Unable to lock the download directory"
 msgstr "មិន​អាច​ចាក់​សោ​ថត​ទាញ​យក​បាន​ឡើយ"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"មិនអាច​ដំឡើងកញ្ចប់​មួយចំនួន​បានឡើយ ។ នេះ​មាន​ន័យ​ថា​អ្នក​\n"
+"​បានស្នើរ​ស្ថានភាព​ដែល​មិន​អាច​ធ្វើបានមួយ ឬ ​ប្រសិន​បើ​​អ្នក​កំពុង​ប្រើការចែកចាយ​ពុំ​មាន​លំនឹង​នោះ កញ្ចប់​"
+"ដែលបាន​ទាមទារនឹងមិនទាន់បានបង្កើត​ឡើយ​\n"
+" ឬ ​បានយក​ចេញ​ពីការមកដល់ ។"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "ព័ត៌មាន​ដូចតទៅនេះ អាចជួយ​ដោះស្រាយ​ស្ថានភាព​បាន ៖"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "កញ្ចប់​ដែល​បាន​ខូច​"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "កំហុស​ខាងក្នុង កញ្ចប់​ដំឡើង​ត្រូវ​បាន​ហៅ​​ជាមួយ​កញ្ចប់​ដែល​ខូច !"
 
@@ -398,20 +428,6 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "ព័ត៌មាន​ដូចតទៅនេះ អាចជួយ​ដោះស្រាយ​ស្ថានភាព​បាន ៖"
-
 #: apt-private/private-install.cc
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
@@ -452,22 +468,6 @@ msgid ""
 "solution)."
 msgstr ""
 "ភាពអស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ 'apt-get -f install' ដោយ​គ្មាន​កញ្ចប់ (ឬ បញ្ជាក់​ដំណោះស្រាយ) ។"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"មិនអាច​ដំឡើងកញ្ចប់​មួយចំនួន​បានឡើយ ។ នេះ​មាន​ន័យ​ថា​អ្នក​\n"
-"​បានស្នើរ​ស្ថានភាព​ដែល​មិន​អាច​ធ្វើបានមួយ ឬ ​ប្រសិន​បើ​​អ្នក​កំពុង​ប្រើការចែកចាយ​ពុំ​មាន​លំនឹង​នោះ កញ្ចប់​"
-"ដែលបាន​ទាមទារនឹងមិនទាន់បានបង្កើត​ឡើយ​\n"
-" ឬ ​បានយក​ចេញ​ពីការមកដល់ ។"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "កញ្ចប់​ដែល​បាន​ខូច​"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -873,51 +873,6 @@ msgstr "ពិនិត្យ​ប្រសិន​បើកញ្ចប់ 'd
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "សាងសង​ពាក្យ​បញ្ជា​ '%s' បានបរាជ័យ​ ។\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "បរាជ័យ​ក្នុងការ​តម្រូវចិត្តភាពអាស្រ័យ %s សម្រាប់ %s ៖ កញ្ចប់ %s ដែលបានដំឡើង គឺថ្មីពេក"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"ភាពអាស្រ័យ %s សម្រាប់ %s មិនអាច​តម្រូវចិត្តបានទេ ព្រោះ មិនមាន​កំណែ​នៃកញ្ចប់ %s ដែលអាច​តម្រូវចិត្ត​"
-"តម្រូវការ​កំណែបានឡើយ"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "បរាជ័យ​ក្នុងការ​តម្រូវចិត្តភាពអាស្រ័យ %s សម្រាប់ %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "ភាពអាស្រ័យ​ដែល​បង្កើត​ %s មិន​អាច​បំពេញ​សេចក្ដី​ត្រូវការ​បាន​ទេ ។"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3705,6 +3660,41 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "កំពុង​គណនា​ការ​ធ្វើ​ឲ្យ​ប្រសើរ"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr "បរាជ័យ​ក្នុងការ​តម្រូវចិត្តភាពអាស្រ័យ %s សម្រាប់ %s ៖ កញ្ចប់ %s ដែលបានដំឡើង គឺថ្មីពេក"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "ភាពអាស្រ័យ %s សម្រាប់ %s មិនអាច​តម្រូវចិត្តបានទេ ព្រោះ មិនមាន​កំណែ​នៃកញ្ចប់ %s ដែលអាច​"
+#~ "តម្រូវចិត្ត​តម្រូវការ​កំណែបានឡើយ"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr "%s ភាពអស្រ័យ​សម្រាប់​ %s មិន​អាច​ធ្វើ​ឲ្យ​ពេញចិត្ត​ ព្រោះ​រក​​ %s កញ្ចប់​មិន​ឃើញ​ "
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "បរាជ័យ​ក្នុងការ​តម្រូវចិត្តភាពអាស្រ័យ %s សម្រាប់ %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "ភាពអាស្រ័យ​ដែល​បង្កើត​ %s មិន​អាច​បំពេញ​សេចក្ដី​ត្រូវការ​បាន​ទេ ។"
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "មានបញ្ហា​ក្នុងការ​ផ្ដាច់តំណ %s"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2005-02-14 23:30+0100\n"
 "Last-Translator: Havard Korsvoll <korsvoll@skulelinux.no>\n"
 "Language-Team: Norwegian nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -254,6 +254,36 @@ msgid "Unable to lock the download directory"
 msgstr "Klarte ikkje låsa nedlastingskatalogen"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Nokre av pakkane kunne ikkje installerast. Dette kan koma av at du har\n"
+"valt ein umogleg situasjon. Dersom du brukar den ustabile utgåva av\n"
+"distribusjonen, kan det òg henda at nokre av pakkane som trengst ikkje\n"
+"er laga enno eller at dei framleis ligg i «Incoming»."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Følgjande informasjon kan hjelpa med å løysa situasjonen:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Øydelagde pakkar"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 
@@ -398,20 +428,6 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Følgjande informasjon kan hjelpa med å løysa situasjonen:"
-
 #: apt-private/private-install.cc
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
@@ -454,22 +470,6 @@ msgid ""
 msgstr ""
 "Nokre krav er ikkje oppfylte. Du kan prøva «apt-get -f install» (eller velja "
 "ei løysing)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Nokre av pakkane kunne ikkje installerast. Dette kan koma av at du har\n"
-"valt ein umogleg situasjon. Dersom du brukar den ustabile utgåva av\n"
-"distribusjonen, kan det òg henda at nokre av pakkane som trengst ikkje\n"
-"er laga enno eller at dei framleis ligg i «Incoming»."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Øydelagde pakkar"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -880,52 +880,6 @@ msgstr ""
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Byggjekommandoen «%s» mislukkast.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Klarte ikkje oppfylla kravet %s for %s: Den installerte pakken %s er for ny"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"Kravet %s for %s kan ikkje oppfyllast fordi det ikkje finst nokon "
-"tilgjengelege versjonar av pakken %s som oppfyller versjonskrava"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Klarte ikkje oppfylla kravet %s for %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Byggjekrav for %s kunne ikkje tilfredstillast."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3722,6 +3676,43 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Reknar ut oppgradering"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Klarte ikkje oppfylla kravet %s for %s: Den installerte pakken %s er for "
+#~ "ny"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "Kravet %s for %s kan ikkje oppfyllast fordi det ikkje finst nokon "
+#~ "tilgjengelege versjonar av pakken %s som oppfyller versjonskrava"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr "Kravet %s for %s kan ikkje oppfyllast fordi pakken %s ikkje finst"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Klarte ikkje oppfylla kravet %s for %s: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Byggjekrav for %s kunne ikkje tilfredstillast."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problem ved oppheving av lenkje til %s"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -251,6 +251,36 @@ msgid "Unable to lock the download directory"
 msgstr "Ezin da deskarga direktorioa blokeatu"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Pakete batzuk ezin izan dira instalatu. Beharbada ezinezko egoera \n"
+"bat eskatu duzu, edo, banaketa ezegonkorra erabiltzen ari bazara,\n"
+"beharrezko pakete batzuk ez ziren sortuko oraindik, edo \n"
+"Sarrerakoetan (Incoming) egoten jarraituko dute."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Informazio honek arazoa konpontzen lagun dezake:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Hautsitako paketeak"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Barne errorea, InstallPackages apurturiko paketeez deitu da!"
 
@@ -397,20 +427,6 @@ msgstr ""
 "Hmm, dirudienez AutoRemover-ek gertatu behar ez zen apurtu du\n"
 "Mesedez programa errore txosten bat bete mesedez."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Informazio honek arazoa konpontzen lagun dezake:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Barne Errorea, AutoRemover-ek zerbait apurtu du"
@@ -459,22 +475,6 @@ msgid ""
 msgstr ""
 "Bete gabeko mendekotasunak. Probatu 'apt-get -f install' paketerik gabe (edo "
 "zehaztu konponbide bat)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Pakete batzuk ezin izan dira instalatu. Beharbada ezinezko egoera \n"
-"bat eskatu duzu, edo, banaketa ezegonkorra erabiltzen ari bazara,\n"
-"beharrezko pakete batzuk ez ziren sortuko oraindik, edo \n"
-"Sarrerakoetan (Incoming) egoten jarraituko dute."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Hautsitako paketeak"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -883,56 +883,6 @@ msgstr "Egiaztatu 'dpkg-dev' paketea instalaturik dagoen.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Eraikitzeko '%s' komandoak huts egin du.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: instalatutako %3$s "
-"paketea berriegia da"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%2$s(r)en %1$s mendekotasuna ezin da bete, ez baitago bertsio-eskakizunak "
-"betetzen dituen %3$s paketearen bertsio erabilgarririk"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: %3$s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s(r)en eraikitze mendekotasunak ezin izan dira bete."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3737,6 +3687,49 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Berriketak kalkulatzen"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako "
+#~ "aurkitu"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako "
+#~ "aurkitu"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: instalatutako %3$s "
+#~ "paketea berriegia da"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%2$s(r)en %1$s mendekotasuna ezin da bete, ez baitago bertsio-eskakizunak "
+#~ "betetzen dituen %3$s paketearen bertsio erabilgarririk"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako "
+#~ "aurkitu"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: %3$s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "%s(r)en eraikitze mendekotasunak ezin izan dira bete."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Arazoa %s desestekatzean"

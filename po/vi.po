@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -254,6 +254,36 @@ msgid "Unable to lock the download directory"
 msgstr "Không thể khoá thư mục tải về"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Không thể cài đặt một số gói. Điều đó có nghĩa là bạn đã yêu cầu\n"
+"một trường hợp không thể, hoặc nếu bạn đang sử dụng bản phân phối\n"
+"chưa ổn định cái mà yêu cầu các gói mà nó còn chưa được tạo ra\n"
+"hay chưa được chuyển ra khỏi phần Incoming (Đến)."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Có lẽ thông tin theo đây sẽ giúp đỡ bạn giải quyết tình trạng này:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Gói bị hỏng"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Lỗi nội bộ: InstallPackages (cài đặt gói) được gọi với gói bị hỏng!"
 
@@ -405,20 +435,6 @@ msgstr ""
 "Ừm, có vẻ là Bộ Gỡ bỏ Tự động đã hủy cái gì, một trường hợp thực sự không "
 "nên xảy ra. Hãy thông báo lỗi về apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Có lẽ thông tin theo đây sẽ giúp đỡ bạn giải quyết tình trạng này:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Lỗi nội bộ: Bộ Gỡ bỏ Tự động đã làm hỏng một thứ gì đó"
@@ -456,22 +472,6 @@ msgid ""
 msgstr ""
 "Thưa thỏa mãn quan hệ phụ thuộc. Hãy thử chạy lệnh “apt-get -f install” mà "
 "không có gói nào (hoặc chỉ định cách thức giải quyết)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Không thể cài đặt một số gói. Điều đó có nghĩa là bạn đã yêu cầu\n"
-"một trường hợp không thể, hoặc nếu bạn đang sử dụng bản phân phối\n"
-"chưa ổn định cái mà yêu cầu các gói mà nó còn chưa được tạo ra\n"
-"hay chưa được chuyển ra khỏi phần Incoming (Đến)."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Gói bị hỏng"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -883,58 +883,6 @@ msgstr "Hãy kiểm tra xem gói “dpkg-dev” đã được cài đặt chưa.
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Lệnh biên dịch “%s” bị lỗi.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"Phần phụ thuộc %s cho %s không ổn thỏa bởi vì %s không được cho phép trên "
-"gói “%s”"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"Phần phụ thuộc %s cho %s không thể được thỏa mãn vì không tìm thấy gói %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Việc cố thỏa mãn quan hệ phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s là "
-"quá mới"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"phần phụ thuộc %s cho %s không thể được thỏa mãn phiên bản ứng cử của gói %s "
-"có thể thỏa mãn điều kiện phiên bản"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"phần phụ thuộc %s cho %s không thể được thỏa mãn bởi vì gói %s không có bản "
-"ứng cử"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Không thể thỏa mãn quan hệ phụ thuộc khi biên dịch cho %s."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3811,6 +3759,45 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Đang tính toán nâng cấp"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "Phần phụ thuộc %s cho %s không ổn thỏa bởi vì %s không được cho phép trên "
+#~ "gói “%s”"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "Phần phụ thuộc %s cho %s không thể được thỏa mãn vì không tìm thấy gói %s"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Việc cố thỏa mãn quan hệ phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s "
+#~ "là quá mới"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "phần phụ thuộc %s cho %s không thể được thỏa mãn phiên bản ứng cử của gói "
+#~ "%s có thể thỏa mãn điều kiện phiên bản"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "phần phụ thuộc %s cho %s không thể được thỏa mãn bởi vì gói %s không có "
+#~ "bản ứng cử"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Không thể thỏa mãn quan hệ phụ thuộc khi biên dịch cho %s."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Gặp lỗi khi bỏ liên kết %s"

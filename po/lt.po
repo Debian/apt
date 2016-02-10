@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -254,6 +254,36 @@ msgid "Unable to lock the download directory"
 msgstr "Nepavyko užrakinti parsiuntimų aplanko"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Nepavyko įdiegti kai kurių paketų. Tai gali reikšti, kad jūs\n"
+"paprašėte neįmanomo dalyko, arba, jei jūs naudojate nestabilų\n"
+"leidimą, kuomet kai kurie paketai dar nebuvo sukurti arba buvo\n"
+"pašalinti iš \"Incoming\" aplanko."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Ši informacija gali padėti išspręsti šią situaciją:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Sugadinti paketai"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 
@@ -396,20 +426,6 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Ši informacija gali padėti išspręsti šią situaciją:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr ""
@@ -450,22 +466,6 @@ msgid ""
 msgstr ""
 "Nepatenkintos priklausomybės. Pabandykite įvykdyti 'apt-get -f install' be "
 "nurodytų paketų (arba nurodykite išeitį)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Nepavyko įdiegti kai kurių paketų. Tai gali reikšti, kad jūs\n"
-"paprašėte neįmanomo dalyko, arba, jei jūs naudojate nestabilų\n"
-"leidimą, kuomet kai kurie paketai dar nebuvo sukurti arba buvo\n"
-"pašalinti iš \"Incoming\" aplanko."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Sugadinti paketai"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -872,56 +872,6 @@ msgstr "Patikrinkite, ar įdiegtas „dpkg-dev“ paketas.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Nepavyko įvykdyti paketo kompiliavimo komandos „%s“\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s nerastas"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s nerastas"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Nepavyko patenkinti %s priklausomybės %s paketui: Įdiegtas paketas %s yra "
-"per naujas"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s priklausomybė %s paketui negali būti patenkinama, nes nėra tinkamos "
-"versijos %s paketo"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s nerastas"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Nepavyko patenkinti %s priklausomybės %s: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr ""
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3703,6 +3653,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Skaičiuojami atnaujinimai"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s "
+#~ "nerastas"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s "
+#~ "nerastas"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Nepavyko patenkinti %s priklausomybės %s paketui: Įdiegtas paketas %s yra "
+#~ "per naujas"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%s priklausomybė %s paketui negali būti patenkinama, nes nėra tinkamos "
+#~ "versijos %s paketo"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "%s priklausomybė %s paketui negali būti patenkinama, nes paketas %s "
+#~ "nerastas"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Nepavyko patenkinti %s priklausomybės %s: %s"
 
 #~ msgid "Failed to unlink %s"
 #~ msgstr "Nepavyko atsieti nuorodos %s"

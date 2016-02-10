@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -254,6 +254,37 @@ msgid "Unable to lock the download directory"
 msgstr "Das Downloadverzeichnis konnte nicht gesperrt werden."
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Einige Pakete konnten nicht installiert werden. Das kann bedeuten, dass\n"
+"Sie eine unmögliche Situation angefordert haben oder, wenn Sie die\n"
+"Unstable-Distribution verwenden, dass einige erforderliche Pakete noch\n"
+"nicht erstellt wurden oder Incoming noch nicht verlassen haben."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr ""
+"Die folgenden Informationen helfen Ihnen vielleicht, die Situation zu lösen:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Beschädigte Pakete"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Interner Fehler, InstallPackages mit defekten Paketen aufgerufen!"
 
@@ -406,21 +437,6 @@ msgstr ""
 "wirklich nicht geschehen sollte. Bitte erstellen Sie einen Fehlerbericht\n"
 "über apt."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr ""
-"Die folgenden Informationen helfen Ihnen vielleicht, die Situation zu lösen:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Interner Fehler, AutoRemover hat etwas beschädigt."
@@ -466,22 +482,6 @@ msgid ""
 msgstr ""
 "Unerfüllte Abhängigkeiten. Versuchen Sie »apt-get -f install« ohne Angabe "
 "eines Pakets (oder geben Sie eine Lösung an)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Einige Pakete konnten nicht installiert werden. Das kann bedeuten, dass\n"
-"Sie eine unmögliche Situation angefordert haben oder, wenn Sie die\n"
-"Unstable-Distribution verwenden, dass einige erforderliche Pakete noch\n"
-"nicht erstellt wurden oder Incoming noch nicht verlassen haben."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Beschädigte Pakete"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -914,60 +914,6 @@ msgstr "Überprüfen Sie, ob das Paket »dpkg-dev« installiert ist.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Build-Befehl »%s« fehlgeschlagen.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da %s bei »%s«-Paketen "
-"nicht erlaubt ist."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da Paket %s nicht "
-"gefunden werden kann."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"»%s«-Abhängigkeit für %s kann nicht erfüllt werden: Installiertes Paket %s "
-"ist zu neu."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da die Version des "
-"Installationskandidaten für das Paket %s die Versionsanforderungen nicht "
-"erfüllen kann."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da für Paket %s kein "
-"Installationskandidat existiert."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "»%s«-Abhängigkeit für %s konnte nicht erfüllt werden: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Bauabhängigkeiten für %s konnten nicht erfüllt werden."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3895,6 +3841,47 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Paketaktualisierung (Upgrade) wird berechnet"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da %s bei »%s«-"
+#~ "Paketen nicht erlaubt ist."
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da Paket %s nicht "
+#~ "gefunden werden kann."
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "»%s«-Abhängigkeit für %s kann nicht erfüllt werden: Installiertes Paket "
+#~ "%s ist zu neu."
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da die Version des "
+#~ "Installationskandidaten für das Paket %s die Versionsanforderungen nicht "
+#~ "erfüllen kann."
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "»%s«-Abhängigkeit für %s kann nicht erfüllt werden, da für Paket %s kein "
+#~ "Installationskandidat existiert."
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "»%s«-Abhängigkeit für %s konnte nicht erfüllt werden: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Bauabhängigkeiten für %s konnten nicht erfüllt werden."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Problem beim Entfernen (unlink) von %s"

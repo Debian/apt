@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2014-12-12 22:33+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -253,6 +253,36 @@ msgid "Unable to lock the download directory"
 msgstr "ダウンロードディレクトリをロックできません"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"インストールすることができないパッケージがありました。おそらく、あり得\n"
+"ない状況を要求したか、(不安定版ディストリビューションを使用しているの\n"
+"であれば) 必要なパッケージがまだ作成されていなかったり Incoming から移\n"
+"動されていないことが考えられます。"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "以下の情報がこの問題を解決するために役立つかもしれません:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "壊れたパッケージ"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "内部エラー、InstallPackages が壊れたパッケージで呼び出されました!"
 
@@ -400,20 +430,6 @@ msgstr ""
 "AutoRemover が、本来起きるべきでない何かを壊したようです。\n"
 "apt にバグ報告を送ってください。"
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "以下の情報がこの問題を解決するために役立つかもしれません:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "内部エラー、AutoRemover が何かを破壊しました"
@@ -455,22 +471,6 @@ msgid ""
 msgstr ""
 "未解決の依存関係です。'apt-get -f install' を実行してみてください (または解法"
 "を明示してください)。"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"インストールすることができないパッケージがありました。おそらく、あり得\n"
-"ない状況を要求したか、(不安定版ディストリビューションを使用しているの\n"
-"であれば) 必要なパッケージがまだ作成されていなかったり Incoming から移\n"
-"動されていないことが考えられます。"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "壊れたパッケージ"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -889,59 +889,6 @@ msgstr ""
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "ビルドコマンド '%s' が失敗しました。\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"パッケージ %3$s が '%4$s' パッケージで許されていないため、%2$s に対する %1$s "
-"の依存関係を満たすことができません"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たすこと"
-"ができません"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s パッ"
-"ケージは新しすぎます"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"パッケージ %3$s の候補バージョンはバージョンについての要求を満たせないた"
-"め、%2$s に対する %1$s の依存関係を満たすことができません"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"パッケージ %3$s の候補バージョンが存在しないため、%2$s に対する %1$s の依存関"
-"係を満たすことができません"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "%s のビルド依存関係を満たすことができませんでした。"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3794,6 +3741,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "アップグレードパッケージを検出しています"
+
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "パッケージ %3$s が '%4$s' パッケージで許されていないため、%2$s に対する "
+#~ "%1$s の依存関係を満たすことができません"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たす"
+#~ "ことができません"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s "
+#~ "パッケージは新しすぎます"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "パッケージ %3$s の候補バージョンはバージョンについての要求を満たせないた"
+#~ "め、%2$s に対する %1$s の依存関係を満たすことができません"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "パッケージ %3$s の候補バージョンが存在しないため、%2$s に対する %1$s の依"
+#~ "存関係を満たすことができません"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "%s のビルド依存関係を満たすことができませんでした。"
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "%s のリンク解除で問題が発生しました"

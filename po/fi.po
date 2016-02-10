@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-01-25 18:05+0100\n"
+"POT-Creation-Date: 2016-02-10 18:02+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -251,6 +251,35 @@ msgid "Unable to lock the download directory"
 msgstr "Noutokansiota ei saatu lukittua"
 
 #: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Joitakin paketteja ei voitu asentaa. On ehkä vaadittu mahdottomia tai,\n"
+"jos käytetään epävakaata jakelua, joitain vaadittuja paketteja ei ole\n"
+"vielä luotu tai siirretty Incoming-kansiosta."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Seuraavista tiedoista voi olla hyötyä selvitettäessä tilannetta:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Rikkinäiset paketit"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Sisäinen virhe, InstallPackages kutsuttiin rikkinäisille paketeille!"
 
@@ -398,20 +427,6 @@ msgstr ""
 "Hmm, nähtävästi AutoRemover tuhosi jotain, mitä ei pitäisi tapahtua.\n"
 "Tekisitkö vikailmoituksen apt:sta."
 
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Seuraavista tiedoista voi olla hyötyä selvitettäessä tilannetta:"
-
 #: apt-private/private-install.cc
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Sisäinen virhe, AutoRemover rikkoi jotain"
@@ -460,21 +475,6 @@ msgid ""
 msgstr ""
 "Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" "
 "ilmanpaketteja (tai ratkaise itse)."
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Joitakin paketteja ei voitu asentaa. On ehkä vaadittu mahdottomia tai,\n"
-"jos käytetään epävakaata jakelua, joitain vaadittuja paketteja ei ole\n"
-"vielä luotu tai siirretty Incoming-kansiosta."
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Rikkinäiset paketit"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -880,56 +880,6 @@ msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr ""
-"Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
-"uusi"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
-"ei vastaa versioriippuvuuksia"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-"riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3729,6 +3679,46 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Käsitellään päivitystä"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+#~ "packages"
+#~ msgstr ""
+#~ "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
+#~ "found"
+#~ msgstr ""
+#~ "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#~ msgid ""
+#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+#~ msgstr ""
+#~ "Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on "
+#~ "liian uusi"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because candidate version of "
+#~ "package %s can't satisfy version requirements"
+#~ msgstr ""
+#~ "%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s "
+#~ "versio ei vastaa versioriippuvuuksia"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s dependency for %s cannot be satisfied because package %s has no "
+#~ "candidate version"
+#~ msgstr ""
+#~ "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
+
+#~ msgid "Failed to satisfy %s dependency for %s: %s"
+#~ msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
+
+#~ msgid "Build-dependencies for %s could not be satisfied."
+#~ msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
 
 #~ msgid "Problem unlinking %s"
 #~ msgstr "Ilmeni pulmia poistettaessa tiedosto %s"
