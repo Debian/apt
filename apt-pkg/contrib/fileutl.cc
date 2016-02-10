@@ -1119,6 +1119,7 @@ public:
 	 return filefd->FileFdError("Seek on file %s because it couldn't be reopened", filefd->FileName.c_str());
 
       buffer.reset();
+      set_seekpos(0);
       if (To != 0)
 	 return filefd->Skip(To);
 
