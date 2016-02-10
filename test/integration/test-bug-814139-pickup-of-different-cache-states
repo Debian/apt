@@ -23,11 +23,13 @@ testrun() {
 	testsuccess aptget build-dep foo -y
 	testdpkginstalled 'bar'
 	cleanup
+	cd downloaded
 	testsuccess aptget source foo
 	testsuccess test -s foo_1.tar.* -a -s foo_1.dsc
 	rm foo_1.tar.* foo_1.dsc
 	testsuccess test -d foo-1
 	rm -rf foo-1
+	cd ..
 	cleanup
 	testsuccess aptget install foo -y
 }
