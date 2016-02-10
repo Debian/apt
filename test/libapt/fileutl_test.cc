@@ -82,6 +82,18 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
       EXPECT_N_STR(expect, readback);
       EXPECT_EQ(test.size(), f.Tell());
    }
+   // Non-zero backwards seek
+   {
+      APT_INIT_READBACK
+      char const * const expect = "is";
+      EXPECT_EQ(test.size(), f.Tell());
+      EXPECT_TRUE(f.Seek(5));
+      EXPECT_TRUE(f.Read(readback, strlen(expect)));
+      EXPECT_FALSE(f.Failed());
+      EXPECT_FALSE(f.Eof());
+      EXPECT_N_STR(expect, readback);
+      EXPECT_EQ(7, f.Tell());
+   }
    {
       APT_INIT_READBACK
       EXPECT_TRUE(f.Seek(0));
