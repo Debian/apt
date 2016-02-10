@@ -73,8 +73,6 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			       pkgSrcRecords &SrcRecs,std::string &Src,
 			       CacheFile &Cache)
 {
-   if (Cache.BuildCaches(false) == false)
-      return nullptr;
    std::string VerTag, UserRequestedVerTag;
    std::string ArchTag = "";
    std::string RelTag = _config->Find("APT::Default-Release");
@@ -321,12 +319,11 @@ bool DoSource(CommandLine &CmdL)
       return _error->Error(_("Must specify at least one package to fetch source for"));
 
    CacheFile Cache;
-   // Read the source list
-   if (Cache.BuildSourceList() == false)
+   if (Cache.BuildCaches(false) == false)
       return false;
-   pkgSourceList *List = Cache.GetSourceList();
 
    // Create the text record parsers
+   pkgSourceList * const List = Cache.GetSourceList();
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -725,8 +722,11 @@ bool DoBuildDep(CommandLine &CmdL)
 	       VolatileCmdL.size());
    }
 
+   bool const WantLock = _config->FindB("APT::Get::Print-URIs", false) == false;
    if (CmdL.FileList[1] != 0)
    {
+      if (Cache.BuildCaches(WantLock) == false)
+	 return false;
       // Create the text record parsers
       pkgSrcRecords SrcRecs(*List);
       if (_error->PendingError() == true)
@@ -747,7 +747,6 @@ bool DoBuildDep(CommandLine &CmdL)
 
    Cache.AddIndexFile(new debStringPackageIndex(buildDepsPkgFile.str()));
 
-   bool WantLock = _config->FindB("APT::Get::Print-URIs", false) == false;
    if (Cache.Open(WantLock) == false)
       return false;
    pkgProblemResolver Fix(Cache.GetDepCache());

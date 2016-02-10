@@ -1,0 +1,58 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'build-essential' 'amd64' '1'
+
+buildsimplenativepackage 'foo' 'all' '1' 'stable' 'Build-Depends: bar'
+buildsimplenativepackage 'bar' 'all' '1' 'stable'
+
+setupaptarchive
+
+cp rootdir/var/lib/dpkg/status status.backup
+
+testrun() {
+	cp status.backup rootdir/var/lib/dpkg/status
+	cleanup
+	testdpkgnotinstalled 'bar'
+	testsuccess aptget build-dep foo -y
+	testdpkginstalled 'bar'
+	cleanup
+	testsuccess aptget source foo
+	testsuccess test -s foo_1.tar.xz -a -s foo_1.dsc
+	rm foo_1.tar.xz foo_1.dsc
+	testsuccess test -d foo-1
+	rm -rf foo-1
+	cleanup
+	testsuccess aptget install foo -y
+}
+
+msgmsg 'Caches fully up-to-date'
+cleanup() {
+	rm -f rootdir/var/cache/apt/*.bin
+	testsuccess aptcache gencaches
+}
+testrun
+
+msgmsg 'pkgcache.bin is missing'
+cleanup() {
+	rm -f rootdir/var/cache/apt/*.bin
+	testsuccess aptcache gencaches
+	rm rootdir/var/cache/apt/pkgcache.bin
+}
+testrun
+
+msgmsg 'Caches are not writeable'
+rm rootdir/var/cache/apt/*.bin
+addtrap 'prefix' 'chmod 755 rootdir/var/cache/apt;'
+chmod 555 rootdir/var/cache/apt
+testsuccess aptcache gencaches
+cleanup() {
+	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/cache/apt" '%a' '=' '555'
+}
+testrun

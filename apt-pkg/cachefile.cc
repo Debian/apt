@@ -238,6 +238,7 @@ bool pkgCacheFile::AddIndexFile(pkgIndexFile * const File)		/*{{{*/
       ExternOwner = false;
       Map = NULL;
    }
+   _system->UnLock(true);
    return true;
 }
 									/*}}}*/
