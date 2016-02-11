@@ -246,6 +246,8 @@ bool DoChangelog(CommandLine &CmdL)
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
    bool const printOnly = _config->FindB("APT::Get::Print-URIs", false);
+   if (printOnly)
+      _config->CndSet("Acquire::Changelogs::AlwaysOnline", true);
 
    aptAcquireWithTextStatus Fetcher;
    for (APT::VersionList::const_iterator Ver = verset.begin();

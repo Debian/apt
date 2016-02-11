@@ -3149,16 +3149,47 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 									/*}}}*/
 std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
 {
+   std::string const confOnline = "Acquire::Changelogs::AlwaysOnline";
+   bool AlwaysOnline = _config->FindB(confOnline, false);
+   if (AlwaysOnline == false)
+      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
+      {
+	 pkgCache::PkgFileIterator const PF = VF.File();
+	 if (PF.Flagged(pkgCache::Flag::NotSource) || PF->Release == 0)
+	    continue;
+	 pkgCache::RlsFileIterator const RF = PF.ReleaseFile();
+	 if (RF->Origin != 0 && _config->FindB(confOnline + "::Origin::" + RF.Origin(), false))
+	 {
+	    AlwaysOnline = true;
+	    break;
+	 }
+      }
+   if (AlwaysOnline == false)
+   {
+      pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
+      if (Pkg->CurrentVer != 0 && Pkg.CurrentVer() == Ver)
+      {
+	 std::string const basename = std::string("/usr/share/doc/") + Pkg.Name() + "/changelog";
+	 std::string const debianname = basename + ".Debian";
+	 if (FileExists(debianname))
+	    return "copy://" + debianname;
+	 else if (FileExists(debianname + ".gz"))
+	    return "gzip://" + debianname + ".gz";
+	 else if (FileExists(basename))
+	    return "copy://" + basename;
+	 else if (FileExists(basename + ".gz"))
+	    return "gzip://" + basename + ".gz";
+      }
+   }
+
    char const * const SrcName = Ver.SourcePkgName();
    char const * const SrcVersion = Ver.SourceVerStr();
-   pkgCache::PkgFileIterator PkgFile;
    // find the first source for this version which promises a changelog
    for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
    {
       pkgCache::PkgFileIterator const PF = VF.File();
       if (PF.Flagged(pkgCache::Flag::NotSource) || PF->Release == 0)
 	 continue;
-      PkgFile = PF;
       pkgCache::RlsFileIterator const RF = PF.ReleaseFile();
       std::string const uri = URI(RF, PF.Component(), SrcName, SrcVersion);
       if (uri.empty())

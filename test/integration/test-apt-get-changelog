@@ -7,6 +7,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'native'
 
+buildsimplenativepackage 'dpkg' 'native' '42' 'stable'
 buildsimplenativepackage 'foo' 'all' '1.0' 'stable'
 buildsimplenativepackage 'libbar' 'all' '1.0' 'stable'
 
@@ -105,3 +106,25 @@ testfailure test -e foo.changelog
 testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
 " aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@CHANGEPATH@/change.txt"
 testfailure test -e foo.changelog
+cd ..
+
+testdpkgnotinstalled 'foo'
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" apt changelog foo --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" apt changelog foo --print-uris -o Acquire::Changelogs::AlwaysOnline=true
+
+testsuccess apt install dpkg -y
+# at this moment, we still have the Releasefile claim to be origin:ubuntu
+echo 'Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu "false";' >> rootdir/etc/apt/apt.conf.d/nooriginchangelogs
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris
+testsuccessequal "'gzip:///usr/share/doc/dpkg/changelog.Debian.gz' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=true
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu=true
+testsuccessequal "'gzip:///usr/share/doc/dpkg/changelog.Debian.gz' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Debian=true
+
+cd downloaded
+testsuccess apt changelog dpkg -d
+testfilestats 'dpkg.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+head -n 3 dpkg.changelog > dpkg.change
+testfileequal 'dpkg.change' "$(apthelper cat-file '/usr/share/doc/dpkg/changelog.Debian.gz' | head -n 3)"
+rm -f dpkg.change dpkg.changelog
+cd ..
