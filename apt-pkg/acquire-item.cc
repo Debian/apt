@@ -3076,9 +3076,14 @@ std::string pkgAcqArchive::ShortDesc() const				/*{{{*/
 pkgAcqArchive::~pkgAcqArchive() {}
 
 // AcqChangelog::pkgAcqChangelog - Constructors				/*{{{*/
+class pkgAcqChangelog::Private
+{
+   public:
+   std::string FinalFile;
+};
 pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::VerIterator const &Ver,
       std::string const &DestDir, std::string const &DestFilename) :
-   pkgAcquire::Item(Owner), d(NULL), SrcName(Ver.SourcePkgName()), SrcVersion(Ver.SourceVerStr())
+   pkgAcquire::Item(Owner), d(new pkgAcqChangelog::Private()), SrcName(Ver.SourcePkgName()), SrcVersion(Ver.SourceVerStr())
 {
    Desc.URI = URI(Ver);
    Init(DestDir, DestFilename);
@@ -3087,7 +3092,7 @@ pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::VerIterator
 pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::RlsFileIterator const &RlsFile,
       char const * const Component, char const * const SrcName, char const * const SrcVersion,
       const string &DestDir, const string &DestFilename) :
-   pkgAcquire::Item(Owner), d(NULL), SrcName(SrcName), SrcVersion(SrcVersion)
+   pkgAcquire::Item(Owner), d(new pkgAcqChangelog::Private()), SrcName(SrcName), SrcVersion(SrcVersion)
 {
    Desc.URI = URI(RlsFile, Component, SrcName, SrcVersion);
    Init(DestDir, DestFilename);
@@ -3095,7 +3100,7 @@ pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner, pkgCache::RlsFileIter
 pkgAcqChangelog::pkgAcqChangelog(pkgAcquire * const Owner,
       std::string const &URI, char const * const SrcName, char const * const SrcVersion,
       const string &DestDir, const string &DestFilename) :
-   pkgAcquire::Item(Owner), d(NULL), SrcName(SrcName), SrcVersion(SrcVersion)
+   pkgAcquire::Item(Owner), d(new pkgAcqChangelog::Private()), SrcName(SrcName), SrcVersion(SrcVersion)
 {
    Desc.URI = URI;
    Init(DestDir, DestFilename);
@@ -3116,30 +3121,30 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
       return;
    }
 
-   if (DestDir.empty())
-   {
-      std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-      std::string const systemTemp = GetTempDir(SandboxUser);
-      char tmpname[100];
-      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", systemTemp.c_str());
-      if (NULL == mkdtemp(tmpname))
-      {
-	 _error->Errno("mkdtemp", "mkdtemp failed in changelog acquire of %s %s", SrcName.c_str(), SrcVersion.c_str());
-	 Status = StatError;
-	 return;
-      }
-      DestFile = TemporaryDirectory = tmpname;
-
-      ChangeOwnerAndPermissionOfFile("Item::QueueURI", DestFile.c_str(),
-                                     SandboxUser.c_str(), "root", 0700);
-   }
-   else
-      DestFile = DestDir;
-
+   std::string DestFileName;
    if (DestFilename.empty())
-      DestFile = flCombine(DestFile, SrcName + ".changelog");
+      DestFileName = flCombine(DestFile, SrcName + ".changelog");
    else
-      DestFile = flCombine(DestFile, DestFilename);
+      DestFileName = flCombine(DestFile, DestFilename);
+
+   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+   std::string const systemTemp = GetTempDir(SandboxUser);
+   char tmpname[1000];
+   snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", systemTemp.c_str());
+   if (NULL == mkdtemp(tmpname))
+   {
+      _error->Errno("mkdtemp", "mkdtemp failed in changelog acquire of %s %s", SrcName.c_str(), SrcVersion.c_str());
+      Status = StatError;
+      return;
+   }
+   TemporaryDirectory = tmpname;
+
+   ChangeOwnerAndPermissionOfFile("Item::QueueURI", TemporaryDirectory.c_str(),
+	 SandboxUser.c_str(), "root", 0700);
+
+   DestFile = flCombine(TemporaryDirectory, DestFileName);
+   if (DestDir.empty() == false)
+      d->FinalFile = flCombine(DestDir, DestFileName);
 
    Desc.ShortDesc = "Changelog";
    strprintf(Desc.Description, "%s %s %s Changelog", URI::SiteOnly(Desc.URI).c_str(), SrcName.c_str(), SrcVersion.c_str());
@@ -3294,6 +3299,8 @@ void pkgAcqChangelog::Done(string const &Message,HashStringList const &CalcHashe
 		      pkgAcquire::MethodConfig const * const Cnf)
 {
    Item::Done(Message,CalcHashes,Cnf);
+   if (d->FinalFile.empty() == false)
+      Rename(DestFile, d->FinalFile);
 
    Complete = true;
 }
@@ -3305,6 +3312,7 @@ pkgAcqChangelog::~pkgAcqChangelog()					/*{{{*/
       RemoveFile("~pkgAcqChangelog", DestFile);
       rmdir(TemporaryDirectory.c_str());
    }
+   delete d;
 }
 									/*}}}*/
 

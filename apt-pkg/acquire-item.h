@@ -1055,7 +1055,8 @@ class pkgAcqArchive : public pkgAcquire::Item
  */
 class pkgAcqChangelog : public pkgAcquire::Item
 {
-   void * const d;
+   class Private;
+   Private * const d;
    std::string TemporaryDirectory;
    std::string const SrcName;
    std::string const SrcVersion;

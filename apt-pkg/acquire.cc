@@ -559,7 +559,7 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 	I != Fetcher.ItemsEnd(); ++I)
    {
       // no need to drop privileges for a complete file
-      if ((*I)->Complete == true)
+      if ((*I)->Complete == true || (*I)->Status != pkgAcquire::Item::StatIdle)
 	 continue;
 
       // if destination file is inaccessible all hope is lost for privilege dropping

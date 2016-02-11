@@ -48,12 +48,7 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/main/f/foo/foo_1.0.changelog'
 'http://localhost:${APTHTTPPORT}/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Override::Label::Debian="http://localhost:${APTHTTPPORT}/@CHANGEPATH@.changelog"
 
 releasechanger 'Changelogs' 'no'
-if [ "$(id -u)" = '0' ]; then
-	testfailuremsg "W: Can't drop privileges for downloading as file 'foo.changelog' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)
-E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0" aptget changelog foo -d
-else
-	testfailuremsg 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0' aptget changelog foo -d
-fi
+testfailuremsg 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0' aptget changelog foo -d
 
 sed -i '/^Changelogs: / d' $(find rootdir/var/lib/apt/lists -name '*Release')
 releasechanger 'Label' 'Testcases'
@@ -73,29 +68,35 @@ testsuccess aptget changelog foo libbar -qq
 testfileequal 'rootdir/tmp/testsuccess.output' "$(cat aptarchive/pool/main/f/foo/foo_1.0/changelog)
 $(cat aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
 
-cd downloaded
-
 testsuccess aptget changelog foo -d
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
-testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 rm -f foo.changelog
 
 testsuccess aptget changelog libbar foo -d
 testfilestats 'libbar.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
-testfileequal 'libbar.changelog' "$(cat  ../aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
-testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testfileequal 'libbar.changelog' "$(cat  aptarchive/pool/main/libb/libbar/libbar_1.0/changelog)"
+testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 rm -f libbar.changelog foo.changelog
 
 # as such bogus, but can happen with multiple binaries from the same source
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog
 'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" aptget changelog foo foo --print-uris
 testsuccess aptget changelog foo foo -qq
-testfileequal '../rootdir/tmp/testsuccess.output' "$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)
-$(cat ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testfileequal 'rootdir/tmp/testsuccess.output' "$(cat aptarchive/pool/main/f/foo/foo_1.0/changelog)
+$(cat aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 testsuccess aptget changelog foo foo -d
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
-testfileequal 'foo.changelog' "$(cat  ../aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+# we have the file already, confused?
+testsuccess aptget changelog foo foo -d
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+echo 'bogus' > foo.changelog
+testsuccess aptget changelog foo foo -d
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 rm -f foo.changelog
 
 # no @CHANGEPATH@ in the URI
@@ -106,7 +107,6 @@ testfailure test -e foo.changelog
 testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
 " aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@CHANGEPATH@/change.txt"
 testfailure test -e foo.changelog
-cd ..
 
 testdpkgnotinstalled 'foo'
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/f/foo/foo_1.0/changelog' foo.changelog" apt changelog foo --print-uris -o Acquire::Changelogs::AlwaysOnline=false
@@ -121,10 +121,8 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/chan
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu=true
 testsuccessequal "'gzip:///usr/share/doc/dpkg/changelog.Debian.gz' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Debian=true
 
-cd downloaded
 testsuccess apt changelog dpkg -d
 testfilestats 'dpkg.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 head -n 3 dpkg.changelog > dpkg.change
 testfileequal 'dpkg.change' "$(apthelper cat-file '/usr/share/doc/dpkg/changelog.Debian.gz' | head -n 3)"
 rm -f dpkg.change dpkg.changelog
-cd ..
