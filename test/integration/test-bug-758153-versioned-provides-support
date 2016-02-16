@@ -50,49 +50,74 @@ insertpackage 'unstable' 'needsselfprov123' 'amd64' '1' 'Depends: selfprov (= 1)
 
 setupaptarchive
 
-testsuccessequal 'Reading package lists...
+SOMEPACKAGESCOULDNOT='Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:'
+
+for binary in 'aptget' 'apt'; do
+	for method in 'upgrade' 'dist-upgrade'; do
+		for solver in 'internal' 'apt'; do
+			if [ "$solver" = 'apt' ]; then
+				HEADER='Execute external solver...'
+			else
+				HEADER='Calculating upgrade...'
+			fi
+			testsuccessequal "Reading package lists...
 Building dependency tree...
-Calculating upgrade...
+$HEADER
 The following packages will be upgraded:
   webapp webserver
 2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst webserver [1] (2 unstable [amd64])
 Inst webapp [1] (2 unstable [all])
 Conf webserver (2 unstable [amd64])
-Conf webapp (2 unstable [all])' aptget dist-upgrade -s
+Conf webapp (2 unstable [all])" $binary $method -s --solver $solver
+		done
+	done
+done
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+for solver in 'internal' 'apt'; do
+	msgmsg 'Testing with solver' "$solver"
+	HEADER_PRE='Reading package lists...
+Building dependency tree...'
+	HEADER_POST='Execute external solver...'
+	HEADER="${HEADER_PRE}"
+	if [ "$solver" = 'apt' ]; then
+		HEADER="${HEADER}
+${HEADER_POST}"
+	fi
+	testsuccessequal "$HEADER
 The following packages will be upgraded:
   webapp webserver
 2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst webserver [1] (2 unstable [amd64])
 Inst webapp [1] (2 unstable [all])
 Conf webserver (2 unstable [amd64])
-Conf webapp (2 unstable [all])' aptget install webapp webserver -s
+Conf webapp (2 unstable [all])" aptget install webapp webserver -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following packages will be upgraded:
   webapp webserver
 2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst webserver [1] (2 unstable [amd64])
 Inst webapp [1] (3 experimental [all])
 Conf webserver (2 unstable [amd64])
-Conf webapp (3 experimental [all])' aptget install webapp=3 webserver -s
+Conf webapp (3 experimental [all])" aptget install webapp=3 webserver -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following packages will be upgraded:
   webapp webserver
 2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst webserver [1] (3 experimental [amd64])
 Inst webapp [1] (2 unstable [all])
 Conf webserver (3 experimental [amd64])
-Conf webapp (2 unstable [all])' aptget install webapp webserver=3 -s
+Conf webapp (2 unstable [all])" aptget install webapp webserver=3 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   foreign-webserver:i386
 The following packages will be upgraded:
@@ -101,10 +126,9 @@ The following packages will be upgraded:
 Inst foreign-webserver:i386 (2 unstable [i386])
 Inst webapp [1] (2 unstable [all])
 Conf foreign-webserver:i386 (2 unstable [i386])
-Conf webapp (2 unstable [all])' aptget install webapp foreign-webserver:i386 -s
+Conf webapp (2 unstable [all])" aptget install webapp foreign-webserver:i386 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   foreign-webserver:i386
 The following packages will be upgraded:
@@ -113,10 +137,9 @@ The following packages will be upgraded:
 Inst foreign-webserver:i386 (2 unstable [i386])
 Inst webapp [1] (3 experimental [all])
 Conf foreign-webserver:i386 (2 unstable [i386])
-Conf webapp (3 experimental [all])' aptget install webapp=3 foreign-webserver:i386 -s
+Conf webapp (3 experimental [all])" aptget install webapp=3 foreign-webserver:i386 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   foreign-webserver:i386
 The following packages will be upgraded:
@@ -125,44 +148,37 @@ The following packages will be upgraded:
 Inst foreign-webserver:i386 (4 experimental [i386])
 Inst webapp [1] (2 unstable [all])
 Conf foreign-webserver:i386 (4 experimental [i386])
-Conf webapp (2 unstable [all])' aptget install webapp foreign-webserver:i386=4 -s
+Conf webapp (2 unstable [all])" aptget install webapp foreign-webserver:i386=4 -s --solver $solver
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
-
+	if [ "$solver" = 'apt' ]; then
+		WEBAPP_ERR="$HEADER
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
  cool-webapp : Depends: httpd (>= 4)
-E: Unable to correct problems, you have held broken packages.' aptget install cool-webapp -s
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
-
-The following packages have unmet dependencies:
+$SOMEPACKAGESCOULDNOT
  cool-webapp : Depends: httpd (>= 4)
-E: Unable to correct problems, you have held broken packages.' aptget install cool-webapp foreign-webserver:i386 -s
+E: External solver failed with: The following packages have unmet dependencies:"
+	else
+		WEBAPP_ERR="$HEADER
+$SOMEPACKAGESCOULDNOT
+ cool-webapp : Depends: httpd (>= 4)
+E: Unable to correct problems, you have held broken packages."
+	fi
+	testfailureequal "$WEBAPP_ERR" aptget install cool-webapp -s --solver $solver
+	testfailureequal "$WEBAPP_ERR" aptget install cool-webapp foreign-webserver:i386 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   cool-webapp foreign-webserver:i386
 0 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
 Inst foreign-webserver:i386 (4 experimental [i386])
 Inst cool-webapp (4 experimental [all])
 Conf foreign-webserver:i386 (4 experimental [i386])
-Conf cool-webapp (4 experimental [all])' aptget install cool-webapp foreign-webserver:i386=4 -s
+Conf cool-webapp (4 experimental [all])" aptget install cool-webapp foreign-webserver:i386=4 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
@@ -171,23 +187,32 @@ The following NEW packages will be installed:
 Inst foo (1 unstable [all])
 Inst baz:i386 (1 unstable [i386])
 Conf foo (1 unstable [all])
-Conf baz:i386 (1 unstable [i386])' aptget install baz:i386 -s
+Conf baz:i386 (1 unstable [i386])" aptget install baz:i386 -s --solver $solver
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
-
+	if [ "$solver" = 'apt' ]; then
+		testfailureequal "$HEADER
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
  baz : Depends: bar but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install baz:amd64 -s
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
-Selected version '2' (experimental [amd64]) for 'baz'
+$SOMEPACKAGESCOULDNOT
+ baz : Depends: bar but it is not installable
+E: External solver failed with: The following packages have unmet dependencies:" aptget install baz:amd64 -s --solver $solver
+	else
+		testfailureequal "$HEADER
+$SOMEPACKAGESCOULDNOT
+ baz : Depends: bar but it is not installable
+E: Unable to correct problems, you have held broken packages." aptget install baz:amd64 -s --solver $solver
+	fi
+
+	HEADER="${HEADER_PRE}
+Selected version '2' (experimental [amd64]) for 'baz'"
+	if [ "$solver" = 'apt' ]; then
+		HEADER="${HEADER}
+${HEADER_POST}"
+	fi
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
@@ -196,11 +221,15 @@ The following NEW packages will be installed:
 Inst foo (1 unstable [all])
 Inst baz (2 experimental [amd64])
 Conf foo (1 unstable [all])
-Conf baz (2 experimental [amd64])" aptget install baz/experimental -s
+Conf baz (2 experimental [amd64])" aptget install baz/experimental -s --solver $solver
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
-Selected version '2' (experimental [i386]) for 'baz:i386'
+	HEADER="${HEADER_PRE}
+Selected version '2' (experimental [i386]) for 'baz:i386'"
+	if [ "$solver" = 'apt' ]; then
+		HEADER="${HEADER}
+${HEADER_POST}"
+	fi
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   foo
 The following NEW packages will be installed:
@@ -209,22 +238,33 @@ The following NEW packages will be installed:
 Inst foo (1 unstable [all])
 Inst baz:i386 (2 experimental [i386])
 Conf foo (1 unstable [all])
-Conf baz:i386 (2 experimental [i386])" aptget install baz:i386/experimental -s
+Conf baz:i386 (2 experimental [i386])" aptget install baz:i386/experimental -s --solver $solver
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
+	if [ "$solver" = 'apt' ]; then
+		HEADER="${HEADER_PRE}
+${HEADER_POST}"
+	else
+		HEADER="${HEADER_PRE}"
+	fi
 
+	if [ "$solver" = 'apt' ]; then
+		testfailureequal "$HEADER
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
  baz-broken:i386 : Depends: bar:amd64 but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install baz-broken -s
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+$SOMEPACKAGESCOULDNOT
+ baz-broken:i386 : Depends: bar:amd64 but it is not installable
+E: External solver failed with: The following packages have unmet dependencies:" aptget install baz-broken -s --solver $solver
+	else
+		testfailureequal "$HEADER
+$SOMEPACKAGESCOULDNOT
+ baz-broken:i386 : Depends: bar:amd64 but it is not installable
+E: Unable to correct problems, you have held broken packages." aptget install baz-broken -s --solver $solver
+	fi
+
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   next
 The following NEW packages will be installed:
@@ -233,10 +273,9 @@ The following NEW packages will be installed:
 Inst next (1 unstable [amd64])
 Inst needsrealnext (2 unstable [amd64])
 Conf next (1 unstable [amd64])
-Conf needsrealnext (2 unstable [amd64])' aptget install needsrealnext -s
+Conf needsrealnext (2 unstable [amd64])" aptget install needsrealnext -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   next
 The following NEW packages will be installed:
@@ -245,10 +284,9 @@ The following NEW packages will be installed:
 Inst next (1 unstable [amd64])
 Inst needsrealnext:i386 (2 unstable [i386])
 Conf next (1 unstable [amd64])
-Conf needsrealnext:i386 (2 unstable [i386])' aptget install needsrealnext:i386 -s
+Conf needsrealnext:i386 (2 unstable [i386])" aptget install needsrealnext:i386 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   virtualnext2
 The following NEW packages will be installed:
@@ -257,10 +295,9 @@ The following NEW packages will be installed:
 Inst virtualnext2 (1 unstable [amd64])
 Inst needsnext2 (2 unstable [amd64])
 Conf virtualnext2 (1 unstable [amd64])
-Conf needsnext2 (2 unstable [amd64])' aptget install needsnext2 -s
+Conf needsnext2 (2 unstable [amd64])" aptget install needsnext2 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   virtualnext2
 The following NEW packages will be installed:
@@ -269,10 +306,9 @@ The following NEW packages will be installed:
 Inst virtualnext2 (1 unstable [amd64])
 Inst needsnext2:i386 (2 unstable [i386])
 Conf virtualnext2 (1 unstable [amd64])
-Conf needsnext2:i386 (2 unstable [i386])' aptget install needsnext2:i386 -s
+Conf needsnext2:i386 (2 unstable [i386])" aptget install needsnext2:i386 -s --solver $solver
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   virtualnext3
 The following NEW packages will be installed:
@@ -281,22 +317,26 @@ The following NEW packages will be installed:
 Inst virtualnext3 (1 unstable [amd64])
 Inst needsnext3 (2 unstable [amd64])
 Conf virtualnext3 (1 unstable [amd64])
-Conf needsnext3 (2 unstable [amd64])' aptget install needsnext3 -s
+Conf needsnext3 (2 unstable [amd64])" aptget install needsnext3 -s --solver $solver
 
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
-
+	if [ "$solver" = 'apt' ]; then
+		testfailureequal "$HEADER
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
  needsnext3:i386 : Depends: next3:i386 (>= 2) but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install needsnext3:i386 -s
 
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+$SOMEPACKAGESCOULDNOT
+ needsnext3:i386 : Depends: next3:i386 (>= 2) but it is not installable
+E: External solver failed with: The following packages have unmet dependencies:" aptget install needsnext3:i386 -s --solver $solver
+	else
+		testfailureequal "$HEADER
+$SOMEPACKAGESCOULDNOT
+ needsnext3:i386 : Depends: next3:i386 (>= 2) but it is not installable
+E: Unable to correct problems, you have held broken packages." aptget install needsnext3:i386 -s --solver $solver
+	fi
+
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   selfprov
 The following NEW packages will be installed:
@@ -305,9 +345,8 @@ The following NEW packages will be installed:
 Inst selfprov (2 unstable [amd64])
 Inst needsselfprov1 (1 unstable [amd64])
 Conf selfprov (2 unstable [amd64])
-Conf needsselfprov1 (1 unstable [amd64])' aptget install needsselfprov1 -s
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+Conf needsselfprov1 (1 unstable [amd64])" aptget install needsselfprov1 -s --solver $solver
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   selfprov
 The following NEW packages will be installed:
@@ -316,9 +355,8 @@ The following NEW packages will be installed:
 Inst selfprov (2 unstable [amd64])
 Inst needsselfprov2 (1 unstable [amd64])
 Conf selfprov (2 unstable [amd64])
-Conf needsselfprov2 (1 unstable [amd64])' aptget install needsselfprov2 -s
-testsuccessequal 'Reading package lists...
-Building dependency tree...
+Conf needsselfprov2 (1 unstable [amd64])" aptget install needsselfprov2 -s --solver $solver
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   selfprov
 The following NEW packages will be installed:
@@ -327,15 +365,23 @@ The following NEW packages will be installed:
 Inst selfprov (2 unstable [amd64])
 Inst needsselfprov12 (1 unstable [amd64])
 Conf selfprov (2 unstable [amd64])
-Conf needsselfprov12 (1 unstable [amd64])' aptget install needsselfprov12 -s
-testfailureequal 'Reading package lists...
-Building dependency tree...
-Some packages could not be installed. This may mean that you have
-requested an impossible situation or if you are using the unstable
-distribution that some required packages have not yet been created
-or been moved out of Incoming.
-The following information may help to resolve the situation:
-
+Conf needsselfprov12 (1 unstable [amd64])" aptget install needsselfprov12 -s --solver $solver
+	if [ "$solver" = 'apt' ]; then
+		testfailureequal "$HEADER
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
  needsselfprov123 : Depends: selfprov (= 3)
-E: Unable to correct problems, you have held broken packages.' aptget install needsselfprov123 -s
+
+$SOMEPACKAGESCOULDNOT
+ needsselfprov123 : Depends: selfprov (= 1)
+                    Depends: selfprov (= 2)
+                    Depends: selfprov (= 3)
+E: External solver failed with: The following packages have unmet dependencies:" aptget install needsselfprov123 -s --solver $solver
+	else
+		testfailureequal "$HEADER
+$SOMEPACKAGESCOULDNOT
+ needsselfprov123 : Depends: selfprov (= 3)
+E: Unable to correct problems, you have held broken packages." aptget install needsselfprov123 -s --solver $solver
+	fi
+done

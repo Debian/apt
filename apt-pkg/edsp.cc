@@ -121,6 +121,8 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
       if (Prv.IsMultiArchImplicit() == true)
 	 continue;
       provides.append(", ").append(Prv.Name());
+      if (Prv->ProvideVersion != 0)
+	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
    }
    if (provides.empty() == false)
       fprintf(output, "Provides: %s\n", provides.c_str()+2);
