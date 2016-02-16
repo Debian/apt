@@ -3145,7 +3145,21 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 
    DestFile = flCombine(TemporaryDirectory, DestFileName);
    if (DestDir.empty() == false)
+   {
       d->FinalFile = flCombine(DestDir, DestFileName);
+      if (RealFileExists(d->FinalFile))
+      {
+	 FileFd file1, file2;
+	 if (file1.Open(DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive) &&
+	       file2.Open(d->FinalFile, FileFd::ReadOnly) && CopyFile(file2, file1))
+	 {
+	    struct timeval times[2];
+	    times[0].tv_sec = times[1].tv_sec = file2.ModificationTime();
+	    times[0].tv_usec = times[1].tv_usec = 0;
+	    utimes(DestFile.c_str(), times);
+	 }
+      }
+   }
 
    Desc.ShortDesc = "Changelog";
    strprintf(Desc.Description, "%s %s %s Changelog", URI::SiteOnly(Desc.URI).c_str(), SrcName.c_str(), SrcVersion.c_str());
@@ -3292,7 +3306,6 @@ void pkgAcqChangelog::Failed(string const &Message, pkgAcquire::MethodConfig con
       ErrorText = errText;
    else
       ErrorText = errText + " (" + ErrorText + ")";
-   return;
 }
 									/*}}}*/
 // AcqChangelog::Done - Item downloaded OK				/*{{{*/
@@ -3301,7 +3314,11 @@ void pkgAcqChangelog::Done(string const &Message,HashStringList const &CalcHashe
 {
    Item::Done(Message,CalcHashes,Cnf);
    if (d->FinalFile.empty() == false)
-      Rename(DestFile, d->FinalFile);
+   {
+      if (RemoveFile("pkgAcqChangelog::Done", d->FinalFile) == false ||
+	    Rename(DestFile, d->FinalFile) == false)
+	 Status = StatError;
+   }
 
    Complete = true;
 }

@@ -94,9 +94,15 @@ testsuccess aptget changelog foo foo -d
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
 echo 'bogus' > foo.changelog
+touch -d 'now + 1 hour' foo.changelog
 testsuccess aptget changelog foo foo -d
 testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 testfileequal 'foo.changelog' "$(cat  aptarchive/pool/main/f/foo/foo_1.0/changelog)"
+echo -n 'bogus' > foo.changelog
+touch -d "$(stat -c%y aptarchive/pool/main/f/foo/foo_1.0/changelog)" foo.changelog
+testsuccess aptget changelog foo foo -d
+testfilestats 'foo.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+testequal 'bogus1.0) stable; urgency=low' head -n 1 foo.changelog
 rm -f foo.changelog
 
 # no @CHANGEPATH@ in the URI
