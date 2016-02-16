@@ -775,8 +775,31 @@ bool DoBuildDep(CommandLine &CmdL)
    }
    if (DoAutomaticRemove(Cache) == false)
       return false;
+
    {
       pkgDepCache::ActionGroup group(Cache);
+      if (_config->FindB("APT::Get::Build-Dep-Automatic", false) == false)
+      {
+	 for (auto const &pkg: removeAgain)
+	 {
+	    auto const instVer = Cache[pkg].InstVerIter(Cache);
+	    if (unlikely(instVer.end() == true))
+	       continue;
+	    for (auto D = instVer.DependsList(); D.end() != true; ++D)
+	    {
+	       if (D->Type != pkgCache::Dep::Depends || D.IsMultiArchImplicit())
+		  continue;
+	       APT::VersionList verlist = APT::VersionList::FromDependency(Cache, D, APT::CacheSetHelper::CANDIDATE);
+	       for (auto const &V : verlist)
+	       {
+		  auto const P = V.ParentPkg();
+		  if (Cache[P].InstallVer != V)
+		     continue;
+		  Cache->MarkAuto(P, false);
+	       }
+	    }
+	 }
+      }
       for (auto const &pkg: removeAgain)
 	 Cache->MarkDelete(pkg, false, 0, true);
    }
