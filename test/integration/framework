@@ -517,7 +517,7 @@ int execvp(const char *file, char *const argv[]) {
 	return func_execvp(newfile, argv);
 }
 EOF
-	testsuccess --nomsg gcc -Wall -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+	testempty --nomsg gcc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
 }
 configcompression() {
 	local CMD='apthelper cat-file -C'
@@ -1313,9 +1313,13 @@ testfileequal() {
 
 testempty() {
 	msggroup 'testempty'
-	msgtest "Test for no output of" "$*"
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest "Test for no output of" "$*"
+	fi
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
-	if ("$@" >"$COMPAREFILE" 2>&1 || true) && test ! -s "$COMPAREFILE"; then
+	if "$@" >"$COMPAREFILE" 2>&1 && test ! -s "$COMPAREFILE"; then
 		msgpass
 	else
 		msgfailoutput '' "$COMPAREFILE" "$@"

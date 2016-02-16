@@ -124,7 +124,7 @@ rm -f "$APT_EDSP_DUMP_FILENAME"
 testfailure aptget install --solver dump awesomecoolstuff:i386 -s
 testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
 testequal 'Install: awesomecoolstuff:i386' grep :i386 "$APT_EDSP_DUMP_FILENAME"
-testempty grep -e ':amd64' -e 'Architecture: any' "$APT_EDSP_DUMP_FILENAME"
+testfailure grep -e ':amd64' -e 'Architecture: any' "$APT_EDSP_DUMP_FILENAME"
 
 testsuccess aptget dist-upgrade -s
 testsuccess aptget dist-upgrade -s --solver apt
