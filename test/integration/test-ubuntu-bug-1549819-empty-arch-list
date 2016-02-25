@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture ""
+echo 'APT::Architecture "";' > rootdir/etc/apt/apt.conf
+echo 'APT::Architectures:: "";' >> rootdir/etc/apt/apt.conf
+setupaptarchive
+
+# test success
+testsuccess aptcache -c rootdir/etc/apt/apt.conf gencaches -o debug::NoLocking=1

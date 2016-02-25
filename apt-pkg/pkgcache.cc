@@ -184,10 +184,12 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 
    // Check the architecture
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
-   std::vector<std::string>::const_iterator a = archs.begin();
-   std::string list = *a;
-   for (++a; a != archs.end(); ++a)
-      list.append(",").append(*a);
+   std::string list = "";
+   for (auto const & arch : archs) {
+      if (!list.empty())
+         list.append(",");
+      list.append(arch);
+   }
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
 	 list != StrP + HeaderP->GetArchitectures())
       return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->GetArchitectures(), list.c_str());
