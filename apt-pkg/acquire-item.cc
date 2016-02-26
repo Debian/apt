@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <ctime>
 #include <sstream>
+#include <numeric>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -49,6 +49,7 @@
 #include <utility>
 #include <vector>
 #include <sstream>
+#include <numeric>
 
 #include <apti18n.h>
 									/*}}}*/
