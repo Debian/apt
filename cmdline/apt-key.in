@@ -191,6 +191,10 @@ remove_key_from_keyring() {
     for KEY in "$@"; do
 	local FINGERPRINTS="${GPGHOMEDIR}/keyringfile.keylst"
 	get_fingerprints_of_keyring "$KEYRINGFILE" > "$FINGERPRINTS"
+
+        # strip leading 0x, if present:
+        KEY="$(printf %s "$KEY" | sed s/^0x//)"
+
 	# check if the key is in this keyring
 	if ! grep -iq "^[0-9A-F]*${KEY}$" "$FINGERPRINTS"; then
 	    continue
