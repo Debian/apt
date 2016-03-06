@@ -148,6 +148,10 @@ pkgCacheGenerator::~pkgCacheGenerator()
 }
 									/*}}}*/
 void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newMap, size_t oldSize) {/*{{{*/
+   // Prevent multiple remaps of the same iterator. If seen.insert(iterator)
+   // returns (something, true) the iterator was not yet seen and we can
+   // remap it.
+   std::unordered_set<void *> seen;
    if (oldMap == newMap)
       return;
 
@@ -161,29 +165,39 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::PkgIterator*>::const_iterator i = Dynamic<pkgCache::PkgIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PkgIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::VerIterator*>::const_iterator i = Dynamic<pkgCache::VerIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::VerIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::DepIterator*>::const_iterator i = Dynamic<pkgCache::DepIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::DepIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+	if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::DescIterator*>::const_iterator i = Dynamic<pkgCache::DescIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::DescIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::PrvIterator*>::const_iterator i = Dynamic<pkgCache::PrvIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PrvIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::PkgFileIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (std::vector<pkgCache::RlsFileIterator*>::const_iterator i = Dynamic<pkgCache::RlsFileIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::RlsFileIterator>::toReMap.end(); ++i)
-      (*i)->ReMap(oldMap, newMap);
+      if (std::get<1>(seen.insert(*i)) == true)
+	 (*i)->ReMap(oldMap, newMap);
    for (APT::StringView* ViewP : Dynamic<APT::StringView>::toReMap) {
+      if (std::get<1>(seen.insert(ViewP)) == false)
+	 continue;
       // Ignore views outside of the cache.
       if (ViewP->data() < static_cast<const char*>(oldMap)
 	 || ViewP->data() > static_cast<const char*>(oldMap) + oldSize)
