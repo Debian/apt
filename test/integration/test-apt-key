@@ -85,6 +85,17 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
+	msgtest 'Test key removal with' 'different key specs'
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+	testsuccess --nomsg aptkey --fakeroot del 0xDBAC8DAE 528144E2
+	testempty aptkey list
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+	testfailure test -e rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+	testsuccess cmp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg~
+
 	msgtest 'Test key removal with' 'long key ID'
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg

@@ -193,7 +193,7 @@ remove_key_from_keyring() {
 	get_fingerprints_of_keyring "$KEYRINGFILE" > "$FINGERPRINTS"
 
         # strip leading 0x, if present:
-        KEY="$(printf %s "$KEY" | sed s/^0x//)"
+        KEY="${KEY#0x}"
 
 	# check if the key is in this keyring
 	if ! grep -iq "^[0-9A-F]*${KEY}$" "$FINGERPRINTS"; then
