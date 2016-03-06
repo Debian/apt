@@ -1,3 +1,25 @@
+apt (1.2.5) unstable; urgency=medium
+
+  [ Daniel Kahn Gillmor ]
+  * apt-key del should correctly handle keyids prefixed with 0x
+
+  [ David Kalnischkies ]
+  * support APT::Get::Build-Dep-Automatic again in build-dep
+  * add test for apt-key 0xKEY and use parameter expansion.
+    Thanks to James McCoy for the suggestion. (Closes: 816691)
+  * do not move not-failed pdiff-patches into CWD on failure (Closes: #816837)
+  * get group again after potential remap in Source: parse.
+    Thanks to Francesco Poli and Marc Haber for testdata. (Closes: 812251)
+
+  [ Colin Watson ]
+  * Fix lzma write support to handle "try again" case (Closes: #751688)
+
+  [ Julian Andres Klode ]
+  * Prevent double remapping of iterators and string views
+  * debian/control: Set Standards-Version to 3.9.7
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 06 Mar 2016 19:47:45 +0100
+
 apt (1.2.4) unstable; urgency=medium
 
   [ David Kalnischkies ]
