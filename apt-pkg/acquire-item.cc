@@ -2476,8 +2476,21 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 
    Item::Done(Message, Hashes, Cnf);
 
+   if (std::any_of(allPatches->begin(), allPatches->end(),
+	    [](pkgAcqIndexMergeDiffs const * const P) { return P->State == StateErrorDiff; }))
+   {
+      if(Debug)
+	 std::clog << "Another patch failed already, no point in processing this one." << std::endl;
+      return;
+   }
+
    std::string const UncompressedUnpatchedFile = GetPartialFileNameFromURI(Target.URI);
    std::string const UnpatchedFile = GetExistingFilename(UncompressedUnpatchedFile);
+   if (UnpatchedFile.empty())
+   {
+      _error->Fatal("Unpatched file %s doesn't exist (anymore)!", UnpatchedFile.c_str());
+      return;
+   }
    std::string const PatchFile = GetMergeDiffsPatchFileName(UnpatchedFile, patch.file);
    std::string const PatchedFile = GetKeepCompressedFileName(UncompressedUnpatchedFile, Target);
 
