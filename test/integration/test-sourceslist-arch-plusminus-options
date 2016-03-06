@@ -73,7 +73,7 @@ echo 'deb [arch-=mips,hurd-powerpc,i386] http://example.org/debian stable rocks'
 testbinaries 'arch-=foreign,unknown,foreign' 'amd64' 'armel' 'armhf' 'mipsel' 'all'
 
 echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
-testbinaries 'substract from a arch-set' 'i386' 'all'
+testbinaries 'subtract from a arch-set' 'i386' 'all'
 
 echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testbinaries 'useless subtract from a arch-set' 'i386' 'all'

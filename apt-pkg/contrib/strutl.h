@@ -93,7 +93,7 @@ std::vector<std::string> VectorizeString(std::string const &haystack, char const
  *
  * \param input The input string.
  *
- * \param sep The seperator to use.
+ * \param sep The separator to use.
  *
  * \param maxsplit (optional) The maximum amount of splitting that
  * should be done .

@@ -1965,7 +1965,7 @@ apt (0.9.13~exp1) experimental; urgency=low
   * Improve the API for APT::Upgrade::Upgrade()
   * Re-add "Calculating upgrade..." message
   * move upgrade releated code into upgrade.{cc,h}
-  * Move ListUpdate/AquireUpdate into update.{cc,h}
+  * Move ListUpdate/AcquireUpdate into update.{cc,h}
   * Add new apt-pkg/install-progress.h with APT::Progress::PackageManager
     progress reporting classes
   * Move the status-fd progress reporting out of the pkgDPkgPM class
@@ -3282,7 +3282,7 @@ apt (0.8.16~exp13) experimental; urgency=low
   * methods/http{s,}.cc:
     - if a file without an extension is requested send an 'Accept: text/*'
       header to avoid that the server chooses unsupported compressed files
-      in a content-negotation attempt (Closes: #657560)
+      in a content-negotiation attempt (Closes: #657560)
     - remove the arbitrary MAXLEN limit for response lines (Closes: #658346)
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
@@ -5502,7 +5502,7 @@ apt (0.7.26~exp3) experimental; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - fix backgrounding when dpkg runs (closes: #486222)
   * cmdline/apt-mark:
-    - show error on incorrect aguments (LP: #517917), thanks to
+    - show error on incorrect arguments (LP: #517917), thanks to
       Torsten Spindler
   * cmdline/apt-get.cc:
     - if apt-get source foo=version or foo/distro can not be found,
@@ -5789,7 +5789,7 @@ apt (0.7.25) unstable; urgency=low
     - add build-dependency on autotools-dev
     - bump policy to 3.8.3 as we have no outdated manpages anymore
   * debian/NEWS:
-    - fix a typo in 0.7.24: Allready -> Already (Closes: #557674)
+    - fix a typo in 0.7.24: Already -> Already (Closes: #557674)
   * ftparchive/writer.{cc,h}:
     - add APT::FTPArchive::LongDescription to be able to disable them
   * apt-pkg/deb/debsrcrecords.cc:
@@ -6484,7 +6484,7 @@ apt (0.7.15~exp3) experimental; urgency=low
 
   [ Michael Vogt ]
   * apt-pkg/packagemanager.cc, apt-pkg/deb/dpkgpm.cc:
-    - move the state file writting into the Go() implementation
+    - move the state file writing into the Go() implementation
       of dpkgpm (closes: #498799)
   * apt-pkg/algorithms.cc:
     - fix simulation performance drop (thanks to Ferenc Wagner
@@ -7517,7 +7517,7 @@ apt (0.6.42.2) unstable; urgency=high
  
 apt (0.6.42.1) unstable; urgency=low
 
-  * fix a incorrect example in the apt_prefrences man page
+  * fix a incorrect example in the apt_preferences man page
     (thanks to Filipus Klutiero, closes: #282918)
   * apt-pkg/pkgrecords.cc:
     - revert patch from last version, it causes trouble on alpha 
@@ -7684,7 +7684,7 @@ apt (0.6.36) experimental; urgency=low
       added "Acquire::BrokenProxy" that will force apt to always 
       re-get the Release.gpg file (for broken proxies)
     - debian/apt.cron.daily:
-      MinAge is defaulting to 2 days now to prevent over-aggresive removal 
+      MinAge is defaulting to 2 days now to prevent over-aggressive removal
     - apt-pkg/cdrom.cc:
       honor "Acquire::gpgv::Options" when verifying the signature (Ubuntu #8496)
  
@@ -8734,7 +8734,7 @@ apt (0.5.5) unstable; urgency=low
     ignore roots umask for these files. Closes: #108801
   * Support larger config spaces. Closes: #111914
   * 'apt-get update' no longer does 'Building Dependency Tree'.
-  * When matching regexs allways print a message. Change regex activation
+  * When matching regexs always print a message. Change regex activation
     charset. Closes: #147817
   * Don't die if lines in sources.list are too long. Closes: #146846
   * Show file name on apt-extracttemplate error messges. Closes: #151835
@@ -8780,7 +8780,7 @@ apt (0.5.5) unstable; urgency=low
   * When installing build-deps, make sure the new version will
     satisfy build requirements. Closes: #178121
   * Split offline and guide documentation into apt-doc.  This was done so
-    that binary-arch builds do not require documention deps.  Note, that 
+    that binary-arch builds do not require documentation deps.  Note, that
     apt-doc is not installed on upgrades.
   * Use doc-base, instead of dhelp directly.  Closes: #110389
   * Change http message 'Waiting for file' to 'Waiting for headers'.
@@ -9021,7 +9021,7 @@ apt (0.3.19) frozen unstable; urgency=low
   * Typo in Algorithms.cc. Closes: #63577
   * Evil dotty function in apt-cache for generating dependency graphs
     with the as-yet-unpackaged GraphVis.
-  * Appears to have been fixed in Janurary.. Closes: #57981
+  * Appears to have been fixed in January.. Closes: #57981
   * New config.guess/sub for the new archs. Closes: #60874
   * Fixed error reporting for certain kinds of resolution failures.
     Closes: #61327
@@ -9428,7 +9428,7 @@ apt (0.0.9) experimental; urgency=low
 
   * Added ftp support.
   * Various other less visible bug fixes.
-  * Fixed problem with segfault when apt-get invoked in a non-existant
+  * Fixed problem with segfault when apt-get invoked in a non-existent
     directory (Bug #21863)
   * Bumped policy to 2.4.1
 

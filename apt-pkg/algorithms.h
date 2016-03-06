@@ -75,8 +75,8 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    Policy iPolicy;
    pkgDepCache Sim;
    pkgDepCache::ActionGroup group;
-   
-   // The Actuall installation implementation
+
+   // The Actual installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
    virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
    virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;

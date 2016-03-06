@@ -1588,7 +1588,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
-	 // if it was set to "keep-dpkg-runing" then we won't return
+	 // if it was set to "keep-dpkg-running" then we won't return
 	 // here but keep the loop going and just report it as a error
 	 // for later
 	 bool const stopOnError = _config->FindB("Dpkg::StopOnError",true);

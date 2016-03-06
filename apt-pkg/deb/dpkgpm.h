@@ -119,7 +119,7 @@ class pkgDPkgPM : public pkgPackageManager
    void DoDpkgStatusFd(int statusfd);
    void ProcessDpkgStatusLine(char *line);
 
-   // The Actuall installation implementation
+   // The Actual installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
    virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
    virtual bool Remove(PkgIterator Pkg,bool Purge = false) APT_OVERRIDE;

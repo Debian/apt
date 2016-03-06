@@ -500,7 +500,7 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
    
    if (S->CurrentState == pkgCache::State::UnPacked ||
        S->CurrentState == pkgCache::State::HalfConfigured)
-      // we leave triggers alone complettely. dpkg deals with
+      // we leave triggers alone completely. dpkg deals with
       // them in a hard-to-predict manner and if they get 
       // resolved by dpkg before apt run dpkg --configure on 
       // the TriggersPending package dpkg returns a error
@@ -802,7 +802,7 @@ bool pkgCache::DepIterator::IsImplicit() const
    return false;
 }
 									/*}}}*/
-// ostream operator to handle string representation of a dependecy	/*{{{*/
+// ostream operator to handle string representation of a dependency	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 std::ostream& operator<<(std::ostream& out, pkgCache::DepIterator D)

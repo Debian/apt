@@ -6,7 +6,7 @@
    Package Manager - Abstacts the package manager
 
    More work is needed in the area of transitioning provides, ie exim
-   replacing smail. This can cause interesing side effects.
+   replacing smail. This can cause interesting side effects.
 
    Other cases involving conflicts+replaces should be tested. 
    
@@ -136,7 +136,7 @@ bool pkgPackageManager::FixMissing()
 // PM::ImmediateAdd - Add the immediate flag recursivly			/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the immediate flag to the pkg and recursively to the
-   dependendies 
+   dependencies
  */
 void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned const int &Depth)
 {
@@ -189,7 +189,7 @@ bool pkgPackageManager::CreateOrderList()
       if (I->VersionList == 0)
 	 continue;
       
-      // Mark the package and its dependends for immediate configuration
+      // Mark the package and its dependents for immediate configuration
       if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential) &&
 	  NoImmConfigure == false) || ImmConfigureAll)
       {

@@ -52,7 +52,7 @@
 
 using namespace std;
 
-static void printHashSumComparision(std::string const &URI, HashStringList const &Expected, HashStringList const &Actual) /*{{{*/
+static void printHashSumComparison(std::string const &URI, HashStringList const &Expected, HashStringList const &Actual) /*{{{*/
 {
    if (_config->FindB("Debug::Acquire::HashSumMismatch", false) == false)
       return;
@@ -1821,7 +1821,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       if (Debug == true)
       {
 	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": Index has different hashes than parser, probably older, so fail pdiffing" << std::endl;
-         printHashSumComparision(CurrentPackagesFile, ServerHashes, TargetFileHashes);
+         printHashSumComparison(CurrentPackagesFile, ServerHashes, TargetFileHashes);
       }
       return false;
    }

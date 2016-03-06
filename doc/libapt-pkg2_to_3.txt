@@ -27,11 +27,11 @@ source will continue to function, but perhaps at reduced functionality.
   include the trailing \n.
 * GenCaches::SelectFile accepts a site parameter now too.
 * Global version compare functions are gone. If you 
-    #define APT_COMPATABILITY 1
+    #define APT_COMPATIBILITY 1
   They will come back as they were before. Code should be updated to 
   reference the compare functions to the VersioningSystem (VS) referenced
   by the Cache or _system structures.
-* Initialization is now two stage (define APT_COMPATABILITY..) The first
+* Initialization is now two stage (define APT_COMPATIBILITY..) The first
   stage, pkgInitConfig is called before commandline parsing, and
   pkgInitSystem is called after. This gives the user the oppertunity to
   override default settings from the config files before startup has been
