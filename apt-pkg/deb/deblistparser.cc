@@ -144,7 +144,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       Ver->Section = idx;
    }
    // Parse the source package name
-   pkgCache::GrpIterator const G = Ver.ParentPkg().Group();
+   pkgCache::GrpIterator G = Ver.ParentPkg().Group();
    Ver->SourcePkgName = G->Name;
    Ver->SourceVerStr = Ver->VerStr;
    if (Section.Find("Source",Start,Stop) == true)
@@ -164,6 +164,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	       if (version != Ver.VerStr())
 	       {
 		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
+		  G = Ver.ParentPkg().Group();
 		  Ver->SourceVerStr = idx;
 	       }
 	    }
@@ -190,6 +191,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 if (V.end() == true)
 	 {
 	    map_stringitem_t const idx = StoreString(pkgCacheGenerator::PKGNAME, pkgname);
+	    G = Ver.ParentPkg().Group();
 	    Ver->SourcePkgName = idx;
 	 }
       }
