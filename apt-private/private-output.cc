@@ -188,7 +188,7 @@ static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterato
       return P.CurrentVer().Arch();
 }
 									/*}}}*/
-static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
+std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
 
