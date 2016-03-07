@@ -991,7 +991,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  if (Debug == true)
 		     clog << "  Added " << Pkg.FullName(false) << " to the remove list" << endl;
 
-		  KillList.push_back({Pkg, End});
+		  KillList.push_back((PackageKill) {Pkg, End});
 		  
 		  if (Start.IsNegative() == false)
 		     break;
@@ -1041,7 +1041,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	 // Apply the kill list now
 	 if (Cache[I].InstallVer != 0)
 	 {
-	    for (auto J = KillList.begin(); J != KillList.end(); J++)
+	    for (std::vector<PackageKill>::const_iterator J = KillList.begin(); J != KillList.end(); J++)
 	    {
 	       Change = true;
 	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
