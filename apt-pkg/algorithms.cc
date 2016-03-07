@@ -735,6 +735,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
       changing a breaks c) */
    bool Change = true;
    bool const TryFixByInstall = _config->FindB("pkgProblemResolver::FixByInstall", true);
+   std::vector<PackageKill> KillList;
    for (int Counter = 0; Counter != 10 && Change == true; Counter++)
    {
       Change = false;
@@ -777,12 +778,12 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    clog << "Investigating (" << Counter << ") " << I << endl;
 	 
 	 // Isolate the problem dependency
-	 PackageKill KillList[100];
-	 PackageKill *LEnd = KillList;
 	 bool InOr = false;
 	 pkgCache::DepIterator Start;
 	 pkgCache::DepIterator End;
-	 PackageKill *OldEnd = LEnd;
+	 size_t OldSize = 0;
+
+	 KillList.resize(0);
 	 
 	 enum {OrRemove,OrKeep} OrOp = OrRemove;
 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
@@ -792,7 +793,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    if (Start == End)
 	    {
 	       // Decide what to do
-	       if (InOr == true && OldEnd == LEnd)
+	       if (InOr == true && OldSize == KillList.size())
 	       {
 		  if (OrOp == OrRemove)
 		  {
@@ -826,7 +827,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  continue;
 
 	       InOr = Start != End;
-	       OldEnd = LEnd;
+	       OldSize = KillList.size();
 	    }
 	    else
             {
@@ -989,10 +990,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		
 		  if (Debug == true)
 		     clog << "  Added " << Pkg.FullName(false) << " to the remove list" << endl;
-		  
-		  LEnd->Pkg = Pkg;
-		  LEnd->Dep = End;
-		  LEnd++;
+
+		  KillList.push_back({Pkg, End});
 		  
 		  if (Start.IsNegative() == false)
 		     break;
@@ -1042,7 +1041,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	 // Apply the kill list now
 	 if (Cache[I].InstallVer != 0)
 	 {
-	    for (PackageKill *J = KillList; J != LEnd; J++)
+	    for (auto J = KillList.begin(); J != KillList.end(); J++)
 	    {
 	       Change = true;
 	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
