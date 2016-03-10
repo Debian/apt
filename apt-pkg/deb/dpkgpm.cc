@@ -1530,20 +1530,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // the result of the waitpid call
       int res;
       int select_ret;
+      bool waitpid_failure = false;
       while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
 	 if(res < 0) {
-	    // FIXME: move this to a function or something, looks ugly here
 	    // error handling, waitpid returned -1
 	    if (errno == EINTR)
 	       continue;
-	    RunScripts("DPkg::Post-Invoke");
-
-	    // Restore sig int/quit
-	    signal(SIGQUIT,old_SIGQUIT);
-	    signal(SIGINT,old_SIGINT);
-
-	    signal(SIGHUP,old_SIGHUP);
-	    return _error->Errno("waitpid","Couldn't wait for subprocess");
+	    waitpid_failure = true;
+	    break;
 	 }
 
 	 // wait for input or output here
@@ -1583,8 +1577,15 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
-      
       signal(SIGHUP,old_SIGHUP);
+
+      if (waitpid_failure == true)
+      {
+	 strprintf(d->dpkg_error, "Sub-process %s couldn't be waited for.",Args[0]);
+	 _error->Error("%s", d->dpkg_error.c_str());
+	 break;
+      }
+
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
@@ -1606,15 +1607,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       }
    }
    // dpkg is done at this point
-   d->progress->Stop();
    StopPtyMagic();
    CloseLog();
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));
-
-   if (RunScripts("DPkg::Post-Invoke") == false)
-      return false;
 
    if (_config->FindB("Debug::pkgDPkgPM",false) == false)
    {
@@ -1634,6 +1631,12 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    }
 
    Cache.writeStateFile(NULL);
+
+   d->progress->Stop();
+
+   if (RunScripts("DPkg::Post-Invoke") == false)
+      return false;
+
    return d->dpkg_error.empty();
 }
 
