@@ -84,5 +84,8 @@ testdpkginstalled failure-postrm
 testmyfailure aptget purge failure-postrm -y
 
 # FIXME: test with output going to a PTY as it usually does
-#cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
-#aptget install failure-preinst -y
+if false; then
+	cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+	apt install dependee -y || true
+	apt install failure-postinst -y || true
+fi

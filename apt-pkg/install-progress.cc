@@ -333,6 +333,7 @@ void PackageManagerFancy::Stop()
       // override the progress line (sledgehammer)
       static const char* clear_screen_below_cursor = "\033[J";
       std::cout << clear_screen_below_cursor;
+      std::flush(std::cout);
    }
    child_pty = -1;
 }
