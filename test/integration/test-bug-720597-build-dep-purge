@@ -4,16 +4,19 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-configarchitecture 'amd64'
+
+# we need this construct here as it isn't really possible to fake native arch for dpkg-* tools
+NATIVE="$(command dpkg --print-architecture)"
+configarchitecture $NATIVE
 
 insertinstalledpackage 'build-essential' 'all' '11.5' 'Multi-Arch: foreign'
 insertinstalledpackage 'pkga' 'all' '1'
-buildsimplenativepackage 'pkgb' 'amd64' '1' 'stable' 'Conflicts: pkga'
-buildsimplenativepackage 'pkgc' 'amd64' '1' 'stable' 'Build-Depends: pkgb'
+buildsimplenativepackage 'pkgb' "$NATIVE" '1' 'stable' 'Conflicts: pkga'
+buildsimplenativepackage 'pkgc' "$NATIVE" '1' 'stable' 'Build-Depends: pkgb'
 
 setupaptarchive
 
-testsuccessequal 'Reading package lists...
+testsuccessequal "Reading package lists...
 Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:
@@ -22,10 +25,10 @@ The following NEW packages will be installed:
   pkgb
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv pkga [1]
-Inst pkgb (1 stable [amd64])
-Conf pkgb (1 stable [amd64])' aptget build-dep pkgc -s
+Inst pkgb (1 stable [$NATIVE])
+Conf pkgb (1 stable [$NATIVE])" aptget build-dep pkgc -s
 
-testsuccessequal 'Reading package lists...
+testsuccessequal "Reading package lists...
 Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:
@@ -34,8 +37,8 @@ The following NEW packages will be installed:
   pkgb
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Purg pkga [1]
-Inst pkgb (1 stable [amd64])
-Conf pkgb (1 stable [amd64])' aptget build-dep pkgc -s --purge
+Inst pkgb (1 stable [$NATIVE])
+Conf pkgb (1 stable [$NATIVE])" aptget build-dep pkgc -s --purge
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
