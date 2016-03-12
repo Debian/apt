@@ -316,15 +316,30 @@ private:								/*{{{*/
 		Item(char const *Text, MsgType const &Type) :
 			Text(Text), Type(Type) {};
 
-		friend std::ostream& operator<< (std::ostream &out, Item i) {
+		APT_HIDDEN friend std::ostream& operator<< (std::ostream &out, Item i) {
 			switch(i.Type) {
 			case FATAL:
-			case ERROR: out << "E"; break;
-			case WARNING: out << "W"; break;
-			case NOTICE: out << "N"; break;
-			case DEBUG: out << "D"; break;
+			case ERROR: out << 'E'; break;
+			case WARNING: out << 'W'; break;
+			case NOTICE: out << 'N'; break;
+			case DEBUG: out << 'D'; break;
 			}
-			return out << ": " << i.Text;
+			out << ": ";
+			std::string::size_type line_start = 0;
+			std::string::size_type line_end;
+			while ((line_end = i.Text.find_first_of("\n\r", line_start)) != std::string::npos) {
+				if (line_start != 0)
+				   out << std::endl << "   ";
+				out << i.Text.substr(line_start, line_end - line_start);
+				line_start = i.Text.find_first_not_of("\n\r", line_end + 1);
+				if (line_start == std::string::npos)
+				   break;
+			}
+			if (line_start == 0)
+			   out << i.Text;
+			else if (line_start != std::string::npos)
+			   out << std::endl << "   " << i.Text.substr(line_start);
+			return out;
 		}
 	};
 

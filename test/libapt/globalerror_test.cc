@@ -116,6 +116,16 @@ TEST(GlobalErrorTest,LongMessage)
    EXPECT_FALSE(e.Errno("errno", "%s horrible %s %d times", longText.c_str(), "happened", 2));
    EXPECT_TRUE(e.PopMessage(text));
    EXPECT_EQ(std::string(longText).append(" horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"), text);
+
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", longText.c_str(), "happened", 2));
+   std::ostringstream out;
+   e.DumpErrors(out);
+   EXPECT_EQ(std::string("E: ").append(longText).append(" horrible happened 2 times\n"), out.str());
+
+   EXPECT_FALSE(e.Errno("errno", "%s horrible %s %d times", longText.c_str(), "happened", 2));
+   std::ostringstream out2;
+   e.DumpErrors(out2);
+   EXPECT_EQ(std::string("E: ").append(longText).append(" horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")\n"), out2.str());
 }
 TEST(GlobalErrorTest,UTF8Message)
 {
@@ -126,10 +136,34 @@ TEST(GlobalErrorTest,UTF8Message)
    EXPECT_FALSE(e.PopMessage(text));
    EXPECT_EQ("Репозиторий не обновлён и будут 4 test", text);
 
+   EXPECT_FALSE(e.Warning("Репозиторий не обновлён и будут %d %s", 4, "test"));
+   std::ostringstream out;
+   e.DumpErrors(out);
+   EXPECT_EQ("W: Репозиторий не обновлён и будут 4 test\n", out.str());
+
    std::string longText;
    for (size_t i = 0; i < 50; ++i)
       longText.append("РезийбёбAZ");
    EXPECT_FALSE(e.Warning("%s", longText.c_str()));
    EXPECT_FALSE(e.PopMessage(text));
    EXPECT_EQ(longText, text);
+}
+TEST(GlobalErrorTest,MultiLineMessage)
+{
+   GlobalError e;
+   std::string text;
+
+   EXPECT_FALSE(e.Warning("Sometimes one line isn't enough.\nYou do know what I mean, right?\r\n%s?\rGood because I don't.", "Right"));
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_EQ("Sometimes one line isn't enough.\nYou do know what I mean, right?\r\nRight?\rGood because I don't.", text);
+
+   EXPECT_FALSE(e.Warning("Sometimes one line isn't enough.\nYou do know what I mean, right?\r\n%s?\rGood because I don't.", "Right"));
+   std::ostringstream out;
+   e.DumpErrors(out);
+   EXPECT_EQ("W: Sometimes one line isn't enough.\n   You do know what I mean, right?\n   Right?\n   Good because I don't.\n", out.str());
+
+   EXPECT_FALSE(e.Warning("Sometimes one line isn't enough.\nYou do know what I mean, right?\r\n%s?\rGood because I don't.\n", "Right"));
+   std::ostringstream out2;
+   e.DumpErrors(out2);
+   EXPECT_EQ("W: Sometimes one line isn't enough.\n   You do know what I mean, right?\n   Right?\n   Good because I don't.\n", out2.str());
 }
