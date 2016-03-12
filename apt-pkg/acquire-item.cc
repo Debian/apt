@@ -132,6 +132,49 @@ static std::string GetDiffIndexURI(IndexTarget const &Target)		/*{{{*/
 }
 									/*}}}*/
 
+static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string const &FailCode, std::string const &Details)/*{{{*/
+{
+   // we only act if a mirror was used at all
+   if(I.UsedMirror.empty())
+      return;
+#if 0
+   std::cerr << "\nReportMirrorFailure: "
+	     << UsedMirror
+	     << " Uri: " << DescURI()
+	     << " FailCode: "
+	     << FailCode << std::endl;
+#endif
+   string const report = _config->Find("Methods::Mirror::ProblemReporting",
+				 "/usr/lib/apt/apt-report-mirror-failure");
+   if(!FileExists(report))
+      return;
+
+   std::vector<char const*> const Args = {
+      report.c_str(),
+      I.UsedMirror.c_str(),
+      I.DescURI().c_str(),
+      FailCode.c_str(),
+      Details.c_str(),
+      NULL
+   };
+
+   pid_t pid = ExecFork();
+   if(pid < 0)
+   {
+      _error->Error("ReportMirrorFailure Fork failed");
+      return;
+   }
+   else if(pid == 0)
+   {
+      execvp(Args[0], (char**)Args.data());
+      std::cerr << "Could not exec " << Args[0] << std::endl;
+      _exit(100);
+   }
+   if(!ExecWait(pid, "report-mirror-failure"))
+      _error->Warning("Couldn't report problem to '%s'", report.c_str());
+}
+									/*}}}*/
+
 static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
 {
    if (isError)
@@ -640,15 +683,19 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 
    string const FailReason = LookupTag(Message, "FailReason");
    if (FailReason == "MaximumSizeExceeded")
+   {
       RenameOnError(MaximumSizeExceeded);
+      ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
+   }
    else if (Status == StatAuthError)
+   {
       RenameOnError(HashSumMismatch);
-
-   // report mirror failure back to LP if we actually use a mirror
-   if (FailReason.empty() == false)
-      ReportMirrorFailure(FailReason);
+      ReportMirrorFailureToCentral(*this, "HashChecksumFailure", ErrorText);
+   }
+   else if (FailReason.empty() == false)
+      ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
    else
-      ReportMirrorFailure(ErrorText);
+      ReportMirrorFailureToCentral(*this, ErrorText, ErrorText);
 
    if (QueueCounter > 1)
       Status = StatIdle;
@@ -737,12 +784,10 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
       case HashSumMismatch:
 	 errtext = _("Hash Sum mismatch");
 	 Status = StatAuthError;
-	 ReportMirrorFailure("HashChecksumFailure");
 	 break;
       case SizeMismatch:
 	 errtext = _("Size mismatch");
 	 Status = StatAuthError;
-	 ReportMirrorFailure("SizeFailure");
 	 break;
       case InvalidFormat:
 	 errtext = _("Invalid file format");
@@ -777,47 +822,9 @@ void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
 }
 									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
-void pkgAcquire::Item::ReportMirrorFailure(string const &FailCode)
+void pkgAcquire::Item::ReportMirrorFailure(std::string const &FailCode)
 {
-   // we only act if a mirror was used at all
-   if(UsedMirror.empty())
-      return;
-#if 0
-   std::cerr << "\nReportMirrorFailure: " 
-	     << UsedMirror
-	     << " Uri: " << DescURI()
-	     << " FailCode: " 
-	     << FailCode << std::endl;
-#endif
-   string report = _config->Find("Methods::Mirror::ProblemReporting", 
-				 "/usr/lib/apt/apt-report-mirror-failure");
-   if(!FileExists(report))
-      return;
-
-   std::vector<char const*> Args;
-   Args.push_back(report.c_str());
-   Args.push_back(UsedMirror.c_str());
-   Args.push_back(DescURI().c_str());
-   Args.push_back(FailCode.c_str());
-   Args.push_back(NULL);
-
-   pid_t pid = ExecFork();
-   if(pid < 0)
-   {
-      _error->Error("ReportMirrorFailure Fork failed");
-      return;
-   }
-   else if(pid == 0)
-   {
-      execvp(Args[0], (char**)Args.data());
-      std::cerr << "Could not exec " << Args[0] << std::endl;
-      _exit(100);
-   }
-   if(!ExecWait(pid, "report-mirror-failure"))
-   {
-      _error->Warning("Couldn't report problem to '%s'",
-		      _config->Find("Methods::Mirror::ProblemReporting").c_str());
-   }
+   ReportMirrorFailureToCentral(*this, FailCode, FailCode);
 }
 									/*}}}*/
 std::string pkgAcquire::Item::HashSum() const				/*{{{*/
@@ -974,37 +981,36 @@ void pkgAcqMetaBase::TransactionStageRemoval(pkgAcqTransactionItem * const I,
 }
 									/*}}}*/
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
+/* This method is called from ::Failed handlers. If it returns true,
+   no fallback to other files or modi is performed */
 bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const std::string &Message)
 {
-   // FIXME: this entire function can do now that we disallow going to
-   //        a unauthenticated state and can cleanly rollback
-
    string const Final = I->GetFinalFilename();
-   if(FileExists(Final))
+   std::string const GPGError = LookupTag(Message, "Message");
+   if (FileExists(Final))
    {
       I->Status = StatTransientNetworkError;
-      _error->Warning(_("An error occurred during the signature "
-                        "verification. The repository is not updated "
-                        "and the previous index files will be used. "
-                        "GPG error: %s: %s"),
-                      Desc.Description.c_str(),
-                      LookupTag(Message,"Message").c_str());
+      _error->Warning(_("An error occurred during the signature verification. "
+	       "The repository is not updated and the previous index files will be used. "
+	       "GPG error: %s: %s"),
+	    Desc.Description.c_str(),
+	    GPGError.c_str());
       RunScripts("APT::Update::Auth-Failure");
       return true;
    } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
       /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
       _error->Error(_("GPG error: %s: %s"),
-                    Desc.Description.c_str(),
-                    LookupTag(Message,"Message").c_str());
+	    Desc.Description.c_str(),
+	    GPGError.c_str());
       I->Status = StatAuthError;
       return true;
    } else {
       _error->Warning(_("GPG error: %s: %s"),
-                      Desc.Description.c_str(),
-                      LookupTag(Message,"Message").c_str());
+	    Desc.Description.c_str(),
+	    GPGError.c_str());
    }
    // gpgv method failed
-   ReportMirrorFailure("GPGFailure");
+   ReportMirrorFailureToCentral(*this, "GPGFailure", GPGError);
    return false;
 }
 									/*}}}*/

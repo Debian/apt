@@ -281,7 +281,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *
     *  \param FailCode A short failure string that is send
     */
-   void ReportMirrorFailure(std::string const &FailCode);
+   APT_DEPRECATED_MSG("Item::Failed does this for you") void ReportMirrorFailure(std::string const &FailCode);
 
    /** \brief Set the name of the current active subprocess
     *
