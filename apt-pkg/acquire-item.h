@@ -609,6 +609,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
  public:
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const APT_OVERRIDE;
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                    IndexTarget const &Target);

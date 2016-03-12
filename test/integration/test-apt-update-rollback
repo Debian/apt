@@ -30,6 +30,7 @@ add_new_package() {
 }
 
 break_repository_sources_index() {
+    mv "$APTARCHIVE/dists/unstable/main/source/Sources.gz" "$APTARCHIVE/dists/unstable/main/source/Sources.gz.orig"
     printf 'xxx' > "$APTARCHIVE/dists/unstable/main/source/Sources"
     compressfile "$APTARCHIVE/dists/unstable/main/source/Sources" "$@"
 }
@@ -61,6 +62,14 @@ test_inrelease_to_broken_hash_reverts_all() {
 
     # test the error condition
     testfailureequal "E: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
+   Hashes of expected file:
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/source/Sources.gz.orig')
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/source/Sources.gz.orig' | cut -d' ' -f 1)
+   Hashes of received file:
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/source/Sources.gz' | cut -d' ' -f 1)
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/source/Sources.gz')
+   Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/source/Sources.gz')
+   Release file created at: $(releasefiledate 'aptarchive/dists/unstable/InRelease')
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -127,6 +136,14 @@ E: There were unauthenticated packages and -y was used without --allow-unauthent
     break_repository_sources_index '+1hour'
 
     testfailureequal "E: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
+   Hashes of expected file:
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/source/Sources.gz.orig')
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/source/Sources.gz.orig' | cut -d' ' -f 1)
+   Hashes of received file:
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/source/Sources.gz' | cut -d' ' -f 1)
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/source/Sources.gz')
+   Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/source/Sources.gz')
+   Release file created at: $(releasefiledate 'aptarchive/dists/unstable/InRelease')
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"

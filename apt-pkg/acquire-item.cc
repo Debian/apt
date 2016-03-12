@@ -650,8 +650,6 @@ APT_CONST bool pkgAcquire::Item::IsTrusted() const			/*{{{*/
    fetch this object */
 void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
-   if(ErrorText.empty())
-      ErrorText = LookupTag(Message,"Message");
    if (QueueCounter <= 1)
    {
       /* This indicates that the file is not available right now but might
@@ -681,18 +679,37 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
       Dequeue();
    }
 
+   if(ErrorText.empty())
+   {
+      if (Status == StatAuthError)
+      {
+	 std::ostringstream out;
+	 out << _("Hash Sum mismatch") << std::endl;
+	 out << "Hashes of expected file:" << std::endl;
+	 for (auto const &hs: GetExpectedHashes())
+	    out << " - " << hs.toStr() << std::endl;
+	 out << "Hashes of received file:" << std::endl;
+	 for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+	 {
+	    std::string const tagname = std::string(*type) + "-Hash";
+	    std::string const hashsum = LookupTag(Message, tagname.c_str());
+	    if (hashsum.empty() == false)
+	       out << " - " << HashString(*type, hashsum).toStr() << std::endl;
+	 }
+	 out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
+	 ErrorText = out.str();
+      }
+      else
+	 ErrorText = LookupTag(Message,"Message");
+   }
+
    string const FailReason = LookupTag(Message, "FailReason");
    if (FailReason == "MaximumSizeExceeded")
-   {
       RenameOnError(MaximumSizeExceeded);
-      ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
-   }
    else if (Status == StatAuthError)
-   {
       RenameOnError(HashSumMismatch);
-      ReportMirrorFailureToCentral(*this, "HashChecksumFailure", ErrorText);
-   }
-   else if (FailReason.empty() == false)
+
+   if (FailReason.empty() == false)
       ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
    else
       ReportMirrorFailureToCentral(*this, ErrorText, ErrorText);
@@ -1771,6 +1788,23 @@ pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
 {
 }
 									/*}}}*/
+void pkgAcqBaseIndex::Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
+{
+   pkgAcquire::Item::Failed(Message, Cnf);
+   if (TransactionManager == nullptr || ErrorText.empty() ||
+	 TransactionManager->MetaIndexParser == nullptr ||
+	 LookupTag(Message, "FailReason") != "HashSumMismatch")
+      return;
+
+   ErrorText.append("Release file created at: ");
+   auto const timespec = TransactionManager->MetaIndexParser->GetDate();
+   if (timespec == 0)
+      ErrorText.append("<unknown>");
+   else
+      ErrorText.append(TimeRFC1123(timespec));
+   ErrorText.append("\n");
+}
+									/*}}}*/
 pkgAcqBaseIndex::~pkgAcqBaseIndex() {}
 
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
@@ -2210,7 +2244,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 									/*}}}*/
 void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
-   Item::Failed(Message,Cnf);
+   pkgAcqBaseIndex::Failed(Message,Cnf);
    Status = StatDone;
 
    if(Debug)
@@ -2291,7 +2325,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
 									/*}}}*/
 void pkgAcqIndexDiffs::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
-   Item::Failed(Message,Cnf);
+   pkgAcqBaseIndex::Failed(Message,Cnf);
    Status = StatDone;
 
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
@@ -2496,7 +2530,7 @@ void pkgAcqIndexMergeDiffs::Failed(string const &Message,pkgAcquire::MethodConfi
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
 
-   Item::Failed(Message,Cnf);
+   pkgAcqBaseIndex::Failed(Message,Cnf);
    Status = StatDone;
 
    // check if we are the first to fail, otherwise we are done here
@@ -2734,7 +2768,7 @@ string pkgAcqIndex::Custom600Headers() const
 // AcqIndex::Failed - getting the indexfile failed			/*{{{*/
 void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
-   Item::Failed(Message,Cnf);
+   pkgAcqBaseIndex::Failed(Message,Cnf);
 
    // authorisation matches will not be fixed by other compression types
    if (Status != StatAuthError)

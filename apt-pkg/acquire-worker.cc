@@ -439,7 +439,10 @@ bool pkgAcquire::Worker::RunMessages()
 	       else
 	       {
 		  if (isDoomedItem(Owner) == false)
+		  {
+		     Message.append("\nFailReason: HashSumMismatch");
 		     Owner->Failed(Message,Config);
+		  }
 		  if (Log != nullptr)
 		     Log->Fail(Owner->GetItemDesc());
 	       }

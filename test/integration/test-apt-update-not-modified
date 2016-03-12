@@ -6,6 +6,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 
 setupenvironment
 configarchitecture 'amd64' 'i386'
+confighashes 'SHA256'
 
 insertpackage 'unstable' 'apt' 'amd64,i386' '1.0'
 
@@ -34,10 +35,9 @@ Reading package lists..." aptget update
 	# readd arch so its downloaded again…
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
-        SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
-	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
-	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
-
+	SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+	mv aptarchive/dists/unstable/main/binary-amd64/Packages.gz aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig
+	cat > aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
 Package: thisisbad
 Architecture: amd64
 Version: 1
@@ -47,8 +47,24 @@ EOF
 Get:2 $1 unstable/main amd64 Packages [$SIZE B]
 Err:2 $1 unstable/main amd64 Packages
   Hash Sum mismatch
+  Hashes of expected file:
+   - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig')
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+  Hashes of received file:
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
+   - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+  Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+  Release file created at: $(releasefiledate 'aptarchive/dists/unstable/InRelease')
 Reading package lists...
 E: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
+   Hashes of expected file:
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig')
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+   Hashes of received file:
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+   Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+   Release file created at: $(releasefiledate 'aptarchive/dists/unstable/InRelease')
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
 	rm -rf aptarchive/dists
@@ -93,10 +109,9 @@ Reading package lists..." aptget update
 	# readd arch so its downloaded again…
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
-        SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
-	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
-	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
-
+	SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+	mv aptarchive/dists/unstable/main/binary-amd64/Packages.gz aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig
+	cat > aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
 Package: thisisbad
 Architecture: amd64
 Version: 1
@@ -108,8 +123,24 @@ Hit:2 $1 unstable Release
 Get:4 $1 unstable/main amd64 Packages [$SIZE B]
 Err:4 $1 unstable/main amd64 Packages
   Hash Sum mismatch
+  Hashes of expected file:
+   - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig')
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+  Hashes of received file:
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
+   - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+  Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+  Release file created at: $(releasefiledate 'aptarchive/dists/unstable/Release')
 Reading package lists...
 E: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
+   Hashes of expected file:
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig')
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+   Hashes of received file:
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
+    - Checksum-FileSize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+   Last modification reported: $(lastmodification 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
+   Release file created at: $(releasefiledate 'aptarchive/dists/unstable/Release')
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 	testfileequal 'listsdir-without-amd64.lst' "$(listcurrentlistsdirectory)"
 	rm -rf aptarchive/dists

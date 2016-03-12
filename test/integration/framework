@@ -217,6 +217,12 @@ gdb() {
 	fi
 	runapt command gdb --quiet -ex run "$CMD" --args "$CMD" "$@"
 }
+lastmodification() {
+	date -u -d "@$(stat -c '%Y' "${TMPWORKINGDIRECTORY}/$1")" '+%a, %d %b %Y %H:%M:%S GMT'
+}
+releasefiledate() {
+	grep "^${2:-Date}:" "$1" | cut -d' ' -f 2- | sed -e 's#UTC#GMT#'
+}
 
 exitwithstatus() {
         # error if we about to overflow, but ...
@@ -595,12 +601,12 @@ setupsimplenativepackage() {
 	mkdir -p ${BUILDDIR}/debian/source
 	cd ${BUILDDIR}
 	echo "* most suckless software product ever" > FEATURES
-	test -e debian/copyright || echo "Copyleft by Joe Sixpack $(date +%Y)" > debian/copyright
+	test -e debian/copyright || echo "Copyleft by Joe Sixpack $(date -u +%Y)" > debian/copyright
 	test -e debian/changelog || echo "$NAME ($VERSION) $RELEASE; urgency=low
 
   * Initial release
 
- -- Joe Sixpack <joe@example.org>  $(date -R)" > debian/changelog
+ -- Joe Sixpack <joe@example.org>  $(date -u -R)" > debian/changelog
 	test -e debian/control || echo "Source: $NAME
 Section: $SECTION
 Priority: optional
@@ -658,12 +664,12 @@ buildsimplenativepackage() {
 	echo "#!/bin/sh
 echo '$NAME says \"Hello!\"'" > "${BUILDDIR}/${NAME}"
 
-	echo "Copyleft by Joe Sixpack $(date +%Y)" > "${BUILDDIR}/debian/copyright"
+	echo "Copyleft by Joe Sixpack $(date -u +%Y)" > "${BUILDDIR}/debian/copyright"
 	echo "$NAME ($VERSION) $RELEASE; urgency=low
 
   * Initial release
 
- -- Joe Sixpack <joe@example.org>  $(date -R)" > "${BUILDDIR}/debian/changelog"
+ -- Joe Sixpack <joe@example.org>  $(date -u -R)" > "${BUILDDIR}/debian/changelog"
 	{
 		echo "Source: $NAME
 Priority: $PRIORITY
@@ -1014,13 +1020,13 @@ NotAutomatic: yes' "$dir/Release"
 	fi
 	if [ -n "$DATE" -a "$DATE" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
-			sed -i "s/^Date: .*$/Date: $(date -d "$DATE" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
+			sed -i "s/^Date: .*$/Date: $(date -u -d "$DATE" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
 			touch -d "$DATE" "$release"
 		done
 	fi
 	if [ -n "$VALIDUNTIL" ]; then
 		sed -i "/^Date: / a\
-Valid-Until: $(date -d "$VALIDUNTIL" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
+Valid-Until: $(date -u -d "$VALIDUNTIL" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
 	fi
 	msgdone "info"
 }
@@ -1119,7 +1125,7 @@ signreleasefiles() {
 }
 
 redatereleasefiles() {
-	local DATE="$(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
+	local DATE="$(date -u -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
 	for release in $(find aptarchive/ -name 'Release'); do
 		sed -i "s/^Date: .*$/Date: ${DATE}/" "$release"
 		touch -d "$DATE" "$release"
