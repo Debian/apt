@@ -121,23 +121,39 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    AssignItemID(Itm);
    clearLastLine();
 
+   bool ShowErrorText = true;
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone || Itm.Owner->Status == pkgAcquire::Item::StatIdle)
    {
       // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
       // which failed to download, but the error is ignored (compare "Err:")
       ioprintf(out, _("Ign:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
-      if (Itm.Owner->ErrorText.empty() == false &&
-	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == true)
-	 out << std::endl << "  " << Itm.Owner->ErrorText;
-      out << std::endl;
+      if (Itm.Owner->ErrorText.empty() ||
+	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == false)
+	 ShowErrorText = false;
    }
    else
    {
       // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
       // which failed to download and the error is critical (compare "Ign:")
       ioprintf(out, _("Err:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
-      out << std::endl << "  " << Itm.Owner->ErrorText << std::endl;
    }
+
+   if (ShowErrorText)
+   {
+      std::string::size_type line_start = 0;
+      std::string::size_type line_end;
+      while ((line_end = Itm.Owner->ErrorText.find_first_of("\n\r", line_start)) != std::string::npos) {
+	 out << std::endl << "  " << Itm.Owner->ErrorText.substr(line_start, line_end - line_start);
+	 line_start = Itm.Owner->ErrorText.find_first_not_of("\n\r", line_end + 1);
+	 if (line_start == std::string::npos)
+	    break;
+      }
+      if (line_start == 0)
+	 out << std::endl << "  " << Itm.Owner->ErrorText;
+      else if (line_start != std::string::npos)
+	 out << std::endl << "  " << Itm.Owner->ErrorText.substr(line_start);
+   }
+   out << std::endl;
 
    Update = true;
 }
