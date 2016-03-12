@@ -34,14 +34,12 @@ test_apt_helper_download() {
     msgtest 'apt-file download-file' 'wrong md5sum'
     testfailure --nomsg apthelper -qq download-file "${1}/foo" './downloaded/foo5' 'MD5Sum:aabbcc'
     testfileequal rootdir/tmp/testfailure.output "E: Failed to fetch ${1}/foo  Hash Sum mismatch
-
 E: Download Failed"
     testfileequal ./downloaded/foo5.FAILED 'foo'
 
     msgtest 'apt-file download-file' 'wrong sha256'
     testfailure --nomsg apthelper -qq download-file "${1}/foo" './downloaded/foo6' 'SHA256:aabbcc'
     testfileequal rootdir/tmp/testfailure.output "E: Failed to fetch ${1}/foo  Hash Sum mismatch
-
 E: Download Failed"
     testfileequal './downloaded/foo6.FAILED' 'foo'
 

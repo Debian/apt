@@ -106,12 +106,12 @@ testequal 'bogus1.0) stable; urgency=low' head -n 1 foo.changelog
 rm -f foo.changelog
 
 # no @CHANGEPATH@ in the URI
-testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0
-' aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/change.txt"
+testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0' \
+	aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/change.txt"
 testfailure test -e foo.changelog
 
-testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)
-" aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@CHANGEPATH@/change.txt"
+testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)" \
+	aptget changelog foo -qq -d -o Acquire::Changelogs::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@CHANGEPATH@/change.txt"
 testfailure test -e foo.changelog
 
 testdpkgnotinstalled 'foo'

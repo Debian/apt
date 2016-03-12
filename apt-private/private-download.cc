@@ -109,7 +109,7 @@ bool AcquireRun(pkgAcquire &Fetcher, int const PulseInterval, bool * const Failu
       uri.User.clear();
       uri.Password.clear();
       std::string descUri = std::string(uri);
-      _error->Error(_("Failed to fetch %s  %s\n"), descUri.c_str(),
+      _error->Error(_("Failed to fetch %s  %s"), descUri.c_str(),
 	    (*I)->ErrorText.c_str());
 
       if (Failure != NULL)
