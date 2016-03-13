@@ -328,11 +328,18 @@ TEST(HashSumsTest, HashStringList)
    EXPECT_EQ(29, list.FileSize());
    EXPECT_TRUE(NULL != list.find("MD5Sum"));
    list.push_back(HashString("SHA1", "cacecbd74968bc90ea3342767e6b94f46ddbcafc"));
-   EXPECT_TRUE(list.usable());
+   EXPECT_FALSE(list.usable());
    EXPECT_EQ(3, list.size());
    EXPECT_EQ(29, list.FileSize());
    EXPECT_TRUE(NULL != list.find("MD5Sum"));
    EXPECT_TRUE(NULL != list.find("SHA1"));
+   list.push_back(HashString("SHA256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+   EXPECT_TRUE(list.usable());
+   EXPECT_EQ(4, list.size());
+   EXPECT_EQ(29, list.FileSize());
+   EXPECT_TRUE(NULL != list.find("MD5Sum"));
+   EXPECT_TRUE(NULL != list.find("SHA1"));
+   EXPECT_TRUE(NULL != list.find("SHA256"));
 
    Hashes hashes;
    hashes.Add("The quick brown fox jumps over the lazy dog");

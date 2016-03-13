@@ -80,7 +80,7 @@ followuprequest() {
 
 	webserverconfig 'aptwebserver::support::content-range' 'false'
 	copysource $TESTFILE 1M $DOWN
-	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '=' "SHA1:$(sha1sum "$TESTFILE" | cut -d' ' -f 1)"
+	testdownloadfile 'completely downloaded file' "${1}/testfile" "$DOWN" '=' "SHA256:$(sha256sum "$TESTFILE" | cut -d' ' -f 1)"
 	testwebserverlaststatuscode '416' "$DOWNLOADLOG"
 	webserverconfig 'aptwebserver::support::content-range' 'true'
 

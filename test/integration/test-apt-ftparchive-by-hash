@@ -2,7 +2,7 @@
 set -e
 
 verify_by_hash() {
-    for hash_gen in SHA1:sha1sum SHA256:sha256sum SHA512:sha512sum; do
+    for hash_gen in SHA256:sha256sum SHA512:sha512sum; do
         hash=$(echo ${hash_gen} | cut -f1 -d:)
         gen=$(echo ${hash_gen} | cut -f2 -d:)
         testsuccess stat aptarchive/dists/unstable/main/binary-i386/by-hash/$hash/$($gen aptarchive/dists/unstable/main/binary-i386/Packages | cut -f1 -d' ')
@@ -18,7 +18,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386'
 configcompression 'gz' '.'
-confighashes 'SHA1' 'SHA256' 'SHA512'
+confighashes 'SHA256' 'SHA512'
 
 # enable by-hash in apt-ftparchive
 echo 'APT::FTPArchive::DoByHash "1";' >> aptconfig.conf

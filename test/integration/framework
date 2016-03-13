@@ -390,7 +390,7 @@ EOF
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	echo 'Acquire::Connect::AddrConfig "false";' > rootdir/etc/apt/apt.conf.d/connect-addrconfig
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
-	confighashes 'SHA1' # these are tests, not security best-practices
+	confighashes 'SHA256' # these are tests, not security best-practices
 
 	# create some files in /tmp and look at user/group to get what this means
 	TEST_DEFAULT_USER="$(id -un)"
