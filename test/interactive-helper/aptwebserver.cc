@@ -209,8 +209,8 @@ static bool sendData(int const client, std::list<std::string> const &headers, st
 static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
 	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   std::string response("<html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title></head>");
+   std::string response("<!doctype html><html><head><title>");
+   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
    if (httpcode != 200)
       response.append("<p><em>Error</em>: ");
@@ -245,8 +245,8 @@ static void sendRedirect(int const client, int const httpcode, std::string const
 		  std::string const &request, bool content)
 {
    std::list<std::string> headers;
-   std::string response("<html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title></head>");
+   std::string response("<!doctype html><html><head><title>");
+   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
    response.append("<p>You should be redirected to <em>").append(uri).append("</em></p>");
    response.append("This page is a result of the request: <pre>");
@@ -332,7 +332,7 @@ static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*
       return;
    }
 
-   listing << "<html><head><title>Index of " << dir << "</title>"
+   listing << "<!doctype html><html><head><title>Index of " << dir << "</title><meta charset=\"utf-8\" />"
 	   << "<style type=\"text/css\"><!-- td {padding: 0.02em 0.5em 0.02em 0.5em;}"
 	   << "tr:nth-child(even){background-color:#dfdfdf;}"
 	   << "h1, td:nth-child(3){text-align:center;}"
