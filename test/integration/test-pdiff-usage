@@ -30,12 +30,12 @@ wasmergeused() {
 
 	msgtest 'Check if the right pdiff merger was used'
 	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' rootdir/tmp/testsuccess.output; then
-		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
+		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1' && ! (echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'); then
 			msgpass
 		else
 			msgfail "Merge shouldn't have been used, but was"
 		fi
-	elif echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
+	elif echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1' && !(echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'); then
 		msgfail "Merge should have been used, but wasn't"
 	else
 		msgpass
@@ -99,6 +99,36 @@ SHA256-Download:
 	signreleasefiles
 	find aptarchive -name 'Packages*' -type f -delete
 	wasmergeused "$@"
+	testnopackage oldstuff
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt newstuff
+
+	msgmsg "Testcase: apply with one patch and SHA1 only: $*"
+	find aptarchive -name 'Packages*' -type f -delete
+	cp "${PKGFILE}-new" aptarchive/Packages
+	compressfile 'aptarchive/Packages'
+	mkdir -p aptarchive/Packages.diff
+	PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
+	diff -e "${PKGFILE}" "${PKGFILE}-new" > "${PATCHFILE}" || true
+	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
+	PATCHINDEX='aptarchive/Packages.diff/Index'
+	echo "SHA1-Current: $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
+SHA1-History:
+ 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
+ $(sha1sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
+SHA1-Patches:
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
+ $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")" > "$PATCHINDEX"
+	if $DOWNLOADHASH; then
+		echo "SHA1-Download:
+ 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
+ $(sha1sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")" >> "$PATCHINDEX"
+	fi
+
+	generatereleasefiles '+1hour'
+	signreleasefiles
+	find aptarchive -name 'Packages*' -type f -delete
+	wasmergeused "$@" -o test::cannot-use-pdiff=1
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff
