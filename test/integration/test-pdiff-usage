@@ -6,7 +6,6 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 
 setupenvironment
 configarchitecture 'i386'
-confighashes 'SHA1' 'SHA256'
 LOWCOSTEXT='lz4'
 
 buildaptarchive
@@ -28,14 +27,21 @@ wasmergeused() {
 		msgfail
 	fi
 
+	if echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'; then
+		msgtest 'Check if pdiff was' 'not used'
+		cp -a rootdir/tmp/testsuccess.output rootdir/tmp/aptupdate.output
+		testsuccess --nomsg grep 'diff_Index: Did not find a good hashsum in the index' rootdir/tmp/aptupdate.output
+		return;
+	fi
+
 	msgtest 'Check if the right pdiff merger was used'
 	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' rootdir/tmp/testsuccess.output; then
-		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1' && ! (echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'); then
+		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
 			msgpass
 		else
 			msgfail "Merge shouldn't have been used, but was"
 		fi
-	elif echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1' && !(echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'); then
+	elif echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
 		msgfail "Merge should have been used, but wasn't"
 	else
 		msgpass
@@ -72,14 +78,7 @@ testrun() {
 	diff -e "${PKGFILE}" "${PKGFILE}-new" > "${PATCHFILE}" || true
 	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
 	PATCHINDEX='aptarchive/Packages.diff/Index'
-	echo "SHA1-Current: $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
-SHA1-History:
- 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
- $(sha1sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
-SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
- $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")
-SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
+	echo "SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA256-History:
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
@@ -87,10 +86,7 @@ SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")" > "$PATCHINDEX"
 	if $DOWNLOADHASH; then
-		echo "SHA1-Download:
- 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
- $(sha1sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")
-SHA256-Download:
+		echo "SHA256-Download:
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")" >> "$PATCHINDEX"
 	fi
@@ -127,7 +123,8 @@ SHA1-Patches:
 
 	generatereleasefiles '+1hour'
 	signreleasefiles
-	find aptarchive -name 'Packages*' -type f -delete
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	wasmergeused "$@" -o test::cannot-use-pdiff=1
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
@@ -143,8 +140,6 @@ Maintainer: Joe Sixpack <joe@example.org>
 Installed-Size: 202
 Filename: pool/futurestuff_1.0_i386.deb
 Size: 202200
-MD5sum: 311aeeaaae5ba33aff1ceaf3e1f76671
-SHA1: 3c695e028f7a1ae324deeaae5ba332desa81088c
 SHA256: b46fd154615edaae5ba33c56a5cc0e7deaef23e2da3e4f129727fd660f28f050
 Description: some cool and shiny future stuff
  This package will appear in the next next mirror update
@@ -154,16 +149,7 @@ Description-md5: d5f89fbbc2ce34c455dfee9b67d82b6b' >> aptarchive/Packages
 	PATCHFILE2="aptarchive/Packages.diff/$(date -d 'now + 1hour' '+%Y-%m-%d-%H%M.%S')"
 	diff -e "${PKGFILE}-new" aptarchive/Packages > "${PATCHFILE2}" || true
 	cat "$PATCHFILE2" | gzip > "${PATCHFILE2}.gz"
-	echo "SHA1-Current: $(sha1sum aptarchive/Packages | cut -d' ' -f 1) $(stat -c%s aptarchive/Packages)
-SHA1-History:
- 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
- $(sha1sum "${PKGFILE}" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}") $(basename "${PATCHFILE}")
- $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new") $(basename "${PATCHFILE2}")
-SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
- $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")
- $(sha1sum "${PATCHFILE2}" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE2}") $(basename "${PATCHFILE2}")
-SHA256-Current: $(sha256sum aptarchive/Packages | cut -d' ' -f 1) $(stat -c%s aptarchive/Packages)
+	echo "SHA256-Current: $(sha256sum aptarchive/Packages | cut -d' ' -f 1) $(stat -c%s aptarchive/Packages)
 SHA256-History:
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
@@ -173,11 +159,7 @@ SHA256-Patches:
  $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")
  $(sha256sum "${PATCHFILE2}" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE2}") $(basename "${PATCHFILE2}")" > "$PATCHINDEX"
 	if $DOWNLOADHASH; then
-		echo "SHA1-Download:
- 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
- $(sha1sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")
- $(sha1sum "${PATCHFILE2}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE2}.gz") $(basename "${PATCHFILE2}.gz")
-SHA256-Download:
+		echo "SHA256-Download:
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")
  $(sha256sum "${PATCHFILE2}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE2}.gz") $(basename "${PATCHFILE2}.gz")" >> "$PATCHINDEX"
@@ -217,14 +199,7 @@ SHA256-Download:
 	diff -e "${PKGFILE}" "${PKGFILE}-new" > "${PATCHFILE}" || true
 	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
 	PATCHINDEX='aptarchive/Packages.diff/Index'
-	echo "SHA1-Current: $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
-SHA1-History:
- 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
- $(sha1sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
-SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
- $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")
-SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
+	echo "SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA256-History:
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
@@ -232,10 +207,7 @@ SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")" > $PATCHINDEX
 	if $DOWNLOADHASH; then
-		echo "SHA1-Download:
- 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
- $(sha1sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")
-SHA256-Download:
+		echo "SHA256-Download:
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")" >> $PATCHINDEX
 	fi
@@ -268,14 +240,7 @@ SHA256-Download:
 	if ! $DOWNLOADHASH; then
 		BIGSIZE="${BIGSIZE}000"
 	fi
-	echo "SHA1-Current: $(sha1sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
-SHA1-History:
- 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
- $(sha1sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
-SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
- $(sha1sum "$PATCHFILE" | cut -d' ' -f 1) $BIGSIZE $(basename "$PATCHFILE")
-SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
+	echo "SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA256-History:
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
@@ -283,10 +248,7 @@ SHA256-Patches:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $BIGSIZE $(basename "$PATCHFILE")" > "$PATCHINDEX"
 	if $DOWNLOADHASH; then
-		echo "SHA1-Download:
- 2365ac0ac57cde3d43c63145e8251a3bd5410213 197 2010-08-18-2013.28.gz
- $(sha1sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz")000 $(basename "${PATCHFILE}.gz")
-SHA256-Download:
+		echo "SHA256-Download:
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz")000 $(basename "${PATCHFILE}.gz")" >> "$PATCHINDEX"
 	fi
@@ -311,20 +273,6 @@ testcase() {
 	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1 "$@"
 	testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0 "$@"
 	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0 "$@"
-
-	sha256sum() {
-		echo '01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b -'
-	}
-	testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA1 "$@"
-	testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA1 "$@"
-	unset -f sha256sum
-
-	sha1sum() {
-		echo 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc -'
-	}
-	testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA256 "$@"
-	testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA256 "$@"
-	unset -f sha1sum
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=false
