@@ -121,6 +121,16 @@ static std::string GetExistingFilename(std::string const &File)		/*{{{*/
    return "";
 }
 									/*}}}*/
+static std::string GetDiffIndexFileName(std::string const &Name)	/*{{{*/
+{
+   return Name + ".diff/Index";
+}
+									/*}}}*/
+static std::string GetDiffIndexURI(IndexTarget const &Target)		/*{{{*/
+{
+   return Target.URI + ".diff/Index";
+}
+									/*}}}*/
 
 static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
 {
@@ -301,12 +311,12 @@ bool pkgAcqDiffIndex::QueueURI(pkgAcquire::ItemDesc &Item)
 // Acquire::Item::GetFinalFilename and specialisations for child classes	/*{{{*/
 std::string pkgAcquire::Item::GetFinalFilename() const
 {
+   // Beware: Desc.URI is modified by redirections
    return GetFinalFileNameFromURI(Desc.URI);
 }
 std::string pkgAcqDiffIndex::GetFinalFilename() const
 {
-   // the logic we inherent from pkgAcqBaseIndex isn't what we need here
-   return pkgAcquire::Item::GetFinalFilename();
+   return GetFinalFileNameFromURI(GetDiffIndexURI(Target));
 }
 std::string pkgAcqIndex::GetFinalFilename() const
 {
@@ -343,7 +353,7 @@ std::string pkgAcqIndex::GetMetaKey() const
 }
 std::string pkgAcqDiffIndex::GetMetaKey() const
 {
-   return Target.MetaKey + ".diff/Index";
+   return GetDiffIndexFileName(Target.MetaKey);
 }
 									/*}}}*/
 //pkgAcqTransactionItem::TransactionState and specialisations for child classes	/*{{{*/
@@ -1166,14 +1176,14 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 if (filename.empty() == false)
 	 {
 	    new NoActionItem(Owner, *Target, filename);
-	    std::string const idxfilename = GetFinalFileNameFromURI(Target->URI + ".diff/Index");
+	    std::string const idxfilename = GetFinalFileNameFromURI(GetDiffIndexURI(*Target));
 	    if (FileExists(idxfilename))
 	       new NoActionItem(Owner, *Target, idxfilename);
 	    continue;
 	 }
 
 	 // check if we have patches available
-	 trypdiff &= TransactionManager->MetaIndexParser->Exists(Target->MetaKey + ".diff/Index");
+	 trypdiff &= TransactionManager->MetaIndexParser->Exists(GetDiffIndexFileName(Target->MetaKey));
       }
       else
       {
@@ -1728,9 +1738,9 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
    Desc.Owner = this;
-   Desc.Description = Target.Description + ".diff/Index";
+   Desc.Description = GetDiffIndexFileName(Target.Description);
    Desc.ShortDesc = Target.ShortDesc;
-   Desc.URI = Target.URI + ".diff/Index";
+   Desc.URI = GetDiffIndexURI(Target);
 
    DestFile = GetPartialFileNameFromURI(Desc.URI);
 
@@ -2444,16 +2454,18 @@ void pkgAcqIndexMergeDiffs::Failed(string const &Message,pkgAcquire::MethodConfi
    for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	 I != allPatches->end(); ++I)
       if ((*I)->State == StateErrorDiff)
+      {
+	 State = StateErrorDiff;
 	 return;
+      }
 
    // first failure means we should fallback
    State = StateErrorDiff;
    if (Debug)
       std::clog << "Falling back to normal index file acquire" << std::endl;
    RenameOnError(PDiffError);
-   std::string const patchname = GetPartialFileNameFromURI(Desc.URI);
-   if (RealFileExists(patchname))
-      Rename(patchname, patchname + ".FAILED");
+   if (RealFileExists(DestFile))
+      Rename(DestFile, DestFile + ".FAILED");
    std::string const UnpatchedFile = GetExistingFilename(GetPartialFileNameFromURI(Target.URI));
    if (UnpatchedFile.empty() == false && FileExists(UnpatchedFile))
       Rename(UnpatchedFile, UnpatchedFile + ".FAILED");
@@ -2474,6 +2486,7 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
    {
       if(Debug)
 	 std::clog << "Another patch failed already, no point in processing this one." << std::endl;
+      State = StateErrorDiff;
       return;
    }
 
@@ -2481,7 +2494,8 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
    std::string const UnpatchedFile = GetExistingFilename(UncompressedUnpatchedFile);
    if (UnpatchedFile.empty())
    {
-      _error->Fatal("Unpatched file %s doesn't exist (anymore)!", UnpatchedFile.c_str());
+      _error->Fatal("Unpatched file %s doesn't exist (anymore)!", UncompressedUnpatchedFile.c_str());
+      State = StateErrorDiff;
       return;
    }
    std::string const PatchFile = GetMergeDiffsPatchFileName(UnpatchedFile, patch.file);

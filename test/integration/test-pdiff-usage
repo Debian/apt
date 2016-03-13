@@ -65,7 +65,7 @@ testrun() {
 	configcompression '.' 'gz'
 
 	# see if the code deals properly with leftover partial files
-	touch rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_Packages
+	partialleftovers
 
 	msgmsg "Testcase: apply with one patch: $*"
 	find aptarchive -name 'Packages*' -type f -delete
@@ -279,7 +279,20 @@ testcase() {
 	testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0 "$@"
 	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0 "$@"
 }
+partialleftovers() { touch "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_Packages"; }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=false
+partialleftovers() { touch "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_Packages.$LOWCOSTEXT"; }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages.$LOWCOSTEXT"; }
+testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
+
+
+partialleftovers() { touch "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_redirectme_Packages.$LOWCOSTEXT"; }
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://0.0.0.0:${APTHTTPPORT}/"
+rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
+aptautotest_apt_update() {
+	aptautotest_aptget_update "$@"
+	testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_redirectme_Packages.$LOWCOSTEXT"
+	testempty find rootdir/var/lib/apt/lists -type f \! \( -name lock -o -name '*_redirectme_*' \)
+}
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
