@@ -216,6 +216,7 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	 F.Path = path;
 	 F.FileSize = strtoull(size.c_str(), NULL, 10);
 	 F.Hashes.push_back(hashString);
+	 F.Hashes.FileSize(F.FileSize);
 
 	 APT_IGNORE_DEPRECATED_PUSH
 	 F.Size = F.FileSize;
