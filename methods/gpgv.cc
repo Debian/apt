@@ -17,7 +17,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <array>
 #include <algorithm>
+#include <sstream>
+#include <iterator>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,6 +38,12 @@ using std::vector;
 #define GNUPGKEYEXPIRED "[GNUPG:] KEYEXPIRED"
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
+
+static const std::array<string, 1> WeakDigests {
+   "1", // MD5
+// "2", // SHA1
+// "3", // RIPEMD-160
+};
 
 class GPGVMethod : public aptMethod
 {
@@ -139,12 +148,19 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       else if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
       {
          char *sig = buffer + sizeof(GNUPGVALIDSIG);
+         std::istringstream iss((string(sig)));
+         vector<string> tokens{std::istream_iterator<string>{iss},
+                               std::istream_iterator<string>{}};
          char *p = sig;
          while (*p && isxdigit(*p))
             p++;
          *p = 0;
          if (Debug == true)
             std::clog << "Got VALIDSIG, key ID: " << sig << std::endl;
+         // Reject weak digest algorithms
+         if (std::find(WeakDigests.begin(), WeakDigests.end(), tokens[7]) != WeakDigests.end())
+            BadSigners.push_back(string(sig));
+
          ValidSigners.push_back(string(sig));
       }
    }
