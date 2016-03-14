@@ -29,6 +29,7 @@ using std::vector;
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
+#define GNUPGERRSIG "[GNUPG:] ERRSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
 #define GNUPGVALIDSIG "[GNUPG:] VALIDSIG"
 #define GNUPGGOODSIG "[GNUPG:] GOODSIG"
@@ -99,6 +100,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       {
          if (Debug == true)
             std::clog << "Got BADSIG! " << std::endl;
+         BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+      }
+      else if (strncmp(buffer, GNUPGERRSIG, sizeof(GNUPGERRSIG)-1) == 0)
+      {
+         if (Debug == true)
+            std::clog << "Got ERRSIG! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       else if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
