@@ -206,12 +206,12 @@ HashStringList pkgAcqMetaBase::GetExpectedHashes() const
 
 APT_CONST bool pkgAcqIndexDiffs::HashesRequired() const
 {
-   /* We don't always have the diff of the downloaded pdiff file.
-      What we have for sure is hashes for the uncompressed file,
-      but rred uncompresses them on the fly while parsing, so not handled here.
-      Hashes are (also) checked while searching for (next) patch to apply. */
+   /* We can't check hashes of rred result as we don't know what the
+      hash of the file will be. We just know the hash of the patch(es),
+      the hash of the file they will apply on and the hash of the resulting
+      file. */
    if (State == StateFetchDiff)
-      return available_patches[0].download_hashes.empty() == false;
+      return true;
    return false;
 }
 HashStringList pkgAcqIndexDiffs::GetExpectedHashes() const
@@ -227,7 +227,7 @@ APT_CONST bool pkgAcqIndexMergeDiffs::HashesRequired() const
       we can check the rred result after all patches are applied as
       we know the expected result rather than potentially apply more patches */
    if (State == StateFetchDiff)
-      return patch.download_hashes.empty() == false;
+      return true;
    return State == StateApplyDiff;
 }
 HashStringList pkgAcqIndexMergeDiffs::GetExpectedHashes() const
@@ -2022,6 +2022,17 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
+   for (auto const &patch: available_patches)
+      if (patch.result_hashes.usable() == false ||
+	    patch.patch_hashes.usable() == false ||
+	    patch.download_hashes.usable() == false)
+      {
+	 if (Debug)
+	    std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": provides no usable hashes for " << patch.file
+	       << " so fallback to complete download" << std::endl;
+	 return false;
+      }
+
    // patching with too many files is rather slow compared to a fast download
    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
    if (fileLimit != 0 && fileLimit < available_patches.size())
@@ -2036,7 +2047,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    unsigned short const sizeLimitPercent = _config->FindI("Acquire::PDiffs::SizeLimit", 100);
    if (sizeLimitPercent > 0 && TransactionManager->MetaIndexParser != nullptr)
    {
-      // compressed case
       unsigned long long downloadSize = std::accumulate(available_patches.begin(),
 	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
 	    return T + I.download_hashes.FileSize();
@@ -2061,23 +2071,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 {
 	    if (Debug)
 	       std::clog << "Need " << downloadSize << " compressed bytes (Limit is " << (sizeLimit/100) << ", "
-		  << "original is " << downloadSizeIdx << ") so fallback to complete download" << std::endl;
-	    return false;
-	 }
-      }
-      // uncompressed case
-      downloadSize = std::accumulate(available_patches.begin(),
-	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
-	    return T + I.patch_hashes.FileSize();
-	    });
-      if (downloadSize != 0)
-      {
-	 unsigned long long const downloadSizeIdx = ServerSize;
-	 unsigned long long const sizeLimit = downloadSizeIdx * sizeLimitPercent;
-	 if ((sizeLimit/100) < downloadSize)
-	 {
-	    if (Debug)
-	       std::clog << "Need " << downloadSize << " uncompressed bytes (Limit is " << (sizeLimit/100) << ", "
 		  << "original is " << downloadSizeIdx << ") so fallback to complete download" << std::endl;
 	    return false;
 	 }
