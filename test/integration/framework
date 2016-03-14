@@ -389,6 +389,10 @@ EOF
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	echo 'Acquire::Connect::AddrConfig "false";' > rootdir/etc/apt/apt.conf.d/connect-addrconfig
+	if aptkey verify --weak-digest SHA1 --help 2>/dev/null >/dev/null; then
+		echo 'Acquire::gpgv::Options { "--weak-digest"; "sha1"; };' > rootdir/etc/apt/apt.conf.d/no-sha1
+	fi
+
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices
 
@@ -1066,7 +1070,7 @@ signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
 	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
-	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes"
+	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo SHA512"
 	msgninfo "\tSign archive with $SIGNER key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
