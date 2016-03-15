@@ -1,3 +1,37 @@
+apt (1.2.7) unstable; urgency=medium
+
+  "Caesar is dead"
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: 817060)
+  * Dutch manpages translation update (Closes: 817062)
+
+  [ Julian Andres Klode ]
+  * Use native architecture instead of amd64 for build-dep-purge test
+  * Do not consider SHA1 usable
+  * Test that SHA1-only .diff/Index files are not used
+  * test: Use SHA512 digests for GPG, reject SHA1-based signatures
+  * methods/gpgv: Reject weak digest algorithms
+  * apt-pkg/acquire-worker.cc: Introduce 104 Warning message
+  * methods/gpgv: Warn about SHA1 (and RIPEMD-160)
+
+  [ David Kalnischkies ]
+  * require $(HASH)-Download field in .diff/Index files
+  * flush line-clearing on progress stop before post-invoke (Closes: 793672)
+  * enforce verify of filesize in 'apt-get source'
+
+  [ Manuel "Venturi" Porras Peralta ]
+  * Spanish apt-mark translation fix (Closes: 817999)
+
+  [ Zhou Mo ]
+  * zh_CN.po: fix translation bug. (Closes: #818177)
+
+  [ Michael Vogt ]
+  * Fix bug where the problemresolve can put a pkg into a heisenstate
+    (LP: #1550741)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 15 Mar 2016 19:20:18 +0100
+
 apt (1.2.6) unstable; urgency=high
 
   [ Veres Lajos ]
