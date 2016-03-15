@@ -1,0 +1,48 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'module-init-tools' 'amd64' '1.0' 'Depends: libkmod2 (= 21-1)'
+insertpackage 'unstable' 'libkmod2' 'amd64' '0.22-1'
+insertinstalledpackage 'module-init-tools' 'amd64' '0.1'
+
+setupaptarchive
+
+# this test only works if the python-apt is build against the same
+# ABI version as the apt we are testing here
+PYAPT_LIB_VER=$(runpython3 -c 'import apt_pkg;print(apt_pkg.LIB_VERSION)' 2>/dev/null || true)
+if [ ! -f $LIBRARYPATH/libapt-pkg.so.$PYAPT_LIB_VER ]; then
+    msgskip "python-apt build with the wrong library version: $PYAPT_LIB_VER"
+    exit 0
+fi
+
+# we can not test this using our normal sh tests
+cat > test.py <<EOF
+#!/usr/bin/python3
+import sys
+import apt
+def in_valid_state(pkg):
+   return (pkg.marked_keep or
+           pkg.marked_install or
+           pkg.marked_upgrade or
+           pkg.marked_delete or
+           pkg.marked_downgrade or
+           pkg.marked_reinstall)
+# main
+cache=apt.Cache()
+pkgname="module-init-tools"
+if not in_valid_state(cache[pkgname]):
+    print("the test is broken, %s should be in a valid state" % pkgname)
+    sys.exit(99)
+cache.upgrade(True)
+if not in_valid_state(cache[pkgname]):
+    print("package %s is in a heisen-state" % pkgname)
+    sys.exit(2)
+
+EOF
+testsuccess runpython3 test.py
