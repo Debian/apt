@@ -39,10 +39,15 @@ using std::vector;
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 
-static const std::array<string, 1> WeakDigests {
+static const std::vector<string> WeakDigests {
    "1", // MD5
 // "2", // SHA1
 // "3", // RIPEMD-160
+};
+
+static const std::vector<string> DeprecatedDigests {
+   "2", // SHA1
+   "3", // RIPEMD-160
 };
 
 class GPGVMethod : public aptMethod
@@ -53,8 +58,8 @@ class GPGVMethod : public aptMethod
 				vector<string> &GoodSigners,
                                 vector<string> &BadSigners,
                                 vector<string> &WorthlessSigners,
+                                vector<string> &SoonWorthlessSigners,
 				vector<string> &NoPubKeySigners);
-   
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
    public:
@@ -67,6 +72,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
 					 vector<string> &WorthlessSigners,
+					 vector<string> &SoonWorthlessSigners,
 					 vector<string> &NoPubKeySigners)
 {
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
@@ -158,6 +164,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          if (Debug == true)
             std::clog << "Got VALIDSIG, key ID: " << sig << std::endl;
          // Reject weak digest algorithms
+         if (std::find(DeprecatedDigests.begin(), DeprecatedDigests.end(), tokens[7]) != DeprecatedDigests.end())
+         {
+            // Treat them like an expired key: For that a message about expiry
+            // is emitted, a VALIDSIG, but no GOODSIG.
+            SoonWorthlessSigners.push_back(string(sig));
+         }
          if (std::find(WeakDigests.begin(), WeakDigests.end(), tokens[7]) != WeakDigests.end())
          {
             // Treat them like an expired key: For that a message about expiry
@@ -247,6 +259,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    vector<string> BadSigners;
    // a worthless signature is a expired or revoked one
    vector<string> WorthlessSigners;
+   vector<string> SoonWorthlessSigners;
    vector<string> NoPubKeySigners;
    
    FetchResult Res;
@@ -256,7 +269,20 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    // Run apt-key on file, extract contents and get the key ID of the signer
    string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), key,
                                  GoodSigners, BadSigners, WorthlessSigners,
-                                 NoPubKeySigners);
+                                 SoonWorthlessSigners, NoPubKeySigners);
+
+
+   // Check if there are any good signers that are not soon worthless
+   std::vector<std::string> NotWarnAboutSigners(GoodSigners);
+   for (auto const & Signer : SoonWorthlessSigners)
+      NotWarnAboutSigners.erase(std::remove(NotWarnAboutSigners.begin(), NotWarnAboutSigners.end(), "GOODSIG " + Signer));
+   // If all signers are soon worthless, report them.
+   if (NotWarnAboutSigners.empty()) {
+      for (auto const & Signer : SoonWorthlessSigners)
+         // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+         Warning(_("The repository is insufficiently signed by key %s (%s)"), (string(Signer)).c_str(), "weak digest");
+   }
+
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())
    {
       string errmsg;
