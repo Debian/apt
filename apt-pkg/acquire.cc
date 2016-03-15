@@ -1129,7 +1129,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    CurrentBytes = 0;
    TotalItems = 0;
    CurrentItems = 0;
-   
+
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
    unsigned int Count = 0;
@@ -1141,16 +1141,12 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       TotalItems++;
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 ++CurrentItems;
-      
-      // Totally ignore local items
-      if ((*I)->Local == true)
-	 continue;
 
       // see if the method tells us to expect more
       TotalItems += (*I)->ExpectedAdditionalItems;
 
       // check if there are unfetched Release files
-      if ((*I)->Complete == false && (*I)->ExpectedAdditionalItems > 0)
+      if ((*I)->Status != pkgAcquire::Item::StatDone && (*I)->ExpectedAdditionalItems > 0)
          UnfetchedReleaseFiles = true;
 
       TotalBytes += (*I)->FileSize;
@@ -1159,7 +1155,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       if ((*I)->FileSize == 0 && (*I)->Complete == false)
 	 ++Unknown;
    }
-   
+
    // Compute the current completion
    unsigned long long ResumeSize = 0;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
@@ -1187,12 +1183,6 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    if (CurrentBytes > TotalBytes)
       CurrentBytes = TotalBytes;
 
-   // debug
-   if (_config->FindB("Debug::acquire::progress", false) == true)
-      std::clog << " Bytes: " 
-                << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes) 
-                << std::endl;
-   
    // Compute the CPS
    struct timeval NewTime;
    gettimeofday(&NewTime,0);
@@ -1220,6 +1210,21 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       // use both files and bytes because bytes can be unreliable
       Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) +
                  0.2 * (CurrentItems/float(TotalItems)*100.0));
+
+   // debug
+   if (_config->FindB("Debug::acquire::progress", false) == true)
+   {
+      std::clog
+         << "["
+         << std::setw(5) << std::setprecision(4) << std::showpoint << Percent 
+         << "]"
+         << " Bytes: "
+         << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes)
+         << " # Files: "
+         << CurrentItems << " / " << TotalItems
+         << std::endl;
+   }
+
    double const DiffPercent = Percent - OldPercent;
    if (DiffPercent < 0.001 && _config->FindB("Acquire::Progress::Diffpercent", false) == true)
       return true;

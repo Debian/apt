@@ -2610,6 +2610,10 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    DestFile = GetPartialFileNameFromURI(URI);
    NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, false);
 
+   // store file size of the download to ensure the fetcher gives
+   // accurate progress reporting
+   FileSize = GetExpectedHashes().FileSize();
+
    if (CurrentCompressionExtension == "uncompressed")
    {
       Desc.URI = URI;

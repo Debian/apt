@@ -34,6 +34,7 @@ Reading package lists..." aptget update
 	# readd arch so its downloaded again…
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
+        SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
 	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
 	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
 
@@ -43,7 +44,7 @@ Version: 1
 EOF
 	compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
 	testfailureequal "Hit:1 $1 unstable InRelease
-Get:2 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Get:2 $1 unstable/main amd64 Packages [$SIZE B]
 Err:2 $1 unstable/main amd64 Packages
   Hash Sum mismatch
 Reading package lists...
@@ -92,6 +93,7 @@ Reading package lists..." aptget update
 	# readd arch so its downloaded again…
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
+        SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
 	find aptarchive/dists/unstable/main/binary-amd64/ -type f -delete
 	cat >> aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
 
@@ -103,7 +105,7 @@ EOF
 	testfailureequal "Ign:1 $1 unstable InRelease
   404  Not Found
 Hit:2 $1 unstable Release
-Get:4 $1 unstable/main amd64 Packages [$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') B]
+Get:4 $1 unstable/main amd64 Packages [$SIZE B]
 Err:4 $1 unstable/main amd64 Packages
   Hash Sum mismatch
 Reading package lists...

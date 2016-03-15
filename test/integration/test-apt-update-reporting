@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+for i in $(seq 100); do
+  insertpackage 'unstable' "foo-$i" 'all' '1.0'
+  insertsource 'unstable' "foo-$i" 'all' '1.0'
+done
+
+setupaptarchive --no-update
+changetowebserver
+
+aptget update -o Debug::Acquire::Progress=1 2>progress.log >ignore.out
+
+prev_percent=0.0
+while read line; do
+    percent="$(echo "$line"|cut -b2-6)"
+    # need to cut the decimal point and digits because sh can not do
+    # float compare
+    if [ "${percent%%.*}" -lt "${prev_percent%%.*}" ]; then
+        echo "progress goes backwards"
+        cat progress.log
+        exit 1
+    fi
+    prev_percent="$percent"
+done < progress.log
+
