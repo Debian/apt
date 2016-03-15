@@ -159,7 +159,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::clog << "Got VALIDSIG, key ID: " << sig << std::endl;
          // Reject weak digest algorithms
          if (std::find(WeakDigests.begin(), WeakDigests.end(), tokens[7]) != WeakDigests.end())
-            BadSigners.push_back(string(sig));
+         {
+            // Treat them like an expired key: For that a message about expiry
+            // is emitted, a VALIDSIG, but no GOODSIG.
+            WorthlessSigners.push_back("WEAKDIGEST " + string(sig));
+            GoodSigners.erase(std::remove(GoodSigners.begin(), GoodSigners.end(), string(sig)));
+         }
 
          ValidSigners.push_back(string(sig));
       }
