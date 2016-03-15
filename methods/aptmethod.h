@@ -34,6 +34,14 @@ public:
       return true;
    }
 
+   void Warning(const char *Format,...)
+   {
+      va_list args;
+      va_start(args,Format);
+      PrintStatus("104 Warning", Format, args);
+      va_end(args);
+   }
+
    aptMethod(char const * const Binary, char const * const Ver, unsigned long const Flags) :
       pkgAcqMethod(Ver, Flags), Binary(Binary)
    {}
