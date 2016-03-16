@@ -39,15 +39,43 @@ using std::vector;
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 
-static const std::vector<string> WeakDigests {
-   "1", // MD5
-// "2", // SHA1
-// "3", // RIPEMD-160
+struct Digest {
+   enum class State {
+      Untrusted,
+      Weak,
+      Trusted,
+   } state;
+   char name[32];
 };
 
-static const std::vector<string> DeprecatedDigests {
-   "2", // SHA1
-   "3", // RIPEMD-160
+static constexpr Digest Digests[] = {
+   {Digest::State::Untrusted, "Invalid digest"},
+   {Digest::State::Untrusted, "MD5"},
+   {Digest::State::Weak, "SHA1"},
+   {Digest::State::Weak, "RIPE-MD/160"},
+   {Digest::State::Trusted, "Reserved digest"},
+   {Digest::State::Trusted, "Reserved digest"},
+   {Digest::State::Trusted, "Reserved digest"},
+   {Digest::State::Trusted, "Reserved digest"},
+   {Digest::State::Trusted, "SHA256"},
+   {Digest::State::Trusted, "SHA384"},
+   {Digest::State::Trusted, "SHA512"},
+   {Digest::State::Trusted, "SHA224"},
+};
+
+static Digest FindDigest(std::string const & Digest)
+{
+   int id = atoi(Digest.c_str());
+   if (id >= 0 && static_cast<unsigned>(id) < _count(Digests)) {
+      return Digests[id];
+   } else {
+      return Digests[0];
+   }
+}
+
+struct Signer {
+   std::string key;
+   std::string note;
 };
 
 class GPGVMethod : public aptMethod
@@ -58,7 +86,7 @@ class GPGVMethod : public aptMethod
 				vector<string> &GoodSigners,
                                 vector<string> &BadSigners,
                                 vector<string> &WorthlessSigners,
-                                vector<string> &SoonWorthlessSigners,
+                                vector<Signer> &SoonWorthlessSigners,
 				vector<string> &NoPubKeySigners);
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
@@ -72,7 +100,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
 					 vector<string> &WorthlessSigners,
-					 vector<string> &SoonWorthlessSigners,
+					 vector<Signer> &SoonWorthlessSigners,
 					 vector<string> &NoPubKeySigners)
 {
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
@@ -164,18 +192,21 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          if (Debug == true)
             std::clog << "Got VALIDSIG, key ID: " << sig << std::endl;
          // Reject weak digest algorithms
-         if (std::find(DeprecatedDigests.begin(), DeprecatedDigests.end(), tokens[7]) != DeprecatedDigests.end())
-         {
+         Digest digest = FindDigest(tokens[7]);
+         switch (digest.state) {
+         case Digest::State::Weak:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            SoonWorthlessSigners.push_back(string(sig));
-         }
-         if (std::find(WeakDigests.begin(), WeakDigests.end(), tokens[7]) != WeakDigests.end())
-         {
+            SoonWorthlessSigners.push_back({string(sig), digest.name});
+            break;
+         case Digest::State::Untrusted:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            WorthlessSigners.push_back("WEAKDIGEST " + string(sig));
+            WorthlessSigners.push_back(string(sig));
             GoodSigners.erase(std::remove(GoodSigners.begin(), GoodSigners.end(), string(sig)));
+            break;
+         case Digest::State::Trusted:
+            break;
          }
 
          ValidSigners.push_back(string(sig));
@@ -259,7 +290,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    vector<string> BadSigners;
    // a worthless signature is a expired or revoked one
    vector<string> WorthlessSigners;
-   vector<string> SoonWorthlessSigners;
+   vector<Signer> SoonWorthlessSigners;
    vector<string> NoPubKeySigners;
    
    FetchResult Res;
@@ -275,12 +306,12 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    // Check if there are any good signers that are not soon worthless
    std::vector<std::string> NotWarnAboutSigners(GoodSigners);
    for (auto const & Signer : SoonWorthlessSigners)
-      NotWarnAboutSigners.erase(std::remove(NotWarnAboutSigners.begin(), NotWarnAboutSigners.end(), "GOODSIG " + Signer));
+      NotWarnAboutSigners.erase(std::remove(NotWarnAboutSigners.begin(), NotWarnAboutSigners.end(), "GOODSIG " + Signer.key));
    // If all signers are soon worthless, report them.
    if (NotWarnAboutSigners.empty()) {
       for (auto const & Signer : SoonWorthlessSigners)
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-         Warning(_("The repository is insufficiently signed by key %s (%s)"), (string(Signer)).c_str(), "weak digest");
+         Warning(_("Weak signature from %s (%s)"), Signer.key.c_str(), Signer.note.c_str());
    }
 
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())
