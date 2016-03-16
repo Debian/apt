@@ -311,7 +311,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    if (NotWarnAboutSigners.empty()) {
       for (auto const & Signer : SoonWorthlessSigners)
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-         Warning(_("Weak signature from %s (%s)"), Signer.key.c_str(), Signer.note.c_str());
+         Warning(_("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
    }
 
    if (GoodSigners.empty() || !BadSigners.empty() || !NoPubKeySigners.empty())
