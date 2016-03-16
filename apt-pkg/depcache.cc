@@ -1700,11 +1700,7 @@ void pkgDepCache::StateCache::Update(PkgIterator Pkg,pkgCache &Cache)
    CurVersion = "";
    if (Pkg->CurrentVer != 0)
       CurVersion = Pkg.CurrentVer().VerStr();
-   
-   // Strip off the epochs for display
-   CurVersion = StripEpoch(CurVersion);
-   CandVersion = StripEpoch(CandVersion);
-   
+
    // Figure out if its up or down or equal
    Status = Ver.CompareVer(Pkg.CurrentVer());
    if (Pkg->CurrentVer == 0 || Pkg->VersionList == 0 || CandidateVer == 0)
