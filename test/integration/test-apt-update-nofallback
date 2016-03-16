@@ -149,7 +149,7 @@ test_subvert_inrelease()
     # replace InRelease with something else
     mv "$APTARCHIVE/dists/unstable/Release" "$APTARCHIVE/dists/unstable/InRelease"
 
-    testfailuremsg "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
+    testfailuremsg "E: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
 
     # ensure we keep the repo

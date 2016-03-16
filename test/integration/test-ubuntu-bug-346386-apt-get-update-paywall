@@ -37,7 +37,7 @@ ensure_n_canary_strings_in_dir() {
 LISTS='rootdir/var/lib/apt/lists'
 rm -rf rootdir/var/lib/apt/lists
 testfailure aptget update
-testsuccess grep '^W:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
 
 ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
 testequal 'lock
@@ -50,7 +50,7 @@ for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
 done
 
 testfailure aptget update
-testsuccess grep '^W:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
 
 ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 4
 ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
@@ -61,7 +61,7 @@ chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
 rm -f "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release" "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release.gpg"
 msgtest 'excpected failure of' 'apt-get update'
 testfailure aptget update
-testsuccess grep '^W:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
 
 ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 3
 ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0

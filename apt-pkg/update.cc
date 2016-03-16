@@ -73,9 +73,13 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
       uri.User.clear();
       uri.Password.clear();
       string descUri = string(uri);
-      _error->Warning(_("Failed to fetch %s  %s"), descUri.c_str(),
-	      (*I)->ErrorText.c_str());
-
+      // Show an error for non-transient failures, otherwise only warn
+      if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError)
+	 _error->Warning(_("Failed to fetch %s  %s"), descUri.c_str(),
+			(*I)->ErrorText.c_str());
+      else
+	 _error->Error(_("Failed to fetch %s  %s"), descUri.c_str(),
+	       (*I)->ErrorText.c_str());
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError) 
       {
 	 TransientNetworkFailure = true;

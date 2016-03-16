@@ -60,7 +60,7 @@ test_inrelease_to_broken_hash_reverts_all() {
     break_repository_sources_index '+1hour'
 
     # test the error condition
-    testfailureequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
+    testfailureequal "E: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
     # ensure that the Packages file is also rolled back
     testfileequal lists.before "$(listcurrentlistsdirectory)"
@@ -126,7 +126,7 @@ E: There were unauthenticated packages and -y was used without --allow-unauthent
     add_new_package '+1hour'
     break_repository_sources_index '+1hour'
 
-    testfailureequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
+    testfailureequal "E: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources.gz  Hash Sum mismatch
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testfileequal lists.before "$(listcurrentlistsdirectory)"
