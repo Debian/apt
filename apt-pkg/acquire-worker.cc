@@ -279,7 +279,7 @@ bool pkgAcquire::Worker::RunMessages()
          }
 	 // 104 Warning
 	 case 104:
-	    _error->Warning("%s: %s", Itm->URI.c_str(), LookupTag(Message,"Message").c_str());
+	    _error->Warning("%s: %s", Itm->Owner->DescURI().c_str(), LookupTag(Message,"Message").c_str());
 	    break;
 
 	 // 200 URI Start
