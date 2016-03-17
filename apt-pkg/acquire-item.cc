@@ -802,6 +802,32 @@ HashStringList pkgAcqTransactionItem::GetExpectedHashesFor(std::string const &Me
 }
 									/*}}}*/
 
+static void LoadLastMetaIndexParser(pkgAcqMetaClearSig * const TransactionManager, std::string const &FinalRelease, std::string const &FinalInRelease)/*{{{*/
+{
+   if (TransactionManager->IMSHit == true)
+      return;
+   if (RealFileExists(FinalInRelease) || RealFileExists(FinalRelease))
+   {
+      TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
+      if (TransactionManager->LastMetaIndexParser != NULL)
+      {
+	 _error->PushToStack();
+	 if (RealFileExists(FinalInRelease))
+	    TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
+	 else
+	    TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
+	 // its unlikely to happen, but if what we have is bad ignore it
+	 if (_error->PendingError())
+	 {
+	    delete TransactionManager->LastMetaIndexParser;
+	    TransactionManager->LastMetaIndexParser = NULL;
+	 }
+	 _error->RevertToStack();
+      }
+   }
+}
+									/*}}}*/
+
 // AcqMetaBase - Constructor						/*{{{*/
 pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire * const Owner,
       pkgAcqMetaClearSig * const TransactionManager,
@@ -1014,25 +1040,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
 	 FinalInRelease = FinalFile.substr(0, FinalFile.length() - strlen("Release")) + "InRelease";
 	 FinalRelease = FinalFile;
       }
-      if (RealFileExists(FinalInRelease) || RealFileExists(FinalRelease))
-      {
-	 TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
-	 if (TransactionManager->LastMetaIndexParser != NULL)
-	 {
-	    _error->PushToStack();
-	    if (RealFileExists(FinalInRelease))
-	       TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
-	    else
-	       TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
-	    // its unlikely to happen, but if what we have is bad ignore it
-	    if (_error->PendingError())
-	    {
-	       delete TransactionManager->LastMetaIndexParser;
-	       TransactionManager->LastMetaIndexParser = NULL;
-	    }
-	    _error->RevertToStack();
-	 }
-      }
+      LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
    }
 
    if (TransactionManager->MetaIndexParser->Load(DestFile, &ErrorText) == false)
@@ -1428,30 +1436,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 string const FinalInRelease = GetFinalFilename();
 	 Rename(DestFile, PartialRelease);
 	 TransactionManager->TransactionStageCopy(this, PartialRelease, FinalRelease);
-
-	 if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
-	 {
-	    // open the last Release if we have it
-	    if (TransactionManager->IMSHit == false)
-	    {
-	       TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
-	       if (TransactionManager->LastMetaIndexParser != NULL)
-	       {
-		  _error->PushToStack();
-		  if (RealFileExists(FinalInRelease))
-		     TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
-		  else
-		     TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
-		  // its unlikely to happen, but if what we have is bad ignore it
-		  if (_error->PendingError())
-		  {
-		     delete TransactionManager->LastMetaIndexParser;
-		     TransactionManager->LastMetaIndexParser = NULL;
-		  }
-		  _error->RevertToStack();
-	       }
-	    }
-	 }
+	 LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
 
 	 // we parse the indexes here because at this point the user wanted
 	 // a repository that may potentially harm him
@@ -1667,29 +1652,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
    // only allow going further if the user explicitly wants it
    if (AllowInsecureRepositories(_("The repository '%s' is not signed."), MetaIndex->Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
-      if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
-      {
-	 // open the last Release if we have it
-	 if (TransactionManager->IMSHit == false)
-	 {
-	    TransactionManager->LastMetaIndexParser = TransactionManager->MetaIndexParser->UnloadedClone();
-	    if (TransactionManager->LastMetaIndexParser != NULL)
-	    {
-	       _error->PushToStack();
-	       if (RealFileExists(FinalInRelease))
-		  TransactionManager->LastMetaIndexParser->Load(FinalInRelease, NULL);
-	       else
-		  TransactionManager->LastMetaIndexParser->Load(FinalRelease, NULL);
-	       // its unlikely to happen, but if what we have is bad ignore it
-	       if (_error->PendingError())
-	       {
-		  delete TransactionManager->LastMetaIndexParser;
-		  TransactionManager->LastMetaIndexParser = NULL;
-	       }
-	       _error->RevertToStack();
-	    }
-	 }
-      }
+      LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
 
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
