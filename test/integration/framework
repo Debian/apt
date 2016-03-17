@@ -1231,7 +1231,7 @@ connect = $APTHTTPPORT
 		msgdie 'Could not fork stunnel4 successfully'
 	fi
 	addtrap 'prefix' "kill ${PID};"
-	APTHTTPSPORT="$(lsof -i | awk "/^stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
+	APTHTTPSPORT="$(lsof -i -n | awk "/^stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
 	webserverconfig 'aptwebserver::port::https' "$APTHTTPSPORT" "https://localhost:${APTHTTPSPORT}"
 	rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
 }
