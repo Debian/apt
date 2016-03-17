@@ -1149,6 +1149,8 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
    // valid signature from a key in the trusted keyring.  We
    // perform additional verification of its contents, and use them
    // to verify the indexes we are about to download
+   if (_config->FindB("Debug::pkgAcquire::Auth", false))
+      std::cerr << "Signature verification succeeded: " << DestFile << std::endl;
 
    if (TransactionManager->IMSHit == false)
    {
@@ -1169,7 +1171,9 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
       LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
    }
 
-   if (TransactionManager->MetaIndexParser->Load(DestFile, &ErrorText) == false)
+   bool const GoodAuth = TransactionManager->MetaIndexParser->Load(DestFile, &ErrorText);
+   if (GoodAuth == false && AllowInsecureRepositories(_("The repository '%s' provides only weak security information."),
+							 Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == false)
    {
       Status = StatAuthError;
       return false;
@@ -1181,14 +1185,10 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
       return false;
    }
 
-   if (_config->FindB("Debug::pkgAcquire::Auth", false))
-      std::cerr << "Signature verification succeeded: "
-                << DestFile << std::endl;
-
    // Download further indexes with verification
-   TransactionManager->QueueIndexes(true);
+   TransactionManager->QueueIndexes(GoodAuth);
 
-   return true;
+   return GoodAuth;
 }
 									/*}}}*/
 void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
@@ -1197,8 +1197,14 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
    ExpectedAdditionalItems = 0;
 
    std::set<std::string> targetsSeen;
-   bool const metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
-   for (auto &Target: TransactionManager->MetaIndexParser->GetIndexTargets())
+   bool const hasReleaseFile = TransactionManager->MetaIndexParser != NULL;
+   bool const metaBaseSupportsByHash = hasReleaseFile && TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
+   bool hasHashes = true;
+   auto IndexTargets = TransactionManager->MetaIndexParser->GetIndexTargets();
+   if (hasReleaseFile && verify == false)
+      hasHashes = std::any_of(IndexTargets.begin(), IndexTargets.end(),
+	    [&](IndexTarget const &Target) { return TransactionManager->MetaIndexParser->Exists(Target.MetaKey); });
+   for (auto&& Target: IndexTargets)
    {
       // if we have seen a target which is created-by a target this one here is declared a
       // fallback to, we skip acquiring the fallback (but we make sure we clean up)
@@ -1214,7 +1220,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       // download time, bandwidth and diskspace for nothing, BUT Debian doesn't feature all
       // in the set of supported architectures, so we can filter based on this property rather
       // than invent an entirely new flag we would need to carry for all of eternity.
-      if (Target.Option(IndexTarget::ARCHITECTURE) == "all")
+      if (hasReleaseFile && Target.Option(IndexTarget::ARCHITECTURE) == "all")
       {
 	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false ||
 	       TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(Target) == false)
@@ -1225,12 +1231,12 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       }
 
       bool trypdiff = Target.OptionBool(IndexTarget::PDIFFS);
-      if (verify == true)
+      if (hasReleaseFile == true)
       {
 	 if (TransactionManager->MetaIndexParser->Exists(Target.MetaKey) == false)
 	 {
 	    // optional targets that we do not have in the Release file are skipped
-	    if (Target.IsOptional)
+	    if (hasHashes == true && Target.IsOptional)
 	    {
 	       new CleanupItem(Owner, TransactionManager, Target);
 	       continue;
@@ -1249,18 +1255,26 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       // if the architecture is officially supported but currently no packages for it available,
 	       // ignore silently as this is pretty much the same as just shipping an empty file.
 	       // if we don't know which architectures are supported, we do NOT ignore it to notify user about this
-	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported("*undefined*") == false)
+	       if (hasHashes == true && TransactionManager->MetaIndexParser->IsArchitectureSupported("*undefined*") == false)
 	       {
 		  new CleanupItem(Owner, TransactionManager, Target);
 		  continue;
 	       }
 	    }
 
-	    Status = StatAuthError;
-	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target.MetaKey.c_str());
-	    return;
+	    if (hasHashes == true)
+	    {
+	       Status = StatAuthError;
+	       strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target.MetaKey.c_str());
+	       return;
+	    }
+	    else
+	    {
+	       new pkgAcqIndex(Owner, TransactionManager, Target);
+	       continue;
+	    }
 	 }
-	 else
+	 else if (verify)
 	 {
 	    auto const hashes = GetExpectedHashesFor(Target.MetaKey);
 	    if (hashes.empty() == false)
@@ -1530,6 +1544,17 @@ void pkgAcqMetaClearSig::Done(std::string const &Message,
 	 new NoActionItem(Owner, DetachedSigTarget);
       }
    }
+   else if (Status != StatAuthError)
+   {
+      string const FinalFile = GetFinalFileNameFromURI(DetachedDataTarget.URI);
+      string const OldFile = GetFinalFilename();
+      if (TransactionManager->IMSHit == false)
+	 TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      else if (RealFileExists(OldFile) == false)
+	 new NoActionItem(Owner, DetachedDataTarget);
+      else
+	 TransactionManager->TransactionStageCopy(this, OldFile, FinalFile);
+   }
 }
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf) /*{{{*/
@@ -1734,6 +1759,14 @@ void pkgAcqMetaSig::Done(string const &Message, HashStringList const &Hashes,
 	 TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
       }
+   }
+   else if (MetaIndex->Status != StatAuthError)
+   {
+      std::string const FinalFile = MetaIndex->GetFinalFilename();
+      if (TransactionManager->IMSHit == false)
+	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, FinalFile);
+      else
+	 TransactionManager->TransactionStageCopy(MetaIndex, FinalFile, FinalFile);
    }
 }
 									/*}}}*/

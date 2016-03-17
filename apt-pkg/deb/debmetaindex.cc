@@ -440,18 +440,13 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       }
    }
 
+   bool AuthPossible = false;
    if(FoundHashSum == false)
-   {
-      if (ErrorText != NULL)
-	 strprintf(*ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
-      return false;
-   }
-   if(FoundStrongHashSum == false)
-   {
-      if (ErrorText != NULL)
-	 strprintf(*ErrorText, _("No Hash entry in Release file %s which is considered strong enough for security purposes"), Filename.c_str());
-      return false;
-   }
+      _error->Warning(_("No Hash entry in Release file %s"), Filename.c_str());
+   else if(FoundStrongHashSum == false)
+      _error->Warning(_("No Hash entry in Release file %s which is considered strong enough for security purposes"), Filename.c_str());
+   else
+      AuthPossible = true;
 
    std::string const StrDate = Section.FindS("Date");
    if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
@@ -539,8 +534,9 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       }
    }
 
-   LoadedSuccessfully = TRI_YES;
-   return true;
+   if (AuthPossible)
+      LoadedSuccessfully = TRI_YES;
+   return AuthPossible;
 }
 									/*}}}*/
 metaIndex * debReleaseIndex::UnloadedClone() const			/*{{{*/
