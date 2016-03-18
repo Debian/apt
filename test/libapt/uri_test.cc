@@ -159,11 +159,19 @@ TEST(URITest, RFC2732)
    EXPECT_EQ("cdrom://Foo Bar Cow", URI::SiteOnly(U));
    EXPECT_EQ("cdrom://Foo Bar Cow/debian", URI::ArchiveOnly(U));
    EXPECT_EQ("cdrom://Foo Bar Cow/debian/", URI::NoUserPassword(U));
-   // percent encoded
+   // percent encoded password
    U = URI("ftp://foo:b%40r@example.org");
    EXPECT_EQ("foo", U.User);
    EXPECT_EQ("b@r", U.Password);
    EXPECT_EQ("ftp://foo:b%40r@example.org/", (std::string) U);
+   EXPECT_EQ("ftp://example.org", URI::SiteOnly(U));
+   EXPECT_EQ("ftp://example.org", URI::ArchiveOnly(U));
+   EXPECT_EQ("ftp://example.org/", URI::NoUserPassword(U));
+   // percent encoded user
+   U = URI("ftp://f%40o:bar@example.org");
+   EXPECT_EQ("f@o", U.User);
+   EXPECT_EQ("bar", U.Password);
+   EXPECT_EQ("ftp://f%40o:bar@example.org/", (std::string) U);
    EXPECT_EQ("ftp://example.org", URI::SiteOnly(U));
    EXPECT_EQ("ftp://example.org", URI::ArchiveOnly(U));
    EXPECT_EQ("ftp://example.org/", URI::NoUserPassword(U));
