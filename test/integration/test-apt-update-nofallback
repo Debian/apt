@@ -93,6 +93,30 @@ test_from_inrelease_to_unsigned_with_override()
     find "$APTARCHIVE" -name '*Packages*' -exec touch -d '+2 hours' {} \;
 
     # and ensure we can update to it (with enough force) 
+    testfailure aptget update
+    testfailure aptget update --allow-insecure-repositories
+    testwarning aptget update --allow-insecure-repositories \
+        -o Acquire::AllowDowngradeToInsecureRepositories=1 -o Debug::pkgAcquire::Worker=1 -o Debug::pkgAcquire::Auth=1
+    # but that the individual packages are still considered untrusted
+    testfailureequal "WARNING: The following packages cannot be authenticated!
+  evil
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y evil
+}
+
+test_from_inrelease_to_norelease_with_override()
+{
+    # setup archive with InRelease file
+    setupaptarchive_with_lists_clean
+    testsuccess aptget update
+
+    # simulate moving to a unsigned but otherwise valid repo
+    simulate_mitm_and_inject_evil_package
+    find "$APTARCHIVE" -name '*Release*' -delete
+    find "$APTARCHIVE" -name '*Packages*' -exec touch -d '+2 hours' {} \;
+
+    # and ensure we can update to it (with enough force) 
+    testfailure aptget update
+    testfailure aptget update --allow-insecure-repositories
     testwarning aptget update --allow-insecure-repositories \
         -o Acquire::AllowDowngradeToInsecureRepositories=1 -o Debug::pkgAcquire::Worker=1 -o Debug::pkgAcquire::Auth=1
     # but that the individual packages are still considered untrusted
@@ -237,3 +261,5 @@ test_release_gpg_to_invalid_release_release_gpg
 # ensure we can override the downgrade error
 msgmsg "test_from_inrelease_to_unsigned_with_override"
 test_from_inrelease_to_unsigned_with_override
+msgmsg "test_from_inrelease_to_norelease_with_override"
+test_from_inrelease_to_norelease_with_override

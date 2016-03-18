@@ -175,41 +175,79 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
 }
 									/*}}}*/
 
-static bool MessageInsecureRepository(bool const isError, std::string const &msg)/*{{{*/
+static bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)/*{{{*/
 {
+   std::string m;
+   strprintf(m, msg, repo.c_str());
    if (isError)
    {
-      _error->Error("%s", msg.c_str());
+      _error->Error("%s", m.c_str());
       _error->Notice("%s", _("Updating from such a repository can't be done securely, and is therefore disabled by default."));
    }
    else
    {
-      _error->Warning("%s", msg.c_str());
+      _error->Warning("%s", m.c_str());
       _error->Notice("%s", _("Data from such a repository can't be authenticated and is therefore potentially dangerous to use."));
    }
    _error->Notice("%s", _("See apt-secure(8) manpage for repository creation and user configuration details."));
    return false;
 }
-static bool APT_NONNULL(2) MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)
-{
-   std::string m;
-   strprintf(m, msg, repo.c_str());
-   return MessageInsecureRepository(isError, m);
-}
 									/*}}}*/
-static bool APT_NONNULL(1, 3, 4, 5) AllowInsecureRepositories(char const * const msg, std::string const &repo,/*{{{*/
+// AllowInsecureRepositories						/*{{{*/
+enum class InsecureType { UNSIGNED, WEAK, NORELEASE };
+static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType msg, std::string const &repo,
       metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I)
 {
+   // we skip weak downgrades as its unlikely that a repository gets really weaker –
+   // its more realistic that apt got pickier in a newer version
+   if (msg != InsecureType::WEAK)
+   {
+      std::string const FinalInRelease = TransactionManager->GetFinalFilename();
+      std::string const FinalReleasegpg = FinalInRelease.substr(0, FinalInRelease.length() - strlen("InRelease")) + "Release.gpg";
+      if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
+      {
+	 char const * msgstr = nullptr;
+	 switch (msg)
+	 {
+	    case InsecureType::UNSIGNED: msgstr = _("The repository '%s' is no longer signed."); break;
+	    case InsecureType::NORELEASE: msgstr = _("The repository '%s' does no longer have a Release file."); break;
+	    case InsecureType::WEAK: /* unreachable */ break;
+	 }
+	 if (_config->FindB("Acquire::AllowDowngradeToInsecureRepositories"))
+	 {
+	    // meh, the users wants to take risks (we still mark the packages
+	    // from this repository as unauthenticated)
+	    _error->Warning(msgstr, repo.c_str());
+	    _error->Warning(_("This is normally not allowed, but the option "
+		     "Acquire::AllowDowngradeToInsecureRepositories was "
+		     "given to override it."));
+	 } else {
+	    MessageInsecureRepository(true, msgstr, repo);
+	    TransactionManager->AbortTransaction();
+	    I->Status = pkgAcquire::Item::StatError;
+	    return false;
+	 }
+      }
+   }
+
    if(MetaIndexParser->GetTrusted() == metaIndex::TRI_YES)
       return true;
 
+   char const * msgstr = nullptr;
+   switch (msg)
+   {
+      case InsecureType::UNSIGNED: msgstr = _("The repository '%s' is not signed."); break;
+      case InsecureType::NORELEASE: msgstr = _("The repository '%s' does not have a Release file."); break;
+      case InsecureType::WEAK: msgstr = _("The repository '%s' provides only weak security information."); break;
+   }
+
    if (_config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
-      MessageInsecureRepository(false, msg, repo);
+      MessageInsecureRepository(false, msgstr, repo);
       return true;
    }
 
-   MessageInsecureRepository(true, msg, repo);
+   MessageInsecureRepository(true, msgstr, repo);
    TransactionManager->AbortTransaction();
    I->Status = pkgAcquire::Item::StatError;
    return false;
@@ -1172,8 +1210,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
    }
 
    bool const GoodAuth = TransactionManager->MetaIndexParser->Load(DestFile, &ErrorText);
-   if (GoodAuth == false && AllowInsecureRepositories(_("The repository '%s' provides only weak security information."),
-							 Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == false)
+   if (GoodAuth == false && AllowInsecureRepositories(InsecureType::WEAK, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == false)
    {
       Status = StatAuthError;
       return false;
@@ -1586,10 +1623,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
       if(CheckStopAuthentication(this, Message))
          return;
 
-      // No Release file was present, or verification failed, so fall
-      // back to queueing Packages files without verification
-      // only allow going further if the user explicitly wants it
-      if(AllowInsecureRepositories(_("The repository '%s' is not signed."), ClearsignedTarget.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+      if(AllowInsecureRepositories(InsecureType::UNSIGNED, ClearsignedTarget.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
       {
 	 Status = StatDone;
 
@@ -1660,7 +1694,7 @@ void pkgAcqMetaIndex::Failed(string const &Message,
    // No Release file was present so fall
    // back to queueing Packages files without verification
    // only allow going further if the user explicitly wants it
-   if(AllowInsecureRepositories(_("The repository '%s' does not have a Release file."), Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+   if(AllowInsecureRepositories(InsecureType::NORELEASE, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
       // ensure old Release files are removed
       TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
@@ -1778,40 +1812,14 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
    if (MetaIndex->AuthPass == true && MetaIndex->CheckStopAuthentication(this, Message))
          return;
 
-   string const FinalRelease = MetaIndex->GetFinalFilename();
-   string const FinalReleasegpg = GetFinalFilename();
-   string const FinalInRelease = TransactionManager->GetFinalFilename();
-
-   if (RealFileExists(FinalReleasegpg) || RealFileExists(FinalInRelease))
-   {
-      std::string downgrade_msg;
-      strprintf(downgrade_msg, _("The repository '%s' is no longer signed."),
-                MetaIndex->Target.Description.c_str());
-      if(_config->FindB("Acquire::AllowDowngradeToInsecureRepositories"))
-      {
-         // meh, the users wants to take risks (we still mark the packages
-         // from this repository as unauthenticated)
-         _error->Warning("%s", downgrade_msg.c_str());
-         _error->Warning(_("This is normally not allowed, but the option "
-                           "Acquire::AllowDowngradeToInsecureRepositories was "
-                           "given to override it."));
-         Status = StatDone;
-      } else {
-	 MessageInsecureRepository(true, downgrade_msg);
-	 if (TransactionManager->IMSHit == false)
-	    Rename(MetaIndex->DestFile, MetaIndex->DestFile + ".FAILED");
-	 Item::Failed("Message: " + downgrade_msg, Cnf);
-         TransactionManager->AbortTransaction();
-         return;
-      }
-   }
-
    // ensures that a Release.gpg file in the lists/ is removed by the transaction
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the user explicitly wants it
-   if (AllowInsecureRepositories(_("The repository '%s' is not signed."), MetaIndex->Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+   if (AllowInsecureRepositories(InsecureType::UNSIGNED, MetaIndex->Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
    {
+      string const FinalRelease = MetaIndex->GetFinalFilename();
+      string const FinalInRelease = TransactionManager->GetFinalFilename();
       LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
 
       // we parse the indexes here because at this point the user wanted
@@ -1822,8 +1830,10 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
       else
 	 TransactionManager->QueueIndexes(GoodLoad);
 
-      TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
+      TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, FinalRelease);
    }
+   else if (TransactionManager->IMSHit == false)
+      Rename(MetaIndex->DestFile, MetaIndex->DestFile + ".FAILED");
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
    if (Cnf->LocalOnly == true ||
