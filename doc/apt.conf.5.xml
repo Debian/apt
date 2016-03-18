@@ -650,27 +650,24 @@ APT::Compressor::rev {
 
      <varlistentry><term><option>AllowInsecureRepositories</option></term>
 	 <listitem><para>
-           Allow the update operation to load data files from
-           a repository without a trusted signature. If enabled this
-           option no data files will be loaded and the update
-           operation fails with a error for this source. The default
-           is false for backward compatibility. This will be changed
-           in the future.
+	   Allow update operations to load data files from
+	   repositories without sufficient security information.
+	   The default value is "<literal>false</literal>".
+	   Concept and implications of this are detailed in &apt-secure;.
 	 </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>AllowDowngradeToInsecureRepositories</option></term>
 	 <listitem><para>
-           Allow that a repository that was previously gpg signed to become
-           unsigned durign a update operation. When there is no valid signature
-           of a previously trusted repository apt will refuse the update. This
-           option can be used to override this protection. You almost certainly
-           never want to enable this. The default is false.
+	   Allow that a repository that was previously gpg signed to become
+	   unsigned during an update operation. When there is no valid signature
+	   for a previously trusted repository apt will refuse the update. This
+	   option can be used to override this protection. You almost certainly
+	   never want to enable this. The default is <literal>false</literal>.
 
-           Note that apt will still consider packages from this source
-           untrusted and warn about them if you try to install
-           them.
-         </para></listitem>
+	   Note that apt will still consider packages from this source
+	   untrusted and warns about them if you try to install them.
+	 </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>Changelogs::URI</option> scope</term>

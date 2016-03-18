@@ -372,7 +372,6 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
    return Args;
 }
 									/*}}}*/
-#undef CmdMatches
 #undef addArg
 static void ShowHelpListCommands(std::vector<aptDispatchWithHelp> const &Cmds)/*{{{*/
 {
@@ -445,14 +444,21 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::APT::Get::Upgrade-Allow-New", true);
       _config->CndSet("Binary::apt::APT::Cmd::Show-Update-Stats", true);
       _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
-      _config->CndSet("Binary::apt::Acquire::AllowInsecureRepositories", false);
       _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
    }
+   if (binary == "apt-config")
+      _config->CndSet("Binary::apt-get::Acquire::AllowInsecureRepositories", true);
 
    _config->Set("Binary", binary);
-   std::string const conf = "Binary::" + binary;
-   _config->MoveSubTree(conf.c_str(), NULL);
 }
+									/*}}}*/
+static void BinaryCommandSpecificConfiguration(char const * const Binary, char const * const Cmd)/*{{{*/
+{
+   std::string const binary = flNotDir(Binary);
+   if (binary == "apt-get" && CmdMatches("update"))
+      _config->CndSet("Binary::apt-get::Acquire::AllowInsecureRepositories", true);
+}
+#undef CmdMatches
 									/*}}}*/
 std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[],
@@ -481,11 +487,14 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    // Args running out of scope invalidates the pointer stored in CmdL,
    // but we don't use the pointer after this function, so we ignore
    // this problem for now and figure something out if we have to.
-   std::vector<CommandLine::Args> Args;
+   char const * CmdCalled = nullptr;
    if (Cmds.empty() == false && Cmds[0].Handler != nullptr)
-      Args = getCommandArgs(Binary, CommandLine::GetCommand(Cmds.data(), argc, argv));
-   else
-      Args = getCommandArgs(Binary, nullptr);
+      CmdCalled = CommandLine::GetCommand(Cmds.data(), argc, argv);
+   if (CmdCalled != nullptr)
+      BinaryCommandSpecificConfiguration(argv[0], CmdCalled);
+   std::string const conf = "Binary::" + _config->Find("Binary");
+   _config->MoveSubTree(conf.c_str(), nullptr);
+   auto Args = getCommandArgs(Binary, CmdCalled);
    CmdL = CommandLine(Args.data(), _config);
 
    if (CmdL.Parse(argc,argv) == false ||

@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2015-10-15T00:00:00Z</date>
+   <date>2016-03-18T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -48,22 +48,46 @@
    Starting with version 0.6, <command>APT</command> contains code that does
    signature checking of the Release file for all repositories. This ensures
    that data like packages in the archive can't be modified by people who
-   have no access to the Release file signing key.
+   have no access to the Release file signing key. Starting with version 1.1
+   <command>APT</command> requires repositories to provide recent authentication
+   information for unimpeded usage of the repository.
    </para>
 
    <para>
    If an archive has an unsigned Release file or no Release file at all
-   current APT versions will raise a warning in <command>update</command>
-   operations and front-ends like <command>apt-get</command> will require
-   explicit confirmation if an installation request includes a package from
-   such an unauthenticated archive.
+   current APT versions will refuse to download data from them by default
+   in <command>update</command> operations and even if forced to download
+   front-ends like &apt-get; will require explicit confirmation if an
+   installation request includes a package from such an unauthenticated
+   archive.
    </para>
 
    <para>
-   In the future APT will refuse to work with unauthenticated repositories by
-   default until support for them is removed entirely. Users have the option to
-   opt-in to this behavior already by setting the configuration option
-   <option>Acquire::AllowInsecureRepositories</option> to <literal>false</literal>.
+   As a temporary exception &apt-get; (not &apt;!) raises warnings only if it
+   encounters unauthenticated archives to give a slightly longer grace period
+   on this backward compatibility effecting change. This exception will be removed
+   in future releases and you can opt-out of this grace period by setting the
+   configuration option <option>Binary::apt-get::Acquire::AllowInsecureRepositories</option>
+   to <literal>false</literal> or <option>--no-allow-insecure-repositories</option>
+   on the command line.
+   </para>
+
+   <para>
+   You can force all APT clients to raise only warnings by setting the
+   configuration option <option>Acquire::AllowInsecureRepositories</option> to
+   <literal>true</literal>. Note that this option will eventually be removed.
+   Users also have the <option>Trusted</option> option available to disable
+   even the warnings, but be sure to understand the implications as detailed in
+   &sources-list;.
+   </para>
+
+   <para>
+   A repository which previously was authentication but would loose this state in
+   an <command>update</command> operation raises an error in all APT clients
+   irrespective of the option to allow or forbid usage of insecure repositories.
+   The error can be overcome by additionally setting
+   <option>Acquire::AllowDowngradeToInsecureRepositories</option>
+   to <literal>true</literal>.
    </para>
 
    <para>
