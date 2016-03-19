@@ -316,7 +316,7 @@ msgstr "内部错误，排序未完成"
 
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "怪了……文件大小不符，请发信给 apt@packages.debian.org 吧"
+msgstr "怪了……文件大小不符，请发邮件给 apt@packages.debian.org 吧"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1020,7 +1020,15 @@ msgid ""
 "displayed information may therefore be outdated if the last update was\n"
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
-msgstr ""
+msgstr "" 
+"用法： apt-cache [选项] 命令\n"
+"       apt-cache [选项] show 软件包1 [软件包2 ...]\n"
+"\n"
+"apt-cache 可以查询和显示已安装和可安装软件包的可用信息。\n"
+"它专门工作在本地的数据缓存上，而这些缓存可以通过比如\n"
+"apt-get 的 'update' 命令来更新。如果距离上一次更新的时间太久，\n"
+"那么它显示的信息可能就会过时。不过作为交换，apt-cache 不依赖\n"
+"当前软件源的可用性（比如：离线状态）。\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -1086,6 +1094,10 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"用法： apt-cdrom [选项] 命令\n"
+"\n"
+"apt-cdrom 用于添加CDROM, USB存储器和其他可移动媒介作为 APT 软件源。\n"
+"关于挂载点和设备的详细信息参见 apt.conf(5), udev(7) 和 fstab(5)。\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
@@ -1135,7 +1147,6 @@ msgid "Supported modules:"
 msgstr "支持的模块："
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1150,8 +1161,8 @@ msgstr ""
 "　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
 "　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
 "\n"
-"apt-get 是一个用于下载和安装软件包的简易命令行界面。\n"
-"最常用命令是 update 和 install。\n"
+"apt-get 可以从认证软件源下载软件包及相关信息，以便安装和升级软件包，\n"
+"或者用于移除软件包。在这些过程中，软件包依赖会被妥善处理。\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1231,7 +1242,6 @@ msgid "GetSrvRec failed for %s"
 msgstr "GetSrvRec 失败，因为 %s"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -1243,7 +1253,8 @@ msgstr ""
 "用法： apt-helper [选项] 命令\n"
 "       apt-helper [选项] download-file URI 目标路径\n"
 "\n"
-"apt-helper 是一个 apt 的内部助手\n"
+"apt-helper 汇集了各种各样的功能来供shell脚本调用，比如\n"
+"使用与APT相同的代理设置，或者相同的捕获系统。\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1316,7 +1327,6 @@ msgid "Selected %s for installation.\n"
 msgstr "选中 %s 以待安装。\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1327,8 +1337,8 @@ msgid ""
 msgstr ""
 "用法：apt-mark [选项] {auto|manual} 软件包1 [软件包2 ...]\n"
 "\n"
-"apt-mark 是一个可以对软件包进行 手动/自动 安装标记的简单命令行界面。\n"
-"它也能列出标记。\n"
+"apt-mark 可以对软件包进行 手动/自动 安装标记，也可以用来处理软件\n"
+"包的 dpkg(1) 选中状态，以及列出或过滤拥有某个标记的软件包。\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -1695,9 +1705,9 @@ msgstr "运行 apt-key 时发生未知错误"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository is insufficiently signed by key %s (%s)"
-msgstr "仓库 “%s” 没有数字签名。"
+msgstr "仓库 “%s” 数字签名不完整。"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -1876,7 +1886,6 @@ msgid "Merging available information"
 msgstr "正在合并可用信息"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1884,16 +1893,10 @@ msgid ""
 "from debian packages. It is used mainly by debconf(1) to prompt for\n"
 "configuration questions before installation of packages.\n"
 msgstr ""
-"用法： apt-extracttemplates 文件甲 [文件乙 ...]\n"
+"用法： apt-extracttemplates 文件1 [文件2 ...]\n"
 "\n"
-"apt-extracttemplates 是用来从 debian 软件包中解压出配置文件和模板\n"
-"信息的工具\n"
-"\n"
-"选项：\n"
-"  -h   本帮助文本\n"
-"  -t   设置 temp 目录\n"
-"  -c=? 读指定的配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+"apt-extracttemplates 可以从 debian 软件包中解压出配置文件和模板\n"
+"信息。它主要被 debconf(1) 用于在安装软件包前询问用户配置问题。\n"
 
 #: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1910,7 +1913,6 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1920,14 +1922,8 @@ msgid ""
 msgstr ""
 "用法： apt-internal-solver\n"
 "\n"
-"apt-internal-solver 是个用于调试及类似用途的接口，它可以\n"
-"像 APT 家族外部解决器(resolver)那样使用当前的内部解决器。\n"
-"\n"
-"选项：\n"
-"  -h  显示本帮助。\n"
-"  -q  日志型输出 - 无进度指示\n"
-"  -c=? 读取指定配置文件\n"
-"  -o=? 设置任意配置项，比如 -o dir::cache=/tmp\n"
+"apt-internal-solver 可以像外部解析器那样使用当前的APT家族内部解析器，\n"
+"以便调试等用途。\n"
 
 #: cmdline/apt-sortpkgs.cc
 msgid "Unknown package record!"
@@ -2454,6 +2450,7 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2469,6 +2466,7 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
 
 #: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
@@ -2516,6 +2514,9 @@ msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"一般不可以这样做，但选项 "
+"Acquire:: AllowDowngradeToInsecureRepositories "
+"可以用于覆盖默认设置。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2582,14 +2583,14 @@ msgstr "无法对目录 %s 加锁"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
+msgstr "系统中不存在沙箱用户'%s'，无法降低权限"
 
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
-msgstr ""
+msgstr "文件'%s'无法被用户'%s'访问，无法降低权限以进行下载。"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -2970,7 +2971,7 @@ msgstr "关闭 gzip %s 文件出错"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "未预期的文件结束符"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -3121,7 +3122,7 @@ msgstr "找不到您选则的 %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "目标 %1$s 想要捕获与 %3$s (来自软件源 %4$s) 相同的文件 (%2$s)"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -3129,7 +3130,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "目标 %s (%s) 在 %s 和 %s 中被配置了多次"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3147,11 +3148,12 @@ msgid "No Hash entry in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内无哈希条目"
 
 #: apt-pkg/deb/debmetaindex.cc
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "No Hash entry in Release file %s, which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Release 文件 %s 中不含散列字段，"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3167,12 +3169,12 @@ msgstr "软件包仓库 Release 文件 %s 内 Valid-Until 条目无效"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
-msgstr ""
+msgstr "软件源 %2$s %3$s 的选项 %1$s 中含有互相冲突的值"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
-msgstr ""
+msgstr "软件源 %2$s %3$s (%4$s) 的选项 %1$s 中含有无效值"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
