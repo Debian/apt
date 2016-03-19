@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -69,9 +70,13 @@ public:
    ScopedErrorMerge() { _error->PushToStack(); }
    ~ScopedErrorMerge() { _error->MergeWithStack(); }
 };
+
 bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 {
-   if (Cache != NULL)
+   std::unique_ptr<pkgCache> Cache;
+   std::unique_ptr<MMap> Map;
+
+   if (this->Cache != NULL)
       return true;
 
    ScopedErrorMerge sem;
@@ -80,11 +85,16 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
       FileFd file(_config->FindFile("Dir::Cache::pkgcache"), FileFd::ReadOnly);
       if (file.IsOpen() == false || file.Failed())
 	 return false;
-      Map = new MMap(file, MMap::Public|MMap::ReadOnly);
+      Map.reset(new MMap(file, MMap::Public|MMap::ReadOnly));
       if (unlikely(Map->validData() == false))
 	 return false;
-      Cache = new pkgCache(Map);
-      return _error->PendingError() == false;
+      Cache.reset(new pkgCache(Map.get()));
+      if (_error->PendingError() == true)
+	 return false;
+
+      this->Cache = Cache.release();
+      this->Map = Map.release();
+      return true;
    }
 
    if (WithLock == true)
@@ -94,11 +104,15 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    if (_error->PendingError() == true)
       return false;
 
-   BuildSourceList(Progress);
+   if (BuildSourceList(Progress) == false)
+      return false;
 
    // Read the caches
-   Cache = nullptr;
-   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map, &Cache, true);
+   MMap *TmpMap = nullptr;
+   pkgCache *TmpCache = nullptr;
+   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&TmpMap, &TmpCache, true);
+   Map.reset(TmpMap);
+   Cache.reset(TmpCache);
    if (Progress != NULL)
       Progress->Done();
    if (Res == false)
@@ -109,9 +123,12 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
       _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
    if (Cache == nullptr)
-      Cache = new pkgCache(Map);
+      Cache.reset(new pkgCache(Map.get()));
    if (_error->PendingError() == true)
       return false;
+   this->Map = Map.release();
+   this->Cache = Cache.release();
+
    return true;
 }
 									/*}}}*/
@@ -120,12 +137,14 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 /* */
 bool pkgCacheFile::BuildSourceList(OpProgress * /*Progress*/)
 {
-   if (SrcList != NULL)
+   std::unique_ptr<pkgSourceList> SrcList;
+   if (this->SrcList != NULL)
       return true;
 
-   SrcList = new pkgSourceList();
+   SrcList.reset(new pkgSourceList());
    if (SrcList->ReadMainList() == false)
       return _error->Error(_("The list of sources could not be read."));
+   this->SrcList = SrcList.release();
    return true;
 }
 									/*}}}*/
@@ -134,16 +153,18 @@ bool pkgCacheFile::BuildSourceList(OpProgress * /*Progress*/)
 /* */
 bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 {
-   if (Policy != NULL)
+   std::unique_ptr<pkgPolicy> Policy;
+   if (this->Policy != NULL)
       return true;
 
-   Policy = new pkgPolicy(Cache);
+   Policy.reset(new pkgPolicy(Cache));
    if (_error->PendingError() == true)
       return false;
 
    if (ReadPinFile(*Policy) == false || ReadPinDir(*Policy) == false)
       return false;
 
+   this->Policy = Policy.release();
    return true;
 }
 									/*}}}*/
@@ -152,17 +173,21 @@ bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 /* */
 bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
 {
-   if (DCache != NULL)
+   std::unique_ptr<pkgDepCache> DCache;
+   if (this->DCache != NULL)
       return true;
 
    if (BuildPolicy(Progress) == false)
       return false;
 
-   DCache = new pkgDepCache(Cache,Policy);
+   DCache.reset(new pkgDepCache(Cache,Policy));
    if (_error->PendingError() == true)
       return false;
+   if (DCache->Init(Progress) == false)
+      return false;
 
-   return DCache->Init(Progress);
+   this->DCache = DCache.release();
+   return true;
 }
 									/*}}}*/
 // CacheFile::Open - Open the cache files, creating if necessary	/*{{{*/
@@ -225,7 +250,12 @@ bool pkgCacheFile::AddIndexFile(pkgIndexFile * const File)		/*{{{*/
 	       return false;
 	 }
 	 Cache = new pkgCache(Map);
-	 return _error->PendingError() == false;
+	 if (_error->PendingError() == true) {
+	    delete Cache;
+	    Cache = nullptr;
+	    return false;
+	 }
+	 return true;
       }
       else
       {

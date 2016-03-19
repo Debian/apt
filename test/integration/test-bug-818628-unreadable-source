@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+if [ "$(id -u)" = "0" ]; then
+    msgskip "Tests for unreadable sources.list do not work as root"
+    exit 0
+fi
+
+insertinstalledpackage 'apt' 'i386' '1'
+buildsimplenativepackage 'apt' 'i386' '2' 'unstable'
+
+setupaptarchive
+
+# Test unreadable sources.list files
+chmod -r rootdir/etc/apt/sources.list.d
+
+testfailureequal "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)
+W: You may want to run apt-get update to correct these problems
+E: The package cache file is corrupted" aptcache policy apt
+testfailureequal "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)
+W: You may want to run apt-get update to correct these problems
+E: The package cache file is corrupted" apt search apt
+
+chmod +r rootdir/etc/apt/sources.list.d
+
+
+# Test unreadable sources.list files
+chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+
+testfailureequal "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
+E: The list of sources could not be read.
+E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
+E: The list of sources could not be read." aptcache policy apt
+testfailureequal "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
+E: The list of sources could not be read." apt search apt
+
+chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
