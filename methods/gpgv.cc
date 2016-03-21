@@ -189,8 +189,6 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          while (*p && isxdigit(*p))
             p++;
          *p = 0;
-         if (Debug == true)
-            std::clog << "Got VALIDSIG, key ID: " << sig << std::endl;
          // Reject weak digest algorithms
          Digest digest = FindDigest(tokens[7]);
          switch (digest.state) {
@@ -198,14 +196,20 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
             SoonWorthlessSigners.push_back({string(sig), digest.name});
+	    if (Debug == true)
+	       std::clog << "Got weak VALIDSIG, key ID: " << sig << std::endl;
             break;
          case Digest::State::Untrusted:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
             WorthlessSigners.push_back(string(sig));
             GoodSigners.erase(std::remove(GoodSigners.begin(), GoodSigners.end(), string(sig)));
+	    if (Debug == true)
+	       std::clog << "Got untrusted VALIDSIG, key ID: " << sig << std::endl;
             break;
          case Digest::State::Trusted:
+	    if (Debug == true)
+	       std::clog << "Got trusted VALIDSIG, key ID: " << sig << std::endl;
             break;
          }
 
@@ -302,13 +306,14 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  SoonWorthlessSigners, NoPubKeySigners);
 
-
-   // Check if there are any good signers that are not soon worthless
-   std::vector<std::string> NotWarnAboutSigners(GoodSigners);
-   for (auto const & Signer : SoonWorthlessSigners)
-      NotWarnAboutSigners.erase(std::remove(NotWarnAboutSigners.begin(), NotWarnAboutSigners.end(), "GOODSIG " + Signer.key));
-   // If all signers are soon worthless, report them.
-   if (NotWarnAboutSigners.empty()) {
+   // Check if all good signers are soon worthless and warn in that case
+   if (std::all_of(GoodSigners.begin(), GoodSigners.end(), [&](std::string const &good) {
+	    return std::any_of(SoonWorthlessSigners.begin(), SoonWorthlessSigners.end(), [&](Signer const &weak) {
+		  // VALIDSIG reports a keyid (40 = 24 + 16), GOODSIG is a longid (16) only
+		  return weak.key.compare(24, 16, good, strlen("GOODSIG "), 16) == 0;
+		  });
+	    }))
+   {
       for (auto const & Signer : SoonWorthlessSigners)
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
          Warning(_("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());

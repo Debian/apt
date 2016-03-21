@@ -1074,7 +1074,7 @@ signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
 	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
-	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo SHA512"
+	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo ${APT_TESTS_DIGEST_ALGO:-SHA512}"
 	msgninfo "\tSign archive with $SIGNER key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
