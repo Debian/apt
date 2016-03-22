@@ -32,6 +32,7 @@ using std::vector;
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
+#define GNUPGERRSIG "[GNUPG:] ERRSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
 #define GNUPGVALIDSIG "[GNUPG:] VALIDSIG"
 #define GNUPGGOODSIG "[GNUPG:] GOODSIG"
@@ -44,8 +45,20 @@ struct Digest {
       Untrusted,
       Weak,
       Trusted,
+      Configureable
    } state;
    char name[32];
+
+   State getState() const {
+      if (state != Digest::State::Configureable)
+	 return state;
+      std::string const digestconfig = _config->Find("Debug::Acquire::gpgv::configdigest::truststate", "trusted");
+      if (digestconfig == "weak")
+	 return State::Weak;
+      else if (digestconfig == "untrusted")
+	 return State::Untrusted;
+      return State::Trusted;
+   }
 };
 
 static constexpr Digest Digests[] = {
@@ -60,8 +73,9 @@ static constexpr Digest Digests[] = {
    {Digest::State::Trusted, "SHA256"},
    {Digest::State::Trusted, "SHA384"},
    {Digest::State::Trusted, "SHA512"},
-   {Digest::State::Trusted, "SHA224"},
+   {Digest::State::Configureable, "SHA224"},
 };
+static_assert(Digests[_count(Digests) - 1].state == Digest::State::Configureable, "the last digest algo isn't the configurable one which we expect for tests");
 
 static Digest FindDigest(std::string const & Digest)
 {
@@ -77,6 +91,10 @@ struct Signer {
    std::string key;
    std::string note;
 };
+static bool IsTheSameKey(std::string const &validsig, std::string const &goodsig) {
+   // VALIDSIG reports a keyid (40 = 24 + 16), GOODSIG is a longid (16) only
+   return validsig.compare(24, 16, goodsig, strlen("GOODSIG "), 16) == 0;
+}
 
 class GPGVMethod : public aptMethod
 {
@@ -91,7 +109,6 @@ class GPGVMethod : public aptMethod
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
    public:
-   
    GPGVMethod() : aptMethod("gpgv","1.0",SingleInstance | SendConfig) {};
 };
 
@@ -125,6 +142,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
    // Loop over the output of apt-key (which really is gnupg), and check the signatures.
    std::vector<std::string> ValidSigners;
+   std::vector<std::string> ErrSigners;
    size_t buffersize = 0;
    char *buffer = NULL;
    while (1)
@@ -144,11 +162,19 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::clog << "Got BADSIG! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
+      else if (strncmp(buffer, GNUPGERRSIG, sizeof(GNUPGERRSIG)-1) == 0)
+      {
+         if (Debug == true)
+            std::clog << "Got ERRSIG " << std::endl;
+         ErrSigners.push_back(string(buffer, strlen(GNUPGPREFIX), strlen("ERRSIG ") + 16));
+      }
       else if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
       {
          if (Debug == true)
             std::clog << "Got NO_PUBKEY " << std::endl;
          NoPubKeySigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+	 ErrSigners.erase(std::remove_if(ErrSigners.begin(), ErrSigners.end(), [&](std::string const &errsig) {
+		  return errsig.compare(strlen("ERRSIG "), 16, buffer, strlen(GNUPGNOPUBKEY), 16) == 0;  }), ErrSigners.end());
       }
       else if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGBADSIG)-1) == 0)
       {
@@ -191,7 +217,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          *p = 0;
          // Reject weak digest algorithms
          Digest digest = FindDigest(tokens[7]);
-         switch (digest.state) {
+         switch (digest.getState()) {
          case Digest::State::Weak:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
@@ -203,10 +229,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
             WorthlessSigners.push_back(string(sig));
-            GoodSigners.erase(std::remove(GoodSigners.begin(), GoodSigners.end(), string(sig)));
+            GoodSigners.erase(std::remove_if(GoodSigners.begin(), GoodSigners.end(), [&](std::string const &goodsig) {
+		     return IsTheSameKey(string(sig), goodsig); }), GoodSigners.end());
 	    if (Debug == true)
 	       std::clog << "Got untrusted VALIDSIG, key ID: " << sig << std::endl;
             break;
+	 case Digest::State::Configureable:
          case Digest::State::Trusted:
 	    if (Debug == true)
 	       std::clog << "Got trusted VALIDSIG, key ID: " << sig << std::endl;
@@ -218,6 +246,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    fclose(pipein);
    free(buffer);
+   std::move(ErrSigners.begin(), ErrSigners.end(), std::back_inserter(WorthlessSigners));
 
    // apt-key has a --keyid parameter, but this requires gpg, so we call it without it
    // and instead check after the fact which keyids where used for verification
@@ -252,7 +281,22 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    {
       ioprintf(std::clog, "gpgv exited with status %i\n", WEXITSTATUS(status));
    }
-   
+
+   if (Debug)
+   {
+      std::cerr << "Summary:" << std::endl << "  Good: ";
+      std::copy(GoodSigners.begin(), GoodSigners.end(), std::ostream_iterator<std::string>(std::cerr, ", "));
+      std::cerr << std::endl << "  Bad: ";
+      std::copy(BadSigners.begin(), BadSigners.end(), std::ostream_iterator<std::string>(std::cerr, ", "));
+      std::cerr << std::endl << "  Worthless: ";
+      std::copy(WorthlessSigners.begin(), WorthlessSigners.end(), std::ostream_iterator<std::string>(std::cerr, ", "));
+      std::cerr << std::endl << "  SoonWorthless: ";
+      std::for_each(SoonWorthlessSigners.begin(), SoonWorthlessSigners.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
+      std::cerr << std::endl << "  NoPubKey: ";
+      std::copy(NoPubKeySigners.begin(), NoPubKeySigners.end(), std::ostream_iterator<std::string>(std::cerr, ", "));
+      std::cerr << std::endl;
+   }
+
    if (WEXITSTATUS(status) == 0)
    {
       if (keyIsID)
@@ -309,8 +353,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    // Check if all good signers are soon worthless and warn in that case
    if (std::all_of(GoodSigners.begin(), GoodSigners.end(), [&](std::string const &good) {
 	    return std::any_of(SoonWorthlessSigners.begin(), SoonWorthlessSigners.end(), [&](Signer const &weak) {
-		  // VALIDSIG reports a keyid (40 = 24 + 16), GOODSIG is a longid (16) only
-		  return weak.key.compare(24, 16, good, strlen("GOODSIG "), 16) == 0;
+		  return IsTheSameKey(weak.key, good);
 		  });
 	    }))
    {

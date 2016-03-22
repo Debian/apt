@@ -97,6 +97,7 @@ updatewithwarnings() {
 }
 
 runtest() {
+	local DELETEFILE="$1"
 	msgmsg 'Cold archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
@@ -257,19 +258,14 @@ runtest2() {
 }
 
 runtest3() {
-	export APT_TESTS_DIGEST_ALGO="$1"
-	msgmsg "Running base test with digest $1"
+	echo "Debug::Acquire::gpgv::configdigest::truststate \"$1\";" > rootdir/etc/apt/apt.conf.d/truststate
+	msgmsg "Running base test with $1 digest"
 	runtest2
 
-	DELETEFILE="InRelease"
-	msgmsg "Running test with deletion of $DELETEFILE and digest $1"
-	runtest
-
-	DELETEFILE="Release.gpg"
-	msgmsg "Running test with deletion of $DELETEFILE and digest $1"
-	runtest
-
-	unset APT_TESTS_DIGEST_ALGO
+	for DELETEFILE in 'InRelease' 'Release.gpg'; do
+		msgmsg "Running test with deletion of $DELETEFILE and $1 digest"
+		runtest "$DELETEFILE"
+	done
 }
 
 # diable some protection by default and ensure we still do the verification
@@ -278,17 +274,50 @@ cat > rootdir/etc/apt/apt.conf.d/weaken-security <<EOF
 Acquire::AllowInsecureRepositories "1";
 Acquire::AllowDowngradeToInsecureRepositories "1";
 EOF
+# the hash marked as configureable in our gpgv method
+export APT_TESTS_DIGEST_ALGO='SHA224'
 
-# an all-round good hash
 successfulaptgetupdate() {
 	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 }
-runtest3 'SHA512'
+runtest3 'trusted'
 
-# a hash we consider weak and therefore warn about
-rm -f rootdir/etc/apt/apt.conf.d/no-sha1
 successfulaptgetupdate() {
 	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 	testsuccess grep 'uses weak digest algorithm' rootdir/tmp/testwarning.output
 }
-runtest3 'SHA1'
+runtest3 'weak'
+
+msgmsg "Running test with apt-untrusted digest"
+echo "Debug::Acquire::gpgv::configdigest::truststate \"untrusted\";" > rootdir/etc/apt/apt.conf.d/truststate
+runfailure() {
+	for DELETEFILE in 'InRelease' 'Release.gpg'; do
+		msgmsg 'Cold archive signed by' 'Joe Sixpack'
+		prepare "${PKGFILE}"
+		rm -rf rootdir/var/lib/apt/lists
+		signreleasefiles 'Joe Sixpack'
+		find aptarchive/ -name "$DELETEFILE" -delete
+		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		testsuccess grep 'The following signatures were invalid' rootdir/tmp/testfailure.output
+		testnopackage 'apt'
+		testwarning aptget update --allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		failaptold
+
+		msgmsg 'Cold archive signed by' 'Marvin Paranoid'
+		prepare "${PKGFILE}"
+		rm -rf rootdir/var/lib/apt/lists
+		signreleasefiles 'Marvin Paranoid'
+		find aptarchive/ -name "$DELETEFILE" -delete
+		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		testnopackage 'apt'
+		updatewithwarnings '^W: .* NO_PUBKEY'
+		testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+		failaptold
+	done
+}
+runfailure
+
+msgmsg "Running test with gpgv-untrusted digest"
+export APT_TESTS_DIGEST_ALGO='MD5'
+runfailure
