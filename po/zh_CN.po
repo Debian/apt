@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-03-15 19:21+0100\n"
+"POT-Creation-Date: 2016-03-24 19:31+0100\n"
 "PO-Revision-Date: 2016-03-19 08:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1020,7 +1020,7 @@ msgid ""
 "displayed information may therefore be outdated if the last update was\n"
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
-msgstr "" 
+msgstr ""
 "用法： apt-cache [选项] 命令\n"
 "       apt-cache [选项] show 软件包1 [软件包2 ...]\n"
 "\n"
@@ -1706,8 +1706,8 @@ msgstr "运行 apt-key 时发生未知错误"
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
 #, c-format
-msgid "The repository is insufficiently signed by key %s (%s)"
-msgstr "仓库 “%s” 数字签名不完整。"
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr ""
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -2449,8 +2449,7 @@ msgstr "GPG 错误：%s: %s"
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
-msgstr ""
-"鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
+msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2465,8 +2464,7 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr ""
-"鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
+msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
 
 #: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
@@ -2514,9 +2512,8 @@ msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
-"一般不可以这样做，但选项 "
-"Acquire:: AllowDowngradeToInsecureRepositories "
-"可以用于覆盖默认设置。"
+"一般不可以这样做，但选项 Acquire:: AllowDowngradeToInsecureRepositories 可以"
+"用于覆盖默认设置。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -3148,12 +3145,11 @@ msgid "No Hash entry in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内无哈希条目"
 
 #: apt-pkg/deb/debmetaindex.cc
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"No Hash entry in Release file %s which is considered strong enough for "
+"No Hash entry in Release file %s, which is considered strong enough for "
 "security purposes"
-msgstr ""
-"Release 文件 %s 中不含散列字段，该文件用于保证足够的安全性。"
+msgstr "Release 文件 %s 中不含散列字段，该文件用于保证足够的安全性。"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3664,6 +3660,9 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "正在计算更新"
+
+#~ msgid "The repository is insufficiently signed by key %s (%s)"
+#~ msgstr "仓库 “%s” 数字签名不完整。"
 
 #~ msgid ""
 #~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
