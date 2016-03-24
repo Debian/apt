@@ -13,6 +13,7 @@
 #define APT_STRINGVIEW_H
 #include <string.h>
 #include <string>
+#include <apt-pkg/macros.h>
 
 namespace APT {
 
@@ -23,7 +24,7 @@ namespace APT {
  * used by APT. It is not meant to be used in programs, only inside the
  * library for performance critical paths.
  */
-class StringView {
+class APT_HIDDEN StringView {
     const char *data_;
     size_t size_;
 
