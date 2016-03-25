@@ -341,7 +341,7 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    unlink(message);
    free(message);
 
-   MessageFile.OpenDescriptor(messageFd, FileFd::ReadWrite, true);
+   MessageFile.OpenDescriptor(messageFd, FileFd::ReadWrite | FileFd::BufferedWrite, true);
    if (MessageFile.Failed() == true)
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
