@@ -1176,7 +1176,7 @@ public:
    virtual ~FileFdPrivate() {}
 };
 									/*}}}*/
-class APT_HIDDEN BufferedWriteFileFdPrivate : public FileFdPrivate {							/*{{{*/
+class APT_HIDDEN BufferedWriteFileFdPrivate : public FileFdPrivate {	/*{{{*/
 protected:
    FileFdPrivate *wrapped;
    simple_buffer writebuffer;
@@ -1186,63 +1186,63 @@ public:
    explicit BufferedWriteFileFdPrivate(FileFdPrivate *Priv) :
       FileFdPrivate(Priv->filefd), wrapped(Priv) {};
 
-   virtual APT::Configuration::Compressor get_compressor() const override
+   virtual APT::Configuration::Compressor get_compressor() const APT_OVERRIDE
    {
       return wrapped->get_compressor();
    }
-   virtual void set_compressor(APT::Configuration::Compressor const &compressor)  override
+   virtual void set_compressor(APT::Configuration::Compressor const &compressor)  APT_OVERRIDE
    {
       return wrapped->set_compressor(compressor);
    }
-   virtual unsigned int get_openmode() const  override
+   virtual unsigned int get_openmode() const  APT_OVERRIDE
    {
       return wrapped->get_openmode();
    }
-   virtual void set_openmode(unsigned int openmode)  override
+   virtual void set_openmode(unsigned int openmode)  APT_OVERRIDE
    {
       return wrapped->set_openmode(openmode);
    }
-   virtual bool get_is_pipe() const  override
+   virtual bool get_is_pipe() const  APT_OVERRIDE
    {
       return wrapped->get_is_pipe();
    }
-   virtual void set_is_pipe(bool is_pipe) override
+   virtual void set_is_pipe(bool is_pipe) APT_OVERRIDE
    {
       FileFdPrivate::set_is_pipe(is_pipe);
       wrapped->set_is_pipe(is_pipe);
    }
-   virtual unsigned long long get_seekpos() const override
+   virtual unsigned long long get_seekpos() const APT_OVERRIDE
    {
       return wrapped->get_seekpos();
    }
-   virtual void set_seekpos(unsigned long long seekpos) override
+   virtual void set_seekpos(unsigned long long seekpos) APT_OVERRIDE
    {
       return wrapped->set_seekpos(seekpos);
    }
-   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return false;
       return wrapped->InternalOpen(iFd, Mode);
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return -1;
       return wrapped->InternalUnbufferedRead(To, Size);
 
    }
-   virtual bool InternalReadError() override
+   virtual bool InternalReadError() APT_OVERRIDE
    {
       return wrapped->InternalReadError();
    }
-   virtual char * InternalReadLine(char * To, unsigned long long Size) override
+   virtual char * InternalReadLine(char * To, unsigned long long Size) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return nullptr;
       return wrapped->InternalReadLine(To, Size);
    }
-   virtual bool InternalFlush() override
+   virtual bool InternalFlush() APT_OVERRIDE
    {
       while (writebuffer.empty() == false) {
 	 auto written = wrapped->InternalWrite(writebuffer.get(),
@@ -1259,7 +1259,7 @@ public:
       writebuffer.reset();
       return true;
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       // Optimisation: If the buffer is empty and we have more to write than
       // would fit in the buffer (or equal number of bytes), write directly.
@@ -1274,45 +1274,45 @@ public:
 
       return written;
    }
-   virtual bool InternalWriteError()
+   virtual bool InternalWriteError() APT_OVERRIDE
    {
       return wrapped->InternalWriteError();
    }
-   virtual bool InternalSeek(unsigned long long const To)
+   virtual bool InternalSeek(unsigned long long const To) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return false;
       return wrapped->InternalSeek(To);
    }
-   virtual bool InternalSkip(unsigned long long Over)
+   virtual bool InternalSkip(unsigned long long Over) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return false;
       return wrapped->InternalSkip(Over);
    }
-   virtual bool InternalTruncate(unsigned long long const Size)
+   virtual bool InternalTruncate(unsigned long long const Size) APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return false;
       return wrapped->InternalTruncate(Size);
    }
-   virtual unsigned long long InternalTell()
+   virtual unsigned long long InternalTell() APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return -1;
       return wrapped->InternalTell();
    }
-   virtual unsigned long long InternalSize()
+   virtual unsigned long long InternalSize() APT_OVERRIDE
    {
       if (InternalFlush() == false)
 	 return -1;
       return wrapped->InternalSize();
    }
-   virtual bool InternalClose(std::string const &FileName)
+   virtual bool InternalClose(std::string const &FileName) APT_OVERRIDE
    {
       return wrapped->InternalClose(FileName);
    }
-   virtual bool InternalAlwaysAutoClose() const
+   virtual bool InternalAlwaysAutoClose() const APT_OVERRIDE
    {
       return wrapped->InternalAlwaysAutoClose();
    }
@@ -1326,7 +1326,7 @@ class APT_HIDDEN GzipFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_ZLIB
 public:
    gzFile gz;
-   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
    {
       if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
 	 gz = gzdopen(iFd, "r+");
@@ -1337,11 +1337,11 @@ public:
       filefd->Flags |= FileFd::Compressed;
       return gz != nullptr;
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       return gzread(gz, To, Size);
    }
-   virtual bool InternalReadError() override
+   virtual bool InternalReadError() APT_OVERRIDE
    {
       int err;
       char const * const errmsg = gzerror(gz, &err);
@@ -1349,15 +1349,15 @@ public:
 	 return filefd->FileFdError("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
       return FileFdPrivate::InternalReadError();
    }
-   virtual char * InternalReadLine(char * To, unsigned long long Size) override
+   virtual char * InternalReadLine(char * To, unsigned long long Size) APT_OVERRIDE
    {
       return gzgets(gz, To, Size);
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       return gzwrite(gz,From,Size);
    }
-   virtual bool InternalWriteError() override
+   virtual bool InternalWriteError() APT_OVERRIDE
    {
       int err;
       char const * const errmsg = gzerror(gz, &err);
@@ -1365,7 +1365,7 @@ public:
 	 return filefd->FileFdError("gzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
       return FileFdPrivate::InternalWriteError();
    }
-   virtual bool InternalSeek(unsigned long long const To) override
+   virtual bool InternalSeek(unsigned long long const To) APT_OVERRIDE
    {
       off_t const res = gzseek(gz, To, SEEK_SET);
       if (res != (off_t)To)
@@ -1374,7 +1374,7 @@ public:
       buffer.reset();
       return true;
    }
-   virtual bool InternalSkip(unsigned long long Over) override
+   virtual bool InternalSkip(unsigned long long Over) APT_OVERRIDE
    {
       if (Over >= buffer.size())
       {
@@ -1394,11 +1394,11 @@ public:
       seekpos = res;
       return true;
    }
-   virtual unsigned long long InternalTell() override
+   virtual unsigned long long InternalTell() APT_OVERRIDE
    {
       return gztell(gz) - buffer.size();
    }
-   virtual unsigned long long InternalSize() override
+   virtual unsigned long long InternalSize() APT_OVERRIDE
    {
       unsigned long long filesize = FileFdPrivate::InternalSize();
       // only check gzsize if we are actually a gzip file, just checking for
@@ -1432,7 +1432,7 @@ public:
       }
       return size;
    }
-   virtual bool InternalClose(std::string const &FileName) override
+   virtual bool InternalClose(std::string const &FileName) APT_OVERRIDE
    {
       if (gz == nullptr)
 	 return true;
@@ -1453,7 +1453,7 @@ class APT_HIDDEN Bz2FileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_BZ2
    BZFILE* bz2;
 public:
-   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
    {
       if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
 	 bz2 = BZ2_bzdopen(iFd, "r+");
@@ -1464,11 +1464,11 @@ public:
       filefd->Flags |= FileFd::Compressed;
       return bz2 != nullptr;
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       return BZ2_bzread(bz2, To, Size);
    }
-   virtual bool InternalReadError() override
+   virtual bool InternalReadError() APT_OVERRIDE
    {
       int err;
       char const * const errmsg = BZ2_bzerror(bz2, &err);
@@ -1476,11 +1476,11 @@ public:
 	 return filefd->FileFdError("BZ2_bzread: %s %s (%d: %s)", filefd->FileName.c_str(), _("Read error"), err, errmsg);
       return FileFdPrivate::InternalReadError();
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       return BZ2_bzwrite(bz2, (void*)From, Size);
    }
-   virtual bool InternalWriteError() override
+   virtual bool InternalWriteError() APT_OVERRIDE
    {
       int err;
       char const * const errmsg = BZ2_bzerror(bz2, &err);
@@ -1488,8 +1488,8 @@ public:
 	 return filefd->FileFdError("BZ2_bzwrite: %s %s (%d: %s)", filefd->FileName.c_str(), _("Write error"), err, errmsg);
       return FileFdPrivate::InternalWriteError();
    }
-   virtual bool InternalStream() const override { return true; }
-   virtual bool InternalClose(std::string const &) override
+   virtual bool InternalStream() const APT_OVERRIDE { return true; }
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE
    {
       if (bz2 == nullptr)
 	 return true;
@@ -1515,7 +1515,7 @@ class APT_HIDDEN Lz4FileFdPrivate: public FileFdPrivate {				/*{{{*/
    // Count of bytes that the decompressor expects to read next, or buffer size.
    size_t next_to_load = APT_BUFFER_SIZE;
 public:
-   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
    {
       if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
 	 return _error->Error("lz4 only supports write or read mode");
@@ -1548,7 +1548,7 @@ public:
 
       return true;
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       /* Keep reading as long as the compressor still wants to read */
       while (next_to_load) {
@@ -1586,13 +1586,13 @@ public:
 
       return 0;
    }
-   virtual bool InternalReadError() override
+   virtual bool InternalReadError() APT_OVERRIDE
    {
       char const * const errmsg = LZ4F_getErrorName(res);
 
       return filefd->FileFdError("LZ4F: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Read error"), res, errmsg);
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       unsigned long long const towrite = std::min(APT_BUFFER_SIZE, Size);
 
@@ -1605,20 +1605,20 @@ public:
 
       return towrite;
    }
-   virtual bool InternalWriteError() override
+   virtual bool InternalWriteError() APT_OVERRIDE
    {
       char const * const errmsg = LZ4F_getErrorName(res);
 
       return filefd->FileFdError("LZ4F: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Write error"), res, errmsg);
    }
-   virtual bool InternalStream() const override { return true; }
+   virtual bool InternalStream() const APT_OVERRIDE { return true; }
 
-   virtual bool InternalFlush() override
+   virtual bool InternalFlush() APT_OVERRIDE
    {
       return backend.Flush();
    }
 
-   virtual bool InternalClose(std::string const &) override
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE
    {
       /* Reset variables */
       res = 0;
@@ -1722,7 +1722,7 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
       return 6;
    }
 public:
-   virtual bool InternalOpen(int const iFd, unsigned int const Mode) override
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
    {
       if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
 	 return filefd->FileFdError("ReadWrite mode is not supported for lzma/xz files %s", filefd->FileName.c_str());
@@ -1774,7 +1774,7 @@ public:
       }
       return true;
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       ssize_t Res;
       if (lzma->eof == true)
@@ -1810,11 +1810,11 @@ public:
       }
       return Res;
    }
-   virtual bool InternalReadError() override
+   virtual bool InternalReadError() APT_OVERRIDE
    {
       return filefd->FileFdError("lzma_read: %s (%d)", _("Read error"), lzma->err);
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       ssize_t Res;
       lzma->stream.next_in = (uint8_t *)From;
@@ -1843,12 +1843,12 @@ public:
       }
       return Res;
    }
-   virtual bool InternalWriteError() override
+   virtual bool InternalWriteError() APT_OVERRIDE
    {
       return filefd->FileFdError("lzma_write: %s (%d)", _("Write error"), lzma->err);
    }
-   virtual bool InternalStream() const override { return true; }
-   virtual bool InternalClose(std::string const &) override
+   virtual bool InternalStream() const APT_OVERRIDE { return true; }
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE
    {
       delete lzma;
       lzma = nullptr;
@@ -1865,7 +1865,7 @@ class APT_HIDDEN PipedFileFdPrivate: public FileFdPrivate				/*{{{*/
    by executing a specified binary and pipe in/out what we need */
 {
 public:
-   virtual bool InternalOpen(int const, unsigned int const Mode) override
+   virtual bool InternalOpen(int const, unsigned int const Mode) APT_OVERRIDE
    {
       // collect zombies here in case we reopen
       if (compressor_pid > 0)
@@ -1963,15 +1963,15 @@ public:
 
       return true;
    }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       return read(filefd->iFd, To, Size);
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       return write(filefd->iFd, From, Size);
    }
-   virtual bool InternalClose(std::string const &) override
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE
    {
       bool Ret = true;
       if (compressor_pid > 0)
@@ -1986,12 +1986,12 @@ public:
 class APT_HIDDEN DirectFileFdPrivate: public FileFdPrivate				/*{{{*/
 {
 public:
-   virtual bool InternalOpen(int const, unsigned int const) override { return true; }
-   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) override
+   virtual bool InternalOpen(int const, unsigned int const) APT_OVERRIDE { return true; }
+   virtual ssize_t InternalUnbufferedRead(void * const To, unsigned long long const Size) APT_OVERRIDE
    {
       return read(filefd->iFd, To, Size);
    }
-   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) override
+   virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
       // files opened read+write are strange and only really "supported" for direct files
       if (buffer.size() != 0)
@@ -2001,7 +2001,7 @@ public:
       }
       return write(filefd->iFd, From, Size);
    }
-   virtual bool InternalSeek(unsigned long long const To) override
+   virtual bool InternalSeek(unsigned long long const To) APT_OVERRIDE
    {
       off_t const res = lseek(filefd->iFd, To, SEEK_SET);
       if (res != (off_t)To)
@@ -2010,7 +2010,7 @@ public:
       buffer.reset();
       return true;
    }
-   virtual bool InternalSkip(unsigned long long Over) override
+   virtual bool InternalSkip(unsigned long long Over) APT_OVERRIDE
    {
       if (Over >= buffer.size())
       {
@@ -2030,7 +2030,7 @@ public:
       seekpos = res;
       return true;
    }
-   virtual bool InternalTruncate(unsigned long long const To) override
+   virtual bool InternalTruncate(unsigned long long const To) APT_OVERRIDE
    {
       if (buffer.size() != 0)
       {
@@ -2046,16 +2046,16 @@ public:
 	 return filefd->FileFdError("Unable to truncate to %llu",To);
       return true;
    }
-   virtual unsigned long long InternalTell() override
+   virtual unsigned long long InternalTell() APT_OVERRIDE
    {
       return lseek(filefd->iFd,0,SEEK_CUR) - buffer.size();
    }
-   virtual unsigned long long InternalSize() override
+   virtual unsigned long long InternalSize() APT_OVERRIDE
    {
       return filefd->FileSize();
    }
-   virtual bool InternalClose(std::string const &) override { return true; }
-   virtual bool InternalAlwaysAutoClose() const override { return false; }
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE { return true; }
+   virtual bool InternalAlwaysAutoClose() const APT_OVERRIDE { return false; }
 
    explicit DirectFileFdPrivate(FileFd * const filefd) : FileFdPrivate(filefd) {}
    virtual ~DirectFileFdPrivate() { InternalClose(""); }
