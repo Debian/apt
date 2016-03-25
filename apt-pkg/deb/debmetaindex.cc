@@ -435,7 +435,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    if(FoundStrongHashSum == false)
    {
       if (ErrorText != NULL)
-	 strprintf(*ErrorText, _("No Hash entry in Release file %s, which is considered strong enough for security purposes"), Filename.c_str());
+	 strprintf(*ErrorText, _("No Hash entry in Release file %s which is considered strong enough for security purposes"), Filename.c_str());
       return false;
    }
 

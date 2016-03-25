@@ -17,7 +17,7 @@ APTARCHIVE="$(readlink -f ./aptarchive)"
 msgmsg 'Release contains only weak hashes'
 FILENAME="${APTARCHIVE}/dists/unstable/InRelease"
 MANGLED="$(readlink -f ./rootdir)/var/lib/apt/lists/partial/$(echo "$FILENAME" | sed 's#/#_#g')"
-testfailuremsg "E: Failed to fetch file:${FILENAME}  No Hash entry in Release file ${MANGLED}, which is considered strong enough for security purposes
+testfailuremsg "E: Failed to fetch file:${FILENAME}  No Hash entry in Release file ${MANGLED} which is considered strong enough for security purposes
 E: Some index files failed to download. They have been ignored, or old ones used instead." apt update
 testnopackage foo
 testnosrcpackage foo
