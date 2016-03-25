@@ -325,12 +325,18 @@ pkgDebianIndexFile::~pkgDebianIndexFile()
 pkgCacheListParser * pkgDebianIndexFile::CreateListParser(FileFd &Pkg)
 {
    if (Pkg.IsOpen() == false)
-      return NULL;
+      return nullptr;
    _error->PushToStack();
    pkgCacheListParser * const Parser = new debListParser(&Pkg);
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   return newError ? NULL : Parser;
+   if (newError)
+   {
+      delete Parser;
+      return nullptr;
+   }
+   else
+      return Parser;
 }
 bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
 {

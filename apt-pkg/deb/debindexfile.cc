@@ -121,12 +121,18 @@ std::string debTranslationsIndex::GetArchitecture() const
 pkgCacheListParser * debTranslationsIndex::CreateListParser(FileFd &Pkg)
 {
    if (Pkg.IsOpen() == false)
-      return NULL;
+      return nullptr;
    _error->PushToStack();
    pkgCacheListParser * const Parser = new debTranslationsParser(&Pkg);
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   return newError ? NULL : Parser;
+   if (newError)
+   {
+      delete Parser;
+      return nullptr;
+   }
+   else
+      return Parser;
 }
 									/*}}}*/
 // dpkg/status Index							/*{{{*/
@@ -149,12 +155,18 @@ uint8_t debStatusIndex::GetIndexFlags() const
 pkgCacheListParser * debStatusIndex::CreateListParser(FileFd &Pkg)
 {
    if (Pkg.IsOpen() == false)
-      return NULL;
+      return nullptr;
    _error->PushToStack();
    pkgCacheListParser * const Parser = new debStatusListParser(&Pkg);
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   return newError ? NULL : Parser;
+   if (newError)
+   {
+      delete Parser;
+      return nullptr;
+   }
+   else
+      return Parser;
 }
 									/*}}}*/
 // DebPkgFile Index - a single .deb file as an index			/*{{{*/
@@ -225,12 +237,18 @@ bool debDebPkgFileIndex::OpenListFile(FileFd &Pkg, std::string const &FileName)
 pkgCacheListParser * debDebPkgFileIndex::CreateListParser(FileFd &Pkg)
 {
    if (Pkg.IsOpen() == false)
-      return NULL;
+      return nullptr;
    _error->PushToStack();
    pkgCacheListParser * const Parser = new debDebFileParser(&Pkg, DebFile);
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   return newError ? NULL : Parser;
+   if (newError)
+   {
+      delete Parser;
+      return nullptr;
+   }
+   else
+      return Parser;
 }
 uint8_t debDebPkgFileIndex::GetIndexFlags() const
 {
