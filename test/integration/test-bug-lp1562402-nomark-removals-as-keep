@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'maas-common' 'all' '2.0.0~alpha4+bzr4843-0ubuntu1~xenial2'
+insertpackage 'unstable' 'maas-region-controller-min' 'amd64' '2.0.0~alpha4+bzr4837-0ubuntu1~xenial1'  'Depends: maas-common (= 2.0.0~alpha4+bzr4837-0ubuntu1~xenial1)'
+insertpackage 'unstable' 'maas-region-api' 'amd64' '2.0.0~alpha4+bzr4843-0ubuntu1~xenial2' 'Depends: maas-common (= 2.0.0~alpha4+bzr4843-0ubuntu1~xenial2)\nConflicts: maas-region-controller-min\nProvides: maas-region-controller-min'
+insertpackage 'unstable' 'maas-region-controller' 'all' '2.0.0~alpha4+bzr4843-0ubuntu1~xenial2' 'Depends: maas-region-api (= 2.0.0~alpha4+bzr4843-0ubuntu1~xenial2)'
+
+insertinstalledpackage 'maas-common' 'all' '2.0.0~alpha3+bzr4810-0ubuntu1'
+insertinstalledpackage 'maas-region-controller-min' 'amd64' '2.0.0~alpha3+bzr4810-0ubuntu1' 'Depends: maas-common (= 2.0.0~alpha3+bzr4810-0ubuntu1)'
+insertinstalledpackage 'maas-region-controller' 'all' '2.0.0~alpha3+bzr4810-0ubuntu1' 'Depends: maas-region-controller-min (= 2.0.0~alpha3+bzr4810-0ubuntu1)'
+
+setupaptarchive
+
+testsuccess aptget dist-upgrade -s -o Debug::pkgDepCache::AutoInstall=true  -o Debug::pkgPackageManager=yes  -o Debug::pkgProblemResolver=yes
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  maas-region-controller-min
+The following NEW packages will be installed:
+  maas-region-api
+The following packages will be upgraded:
+  maas-common maas-region-controller
+2 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Inst maas-region-controller [2.0.0~alpha3+bzr4810-0ubuntu1] (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all]) []
+Remv maas-region-controller-min [2.0.0~alpha3+bzr4810-0ubuntu1] []
+Inst maas-common [2.0.0~alpha3+bzr4810-0ubuntu1] (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all]) []
+Inst maas-region-api (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [amd64])
+Conf maas-common (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all])
+Conf maas-region-api (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [amd64])
+Conf maas-region-controller (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all])' \
+aptget dist-upgrade -s

@@ -1424,8 +1424,11 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
          {
 	    SetCandidateVersion(Pkg.CurrentVer());
             StateCache &State = PkgState[Pkg->ID];
-            State.Mode = ModeKeep;
-            State.Update(Pkg, *this);
+	    if (State.Mode != ModeDelete)
+	    {
+	       State.Mode = ModeKeep;
+	       State.Update(Pkg, *this);
+	    }
          }
 	 return false;
       }
