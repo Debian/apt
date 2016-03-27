@@ -59,6 +59,7 @@ testrun 'httpdown'
 httpredirectdown() {
 	msgtest 'Redirect leads' 'first URI to the second URI'
 	for i in 1 2 3 4 5 6 7 8 9 10; do
+		rm -f ./downloaded/foo1 ./downloaded/foo2
 		testsuccess --nomsg apthelper download-file "http://localhost:${APTHTTPPORT}/foo2" "./downloaded/foo1" '' \
 			"http://localhost:${APTHTTPPORT}/foo" './downloaded/foo2' '' -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 		cp rootdir/tmp/testsuccess.output download.log
