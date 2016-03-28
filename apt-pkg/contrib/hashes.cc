@@ -129,12 +129,21 @@ APT_PURE bool HashString::empty() const					/*{{{*/
    return (Type.empty() || Hash.empty());
 }
 									/*}}}*/
+
+APT_PURE static bool IsConfigured(const char *name, const char *what)
+{
+   std::string option;
+   strprintf(option, "APT::Hashes::%s::%s", name, what);
+   return _config->FindB(option, false);
+}
+
 APT_PURE bool HashString::usable() const				/*{{{*/
 {
    return (
       (Type != "Checksum-FileSize") &&
       (Type != "MD5Sum") &&
-      (Type != "SHA1")
+      (Type != "SHA1") &&
+      !IsConfigured(Type.c_str(), "Untrusted")
    );
 }
 									/*}}}*/

@@ -258,7 +258,7 @@ runtest2() {
 }
 
 runtest3() {
-	echo "Debug::Acquire::gpgv::configdigest::truststate \"$1\";" > rootdir/etc/apt/apt.conf.d/truststate
+	echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::$1 \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
 	msgmsg "Running base test with $1 digest"
 	runtest2
 
@@ -280,16 +280,16 @@ export APT_TESTS_DIGEST_ALGO='SHA224'
 successfulaptgetupdate() {
 	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 }
-runtest3 'trusted'
+runtest3 'Trusted'
 
 successfulaptgetupdate() {
 	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 	testsuccess grep 'uses weak digest algorithm' rootdir/tmp/testwarning.output
 }
-runtest3 'weak'
+runtest3 'Weak'
 
 msgmsg "Running test with apt-untrusted digest"
-echo "Debug::Acquire::gpgv::configdigest::truststate \"untrusted\";" > rootdir/etc/apt/apt.conf.d/truststate
+echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::Untrusted \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
 runfailure() {
 	for DELETEFILE in 'InRelease' 'Release.gpg'; do
 		msgmsg 'Cold archive signed by' 'Joe Sixpack'

@@ -45,19 +45,20 @@ struct Digest {
       Untrusted,
       Weak,
       Trusted,
-      Configureable
    } state;
    char name[32];
 
    State getState() const {
-      if (state != Digest::State::Configureable)
-	 return state;
-      std::string const digestconfig = _config->Find("Debug::Acquire::gpgv::configdigest::truststate", "trusted");
-      if (digestconfig == "weak")
-	 return State::Weak;
-      else if (digestconfig == "untrusted")
+      std::string optionUntrusted;
+      std::string optionWeak;
+      strprintf(optionUntrusted, "APT::Hashes::%s::Untrusted", name);
+      strprintf(optionWeak, "APT::Hashes::%s::Weak", name);
+      if (_config->FindB(optionUntrusted, state == State::Untrusted) == true)
 	 return State::Untrusted;
-      return State::Trusted;
+      if (_config->FindB(optionWeak, state == State::Weak) == true)
+	 return State::Weak;
+
+      return state;
    }
 };
 
@@ -73,9 +74,8 @@ static constexpr Digest Digests[] = {
    {Digest::State::Trusted, "SHA256"},
    {Digest::State::Trusted, "SHA384"},
    {Digest::State::Trusted, "SHA512"},
-   {Digest::State::Configureable, "SHA224"},
+   {Digest::State::Trusted, "SHA224"},
 };
-static_assert(Digests[_count(Digests) - 1].state == Digest::State::Configureable, "the last digest algo isn't the configurable one which we expect for tests");
 
 static Digest FindDigest(std::string const & Digest)
 {
@@ -234,8 +234,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	    if (Debug == true)
 	       std::clog << "Got untrusted VALIDSIG, key ID: " << sig << std::endl;
             break;
-	 case Digest::State::Configureable:
-         case Digest::State::Trusted:
+
+	 case Digest::State::Trusted:
 	    if (Debug == true)
 	       std::clog << "Got trusted VALIDSIG, key ID: " << sig << std::endl;
             break;
