@@ -4,19 +4,22 @@
 # Debian Project, Masato Taruishi <taru@debian.org>, 2002
 # Debian Project, Keita Maehara <maehara@debian.org>, 2003
 # Debian Project, Kenshi Muto <kmuto@debian.org>, 2004-2012
+# Takuma Yamada <tyamada@takumayamada.com>, 2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-03-25 09:30+0100\n"
-"PO-Revision-Date: 2014-12-12 22:33+0900\n"
-"Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
-"Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
+"POT-Creation-Date: 2016-04-04 11:47+0200\n"
+"PO-Revision-Date: 2016-03-31 09:45+0900\n"
+"Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
+"Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8 bit\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
 #: apt-private/acqprogress.cc
@@ -55,7 +58,7 @@ msgid " [Working]"
 msgstr " [処理中]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
@@ -63,7 +66,8 @@ msgid ""
 msgstr ""
 "メディア変更: \n"
 " '%s'\n"
-"とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してください\n"
+"とラベルの付いたディスクをドライブ '%s' に入れて [Enter] キーを押してくださ"
+"い\n"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -100,38 +104,36 @@ msgid "Sorting"
 msgstr "ソート中"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "'%3$s' のバージョン '%1$s' (%2$s) を選択しました\n"
+msgstr "注意、タスク '%2$s' のために '%1$s' を選択します\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "'%3$s' のバージョン '%1$s' (%2$s) を選択しました\n"
+msgstr "注意、glob '%2$s' のために '%1$s' を選択します\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "'%3$s' のバージョン '%1$s' (%2$s) を選択しました\n"
+msgstr "注意、regex '%2$s' のために '%1$s' を選択します\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package %s is a virtual package provided by:\n"
-msgstr "しかし、これは仮想パッケージです"
+msgstr "パッケージ %s は、以下によって提供される仮想パッケージです:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
 msgstr "[インストール済み]"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "候補バージョン"
+msgstr "[候補バージョンでない]"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
-msgstr ""
+msgstr "インストールするには、明示的にいずれかを選択する必要があります。"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -140,21 +142,23 @@ msgid ""
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
+"パッケージ %s は使用できませんが、別のパッケージから参照されます。\n"
+"これは、パッケージが欠落しているか、廃止されたか、または別のソース\n"
+"からのみ利用可能であることを意味します。\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid "However the following packages replace it:"
-msgstr "以下のパッケージはアップグレードされます:"
+msgstr "しかし、以下のパッケージが置き換えます:"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "パッケージ '%s' はインストールされていないため、削除もされません\n"
+msgstr "パッケージ '%s' はインストール候補ではありません"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "'%s' のような仮想パッケージを削除することはできません\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
@@ -167,21 +171,21 @@ msgstr ""
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "パッケージ '%s' はインストールされていないため、削除もされません\n"
+msgstr "パッケージ '%s' はインストールされていないため削除もされません\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "'%2$s' の代わりに '%1$s' をソースパッケージとして選出しています\n"
+msgstr "注意、'%2$s' の代わりに '%1$s' を選択します\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "最も使用されているコマンド:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "利用可能なコマンドの詳細は %s を参照してください。"
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -190,6 +194,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"設定オプションと構文は apt.conf(5) に詳述されています。\n"
+"ソースを設定する方法の詳細は sources.list(5) で見つけることができます。\n"
+"パッケージとバージョンの選択肢は apt_preferences(5) で表すことができます。\n"
+"セキュリティの詳細は apt-secure(8) で利用可能です。\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -225,13 +233,16 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes は時代遅れです、代わりに --allow で始まるオプションのいずれかを使"
+"用します。"
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "問題が発生し、-y オプションが --force-yes なしで使用されました"
+msgstr ""
+"認証されていないパッケージがあり、-y オプションが --allow-unauthenticated な"
+"しで使用されました"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -291,22 +302,26 @@ msgid "Packages need to be removed but remove is disabled."
 msgstr "パッケージを削除しなければなりませんが、削除が無効になっています。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "問題が発生し、-y オプションが --force-yes なしで使用されました"
+msgstr ""
+"不可欠パッケージが削除され、-y オプションが --allow-remove-essential なしで使"
+"用されました"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "問題が発生し、-y オプションが --force-yes なしで使用されました"
+msgstr ""
+"パッケージがダウングレードされ、-y オプションが --allow-downgrades なしで使用"
+"されました。"
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"保留パッケージが変更され、-y オプションが --allow-change-held-packages なしで"
+"使用されました。"
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -473,7 +488,6 @@ msgstr ""
 "を明示してください)。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "以下の追加パッケージがインストールされます:"
 
@@ -506,9 +520,9 @@ msgstr "%s はダウンロードできないため、再インストールは不
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s はすでに最新版です。\n"
+msgstr "%s はすでに最新バージョン (%s) です。\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -761,7 +775,7 @@ msgstr "(見つかりません)"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s 優先度 %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -917,12 +931,12 @@ msgstr ""
 #: apt-private/private-source.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "注意、ビルドの依存関係を取得するためディレクトリ '%s' を使用します\n"
 
 #: apt-private/private-source.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "ビルド依存関係の処理に失敗しました"
+msgstr "注意、ビルドの依存関係を取得するためファイル '%s' を使用します\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to process build dependencies"
@@ -962,9 +976,8 @@ msgid "All packages are up to date."
 msgstr "パッケージはすべて最新です。"
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "update コマンドは引数をとりません"
+msgstr "apt-cache stats は引数をとりません"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -1047,6 +1060,15 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"使用方法: apt-cache [オプション] コマンド\n"
+"          apt-cache [オプション] show パッケージ名1 [パッケージ名2 ...]\n"
+"\n"
+"apt-cache はインストール済みとインストール可能なパッケージの情報を\n"
+"問い合わせて表示します。例えば apt-get の「更新」コマンドによって\n"
+"ローカルキャッシュに取得されたデータと排他的に動作します。したがって、\n"
+"最後の更新が古すぎる場合には、表示される情報は時代遅れかもしれません。\n"
+"しかし、引き換えに、apt-cache は設定されたソースの可用性とは独立して\n"
+"動作します (例えばオフライン)。\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -1081,9 +1103,8 @@ msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "このディスクに、'Debian 5.0.3 Disk 1' のような名前を付けてください"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "ディスクをドライブに入れて Enter キーを押してください"
+msgstr "ディスクをドライブに入れて [Enter] キーを押してください"
 
 #: cmdline/apt-cdrom.cc
 #, c-format
@@ -1117,13 +1138,18 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"使用方法: apt-cdrom [オプション] コマンド\n"
+"\n"
+"apt-cdrom は、CD-ROM、USB フラッシュドライブやその他のリムーバブル\n"
+"メディアを APT のパッケージソースに追加するために使用されます。\n"
+"マウントポイントとデバイス情報は、apt.conf(5)、udev(7) と fstab(5)\n"
+"から取得されます。\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "引数がペアではありません"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -1132,15 +1158,16 @@ msgid ""
 msgstr ""
 "使用方法: apt-config [オプション] コマンド\n"
 "\n"
-"apt-config は APT の設定ファイルを読み込むための簡単なツールです\n"
+"apt-config はすべての APT ツールで使用される設定へのインター\n"
+"フェースで、主にデバッグとシェルスクリプト向けです。\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "シェルの評価を経由して設定値を取得"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "アクティブな設定を表示"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1169,7 +1196,6 @@ msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1185,9 +1211,9 @@ msgstr ""
 "2 ...]\n"
 "        apt-get [オプション] source パッケージ名1 [パッケージ名2 ...]\n"
 "\n"
-"apt-get は、パッケージをダウンロード/インストールするための簡単なコマ\n"
-"ンドラインインタフェースです。もっともよく使われるコマンドは、update \n"
-"と install です。\n"
+"apt-get は、認証されたソースからのパッケージと情報の検索、\n"
+"および依存関係を伴うパッケージのインストール、アップグレード、\n"
+"削除のためのコマンドラインインターフェースです。\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1266,10 +1292,9 @@ msgstr "ダウンロード失敗"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec は %s のため失敗しました"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -1279,9 +1304,11 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "使用法: apt-helper [オプション] コマンド\n"
+"        apt-helper [オプション] cat-file ファイル ...\n"
 "        apt-helper [オプション] download-file uri 目標パス\n"
 "\n"
-"apt-helper は apt の内部ヘルパーです\n"
+"apt-helper はシェルスクリプトが使用するさまざまなコマンドをバンドル\n"
+"しています。例えば、同じプロキシ設定や APT と同様のシステム取得。\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1289,11 +1316,11 @@ msgstr "指定した uri を目標パスにダウンロードする"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "SRV レコードを検索 (例えば _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "自動解凍とファイル結合"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -1341,20 +1368,19 @@ msgstr "%s の保留を解除しました。\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "%s は完全削除で選択されました。\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "%s は削除で選択されました。\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "%s はインストールで選択されました。\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1365,8 +1391,10 @@ msgid ""
 msgstr ""
 "Usage: apt-mark [オプション] {auto|manual} パッケージ1 [パッケージ2 ...]\n"
 "\n"
-"apt-mark は、パッケージを手動または自動でインストールされたものとしてマーク\n"
-"する簡単なコマンドラインインターフェイスです。マークの一覧表示もできます。\n"
+"apt-mark は、パッケージを手動または自動でインストールされたものとして\n"
+"マークする簡単なコマンドラインインターフェイスです。また、dpkg(1) の\n"
+"パッケージ選択状態を操作したり、マークを特定せずにすべてのパッケージの\n"
+"一覧表示したりもできます。\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -1406,6 +1434,12 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"使用方法: apt [オプション] コマンド\n"
+"\n"
+"apt は、検索や管理、パッケージに関する情報を問い合わせるコマンドを\n"
+"提供するコマンドラインパッケージマネージャです。apt-get や apt-cache\n"
+"のような特化した APT ツールと同じ機能を提供しますが、デフォルトで\n"
+"対話的に使用するために適切なオプションを有効にします。\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1735,7 +1769,7 @@ msgstr "apt-key の実行中に未知のエラーが発生"
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
+msgstr "鍵 %s による署名は弱い digest アルゴリズム (%s) を使用しています"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -1870,6 +1904,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"サーバ/プロキシからの不正な応答のため自動的に %s を無効にしました。(man 5 "
+"apt.conf)"
 
 #: methods/server.cc
 msgid "Internal error"
@@ -1885,9 +1921,8 @@ msgstr "不正なデフォルト設定です!"
 
 #: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
 #: dselect/install:106 dselect/update:45
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Enter キーを押すと続行します。"
+msgstr "[Enter] キーを押すと続行します。"
 
 #: dselect/install:92
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -1915,7 +1950,6 @@ msgid "Merging available information"
 msgstr "入手可能情報をマージしています"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1925,14 +1959,9 @@ msgid ""
 msgstr ""
 "使用方法: apt-extracttemplates ファイル名1 [ファイル名2 ...]\n"
 "\n"
-"apt-extracttemplates は debian パッケージから設定とテンプレート情報を\n"
-"抽出するためのツールです\n"
-"\n"
-"オプション:\n"
-"  -h   このヘルプを表示する\n"
-"  -t   一時ディレクトリを指定する\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
+"apt-extracttemplates は debian パッケージから設定とテンプレートファイルを\n"
+"抽出するためのツールです。パッケージのインストールの前に設定に関する質問を\n"
+"要求する debconf(1) によって主に使用されます。\n"
 
 #: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1950,7 +1979,6 @@ msgstr ""
 "debconf のバージョンを取得できません。debconf はインストールされていますか?"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1962,12 +1990,6 @@ msgstr ""
 "\n"
 "apt-internal-solver は、デバッグなどの用途で、現在の内部リゾルバを\n"
 "APT ファミリの外部リゾルバのように使うためのインターフェイスです。\n"
-"\n"
-"オプション:\n"
-"  -h   このヘルプを表示する\n"
-"  -q   ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-"  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #: cmdline/apt-sortpkgs.cc
 msgid "Unknown package record!"
@@ -1981,6 +2003,11 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"使用方法: apt-sortpkgs [オプション] ファイル名1 [ファイル名2 ...]\n"
+"\n"
+"apt-sortpkgs は、パッケージ情報ファイルをソートするシンプルなツールです。\n"
+"デフォルトではバイナリパッケージ情報でソートしますが、-s オプションを使って\n"
+"ソースパッケージの順序に切り替えることができます。\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -2307,9 +2334,9 @@ msgid "Failed to read the archive headers"
 msgstr "アーカイブヘッダの読み込みに失敗しました"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "認証レコードが見つかりません: %s"
+msgstr "設定された圧縮プログラム '%s' が見つかりません"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -2437,18 +2464,22 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"セキュアに更新することができないリポジトリからの更新は、デフォルトで無効に"
+"なっています。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
-msgstr ""
+msgstr "認証されていないリポジトリのデータを使用することは、潜在的に危険です。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"リポジトリの作成とユーザ設定の詳細は、apt-secure(8) man ページを参照してくだ"
+"さい。"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2468,18 +2499,17 @@ msgid "Invalid file format"
 msgstr "不正なファイル形式"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "書き込みエラー"
+msgstr "署名エラー"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
 "署名照合中にエラーが発生しました。リポジトリは更新されず、過去のインデックス"
-"ファイルが使われます。GPG エラー: %s: %s\n"
+"ファイルが使われます。GPG エラー: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -2493,6 +2523,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"リポジトリ '%2$s' がアーキテクチャ '%3$s' をサポートしないため設定ファイル "
+"'%1$s' の取得をスキップ"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2509,6 +2541,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"リポジトリ '%2$s' は弱いセキュリティ情報のみを提供しているため、設定ファイル "
+"'%1$s' の取得をスキップします"
 
 #: apt-pkg/acquire-item.cc
 msgid "There is no public key available for the following key IDs:\n"
@@ -2537,28 +2571,30 @@ msgstr ""
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "ディレクトリ %s は divert されています"
+msgstr "リポジトリ %s は署名されていません。"
 
 #. No Release file was present so fall
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "ディレクトリ %s は divert されています"
+msgstr "リポジトリ %s には Release ファイルがありません。"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "ディレクトリ %s は divert されています"
+msgstr "リポジトリ %s はもう署名されていません。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"通常は許可されませんが、オプション Acquire::"
+"AllowDowngradeToInsecureRepositories が上書きするために指定されました。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2584,9 +2620,9 @@ msgstr ""
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "%s (%s) の変更履歴"
+msgstr "%s=%s のため変更履歴が利用できません"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -2604,12 +2640,12 @@ msgid "Method %s did not start correctly"
 msgstr "メソッド %s が正常に開始しませんでした"
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr ""
-"'%s' とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してくだ"
-"さい。"
+"'%s' とラベルの付いたディスクをドライブ '%s' に入れて [Enter] キーを押してく"
+"ださい。"
 
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
@@ -2630,6 +2666,8 @@ msgstr "ディレクトリ %s をロックできません"
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
+"システムにサンドボックスユーザ '%s' がないため、特権を取り消すことができませ"
+"ん"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -2637,6 +2675,8 @@ msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
 msgstr ""
+"ファイル '%s' がユーザ '%s' からアクセスできないため、ダウンロード権限を取り"
+"消すすことができません。"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -2845,18 +2885,22 @@ msgid "Failed to stat the cdrom"
 msgstr "CD-ROM の状態を取得するのに失敗しました"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "コマンドラインオプション '%c' [%s から] は不明です。"
+msgstr ""
+"コマンドラインオプション '%c' [%s から] は、ほかのオプションとの組み合わせで"
+"理解できません。"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "コマンドラインオプション %s を理解できません"
+msgstr ""
+"コマンドラインオプション %s は、ほかのオプションとの組み合わせで理解できませ"
+"ん"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -3031,7 +3075,7 @@ msgstr "gzip ファイル %s のクローズ中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "予期しないファイル終了 (EOF)"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -3184,6 +3228,8 @@ msgstr "選択された %s が見つかりません"
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
 msgstr ""
+"ターゲット %1$s はソース %4$s から %3$s と同じファイル (%2$s) の取得を求めて"
+"います"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -3191,7 +3237,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "ターゲット %s (%s) は %s と %s で複数回設定されています"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3214,6 +3260,8 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Release ファイル %s にセキュリティ目的のために十分に強いと考えられているハッ"
+"シュエントリがありません"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3229,12 +3277,13 @@ msgstr "Release ファイル %s に無効な 'Valid-Until' エントリがあり
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
-msgstr ""
+msgstr "ソース %2$s %3$s に関してオプション %1$s の値が競合します"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr ""
+"ソース %2$s %3$s (%4$s) に関してオプション %1$s に設定された値が無効です"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -3551,14 +3600,14 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "この APT はバージョニングシステム '%s' をサポートしていません"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "パッケージキャッシュが異なるアーキテクチャ用に構築されています"
+msgstr ""
+"パッケージキャッシュが異なるアーキテクチャ用に構築されています: %s vs %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "パッケージキャッシュファイルが壊れています。短かすぎます"
+msgstr "パッケージキャッシュファイルが壊れています。ハッシュが違います"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -3680,7 +3729,7 @@ msgstr "pin タイプ %s を理解できませんでした"
 #: apt-pkg/policy.cc
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
-msgstr ""
+msgstr "%s: 値 %s は pin の有効な優先度の範囲外です (%d から %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -3688,9 +3737,9 @@ msgstr "pin で優先度 (または 0) が指定されていません"
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "不正な override %s %llu 行目 (%s)"
+msgstr "不正なエントリ %u 行目 %s ファイル %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3708,9 +3757,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "ソースリスト %3$s の %2$u 行にあるタイプ '%1$s' は不明です"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "ソースリスト %2$s の %1$u 行目が不正です (type)"
+msgstr "ソースリスト %2$s の %1$u 個目の節が不正です (type)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3720,7 +3769,7 @@ msgstr "ソースリスト %3$s の %2$u 個目の節 '%1$s' は不明です"
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "コマンドラインで指定されたファイル %s はサポートされていません"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
@@ -3729,12 +3778,12 @@ msgstr "sources.list に 'ソース' URI を指定する必要があります"
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "%s を整数に変換できません: 範囲外"
 
 #: apt-pkg/update.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "%s の取得に失敗しました  %s\n"
+msgstr "%s の取得に失敗しました  %s"
 
 #: apt-pkg/update.cc
 msgid ""
