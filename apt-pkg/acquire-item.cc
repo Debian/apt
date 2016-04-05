@@ -362,6 +362,7 @@ bool pkgAcqTransactionItem::TransactionState(TransactionStates const state)
    bool const Debug = _config->FindB("Debug::Acquire::Transaction", false);
    switch(state)
    {
+      case TransactionStarted: _error->Fatal("Item %s changed to invalid transaction start state!", Target.URI.c_str()); break;
       case TransactionAbort:
 	 if(Debug == true)
 	    std::clog << "  Cancel: " << DestFile << std::endl;
@@ -451,6 +452,7 @@ bool pkgAcqIndex::TransactionState(TransactionStates const state)
 
    switch (state)
    {
+      case TransactionStarted: _error->Fatal("AcqIndex %s changed to invalid transaction start state!", Target.URI.c_str()); break;
       case TransactionAbort:
 	 if (Stage == STAGE_DECOMPRESS_AND_VERIFY)
 	 {
@@ -474,6 +476,7 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
 
    switch (state)
    {
+      case TransactionStarted: _error->Fatal("Item %s changed to invalid transaction start state!", Target.URI.c_str()); break;
       case TransactionCommit:
 	 break;
       case TransactionAbort:
@@ -835,7 +838,7 @@ pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire * const Owner,
       IndexTarget const &DataTarget)
 : pkgAcqTransactionItem(Owner, TransactionManager, DataTarget), d(NULL),
    IndexTargets(IndexTargets),
-   AuthPass(false), IMSHit(false)
+   AuthPass(false), IMSHit(false), State(TransactionStarted)
 {
 }
 									/*}}}*/
@@ -850,6 +853,14 @@ void pkgAcqMetaBase::AbortTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "AbortTransaction: " << TransactionManager << std::endl;
+
+   switch (TransactionManager->State)
+   {
+      case TransactionStarted: break;
+      case TransactionAbort: _error->Fatal("Transaction %s was already aborted and is aborted again", TransactionManager->Target.URI.c_str()); return;
+      case TransactionCommit: _error->Fatal("Transaction %s was already aborted and is now commited", TransactionManager->Target.URI.c_str()); return;
+   }
+   TransactionManager->State = TransactionAbort;
 
    // ensure the toplevel is in error state too
    for (std::vector<pkgAcqTransactionItem*>::iterator I = Transaction.begin();
@@ -883,6 +894,14 @@ void pkgAcqMetaBase::CommitTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "CommitTransaction: " << this << std::endl;
+
+   switch (TransactionManager->State)
+   {
+      case TransactionStarted: break;
+      case TransactionAbort: _error->Fatal("Transaction %s was already commited and is now aborted", TransactionManager->Target.URI.c_str()); return;
+      case TransactionCommit: _error->Fatal("Transaction %s was already commited and is again commited", TransactionManager->Target.URI.c_str()); return;
+   }
+   TransactionManager->State = TransactionCommit;
 
    // move new files into place *and* remove files that are not
    // part of the transaction but are still on disk
@@ -1350,6 +1369,15 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    return Header;
 }
 									/*}}}*/
+void pkgAcqMetaClearSig::Finished()					/*{{{*/
+{
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "Finished: " << DestFile <<std::endl;
+   if(TransactionManager != NULL && TransactionManager->State == TransactionStarted &&
+      TransactionManager->TransactionHasError() == false)
+      TransactionManager->CommitTransaction();
+}
+									/*}}}*/
 bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,		/*{{{*/
 	 pkgAcquire::MethodConfig const * const Cnf)
 {
@@ -1507,15 +1535,6 @@ void pkgAcqMetaIndex::Failed(string const &Message,
       // queue without any kind of hashsum support
       QueueIndexes(false);
    }
-}
-									/*}}}*/
-void pkgAcqMetaIndex::Finished()					/*{{{*/
-{
-   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-      std::clog << "Finished: " << DestFile <<std::endl;
-   if(TransactionManager != NULL &&
-      TransactionManager->TransactionHasError() == false)
-      TransactionManager->CommitTransaction();
 }
 									/*}}}*/
 std::string pkgAcqMetaIndex::DescURI() const				/*{{{*/

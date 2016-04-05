@@ -381,6 +381,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    pkgAcqMetaClearSig * const TransactionManager;
 
    enum TransactionStates {
+      TransactionStarted,
       TransactionCommit,
       TransactionAbort,
    };
@@ -467,6 +468,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
  public:
    // This refers more to the Transaction-Manager than the actual file
    bool IMSHit;
+   TransactionStates State;
 
    virtual bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
    virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
@@ -522,7 +524,6 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
-   virtual void Finished() APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
@@ -588,6 +589,7 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
    virtual bool VerifyDone(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual void Finished() APT_OVERRIDE;
 
    /** \brief Create a new pkgAcqMetaClearSig. */
    pkgAcqMetaClearSig(pkgAcquire * const Owner,
