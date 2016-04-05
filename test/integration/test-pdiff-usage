@@ -10,9 +10,24 @@ LOWCOSTEXT='lz4'
 
 buildaptarchive
 setupflataptarchive
-changetowebserver -o aptwebserver::support::modified-since=false
+changetowebserver
+
+cat >rootdir/etc/apt/apt.conf.d/contents.conf <<EOF
+Acquire::IndexTargets::deb::Contents {
+	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
+	ShortDescription "Contents";
+	Description "\$(RELEASE)/\$(COMPONENT) \$(ARCHITECTURE) Contents";
+	MetaKey "\$(COMPONENT)/Contents-\$(ARCHITECTURE)";
+	flatMetaKey "Contents-\$(ARCHITECTURE)";
+	flatDescription "\$(RELEASE) \$(ARCHITECTURE) Contents";
+};
+EOF
 
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
+echo 'contents for stuff' > aptarchive/Contents-i386
+compressfile aptarchive/Contents-i386
+echo 'hacked' > aptarchive/hacked-i386
+compressfile aptarchive/hacked-i386
 
 wasmergeused() {
 	testsuccess apt update "$@"
@@ -191,6 +206,21 @@ SHA256-Download:
 	testnopackage oldstuff
 	testsuccessequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
+
+	# we reuse the archive state of the previous test here
+	msgmsg "Testcase: pdiff handling is stopped if transaction fails $*"
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	cp Packages-future aptarchive/Packages
+	rm -f rootdir/var/lib/apt/lists/*_Contents-*
+	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/hacked-i386.gz'
+	testfailure apt update "$@" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
+	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/Contents-i386.gz'
+	cp rootdir/tmp/testfailure.output patchdownload.output
+	testfailure grep 'rred:600' patchdownload.output
+	testnopackage newstuff futurestuff
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt oldstuff
 
 	# we reuse the archive state of the previous test here
 	msgmsg "Testcase: downloading a patch fails, but successful fallback: $*"

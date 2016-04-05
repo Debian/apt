@@ -281,6 +281,12 @@ bool pkgAcquire::Item::QueueURI(pkgAcquire::ItemDesc &Item)
    for a hashsum mismatch to happen which helps nobody) */
 bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
 {
+   if (TransactionManager->State != TransactionStarted)
+   {
+      if (_config->FindB("Debug::Acquire::Transaction", false))
+	 std::clog << "Skip " << Target.URI << " as transaction was already dealt with!" << std::endl;
+      return false;
+   }
    std::string const FinalFile = GetFinalFilename();
    if (TransactionManager != NULL && TransactionManager->IMSHit == true &&
 	 FileExists(FinalFile) == true)
@@ -866,6 +872,8 @@ void pkgAcqMetaBase::AbortTransaction()
    for (std::vector<pkgAcqTransactionItem*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
+      if ((*I)->Status != pkgAcquire::Item::StatFetching)
+	 Owner->Dequeue(*I);
       (*I)->TransactionState(TransactionAbort);
    }
    Transaction.clear();
