@@ -978,6 +978,10 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
       AddPattern("Release");
       AddPattern("Contents-*");
       AddPattern("Index");
+      AddPattern("icons-*.tar");
+      AddPattern("icons-*.tar.*");
+      AddPattern("Components-*.yml");
+      AddPattern("Components-*.yml.*");
       AddPattern("md5sum.txt");
    }
    AddPatterns(_config->FindVector("APT::FTPArchive::Release::Patterns"));
