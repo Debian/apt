@@ -760,7 +760,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 			   headers.push_back(contentrange.str());
 			}
 			sendError(client, 416, *m, sendContent, "", headers);
-			break;
+			continue;
 		     }
 		  }
 	       }
