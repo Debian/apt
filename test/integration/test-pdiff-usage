@@ -30,7 +30,7 @@ echo 'hacked' > aptarchive/hacked-i386
 compressfile aptarchive/hacked-i386
 
 wasmergeused() {
-	testsuccess apt update "$@"
+	testsuccess apt update "$@" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1 -o Debug::pkgAcquire=1
 
 	msgtest 'No intermediate patch files' 'still exist'
 	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
@@ -61,6 +61,8 @@ wasmergeused() {
 	else
 		msgpass
 	fi
+
+	testequal '1' grep -c rred:601 rootdir/tmp/testsuccess.output
 }
 
 testrun() {
@@ -214,7 +216,7 @@ SHA256-Download:
 	cp Packages-future aptarchive/Packages
 	rm -f rootdir/var/lib/apt/lists/*_Contents-*
 	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/hacked-i386.gz'
-	testfailure apt update "$@" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
+	testfailure apt update "$@"
 	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/Contents-i386.gz'
 	cp rootdir/tmp/testfailure.output patchdownload.output
 	testfailure grep 'rred:600' patchdownload.output

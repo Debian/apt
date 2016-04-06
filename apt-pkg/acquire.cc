@@ -352,23 +352,37 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
       return U.Access;
 
    string AccessSchema = U.Access + ':';
-	string FullQueueName;
+   string FullQueueName;
 
    if (U.Host.empty())
    {
-      long randomQueue = random();
+      long existing = 0;
+      // check how many queues exist already and reuse empty ones
+      for (Queue const *I = Queues; I != 0; I = I->Next)
+	 if (I->Name.compare(0, AccessSchema.length(), AccessSchema) == 0)
+	 {
+	    if (I->Items == nullptr)
+	       return I->Name;
+	    ++existing;
+	 }
+
 #ifdef _SC_NPROCESSORS_ONLN
       long cpuCount = sysconf(_SC_NPROCESSORS_ONLN) * 2;
 #else
-      long cpuCount = _config->FindI("Acquire::QueueHost::Limit",10);
+      long cpuCount = 10;
 #endif
-      if (cpuCount > 0)
-         randomQueue %= cpuCount;
+      cpuCount = _config->FindI("Acquire::QueueHost::Limit", cpuCount);
 
-      strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), randomQueue);
-      if (Debug) {
-         clog << "Chose random queue " << FullQueueName << " for " << Uri << endl;
+      if (cpuCount <= 0 || existing < cpuCount)
+	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), existing);
+      else
+      {
+	 long const randomQueue = random() % cpuCount;
+	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), randomQueue);
       }
+
+      if (Debug)
+         clog << "Chose random queue " << FullQueueName << " for " << Uri << endl;
    } else
    {
       FullQueueName = AccessSchema + U.Host;
