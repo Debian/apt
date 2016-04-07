@@ -419,36 +419,66 @@ void ServerMethod::SigTerm(int)
    depth. */
 bool ServerMethod::Fetch(FetchItem *)
 {
-   if (Server == 0)
+   if (Server == nullptr || QueueBack == nullptr)
       return true;
 
-   // Queue the requests
-   int Depth = -1;
-   for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
-	I = I->Next, Depth++)
-   {
-      if (Depth >= 0)
-      {
-	 // If pipelining is disabled, we only queue 1 request
-	 if (Server->Pipeline == false)
-	    break;
-	 // if we have no hashes, do at most one such request
-	 // as we can't fixup pipeling misbehaviors otherwise
-	 else if (I->ExpectedHashes.usable() == false)
-	    break;
-      }
-      
+   // If pipelining is disabled, we only queue 1 request
+   auto const AllowedDepth = Server->Pipeline ? PipelineDepth : 0;
+   // how deep is our pipeline currently?
+   decltype(PipelineDepth) CurrentDepth = 0;
+   for (FetchItem const *I = Queue; I != QueueBack; I = I->Next)
+      ++CurrentDepth;
+
+   do {
       // Make sure we stick with the same server
-      if (Server->Comp(I->Uri) == false)
+      if (Server->Comp(QueueBack->Uri) == false)
 	 break;
-      if (QueueBack == I)
+
+      bool const UsableHashes = QueueBack->ExpectedHashes.usable();
+      // if we have no hashes, do at most one such request
+      // as we can't fixup pipeling misbehaviors otherwise
+      if (CurrentDepth != 0 && UsableHashes == false)
+	 break;
+
+      if (UsableHashes && FileExists(QueueBack->DestFile))
       {
-	 QueueBack = I->Next;
-	 SendReq(I);
-	 continue;
+	 FileFd partial(QueueBack->DestFile, FileFd::ReadOnly);
+	 Hashes wehave(QueueBack->ExpectedHashes);
+	 if (QueueBack->ExpectedHashes.FileSize() == partial.FileSize())
+	 {
+	    if (wehave.AddFD(partial) &&
+		  wehave.GetHashStringList() == QueueBack->ExpectedHashes)
+	    {
+	       FetchResult Res;
+	       Res.Filename = QueueBack->DestFile;
+	       Res.ResumePoint = QueueBack->ExpectedHashes.FileSize();
+	       URIStart(Res);
+	       // move item to the start of the queue as URIDone will
+	       // always dequeued the first item in the queue
+	       if (Queue != QueueBack)
+	       {
+		  FetchItem *Prev = Queue;
+		  for (; Prev->Next != QueueBack; Prev = Prev->Next)
+		     /* look for the previous queue item */;
+		  Prev->Next = QueueBack->Next;
+		  QueueBack->Next = Queue;
+		  Queue = QueueBack;
+		  QueueBack = Prev->Next;
+	       }
+	       Res.TakeHashes(wehave);
+	       URIDone(Res);
+	       continue;
+	    }
+	    else
+	       RemoveFile("Fetch-Partial", QueueBack->DestFile);
+	 }
       }
-   }
-   
+      auto const Tmp = QueueBack;
+      QueueBack = QueueBack->Next;
+      SendReq(Tmp);
+      ++CurrentDepth;
+   } while (CurrentDepth <= AllowedDepth && QueueBack != nullptr);
+
    return true;
 }
 									/*}}}*/

@@ -30,7 +30,7 @@ echo 'hacked' > aptarchive/hacked-i386
 compressfile aptarchive/hacked-i386
 
 wasmergeused() {
-	testsuccess apt update "$@" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1 -o Debug::pkgAcquire=1
+	testsuccess apt update "$@"
 
 	msgtest 'No intermediate patch files' 'still exist'
 	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
@@ -224,6 +224,14 @@ SHA256-Download:
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt oldstuff
 
+	# we reuse the entire state of the previous test here
+	msgmsg "Testcase: good files from previous fails are picked up from partial: $*"
+	wasmergeused "$@"
+	testfailure grep '^GET /Packages.diff/Index HTTP/1.1' rootdir/tmp/testsuccess.output
+	testnopackage oldstuff
+	testsuccessequal "$(cat Packages-future)
+" aptcache show apt newstuff futurestuff
+
 	# we reuse the archive state of the previous test here
 	msgmsg "Testcase: downloading a patch fails, but successful fallback: $*"
 	rm -rf rootdir/var/lib/apt/lists
@@ -294,7 +302,7 @@ SHA256-Download:
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz")000 $(basename "${PATCHFILE}.gz")" > "$PATCHINDEX"
 	generatereleasefiles '+1hour'
 	signreleasefiles
-	testsuccess apt update -o Debug::pkgAcquire::Diffs=1 "$@"
+	testsuccess apt update "$@"
 	cp -f rootdir/tmp/testsuccess.output rootdir/tmp/aptupdate.output
 	testsuccess grep 'bytes (Limit is' rootdir/tmp/aptupdate.output
 	testnopackage oldstuff
@@ -303,6 +311,9 @@ SHA256-Download:
 }
 echo 'Debug::pkgAcquire::Diffs "true";
 Debug::Acquire::Transaction "true";
+Debug::pkgAcquire::Worker "true";
+Debug::Acquire::http "true";
+Debug::pkgAcquire "true";
 Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
 
 testcase() {

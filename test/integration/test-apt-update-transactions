@@ -44,7 +44,8 @@ testrun() {
 	signreleasefiles
 
 	onehashbroken() {
-		testfailure aptget update
+		rm -rf rootdir/var/lib/apt/lists/partial
+		testfailure aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
 		# each file generates two messages with this string
 		testequal '2' grep --count 'Hash Sum mismatch' rootdir/tmp/testfailure.output
 		testfileequal "$1" "$(listcurrentlistsdirectory)"

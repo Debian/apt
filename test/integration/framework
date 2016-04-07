@@ -1505,6 +1505,14 @@ testmarkedmanual() {
 	msggroup
 }
 
+catfile() {
+	if [ "${1##*.}" = 'deb' ]; then
+		stat >&2 "$1" || true
+		file >&2 "$1" || true
+	else
+		cat >&2 "$1" || true
+	fi
+}
 msgfailoutput() {
 	msgreportheader 'msgfailoutput'
 	local MSG="$1"
@@ -1514,7 +1522,7 @@ msgfailoutput() {
 		echo >&2
 		while [ -n "$2" ]; do shift; done
 		echo "#### Complete file: $1 ####"
-		cat >&2 "$1" || true
+		catfile "$1"
 		echo '#### grep output ####'
 	elif [ "$1" = 'test' ]; then
 		echo >&2
@@ -1529,7 +1537,7 @@ msgfailoutput() {
 					ls >&2 "$2" || true
 				elif test -e "$2"; then
 					echo "#### Complete file: $2 ####"
-					cat >&2 "$2" || true
+					catfile "$2"
 				fi
 			fi
 		}
@@ -1543,12 +1551,12 @@ msgfailoutput() {
 		echo >&2
 		while [ -n "$2" ]; do
 			echo "#### Complete file: $2 ####"
-			cat >&2 "$2" || true
+			catfile "$2"
 			shift
 		done
 		echo '#### cmp output ####'
 	fi
-	cat >&2 "$OUTPUT"
+	catfile "$OUTPUT"
 	msgfail "$MSG"
 }
 
