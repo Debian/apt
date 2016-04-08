@@ -1847,28 +1847,41 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    bool const follow_suggests   = MarkFollowsSuggests();
 
    // do the mark part, this is the core bit of the algorithm
-   for(PkgIterator p = PkgBegin(); !p.end(); ++p)
+   for (PkgIterator P = PkgBegin(); !P.end(); ++P)
    {
-      if(!(PkgState[p->ID].Flags & Flag::Auto) ||
-	  (p->Flags & Flag::Essential) ||
-	  (p->Flags & Flag::Important) ||
-	  userFunc.InRootSet(p) ||
-	  // be nice even then a required package violates the policy (#583517)
-	  // and do the full mark process also for required packages
-	  (p.CurrentVer().end() != true &&
-	   p.CurrentVer()->Priority == pkgCache::State::Required) ||
-	  // packages which can't be changed (like holds) can't be garbage
-	  (IsModeChangeOk(ModeGarbage, p, 0, false) == false))
+      if (P->CurrentVer == 0)
       {
-	 // the package is installed (and set to keep)
-	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())
- 	    MarkPackage(p, p.CurrentVer(),
-			follow_recommends, follow_suggests);
-	 // the package is to be installed 
-	 else if(PkgState[p->ID].Install())
-	    MarkPackage(p, PkgState[p->ID].InstVerIter(*this),
-			follow_recommends, follow_suggests);
+	 if (PkgState[P->ID].Keep())
+	    continue;
       }
+      else
+      {
+	 if (PkgState[P->ID].Delete())
+	    continue;
+      }
+
+      if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
+	 ;
+      else if ((P->Flags & Flag::Essential) || (P->Flags & Flag::Important))
+	 ;
+      // be nice even then a required package violates the policy (#583517)
+      // and do the full mark process also for required packages
+      else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
+	 ;
+      else if (userFunc.InRootSet(P))
+	 ;
+      // packages which can't be changed (like holds) can't be garbage
+      else if (IsModeChangeOk(ModeGarbage, P, 0, false) == false)
+	 ;
+      else
+	 continue;
+
+      if (PkgState[P->ID].Install())
+	 MarkPackage(P, PkgState[P->ID].InstVerIter(*this),
+	       follow_recommends, follow_suggests);
+      else
+	 MarkPackage(P, P.CurrentVer(),
+	       follow_recommends, follow_suggests);
    }
 
    return true;
