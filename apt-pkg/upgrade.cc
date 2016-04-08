@@ -136,12 +136,8 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache, OpProgress * const Pr
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
 
    pkgDepCache::ActionGroup group(Cache);
-
    pkgProblemResolver Fix(&Cache);
 
-   if (Cache.BrokenCount() != 0)
-      return false;
-   
    // Upgrade all installed packages
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
@@ -182,11 +178,7 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
 
    pkgDepCache::ActionGroup group(Cache);
-
    pkgProblemResolver Fix(&Cache);
-
-   if (Cache.BrokenCount() != 0)
-      return false;
 
    // provide the initial set of stuff we want to upgrade by marking
    // all upgradable packages for upgrade
