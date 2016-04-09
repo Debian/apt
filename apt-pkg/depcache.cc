@@ -1824,6 +1824,20 @@ bool pkgDepCache::MarkFollowsSuggests()
 }
 
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
+static bool IsPkgInBoringState(pkgCache::PkgIterator const &Pkg, pkgDepCache::StateCache const * const PkgState)
+{
+   if (Pkg->CurrentVer == 0)
+   {
+      if (PkgState[Pkg->ID].Keep())
+	 return true;
+   }
+   else
+   {
+      if (PkgState[Pkg->ID].Delete())
+	 return true;
+   }
+   return false;
+}
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
    if (_config->Find("APT::Solver", "internal") != "internal")
@@ -1832,8 +1846,8 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
 
    // init the states
-   map_id_t const PackagesCount = Head().PackageCount;
-   for(map_id_t i = 0; i < PackagesCount; ++i)
+   auto const PackagesCount = Head().PackageCount;
+   for(auto i = decltype(PackagesCount){0}; i < PackagesCount; ++i)
    {
       PkgState[i].Marked  = false;
       PkgState[i].Garbage = false;
@@ -1849,16 +1863,8 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    // do the mark part, this is the core bit of the algorithm
    for (PkgIterator P = PkgBegin(); !P.end(); ++P)
    {
-      if (P->CurrentVer == 0)
-      {
-	 if (PkgState[P->ID].Keep())
-	    continue;
-      }
-      else
-      {
-	 if (PkgState[P->ID].Delete())
-	    continue;
-      }
+      if (PkgState[P->ID].Marked || IsPkgInBoringState(P, PkgState))
+	 continue;
 
       if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
 	 ;
@@ -1888,124 +1894,70 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 }
 									/*}}}*/
 // MarkPackage - mark a single package in Mark-and-Sweep		/*{{{*/
-void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
-			      const pkgCache::VerIterator &ver,
+void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
+			      const pkgCache::VerIterator &Ver,
 			      bool const &follow_recommends,
 			      bool const &follow_suggests)
 {
-   pkgDepCache::StateCache &state = PkgState[pkg->ID];
-
-   // if we are marked already we are done
-   if(state.Marked)
-      return;
-
-   VerIterator const currver = pkg.CurrentVer();
-   VerIterator const instver = state.InstVerIter(*this);
-
-#if 0
-   VerIterator const candver = state.CandidateVerIter(*this);
-
-   // If a package was garbage-collected but is now being marked, we
-   // should re-select it 
-   // For cases when a pkg is set to upgrade and this trigger the
-   // removal of a no-longer used dependency.  if the pkg is set to
-   // keep again later it will result in broken deps
-   if(state.Delete() && state.RemoveReason = Unused) 
    {
-      if(ver==candver)
-	 mark_install(pkg, false, false, NULL);
-      else if(ver==pkg.CurrentVer())
-	 MarkKeep(pkg, false, false);
-      
-      instver=state.InstVerIter(*this);
+      pkgDepCache::StateCache &state = PkgState[Pkg->ID];
+      // if we are marked already we are done
+      if(state.Marked || unlikely(Ver.end()))
+	 return;
+      state.Marked=true;
    }
-#endif
 
-   // For packages that are not going to be removed, ignore versions
-   // other than the InstVer.  For packages that are going to be
-   // removed, ignore versions other than the current version.
-   if(!(ver == instver && !instver.end()) &&
-      !(ver == currver && instver.end() && !ver.end()))
+   if (IsPkgInBoringState(Pkg, PkgState))
       return;
 
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
-
    if(debug_autoremove)
-     {
-       std::clog << "Marking: " << pkg.FullName();
-       if(!ver.end())
-	 std::clog << " " << ver.VerStr();
-       if(!currver.end())
-	 std::clog << ", Curr=" << currver.VerStr();
-       if(!instver.end())
-	 std::clog << ", Inst=" << instver.VerStr();
-       std::clog << std::endl;
-     }
+      std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr() << std::endl;
 
-   state.Marked=true;
+   for (auto D = Ver.DependsList(); D.end() == false; ++D)
+   {
+      auto const T = D.TargetPkg();
+      if (PkgState[T->ID].Marked)
+	 continue;
 
-   if(ver.end() == true)
-      return;
+      if (D->Type != Dep::Depends &&
+	    D->Type != Dep::PreDepends &&
+	    (follow_recommends == false || D->Type != Dep::Recommends) &&
+	    (follow_suggests == false || D->Type != Dep::Suggests))
+	 continue;
 
-     for(DepIterator d = ver.DependsList(); !d.end(); ++d)
-     {
-	if(d->Type == Dep::Depends ||
-	   d->Type == Dep::PreDepends ||
-	   (follow_recommends &&
-	    d->Type == Dep::Recommends) ||
-	   (follow_suggests &&
-	    d->Type == Dep::Suggests))
-        {
-	   // Try all versions of this package.
-	   for(VerIterator V = d.TargetPkg().VersionList(); 
-	       !V.end(); ++V)
-	   {
-	      if(d.IsSatisfied(V))
-	      {
-		if(debug_autoremove)
-		  {
-		    std::clog << "Following dep: " << d.ParentPkg().FullName()
-			      << " " << d.ParentVer().VerStr() << " "
-			      << d.DepType() << " " << d.TargetPkg().FullName();
-		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
-		      {
-			std::clog << " (" << d.CompType() << " "
-				  << d.TargetVer() << ")";
-		      }
-		    std::clog << std::endl;
-		  }
-		 MarkPackage(V.ParentPkg(), V,
-			     follow_recommends, follow_suggests);
-	      }
-	   }
-	   // Now try virtual packages
-	   for(PrvIterator prv=d.TargetPkg().ProvidesList(); 
-	       !prv.end(); ++prv)
-	   {
-	      if(d.IsSatisfied(prv))
-	      {
-		if(debug_autoremove)
-		  {
-		    std::clog << "Following dep: " << d.ParentPkg().FullName() << " "
-			      << d.ParentVer().VerStr() << " "
-			      << d.DepType() << " " << d.TargetPkg().FullName() << " ";
-		    if((d->CompareOp & ~pkgCache::Dep::Or) != pkgCache::Dep::NoOp)
-		      {
-			std::clog << " (" << d.CompType() << " "
-				  << d.TargetVer() << ")";
-		      }
-		    std::clog << ", provided by "
-			      << prv.OwnerPkg().FullName() << " "
-			      << prv.OwnerVer().VerStr()
-			      << std::endl;
-		  }
+      // handle the virtual part first
+      for(auto Prv = T.ProvidesList(); Prv.end() == false; ++Prv)
+      {
+	 auto PP = Prv.OwnerPkg();
+	 if (PkgState[PP->ID].Marked || IsPkgInBoringState(PP, PkgState))
+	    continue;
 
-		 MarkPackage(prv.OwnerPkg(), prv.OwnerVer(),
-			     follow_recommends, follow_suggests);
-	      }
-	   }
-	}
-     }
+	 // we want to ignore provides from uninteresting versions
+	 auto const PV = (PkgState[PP->ID].Install()) ?
+	    PkgState[PP->ID].InstVerIter(*this) : PP.CurrentVer();
+	 if (unlikely(PV.end()) || PV != Prv.OwnerVer() || D.IsSatisfied(Prv) == false)
+	    continue;
+
+	 if (debug_autoremove)
+	    std::clog << "Following dep: " << APT::PrettyDep(this, D)
+	       << ", provided by " << PP.FullName() << " " << PV.VerStr() << std::endl;
+	 MarkPackage(PP, PV, follow_recommends, follow_suggests);
+      }
+
+      // now deal with the real part of the package
+      if (IsPkgInBoringState(T, PkgState))
+	 continue;
+
+      auto const TV = (PkgState[T->ID].Install()) ?
+	 PkgState[T->ID].InstVerIter(*this) : T.CurrentVer();
+      if (unlikely(TV.end()) || D.IsSatisfied(TV) == false)
+	 continue;
+
+      if (debug_autoremove)
+	 std::clog << "Following dep: " << APT::PrettyDep(this, D) << std::endl;
+      MarkPackage(T, TV, follow_recommends, follow_suggests);
+   }
 }
 									/*}}}*/
 bool pkgDepCache::Sweep()						/*{{{*/
