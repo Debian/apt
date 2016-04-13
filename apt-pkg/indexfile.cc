@@ -310,7 +310,7 @@ std::string pkgDebianIndexRealFile::GetProgressDescription() const
 }
 bool pkgDebianIndexRealFile::OpenListFile(FileFd &Pkg, std::string const &FileName)/*{{{*/
 {
-   if (Pkg.Open(FileName, FileFd::ReadOnly, FileFd::None) == false)
+   if (Pkg.Open(FileName, FileFd::ReadOnly, FileFd::Extension) == false)
       return _error->Error("Problem opening %s",FileName.c_str());
    return true;
 }
