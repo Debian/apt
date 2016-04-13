@@ -408,7 +408,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 pkgCache::DepIterator Start, End;
 	 D.GlobOr(Start,End);
 
-	 if (End->Type != pkgCache::Dep::Depends)
+	 if (End->Type != pkgCache::Dep::Depends && End->Type != pkgCache::Dep::PreDepends)
 	    continue;
 	 Bad = true;
 
@@ -534,7 +534,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	    Discard.GlobOr(Start,End);
 	 }
 
-	 if (End->Type != pkgCache::Dep::Depends)
+	 if (End->Type != pkgCache::Dep::Depends && End->Type != pkgCache::Dep::PreDepends)
 	    continue;
 	 Bad = true;
 
