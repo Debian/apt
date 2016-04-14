@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+configcompression '.' 'gz'
+
+insertpackage 'unstable' 'apt' 'amd64' '1'
+# this automatically gives us an empty Sources file
+
+setupaptarchive --no-update
+
+msgmsg 'Test with file'
+rm -rf rootdir/var/lib/apt/lists
+testsuccess apt update -o Debug::pkgAcquire::Worker=1
+cp rootdir/tmp/testsuccess.output apt.output
+testsuccess grep '%0aAlt-Filename:%20/.*/Sources%0a' apt.output
+
+msgmsg 'Test with http'
+changetowebserver
+rm -rf rootdir/var/lib/apt/lists
+testsuccess apt update -o Debug::pkgAcquire::Worker=1
