@@ -98,7 +98,7 @@ bool FileMethod::Fetch(FetchItem *Itm)
    {
       if (APT::String::Endswith(File, *ext) == true)
       {
-	 std::string const unfile = File.substr(0, File.length() - ext->length() - 1);
+	 std::string const unfile = File.substr(0, File.length() - ext->length());
 	 if (stat(unfile.c_str(),&Buf) == 0)
 	 {
 	    AltRes.Size = Buf.st_size;

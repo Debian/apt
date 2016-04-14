@@ -437,7 +437,7 @@ bool pkgAcqTransactionItem::TransactionState(TransactionStates const state)
 	 } else {
 	    if(Debug == true)
 	       std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
-	    if (RemoveFile("TransactionCommit", DestFile) == false)
+	    if (RemoveFile("TransItem::TransactionCommit", DestFile) == false)
 	       return false;
 	 }
 	 break;
@@ -470,7 +470,7 @@ bool pkgAcqIndex::TransactionState(TransactionStates const state)
 	 break;
       case TransactionCommit:
 	 if (EraseFileName.empty() == false)
-	    RemoveFile("TransactionCommit", EraseFileName);
+	    RemoveFile("AcqIndex::TransactionCommit", EraseFileName);
 	 break;
    }
    return true;
@@ -2748,9 +2748,8 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
    // methods like file:// give us an alternative (uncompressed) file
    else if (Target.KeepCompressed == false && AltFilename.empty() == false)
    {
-      if (CurrentCompressionExtension != "uncompressed")
-	 DestFile.erase(DestFile.length() - (CurrentCompressionExtension.length() + 1));
       Filename = AltFilename;
+      EraseFileName.clear();
    }
    // Methods like e.g. "file:" will give us a (compressed) FileName that is
    // not the "DestFile" we set, in this case we uncompress from the local file
@@ -2780,7 +2779,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
       DestFile = "/dev/null";
    }
 
-   if (EraseFileName.empty())
+   if (EraseFileName.empty() && Filename != AltFilename)
       EraseFileName = Filename;
 
    // queue uri for the next stage

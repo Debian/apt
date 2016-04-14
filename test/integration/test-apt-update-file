@@ -40,7 +40,9 @@ if [ "$(id -u)" = '0' ]; then
 	exit
 fi
 chmod 555 aptarchive/dists/unstable/main/binary-all
-testsuccess aptget update
+testsuccess aptget update -o Debug::pkgAcquire::Worker=1
+cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output
+testsuccess grep '%0aAlt-Filename:%20' rootdir/tmp/update.output
 
 # the release files aren't an IMS-hit, but the indexes are
 redatereleasefiles '+1 hour'
