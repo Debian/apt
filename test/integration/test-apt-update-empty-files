@@ -27,3 +27,21 @@ testsuccess apt update -o Debug::pkgAcquire::Worker=1
 cp rootdir/tmp/testsuccess.output apt.output
 testfailure grep 'http:600.*Sources' apt.output
 testempty find rootdir/var/lib/apt/lists -name '*_Sources'
+
+msgmsg 'Test lists-cleanup on newly empty'
+rm -rf rootdir/var/lib/apt/lists
+insertsource 'unstable' 'apt' 'any' '1'
+compressfile aptarchive/dists/unstable/main/source/Sources
+generatereleasefiles
+signreleasefiles
+testsuccess apt update -o Debug::pkgAcquire::Worker=1
+cp rootdir/tmp/testsuccess.output apt.output
+testsuccess grep 'http:600.*Sources' apt.output
+echo -n > aptarchive/dists/unstable/main/source/Sources
+compressfile aptarchive/dists/unstable/main/source/Sources
+generatereleasefiles 'now + 1hour'
+signreleasefiles
+testsuccess apt update -o Debug::pkgAcquire::Worker=1 -o APT::Get::List-Cleanup=0 -o Debug::Acquire::Transaction=1
+cp rootdir/tmp/testsuccess.output apt.output
+testfailure grep 'http:600.*Sources' apt.output
+testempty find rootdir/var/lib/apt/lists -name '*_Sources'

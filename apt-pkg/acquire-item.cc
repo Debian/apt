@@ -519,6 +519,41 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
    }
 };
 									/*}}}*/
+class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
+/* This class ensures that a file which was configured but isn't downloaded
+   for various reasons isn't kept in an old version in the lists directory.
+   In a way its the reverse of NoActionItem as it helps with removing files
+   even if the lists-cleanup is deactivated. */
+{
+   public:
+   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI;};
+   virtual HashStringList GetExpectedHashes()  const APT_OVERRIDE {return HashStringList();};
+
+   CleanupItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target) :
+      pkgAcqTransactionItem(Owner, TransactionManager, Target)
+   {
+      Status = StatDone;
+      DestFile = GetFinalFileNameFromURI(Target.URI);
+   }
+   bool TransactionState(TransactionStates const state) APT_OVERRIDE
+   {
+      switch (state)
+      {
+	 case TransactionStarted:
+	    break;
+	 case TransactionAbort:
+	    break;
+	 case TransactionCommit:
+	    if (_config->FindB("Debug::Acquire::Transaction", false) == true)
+	       std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
+	    if (RemoveFile("TransItem::TransactionCommit", DestFile) == false)
+	       return false;
+	    break;
+      }
+      return true;
+   }
+};
+									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 APT_IGNORE_DEPRECATED_PUSH
@@ -1113,10 +1148,12 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
       // than invent an entirely new flag we would need to carry for all of eternity.
       if (Target->Option(IndexTarget::ARCHITECTURE) == "all")
       {
-	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false)
+	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false ||
+	       TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(*Target) == false)
+	 {
+	    new CleanupItem(Owner, TransactionManager, *Target);
 	    continue;
-	 if (TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(*Target) == false)
-	    continue;
+	 }
       }
 
       bool trypdiff = Target->OptionBool(IndexTarget::PDIFFS);
@@ -1126,13 +1163,17 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 {
 	    // optional targets that we do not have in the Release file are skipped
 	    if (Target->IsOptional)
+	    {
+	       new CleanupItem(Owner, TransactionManager, *Target);
 	       continue;
+	    }
 
 	    std::string const &arch = Target->Option(IndexTarget::ARCHITECTURE);
 	    if (arch.empty() == false)
 	    {
 	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported(arch) == false)
 	       {
+		  new CleanupItem(Owner, TransactionManager, *Target);
 		  _error->Notice(_("Skipping acquire of configured file '%s' as repository '%s' doesn't support architecture '%s'"),
 			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str(), arch.c_str());
 		  continue;
@@ -1141,7 +1182,10 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	       // ignore silently as this is pretty much the same as just shipping an empty file.
 	       // if we don't know which architectures are supported, we do NOT ignore it to notify user about this
 	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported("*undefined*") == false)
+	       {
+		  new CleanupItem(Owner, TransactionManager, *Target);
 		  continue;
+	       }
 	    }
 
 	    Status = StatAuthError;
@@ -1155,13 +1199,17 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	    {
 	       if (hashes.usable() == false)
 	       {
+		  new CleanupItem(Owner, TransactionManager, *Target);
 		  _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
 			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str());
 		  continue;
 	       }
 	       // empty files are skipped as acquiring the very small compressed files is a waste of time
 	       else if (hashes.FileSize() == 0)
+	       {
+		  new CleanupItem(Owner, TransactionManager, *Target);
 		  continue;
+	       }
 	    }
 	 }
 
