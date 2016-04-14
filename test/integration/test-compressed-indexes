@@ -33,11 +33,9 @@ testrun() {
 	msgtest 'Check if all index files are' "${1:-uncompressed}"
 	if [ "$1" = 'compressed' ]; then
 		! test -e rootdir/var/lib/apt/lists/*i386_Packages || F=1
-		! test -e rootdir/var/lib/apt/lists/*all_Packages || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
 		test -e rootdir/var/lib/apt/lists/*i386_Packages.$LOWCOSTEXT || F=1
-		test -e rootdir/var/lib/apt/lists/*all_Packages.$LOWCOSTEXT || F=1
 		test -e rootdir/var/lib/apt/lists/*_Sources.$LOWCOSTEXT || F=1
 		test -e rootdir/var/lib/apt/lists/*_Translation-en.$LOWCOSTEXT || F=1
 		# there is no point in trying pdiff if we have compressed indexes
@@ -47,11 +45,9 @@ testrun() {
 		# clear the faked pdiff indexes so the glob below works
 		rm -f rootdir/var/lib/apt/lists/*diff_Index
 		test -e rootdir/var/lib/apt/lists/*i386_Packages || F=1
-		test -e rootdir/var/lib/apt/lists/*all_Packages || F=1
 		test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
 		! test -e rootdir/var/lib/apt/lists/*i386_Packages.* || F=1
-		! test -e rootdir/var/lib/apt/lists/*all_Packages.* || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Sources.* || F=1
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en.* || F=1
 	fi
@@ -112,6 +108,7 @@ testovermethod() {
 			INDCOMP='uncompressed'
 		else
 			INDCOMP='compressed'
+			echo 'APT::Compressor::lz4::Name "lz4";' >> rootdir/etc/apt/apt.conf.d/02compressindex
 		fi
 
 		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes gzip=$INDEX"

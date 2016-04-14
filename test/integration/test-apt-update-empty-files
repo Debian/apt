@@ -17,9 +17,13 @@ msgmsg 'Test with file'
 rm -rf rootdir/var/lib/apt/lists
 testsuccess apt update -o Debug::pkgAcquire::Worker=1
 cp rootdir/tmp/testsuccess.output apt.output
-testsuccess grep '%0aAlt-Filename:%20/.*/Sources%0a' apt.output
+testfailure grep '%0a\(Alt\)\?Filename:%20/.*/Sources\(\.gz\)\?%0a' apt.output
+testempty find rootdir/var/lib/apt/lists -name '*_Sources'
 
 msgmsg 'Test with http'
 changetowebserver
 rm -rf rootdir/var/lib/apt/lists
 testsuccess apt update -o Debug::pkgAcquire::Worker=1
+cp rootdir/tmp/testsuccess.output apt.output
+testfailure grep 'http:600.*Sources' apt.output
+testempty find rootdir/var/lib/apt/lists -name '*_Sources'

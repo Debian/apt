@@ -15,6 +15,7 @@ configcompression '.' 'gz'
 LOWCOSTEXT='lz4'
 
 buildsimplenativepackage 'foo' 'amd64' '1' 'unstable'
+buildsimplenativepackage 'bar' 'all' '1' 'unstable'
 
 setupaptarchive --no-update
 changetowebserver
@@ -110,7 +111,7 @@ testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_mai
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT" find rootdir/var/lib/apt/lists -name '*Contents-all*'
 testequal "$(readfile Contents-amd64.$LOWCOSTEXT Contents-all.$LOWCOSTEXT)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 testequal "$(apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT)" apthelper cat-file 'aptarchive/dists/unstable/main/Contents-amd64.gz'
-testempty apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT
+testequal "$(apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT)" apthelper cat-file 'aptarchive/dists/unstable/main/Contents-all.gz'
 
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT

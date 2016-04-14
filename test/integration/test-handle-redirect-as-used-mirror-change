@@ -16,9 +16,8 @@ rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
 
 testsuccessequal "Get:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease [$(stat -c %s aptarchive/dists/unstable/InRelease) B]
 Get:2 http://0.0.0.0:${APTHTTPPORT} unstable/main Sources [$(stat -c %s aptarchive/dists/unstable/main/source/Sources.gz) B]
-Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main amd64 Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-amd64/Packages.gz) B]
-Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main all Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-all/Packages.gz) B]
-Get:5 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
+Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main all Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-all/Packages.gz) B]
+Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
 Reading package lists..." aptget update
 
 testsuccessequal "Hit:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease

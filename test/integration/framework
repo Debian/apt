@@ -566,6 +566,11 @@ forcecompressor() {
 	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
 Dir::Bin::uncompressed \"/does/not/exist\";" > "$CONFFILE"
+	for COMP in $(aptconfig dump 'APT::Compressor' --format '%f%n' | cut -d':' -f 5 | uniq); do
+		if [ -z "$COMP" -o "$COMP" = '.' -o "$COMP" = "$COMPRESSOR" ]; then continue; fi
+		echo "Dir::Bin::${COMP} \"/does/not/exist\";" >> "$CONFFILE"
+		echo "APT::Compressor::${COMP}::Name \"${COMP}-disabled\";" >> "$CONFFILE"
+	done
 }
 
 setupsimplenativepackage() {
@@ -1843,6 +1848,7 @@ listcurrentlistsdirectory() {
 	} | sort
 }
 forallsupportedcompressors() {
+	rm -f "${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
 	for COMP in $(aptconfig dump 'APT::Compressor' --format '%f%n' | cut -d':' -f 5 | uniq); do
 		if [ -z "$COMP" -o "$COMP" = '.' ]; then continue; fi
 		"$@" "$COMP"

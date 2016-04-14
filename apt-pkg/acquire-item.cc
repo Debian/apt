@@ -1151,11 +1151,17 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
 	 else
 	 {
 	    auto const hashes = GetExpectedHashesFor(Target->MetaKey);
-	    if (hashes.usable() == false && hashes.empty() == false)
+	    if (hashes.empty() == false)
 	    {
-	       _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
+	       if (hashes.usable() == false)
+	       {
+		  _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
 			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str());
-	       continue;
+		  continue;
+	       }
+	       // empty files are skipped as acquiring the very small compressed files is a waste of time
+	       else if (hashes.FileSize() == 0)
+		  continue;
 	    }
 	 }
 
