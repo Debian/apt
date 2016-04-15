@@ -338,6 +338,21 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       Status = StatDone;
       return false;
    }
+   // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
+   if (TransactionManager != nullptr && TransactionManager->BaseURI.empty() == false &&
+	 URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
+   {
+      // this ensures we rewrite only once and only the first step
+      auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
+      if (APT::String::Startswith(Item.URI, OldBaseURI))
+      {
+	 auto const ExtraPath = Item.URI.substr(OldBaseURI.length());
+	 Item.URI = flCombine(TransactionManager->BaseURI, ExtraPath);
+	 UsedMirror = TransactionManager->UsedMirror;
+	 if (Item.Description.find(" ") != string::npos)
+	    Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
+      }
+   }
    return pkgAcquire::Item::QueueURI(Item);
 }
 /* The transition manager InRelease itself (or its older sisters-in-law
@@ -1086,6 +1101,15 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
 {
    // We have just finished downloading a Release file (it is not
    // verified yet)
+
+   // Save the final base URI we got this Release file from
+   if (I->UsedMirror.empty() == false && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
+   {
+      if (APT::String::Endswith(I->Desc.URI, "InRelease"))
+	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("InRelease"));
+      else
+	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("Release"));
+   }
 
    std::string const FileName = LookupTag(Message,"Filename");
    if (FileName != I->DestFile && RealFileExists(I->DestFile) == false)

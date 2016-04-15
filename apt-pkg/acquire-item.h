@@ -469,6 +469,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    // This refers more to the Transaction-Manager than the actual file
    bool IMSHit;
    TransactionStates State;
+   std::string BaseURI;
 
    virtual bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
    virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
