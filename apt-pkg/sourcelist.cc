@@ -98,8 +98,8 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    std::map<char const * const, std::pair<char const * const, bool> > mapping;
 #define APT_PLUSMINUS(X, Y) \
    mapping.insert(std::make_pair(X, std::make_pair(Y, true))); \
-   mapping.insert(std::make_pair(X "Add", std::make_pair(Y "+", true))); \
-   mapping.insert(std::make_pair(X "Remove", std::make_pair(Y "-", true)))
+   mapping.insert(std::make_pair(X "-Add", std::make_pair(Y "+", true))); \
+   mapping.insert(std::make_pair(X "-Remove", std::make_pair(Y "-", true)))
    APT_PLUSMINUS("Architectures", "arch");
    APT_PLUSMINUS("Languages", "lang");
    APT_PLUSMINUS("Targets", "target");
