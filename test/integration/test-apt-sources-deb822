@@ -189,3 +189,13 @@ EOF
 testsuccessequal --nomsg "'http://emacs.naquadah.org/stable/InRelease' emacs.naquadah.org_stable_InRelease 0 
 'http://emacs.naquadah.org/stable/Packages.xz' emacs.naquadah.org_stable_Packages 0 
 'http://emacs.naquadah.org/stable/en.xz' emacs.naquadah.org_stable_en 0 " aptget update --print-uris
+
+# multivalue -Add/-Remove
+msgcleantest 'Test deb822 sources.list file which has' '-Add/-Remove multivalues'
+echo "$BASE" > $SOURCES
+echo "Languages-Remove: en" >> $SOURCES
+echo "Architectures-Add: armel" >> $SOURCES
+testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 " aptget update --print-uris
