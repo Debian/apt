@@ -471,18 +471,28 @@ bool pkgAcquire::Worker::RunMessages()
 	    OwnerQ->ItemDone(Itm);
 	    Itm = nullptr;
 
-	    bool errTransient;
+	    bool errTransient = false, errAuthErr = false;
 	    {
 	       std::string const failReason = LookupTag(Message, "FailReason");
-	       std::string const reasons[] = { "Timeout", "ConnectionRefused",
-		  "ConnectionTimedOut", "ResolveFailure", "TmpResolveFailure" };
-	       errTransient = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
+	       {
+		  auto const reasons = { "Timeout", "ConnectionRefused",
+		     "ConnectionTimedOut", "ResolveFailure", "TmpResolveFailure" };
+		  errTransient = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
+	       }
+	       if (errTransient == false)
+	       {
+		  auto const reasons = { "HashSumMismatch", "MaximumSizeExceeded" };
+		  errAuthErr = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
+	       }
 	    }
 
 	    for (auto const Owner: ItmOwners)
 	    {
-	       if (errTransient)
+	       if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+		  Owner->Status = pkgAcquire::Item::StatAuthError;
+	       else if (errTransient)
 		  Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+
 	       if (isDoomedItem(Owner) == false)
 		  Owner->Failed(Message,Config);
 	       if (Log != nullptr)

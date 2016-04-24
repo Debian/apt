@@ -679,35 +679,59 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
       Dequeue();
    }
 
+   string const FailReason = LookupTag(Message, "FailReason");
+   enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, OTHER } failreason = OTHER;
+   if ( FailReason == "MaximumSizeExceeded")
+      failreason = MAXIMUM_SIZE_EXCEEDED;
+   else if (Status == StatAuthError)
+      failreason = HASHSUM_MISMATCH;
+
    if(ErrorText.empty())
    {
       if (Status == StatAuthError)
       {
 	 std::ostringstream out;
-	 out << _("Hash Sum mismatch") << std::endl;
-	 out << "Hashes of expected file:" << std::endl;
-	 for (auto const &hs: GetExpectedHashes())
-	    out << " - " << hs.toStr() << std::endl;
-	 out << "Hashes of received file:" << std::endl;
-	 for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+	 switch (failreason)
 	 {
-	    std::string const tagname = std::string(*type) + "-Hash";
-	    std::string const hashsum = LookupTag(Message, tagname.c_str());
-	    if (hashsum.empty() == false)
-	       out << " - " << HashString(*type, hashsum).toStr() << std::endl;
+	    case HASHSUM_MISMATCH:
+	       out << _("Hash Sum mismatch") << std::endl;
+	       break;
+	    case MAXIMUM_SIZE_EXCEEDED:
+	    case OTHER:
+	       out << LookupTag(Message, "Message") << std::endl;
+	       break;
 	 }
-	 out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
+	 auto const ExpectedHashes = GetExpectedHashes();
+	 if (ExpectedHashes.empty() == false)
+	 {
+	    out << "Hashes of expected file:" << std::endl;
+	    for (auto const &hs: ExpectedHashes)
+	       out << " - " << hs.toStr() << std::endl;
+	 }
+	 if (failreason == HASHSUM_MISMATCH)
+	 {
+	    out << "Hashes of received file:" << std::endl;
+	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+	    {
+	       std::string const tagname = std::string(*type) + "-Hash";
+	       std::string const hashsum = LookupTag(Message, tagname.c_str());
+	       if (hashsum.empty() == false)
+		  out << " - " << HashString(*type, hashsum).toStr() << std::endl;
+	    }
+	    out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
+	 }
 	 ErrorText = out.str();
       }
       else
 	 ErrorText = LookupTag(Message,"Message");
    }
 
-   string const FailReason = LookupTag(Message, "FailReason");
-   if (FailReason == "MaximumSizeExceeded")
-      RenameOnError(MaximumSizeExceeded);
-   else if (Status == StatAuthError)
-      RenameOnError(HashSumMismatch);
+   switch (failreason)
+   {
+      case MAXIMUM_SIZE_EXCEEDED: RenameOnError(MaximumSizeExceeded); break;
+      case HASHSUM_MISMATCH: RenameOnError(HashSumMismatch); break;
+      case OTHER: break;
+   }
 
    if (FailReason.empty() == false)
       ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
@@ -800,7 +824,6 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
    {
       case HashSumMismatch:
 	 errtext = _("Hash Sum mismatch");
-	 Status = StatAuthError;
 	 break;
       case SizeMismatch:
 	 errtext = _("Size mismatch");
@@ -821,7 +844,6 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 	 break;
       case MaximumSizeExceeded:
 	 // the method is expected to report a good error for this
-	 Status = StatError;
 	 break;
       case PDiffError:
 	 // no handling here, done by callers
@@ -1791,9 +1813,8 @@ pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
 void pkgAcqBaseIndex::Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
    pkgAcquire::Item::Failed(Message, Cnf);
-   if (TransactionManager == nullptr || ErrorText.empty() ||
-	 TransactionManager->MetaIndexParser == nullptr ||
-	 LookupTag(Message, "FailReason") != "HashSumMismatch")
+   if (TransactionManager == nullptr || TransactionManager->MetaIndexParser == nullptr ||
+	 Status != StatAuthError)
       return;
 
    ErrorText.append("Release file created at: ");
