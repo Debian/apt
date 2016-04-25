@@ -65,13 +65,9 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
       fprintf(output, "Multi-Arch: foreign\n");
    else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
       fprintf(output, "Multi-Arch: same\n");
-   signed short Pin = std::numeric_limits<signed short>::min();
    std::set<string> Releases;
    for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
       pkgCache::PkgFileIterator File = I.File();
-      signed short const p = Cache.GetPolicy().GetPriority(File);
-      if (Pin < p)
-	 Pin = p;
       if (File.Flagged(pkgCache::Flag::NotSource) == false) {
 	 string Release = File.RelStr();
 	 if (!Release.empty())
@@ -83,7 +79,7 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
        for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
 	   fprintf(output, " %s\n", R->c_str());
    }
-   fprintf(output, "APT-Pin: %d\n", Pin);
+   fprintf(output, "APT-Pin: %d\n", Cache.GetPolicy().GetPriority(Ver));
    if (Cache.GetCandidateVersion(Pkg) == Ver)
       fprintf(output, "APT-Candidate: yes\n");
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
