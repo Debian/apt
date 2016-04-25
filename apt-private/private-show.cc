@@ -362,8 +362,6 @@ bool Policy(CommandLine &CmdL)
    if (unlikely(Cache == NULL || Plcy == NULL || SrcList == NULL))
       return false;
 
-   bool OldPolicy = _config->FindI("APT::Policy", 1) < 1;
-
    // Print out all of the package files
    if (CmdL.FileList[1] == 0)
    {
@@ -394,24 +392,6 @@ bool Policy(CommandLine &CmdL)
       pkgCache::PkgIterator I = Cache->PkgBegin();
       for (;I.end() != true; ++I)
       {
-	 // Old code for debugging
-	 if (OldPolicy)
-	 {
-	    if (Plcy->GetPriority(I) == 0)
-	       continue;
-
-	    // Print the package name and the version we are forcing to
-	    std::cout << "     " << I.FullName(true) << " -> ";
-
-	    pkgCache::VerIterator V = Plcy->GetMatch(I);
-	    if (V.end() == true)
-	       std::cout << _("(not found)") << std::endl;
-	    else
-	       std::cout << V.VerStr() << std::endl;
-
-	    continue;
-	 }
-	 // New code
 	 for (pkgCache::VerIterator V = I.VersionList(); !V.end(); ++V) {
 	    auto Prio = Plcy->GetPriority(V, false);
 	    if (Prio == 0)
@@ -456,17 +436,6 @@ bool Policy(CommandLine &CmdL)
       else
 	 std::cout << V.VerStr() << std::endl;
 
-      // Pinned version
-      if (OldPolicy && Plcy->GetPriority(Pkg) != 0)
-      {
-	 std::cout << _("  Package pin: ");
-	 V = Plcy->GetMatch(Pkg);
-	 if (V.end() == true)
-	    std::cout << _("(not found)") << std::endl;
-	 else
-	    std::cout << V.VerStr() << std::endl;
-      }
-
       // Show the priority tables
       std::cout << _("  Version table:") << std::endl;
       for (V = Pkg.VersionList(); V.end() == false; ++V)
@@ -475,10 +444,8 @@ bool Policy(CommandLine &CmdL)
 	    std::cout << " *** " << V.VerStr();
 	 else
 	    std::cout << "     " << V.VerStr();
-	 if (_config->FindI("APT::Policy", 1) < 1)
-	    std::cout << " " << Plcy->GetPriority(Pkg) << std::endl;
-	 else
-	    std::cout << " " << Plcy->GetPriority(V) << std::endl;
+
+	 std::cout << " " << Plcy->GetPriority(V) << std::endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description
