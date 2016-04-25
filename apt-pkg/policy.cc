@@ -374,7 +374,8 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, b
    if (!ConsiderFiles)
       return 0;
 
-   signed short priority = std::numeric_limits<signed short>::min();
+   // priorities are short ints, but we want to pick a value outside the valid range here
+   auto priority = std::numeric_limits<signed int>::min();
    for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
    {
       /* If this is the status file, and the current version is not the
@@ -385,7 +386,7 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, b
       if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver)
 	 priority = std::max(priority, static_cast<decltype(priority)>(-1));
       else
-	 priority = std::max(priority, GetPriority(file.File()));
+	 priority = std::max(priority, static_cast<decltype(priority)>(GetPriority(file.File())));
    }
 
    return priority == std::numeric_limits<decltype(priority)>::min() ? 0 : priority;

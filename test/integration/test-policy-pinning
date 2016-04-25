@@ -273,7 +273,6 @@ Pin-Priority: -32768
 " > rootdir/etc/apt/preferences
 testsuccess aptget install -s coolstuff -o PinPriority=-32768
 
-
 # Check for 32-bit integers
 echo "Package: coolstuff
 Pin: release n=backports
@@ -305,6 +304,26 @@ testfailureequal "Reading package lists...
 E: Cannot convert 2147483648 to integer: out of range
 E: ${tmppath}/rootdir/etc/apt/preferences: Value 2147483648 is outside the range of valid pin priorities (-32768 to 32767)" \
  aptget install -s coolstuff -o PinPriority=2147483648
+
+# Check that short-max/min is a valid pin
+currentpin() {
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: $1
+" > rootdir/etc/apt/preferences
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: $2
+  Version table:
+     2.0~bpo2 $1
+       $1 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages" apt policy coolstuff
+}
+currentpin '32767' '2.0~bpo2'
+currentpin '-32768' '2.0~bpo1'
 
 # Check for 0
 echo "Package: coolstuff
