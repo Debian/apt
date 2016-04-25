@@ -374,7 +374,7 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, b
    if (!ConsiderFiles)
       return 0;
 
-   int priority = std::numeric_limits<int>::min();
+   signed short priority = std::numeric_limits<signed short>::min();
    for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
    {
       /* If this is the status file, and the current version is not the
@@ -382,14 +382,13 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, b
          then it is not a candidate for installation, ever. This weeds
          out bogus entries that may be due to config-file states, or
          other. */
-      if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver) {
-	 // Ignore
-      } else if (GetPriority(file.File()) > priority) {
-	 priority = GetPriority(file.File());
-      }
+      if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver)
+	 priority = std::max(priority, static_cast<decltype(priority)>(-1));
+      else
+	 priority = std::max(priority, GetPriority(file.File()));
    }
 
-   return priority == std::numeric_limits<int>::min() ? 0 : priority;
+   return priority == std::numeric_limits<decltype(priority)>::min() ? 0 : priority;
 }
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
