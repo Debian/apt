@@ -132,7 +132,6 @@ bool pkgPolicy::InitDefaults()
    best package is. */
 pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pkg)
 {
-   // TODO: Replace GetCandidateVer()
    pkgCache::VerIterator cand;
    pkgCache::VerIterator cur = Pkg.CurrentVer();
    int candPriority = -1;
