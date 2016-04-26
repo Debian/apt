@@ -45,11 +45,16 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if request was composed successfully, otherwise false
 	 */
-	bool WriteRequest(pkgDepCache &Cache, FILE* output,
+	bool WriteRequest(pkgDepCache &Cache, FileFd &output,
 				 bool const upgrade = false,
 				 bool const distUpgrade = false,
 				 bool const autoRemove = false,
 				OpProgress *Progress = NULL);
+	bool WriteRequest(pkgDepCache &Cache, FILE* output,
+				 bool const upgrade = false,
+				 bool const distUpgrade = false,
+				 bool const autoRemove = false,
+				OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief creates the scenario representing the package universe
 	 *
@@ -68,7 +73,8 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL);
+	bool WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progress = NULL);
+	bool WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief creates a limited scenario representing the package universe
 	 *
@@ -85,9 +91,12 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
+	bool WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 					 APT::PackageSet const &pkgset,
 					 OpProgress *Progress = NULL);
+	bool WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
+					 APT::PackageSet const &pkgset,
+					 OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief waits and acts on the information returned from the solver
 	 *
@@ -152,7 +161,8 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if solution could be written, otherwise false
 	 */
-	bool WriteSolution(pkgDepCache &Cache, FILE* output);
+	bool WriteSolution(pkgDepCache &Cache, FileFd &output);
+	bool WriteSolution(pkgDepCache &Cache, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief sends a progress report
 	 *
@@ -160,7 +170,8 @@ namespace EDSP								/*{{{*/
 	 *  \param message the solver wants the user to see
 	 *  \param output the front-end listens for progress report
 	 */
-	bool WriteProgress(unsigned short const percent, const char* const message, FILE* output);
+	bool WriteProgress(unsigned short const percent, const char* const message, FileFd &output);
+	bool WriteProgress(unsigned short const percent, const char* const message, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief sends an error report
 	 *
@@ -177,7 +188,8 @@ namespace EDSP								/*{{{*/
 	 *  \param message is free form text to describe the error
 	 *  \param output the front-end listens for error messages
 	 */
-	bool WriteError(char const * const uuid, std::string const &message, FILE* output);
+	bool WriteError(char const * const uuid, std::string const &message, FileFd &output);
+	bool WriteError(char const * const uuid, std::string const &message, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 
 	/** \brief executes the given solver and returns the pipe ends

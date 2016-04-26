@@ -36,20 +36,25 @@ static bool ShowHelp() {
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
+	// we really don't need anything
+	DropPrivileges();
+
 	if (argc > 1 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1],"-h") == 0 ||
 	    strcmp(argv[1],"-v") == 0 || strcmp(argv[1],"--version") == 0)) {
 		ShowHelp();
 		return 0;
 	}
 
-	// we really don't need anything
-	DropPrivileges();
+	FileFd stdoutfd;
+	if (stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
+	   return 1;
+
 	char const * const filename = getenv("APT_EDSP_DUMP_FILENAME");
 	if (filename == NULL || strlen(filename) == 0)
 	{
 	   EDSP::WriteError("ERR_NO_FILENAME", "You have to set the environment variable APT_EDSP_DUMP_FILENAME\n"
 		 "to a valid filename to store the dump of EDSP solver input in.\n"
-		 "For example with: export APT_EDSP_DUMP_FILENAME=/tmp/dump.edsp", stdout);
+		 "For example with: export APT_EDSP_DUMP_FILENAME=/tmp/dump.edsp", stdoutfd);
 	   return 0;
 	}
 
@@ -62,10 +67,10 @@ int main(int argc,const char *argv[])					/*{{{*/
 	   std::ostringstream out;
 	   out << "Writing EDSP solver input to file '" << filename << "' failed!\n";
 	   _error->DumpErrors(out);
-	   EDSP::WriteError("ERR_WRITE_ERROR", out.str(), stdout);
+	   EDSP::WriteError("ERR_WRITE_ERROR", out.str(), stdoutfd);
 	   return 0;
 	}
 
-	EDSP::WriteError("ERR_JUST_DUMPING", "I am too dumb, i can just dump!\nPlease use one of my friends instead!", stdout);
+	EDSP::WriteError("ERR_JUST_DUMPING", "I am too dumb, i can just dump!\nPlease use one of my friends instead!", stdoutfd);
 	return 0;
 }

@@ -55,10 +55,12 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
        (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
       fprintf(output, "Hold: yes\n");
    fprintf(output, "APT-ID: %d\n", Ver->ID);
-   fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
+   if (PrioMap[Ver->Priority] != nullptr)
+      fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       fprintf(output, "Essential: yes\n");
-   fprintf(output, "Section: %s\n", Ver.Section());
+   if (Ver->Section != 0)
+      fprintf(output, "Section: %s\n", Ver.Section());
    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
       fprintf(output, "Multi-Arch: allowed\n");
    else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
@@ -84,6 +86,57 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
       fprintf(output, "APT-Candidate: yes\n");
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
       fprintf(output, "APT-Automatic: yes\n");
+}
+static bool WriteScenarioVersion(pkgDepCache &Cache, FileFd &output, pkgCache::PkgIterator const &Pkg,
+				pkgCache::VerIterator const &Ver)
+{
+   bool Okay = output.Write("Package: ") && output.Write(Pkg.Name());
+   Okay &= output.Write("\nSource: ") && output.Write(Ver.SourcePkgName());
+   Okay &= output.Write("\nArchitecture: ") && output.Write(Ver.Arch());
+   Okay &= output.Write("\nVersion: ") && output.Write(Ver.VerStr());
+   Okay &= output.Write("\nSource-Version: ") && output.Write(Ver.SourceVerStr());
+   if (Pkg.CurrentVer() == Ver)
+      Okay &= output.Write("\nInstalled: yes");
+   if (Pkg->SelectedState == pkgCache::State::Hold ||
+       (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
+      Okay &= output.Write("\nHold: yes");
+   std::string aptid;
+   strprintf(aptid, "\nAPT-ID: %d", Ver->ID);
+   Okay &= output.Write(aptid);
+   if (PrioMap[Ver->Priority] != nullptr)
+      Okay &= output.Write("\nPriority: ") && output.Write(PrioMap[Ver->Priority]);
+   if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      Okay &= output.Write("\nEssential: yes");
+   if (Ver->Section != 0)
+      Okay &= output.Write("\nSection: ") && output.Write(Ver.Section());
+   if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+      Okay &= output.Write("\nMulti-Arch: allowed");
+   else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+      Okay &= output.Write("\nMulti-Arch: foreign");
+   else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+      Okay &= output.Write("\nMulti-Arch: same");
+   std::set<string> Releases;
+   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
+      pkgCache::PkgFileIterator File = I.File();
+      if (File.Flagged(pkgCache::Flag::NotSource) == false) {
+	 string Release = File.RelStr();
+	 if (!Release.empty())
+	    Releases.insert(Release);
+      }
+   }
+   if (!Releases.empty()) {
+       Okay &= output.Write("\nAPT-Release:");
+       for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
+	   Okay &= output.Write("\n ") && output.Write(*R);
+   }
+   std::string aptpin;
+   strprintf(aptpin, "\nAPT-Pin: %d", Cache.GetPolicy().GetPriority(Ver));
+   Okay &= output.Write(aptpin);
+   if (Cache.GetCandidateVersion(Pkg) == Ver)
+      Okay &= output.Write("\nAPT-Candidate: yes");
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      Okay &= output.Write("\nAPT-Automatic: yes");
+   return Okay;
 }
 									/*}}}*/
 // WriteScenarioDependency						/*{{{*/
@@ -116,12 +169,54 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
    {
       if (Prv.IsMultiArchImplicit() == true)
 	 continue;
-      provides.append(", ").append(Prv.Name());
+      if (provides.empty() == false)
+	 provides.append(", ");
+      provides.append(Prv.Name());
       if (Prv->ProvideVersion != 0)
 	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
    }
    if (provides.empty() == false)
-      fprintf(output, "Provides: %s\n", provides.c_str()+2);
+      fprintf(output, "Provides: %s\n", provides.c_str());
+}
+static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver)
+{
+   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   bool orGroup = false;
+   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
+   {
+      if (Dep.IsImplicit() == true)
+	 continue;
+      if (orGroup == false && dependencies[Dep->Type].empty() == false)
+	 dependencies[Dep->Type].append(", ");
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
+      if (Dep->Version != 0)
+	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
+      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+      {
+	 dependencies[Dep->Type].append(" | ");
+	 orGroup = true;
+      }
+      else
+	 orGroup = false;
+   }
+   bool Okay = true;
+   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+      if (dependencies[i].empty() == false)
+	 Okay &= output.Write("\n") && output.Write(DepMap[i]) && output.Write(": ") && output.Write(dependencies[i]);
+   string provides;
+   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+   {
+      if (Prv.IsMultiArchImplicit() == true)
+	 continue;
+      if (provides.empty() == false)
+	 provides.append(", ");
+      provides.append(Prv.Name());
+      if (Prv->ProvideVersion != 0)
+	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
+   }
+   if (provides.empty() == false)
+      Okay &= output.Write("\nProvides: ") && output.Write(provides);
+   return Okay && output.Write("\n");
 }
 									/*}}}*/
 // WriteScenarioLimitedDependency					/*{{{*/
@@ -139,7 +234,8 @@ static void WriteScenarioLimitedDependency(FILE* output,
       {
 	 if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
 	    continue;
-	 dependencies[Dep->Type].append(", ");
+	 if (dependencies[Dep->Type].empty() == false)
+	    dependencies[Dep->Type].append(", ");
       }
       else if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
       {
@@ -162,7 +258,7 @@ static void WriteScenarioLimitedDependency(FILE* output,
    }
    for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
       if (dependencies[i].empty() == false)
-	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
+	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str());
    string provides;
    for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
    {
@@ -170,10 +266,71 @@ static void WriteScenarioLimitedDependency(FILE* output,
 	 continue;
       if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
 	 continue;
-      provides.append(", ").append(Prv.Name());
+      if (provides.empty() == false)
+	 provides.append(", ");
+      provides.append(Prv.Name());
+      if (Prv->ProvideVersion != 0)
+	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
    }
    if (provides.empty() == false)
-      fprintf(output, "Provides: %s\n", provides.c_str()+2);
+      fprintf(output, "Provides: %s\n", provides.c_str());
+}
+static bool WriteScenarioLimitedDependency(FileFd &output,
+					  pkgCache::VerIterator const &Ver,
+					  APT::PackageSet const &pkgset)
+{
+   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   bool orGroup = false;
+   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
+   {
+      if (Dep.IsImplicit() == true)
+	 continue;
+      if (orGroup == false)
+      {
+	 if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+	    continue;
+	 if (dependencies[Dep->Type].empty() == false)
+	    dependencies[Dep->Type].append(", ");
+      }
+      else if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+      {
+	 if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+	    continue;
+	 dependencies[Dep->Type].erase(dependencies[Dep->Type].end()-3, dependencies[Dep->Type].end());
+	 orGroup = false;
+	 continue;
+      }
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
+      if (Dep->Version != 0)
+	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
+      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+      {
+	 dependencies[Dep->Type].append(" | ");
+	 orGroup = true;
+      }
+      else
+	 orGroup = false;
+   }
+   bool Okay = true;
+   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+      if (dependencies[i].empty() == false)
+	 Okay &= output.Write("\n") && output.Write(DepMap[i]) && output.Write(": ") && output.Write(dependencies[i]);
+   string provides;
+   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+   {
+      if (Prv.IsMultiArchImplicit() == true)
+	 continue;
+      if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
+	 continue;
+      if (provides.empty() == false)
+	 provides.append(", ");
+      provides.append(Prv.Name());
+      if (Prv->ProvideVersion != 0)
+	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
+   }
+   if (provides.empty() == false)
+      Okay &= output.Write("\nProvides: ") && output.Write(provides);
+   return Okay && output.Write("\n");
 }
 									/*}}}*/
 static bool SkipUnavailableVersions(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver)/*{{{*/
@@ -219,6 +376,31 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
    }
    return true;
 }
+bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progress)
+{
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
+   unsigned long p = 0;
+   bool Okay = true;
+   std::vector<std::string> archs = APT::Configuration::getArchitectures();
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      std::string const arch = Pkg.Arch();
+      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
+	 continue;
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
+      {
+	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
+	    continue;
+	 Okay &= WriteScenarioVersion(Cache, output, Pkg, Ver);
+	 Okay &= WriteScenarioDependency(output, Ver);
+	 Okay &= output.Write("\n");
+	 if (Progress != NULL && p % 100 == 0)
+	    Progress->Progress(p);
+      }
+   }
+   return true;
+}
 									/*}}}*/
 // EDSP::WriteLimitedScenario - to the given file descriptor		/*{{{*/
 bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
@@ -242,6 +424,29 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
    if (Progress != NULL)
       Progress->Done();
    return true;
+}
+bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
+				APT::PackageSet const &pkgset,
+				OpProgress *Progress)
+{
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
+   unsigned long p  = 0;
+   bool Okay = true;
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg, ++p)
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      {
+	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
+	    continue;
+	 Okay &= WriteScenarioVersion(Cache, output, Pkg, Ver);
+	 Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset);
+	 Okay &= output.Write("\n");
+	 if (Progress != NULL && p % 100 == 0)
+	    Progress->Progress(p);
+      }
+   if (Progress != NULL)
+      Progress->Done();
+   return Okay;
 }
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
@@ -298,6 +503,57 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       fprintf(output, "Preferences: %s\n", solverpref.c_str());
    fprintf(output, "\n");
    return true;
+}
+bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output, bool const Upgrade,
+			bool const DistUpgrade, bool const AutoRemove,
+			OpProgress *Progress)
+{
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to solver"));
+   unsigned long p = 0;
+   string del, inst;
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
+   {
+      if (Progress != NULL && p % 100 == 0)
+         Progress->Progress(p);
+      string* req;
+      pkgDepCache::StateCache &P = Cache[Pkg];
+      if (P.Delete() == true)
+	 req = &del;
+      else if (P.NewInstall() == true || P.Upgrade() == true || P.ReInstall() == true ||
+	       (P.Mode == pkgDepCache::ModeKeep && (P.iFlags & pkgDepCache::Protected) == pkgDepCache::Protected))
+	 req = &inst;
+      else
+	 continue;
+      req->append(" ").append(Pkg.FullName());
+   }
+   bool Okay = output.Write("Request: EDSP 0.5\n");
+
+   const char *arch = _config->Find("APT::Architecture").c_str();
+   std::vector<string> archs = APT::Configuration::getArchitectures();
+   Okay &= output.Write("Architecture: ") && output.Write(arch) && output.Write("\n");
+   Okay &= output.Write("Architectures:");
+   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
+       Okay &= output.Write(" ") && output.Write(*a);
+   Okay &= output.Write("\n");
+
+   if (del.empty() == false)
+      Okay &= output.Write("Remove:") && output.Write(del) && output.Write("\n");
+   if (inst.empty() == false)
+      Okay &= output.Write("Install:") && output.Write(inst) && output.Write("\n");
+   if (Upgrade == true)
+      Okay &= output.Write("Upgrade: yes\n");
+   if (DistUpgrade == true)
+      Okay &= output.Write("Dist-Upgrade: yes\n");
+   if (AutoRemove == true)
+      Okay &= output.Write("Autoremove: yes\n");
+   if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
+      Okay &= output.Write("Strict-Pinning: no\n");
+   string solverpref("APT::Solver::");
+   solverpref.append(_config->Find("APT::Solver", "internal")).append("::Preferences");
+   if (_config->Exists(solverpref) == true)
+      Okay &= output.Write("Preferences: ") && output.Write(_config->Find(solverpref,"")) && output.Write("\n");
+   return Okay && output.Write("\n");
 }
 									/*}}}*/
 // EDSP::ReadResponse - from the given file descriptor			/*{{{*/
@@ -563,6 +819,39 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 
    return true;
 }
+bool EDSP::WriteSolution(pkgDepCache &Cache, FileFd &output)
+{
+   bool const Debug = _config->FindB("Debug::EDSP::WriteSolution", false);
+   bool Okay = true;
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      std::string action;
+      if (Cache[Pkg].Delete() == true)
+	 strprintf(action, "Remove: %d\n", Pkg.CurrentVer()->ID);
+      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+	 strprintf(action, "Install: %d\n", Cache.GetCandidateVersion(Pkg)->ID);
+      else if (Cache[Pkg].Garbage == true)
+	 strprintf(action, "Autoremove: %d\n", Pkg.CurrentVer()->ID);
+      else
+	 continue;
+
+      Okay &= output.Write(action);
+
+      if (Debug)
+      {
+	 Okay &= output.Write("Package: ") && output.Write(Pkg.FullName()) && output.Write("\nVersion: ");
+	 if (Cache[Pkg].Delete() == true || Cache[Pkg].Garbage == true)
+	    Okay &= output.Write(Pkg.CurrentVer().VerStr());
+	 else
+	    Okay &= output.Write(Cache.GetCandidateVersion(Pkg).VerStr());
+	 Okay &= output.Write("\n\n");
+      }
+      else
+	 Okay &= output.Write("\n");
+   }
+
+   return Okay;
+}
 									/*}}}*/
 // EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/
 bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FILE* output) {
@@ -572,12 +861,25 @@ bool EDSP::WriteProgress(unsigned short const percent, const char* const message
 	fflush(output);
 	return true;
 }
+bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FileFd &output) {
+	std::string strpercent;
+	strprintf(strpercent, "Percentage: %d\n", percent);
+	return output.Write("Progress: ") && output.Write(TimeRFC1123(time(NULL))) && output.Write("\n") &&
+	   output.Write(strpercent) && output.Write("Message: ") && output.Write(message) && output.Write("\n\n") &&
+	   output.Flush();
+
+}
 									/*}}}*/
 // EDSP::WriteError - format an error message to be send to file descriptor /*{{{*/
 bool EDSP::WriteError(char const * const uuid, std::string const &message, FILE* output) {
 	fprintf(output, "Error: %s\n", uuid);
 	fprintf(output, "Message: %s\n\n", SubstVar(SubstVar(message, "\n\n", "\n.\n"), "\n", "\n ").c_str());
 	return true;
+}
+bool EDSP::WriteError(char const * const uuid, std::string const &message, FileFd &output) {
+   return output.Write("Error: ") && output.Write(uuid) && output.Write("\n") &&
+      output.Write("Message: ") && output.Write(SubstVar(SubstVar(message, "\n\n", "\n.\n"), "\n", "\n ")) &&
+      output.Write("\n\n");
 }
 									/*}}}*/
 // EDSP::ExecuteSolver - fork requested solver and setup ipc pipes	{{{*/
@@ -643,9 +945,9 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	if (solver_pid == 0)
 		return false;
 
-	FILE* output = fdopen(solver_in, "w");
-	if (output == NULL)
-		return _error->Errno("Resolve", "fdopen on solver stdin failed");
+	FileFd output;
+	if (output.OpenDescriptor(solver_in, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
+		return _error->Errno("ResolveExternal", "Opening solver %s stdin on fd %d for writing failed", solver, solver_in);
 
 	if (Progress != NULL)
 		Progress->OverallProgress(0, 100, 5, _("Execute external solver"));
@@ -653,7 +955,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	if (Progress != NULL)
 		Progress->OverallProgress(5, 100, 20, _("Execute external solver"));
 	EDSP::WriteScenario(Cache, output, Progress);
-	fclose(output);
+	output.Close();
 
 	if (Progress != NULL)
 		Progress->OverallProgress(25, 100, 75, _("Execute external solver"));

@@ -82,12 +82,14 @@ int main(int argc,const char *argv[])					/*{{{*/
 		pkgCacheFile CacheFile;
 		CacheFile.Open(NULL, false);
 		APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
-		FILE* output = stdout;
+		FileFd output;
+		if (output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
+			return 2;
 		if (pkgset.empty() == true)
 			EDSP::WriteScenario(CacheFile, output);
 		else
 			EDSP::WriteLimitedScenario(CacheFile, output, pkgset);
-		fclose(output);
+		output.Close();
 		_error->DumpErrors(std::cerr);
 		return 0;
 	}
@@ -102,8 +104,10 @@ int main(int argc,const char *argv[])					/*{{{*/
 	_config->Set("APT::System", "Debian APT solver interface");
 	_config->Set("APT::Solver", "internal");
 	_config->Set("edsp::scenario", "/nonexistent/stdin");
-	int input = STDIN_FILENO;
-	FILE* output = stdout;
+	FileFd output;
+	if (output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
+	   DIE("stdout couldn't be opened");
+	int const input = STDIN_FILENO;
 	SetNonBlock(input, false);
 
 	EDSP::WriteProgress(0, "Start up solver…", output);
