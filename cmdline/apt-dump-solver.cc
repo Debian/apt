@@ -61,7 +61,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	RemoveFile(argv[0], filename);
 	FileFd input, output;
 	if (input.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false ||
-	      output.Open(filename, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600) == false ||
+	      output.Open(filename, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, FileFd::Extension, 0600) == false ||
 	      CopyFile(input, output) == false || input.Close() == false || output.Close() == false)
 	{
 	   std::ostringstream out;
