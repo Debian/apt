@@ -187,13 +187,13 @@ void HttpsMethod::SetupProxy()						/*{{{*/
    if (UseProxy == "DIRECT")
       return;
 
-   if (UseProxy.empty() == false) 
+   // Parse no_proxy, a comma (,) separated list of domains we don't want to use    
+   // a proxy for so we stop right here if it is in the list
+   if (getenv("no_proxy") != 0 && CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
+      return;
+
+   if (UseProxy.empty() == true)
    {
-      // Parse no_proxy, a comma (,) separated list of domains we don't want to use
-      // a proxy for so we stop right here if it is in the list
-      if (getenv("no_proxy") != 0 && CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
-	 return;
-   } else {
       const char* result = getenv("https_proxy");
       // FIXME: Fall back to http_proxy is to remain compatible with
       // existing setups and behaviour of apt.conf.  This should be
