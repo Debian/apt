@@ -91,6 +91,11 @@ _apt()
                 _filedir "*.deb"
                 return 0
                 ;;
+            download|source|build-dep|changelog)
+                COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
+                    2> /dev/null ) )
+                return 0
+                ;;
             edit-sources)
                 COMPREPLY=( $( compgen -W '$( command ls $sourcesdir )' \
                     -- "$cur" ) )
