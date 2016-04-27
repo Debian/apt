@@ -1626,11 +1626,14 @@ public:
 
       if (cctx != nullptr)
       {
-	 res = LZ4F_compressEnd(cctx, lz4_buffer.buffer, lz4_buffer.buffersize_max, nullptr);
-	 if (LZ4F_isError(res) || backend.Write(lz4_buffer.buffer, res) == false)
-	    return false;
-	 if (!backend.Flush())
-	    return false;
+	 if (filefd->Failed() == false)
+	 {
+	    res = LZ4F_compressEnd(cctx, lz4_buffer.buffer, lz4_buffer.buffersize_max, nullptr);
+	    if (LZ4F_isError(res) || backend.Write(lz4_buffer.buffer, res) == false)
+	       return false;
+	    if (!backend.Flush())
+	       return false;
+	 }
 	 if (!backend.Close())
 	    return false;
 
@@ -1658,16 +1661,17 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_LZMA
    struct LZMAFILE {
       FILE* file;
+      FileFd * const filefd;
       uint8_t buffer[4096];
       lzma_stream stream;
       lzma_ret err;
       bool eof;
       bool compressing;
 
-      LZMAFILE() : file(nullptr), eof(false), compressing(false) { buffer[0] = '\0'; }
+      LZMAFILE(FileFd * const fd) : file(nullptr), filefd(fd), eof(false), compressing(false) { buffer[0] = '\0'; }
       ~LZMAFILE()
       {
-	 if (compressing == true)
+	 if (compressing == true && filefd->Failed() == false)
 	 {
 	    size_t constexpr buffersize = sizeof(buffer)/sizeof(buffer[0]);
 	    while(true)
@@ -1728,7 +1732,7 @@ public:
 	 return filefd->FileFdError("ReadWrite mode is not supported for lzma/xz files %s", filefd->FileName.c_str());
 
       if (lzma == nullptr)
-	 lzma = new LzmaFileFdPrivate::LZMAFILE;
+	 lzma = new LzmaFileFdPrivate::LZMAFILE(filefd);
       if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly)
 	 lzma->file = fdopen(iFd, "w");
       else
@@ -2589,7 +2593,7 @@ unsigned long long FileFd::Size()
 /* */
 bool FileFd::Close()
 {
-   if (Flush() == false)
+   if (Failed() == false && Flush() == false)
       return false;
    if (iFd == -1)
       return true;
