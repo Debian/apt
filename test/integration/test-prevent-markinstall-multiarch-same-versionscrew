@@ -11,10 +11,12 @@ insertpackage 'unstable' 'allarchs' 'all' '2'
 
 insertpackage 'stable,installed' 'fine' 'i386,amd64' '1' 'Multi-Arch: same'
 insertpackage 'unstable' 'fine' 'amd64,i386' '2' 'Multi-Arch: same'
+insertpackage 'experimental' 'fine' 'amd64,i386' '3' 'Multi-Arch: same'
 
 insertinstalledpackage 'fine-installed' 'i386,amd64' '1' 'Multi-Arch: same'
 insertpackage 'stable' 'fine-installed' 'i386,amd64,armel' '1' 'Multi-Arch: same'
 insertpackage 'unstable' 'fine-installed' 'i386,amd64' '2' 'Multi-Arch: same'
+insertpackage 'experimental' 'fine-installed' 'i386,amd64' '3' 'Multi-Arch: same'
 
 insertpackage 'stable,installed' 'out-of-sync-native' 'i386,amd64' '1' 'Multi-Arch: same'
 insertpackage 'unstable' 'out-of-sync-native' 'amd64' '2' 'Multi-Arch: same'
@@ -61,6 +63,36 @@ Conf fine:i386 (2 unstable [i386])
 Conf fine (2 unstable [amd64])
 Conf fine-installed:i386 (2 unstable [i386])
 Conf fine-installed (2 unstable [amd64])
+Conf out-of-sync-gone-foreign (2 unstable [amd64])
+Conf out-of-sync-gone-native:i386 (2 unstable [i386])' aptget dist-upgrade -s #-o Debug::pkgDepCache::Marker=1
+
+echo 'Package: fine:* fine-installed:*
+Pin: release a=experimental
+Pin-Priority: 500' > rootdir/etc/apt/preferences.d/experimental.pref
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  out-of-sync-gone-foreign:i386 out-of-sync-gone-native
+The following packages have been kept back:
+  out-of-sync-foreign:i386 out-of-sync-native
+The following packages will be upgraded:
+  fine fine:i386 fine-installed fine-installed:i386 out-of-sync-gone-foreign
+  out-of-sync-gone-native:i386
+6 upgraded, 0 newly installed, 2 to remove and 2 not upgraded.
+Remv out-of-sync-gone-foreign:i386 [1]
+Remv out-of-sync-gone-native [1]
+Inst fine [1] (3 experimental [amd64]) [fine:amd64 on fine:i386] [fine:i386 on fine:amd64] [fine:i386 ]
+Inst fine:i386 [1] (3 experimental [i386])
+Inst fine-installed [1] (3 experimental [amd64]) [fine-installed:amd64 on fine-installed:i386] [fine-installed:i386 on fine-installed:amd64] [fine-installed:i386 ]
+Inst fine-installed:i386 [1] (3 experimental [i386])
+Inst out-of-sync-gone-foreign [1] (2 unstable [amd64])
+Inst out-of-sync-gone-native:i386 [1] (2 unstable [i386])
+Conf fine:i386 (3 experimental [i386])
+Conf fine (3 experimental [amd64])
+Conf fine-installed:i386 (3 experimental [i386])
+Conf fine-installed (3 experimental [amd64])
 Conf out-of-sync-gone-foreign (2 unstable [amd64])
 Conf out-of-sync-gone-native:i386 (2 unstable [i386])' aptget dist-upgrade -s #-o Debug::pkgDepCache::Marker=1
 

@@ -1360,7 +1360,7 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       // not having a candidate or being in sync
       // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
       VerIterator CV = PkgState[P->ID].CandidateVerIter(*this);
-      if (CV.end() == true || strcmp(Pkg.CandVersion(), CV.VerStr()) == 0)
+      if (CV.end() == true || strcmp(CandVer.VerStr(), CV.VerStr()) == 0)
 	 continue;
 
       // packages losing M-A:same can be out-of-sync
@@ -1375,7 +1375,7 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << Pkg
 	    << " as it is not in sync with its M-A:same sibling " << P
-	    << " (" << Pkg.CandVersion() << " != " << CV.VerStr() << ")" << std::endl;
+	    << " (" << CandVer.VerStr() << " != " << CV.VerStr() << ")" << std::endl;
       return false;
    }
 
