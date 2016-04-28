@@ -14,9 +14,9 @@ namespace APT {
  */
 struct PrettyPkg
 {
-   pkgDepCache const * const DepCache;
+   pkgDepCache * const DepCache;
    pkgCache::PkgIterator const Pkg;
-   PrettyPkg(pkgDepCache const * const depcache, pkgCache::PkgIterator const &pkg) APT_NONNULL(2) : DepCache(depcache), Pkg(pkg) {}
+   PrettyPkg(pkgDepCache * const depcache, pkgCache::PkgIterator const &pkg) APT_NONNULL(2) : DepCache(depcache), Pkg(pkg) {}
 };
 /** helper to format DepIterator for easier printing in debug messages.
  *
@@ -25,9 +25,9 @@ struct PrettyPkg
  */
 struct PrettyDep
 {
-   pkgDepCache const * const DepCache;
+   pkgDepCache * const DepCache;
    pkgCache::DepIterator const Dep;
-   PrettyDep(pkgDepCache const * const depcache, pkgCache::DepIterator const &dep) APT_NONNULL(2) : DepCache(depcache), Dep(dep) {}
+   PrettyDep(pkgDepCache * const depcache, pkgCache::DepIterator const &dep) APT_NONNULL(2) : DepCache(depcache), Dep(dep) {}
 };
 
 }
