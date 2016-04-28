@@ -1296,25 +1296,8 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
    }
 }
 									/*}}}*/
-bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
+bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 {
-   string::size_type pos;
-
-   // check for missing sigs (that where not fatal because otherwise we had
-   // bombed earlier)
-   string missingkeys;
-   string msg = _("There is no public key available for the "
-		  "following key IDs:\n");
-   pos = Message.find("NO_PUBKEY ");
-   if (pos != std::string::npos)
-   {
-      string::size_type start = pos+strlen("NO_PUBKEY ");
-      string Fingerprint = Message.substr(start, Message.find("\n")-start);
-      missingkeys += (Fingerprint);
-   }
-   if(!missingkeys.empty())
-      _error->Warning("%s", (msg + missingkeys).c_str());
-
    string Transformed = TransactionManager->MetaIndexParser->GetExpectedDist();
 
    if (Transformed == "../project/experimental")
@@ -1322,7 +1305,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &Message)		/*{{{*/
       Transformed = "experimental";
    }
 
-   pos = Transformed.rfind('/');
+   auto pos = Transformed.rfind('/');
    if (pos != string::npos)
    {
       Transformed = Transformed.substr(0, pos);

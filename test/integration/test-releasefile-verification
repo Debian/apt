@@ -127,7 +127,29 @@ runtest() {
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	failaptold
-	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	rm -f rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+
+	msgmsg 'Cold archive signed by' 'Joe Sixpack,Marvin Paranoid'
+	prepare "${PKGFILE}"
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack,Marvin Paranoid'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	successfulaptgetupdate 'NO_PUBKEY'
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	msgmsg 'Cold archive signed by' 'Joe Sixpack,Rex Expired'
+	prepare "${PKGFILE}"
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack,Rex Expired'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	successfulaptgetupdate 'EXPKEYSIG'
+	rm -f rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
 
 	msgmsg 'Cold archive signed by' 'Marvin Paranoid'
 	prepare "${PKGFILE}"
@@ -279,11 +301,18 @@ export APT_TESTS_DIGEST_ALGO='SHA224'
 
 successfulaptgetupdate() {
 	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	if [ -n "$1" ]; then
+		cp rootdir/tmp/testsuccess.output aptupdate.output
+		testsuccess grep "$1" aptupdate.output
+	fi
 }
 runtest3 'Trusted'
 
 successfulaptgetupdate() {
 	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	if [ -n "$1" ]; then
+		testsuccess grep "$1" rootdir/tmp/testwarning.output
+	fi
 	testsuccess grep 'uses weak digest algorithm' rootdir/tmp/testwarning.output
 }
 runtest3 'Weak'
