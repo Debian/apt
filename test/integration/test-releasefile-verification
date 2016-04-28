@@ -123,7 +123,7 @@ runtest() {
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	signreleasefiles 'Rex Expired'
 	find aptarchive/ -name "$DELETEFILE" -delete
-	updatewithwarnings '^W: .* KEYEXPIRED'
+	updatewithwarnings '^W: .* EXPKEYSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	failaptold
@@ -172,7 +172,7 @@ runtest() {
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	signreleasefiles 'Rex Expired'
 	find aptarchive/ -name "$DELETEFILE" -delete
-	updatewithwarnings '^W: .* KEYEXPIRED'
+	updatewithwarnings '^W: .* EXPKEYSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold

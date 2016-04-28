@@ -36,7 +36,7 @@ using std::vector;
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"
 #define GNUPGVALIDSIG "[GNUPG:] VALIDSIG"
 #define GNUPGGOODSIG "[GNUPG:] GOODSIG"
-#define GNUPGKEYEXPIRED "[GNUPG:] KEYEXPIRED"
+#define GNUPGEXPKEYSIG "[GNUPG:] EXPKEYSIG"
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 
@@ -182,10 +182,10 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             std::clog << "Got NODATA! " << std::endl;
          BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
-      else if (strncmp(buffer, GNUPGKEYEXPIRED, sizeof(GNUPGKEYEXPIRED)-1) == 0)
+      else if (strncmp(buffer, GNUPGEXPKEYSIG, sizeof(GNUPGEXPKEYSIG)-1) == 0)
       {
          if (Debug == true)
-            std::clog << "Got KEYEXPIRED! " << std::endl;
+            std::clog << "Got EXPKEYSIG! " << std::endl;
          WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       else if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
