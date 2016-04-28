@@ -24,6 +24,7 @@
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/prettyprinters.h>
 
 #include <string.h>
 #include <string>
@@ -710,7 +711,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
          if (Scores[(*K)->ID] != 0)
          {
            pkgCache::PkgIterator Pkg(Cache,*K);
-           clog << Scores[(*K)->ID] << ' ' << Pkg << std::endl;
+           clog << Scores[(*K)->ID] << ' ' << APT::PrettyPkg(&Cache, Pkg) << std::endl;
          }
    }
 
@@ -765,7 +766,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    continue;
 	 
 	 if (Debug == true)
-	    clog << "Investigating (" << Counter << ") " << I << endl;
+	    clog << "Investigating (" << Counter << ") " << APT::PrettyPkg(&Cache, I) << endl;
 	 
 	 // Isolate the problem dependency
 	 bool InOr = false;
@@ -835,7 +836,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    }
 	    
 	    if (Debug == true)
-	       clog << "Broken " << Start << endl;
+	       clog << "Broken " << APT::PrettyDep(&Cache, Start) << endl;
 
 	    /* Look across the version list. If there are no possible
 	       targets then we keep the package and bail. This is necessary
@@ -942,7 +943,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 			      is removed by the resolver because of a conflict or alike but it is
 			      dangerous as it could trigger new breaks/conflicts… */
 			   if (Debug == true)
-			      clog << "  Try Installing " << Start.TargetPkg() << " before changing " << I.FullName(false) << std::endl;
+			      clog << "  Try Installing " << APT::PrettyPkg(&Cache, Start.TargetPkg()) << " before changing " << I.FullName(false) << std::endl;
 			   unsigned long const OldBroken = Cache.BrokenCount();
 			   Cache.MarkInstall(Start.TargetPkg(), true, 1, false);
 			   // FIXME: we should undo the complete MarkInstall process here
@@ -1108,7 +1109,7 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
    if (Cache[I].InstBroken() == true)
    {
       if (Debug == true)
-	 std::clog << "  Dependencies are not satisfied for " << I << std::endl;
+	 std::clog << "  Dependencies are not satisfied for " << APT::PrettyPkg(&Cache, I) << std::endl;
       return true;
    }
 
@@ -1117,7 +1118,7 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
        Cache[I].InstPolicyBroken() == true)
    {
       if (Debug == true)
-	 std::clog << "  Policy breaks with upgrade of " << I << std::endl;
+	 std::clog << "  Policy breaks with upgrade of " << APT::PrettyPkg(&Cache, I) << std::endl;
       return true;
    }
 
@@ -1169,7 +1170,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
          if (Scores[(*K)->ID] != 0)
          {
            pkgCache::PkgIterator Pkg(Cache,*K);
-           clog << Scores[(*K)->ID] << ' ' << Pkg << std::endl;
+           clog << Scores[(*K)->ID] << ' ' << APT::PrettyPkg(&Cache, Pkg) << std::endl;
          }
    }
 
@@ -1224,7 +1225,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	 while (true)
 	 {
 	    if (Debug == true)
-	       clog << "Package " << I.FullName(false) << " " << Start << endl;
+	       clog << "Package " << I.FullName(false) << " " << APT::PrettyDep(&Cache, Start) << endl;
 
 	    // Look at all the possible provides on this package
 	    std::unique_ptr<pkgCache::Version *[]> VList(Start.AllTargets());
