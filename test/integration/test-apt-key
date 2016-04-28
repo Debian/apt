@@ -19,6 +19,11 @@ cleanplate() {
 	rm -rf rootdir/etc/apt/trusted.gpg.d/ rootdir/etc/apt/trusted.gpg
 	mkdir rootdir/etc/apt/trusted.gpg.d/
 }
+testmultigpg() {
+	testfailure --nomsg aptkey --quiet --readonly "$@"
+	testsuccess grep "^gpgv: Can't check signature" rootdir/tmp/testfailure.output
+	testsuccess grep '^gpgv: Good signature from' rootdir/tmp/testfailure.output
+}
 
 echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
 APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/aptkey.conf
@@ -178,7 +183,6 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
 	testsuccess test -s signature.gpg -a -s signature
 
-
 	for GPGV in '' 'gpgv' 'gpgv2'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
 
@@ -209,6 +213,54 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		echo 'lalalalala' > signature2
 		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
 	done
+	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
+
+	msgtest 'Test verify a file' 'with good keyring'
+	testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature
+
+	cleanplate
+	cat keys/joesixpack.pub keys/marvinparanoid.pub > keys/double.pub
+	cat keys/joesixpack.sec keys/marvinparanoid.sec > keys/double.sec
+	cp -a keys/double.pub rootdir/etc/apt/trusted.gpg.d/double.gpg
+	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	testsuccess aptkey --quiet --keyring keys/double.pub --secret-keyring keys/double.sec --readonly \
+		adv --batch --yes -u 'Marvin' -u 'Joe' --armor --detach-sign --sign --output signature.gpg signature
+	testsuccess test -s signature.gpg -a -s signature
+
+	for GPGV in '' 'gpgv' 'gpgv2'; do
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
+
+		msgtest 'Test verify a doublesigned file' 'with all keys'
+		testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+
+		msgtest 'Test verify a doublesigned file' 'with good keyring joe'
+		testmultigpg --keyring keys/joesixpack.pub verify signature.gpg signature
+
+		msgtest 'Test verify a doublesigned file' 'with good keyring marvin'
+		testmultigpg --keyring keys/marvinparanoid.pub verify signature.gpg signature
+
+		msgtest 'Test fail verify a doublesigned file' 'with bad keyring'
+		testfailure --nomsg aptkey --quiet --readonly --keyring keys/rexexpired.pub verify signature.gpg signature
+
+		msgtest 'Test fail verify a doublesigned file' 'with non-existing keyring'
+		testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
+		testfailure test -e keys/does-not-exist.pub
+
+		# note: this isn't how apts gpgv method implements keyid for verify
+		msgtest 'Test verify a doublesigned file' 'with good keyid'
+		testmultigpg --keyid 'Paranoid' verify signature.gpg signature
+
+		msgtest 'Test fail verify a doublesigned file' 'with bad keyid'
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Rex' verify signature.gpg signature
+
+		msgtest 'Test fail verify a doublesigned file' 'with non-existing keyid'
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
+
+		msgtest 'Test verify fails on' 'bad doublesigned file'
+		echo 'lalalalala' > signature2
+		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
+	done
+	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
 }
 
 setupgpgcommand() {

@@ -203,14 +203,14 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
       {
-         char *sig = buffer + sizeof(GNUPGPREFIX);
-         char *p = sig + sizeof("GOODSIG");
+         char *sig = buffer + sizeof(GNUPGGOODSIG);
+         char *p = sig;
          while (*p && isxdigit(*p)) 
             p++;
          *p = 0;
          if (Debug == true)
-            std::clog << "Got GOODSIG, key ID:" << sig << std::endl;
-         GoodSigners.push_back(string(sig));
+            std::clog << "Got GOODSIG, key ID: " << sig << std::endl;
+         GoodSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
       }
       else if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
       {

@@ -1082,40 +1082,61 @@ setupaptarchive() {
 }
 
 signreleasefiles() {
-	local SIGNER="${1:-Joe Sixpack}"
+	local SIGNERS="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
 	if [ -n "$1" ]; then shift; fi
 	if [ -n "$1" ]; then shift; fi
-	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
-	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo ${APT_TESTS_DIGEST_ALGO:-SHA512}"
-	msgninfo "\tSign archive with $SIGNER key $KEY… "
+	local KEY="keys/$(echo "$SIGNERS" | tr 'A-Z' 'a-z' | tr -d ' ,')"
+	msgninfo "\tSign archive with $SIGNERS key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
 	local PUBEXPIREBAK="${REXKEY}.pub.bak"
-	if [ "${SIGNER}" = 'Rex Expired' ]; then
-		# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
-		# option doesn't exist anymore (and using faketime would add a new obscure dependency)
-		# therefore we 'temporary' make the key not expired and restore a backup after signing
-		cp "${REXKEY}.sec" "$SECEXPIREBAK"
-		cp "${REXKEY}.pub" "$PUBEXPIREBAK"
-		local SECUNEXPIRED="${REXKEY}.sec.unexpired"
-		local PUBUNEXPIRED="${REXKEY}.pub.unexpired"
-		if [ -f "$SECUNEXPIRED" ] && [ -f "$PUBUNEXPIRED" ]; then
-			cp "$SECUNEXPIRED" "${REXKEY}.sec"
-			cp "$PUBUNEXPIRED" "${REXKEY}.pub"
-		else
-			if ! printf "expire\n1w\nsave\n" | $GPG --default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
-				cat setexpire.gpg
-				exit 1
-			fi
-			cp "${REXKEY}.sec" "$SECUNEXPIRED"
-			cp "${REXKEY}.pub" "$PUBUNEXPIRED"
+	local SIGUSERS=""
+	while [ -n "${SIGNERS%%,*}" ]; do
+		local SIGNER="${SIGNERS%%,*}"
+		if [ "${SIGNERS}" = "${SIGNER}" ]; then
+			SIGNERS=""
 		fi
+		SIGNERS="${SIGNERS#*,}"
+		# FIXME: This should be the full name, but we can't encode the space properly currently
+		SIGUSERS="${SIGUSERS} -u ${SIGNER#* }"
+		if [ "${SIGNER}" = 'Rex Expired' ]; then
+			# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
+			# option doesn't exist anymore (and using faketime would add a new obscure dependency)
+			# therefore we 'temporary' make the key not expired and restore a backup after signing
+			cp "${REXKEY}.sec" "$SECEXPIREBAK"
+			cp "${REXKEY}.pub" "$PUBEXPIREBAK"
+			local SECUNEXPIRED="${REXKEY}.sec.unexpired"
+			local PUBUNEXPIRED="${REXKEY}.pub.unexpired"
+			if [ -f "$SECUNEXPIRED" ] && [ -f "$PUBUNEXPIRED" ]; then
+				cp "$SECUNEXPIRED" "${REXKEY}.sec"
+				cp "$PUBUNEXPIRED" "${REXKEY}.pub"
+			else
+				if ! printf "expire\n1w\nsave\n" | aptkey --quiet --keyring "${REXKEY}.pub" --secret-keyring "${REXKEY}.sec" \
+					--readonly adv --batch --yes --digest-algo "${APT_TESTS_DIGEST_ALGO:-SHA512}" \
+					--default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
+					cat setexpire.gpg
+					exit 1
+				fi
+				cp "${REXKEY}.sec" "$SECUNEXPIRED"
+				cp "${REXKEY}.pub" "$PUBUNEXPIRED"
+			fi
+		fi
+		if [ ! -e "${KEY}.pub" ]; then
+			local K="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | tr -d ' ,')"
+			cat "${K}.pub" >> "${KEY}.new.pub"
+			cat "${K}.sec" >> "${KEY}.new.sec"
+		fi
+	done
+	if [ ! -e "${KEY}.pub" ]; then
+		mv "${KEY}.new.pub" "${KEY}.pub"
+		mv "${KEY}.new.sec" "${KEY}.sec"
 	fi
+	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo ${APT_TESTS_DIGEST_ALGO:-SHA512}"
 	for RELEASE in $(find "${REPODIR}/" -name Release); do
-		testsuccess $GPG "$@" --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+		testsuccess $GPG "$@" $SIGUSERS --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		testsuccess $GPG "$@" --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
+		testsuccess $GPG "$@" $SIGUSERS --clearsign --output "$INRELEASE" "$RELEASE"
 		# we might have set a specific date for the Release file, so copy it
 		touch -d "$(stat --format "%y" ${RELEASE})" "${RELEASE}.gpg" "${INRELEASE}"
 	done

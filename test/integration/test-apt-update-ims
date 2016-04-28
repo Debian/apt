@@ -49,7 +49,7 @@ runtest() {
 	    $TEST aptget update -o Debug::Acquire::gpgv=1 $APTOPT
 	    cp rootdir/tmp/${TEST}.output goodsign.output
 	    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
-	    testsuccess grep '^Got GOODSIG, key ID:GOODSIG' goodsign.output
+	    testsuccess grep '^Got GOODSIG, key ID:' goodsign.output
     fi
 
     # ensure no leftovers in partial
