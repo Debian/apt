@@ -175,7 +175,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	inline DepIterator RevDependsList() const APT_PURE;
 	inline PrvIterator ProvidesList() const APT_PURE;
 	OkState State() const APT_PURE;
-	const char *CandVersion() const APT_PURE;
+	APT_DEPRECATED_MSG("This method does not respect apt_preferences! Use pkgDepCache::GetCandidateVersion(Pkg)") const char *CandVersion() const APT_PURE;
 	const char *CurVersion() const APT_PURE;
 
 	//Nice printable representation

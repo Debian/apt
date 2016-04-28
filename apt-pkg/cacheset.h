@@ -325,7 +325,7 @@ public:
 		inline pkgCache::DepIterator RevDependsList() const { return getType().RevDependsList(); }
 		inline pkgCache::PrvIterator ProvidesList() const { return getType().ProvidesList(); }
 		inline pkgCache::PkgIterator::OkState State() const { return getType().State(); }
-		inline const char *CandVersion() const { return getType().CandVersion(); }
+		APT_DEPRECATED_MSG("This method does not respect apt_preferences! Use pkgDepCache::GetCandidateVersion(Pkg)") inline const char *CandVersion() const { return getType().CandVersion(); }
 		inline const char *CurVersion() const { return getType().CurVersion(); }
 		inline pkgCache *Cache() const { return getType().Cache(); }
 		inline unsigned long Index() const {return getType().Index();}
