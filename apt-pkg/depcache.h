@@ -369,6 +369,7 @@ class pkgDepCache : protected pkgCache::Namespace
    
    // Accessors
    inline StateCache &operator [](PkgIterator const &I) {return PkgState[I->ID];};
+   inline StateCache &operator [](PkgIterator const &I) const {return PkgState[I->ID];};
    inline unsigned char &operator [](DepIterator const &I) {return DepState[I->ID];};
 
    /** \return A function identifying packages in the root set other

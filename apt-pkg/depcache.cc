@@ -22,6 +22,7 @@
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/macros.h>
 
@@ -796,7 +797,7 @@ bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 #endif
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkKeep " << Pkg << " FU=" << FromUser << std::endl;
+      std::clog << OutputInDepth(Depth) << "MarkKeep " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -876,7 +877,7 @@ bool pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    }
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << (rPurge ? "MarkPurge " : "MarkDelete ") << Pkg << " FU=" << FromUser << std::endl;
+      std::clog << OutputInDepth(Depth) << (rPurge ? "MarkPurge " : "MarkDelete ") << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -912,7 +913,7 @@ bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
       if (P.InstallVer != 0 && P.Status == 2 && (P.Flags & Flag::Auto) != Flag::Auto)
       {
 	 if (DebugMarker == true)
-	    std::clog << OutputInDepth(Depth) << "Manual install request prevents MarkDelete of " << Pkg << std::endl;
+	    std::clog << OutputInDepth(Depth) << "Manual install request prevents MarkDelete of " << APT::PrettyPkg(this, Pkg) << std::endl;
 	 return false;
       }
    }
@@ -962,7 +963,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    {
       if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
-		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
+		   << " of " << APT::PrettyPkg(this, Pkg) << " as its mode (" << PrintMode(P.Mode)
 		   << ") is protected" << std::endl;
       return false;
    }
@@ -972,7 +973,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    {
       if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
-		   << " of " << Pkg << std::endl;
+		   << " of " << APT::PrettyPkg(this, Pkg) << std::endl;
       return false;
    }
 
@@ -1132,7 +1133,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return true;
 
    if (DebugMarker == true)
-      std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << " FU=" << FromUser << std::endl;
+      std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
 
    bool MoveAutoBitToDependencies = false;
    VerIterator const PV = P.InstVerIter(*this);
@@ -1378,8 +1379,8 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
 
       PkgState[Pkg->ID].iFlags |= AutoKept;
       if (unlikely(DebugMarker == true))
-	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << Pkg
-	    << " as it is not in sync with its M-A:same sibling " << P
+	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << APT::PrettyPkg(this, Pkg)
+	    << " as it is not in sync with its M-A:same sibling " << APT::PrettyPkg(this, P)
 	    << " (" << CandVer.VerStr() << " != " << CV.VerStr() << ")" << std::endl;
       return false;
    }
@@ -1421,7 +1422,7 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
       if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer)
       {
 	 if (DebugAutoInstall == true)
-	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
+	    std::clog << OutputInDepth(Depth) << APT::PrettyDep(this, Start) << " can't be satisfied!" << std::endl;
 
 	 // the dependency is critical, but can't be installed, so discard the candidate
 	 // as the problemresolver will trip over it otherwise trying to install it (#735967)

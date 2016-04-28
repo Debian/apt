@@ -21,6 +21,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/prettyprinters.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -443,8 +444,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
 	    {
-	       if (Pkg.CandVersion() != 0)
-	          tooMuch.insert(Pkg);
+	       tooMuch.insert(Pkg);
 	       Cache->MarkDelete(Pkg, false, 0, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
@@ -481,7 +481,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		 if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
 		    continue;
 		 if (Debug == true)
-		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
+		    std::clog << "Save " << APT::PrettyPkg(Cache, Pkg) << " as another installed garbage package depends on it" << std::endl;
 		 Cache->MarkInstall(Pkg, false, 0, false);
 		 if (hideAutoRemove == false)
 		    ++autoRemoveCount;
