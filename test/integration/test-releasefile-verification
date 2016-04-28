@@ -129,6 +129,29 @@ runtest() {
 	failaptold
 	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 
+	msgmsg 'Cold archive expired signed by' 'Joe Sixpack'
+	if dpkg --compare-versions "$(aptkey adv --version | head -n 2 | tail -n 1 | cut -d' ' -f 3)" '>=' '2.1' >/dev/null 2>&1; then
+		touch rootdir/etc/apt/apt.conf.d/99gnupg2
+	elif gpg2 --version >/dev/null 2>&1; then
+		echo 'Apt::Key::gpgcommand "gpg2";' > rootdir/etc/apt/apt.conf.d/99gnupg2
+		if ! dpkg --compare-versions "$(aptkey adv --version | head -n 2 | tail -n 1 | cut -d' ' -f 3)" '>=' '2.1' >/dev/null 2>&1; then
+			rm rootdir/etc/apt/apt.conf.d/99gnupg2
+		fi
+	fi
+	if [ -e rootdir/etc/apt/apt.conf.d/99gnupg2 ]; then
+		prepare "${PKGFILE}"
+		rm -rf rootdir/var/lib/apt/lists
+		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20070924T154812" --default-sig-expire 2016-04-01
+		find aptarchive/ -name "$DELETEFILE" -delete
+		updatewithwarnings '^W: .* EXPSIG'
+		testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+		failaptold
+		rm -f rootdir/etc/apt/apt.conf.d/99gnupg2
+	else
+		msgskip 'Not a new enough gpg available providing --fake-system-time'
+	fi
+
 	msgmsg 'Cold archive signed by' 'Marvin Paranoid'
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists

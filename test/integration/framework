@@ -1084,6 +1084,8 @@ setupaptarchive() {
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
+	if [ -n "$1" ]; then shift; fi
+	if [ -n "$1" ]; then shift; fi
 	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
 	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo ${APT_TESTS_DIGEST_ALGO:-SHA512}"
 	msgninfo "\tSign archive with $SIGNER key $KEY… "
@@ -1111,9 +1113,9 @@ signreleasefiles() {
 		fi
 	fi
 	for RELEASE in $(find "${REPODIR}/" -name Release); do
-		testsuccess $GPG --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+		testsuccess $GPG "$@" --default-key "$SIGNER" --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		testsuccess $GPG --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
+		testsuccess $GPG "$@" --default-key "$SIGNER" --clearsign --output "$INRELEASE" "$RELEASE"
 		# we might have set a specific date for the Release file, so copy it
 		touch -d "$(stat --format "%y" ${RELEASE})" "${RELEASE}.gpg" "${INRELEASE}"
 	done
