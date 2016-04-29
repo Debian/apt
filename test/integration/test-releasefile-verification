@@ -29,7 +29,7 @@ prepare() {
 	cp "$1" aptarchive/Packages
 	find aptarchive -name 'Release' -delete
 	compressfile 'aptarchive/Packages' "$DATE"
-	generatereleasefiles "$DATE"
+	generatereleasefiles "$DATE" 'now + 1 month'
 }
 
 installaptold() {
@@ -47,6 +47,7 @@ Download complete and in download only mode" aptget install apt -dy
 }
 
 installaptnew() {
+	rm -rf rootdir/var/cache/apt/archives
 	testsuccessequal "Reading package lists...
 Building dependency tree...
 Suggested packages:
@@ -301,6 +302,55 @@ runtest() {
 	rm -f rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=${MARVIN},${SIXPACK}\] #\1 #" rootdir/etc/apt/sources.list.d/*
 
+	rm -rf rootdir/var/lib/apt/lists-bak
+	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
+	prepare "${PKGFILE}-new"
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+
+	msgmsg 'Warm archive with signed-by' 'Joe Sixpack'
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SIXPACK}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+
+	msgmsg 'Warm archive with signed-by' 'Marvin Paranoid'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${MARVIN}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	updatewithwarnings 'W: .* public key is not available: GOODSIG'
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	msgmsg 'Warm archive with outdated signed-by' 'Marvin Paranoid'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Valid-Until: $(date -u -d "now - 2min" '+%a, %d %b %Y %H:%M:%S %Z') \\
+Signed-By: ${MARVIN}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+
+	msgmsg 'Warm archive with two signed-bys' 'Joe Sixpack'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${MARVIN} ${MARVIN}, \\
+ ${SIXPACK}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
 }
 
 runtest2() {

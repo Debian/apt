@@ -291,8 +291,10 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		(see <command>apt-key fingerprint</command>). If the option is
 		set, only the key(s) in this keyring or only the keys with these
 		fingerprints are used for the &apt-secure; verification of this
-		repository. Otherwise all keys in the trusted keyrings are
-		considered valid signers for this repository.
+		repository. Defaults to the value of the option with the same name
+		if set in the previously acquired <filename>Release</filename> file.
+		Otherwise all keys in the trusted keyrings are considered valid
+		signers for this repository.
 	  </para></listitem>
 
 	  <listitem><para><option>Check-Valid-Until</option> (<option>check-valid-until</option>)

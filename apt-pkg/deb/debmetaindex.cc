@@ -442,7 +442,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    std::string const StrDate = Section.FindS("Date");
    if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
    {
-      _error->Warning( _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
+      _error->Warning( _("Invalid '%s' entry in Release file %s"), "Date", Filename.c_str());
       Date = 0;
    }
 
@@ -463,7 +463,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
 	 {
 	    if (ErrorText != NULL)
-	       strprintf(*ErrorText, _("Invalid 'Valid-Until' entry in Release file %s"), Filename.c_str());
+	       strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Valid-Until", Filename.c_str());
 	    return false;
 	 }
       }
@@ -495,6 +495,33 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	    if (ValidUntil == 0 || ValidUntil > max_date)
 	       ValidUntil = max_date;
 	 }
+      }
+   }
+
+   /* as the Release file is parsed only after it was verified, the Signed-By field
+      does not effect the current, but the "next" Release file */
+   auto Sign = Section.FindS("Signed-By");
+   if (Sign.empty() == false)
+   {
+      std::transform(Sign.begin(), Sign.end(), Sign.begin(), [&](char const c) {
+	 return (isspace(c) == 0) ? c : ',';
+      });
+      auto fingers = VectorizeString(Sign, ',');
+      std::transform(fingers.begin(), fingers.end(), fingers.begin(), [&](std::string finger) {
+	 std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
+	 if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
+	 {
+	    if (ErrorText != NULL)
+	       strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Signed-By", Filename.c_str());
+	    return std::string();
+	 }
+	 return finger;
+      });
+      if (fingers.empty() == false && std::find(fingers.begin(), fingers.end(), "") == fingers.end())
+      {
+	 std::stringstream os;
+	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
+	 SignedBy = os.str();
       }
    }
 
@@ -956,7 +983,30 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       std::map<std::string, std::string>::const_iterator const signedby = Options.find("signed-by");
       if (signedby == Options.end())
       {
-	 if (Deb->SetSignedBy("") == false)
+	 bool alreadySet = false;
+	 std::string filename;
+	 if (ReleaseFileName(Deb, filename))
+	 {
+	    auto OldDeb = Deb->UnloadedClone();
+	    _error->PushToStack();
+	    OldDeb->Load(filename, nullptr);
+	    bool const goodLoad = _error->PendingError() == false;
+	    _error->RevertToStack();
+	    if (goodLoad)
+	    {
+	       if (OldDeb->GetValidUntil() > 0)
+	       {
+		  time_t const invalid_since = time(NULL) - OldDeb->GetValidUntil();
+		  if (invalid_since <= 0)
+		  {
+		     Deb->SetSignedBy(OldDeb->GetSignedBy());
+		     alreadySet = true;
+		  }
+	       }
+	    }
+	    delete OldDeb;
+	 }
+	 if (alreadySet == false && Deb->SetSignedBy("") == false)
 	    return false;
       }
       else
