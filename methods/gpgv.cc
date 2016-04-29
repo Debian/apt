@@ -112,7 +112,34 @@ class GPGVMethod : public aptMethod
    public:
    GPGVMethod() : aptMethod("gpgv","1.0",SingleInstance | SendConfig) {};
 };
-
+static void PushEntryWithKeyID(std::vector<std::string> &Signers, char * const buffer, bool const Debug)
+{
+   char * const msg = buffer + sizeof(GNUPGPREFIX);
+   char *p = msg;
+   // skip the message
+   while (*p && !isspace(*p))
+      ++p;
+   // skip the seperator whitespace
+   ++p;
+   // skip the hexdigit fingerprint
+   while (*p && isxdigit(*p))
+      ++p;
+   // cut the rest from the message
+   *p = '\0';
+   if (Debug == true)
+      std::clog << "Got " << msg << " !" << std::endl;
+   Signers.push_back(msg);
+}
+static void PushEntryWithUID(std::vector<std::string> &Signers, char * const buffer, bool const Debug)
+{
+   std::string msg = buffer + sizeof(GNUPGPREFIX);
+   auto const nuke = msg.find_last_not_of("\n\t\r");
+   if (nuke != std::string::npos)
+      msg.erase(nuke + 1);
+   if (Debug == true)
+      std::clog << "Got " << msg << " !" << std::endl;
+   Signers.push_back(msg);
+}
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 std::string const &key,
 					 vector<string> &GoodSigners,
@@ -158,86 +185,47 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       // if we improve the apt method communication stuff later
       // it will be better.
       if (strncmp(buffer, GNUPGBADSIG, sizeof(GNUPGBADSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got BADSIG! " << std::endl;
-         BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithUID(BadSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGERRSIG, sizeof(GNUPGERRSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got ERRSIG " << std::endl;
-         ErrSigners.push_back(string(buffer, strlen(GNUPGPREFIX), strlen("ERRSIG ") + 16));
-      }
+	 PushEntryWithKeyID(ErrSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGNOPUBKEY, sizeof(GNUPGNOPUBKEY)-1) == 0)
       {
-         if (Debug == true)
-            std::clog << "Got NO_PUBKEY " << std::endl;
-         NoPubKeySigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
+	 PushEntryWithKeyID(NoPubKeySigners, buffer, Debug);
 	 ErrSigners.erase(std::remove_if(ErrSigners.begin(), ErrSigners.end(), [&](std::string const &errsig) {
-		  return errsig.compare(strlen("ERRSIG "), 16, buffer, strlen(GNUPGNOPUBKEY), 16) == 0;  }), ErrSigners.end());
+		  return errsig.compare(strlen("ERRSIG "), 16, buffer, sizeof(GNUPGNOPUBKEY), 16) == 0;  }), ErrSigners.end());
       }
       else if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGBADSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got NODATA! " << std::endl;
-         BadSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithUID(BadSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGEXPKEYSIG, sizeof(GNUPGEXPKEYSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got EXPKEYSIG! " << std::endl;
-         WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithUID(WorthlessSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGEXPSIG, sizeof(GNUPGEXPSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got EXPSIG!" << std::endl;
-         WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithUID(WorthlessSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
-      {
-         if (Debug == true)
-            std::clog << "Got REVKEYSIG! " << std::endl;
-         WorthlessSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithUID(WorthlessSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
-      {
-         char *sig = buffer + sizeof(GNUPGGOODSIG);
-         char *p = sig;
-         while (*p && isxdigit(*p)) 
-            p++;
-         *p = 0;
-         if (Debug == true)
-            std::clog << "Got GOODSIG, key ID: " << sig << std::endl;
-         GoodSigners.push_back(string(buffer+sizeof(GNUPGPREFIX)));
-      }
+	 PushEntryWithKeyID(GoodSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
       {
-         char *sig = buffer + sizeof(GNUPGVALIDSIG);
-         std::istringstream iss((string(sig)));
+         std::istringstream iss(buffer + sizeof(GNUPGVALIDSIG));
          vector<string> tokens{std::istream_iterator<string>{iss},
                                std::istream_iterator<string>{}};
-         char *p = sig;
-         while (*p && isxdigit(*p))
-            p++;
-         *p = 0;
+         auto const sig = tokens[0];
          // Reject weak digest algorithms
          Digest digest = FindDigest(tokens[7]);
          switch (digest.getState()) {
          case Digest::State::Weak:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            SoonWorthlessSigners.push_back({string(sig), digest.name});
+            SoonWorthlessSigners.push_back({sig, digest.name});
 	    if (Debug == true)
 	       std::clog << "Got weak VALIDSIG, key ID: " << sig << std::endl;
             break;
          case Digest::State::Untrusted:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            WorthlessSigners.push_back(string(sig));
+            WorthlessSigners.push_back(sig);
             GoodSigners.erase(std::remove_if(GoodSigners.begin(), GoodSigners.end(), [&](std::string const &goodsig) {
-		     return IsTheSameKey(string(sig), goodsig); }), GoodSigners.end());
+		     return IsTheSameKey(sig, goodsig); }), GoodSigners.end());
 	    if (Debug == true)
 	       std::clog << "Got untrusted VALIDSIG, key ID: " << sig << std::endl;
             break;
@@ -248,7 +236,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
             break;
          }
 
-         ValidSigners.push_back(string(sig));
+         ValidSigners.push_back(sig);
       }
    }
    fclose(pipein);
@@ -411,8 +399,8 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    // structure is too difficult with the method stuff.  We keep it
    // as three separate vectors for future extensibility.
    Res.GPGVOutput = GoodSigners;
-   Res.GPGVOutput.insert(Res.GPGVOutput.end(),BadSigners.begin(),BadSigners.end());
-   Res.GPGVOutput.insert(Res.GPGVOutput.end(),NoPubKeySigners.begin(),NoPubKeySigners.end());
+   std::move(BadSigners.begin(), BadSigners.end(), std::back_inserter(Res.GPGVOutput));
+   std::move(NoPubKeySigners.begin(), NoPubKeySigners.end(), std::back_inserter(Res.GPGVOutput));
    URIDone(Res);
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
