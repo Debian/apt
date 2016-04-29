@@ -18,7 +18,7 @@ if [ "$REPLY" = "yep" ]; then
   apt-config dump >&3 2>&1
 fi
 
-for config in /etc/apt/preferences /etc/apt/sources.list; do
+for config in /etc/apt/preferences /etc/apt/preferences.d/* /etc/apt/sources.list /etc/apt/sources.list.d/* ; do
   if [ -f $config ]; then
     yesno "May I include your $config configuration file? [Y/n] " yep
     if [ "$REPLY" = "yep" ]; then
