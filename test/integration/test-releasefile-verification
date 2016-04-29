@@ -33,6 +33,7 @@ prepare() {
 }
 
 installaptold() {
+	rm -rf rootdir/var/cache/apt/archives
 	testsuccessequal "Reading package lists...
 Building dependency tree...
 Suggested packages:
@@ -249,30 +250,57 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* NO_PUBKEY'
-
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
+
 	local MARVIN="$(aptkey --keyring $MARVIN finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
+	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
 
 	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid'
-	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
 	find aptarchive/ -name "$DELETEFILE" -delete
-	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
 	cp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
-	rm -f rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
 
-	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
+	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid,Joe Sixpack'
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Marvin Paranoid,Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	successfulaptgetupdate 'NoPubKey: GOODSIG'
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
-	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
+	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 [signed-by=${SIXPACK},${MARVIN}] #" rootdir/etc/apt/sources.list.d/*
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
 
-	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
+	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
+	rm -rf rootdir/var/lib/apt/lists
+	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=${SIXPACK},${MARVIN}\] #\1 [signed-by=${MARVIN},${SIXPACK}] #" rootdir/etc/apt/sources.list.d/*
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+	rm -f rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=${MARVIN},${SIXPACK}\] #\1 #" rootdir/etc/apt/sources.list.d/*
+
 }
 
 runtest2() {

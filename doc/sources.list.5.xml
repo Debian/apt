@@ -284,13 +284,13 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 	  <listitem><para><option>Signed-By</option> (<option>signed-by</option>)
 		is either an absolute path to a keyring file (has to be
 		accessible and readable for the <literal>_apt</literal> user,
-		so ensure everyone has read-permissions on the file) or a
-		fingerprint of a key either in the
-		<filename>trusted.gpg</filename> keyring or in one of the
+		so ensure everyone has read-permissions on the file) or one or
+		more fingerprints of keys either in the
+		<filename>trusted.gpg</filename> keyring or in the
 		keyrings in the <filename>trusted.gpg.d/</filename> directory
 		(see <command>apt-key fingerprint</command>). If the option is
-		set, only the key(s) in this keyring or only the key with this
-		fingerprint is used for the &apt-secure; verification of this
+		set, only the key(s) in this keyring or only the keys with these
+		fingerprints are used for the &apt-secure; verification of this
 		repository. Otherwise all keys in the trusted keyrings are
 		considered valid signers for this repository.
 	  </para></listitem>

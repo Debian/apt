@@ -627,19 +627,26 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
    if (SignedBy.empty() == true && pSignedBy.empty() == false)
    {
       if (pSignedBy[0] == '/') // no check for existence as we could be chrooting later or such things
-	 ; // absolute path to a keyring file
+	 SignedBy = pSignedBy; // absolute path to a keyring file
       else
       {
 	 // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
 	 // but fingerprints are harder to fake than the others and this option is set once,
 	 // not interactively all the time so easy to type is not really a concern.
-	 std::string finger = pSignedBy;
-	 finger.erase(std::remove(finger.begin(), finger.end(), ' '), finger.end());
-	 std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
-	 if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
-	    return _error->Error(_("Invalid value set for option %s regarding source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
+	 auto fingers = VectorizeString(pSignedBy, ',');
+	 std::transform(fingers.begin(), fingers.end(), fingers.begin(), [&](std::string finger) {
+	    std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
+	    if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
+	    {
+	       _error->Error(_("Invalid value set for option %s regarding source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
+	       return std::string();
+	    }
+	    return finger;
+	 });
+	 std::stringstream os;
+	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
+	 SignedBy = os.str();
       }
-      SignedBy = pSignedBy;
    }
    else if (SignedBy != pSignedBy)
       return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Signed-By", URI.c_str(), Dist.c_str());

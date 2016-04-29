@@ -249,25 +249,29 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    {
       if (Debug == true)
 	 std::clog << "GoodSigs needs to be limited to keyid " << key << std::endl;
-      std::vector<std::string>::iterator const foundItr = std::find(ValidSigners.begin(), ValidSigners.end(), key);
-      bool const found = (foundItr != ValidSigners.end());
-      std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
-      if (found)
+      bool foundGood = false;
+      for (auto const &k: VectorizeString(key, ','))
       {
+	 if (std::find(ValidSigners.begin(), ValidSigners.end(), k) == ValidSigners.end())
+	    continue;
 	 // we look for GOODSIG here as well as an expired sig is a valid sig as well (but not a good one)
-	 std::string const goodlongkeyid = "GOODSIG " + key.substr(24, 16);
-	 bool const foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodlongkeyid) != GoodSigners.end();
+	 std::string const goodlongkeyid = "GOODSIG " + k.substr(24, 16);
+	 foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodlongkeyid) != GoodSigners.end();
 	 if (Debug == true)
-	    std::clog << "Key " << key << " is valid sig, is " << goodlongkeyid << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
+	    std::clog << "Key " << k << " is valid sig, is " << goodlongkeyid << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
+	 if (foundGood == false)
+	    continue;
+	 std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
 	 GoodSigners.clear();
-	 if (foundGood)
-	 {
-	    GoodSigners.push_back(goodlongkeyid);
-	    NoPubKeySigners.erase(std::remove(NoPubKeySigners.begin(), NoPubKeySigners.end(), goodlongkeyid), NoPubKeySigners.end());
-	 }
+	 GoodSigners.push_back(goodlongkeyid);
+	 NoPubKeySigners.erase(std::remove(NoPubKeySigners.begin(), NoPubKeySigners.end(), goodlongkeyid), NoPubKeySigners.end());
+	 break;
       }
-      else
+      if (foundGood == false)
+      {
+	 std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
 	 GoodSigners.clear();
+      }
    }
 
    int status;
