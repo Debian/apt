@@ -55,7 +55,7 @@ msgid " [Working]"
 msgstr " [工作中]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
@@ -118,14 +118,12 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "套件 %s 是虛擬套件，提供者為：\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
 msgstr "【已安裝】"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "候選版本"
+msgstr "【非候選版本】"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
@@ -146,7 +144,7 @@ msgid "However the following packages replace it:"
 msgstr "然而，下列的套件取代了它："
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
 msgstr "套件 %s 沒有可安裝的候選版本"
 
@@ -365,7 +363,6 @@ msgid "Abort."
 msgstr "放棄執行。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Do you want to continue?"
 msgstr "是否繼續進行 [Y/n]？"
 
@@ -465,7 +462,6 @@ msgstr ""
 "決方案）。"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "下列的額外套件將被安裝："
 
@@ -3628,10 +3624,10 @@ msgstr "在 sources.list 中必須包含一些 'source' URI"
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
-#: apt-pkg/update.cc
-#, fuzzy, c-format
+#: apt-private/private-download.cc apt-pkg/update.cc
+#, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "無法取得 %s，%s\n"
+msgstr "無法取得 %s，%s"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3644,8 +3640,9 @@ msgstr "有一些索引檔不能下載，它們可能被略過了，或是替而
 msgid "Calculating upgrade"
 msgstr "籌備升級中"
 
-#~ msgid "There is no public key available for the following key IDs:\n"
-#~ msgstr "無法取得以下的密鑰 ID 的公鑰：\n"
+#: apt-pkg/acquire-item.cc
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "無法取得以下的密鑰 ID 的公鑰：\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"
