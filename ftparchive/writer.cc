@@ -1019,6 +1019,7 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";
+   Fields["Signed-By"] = "";
    if (_config->FindB("APT::FTPArchive::DoByHash", false) == true)
       Fields["Acquire-By-Hash"] = "true";
    
