@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'native'
+configdpkgnoopchroot
+
+buildingpkg() {
+	local PKG="$1"
+	shift
+	setupsimplenativepackage "$PKG" 'native' '1' 'unstable' "$@"
+	BUILDDIR="incoming/${PKG}-1"
+	echo '#!/bin/sh
+apt-key list' > "${BUILDDIR}/debian/postinst"
+	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+	rm -rf "$BUILDDIR"
+}
+buildingpkg 'aptkeyuser-nodepends' 'Depends: unrelated'
+buildingpkg 'aptkeyuser-depends' 'Depends: gnupg'
+
+setupaptarchive
+
+insertinstalledpackage 'unrelated' 'native' '1'
+insertinstalledpackage 'gnupg' 'native' '1'
+
+testsuccess apt install aptkeyuser-depends -y
+testfailure grep '^Warning: This will BREAK' rootdir/tmp/testsuccess.output
+
+testsuccess apt install aptkeyuser-nodepends -y
+cp rootdir/tmp/testsuccess.output apt.output
+testsuccess grep '^Warning: This will BREAK' apt.output

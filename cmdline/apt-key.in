@@ -493,8 +493,21 @@ create_gpg_home() {
 }
 
 prepare_gpg_home() {
+    # crude detection if we are called from a maintainerscript where the
+    # package depends on gnupg or not. We accept recommends here as
+    # well as the script hopefully uses apt-key optionally then like e.g.
+    # debian-archive-keyring for (upgrade) cleanup did
+    if [ -n "$DPKG_MAINTSCRIPT_PACKAGE" ]; then
+	if ! dpkg-query --show --showformat '${Pre-Depends}${Depends}${Recommends}' "$DPKG_MAINTSCRIPT_PACKAGE" 2>/dev/null | grep -q gnupg; then
+	    cat >&2 <<EOF
+Warning: The $DPKG_MAINTSCRIPT_NAME maintainerscript of the package $DPKG_MAINTSCRIPT_PACKAGE
+Warning: seems to use apt-key (provided by apt) without depending on gnupg or gnupg2.
+Warning: This will BREAK in the future and should be fixed by the package maintainer(s).
+Note: Check first if apt-key functionality is needed at all - it probably isn't!
+EOF
+	fi
+    fi
     eval "$(apt-config shell GPG_EXE Apt::Key::gpgcommand)"
-
     if [ -n "$GPG_EXE" ] && command_available "$GPG_EXE"; then
 	true
     elif command_available 'gpg'; then
