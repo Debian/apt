@@ -23,7 +23,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <iostream>
+
+#include <array>
 #include <limits>
 #include <string>
 
@@ -33,11 +34,15 @@
 using std::string;
 
 // we could use pkgCache::DepType and ::Priority, but these would be localized strings…
-const char * const PrioMap[] = {0, "important", "required", "standard",
-				      "optional", "extra"};
-const char * const DepMap[] = {"", "Depends", "Pre-Depends", "Suggests",
-				     "Recommends" , "Conflicts", "Replaces",
-				     "Obsoletes", "Breaks", "Enhances"};
+constexpr char const * const PrioMap[] = {
+   nullptr, "important", "required", "standard",
+   "optional", "extra"
+};
+constexpr char const * const DepMap[] = {
+   nullptr, "Depends", "Pre-Depends", "Suggests",
+   "Recommends" , "Conflicts", "Replaces",
+   "Obsoletes", "Breaks", "Enhances"
+};
 
 // WriteOkay - varaidic helper to easily Write to a FileFd		/*{{{*/
 static bool WriteOkay_fn(FileFd &) { return true; }
@@ -160,7 +165,7 @@ static bool WriteScenarioVersion(pkgDepCache &Cache, FileFd &output, pkgCache::P
 // WriteScenarioDependency						/*{{{*/
 static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &Ver)
 {
-   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -179,7 +184,7 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
       else
 	 orGroup = false;
    }
-   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+   for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
 	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
    string provides;
@@ -198,7 +203,7 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
 }
 static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver)
 {
-   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -218,7 +223,7 @@ static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const 
 	 orGroup = false;
    }
    bool Okay = output.Failed() == false;
-   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+   for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
 	 WriteOkay(Okay, output, "\n", DepMap[i], ": ", dependencies[i]);
    string provides;
@@ -242,7 +247,7 @@ static void WriteScenarioLimitedDependency(FILE* output,
 					  pkgCache::VerIterator const &Ver,
 					  APT::PackageSet const &pkgset)
 {
-   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -274,7 +279,7 @@ static void WriteScenarioLimitedDependency(FILE* output,
       else
 	 orGroup = false;
    }
-   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+   for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
 	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str());
    string provides;
@@ -297,7 +302,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 					  pkgCache::VerIterator const &Ver,
 					  APT::PackageSet const &pkgset)
 {
-   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -330,7 +335,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 	 orGroup = false;
    }
    bool Okay = output.Failed() == false;
-   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+   for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
 	 WriteOkay(Okay, output, "\n", DepMap[i], ": ", dependencies[i]);
    string provides;
