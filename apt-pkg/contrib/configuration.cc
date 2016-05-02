@@ -29,8 +29,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <algorithm>
 #include <string>
+#include <stack>
 #include <vector>
 #include <fstream>
 
@@ -674,6 +676,16 @@ string Configuration::Item::FullTag(const Item *Stop) const
    sections like 'zone "foo.org" { .. };' This causes each section to be
    added in with a tag like "zone::foo.org" instead of being split 
    tag/value. AsSectional enables Sectional parsing.*/
+static void leaveCurrentScope(std::stack<std::string> &Stack, std::string &ParentTag)
+{
+   if (Stack.empty())
+      ParentTag.clear();
+   else
+   {
+      ParentTag = Stack.top();
+      Stack.pop();
+   }
+}
 bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectional,
 		    unsigned const &Depth)
 {
@@ -683,8 +695,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
 
    string LineBuffer;
-   string Stack[100];
-   unsigned int StackPos = 0;
+   std::stack<std::string> Stack;
 
    // Parser state
    string ParentTag;
@@ -753,12 +764,12 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	       Start = I + 2;
 	       InComment = false;
 	       break;
-	    }	    
+	    }
 	 }
 	 if (InComment == true)
 	    continue;
       }
-      
+
       // Discard single line comments
       bool InQuote = false;
       for (std::string::const_iterator I = Start;
@@ -803,9 +814,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 		  I = J + 1;
 		  InComment = false;
 		  break;
-	       }	       
+	       }
 	    }
-	    
+
 	    if (InComment == true)
 	      break;
 	 }
@@ -816,7 +827,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       // Skip blank lines.
       if (Fragment.empty())
 	 continue;
-      
+
       // The line has actual content; interpret what it means.
       InQuote = false;
       Start = Fragment.begin();
@@ -826,7 +837,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       {
 	 if (*I == '"')
 	    InQuote = !InQuote;
-	 
+
 	 if (InQuote == false && (*I == '{' || *I == ';' || *I == '}'))
 	 {
 	    // Put the last fragment into the buffer
@@ -845,24 +856,19 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    // brace or a semicolon)
 	    char TermChar = *I;
 	    Start = I + 1;
-	    
+
 	    // Syntax Error
 	    if (TermChar == '{' && LineBuffer.empty() == true)
 	       return _error->Error(_("Syntax error %s:%u: Block starts with no name."),FName.c_str(),CurLine);
-	    
+
 	    // No string on this line
 	    if (LineBuffer.empty() == true)
 	    {
 	       if (TermChar == '}')
-	       {
-		  if (StackPos == 0)
-		     ParentTag = string();
-		  else
-		     ParentTag = Stack[--StackPos];
-	       }
+		  leaveCurrentScope(Stack, ParentTag);
 	       continue;
 	    }
-	    
+
 	    // Parse off the tag
 	    string Tag;
 	    const char *Pos = LineBuffer.c_str();
@@ -889,25 +895,23 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    // Go down a level
 	    if (TermChar == '{')
 	    {
-	       if (StackPos < sizeof(Stack)/sizeof(std::string))
-		  Stack[StackPos++] = ParentTag;
-	       
+	       Stack.push(ParentTag);
+
 	       /* Make sectional tags incorperate the section into the
 	          tag string */
 	       if (AsSectional == true && Word.empty() == false)
 	       {
-		  Tag += "::" ;
-		  Tag += Word;
-		  Word = "";
+		  Tag.append("::").append(Word);
+		  Word.clear();
 	       }
-	       
+
 	       if (ParentTag.empty() == true)
 		  ParentTag = Tag;
 	       else
-		  ParentTag += string("::") + Tag;
-	       Tag = string();
+		  ParentTag.append("::").append(Tag);
+	       Tag.clear();
 	    }
-	    
+
 	    // Generate the item name
 	    string Item;
 	    if (ParentTag.empty() == true)
@@ -919,7 +923,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	       else
 		  Item = ParentTag;
 	    }
-	    
+
 	    // Specials
 	    if (Tag.length() >= 1 && Tag[0] == '#')
 	    {
@@ -941,7 +945,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 		  {
 		     if (ReadConfigFile(Conf,Word,AsSectional,Depth+1) == false)
 			return _error->Error(_("Syntax error %s:%u: Included from here"),FName.c_str(),CurLine);
-		  }		  
+		  }
 	       }
 	       else
 		  return _error->Error(_("Syntax error %s:%u: Unsupported directive '%s'"),FName.c_str(),CurLine,Tag.c_str());
@@ -954,19 +958,13 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	       if (NoWord == false)
 		  Conf.Set(Item,Word);
 	    }
-	    
+
 	    // Empty the buffer
 	    LineBuffer.clear();
-	    
+
 	    // Move up a tag, but only if there is no bit to parse
 	    if (TermChar == '}')
-	    {
-	       if (StackPos == 0)
-		  ParentTag.clear();
-	       else
-		  ParentTag = Stack[--StackPos];
-	    }
-	    
+	       leaveCurrentScope(Stack, ParentTag);
 	 }
       }
 
