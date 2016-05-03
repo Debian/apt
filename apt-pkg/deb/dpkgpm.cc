@@ -1501,6 +1501,13 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       _exit(100);
 	 }
 
+	 // if color support isn't enabled/disabled explicitly tell
+	 // dpkg to use the same state apt is using for its color support
+	 if (_config->FindB("APT::Color", false) == true)
+	    setenv("DPKG_COLORS", "always", 0);
+	 else
+	    setenv("DPKG_COLORS", "never", 0);
+
 	 execvp(Args[0], (char**) &Args[0]);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
