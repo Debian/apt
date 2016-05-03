@@ -273,16 +273,19 @@ bool pkgAcquire::Worker::RunMessages()
 	       // if we change site, treat it as a mirror change
 	       if (URI::SiteOnly(NewURI) != URI::SiteOnly(desc.URI))
 	       {
-		  std::string const OldSite = desc.Description.substr(0, desc.Description.find(" "));
-		  if (likely(APT::String::Startswith(desc.URI, OldSite)))
+		  auto const firstSpace = desc.Description.find(" ");
+		  if (firstSpace != std::string::npos)
 		  {
-		     std::string const OldExtra = desc.URI.substr(OldSite.length() + 1);
-		     if (likely(APT::String::Endswith(NewURI, OldExtra)))
+		     std::string const OldSite = desc.Description.substr(0, firstSpace);
+		     if (likely(APT::String::Startswith(desc.URI, OldSite)))
 		     {
-			std::string const NewSite = NewURI.substr(0, NewURI.length() - OldExtra.length());
-			Owner->UsedMirror = URI::ArchiveOnly(NewSite);
-			if (desc.Description.find(" ") != string::npos)
-			   desc.Description.replace(0, desc.Description.find(" "), Owner->UsedMirror);
+			std::string const OldExtra = desc.URI.substr(OldSite.length() + 1);
+			if (likely(APT::String::Endswith(NewURI, OldExtra)))
+			{
+			   std::string const NewSite = NewURI.substr(0, NewURI.length() - OldExtra.length());
+			   Owner->UsedMirror = URI::ArchiveOnly(NewSite);
+			   desc.Description.replace(0, firstSpace, Owner->UsedMirror);
+			}
 		     }
 		  }
 	       }
