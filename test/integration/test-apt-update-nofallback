@@ -58,7 +58,7 @@ setupaptarchive_with_lists_clean()
 
 test_from_inrelease_to_unsigned()
 {
-    # setup archive with InRelease file
+    export APT_DONT_SIGN='Release.gpg'
     setupaptarchive_with_lists_clean
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
@@ -70,9 +70,8 @@ test_from_inrelease_to_unsigned()
 
 test_from_release_gpg_to_unsigned()
 {
-    # setup archive with Release/Release.gpg (but no InRelease)
+    export APT_DONT_SIGN='InRelease'
     setupaptarchive_with_lists_clean
-    rm "$APTARCHIVE/dists/unstable/InRelease"
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
 
@@ -83,6 +82,7 @@ test_from_release_gpg_to_unsigned()
 
 test_from_inrelease_to_unsigned_with_override()
 {
+    export APT_DONT_SIGN='Release.gpg'
     # setup archive with InRelease file
     setupaptarchive_with_lists_clean
     testsuccess aptget update
@@ -119,13 +119,13 @@ test_cve_2012_0214()
     #
     # Still worth having a regression test the simulates the condition
 
-    # setup archive with InRelease
+    export APT_DONT_SIGN='Release.gpg'
     setupaptarchive_with_lists_clean
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
 
     # do what CVE-2012-0214 did
-    rm "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm -f "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
     inject_evil_package
     # build valid Release file
     aptftparchive -qq release ./aptarchive > aptarchive/dists/unstable/Release
@@ -139,7 +139,7 @@ test_cve_2012_0214()
 
 test_subvert_inrelease()
 {
-    # setup archive with InRelease
+    export APT_DONT_SIGN='Release.gpg'
     setupaptarchive_with_lists_clean
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
@@ -157,7 +157,7 @@ E: Some index files failed to download. They have been ignored, or old ones used
 
 test_inrelease_to_invalid_inrelease()
 {
-    # setup archive with InRelease
+    export APT_DONT_SIGN='Release.gpg'
     setupaptarchive_with_lists_clean
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
@@ -178,9 +178,8 @@ W: Some index files failed to download. They have been ignored, or old ones used
 
 test_release_gpg_to_invalid_release_release_gpg()
 {
-    # setup archive with InRelease
+    export APT_DONT_SIGN='InRelease'
     setupaptarchive_with_lists_clean
-    rm "$APTARCHIVE/dists/unstable/InRelease"
     testsuccess aptget update
     listcurrentlistsdirectory > lists.before
 

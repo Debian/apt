@@ -7,6 +7,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture "i386"
 
+export APT_DONT_SIGN='Release.gpg'
 buildaptarchive
 setupflataptarchive
 changetowebserver
@@ -368,7 +369,7 @@ runtest3() {
 		export APT_DONT_SIGN="$DELETEFILE"
 		msgmsg "Running test with deletion of $DELETEFILE and $1 digest"
 		runtest
-		unset APT_DONT_SIGN
+		export APT_DONT_SIGN='Release.gpg'
 	done
 }
 
@@ -424,7 +425,7 @@ runfailure() {
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 		failaptold
-		unset APT_DONT_SIGN
+		export APT_DONT_SIGN='Release.gpg'
 	done
 }
 runfailure

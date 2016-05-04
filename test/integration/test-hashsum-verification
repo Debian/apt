@@ -46,9 +46,6 @@ SHA256:
 EOF
 }
 
-# fake our downloadable file
-touch aptarchive/apt.deb
-
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
 runtest() {
@@ -63,12 +60,12 @@ runtest() {
 	msgtest 'No package from the source available'
 	testfailureequal --nomsg 'N: Unable to locate package apt
 E: No packages found' aptcache show apt
-        msgtest 'No Packages file in /var/lib/apt/lists'
-        [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null | grep -v FAILED 2>/dev/null)" = "" ] && msgpass || msgfail 
-        
+	msgtest 'No Packages file in /var/lib/apt/lists'
+	testempty find rootdir/var/lib/apt/lists -maxdepth 1 -name '*Package*'
+
         # now with the unsigned Release file
         rm -rf rootdir/var/lib/apt/lists
-        rm aptarchive/InRelease aptarchive/Release.gpg
+        rm -f aptarchive/InRelease aptarchive/Release.gpg
 	msgtest 'unsigned apt-get update gets the expected hashsum mismatch'
 	testfailure --nomsg aptget update --allow-insecure-repositories
 	testsuccess grep "Hash Sum mismatch" rootdir/tmp/testfailure.output
@@ -81,6 +78,5 @@ for COMPRESSEDINDEXES in 'false' 'true'; do
 	else
 		msgmsg 'Run tests with GzipIndexes disabled'
 	fi
- 
         runtest
 done

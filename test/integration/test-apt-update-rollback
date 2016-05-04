@@ -82,8 +82,7 @@ test_inrelease_to_valid_release() {
 
     add_new_package '+1hour'
     # switch to a unsigned repo now
-    rm "$APTARCHIVE/dists/unstable/InRelease"
-    rm "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm -f "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
 
     # update fails
     testfailureequal "E: The repository 'file:${APTARCHIVE} unstable Release' is no longer signed." aptget update -qq
@@ -102,8 +101,7 @@ test_inrelease_to_release_reverts_all() {
 
     # switch to a unsigned repo now
     add_new_package '+1hour'
-    rm "$APTARCHIVE/dists/unstable/InRelease"
-    rm "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm -f "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
 
     # break it
     break_repository_sources_index '+1hour'
@@ -122,8 +120,7 @@ test_inrelease_to_release_reverts_all() {
 test_unauthenticated_to_invalid_inrelease() {
     msgmsg 'Test UnAuthenticated to invalid InRelease reverts everything'
     create_fresh_archive
-    rm "$APTARCHIVE/dists/unstable/InRelease"
-    rm "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm -f "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
 
     testwarning aptget update --allow-insecure-repositories
     listcurrentlistsdirectory > lists.before
@@ -191,9 +188,8 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 
 setupenvironment
 configarchitecture "i386"
+export APT_DONT_SIGN='Release.gpg'
 
-# setup the archive and ensure we have a single package that installs fine
-setupaptarchive
 APTARCHIVE="$(readlink -f ./aptarchive)"
 ROOTDIR="${TMPWORKINGDIRECTORY}/rootdir"
 APTARCHIVE_LISTS="$(echo "$APTARCHIVE" | tr "/" "_" )"
