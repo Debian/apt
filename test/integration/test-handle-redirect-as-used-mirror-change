@@ -23,5 +23,6 @@ Reading package lists..." aptget update
 testsuccessequal "Hit:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease
 Reading package lists..." aptget update
 
+cd downloaded
 testsuccess apthelper download-file "http://localhost:${APTHTTPPORT}/redirectme/dists/unstable/InRelease" inrelease
 testsuccess test -s inrelease
