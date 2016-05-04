@@ -44,7 +44,6 @@ SHA256:
  xb306e66e5e6a7169c8d281a888539d1fdca9cecc99ae605717df579d5b9c166              527 Packages.lzma
  x9585d0e66b74c9385727fbea11fea9ab33c716b18a32f3036f037a2b9b57120              572 Packages.xz
 EOF
-        cp aptarchive/Release aptarchive/InRelease
 }
 
 # fake our downloadable file
@@ -56,7 +55,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 
 	# test signed release file
 	msgtest 'apt-get update gets the expected hashsum mismatch'

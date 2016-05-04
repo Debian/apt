@@ -26,40 +26,43 @@ testsuccess aptget update
 testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 
 msgmsg 'Release.gpg file is silently rejected if' 'new Date is before old Date'
+export APT_DONT_SIGN='InRelease'
 rm -rf rootdir/var/lib/apt/lists
 generatereleasefiles 'now' 'now + 7 days'
 signreleasefiles
-find aptarchive -name 'InRelease' -delete
 testsuccess aptget update
 listcurrentlistsdirectory > listsdir.lst
 redatereleasefiles 'now - 2 days'
-find aptarchive -name 'InRelease' -delete
 testsuccess aptget update
 testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+unset APT_DONT_SIGN
 
 msgmsg 'Crisscross InRelease/Release.gpg file is silently rejected if' 'new Date is before old Date'
+export APT_DONT_SIGN='Release.gpg'
 rm -rf rootdir/var/lib/apt/lists
 generatereleasefiles 'now' 'now + 7 days'
 signreleasefiles
-find aptarchive -name 'Release.gpg' -delete
 testsuccess aptget update
+export APT_DONT_SIGN='InRelease'
 listcurrentlistsdirectory > listsdir.lst
 redatereleasefiles 'now - 2 days'
-find aptarchive -name 'InRelease' -delete
 testsuccess aptget update
 testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+unset APT_DONT_SIGN
 
 msgmsg 'Crisscross Release.gpg/InRelease file is silently rejected if' 'new Date is before old Date'
+export APT_DONT_SIGN='InRelease'
 rm -rf rootdir/var/lib/apt/lists
 generatereleasefiles 'now' 'now + 7 days'
 signreleasefiles
 find aptarchive -name 'InRelease' -delete
 testsuccess aptget update
+export APT_DONT_SIGN='Release.gpg'
 listcurrentlistsdirectory > listsdir.lst
 redatereleasefiles 'now - 2 days'
-find aptarchive -name 'Release.gpg' -delete
 testsuccess aptget update
 testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+unset APT_DONT_SIGN
 
 msgmsg 'Release file has' 'no Date and no Valid-Until field'
 rm -rf rootdir/var/lib/apt/lists

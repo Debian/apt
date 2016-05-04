@@ -9,8 +9,7 @@ set -e
 simulate_mitm_and_inject_evil_package()
 {
     redatereleasefiles '+1 hour'
-    rm -f "$APTARCHIVE/dists/unstable/InRelease"
-    rm -f "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm -f "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
     inject_evil_package
 }
 
@@ -126,11 +125,10 @@ test_cve_2012_0214()
     listcurrentlistsdirectory > lists.before
 
     # do what CVE-2012-0214 did
-    rm "$APTARCHIVE/dists/unstable/InRelease"
-    rm "$APTARCHIVE/dists/unstable/Release.gpg"
+    rm "$APTARCHIVE/dists/unstable/InRelease" "$APTARCHIVE/dists/unstable/Release.gpg"
     inject_evil_package
     # build valid Release file
-    aptftparchive -qq release ./aptarchive > aptarchive/dists/unstable/Release 
+    aptftparchive -qq release ./aptarchive > aptarchive/dists/unstable/Release
 
     assert_update_is_refused_and_last_good_state_used
     testfileequal lists.before "$(listcurrentlistsdirectory)"

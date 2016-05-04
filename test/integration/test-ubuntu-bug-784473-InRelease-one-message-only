@@ -8,11 +8,9 @@ configarchitecture 'i386'
 
 insertpackage 'unstable' 'apt' 'i386' '0.8.11'
 
-setupaptarchive
+export APT_DONT_SIGN='Release.gpg'
+setupaptarchive --no-update
 
-rm -rf rootdir/var/lib/apt/lists
-
-find aptarchive/ -name 'Release.gpg' -delete
 find aptarchive/ -name 'InRelease' -exec cp {} {}.old \;
 
 for RELEASE in $(find aptarchive/ -name 'InRelease'); do

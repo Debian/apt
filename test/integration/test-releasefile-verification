@@ -99,12 +99,10 @@ updatewithwarnings() {
 }
 
 runtest() {
-	local DELETEFILE="$1"
 	msgmsg 'Cold archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -113,7 +111,6 @@ runtest() {
 	msgmsg 'Good warm archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
@@ -124,7 +121,6 @@ runtest() {
 	rm -rf rootdir/var/lib/apt/lists
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	signreleasefiles 'Rex Expired'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* EXPKEYSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -144,7 +140,6 @@ runtest() {
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20070924T154812" --default-sig-expire 2016-04-01
-		find aptarchive/ -name "$DELETEFILE" -delete
 		updatewithwarnings '^W: .* EXPSIG'
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -158,7 +153,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack,Marvin Paranoid'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate 'NO_PUBKEY'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -168,7 +162,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack,Rex Expired'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	successfulaptgetupdate 'EXPKEYSIG'
 	rm -f rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
@@ -180,7 +173,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* NO_PUBKEY'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -189,7 +181,6 @@ runtest() {
 	msgmsg 'Bad warm archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
@@ -199,7 +190,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -208,7 +198,6 @@ runtest() {
 	msgmsg 'Good warm archive signed by' 'Marvin Paranoid'
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Marvin Paranoid'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* NO_PUBKEY'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -218,7 +207,6 @@ runtest() {
 	prepare "${PKGFILE}-new"
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	signreleasefiles 'Rex Expired'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* EXPKEYSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -228,7 +216,6 @@ runtest() {
 	msgmsg 'Good warm archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}-new"
 	signreleasefiles
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
@@ -238,7 +225,6 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	local MARVIN="$(readlink -f keys/marvinparanoid.pub)"
 	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
 	successfulaptgetupdate
@@ -249,7 +235,6 @@ runtest() {
 	msgmsg 'Cold archive signed by bad keyring' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	updatewithwarnings '^W: .* NO_PUBKEY'
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
 
@@ -257,14 +242,12 @@ runtest() {
 	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
 	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
 
 	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	cp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
@@ -274,7 +257,6 @@ runtest() {
 	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid,Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid,Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	successfulaptgetupdate 'NoPubKey: GOODSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -284,7 +266,6 @@ runtest() {
 	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 [signed-by=${SIXPACK},${MARVIN}] #" rootdir/etc/apt/sources.list.d/*
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
@@ -306,7 +287,6 @@ runtest() {
 	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Joe Sixpack'
-	find aptarchive/ -name "$DELETEFILE" -delete
 
 	msgmsg 'Warm archive with signed-by' 'Joe Sixpack'
 	sed -i "/^Valid-Until: / a\
@@ -364,8 +344,7 @@ runtest2() {
 	# package verification.
 	msgmsg 'Warm archive signed by' 'nobody'
 	prepare "${PKGFILE}-new"
-	find aptarchive/ -name InRelease -delete
-	find aptarchive/ -name Release.gpg -delete
+	find aptarchive/ \( -name InRelease -o -name Release.gpg \) -delete
 	updatewithwarnings 'W: .* no longer signed.'
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
@@ -386,8 +365,10 @@ runtest3() {
 	runtest2
 
 	for DELETEFILE in 'InRelease' 'Release.gpg'; do
+		export APT_DONT_SIGN="$DELETEFILE"
 		msgmsg "Running test with deletion of $DELETEFILE and $1 digest"
-		runtest "$DELETEFILE"
+		runtest
+		unset APT_DONT_SIGN
 	done
 }
 
@@ -422,11 +403,11 @@ msgmsg "Running test with apt-untrusted digest"
 echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::Untrusted \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
 runfailure() {
 	for DELETEFILE in 'InRelease' 'Release.gpg'; do
+		export APT_DONT_SIGN="$DELETEFILE"
 		msgmsg 'Cold archive signed by' 'Joe Sixpack'
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Joe Sixpack'
-		find aptarchive/ -name "$DELETEFILE" -delete
 		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 		testsuccess grep 'The following signatures were invalid' rootdir/tmp/testfailure.output
 		testnopackage 'apt'
@@ -437,13 +418,13 @@ runfailure() {
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Marvin Paranoid'
-		find aptarchive/ -name "$DELETEFILE" -delete
 		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 		testnopackage 'apt'
 		updatewithwarnings '^W: .* NO_PUBKEY'
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 		failaptold
+		unset APT_DONT_SIGN
 	done
 }
 runfailure
