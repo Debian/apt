@@ -28,7 +28,7 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false, Progress);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, EDSP::Request::UPGRADE_ALL, Progress);
 
    if (Progress != NULL)
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
@@ -130,7 +130,9 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache, OpProgress * const Pr
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, Progress);
+      return EDSP::ResolveExternal(solver.c_str(), Cache,
+	    EDSP::Request::UPGRADE_ALL | EDSP::Request::FORBID_NEW_INSTALL | EDSP::Request::FORBID_REMOVE,
+	    Progress);
 
    if (Progress != NULL)
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
@@ -172,7 +174,9 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, Progress);
+       return EDSP::ResolveExternal(solver.c_str(), Cache,
+	    EDSP::Request::UPGRADE_ALL | EDSP::Request::FORBID_REMOVE,
+	    Progress);
 
    if (Progress != NULL)
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));

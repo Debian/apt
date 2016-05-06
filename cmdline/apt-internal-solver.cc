@@ -121,8 +121,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 		DIE("WAIT timed out in the resolver");
 
 	std::list<std::string> install, remove;
-	bool upgrade, distUpgrade, autoRemove;
-	if (EDSP::ReadRequest(input, install, remove, upgrade, distUpgrade, autoRemove) == false)
+	unsigned int flags;
+	if (EDSP::ReadRequest(input, install, remove, flags) == false)
 		DIE("Parsing the request failed!");
 
 	EDSP::WriteProgress(5, "Read scenario…", output);
@@ -159,12 +159,19 @@ int main(int argc,const char *argv[])					/*{{{*/
 	EDSP::WriteProgress(60, "Call problemresolver on current scenario…", output);
 
 	std::string failure;
-	if (upgrade == true) {
-		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
+	if (flags & EDSP::Request::UPGRADE_ALL) {
+		int upgrade_flags = APT::Upgrade::ALLOW_EVERYTHING;
+		if (flags & EDSP::Request::FORBID_NEW_INSTALL)
+		   upgrade_flags |= APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES;
+		if (flags & EDSP::Request::FORBID_REMOVE)
+		   upgrade_flags |= APT::Upgrade::FORBID_REMOVE_PACKAGES;
+
+		if (APT::Upgrade::Upgrade(CacheFile, upgrade_flags))
+			;
+		else if (upgrade_flags == APT::Upgrade::ALLOW_EVERYTHING)
+			failure = "ERR_UNSOLVABLE_FULL_UPGRADE";
+		else
 			failure = "ERR_UNSOLVABLE_UPGRADE";
-	} else if (distUpgrade == true) {
-		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::ALLOW_EVERYTHING) == false)
-			failure = "ERR_UNSOLVABLE_DIST_UPGRADE";
 	} else if (Fix.Resolve() == false)
 		failure = "ERR_UNSOLVABLE";
 

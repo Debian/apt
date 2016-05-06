@@ -29,6 +29,16 @@ class OpProgress;
 
 namespace EDSP								/*{{{*/
 {
+	namespace Request
+	{
+	   enum Flags
+	   {
+	      AUTOREMOVE = (1 << 0), /*!< removal of unneeded packages should be performed */
+	      UPGRADE_ALL = (1 << 1), /*!< upgrade all installed packages, like 'apt-get full-upgrade' without forbid flags */
+	      FORBID_NEW_INSTALL = (1 << 2), /*!< forbid the resolver to install new packages */
+	      FORBID_REMOVE = (1 << 3), /*!< forbid the resolver to remove packages */
+	   };
+	}
 	/** \brief creates the EDSP request stanza
 	 *
 	 *  In the EDSP protocol the first thing send to the resolver is a stanza
@@ -38,17 +48,13 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \param Cache in which the request is encoded
 	 *  \param output is written to this "file"
-	 *  \param upgrade is true if it is an request like apt-get upgrade
-	 *  \param distUpgrade is true if it is a request like apt-get dist-upgrade
-	 *  \param autoRemove is true if removal of unneeded packages should be performed
+	 *  \param flags effecting the request documented in #EDSP::Request::Flags
 	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if request was composed successfully, otherwise false
 	 */
 	bool WriteRequest(pkgDepCache &Cache, FileFd &output,
-				 bool const upgrade = false,
-				 bool const distUpgrade = false,
-				 bool const autoRemove = false,
+				 unsigned int const flags = 0,
 				OpProgress *Progress = NULL);
 	bool WriteRequest(pkgDepCache &Cache, FILE* output,
 				 bool const upgrade = false,
@@ -130,6 +136,8 @@ namespace EDSP								/*{{{*/
 	 *  \return true if the request could be found and worked on, otherwise false
 	 */
 	bool ReadRequest(int const input, std::list<std::string> &install,
+			std::list<std::string> &remove, unsigned int &flags);
+	APT_DEPRECATED_MSG("use the flag-based version instead") bool ReadRequest(int const input, std::list<std::string> &install,
 			std::list<std::string> &remove, bool &upgrade,
 			bool &distUpgrade, bool &autoRemove);
 
@@ -212,15 +220,16 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \param solver to execute
 	 *  \param Cache with the problem and as universe to work in
-	 *  \param upgrade is true if it is a request like apt-get upgrade
-	 *  \param distUpgrade is true if it is a request like apt-get dist-upgrade
-	 *  \param autoRemove is true if unneeded packages should be removed
+	 *  \param flags effecting the request documented in #EDSP::Request::Flags
 	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if the solver has successfully solved the problem,
 	 *  otherwise false
 	 */
 	bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
+				    unsigned int const flags = 0,
+				    OpProgress *Progress = NULL);
+	APT_DEPRECATED_MSG("use the flag-based version instead") bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
 				    bool const upgrade, bool const distUpgrade,
 				    bool const autoRemove, OpProgress *Progress = NULL);
 }

@@ -527,8 +527,8 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
    fprintf(output, "\n");
    return true;
 }
-bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output, bool const Upgrade,
-			bool const DistUpgrade, bool const AutoRemove,
+bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
+			unsigned int const flags,
 			OpProgress *Progress)
 {
    if (Progress != NULL)
@@ -564,12 +564,20 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output, bool const Upgrade,
       WriteOkay(Okay, output, "Remove:", del, "\n");
    if (inst.empty() == false)
       WriteOkay(Okay, output, "Install:", inst, "\n");
-   if (Upgrade == true)
-      WriteOkay(Okay, output, "Upgrade: yes\n");
-   if (DistUpgrade == true)
-      WriteOkay(Okay, output, "Dist-Upgrade: yes\n");
-   if (AutoRemove == true)
+   if (flags & Request::AUTOREMOVE)
       WriteOkay(Okay, output, "Autoremove: yes\n");
+   if (flags & Request::UPGRADE_ALL)
+   {
+      WriteOkay(Okay, output, "Upgrade-All: yes\n");
+      if (flags & (Request::FORBID_NEW_INSTALL | Request::FORBID_REMOVE))
+	 WriteOkay(Okay, output, "Upgrade: yes\n");
+      else
+	 WriteOkay(Okay, output, "Dist-Upgrade: yes\n");
+   }
+   if (flags & Request::FORBID_NEW_INSTALL)
+      WriteOkay(Okay, output, "Forbid-New-Install: yes\n");
+   if (flags & Request::FORBID_REMOVE)
+      WriteOkay(Okay, output, "Forbid-Remove: yes\n");
    if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
       WriteOkay(Okay, output, "Strict-Pinning: no\n");
    string solverpref("APT::Solver::");
@@ -711,15 +719,23 @@ static bool StringToBool(char const *answer, bool const defValue) {
 }
 									/*}}}*/
 // EDSP::ReadRequest - first stanza from the given file descriptor	/*{{{*/
+static bool ReadFlag(unsigned int &flags, std::string const &line, APT::StringView const name, unsigned int const setflag)
+{
+   if (line.compare(0, name.length(), name.data()) != 0)
+      return false;
+   auto const l = line.c_str() + name.length() + 1;
+   if (StringToBool(l, false))
+      flags |= setflag;
+   else
+      flags &= ~setflag;
+   return true;
+}
 bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
-			std::list<std::string> &remove, bool &upgrade,
-			bool &distUpgrade, bool &autoRemove)
+			std::list<std::string> &remove, unsigned int &flags)
 {
    install.clear();
    remove.clear();
-   upgrade = false;
-   distUpgrade = false;
-   autoRemove = false;
+   flags = 0;
    std::string line;
    while (ReadLine(input, line) == true)
    {
@@ -747,12 +763,13 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    line.erase(0, 7);
 	    request = &remove;
 	 }
-	 else if (line.compare(0, 8, "Upgrade:") == 0)
-	    upgrade = StringToBool(line.c_str() + 9, false);
-	 else if (line.compare(0, 13, "Dist-Upgrade:") == 0)
-	    distUpgrade = StringToBool(line.c_str() + 14, false);
-	 else if (line.compare(0, 11, "Autoremove:") == 0)
-	    autoRemove = StringToBool(line.c_str() + 12, false);
+	 else if (ReadFlag(flags, line, "Upgrade:", (Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL)) ||
+	       ReadFlag(flags, line, "Dist-Upgrade:", Request::UPGRADE_ALL) ||
+	       ReadFlag(flags, line, "Upgrade-All:", Request::UPGRADE_ALL) ||
+	       ReadFlag(flags, line, "Forbid-New-Install:", Request::FORBID_NEW_INSTALL) ||
+	       ReadFlag(flags, line, "Forbid-Remove:", Request::FORBID_REMOVE) ||
+	       ReadFlag(flags, line, "Autoremove:", Request::AUTOREMOVE))
+	    ;
 	 else if (line.compare(0, 13, "Architecture:") == 0)
 	    _config->Set("APT::Architecture", line.c_str() + 14);
 	 else if (line.compare(0, 14, "Architectures:") == 0)
@@ -783,6 +800,31 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
       }
    }
    return false;
+}
+bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
+			std::list<std::string> &remove, bool &upgrade,
+			bool &distUpgrade, bool &autoRemove)
+{
+   unsigned int flags;
+   auto const ret = ReadRequest(input, install, remove, flags);
+   autoRemove = (flags & Request::AUTOREMOVE);
+   if (flags & Request::UPGRADE_ALL)
+   {
+      if (flags & (Request::FORBID_NEW_INSTALL | Request::FORBID_REMOVE))
+      {
+	 upgrade = true;
+	 distUpgrade = false;
+      } else {
+	 upgrade = false;
+	 distUpgrade = false;
+      }
+   }
+   else
+   {
+      upgrade = false;
+      distUpgrade = false;
+   }
+   return ret;
 }
 									/*}}}*/
 // EDSP::ApplyRequest - first stanza from the given file descriptor	/*{{{*/
@@ -954,8 +996,7 @@ bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_o
 									/*}}}*/
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
-			 bool const upgrade, bool const distUpgrade,
-			 bool const autoRemove, OpProgress *Progress) {
+			 unsigned int const flags, OpProgress *Progress) {
 	int solver_in, solver_out;
 	pid_t const solver_pid = EDSP::ExecuteSolver(solver, &solver_in, &solver_out, true);
 	if (solver_pid == 0)
@@ -968,7 +1009,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	bool Okay = output.Failed() == false;
 	if (Progress != NULL)
 		Progress->OverallProgress(0, 100, 5, _("Execute external solver"));
-	Okay &= EDSP::WriteRequest(Cache, output, upgrade, distUpgrade, autoRemove, Progress);
+	Okay &= EDSP::WriteRequest(Cache, output, flags, Progress);
 	if (Progress != NULL)
 		Progress->OverallProgress(5, 100, 20, _("Execute external solver"));
 	Okay &= EDSP::WriteScenario(Cache, output, Progress);
@@ -980,5 +1021,17 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 		return false;
 
 	return ExecWait(solver_pid, solver);
+}
+bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
+			 bool const upgrade, bool const distUpgrade,
+			 bool const autoRemove, OpProgress *Progress) {
+   unsigned int flags = 0;
+   if (autoRemove)
+      flags |= Request::AUTOREMOVE;
+   if (upgrade)
+      flags |= Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL;
+   if (distUpgrade)
+      flags |= Request::UPGRADE_ALL;
+   return ResolveExternal(solver, Cache, flags, Progress);
 }
 									/*}}}*/

@@ -156,16 +156,25 @@ The following **action fields** are supported in request stanzas:
   Install. This field denotes a list of packages that the user wants to
   remove, usually via APT `remove` or `purge` requests.
 
-- **Upgrade:** (optional, defaults to `no`). Allowed values: `yes`,
+- **Upgrade-All:** (optional, defaults to `no`). Allowed values `yes`,
   `no`. When set to `yes`, an upgrade of all installed packages has been
-  requested, usually via an APT `upgrade` request.
-
-- **Dist-Upgrade:** (optional, defaults to `no`). Allowed values: `yes`,
-  `no`. Same as Upgrade, but for APT `dist-upgrade` requests.
+  requested, usually via an upgrade command like 'apt full-upgrade'.
 
 - **Autoremove:** (optional, defaults to `no`). Allowed values: `yes`,
   `no`. When set to `yes`, a clean up of unused automatically installed
   packages has been requested, usually via an APT `autoremove` request.
+
+- **Upgrade:** (deprecated, optional, defaults to `no`). Allowed values:
+  `yes`, `no`. When set to `yes`, an upgrade of all installed packages
+  has been requested, usually via an APT `upgrade` request. A value of
+  `yes` is equivalent to the fields `Upgrade-All`,
+  `Forbid-New-Install`and `Forbid-Remove` all set to `yes`.
+
+- **Dist-Upgrade:** (deprecated, optional, defaults to `no`). Allowed
+  values: `yes`, `no`. Same as Upgrade, but for APT `dist-upgrade`
+  requests. A value of `yes` is equivalent to the field `Upgrade-All`
+  set to `yes` and the fields `Forbid-New-Install`and `Forbid-Remove`
+  set to `no`.
 
 The following **preference fields** are supported in request stanzas:
 
@@ -177,6 +186,14 @@ The following **preference fields** are supported in request stanzas:
   effort attempt to install APT candidates. Usually, the value of this
   field comes from the `APT::Solver::Strict-Pinning` configuration
   option.
+
+- **Forbid-New-Install:* (optional, defaults to `no`). Allowed values:
+  `yes`, `no`. When set to `yes` the resolver is forbidden to install
+  new packages in its returned solution.
+
+- **Forbid-Remove:* (optional, defaults to `no`). Allowed values: `yes`,
+  `no`.  When set to `yes` the resolver is forbidden to remove currently
+  installed packages in its returned solution.
 
 - **Solver:** (optional, defaults to the empty string) a purely
   informational string specifying to which solver this request was send
