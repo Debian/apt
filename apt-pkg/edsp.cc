@@ -300,7 +300,7 @@ static void WriteScenarioLimitedDependency(FILE* output,
 }
 static bool WriteScenarioLimitedDependency(FileFd &output,
 					  pkgCache::VerIterator const &Ver,
-					  APT::PackageSet const &pkgset)
+					  std::vector<bool> const &pkgset)
 {
    std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
@@ -310,12 +310,12 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 	 continue;
       if (orGroup == false)
       {
-	 if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+	 if (pkgset[Dep.TargetPkg()->ID] == false)
 	    continue;
 	 if (dependencies[Dep->Type].empty() == false)
 	    dependencies[Dep->Type].append(", ");
       }
-      else if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+      else if (pkgset[Dep.TargetPkg()->ID] == false)
       {
 	 if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
 	    continue;
@@ -343,7 +343,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
    {
       if (Prv.IsMultiArchImplicit() == true)
 	 continue;
-      if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
+      if (pkgset[Prv.ParentPkg()->ID] == false)
 	 continue;
       if (provides.empty() == false)
 	 provides.append(", ");
@@ -449,14 +449,17 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
    return true;
 }
 bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
-				APT::PackageSet const &pkgset,
+				std::vector<bool> const &pkgset,
 				OpProgress *Progress)
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
    unsigned long p  = 0;
    bool Okay = output.Failed() == false;
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end() && likely(Okay); ++Pkg, ++p)
+   for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg, ++p)
+   {
+      if (pkgset[Pkg->ID] == false)
+	 continue;
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false && likely(Okay); ++Ver)
       {
 	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
@@ -467,6 +470,7 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
       }
+   }
    if (Progress != NULL)
       Progress->Done();
    return Okay;

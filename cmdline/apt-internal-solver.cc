@@ -88,7 +88,12 @@ int main(int argc,const char *argv[])					/*{{{*/
 		if (pkgset.empty() == true)
 			EDSP::WriteScenario(CacheFile, output);
 		else
-			EDSP::WriteLimitedScenario(CacheFile, output, pkgset);
+		{
+			std::vector<bool> pkgvec(CacheFile->Head().PackageCount, false);
+			for (auto const &p: pkgset)
+			   pkgvec[p->ID] = true;
+			EDSP::WriteLimitedScenario(CacheFile, output, pkgvec);
+		}
 		output.Close();
 		_error->DumpErrors(std::cerr);
 		return 0;

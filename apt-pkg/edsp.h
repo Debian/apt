@@ -18,6 +18,7 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/depcache.h>
@@ -98,7 +99,7 @@ namespace EDSP								/*{{{*/
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
 	bool WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
-					 APT::PackageSet const &pkgset,
+					 std::vector<bool> const &pkgset,
 					 OpProgress *Progress = NULL);
 	bool WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
 					 APT::PackageSet const &pkgset,
