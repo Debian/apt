@@ -128,8 +128,9 @@ Acquire::IndexTargets::deb::Contents {
 };
 EOF
 
-# the last line is utter bogus of course, but how should apt know…
-testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
+runthistest() {
+	# the last lines are utter bogus of course, but how should apt know…
+	testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-amd64_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-all_Packages 0 
@@ -137,16 +138,25 @@ testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-amd64.gz.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-all.gz.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz 0 " aptget update --print-uris
 
-testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
+	testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents.gz [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
 Get:3 http://localhost:${APTHTTPPORT} unstable/main all Contents.gz [$(stat -c%s aptarchive/dists/unstable/main/Contents-all.gz) B]
 Reading package lists..." aptget update
 
-testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
-testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" find rootdir/var/lib/apt/lists -name '*Contents-all*'
-testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
-testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" 'aptarchive/dists/unstable/main/Contents-amd64.gz'
-testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" 'aptarchive/dists/unstable/main/Contents-all.gz'
+	testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
+	testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" find rootdir/var/lib/apt/lists -name '*Contents-all*'
+	testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+	testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" 'aptarchive/dists/unstable/main/Contents-amd64.gz'
+	testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" 'aptarchive/dists/unstable/main/Contents-all.gz'
+}
+runthistest
+
+msgmsg "Compressed Contents file from native architecture"
+echo 'Acquire::IndexTargets::deb::Contents::MetaKey "$(COMPONENT)/Contents-$(NATIVE_ARCHITECTURE).gz";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+runthistest
 
 rm -f rootdir/etc/apt/apt.conf.d/content-target.conf
 msgmsg "No Contents file"

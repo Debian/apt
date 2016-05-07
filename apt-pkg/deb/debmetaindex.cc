@@ -153,7 +153,8 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
       }
       DefKeepCompressedAs += "uncompressed";
    }
-   std::string const NativeArch = _config->Find("APT::Architecture");
+
+   std::vector<std::string> const NativeArchs = { _config->Find("APT::Architecture"), "all" };
    bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
@@ -206,113 +207,120 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 
 	    for (std::vector<std::string>::const_iterator A = E->Architectures.begin(); A != E->Architectures.end(); ++A)
 	    {
-	       // available in templates
-	       std::map<std::string, std::string> Options;
-	       Options.insert(std::make_pair("SITE", Site));
-	       Options.insert(std::make_pair("RELEASE", Release));
-	       if (tplMetaKey.find("$(COMPONENT)") != std::string::npos)
-		  Options.insert(std::make_pair("COMPONENT", E->Name));
-	       if (tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
-		  Options.insert(std::make_pair("LANGUAGE", *L));
-	       if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
-		  Options.insert(std::make_pair("ARCHITECTURE", *A));
-	       else if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
-		  Options.insert(std::make_pair("ARCHITECTURE", NativeArch));
-	       if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
-		  Options.insert(std::make_pair("NATIVE_ARCHITECTURE", NativeArch));
-
-	       std::string MetaKey = tplMetaKey;
-	       std::string ShortDesc = tplShortDesc;
-	       std::string LongDesc = tplLongDesc;
-	       for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
+	       for (auto const &NativeArch: NativeArchs)
 	       {
-		  MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
-		  ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
-		  LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
-	       }
+		  constexpr static auto BreakPoint = "$(NATIVE_ARCHITECTURE)";
+		  // available in templates
+		  std::map<std::string, std::string> Options;
+		  Options.insert(std::make_pair("SITE", Site));
+		  Options.insert(std::make_pair("RELEASE", Release));
+		  if (tplMetaKey.find("$(COMPONENT)") != std::string::npos)
+		     Options.insert(std::make_pair("COMPONENT", E->Name));
+		  if (tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
+		     Options.insert(std::make_pair("LANGUAGE", *L));
+		  if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
+		     Options.insert(std::make_pair("ARCHITECTURE", *A));
+		  else if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
+		     Options.insert(std::make_pair("ARCHITECTURE", NativeArch));
+		  if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
+		     Options.insert(std::make_pair("NATIVE_ARCHITECTURE", NativeArch));
 
-	       {
-		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
-		     return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
-			E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T == IT.Option(IndexTarget::CREATED_BY);
-		  });
-		  if (dup != IndexTargets.end())
+		  std::string MetaKey = tplMetaKey;
+		  std::string ShortDesc = tplShortDesc;
+		  std::string LongDesc = tplLongDesc;
+		  for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
 		  {
-		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
-			break;
-		     continue;
+		     MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
+		     ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
+		     LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
 		  }
-	       }
 
-	       {
-		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
-		     return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
-			E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T != IT.Option(IndexTarget::CREATED_BY);
-		  });
-		  if (dup != IndexTargets.end())
 		  {
-		     std::string const dupT = dup->Option(IndexTarget::CREATED_BY);
-		     std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
-		     //TRANSLATOR: an identifier like Packages; Releasefile key indicating
-		     // a file like main/binary-amd64/Packages; another identifier like Contents;
-		     // filename and linenumber of the sources.list entry currently parsed
-		     _error->Warning(_("Target %s wants to acquire the same file (%s) as %s from source %s"),
-			   T->c_str(), MetaKey.c_str(), dupT.c_str(), dupEntry.c_str());
-		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
-			break;
-		     continue;
+		     auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
+			return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
+			   E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T == IT.Option(IndexTarget::CREATED_BY);
+		     });
+		     if (dup != IndexTargets.end())
+		     {
+			if (tplMetaKey.find(BreakPoint) == std::string::npos)
+			   break;
+			continue;
+		     }
 		  }
-	       }
 
-	       {
-		  auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &T) {
-		     return MetaKey == T.MetaKey && baseURI == T.Option(IndexTarget::BASE_URI) &&
-			E->sourcesEntry != T.Option(IndexTarget::SOURCESENTRY);
-		  });
-		  if (dup != IndexTargets.end())
 		  {
-		     std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
-		     //TRANSLATOR: an identifier like Packages; Releasefile key indicating
-		     // a file like main/binary-amd64/Packages; filename and linenumber of
-		     // two sources.list entries
-		     _error->Warning(_("Target %s (%s) is configured multiple times in %s and %s"),
-			   T->c_str(), MetaKey.c_str(), dupEntry.c_str(), E->sourcesEntry.c_str());
-		     if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
-			break;
-		     continue;
+		     auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &IT) {
+			return MetaKey == IT.MetaKey && baseURI == IT.Option(IndexTarget::BASE_URI) &&
+			   E->sourcesEntry == IT.Option(IndexTarget::SOURCESENTRY) && *T != IT.Option(IndexTarget::CREATED_BY);
+			});
+		     if (dup != IndexTargets.end())
+		     {
+			std::string const dupT = dup->Option(IndexTarget::CREATED_BY);
+			std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
+			//TRANSLATOR: an identifier like Packages; Releasefile key indicating
+			// a file like main/binary-amd64/Packages; another identifier like Contents;
+			// filename and linenumber of the sources.list entry currently parsed
+			_error->Warning(_("Target %s wants to acquire the same file (%s) as %s from source %s"),
+			      T->c_str(), MetaKey.c_str(), dupT.c_str(), dupEntry.c_str());
+			if (tplMetaKey.find(BreakPoint) == std::string::npos)
+			   break;
+			continue;
+		     }
 		  }
+
+		  {
+		     auto const dup = std::find_if(IndexTargets.begin(), IndexTargets.end(), [&](IndexTarget const &T) {
+			return MetaKey == T.MetaKey && baseURI == T.Option(IndexTarget::BASE_URI) &&
+			   E->sourcesEntry != T.Option(IndexTarget::SOURCESENTRY);
+		     });
+		     if (dup != IndexTargets.end())
+		     {
+			std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
+			//TRANSLATOR: an identifier like Packages; Releasefile key indicating
+			// a file like main/binary-amd64/Packages; filename and linenumber of
+			// two sources.list entries
+			_error->Warning(_("Target %s (%s) is configured multiple times in %s and %s"),
+			      T->c_str(), MetaKey.c_str(), dupEntry.c_str(), E->sourcesEntry.c_str());
+			if (tplMetaKey.find(BreakPoint) == std::string::npos)
+			   break;
+			continue;
+		     }
+		  }
+
+		  // not available in templates, but in the indextarget
+		  Options.insert(std::make_pair("BASE_URI", baseURI));
+		  Options.insert(std::make_pair("REPO_URI", URI));
+		  Options.insert(std::make_pair("TARGET_OF", Type));
+		  Options.insert(std::make_pair("CREATED_BY", *T));
+		  Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
+		  Options.insert(std::make_pair("BY_HASH", UseByHash));
+		  Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
+		  Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
+		  Options.insert(std::make_pair("KEEPCOMPRESSEDAS", KeepCompressedAs));
+		  Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
+
+		  bool IsOpt = IsOptional;
+		  if (IsOpt == false)
+		  {
+		     auto const arch = Options.find("ARCHITECTURE");
+		     if (arch != Options.end() && arch->second == "all")
+			IsOpt = true;
+		  }
+
+		  IndexTarget Target(
+			MetaKey,
+			ShortDesc,
+			LongDesc,
+			Options.find("BASE_URI")->second + MetaKey,
+			IsOpt,
+			KeepCompressed,
+			Options
+			);
+		  IndexTargets.push_back(Target);
+
+		  if (tplMetaKey.find(BreakPoint) == std::string::npos)
+		     break;
 	       }
-
-	       // not available in templates, but in the indextarget
-	       Options.insert(std::make_pair("BASE_URI", baseURI));
-	       Options.insert(std::make_pair("REPO_URI", URI));
-	       Options.insert(std::make_pair("TARGET_OF", Type));
-	       Options.insert(std::make_pair("CREATED_BY", *T));
-	       Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
-	       Options.insert(std::make_pair("BY_HASH", UseByHash));
-	       Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
-	       Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
-	       Options.insert(std::make_pair("KEEPCOMPRESSEDAS", KeepCompressedAs));
-	       Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
-
-	       bool IsOpt = IsOptional;
-	       if (IsOpt == false)
-	       {
-		  auto const arch = Options.find("ARCHITECTURE");
-		  if (arch != Options.end() && arch->second == "all")
-		     IsOpt = true;
-	       }
-
-	       IndexTarget Target(
-		     MetaKey,
-		     ShortDesc,
-		     LongDesc,
-		     Options.find("BASE_URI")->second + MetaKey,
-		     IsOpt,
-		     KeepCompressed,
-		     Options
-		     );
-	       IndexTargets.push_back(Target);
 
 	       if (tplMetaKey.find("$(ARCHITECTURE)") == std::string::npos)
 		  break;
