@@ -407,11 +407,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
  protected:
    std::vector<pkgAcqTransactionItem*> Transaction;
 
-   /** \brief The index files which should be looked up in the meta-index
-    *  and then downloaded.
-    */
-   std::vector<IndexTarget> IndexTargets;
-
    /** \brief If \b true, the index's signature is currently being verified.
     */
    bool AuthPass;
@@ -484,7 +479,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
    virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
    pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-		  std::vector<IndexTarget> const &IndexTargets,
 		  IndexTarget const &DataTarget) APT_NONNULL(2, 3);
    virtual ~pkgAcqMetaBase();
 };
@@ -518,8 +512,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
-		   std::vector<IndexTarget> const &IndexTargets) APT_NONNULL(2, 3);
+		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget) APT_NONNULL(2, 3);
    virtual ~pkgAcqMetaIndex();
 
    friend class pkgAcqMetaSig;
@@ -597,7 +590,6 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 		IndexTarget const &ClearsignedTarget,
 		IndexTarget const &DetachedDataTarget,
 		IndexTarget const &DetachedSigTarget,
-		std::vector<IndexTarget> const &IndexTargets,
 		metaIndex * const MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };

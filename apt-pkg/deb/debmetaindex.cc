@@ -601,15 +601,13 @@ bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
 
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
 {
-   std::vector<IndexTarget> const targets = GetIndexTargets();
 #define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, false, std::map<std::string,std::string>())
    pkgAcqMetaClearSig * const TransactionManager = new pkgAcqMetaClearSig(Owner,
-	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"),
-	 targets, this);
+	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"), this);
 #undef APT_TARGET
    // special case for --print-uris
    if (GetAll)
-      for (auto const &Target: targets)
+      for (auto const &Target: GetIndexTargets())
 	 new pkgAcqIndex(Owner, TransactionManager, Target);
 
    return true;

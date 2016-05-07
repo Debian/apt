@@ -934,10 +934,8 @@ static void LoadLastMetaIndexParser(pkgAcqMetaClearSig * const TransactionManage
 // AcqMetaBase - Constructor						/*{{{*/
 pkgAcqMetaBase::pkgAcqMetaBase(pkgAcquire * const Owner,
       pkgAcqMetaClearSig * const TransactionManager,
-      std::vector<IndexTarget> const &IndexTargets,
       IndexTarget const &DataTarget)
 : pkgAcqTransactionItem(Owner, TransactionManager, DataTarget), d(NULL),
-   IndexTargets(IndexTargets),
    AuthPass(false), IMSHit(false), State(TransactionStarted)
 {
 }
@@ -1199,9 +1197,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
    ExpectedAdditionalItems = 0;
 
    bool const metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
-   for (std::vector <IndexTarget>::iterator Target = IndexTargets.begin();
-        Target != IndexTargets.end();
-        ++Target)
+   for (auto Target : TransactionManager->MetaIndexParser->GetIndexTargets())
    {
       // all is an implementation detail. Users shouldn't use this as arch
       // We need this support trickery here as e.g. Debian has binary-all files already,
@@ -1209,36 +1205,36 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       // download time, bandwidth and diskspace for nothing, BUT Debian doesn't feature all
       // in the set of supported architectures, so we can filter based on this property rather
       // than invent an entirely new flag we would need to carry for all of eternity.
-      if (Target->Option(IndexTarget::ARCHITECTURE) == "all")
+      if (Target.Option(IndexTarget::ARCHITECTURE) == "all")
       {
 	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false ||
-	       TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(*Target) == false)
+	       TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(Target) == false)
 	 {
-	    new CleanupItem(Owner, TransactionManager, *Target);
+	    new CleanupItem(Owner, TransactionManager, Target);
 	    continue;
 	 }
       }
 
-      bool trypdiff = Target->OptionBool(IndexTarget::PDIFFS);
+      bool trypdiff = Target.OptionBool(IndexTarget::PDIFFS);
       if (verify == true)
       {
-	 if (TransactionManager->MetaIndexParser->Exists(Target->MetaKey) == false)
+	 if (TransactionManager->MetaIndexParser->Exists(Target.MetaKey) == false)
 	 {
 	    // optional targets that we do not have in the Release file are skipped
-	    if (Target->IsOptional)
+	    if (Target.IsOptional)
 	    {
-	       new CleanupItem(Owner, TransactionManager, *Target);
+	       new CleanupItem(Owner, TransactionManager, Target);
 	       continue;
 	    }
 
-	    std::string const &arch = Target->Option(IndexTarget::ARCHITECTURE);
+	    std::string const &arch = Target.Option(IndexTarget::ARCHITECTURE);
 	    if (arch.empty() == false)
 	    {
 	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported(arch) == false)
 	       {
-		  new CleanupItem(Owner, TransactionManager, *Target);
+		  new CleanupItem(Owner, TransactionManager, Target);
 		  _error->Notice(_("Skipping acquire of configured file '%s' as repository '%s' doesn't support architecture '%s'"),
-			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str(), arch.c_str());
+			Target.MetaKey.c_str(), TransactionManager->Target.Description.c_str(), arch.c_str());
 		  continue;
 	       }
 	       // if the architecture is officially supported but currently no packages for it available,
@@ -1246,49 +1242,49 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       // if we don't know which architectures are supported, we do NOT ignore it to notify user about this
 	       if (TransactionManager->MetaIndexParser->IsArchitectureSupported("*undefined*") == false)
 	       {
-		  new CleanupItem(Owner, TransactionManager, *Target);
+		  new CleanupItem(Owner, TransactionManager, Target);
 		  continue;
 	       }
 	    }
 
 	    Status = StatAuthError;
-	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target->MetaKey.c_str());
+	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target.MetaKey.c_str());
 	    return;
 	 }
 	 else
 	 {
-	    auto const hashes = GetExpectedHashesFor(Target->MetaKey);
+	    auto const hashes = GetExpectedHashesFor(Target.MetaKey);
 	    if (hashes.empty() == false)
 	    {
 	       if (hashes.usable() == false)
 	       {
-		  new CleanupItem(Owner, TransactionManager, *Target);
+		  new CleanupItem(Owner, TransactionManager, Target);
 		  _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
-			Target->MetaKey.c_str(), TransactionManager->Target.Description.c_str());
+			Target.MetaKey.c_str(), TransactionManager->Target.Description.c_str());
 		  continue;
 	       }
 	       // empty files are skipped as acquiring the very small compressed files is a waste of time
 	       else if (hashes.FileSize() == 0)
 	       {
-		  new CleanupItem(Owner, TransactionManager, *Target);
+		  new CleanupItem(Owner, TransactionManager, Target);
 		  continue;
 	       }
 	    }
 	 }
 
 	 // autoselect the compression method
-	 std::vector<std::string> types = VectorizeString(Target->Option(IndexTarget::COMPRESSIONTYPES), ' ');
+	 std::vector<std::string> types = VectorizeString(Target.Option(IndexTarget::COMPRESSIONTYPES), ' ');
 	 types.erase(std::remove_if(types.begin(), types.end(), [&](std::string const &t) {
 	    if (t == "uncompressed")
-	       return TransactionManager->MetaIndexParser->Exists(Target->MetaKey) == false;
-	    std::string const MetaKey = Target->MetaKey + "." + t;
+	       return TransactionManager->MetaIndexParser->Exists(Target.MetaKey) == false;
+	    std::string const MetaKey = Target.MetaKey + "." + t;
 	    return TransactionManager->MetaIndexParser->Exists(MetaKey) == false;
 	 }), types.end());
 	 if (types.empty() == false)
 	 {
 	    std::ostringstream os;
 	    // add the special compressiontype byhash first if supported
-	    std::string const useByHashConf = Target->Option(IndexTarget::BY_HASH);
+	    std::string const useByHashConf = Target.Option(IndexTarget::BY_HASH);
 	    bool useByHash = false;
 	    if(useByHashConf == "force")
 	       useByHash = true;
@@ -1298,12 +1294,12 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       os << "by-hash ";
 	    std::copy(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "));
 	    os << *types.rbegin();
-	    Target->Options["COMPRESSIONTYPES"] = os.str();
+	    Target.Options["COMPRESSIONTYPES"] = os.str();
 	 }
 	 else
-	    Target->Options["COMPRESSIONTYPES"].clear();
+	    Target.Options["COMPRESSIONTYPES"].clear();
 
-	 std::string filename = GetExistingFilename(GetFinalFileNameFromURI(Target->URI));
+	 std::string filename = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
 	 if (filename.empty() == false)
 	 {
 	    // if the Release file is a hit and we have an index it must be the current one
@@ -1314,8 +1310,8 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       // see if the file changed since the last Release file
 	       // we use the uncompressed files as we might compress differently compared to the server,
 	       // so the hashes might not match, even if they contain the same data.
-	       HashStringList const newFile = GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, Target->MetaKey);
-	       HashStringList const oldFile = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, Target->MetaKey);
+	       HashStringList const newFile = GetExpectedHashesFromFor(TransactionManager->MetaIndexParser, Target.MetaKey);
+	       HashStringList const oldFile = GetExpectedHashesFromFor(TransactionManager->LastMetaIndexParser, Target.MetaKey);
 	       if (newFile != oldFile)
 		  filename.clear();
 	    }
@@ -1327,35 +1323,35 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 
 	 if (filename.empty() == false)
 	 {
-	    new NoActionItem(Owner, *Target, filename);
-	    std::string const idxfilename = GetFinalFileNameFromURI(GetDiffIndexURI(*Target));
+	    new NoActionItem(Owner, Target, filename);
+	    std::string const idxfilename = GetFinalFileNameFromURI(GetDiffIndexURI(Target));
 	    if (FileExists(idxfilename))
-	       new NoActionItem(Owner, *Target, idxfilename);
+	       new NoActionItem(Owner, Target, idxfilename);
 	    continue;
 	 }
 
 	 // check if we have patches available
-	 trypdiff &= TransactionManager->MetaIndexParser->Exists(GetDiffIndexFileName(Target->MetaKey));
+	 trypdiff &= TransactionManager->MetaIndexParser->Exists(GetDiffIndexFileName(Target.MetaKey));
       }
       else
       {
 	 // if we have no file to patch, no point in trying
-	 trypdiff &= (GetExistingFilename(GetFinalFileNameFromURI(Target->URI)).empty() == false);
+	 trypdiff &= (GetExistingFilename(GetFinalFileNameFromURI(Target.URI)).empty() == false);
       }
 
       // no point in patching from local sources
       if (trypdiff)
       {
-	 std::string const proto = Target->URI.substr(0, strlen("file:/"));
+	 std::string const proto = Target.URI.substr(0, strlen("file:/"));
 	 if (proto == "file:/" || proto == "copy:/" || proto == "cdrom:")
 	    trypdiff = false;
       }
 
       // Queue the Index file (Packages, Sources, Translation-$foo, …)
       if (trypdiff)
-         new pkgAcqDiffIndex(Owner, TransactionManager, *Target);
+         new pkgAcqDiffIndex(Owner, TransactionManager, Target);
       else
-         new pkgAcqIndex(Owner, TransactionManager, *Target);
+         new pkgAcqIndex(Owner, TransactionManager, Target);
    }
 }
 									/*}}}*/
@@ -1447,9 +1443,8 @@ pkgAcqMetaBase::~pkgAcqMetaBase()
 pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       IndexTarget const &ClearsignedTarget,
       IndexTarget const &DetachedDataTarget, IndexTarget const &DetachedSigTarget,
-      std::vector<IndexTarget> const &IndexTargets,
       metaIndex * const MetaIndexParser) :
-   pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget, IndexTargets),
+   pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget),
    d(NULL), ClearsignedTarget(ClearsignedTarget),
    DetachedDataTarget(DetachedDataTarget),
    MetaIndexParser(MetaIndexParser), LastMetaIndexParser(NULL)
@@ -1547,7 +1542,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
       TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
       Status = StatDone;
 
-      new pkgAcqMetaIndex(Owner, TransactionManager, DetachedDataTarget, DetachedSigTarget, IndexTargets);
+      new pkgAcqMetaIndex(Owner, TransactionManager, DetachedDataTarget, DetachedSigTarget);
    }
    else
    {
@@ -1585,9 +1580,8 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire * const Owner,		/*{{{*/
                                  pkgAcqMetaClearSig * const TransactionManager,
 				 IndexTarget const &DataTarget,
-				 IndexTarget const &DetachedSigTarget,
-				 vector<IndexTarget> const &IndexTargets) :
-   pkgAcqMetaBase(Owner, TransactionManager, IndexTargets, DataTarget), d(NULL),
+				 IndexTarget const &DetachedSigTarget) :
+   pkgAcqMetaBase(Owner, TransactionManager, DataTarget), d(NULL),
    DetachedSigTarget(DetachedSigTarget)
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
