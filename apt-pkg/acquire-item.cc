@@ -344,7 +344,7 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
    {
       // this ensures we rewrite only once and only the first step
       auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
-      if (APT::String::Startswith(Item.URI, OldBaseURI))
+      if (OldBaseURI.empty() == false && APT::String::Startswith(Item.URI, OldBaseURI))
       {
 	 auto const ExtraPath = Item.URI.substr(OldBaseURI.length());
 	 Item.URI = flCombine(TransactionManager->BaseURI, ExtraPath);
@@ -1107,7 +1107,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    {
       if (APT::String::Endswith(I->Desc.URI, "InRelease"))
 	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("InRelease"));
-      else
+      else if (APT::String::Endswith(I->Desc.URI, "Release"))
 	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("Release"));
    }
 
