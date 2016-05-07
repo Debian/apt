@@ -1188,12 +1188,12 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
                 << DestFile << std::endl;
 
    // Download further indexes with verification
-   QueueIndexes(true);
+   TransactionManager->QueueIndexes(true);
 
    return true;
 }
 									/*}}}*/
-void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
+void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 {
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
@@ -1455,7 +1455,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
    MetaIndexParser(MetaIndexParser), LastMetaIndexParser(NULL)
 {
    // index targets + (worst case:) Release/Release.gpg
-   ExpectedAdditionalItems = IndexTargets.size() + 2;
+   ExpectedAdditionalItems = std::numeric_limits<decltype(ExpectedAdditionalItems)>::max();
    TransactionManager->Add(this);
 }
 									/*}}}*/
@@ -1529,9 +1529,6 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 {
    Item::Failed(Message, Cnf);
 
-   // we failed, we will not get additional items from this method
-   ExpectedAdditionalItems = 0;
-
    if (AuthPass == false)
    {
       if (Status == StatAuthError || Status == StatTransientNetworkError)
@@ -1579,7 +1576,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 if (TransactionManager->MetaIndexParser->Load(PartialRelease, &ErrorText) == false || VerifyVendor(Message) == false)
 	    /* expired Release files are still a problem you need extra force for */;
 	 else
-	    QueueIndexes(true);
+	    TransactionManager->QueueIndexes(true);
       }
    }
 }
@@ -1604,9 +1601,6 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire * const Owner,		/*{{{*/
    Desc.Owner = this;
    Desc.ShortDesc = DataTarget.ShortDesc;
    Desc.URI = DataTarget.URI;
-
-   // we expect more item
-   ExpectedAdditionalItems = IndexTargets.size();
    QueueURI(Desc);
 }
 									/*}}}*/
@@ -1641,7 +1635,7 @@ void pkgAcqMetaIndex::Failed(string const &Message,
       TransactionManager->TransactionStageRemoval(this, GetFinalFilename());
 
       // queue without any kind of hashsum support
-      QueueIndexes(false);
+      TransactionManager->QueueIndexes(false);
    }
 }
 									/*}}}*/
@@ -1787,7 +1781,7 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
       if (MetaIndex->VerifyVendor(Message) == false)
 	 /* expired Release files are still a problem you need extra force for */;
       else
-	 MetaIndex->QueueIndexes(GoodLoad);
+	 TransactionManager->QueueIndexes(GoodLoad);
 
       TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
    }
@@ -1840,6 +1834,9 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
                                  IndexTarget const &Target)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), diffs(NULL)
 {
+   // FIXME: Magic number as an upper bound on pdiffs we will reasonably acquire
+   ExpectedAdditionalItems = 40;
+
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
    Desc.Owner = this;
@@ -1884,6 +1881,7 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
 									/*}}}*/
 bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 {
+   ExpectedAdditionalItems = 0;
    // failing here is fine: our caller will take care of trying to
    // get the complete file if patching fails
    if(Debug)
@@ -2267,6 +2265,7 @@ void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig cons
 {
    pkgAcqBaseIndex::Failed(Message,Cnf);
    Status = StatDone;
+   ExpectedAdditionalItems = 0;
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl

@@ -1147,7 +1147,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
    unsigned int Count = 0;
-   bool UnfetchedReleaseFiles = false;
+   bool ExpectAdditionalItems = false;
    for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); 
         I != Owner->ItemsEnd();
 	++I, ++Count)
@@ -1156,12 +1156,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 ++CurrentItems;
 
-      // see if the method tells us to expect more
-      TotalItems += (*I)->ExpectedAdditionalItems;
-
-      // check if there are unfetched Release files
-      if ((*I)->Status != pkgAcquire::Item::StatDone && (*I)->ExpectedAdditionalItems > 0)
-         UnfetchedReleaseFiles = true;
+      // do we expect to acquire more files than we know of yet?
+      if ((*I)->ExpectedAdditionalItems > 0)
+         ExpectAdditionalItems = true;
 
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
@@ -1218,7 +1215,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
    double const OldPercent = Percent;
    // calculate the percentage, if we have too little data assume 1%
-   if (TotalBytes > 0 && UnfetchedReleaseFiles)
+   if (ExpectAdditionalItems)
       Percent = 0;
    else
       // use both files and bytes because bytes can be unreliable

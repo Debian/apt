@@ -416,16 +416,6 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
     */
    bool AuthPass;
 
-   /** \brief Starts downloading the individual index files.
-    *
-    *  \param verify If \b true, only indices whose expected hashsum
-    *  can be determined from the meta-index will be downloaded, and
-    *  the hashsums of indices will be checked (reporting
-    *  #StatAuthError if there is a mismatch).  If verify is \b false,
-    *  no hashsum checking will be performed.
-    */
-   void QueueIndexes(bool const verify);
-
    /** \brief Called when a file is finished being retrieved.
     *
     *  If the file was not downloaded to DestFile, a copy process is
@@ -591,6 +581,16 @@ class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Finished() APT_OVERRIDE;
+
+   /** \brief Starts downloading the individual index files.
+    *
+    *  \param verify If \b true, only indices whose expected hashsum
+    *  can be determined from the meta-index will be downloaded, and
+    *  the hashsums of indices will be checked (reporting
+    *  #StatAuthError if there is a mismatch).  If verify is \b false,
+    *  no hashsum checking will be performed.
+    */
+   void QueueIndexes(bool const verify);
 
    /** \brief Create a new pkgAcqMetaClearSig. */
    pkgAcqMetaClearSig(pkgAcquire * const Owner,
