@@ -190,14 +190,14 @@ static bool MessageInsecureRepository(bool const isError, std::string const &msg
    _error->Notice("%s", _("See apt-secure(8) manpage for repository creation and user configuration details."));
    return false;
 }
-static bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)
+static bool APT_NONNULL(2) MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)
 {
    std::string m;
    strprintf(m, msg, repo.c_str());
    return MessageInsecureRepository(isError, m);
 }
 									/*}}}*/
-static bool AllowInsecureRepositories(char const * const msg, std::string const &repo,/*{{{*/
+static bool APT_NONNULL(1, 3, 4, 5) AllowInsecureRepositories(char const * const msg, std::string const &repo,/*{{{*/
       metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I)
 {
    if(MetaIndexParser->GetTrusted() == metaIndex::TRI_YES)
@@ -239,8 +239,7 @@ APT_CONST bool pkgAcqTransactionItem::HashesRequired() const
       we can at least trust them for integrity of the download itself.
       Only repositories without a Release file can (obviously) not have
       hashes – and they are very uncommon and strongly discouraged */
-   return TransactionManager->MetaIndexParser != NULL &&
-      TransactionManager->MetaIndexParser->GetLoadedSuccessfully() == metaIndex::TRI_YES;
+   return TransactionManager->MetaIndexParser->GetLoadedSuccessfully() == metaIndex::TRI_YES;
 }
 HashStringList pkgAcqTransactionItem::GetExpectedHashes() const
 {
@@ -331,15 +330,14 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       return false;
    }
    std::string const FinalFile = GetFinalFilename();
-   if (TransactionManager != NULL && TransactionManager->IMSHit == true &&
-	 FileExists(FinalFile) == true)
+   if (TransactionManager->IMSHit == true && FileExists(FinalFile) == true)
    {
       PartialFile = DestFile = FinalFile;
       Status = StatDone;
       return false;
    }
    // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
-   if (TransactionManager != nullptr && TransactionManager->BaseURI.empty() == false &&
+   if (TransactionManager->BaseURI.empty() == false &&
 	 URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
    {
       // this ensures we rewrite only once and only the first step
@@ -1137,8 +1135,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    {
       // for simplicity, the transaction manager is always InRelease
       // even if it doesn't exist.
-      if (TransactionManager != NULL)
-	 TransactionManager->IMSHit = true;
+      TransactionManager->IMSHit = true;
       I->PartialFile = I->DestFile = I->GetFinalFilename();
    }
 
@@ -1201,10 +1198,7 @@ void pkgAcqMetaBase::QueueIndexes(bool const verify)			/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
-  bool metaBaseSupportsByHash = false;
-  if (TransactionManager != NULL && TransactionManager->MetaIndexParser != NULL)
-     metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
-
+   bool const metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
    for (std::vector <IndexTarget>::iterator Target = IndexTargets.begin();
         Target != IndexTargets.end();
         ++Target)
@@ -1487,7 +1481,7 @@ void pkgAcqMetaClearSig::Finished()					/*{{{*/
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "Finished: " << DestFile <<std::endl;
-   if(TransactionManager != NULL && TransactionManager->State == TransactionStarted &&
+   if(TransactionManager->State == TransactionStarted &&
       TransactionManager->TransactionHasError() == false)
       TransactionManager->CommitTransaction();
 }
@@ -1820,8 +1814,7 @@ pkgAcqBaseIndex::pkgAcqBaseIndex(pkgAcquire * const Owner,
 void pkgAcqBaseIndex::Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
    pkgAcquire::Item::Failed(Message, Cnf);
-   if (TransactionManager == nullptr || TransactionManager->MetaIndexParser == nullptr ||
-	 Status != StatAuthError)
+   if (Status != StatAuthError)
       return;
 
    ErrorText.append("Release file created at: ");
@@ -2167,7 +2160,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    // calculate the size of all patches we have to get
    unsigned short const sizeLimitPercent = _config->FindI("Acquire::PDiffs::SizeLimit", 100);
-   if (sizeLimitPercent > 0 && TransactionManager->MetaIndexParser != nullptr)
+   if (sizeLimitPercent > 0)
    {
       unsigned long long downloadSize = std::accumulate(available_patches.begin(),
 	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
@@ -2733,7 +2726,7 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    else if (CurrentCompressionExtension == "by-hash")
    {
       NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, true);
-      if(unlikely(TransactionManager->MetaIndexParser == NULL || CurrentCompressionExtension.empty()))
+      if(unlikely(CurrentCompressionExtension.empty()))
 	 return;
       if (CurrentCompressionExtension != "uncompressed")
       {

@@ -393,7 +393,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    virtual bool HashesRequired() const APT_OVERRIDE;
 
 
-   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target);
+   pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target) APT_NONNULL(2, 3);
    virtual ~pkgAcqTransactionItem();
 
    friend class pkgAcqMetaBase;
@@ -495,7 +495,7 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
 
    pkgAcqMetaBase(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
 		  std::vector<IndexTarget> const &IndexTargets,
-		  IndexTarget const &DataTarget);
+		  IndexTarget const &DataTarget) APT_NONNULL(2, 3);
    virtual ~pkgAcqMetaBase();
 };
 									/*}}}*/
@@ -529,7 +529,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
 		   IndexTarget const &DataTarget, IndexTarget const &DetachedSigTarget,
-		   std::vector<IndexTarget> const &IndexTargets);
+		   std::vector<IndexTarget> const &IndexTargets) APT_NONNULL(2, 3);
    virtual ~pkgAcqMetaIndex();
 
    friend class pkgAcqMetaSig;
@@ -568,7 +568,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-	 IndexTarget const &Target, pkgAcqMetaIndex * const MetaIndex);
+	 IndexTarget const &Target, pkgAcqMetaIndex * const MetaIndex) APT_NONNULL(2, 3, 5);
    virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
@@ -613,7 +613,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
 
    pkgAcqBaseIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-                   IndexTarget const &Target);
+                   IndexTarget const &Target) APT_NONNULL(2, 3);
    virtual ~pkgAcqBaseIndex();
 };
 									/*}}}*/
@@ -678,7 +678,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  \param ShortDesc A short description of the list file to download.
     */
    pkgAcqDiffIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-                   IndexTarget const &Target);
+                   IndexTarget const &Target) APT_NONNULL(2, 3);
    virtual ~pkgAcqDiffIndex();
  private:
    APT_HIDDEN void QueueOnIMSHit() const;
@@ -778,7 +778,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     */
    pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                          IndexTarget const &Target, DiffInfo const &patch,
-                         std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
+                         std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches) APT_NONNULL(2, 3, 6);
    virtual ~pkgAcqIndexMergeDiffs();
 };
 									/*}}}*/
@@ -889,7 +889,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     */
    pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                     IndexTarget const &Target,
-		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>());
+		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>()) APT_NONNULL(2, 3);
    virtual ~pkgAcqIndexDiffs();
 };
 									/*}}}*/
@@ -956,7 +956,7 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
    virtual std::string GetMetaKey() const APT_OVERRIDE;
 
    pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-               IndexTarget const &Target);
+               IndexTarget const &Target) APT_NONNULL(2, 3);
    virtual ~pkgAcqIndex();
 
    private:
