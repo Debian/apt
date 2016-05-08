@@ -1196,9 +1196,18 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
+   std::set<std::string> targetsSeen;
    bool const metaBaseSupportsByHash = TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
-   for (auto Target : TransactionManager->MetaIndexParser->GetIndexTargets())
+   for (auto &Target: TransactionManager->MetaIndexParser->GetIndexTargets())
    {
+      // if we have seen a target which is created-by a target this one here is declared a
+      // fallback to, we skip acquiring the fallback (but we make sure we clean up)
+      if (targetsSeen.find(Target.Option(IndexTarget::FALLBACK_OF)) != targetsSeen.end())
+      {
+	 targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
+	 new CleanupItem(Owner, TransactionManager, Target);
+	 continue;
+      }
       // all is an implementation detail. Users shouldn't use this as arch
       // We need this support trickery here as e.g. Debian has binary-all files already,
       // but arch:all packages are still in the arch:any files, so we would waste precious
@@ -1267,6 +1276,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       else if (hashes.FileSize() == 0)
 	       {
 		  new CleanupItem(Owner, TransactionManager, Target);
+		  targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
 		  continue;
 	       }
 	    }
@@ -1327,6 +1337,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	    std::string const idxfilename = GetFinalFileNameFromURI(GetDiffIndexURI(Target));
 	    if (FileExists(idxfilename))
 	       new NoActionItem(Owner, Target, idxfilename);
+	    targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
 	    continue;
 	 }
 
@@ -1348,6 +1359,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       }
 
       // Queue the Index file (Packages, Sources, Translation-$foo, …)
+      targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
       if (trypdiff)
          new pkgAcqDiffIndex(Owner, TransactionManager, Target);
       else

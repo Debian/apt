@@ -33,13 +33,13 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    public:
    struct APT_HIDDEN debSectionEntry
    {
-      std::string sourcesEntry;
-      std::string Name;
-      std::vector<std::string> Targets;
-      std::vector<std::string> Architectures;
-      std::vector<std::string> Languages;
-      bool UsePDiffs;
-      std::string UseByHash;
+      std::string const sourcesEntry;
+      std::string const Name;
+      std::vector<std::string> const Targets;
+      std::vector<std::string> const Architectures;
+      std::vector<std::string> const Languages;
+      bool const UsePDiffs;
+      std::string const UseByHash;
    };
 
    std::vector<debSectionEntry> DebEntries;
@@ -172,6 +172,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 std::string const UseByHash = APT_T_CONFIG_STR("By-Hash", E->UseByHash);
 	 std::string const CompressionTypes = APT_T_CONFIG_STR("CompressionTypes", DefCompressionTypes);
 	 std::string KeepCompressedAs = APT_T_CONFIG_STR("KeepCompressedAs", "");
+	 std::string const FallbackOf = APT_T_CONFIG_STR("Fallback-Of", "");
 #undef APT_T_CONFIG_BOOL
 #undef APT_T_CONFIG_STR
 	 if (tplMetaKey.empty())
@@ -292,6 +293,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("REPO_URI", URI));
 		  Options.insert(std::make_pair("TARGET_OF", Type));
 		  Options.insert(std::make_pair("CREATED_BY", *T));
+		  Options.insert(std::make_pair("FALLBACK_OF", FallbackOf));
 		  Options.insert(std::make_pair("PDIFFS", UsePDiffs ? "yes" : "no"));
 		  Options.insert(std::make_pair("BY_HASH", UseByHash));
 		  Options.insert(std::make_pair("DEFAULTENABLED", DefaultEnabled ? "yes" : "no"));
@@ -616,7 +618,8 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
    // special case for --print-uris
    if (GetAll)
       for (auto const &Target: GetIndexTargets())
-	 new pkgAcqIndex(Owner, TransactionManager, Target);
+	 if (Target.Option(IndexTarget::FALLBACK_OF).empty())
+	    new pkgAcqIndex(Owner, TransactionManager, Target);
 
    return true;
 }
@@ -948,6 +951,26 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    mytargets.push_back(target);
 	 else if (optValue == false && tarItr != mytargets.end())
 	    mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
+      }
+      // if we can't order it in a 1000 steps we give up… probably a cycle
+      for (auto i = 0; i < 1000; ++i)
+      {
+	 bool Changed = false;
+	 for (auto t = mytargets.begin(); t != mytargets.end(); ++t)
+	 {
+	    std::string const fallback = _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + *t + "::Fallback-Of");
+	    if (fallback.empty())
+	       continue;
+	    auto const faller = std::find(mytargets.begin(), mytargets.end(), fallback);
+	    if (faller == mytargets.end() || faller < t)
+	       continue;
+	    Changed = true;
+	    auto const tv = *t;
+	    mytargets.erase(t);
+	    mytargets.emplace_back(tv);
+	 }
+	 if (Changed == false)
+	    break;
       }
 
       bool UsePDiffs = _config->FindB("Acquire::PDiffs", true);

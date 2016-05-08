@@ -90,6 +90,11 @@ Additional optional properties:
   have to ensure your front-end can deal with all compressed fileformats
   supported by apt (libapt users can e.g. use FileFd, others can use
   the cat-file command of /usr/lib/apt/apt-helper).
+* Fallback-Of: Is by default not set. If it is set and specifies another
+  target name (see Created-By) which was found in the Release file the
+  download of this target will be skipped. This can be used to implement
+  fallback(chain)s to allow transitions like the rename of target files.
+  The behavior if cycles are formed with Fallback-Of is undefined!
 * flat{MetaKey,Description}: APT supports two types of repositories:
   dists-style repositories which are the default and by far the most
   common which are named after the fact that the files are in an
@@ -204,11 +209,11 @@ uppercase and wrapped in $(), as in the configuration file.
 To get all the filenames of all Translation-en files you can e.g. call:
 	apt-get indextargets --format '$(FILENAME)' "Created-By: Translations" "Language: en"
 
-The line-based filtering and the formating is rather crude and feature-
+The line-based filtering and the formatting is rather crude and feature-
 less by design: The default format is Debians standard format deb822 (in
 particular: Field names are case-insensitive and the order of fields in
 the stanza is undefined), so instead of apt reimplementing powerful
-filters and formating for this command, it is recommend to use piping
+filters and formatting for this command, it is recommend to use piping
 and dedicated tools like 'grep-dctrl' if you need more than the basics
 provided.
 

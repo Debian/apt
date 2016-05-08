@@ -158,6 +158,64 @@ rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Cont
 testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
 runthistest
 
+msgmsg "Contents with 3 MetaKeys, first match"
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
+Acquire::IndexTargets::deb::Contents3 {
+	MetaKey "main/Contents-all";
+	ShortDescription "Contents3";
+	Description "\$(RELEASE) all Contents3";
+	Fallback-Of "Contents2";
+};
+Acquire::IndexTargets::deb::Contents {
+	MetaKey "\$(COMPONENT)/Contents-amd64";
+	ShortDescription "Contents";
+	Description "\$(RELEASE)/\$(COMPONENT) amd64 Contents";
+};
+Acquire::IndexTargets::deb::Contents2 {
+	MetaKey "Contents-all";
+	ShortDescription "Contents2";
+	Description "\$(RELEASE) all Contents2";
+	Fallback-Of "Contents";
+};
+EOF
+testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_unstable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-amd64.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64 0 " aptget update --print-uris
+testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
+Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
+Reading package lists..." aptget update
+testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" find rootdir/var/lib/apt/lists -name '*Contents*'
+testequal "$(readfile Contents-amd64)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents2'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents3'
+testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" 'aptarchive/dists/unstable/main/Contents-amd64'
+
+msgmsg "Contents with 3 MetaKeys, third match"
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+echo 'Acquire::IndexTargets::deb::Contents::MetaKey "$(COMPONENT)/Contents-i386";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
+testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_unstable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-i386.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-i386 0 " aptget update --print-uris
+testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
+Get:2 http://localhost:${APTHTTPPORT} unstable all Contents3 [$(stat -c%s aptarchive/dists/unstable/main/Contents-all.gz) B]
+Reading package lists..." aptget update
+testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" find rootdir/var/lib/apt/lists -name '*Contents*'
+testequal "$(readfile Contents-all)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents3'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents2'
+testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" 'aptarchive/dists/unstable/main/Contents-all'
+
+rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all
 rm -f rootdir/etc/apt/apt.conf.d/content-target.conf
 msgmsg "No Contents file"
 
