@@ -222,10 +222,12 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		(<option>target</option>) is a multivalue option defining
 		which download targets apt will try to acquire from this
 		source. If not specified, the default set is defined by the
-		<option>Acquire::IndexTargets</option> configuration scope.
-		Additionally, specific targets can be enabled or disabled by
-		using the identifier as field name instead of using this
-		multivalue option.
+		<option>Acquire::IndexTargets</option> configuration scope
+		(targets are specified by their name in the
+		<literal>Created-By</literal> field).
+		Additionally, targets can be enabled or disabled by using the
+		<literal>Identifier</literal> field as an option with a boolean
+		value instead of using this multivalue option.
 	  </para></listitem>
 
 	  <listitem><para><option>PDiffs</option> (<option>pdiffs</option>)
@@ -501,8 +503,7 @@ Components: main contrib
  </refsect1>
 
  <refsect1><title>See Also</title>
-   <para>&apt-get;, &apt-conf;
-   </para>
+   <para>&apt-get;, &apt-conf;, &apt-acquire-additional-files;</para>
  </refsect1>
 
  &manbugs;

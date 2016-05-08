@@ -46,10 +46,11 @@ multiple types!
 
 After the type you can pick any valid and unique string which preferable
 refers to the file it downloads (In the example we picked 'Packages').
-This string is used as identifier for the target class and accessible as
-'Created-By' e.g. in the "apt-get indextargets" output as detailed
-below.  It is also used to allow user to enable/disable targets per
-sources.list entry.
+This string is used as identifier (if not explicitly set otherwise) for
+the target class and accessible as 'Identifier' and 'Created-By' e.g.
+in the "apt-get indextargets" output as detailed below. The identifier
+is also used to allow user to enable/disable targets per sources.list
+entry.
 
 All targets have three main properties you can define:
 * MetaKey: The identifier of the file to be downloaded as used in the
@@ -71,6 +72,12 @@ All targets have three main properties you can define:
 
 
 Additional optional properties:
+* Identifier: The default value is the unique string identifying this
+  file (in the example above it was 'Packages') also accessible as
+  Created-By. The difference is that using this property multiple files
+  can be subsumed under one identifier e.g. if you configure multiple
+  possible locations for the files (with Fallback-Of), but the front-end
+  doesn't need to handle files from the different locations differently.
 * DefaultEnabled: The default value is 'yes' which means that apt will
   try to acquire this target from all sources. If set to 'no' the user
   has to explicitly enable this target in the sources.list file with the
@@ -207,7 +214,7 @@ own output style. The variables are what you see in the output, just all
 uppercase and wrapped in $(), as in the configuration file.
 
 To get all the filenames of all Translation-en files you can e.g. call:
-	apt-get indextargets --format '$(FILENAME)' "Created-By: Translations" "Language: en"
+	apt-get indextargets --format '$(FILENAME)' "Identifier: Translations" "Language: en"
 
 The line-based filtering and the formatting is rather crude and feature-
 less by design: The default format is Debians standard format deb822 (in
@@ -246,6 +253,9 @@ Remarks on fields only available in (default) --release-info mode:
 Remarks on other available fields:
 * MetaKey, ShortDesc, Description, Site, Release: as defined
   by the configuration and described further above.
+* Identifier: Defaults to the value of Created-By, but can be set
+  explicitly in the configuration (see above). Prefer this field over
+  Created-By to subsume multiple file(location)s (see Fallback-Of).
 * Created-By: configuration entity responsible for this target
 * Target-Of: type of the sources.list entry
 * URI, Repo-URI: avoid using. Contains potentially username/password.

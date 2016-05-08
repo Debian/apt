@@ -165,6 +165,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 	 std::string const tplMetaKey = APT_T_CONFIG_STR(flatArchive ? "flatMetaKey" : "MetaKey", "");
 	 std::string const tplShortDesc = APT_T_CONFIG_STR("ShortDescription", "");
 	 std::string const tplLongDesc = "$(SITE) " + APT_T_CONFIG_STR(flatArchive ? "flatDescription" : "Description", "");
+	 std::string const tplIdentifier = APT_T_CONFIG_STR("Identifier", *T);
 	 bool const IsOptional = APT_T_CONFIG_BOOL("Optional", true);
 	 bool const KeepCompressed = APT_T_CONFIG_BOOL("KeepCompressed", GzipIndex);
 	 bool const DefaultEnabled = APT_T_CONFIG_BOOL("DefaultEnabled", true);
@@ -229,11 +230,14 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  std::string MetaKey = tplMetaKey;
 		  std::string ShortDesc = tplShortDesc;
 		  std::string LongDesc = tplLongDesc;
+		  std::string Identifier = tplIdentifier;
 		  for (std::map<std::string, std::string>::const_iterator O = Options.begin(); O != Options.end(); ++O)
 		  {
-		     MetaKey = SubstVar(MetaKey, std::string("$(") + O->first + ")", O->second);
-		     ShortDesc = SubstVar(ShortDesc, std::string("$(") + O->first + ")", O->second);
-		     LongDesc = SubstVar(LongDesc, std::string("$(") + O->first + ")", O->second);
+		     std::string const varname = "$(" + O->first + ")";
+		     MetaKey = SubstVar(MetaKey, varname, O->second);
+		     ShortDesc = SubstVar(ShortDesc, varname, O->second);
+		     LongDesc = SubstVar(LongDesc, varname, O->second);
+		     Identifier = SubstVar(Identifier, varname, O->second);
 		  }
 
 		  {
@@ -291,6 +295,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  // not available in templates, but in the indextarget
 		  Options.insert(std::make_pair("BASE_URI", baseURI));
 		  Options.insert(std::make_pair("REPO_URI", URI));
+		  Options.insert(std::make_pair("IDENTIFIER", Identifier));
 		  Options.insert(std::make_pair("TARGET_OF", Type));
 		  Options.insert(std::make_pair("CREATED_BY", *T));
 		  Options.insert(std::make_pair("FALLBACK_OF", FallbackOf));
@@ -945,12 +950,13 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
 	 if (opt == Options.end())
 	    continue;
-	 auto const tarItr = std::find(mytargets.begin(), mytargets.end(), target);
-	 bool const optValue = StringToBool(opt->second);
-	 if (optValue == true && tarItr == mytargets.end())
-	    mytargets.push_back(target);
-	 else if (optValue == false && tarItr != mytargets.end())
-	    mytargets.erase(std::remove(mytargets.begin(), mytargets.end(), target), mytargets.end());
+	 auto const idMatch = [&](std::string const &t) {
+	    return target == _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + t + "::Identifier", t);
+	 };
+	 if (StringToBool(opt->second))
+	    std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(mytargets), idMatch);
+	 else
+	    mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), idMatch), mytargets.end());
       }
       // if we can't order it in a 1000 steps we give up… probably a cycle
       for (auto i = 0; i < 1000; ++i)
@@ -971,6 +977,13 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 }
 	 if (Changed == false)
 	    break;
+      }
+      // remove duplicates without changing the order (in first appearance)
+      {
+	 std::set<std::string> seenOnce;
+	 mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), [&](std::string const &t) {
+	    return seenOnce.insert(t).second == false;
+	 }), mytargets.end());
       }
 
       bool UsePDiffs = _config->FindB("Acquire::PDiffs", true);

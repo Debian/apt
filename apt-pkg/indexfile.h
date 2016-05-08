@@ -92,6 +92,7 @@ class IndexTarget							/*{{{*/
       BY_HASH,
       KEEPCOMPRESSEDAS,
       FALLBACK_OF,
+      IDENTIFIER,
    };
    std::string Option(OptionKeys const Key) const;
    bool OptionBool(OptionKeys const Key) const;

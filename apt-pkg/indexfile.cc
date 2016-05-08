@@ -137,6 +137,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(ARCHITECTURE);
       APT_CASE(BASE_URI);
       APT_CASE(REPO_URI);
+      APT_CASE(IDENTIFIER);
       APT_CASE(TARGET_OF);
       APT_CASE(CREATED_BY);
       APT_CASE(FALLBACK_OF);

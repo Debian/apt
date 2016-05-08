@@ -11,7 +11,7 @@ testlangs() {
 	local LANGS="$2"
 	shift 2
 	rm -f gotlangs.list
-	aptget indextargets --no-release-info 'Created-By: Translations' "$@" --format '$(LANGUAGE)' | sort -u > gotlangs.list
+	aptget indextargets --no-release-info 'Identifier: Translations' "$@" --format '$(LANGUAGE)' | sort -u > gotlangs.list
 	if [ -z "$LANGS" ]; then
 		echo -n | tr ',' '\n' | sort | checkdiff - gotlangs.list && msgpass || msgfail
 	else
@@ -45,7 +45,7 @@ testlangs 'lang=de_DE' 'de_DE'
 echo 'deb [lang=none] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testlangs 'lang=none' ''
 testequal 'amd64
-all' aptget indextargets --no-release-info 'Created-By: Packages' --format '$(ARCHITECTURE)'
+all' aptget indextargets --no-release-info 'Identifier: Packages' --format '$(ARCHITECTURE)'
 
 echo 'deb [lang+=pt] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testlangs 'lang+=pt' 'en,de,de_DE,pt'

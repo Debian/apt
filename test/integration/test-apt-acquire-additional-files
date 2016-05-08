@@ -51,15 +51,15 @@ readfile() {
 	done
 }
 
-testequal "$(readfile Contents-amd64 Contents-all)" aptget indextargets --no-release-info --format '$(FILENAME)' 'Created-By: Contents'
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64 Contents-all)" aptget indextargets --no-release-info --format '$(FILENAME)' 'Identifier: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 # lets fake the existence of a compressed Contents file
 touch "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz"
 chmod 644 "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz"
-testequal "$(readfile Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64.gz)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 touch "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz"
 chmod 644 "./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz"
-testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
@@ -72,7 +72,7 @@ testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:
 # apt believes the Contents files we faked are good
 testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Reading package lists..." aptget update
-testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 
 find rootdir/var/lib/apt/lists -name '*Contents*' -delete
 
@@ -91,13 +91,13 @@ Reading package lists..." aptget update
 
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" find rootdir/var/lib/apt/lists -name '*Contents-all*'
-testequal "$(readfile Contents-amd64 Contents-all)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64 Contents-all)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" 'aptarchive/dists/unstable/main/Contents-amd64'
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" 'aptarchive/dists/unstable/main/Contents-all'
 
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64 \
 	./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 
 # if we asked for keeping it compressed, keep it
 msgmsg "Normal Contents file with KeepCompressed"
@@ -109,13 +109,13 @@ Reading package lists..." aptget update
 
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT" find rootdir/var/lib/apt/lists -name '*Contents-all*'
-testequal "$(readfile Contents-amd64.$LOWCOSTEXT Contents-all.$LOWCOSTEXT)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testequal "$(readfile Contents-amd64.$LOWCOSTEXT Contents-all.$LOWCOSTEXT)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 testequal "$(apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT)" apthelper cat-file 'aptarchive/dists/unstable/main/Contents-amd64.gz'
 testequal "$(apthelper cat-file rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT)" apthelper cat-file 'aptarchive/dists/unstable/main/Contents-all.gz'
 
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.$LOWCOSTEXT
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.$LOWCOSTEXT
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 
 msgmsg "Compressed Contents file"
 # and no automatic uncompress based on the name please,
@@ -145,7 +145,7 @@ Reading package lists..." aptget update
 
 	testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" find rootdir/var/lib/apt/lists -name '*Contents-amd64*'
 	testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" find rootdir/var/lib/apt/lists -name '*Contents-all*'
-	testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+	testequal "$(readfile Contents-amd64.gz Contents-all.gz)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 	testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz" 'aptarchive/dists/unstable/main/Contents-amd64.gz'
 	testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz" 'aptarchive/dists/unstable/main/Contents-all.gz'
 }
@@ -155,19 +155,20 @@ msgmsg "Compressed Contents file from native architecture"
 echo 'Acquire::IndexTargets::deb::Contents::MetaKey "$(COMPONENT)/Contents-$(NATIVE_ARCHITECTURE).gz";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 runthistest
 
 msgmsg "Contents with 3 MetaKeys, first match"
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64.gz
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all.gz
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 cat > rootdir/etc/apt/apt.conf.d/content-target.conf <<EOF
 Acquire::IndexTargets::deb::Contents3 {
 	MetaKey "main/Contents-all";
 	ShortDescription "Contents3";
 	Description "\$(RELEASE) all Contents3";
 	Fallback-Of "Contents2";
+	Identifier "Contents";
 };
 Acquire::IndexTargets::deb::Contents {
 	MetaKey "\$(COMPONENT)/Contents-amd64";
@@ -179,6 +180,7 @@ Acquire::IndexTargets::deb::Contents2 {
 	ShortDescription "Contents2";
 	Description "\$(RELEASE) all Contents2";
 	Fallback-Of "Contents";
+	Identifier "Contents";
 };
 EOF
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
@@ -191,14 +193,12 @@ testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Get:2 http://localhost:${APTHTTPPORT} unstable/main amd64 Contents [$(stat -c%s aptarchive/dists/unstable/main/Contents-amd64.gz) B]
 Reading package lists..." aptget update
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" find rootdir/var/lib/apt/lists -name '*Contents*'
-testequal "$(readfile Contents-amd64)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents2'
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents3'
+testequal "$(readfile Contents-amd64)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64" 'aptarchive/dists/unstable/main/Contents-amd64'
 
 msgmsg "Contents with 3 MetaKeys, third match"
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-amd64
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
+testempty aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 echo 'Acquire::IndexTargets::deb::Contents::MetaKey "$(COMPONENT)/Contents-i386";' >> rootdir/etc/apt/apt.conf.d/content-target.conf
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
@@ -210,9 +210,7 @@ testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Get:2 http://localhost:${APTHTTPPORT} unstable all Contents3 [$(stat -c%s aptarchive/dists/unstable/main/Contents-all.gz) B]
 Reading package lists..." aptget update
 testequal "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" find rootdir/var/lib/apt/lists -name '*Contents*'
-testequal "$(readfile Contents-all)" aptget indextargets --format '$(FILENAME)' 'Created-By: Contents3'
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents'
-testempty aptget indextargets --format '$(FILENAME)' 'Created-By: Contents2'
+testequal "$(readfile Contents-all)" aptget indextargets --format '$(FILENAME)' 'Identifier: Contents'
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" 'aptarchive/dists/unstable/main/Contents-all'
 
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all
