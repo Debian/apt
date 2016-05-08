@@ -179,9 +179,13 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	msgtest 'Test signing a file' 'with a key'
 	echo 'Verify me. This is my signature.' > signature
+	echo 'lalalalala' > signature2
 	testsuccess --nomsg aptkey --quiet --keyring keys/marvinparanoid.pub --secret-keyring keys/marvinparanoid.sec --readonly \
 		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
 	testsuccess test -s signature.gpg -a -s signature
+
+	msgtest 'Test verify a file' 'with no sig'
+	testfailure --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature signature2
 
 	for GPGV in '' 'gpgv' 'gpgv2'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
@@ -210,7 +214,6 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
 
 		msgtest 'Test verify fails on' 'bad file'
-		echo 'lalalalala' > signature2
 		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
 	done
 	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
@@ -257,7 +260,6 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
 
 		msgtest 'Test verify fails on' 'bad doublesigned file'
-		echo 'lalalalala' > signature2
 		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
 	done
 	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd

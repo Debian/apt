@@ -1697,8 +1697,9 @@ testfailure() {
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if [ "$1" = 'aptkey' ]; then
-				if grep -q -E " Can't check signature: " "$OUTPUT" || \
-					grep -q -E " BAD signature from " "$OUTPUT"; then
+				if grep -q " Can't check signature: 
+ BAD signature from 
+ signature could not be verified" "$OUTPUT"; then
 					msgpass
 				else
 					msgfailoutput "run failed with exitcode ${EXITCODE}, but no signature error" "$OUTPUT" "$@"

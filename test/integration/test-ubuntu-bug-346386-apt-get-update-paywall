@@ -13,7 +13,7 @@ insertsource 'unstable' 'unrelated' 'all' '1.0' 'stable'
 echo 'ni ni ni' > aptarchive/knights
 
 setupaptarchive
-changetowebserver -o 'aptwebserver::overwrite::.*::filename=/knights'
+changetowebserver -o 'aptwebserver::overwrite::.*InRelease::filename=/knights' -o 'aptwebserver::overwrite::.*::filename=/knights'
 
 msgtest 'Acquire test file from the webserver to check' 'overwrite'
 if downloadfile http://localhost:${APTHTTPPORT}/holygrail ./knights-talking >/dev/null; then
@@ -34,34 +34,39 @@ ensure_n_canary_strings_in_dir() {
 	test "$N" = "$EXPECTED_N" && msgpass || msgfail "Expected $EXPECTED_N canaries, got $N"
 }
 
-LISTS='rootdir/var/lib/apt/lists'
-rm -rf rootdir/var/lib/apt/lists
-testfailure aptget update
-testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+runtests() {
+	LISTS='rootdir/var/lib/apt/lists'
+	rm -rf "$LISTS"
+	testfailure aptget update
+	testsuccess grep "$1" rootdir/tmp/testfailure.output
 
-ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
-testequal 'lock
+	ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
+	testequal 'lock
 partial' ls "$LISTS"
 
-# and again with pre-existing files with "valid data" which should remain
-for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
-	echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
-	chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
-done
+	# and again with pre-existing files with "valid data" which should remain
+	for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
+		echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
+		chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_${f}"
+	done
 
-testfailure aptget update
-testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+	testfailure aptget update
+	testsuccess grep "$1" rootdir/tmp/testfailure.output
 
-ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 4
-ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
+	ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 4
+	ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
 
-# and now with a pre-existing InRelease file
-echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
-chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
-rm -f "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release" "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release.gpg"
-msgtest 'excpected failure of' 'apt-get update'
-testfailure aptget update
-testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
+	# and now with a pre-existing InRelease file
+	echo 'peng neee-wom' > "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
+	chmod 644 "$LISTS/localhost:${APTHTTPPORT}_dists_stable_InRelease"
+	rm -f "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release" "$LISTS/localhost:${APTHTTPPORT}_dists_stable_Release.gpg"
+	msgtest 'excpected failure of' 'apt-get update'
+	testfailure aptget update
+	testsuccess grep "$1" rootdir/tmp/testfailure.output
 
-ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 3
-ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
+	ensure_n_canary_strings_in_dir "$LISTS" 'peng neee-wom' 3
+	ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
+}
+runtests '^E:.*Clearsigned file .*NOSPLIT.*'
+webserverconfig 'aptwebserver::overwrite::.*InRelease::filename' '/404'
+runtests '^E:.*Signed file .*NODATA.*'

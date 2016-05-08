@@ -173,6 +173,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    std::vector<std::string> ErrSigners;
    size_t buffersize = 0;
    char *buffer = NULL;
+   bool gotNODATA = false;
    while (1)
    {
       if (getline(&buffer, &buffersize, pipein) == -1)
@@ -194,8 +195,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 ErrSigners.erase(std::remove_if(ErrSigners.begin(), ErrSigners.end(), [&](std::string const &errsig) {
 		  return errsig.compare(strlen("ERRSIG "), 16, buffer, sizeof(GNUPGNOPUBKEY), 16) == 0;  }), ErrSigners.end());
       }
-      else if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGBADSIG)-1) == 0)
-	 PushEntryWithUID(BadSigners, buffer, Debug);
+      else if (strncmp(buffer, GNUPGNODATA, sizeof(GNUPGNODATA)-1) == 0)
+	 gotNODATA = true;
       else if (strncmp(buffer, GNUPGEXPKEYSIG, sizeof(GNUPGEXPKEYSIG)-1) == 0)
 	 PushEntryWithUID(WorthlessSigners, buffer, Debug);
       else if (strncmp(buffer, GNUPGEXPSIG, sizeof(GNUPGEXPSIG)-1) == 0)
@@ -293,10 +294,26 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::for_each(SoonWorthlessSigners.begin(), SoonWorthlessSigners.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << std::endl << "  NoPubKey: ";
       std::copy(NoPubKeySigners.begin(), NoPubKeySigners.end(), std::ostream_iterator<std::string>(std::cerr, ", "));
-      std::cerr << std::endl;
+      std::cerr << std::endl << "  NODATA: " << (gotNODATA ? "yes" : "no") << std::endl;
    }
 
-   if (WEXITSTATUS(status) == 0)
+   if (WEXITSTATUS(status) == 112)
+   {
+      // acquire system checks for "NODATA" to generate GPG errors (the others are only warnings)
+      std::string errmsg;
+      //TRANSLATORS: %s is a single techy word like 'NODATA'
+      strprintf(errmsg, _("Clearsigned file isn't valid, got '%s' (does the network require authentication?)"), "NODATA");
+      return errmsg;
+   }
+   else if (gotNODATA)
+   {
+      // acquire system checks for "NODATA" to generate GPG errors (the others are only warnings)
+      std::string errmsg;
+      //TRANSLATORS: %s is a single techy word like 'NODATA'
+      strprintf(errmsg, _("Signed file isn't valid, got '%s' (does the network require authentication?)"), "NODATA");
+      return errmsg;
+   }
+   else if (WEXITSTATUS(status) == 0)
    {
       if (keyIsID)
       {
@@ -316,14 +333,6 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return _("At least one invalid signature was encountered.");
    else if (WEXITSTATUS(status) == 111)
       return _("Could not execute 'apt-key' to verify signature (is gnupg installed?)");
-   else if (WEXITSTATUS(status) == 112)
-   {
-      // acquire system checks for "NODATA" to generate GPG errors (the others are only warnings)
-      std::string errmsg;
-      //TRANSLATORS: %s is a single techy word like 'NODATA'
-      strprintf(errmsg, _("Clearsigned file isn't valid, got '%s' (does the network require authentication?)"), "NODATA");
-      return errmsg;
-   }
    else
       return _("Unknown error executing apt-key");
 }
