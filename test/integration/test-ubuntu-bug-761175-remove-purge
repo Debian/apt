@@ -23,35 +23,62 @@ buildcompizpkg 'all' 'all' '2.0' 'unstable'
 setupaptarchive
 
 runtests() {
-	testdpkgnotinstalled compiz-core-$1
-	testsuccess aptget install compiz-core-$1 -t "${2:-unstable}"
-	testdpkginstalled compiz-core-$1
+	local PKG="$1"
+	local RELEASE="${2}"
+	shift 2
+	testdpkgnotinstalled compiz-core-${PKG}
+	testsuccess aptget install compiz-core-${PKG} -t "${RELEASE}" "$@"
+	testdpkginstalled compiz-core-${PKG}
 
-	testsuccess aptget remove compiz-core-$1 -y
-	testdpkgnotinstalled compiz-core-$1
-	testdpkgstatus 'rc' '1' "compiz-core-$1"
+	testsuccess aptget remove compiz-core-${PKG} -y "$@"
+	testdpkgnotinstalled compiz-core-${PKG}
+	testdpkgstatus 'rc' '1' "compiz-core-${PKG}"
 
-	testsuccessequal "Reading package lists...
+	if [ -z "$1" ]; then
+		testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
-  compiz-core-$1*
+  compiz-core-${PKG}*
 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
-Purg compiz-core-$1" aptget purge compiz-core-$1 -s
-	testsuccess aptget purge compiz-core-$1 -y
+Purg compiz-core-${PKG}" aptget purge compiz-core-${PKG} -s "$@"
+	else
+		# check that the rc-version isn't passed to the external resolver if its only in dpkg/status
+		export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/dump-${PKG}.edsp"
+		testfailure aptget purge compiz-core-${PKG} -y "$@" -s --solver dump
+		testsuccessequal '2' grep -c "^Package: compiz-core-${PKG}\$" "$APT_EDSP_DUMP_FILENAME"
+		mv rootdir/etc/apt/sources.list.d/apt-test-stable-deb.list rootdir/etc/apt/sources.list.d/apt-test-stable-deb.disabled
+		testfailure aptget purge compiz-core-${PKG} -y "$@" -s --solver dump
+		testsuccessequal '1' grep -c "^Package: compiz-core-${PKG}\$" "$APT_EDSP_DUMP_FILENAME"
+		mv rootdir/etc/apt/sources.list.d/apt-test-stable-deb.disabled rootdir/etc/apt/sources.list.d/apt-test-stable-deb.list
+
+		testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Execute external solver...
+The following packages will be REMOVED:
+  compiz-core-${PKG}*
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Purg compiz-core-${PKG}" aptget purge compiz-core-${PKG} -s "$@"
+	fi
+	testsuccess aptget purge compiz-core-${PKG} -y "$@"
 	echo -n '' > rootdir/var/lib/dpkg/available # dpkg -l < 1.16.2 reads the available file by default, where the package can be found
-	testequalor2 "dpkg-query: no packages found matching compiz-core-$1" "No packages found matching compiz-core-$1." dpkg -l compiz-core-$1
+	testequalor2 "dpkg-query: no packages found matching compiz-core-${PKG}" "No packages found matching compiz-core-${PKG}." dpkg -l compiz-core-${PKG}
 }
+runtestround() {
+	runtests 'native' 'unstable' "$@"
+	runtests 'all' 'unstable' "$@"
+	runtests 'native' 'stable' "$@"
+	runtests 'all' 'stable' "$@"
+}
+testround() {
+	msgmsg 'Test in multi arch environment' "$@"
+	configarchitecture 'amd64' 'i386'
+	runtestround "$@"
 
-msgmsg 'Test in multi arch environment'
-runtests 'native'
-runtests 'all'
-runtests 'native' 'stable'
-runtests 'all' 'stable'
-
-msgmsg 'Test in single arch environment'
-configarchitecture 'amd64'
-runtests 'native'
-runtests 'all'
-runtests 'native' 'stable'
-runtests 'all' 'stable'
+	msgmsg 'Test in single arch environment' "$@"
+	configarchitecture 'amd64'
+	runtestround "$@"
+}
+testround
+testround --solver apt

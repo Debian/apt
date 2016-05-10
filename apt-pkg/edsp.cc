@@ -180,6 +180,24 @@ static void WriteScenarioLimitedDependency(FILE* output,
       fprintf(output, "Provides: %s\n", provides.c_str()+2);
 }
 									/*}}}*/
+static bool SkipUnavailableVersions(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver)/*{{{*/
+{
+   /* versions which aren't current and aren't available in
+      any "online" source file are bad, expect if they are the choosen
+      candidate: The exception is for build-dep implementation as it creates
+      such pseudo (package) versions and removes them later on again.
+      We filter out versions at all so packages in 'rc' state only available
+      in dpkg/status aren't passed to solvers as they can't be installed. */
+   if (Pkg->CurrentVer != 0)
+      return false;
+   if (Cache.GetCandidateVersion(Pkg) == Ver)
+      return false;
+   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I)
+      if (I.File().Flagged(pkgCache::Flag::NotSource) == false)
+	 return false;
+   return true;
+}
+									/*}}}*/
 // EDSP::WriteScenario - to the given file descriptor			/*{{{*/
 bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 {
@@ -194,6 +212,8 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 	 continue;
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
       {
+	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
+	    continue;
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
 	 WriteScenarioDependency(output, Ver);
 	 fprintf(output, "\n");
@@ -215,6 +235,8 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg, ++p)
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
+	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
+	    continue;
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
 	 WriteScenarioLimitedDependency(output, Ver, pkgset);
 	 fprintf(output, "\n");
