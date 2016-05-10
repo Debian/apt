@@ -71,14 +71,14 @@ bool Endswith(const std::string &s, const std::string &end)
 {
    if (end.size() > s.size())
       return false;
-   return (s.substr(s.size() - end.size(), s.size()) == end);
+   return (s.compare(s.size() - end.size(), end.size(), end) == 0);
 }
 
 bool Startswith(const std::string &s, const std::string &start)
 {
    if (start.size() > s.size())
       return false;
-   return (s.substr(0, start.size()) == start);
+   return (s.compare(0, start.size(), start) == 0);
 }
 
 }

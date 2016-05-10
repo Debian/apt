@@ -15,17 +15,28 @@
 
 class OpProgress;
 
+class VerIteratorWithCaching
+{
+   const pkgCache::VerIterator iter;
+   const pkgCache::DescFile * descFile;
+public:
+   VerIteratorWithCaching(const pkgCache::VerIterator& iter) :
+      iter(iter),
+      descFile(iter->DescriptionList != 0
+	 ? (const pkgCache::DescFile *) iter.TranslatedDescription().FileList()
+	 : nullptr)
+   {}
+   const pkgCache::DescFile * CachedDescFile() const { return descFile; }
+   operator pkgCache::VerIterator() const { return iter; }
+};
+
 struct VersionSortDescriptionLocality					/*{{{*/
 {
-   bool operator () (const pkgCache::VerIterator &v_lhs,
-	 const pkgCache::VerIterator &v_rhs)
+   bool operator () (const VerIteratorWithCaching &v_lhs,
+	 const VerIteratorWithCaching &v_rhs)
    {
-      pkgCache::DescFile const *A = nullptr;
-      pkgCache::DescFile const *B = nullptr;
-      if (v_lhs->DescriptionList != 0)
-	 A = v_lhs.TranslatedDescription().FileList();
-      if (v_rhs->DescriptionList != 0)
-	 B = v_rhs.TranslatedDescription().FileList();
+      pkgCache::DescFile const *A = v_lhs.CachedDescFile();
+      pkgCache::DescFile const *B = v_rhs.CachedDescFile();
 
       if (A == nullptr && B == nullptr)
 	 return false;
@@ -45,7 +56,7 @@ struct VersionSortDescriptionLocality					/*{{{*/
 									/*}}}*/
 // sorted by locality which makes iterating much faster
 typedef APT::VersionContainer<
-   std::set<pkgCache::VerIterator,
+   std::set<VerIteratorWithCaching,
             VersionSortDescriptionLocality> > LocalitySortedVersionSet;
 
 class Matcher {
