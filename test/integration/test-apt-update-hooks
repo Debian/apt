@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386'
+confighashes 'SHA512'
+
+insertpackage 'unstable' 'foo' 'i386' '1.0'
+insertpackage 'testing' 'foo' 'any' '1.0'
+
+setupaptarchive --no-update
+APTARCHIVE="$(readlink -f ./aptarchive)"
+
+signreleasefiles 'Joe Sixpack'
+
+echo 'APT::Update::Post-Invoke-Success { "echo SUCCESS"; };' >> rootdir/etc/apt/apt.conf.d/display-success.conf
+echo 'APT::Update::Post-Invoke { "echo RUN"; };' >> rootdir/etc/apt/apt.conf.d/display-success.conf
+
+
+msgmsg "All sources OK => run Post-Invoke-Success and Post-Invoke"
+testsuccess aptget update
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep "RUN" aptupdate.output
+testsuccess grep "SUCCESS" aptupdate.output
+
+msgmsg "Some sources broken => run Post-Invoke-Success and Post-Invoke"
+sed -i -e '/^ / d' -e '/^SHA512:/ d' "$APTARCHIVE/dists/unstable/Release"
+signreleasefiles
+testfailure aptget update
+cp rootdir/tmp/testfailure.output aptupdate.output
+testsuccess grep "RUN" aptupdate.output
+testsuccess grep "SUCCESS" aptupdate.output
+
+msgmsg "All sources broken => run Post-Invoke"
+sed -i -e '/^ / d' -e '/^SHA512:/ d' "$APTARCHIVE/dists/testing/Release"
+signreleasefiles
+testfailure aptget update
+cp rootdir/tmp/testfailure.output aptupdate.output
+testsuccess grep "RUN" aptupdate.output
+testfailure grep "SUCCESS" aptupdate.output

@@ -61,11 +61,14 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
 
    bool Failed = false;
    bool TransientNetworkFailure = false;
+   bool AllFailed = true;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); 
 	I != Fetcher.ItemsEnd(); ++I)
    {
-      if ((*I)->Status == pkgAcquire::Item::StatDone)
+      if ((*I)->Status == pkgAcquire::Item::StatDone) {
+	 AllFailed = false;
 	 continue;
+      }
 
       (*I)->Finished();
 
@@ -101,22 +104,24 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
 	 // something went wrong with the clean
 	 return false;
    }
+
+   bool Res = true;
    
    if (TransientNetworkFailure == true)
-      _error->Warning(_("Some index files failed to download. They have been ignored, or old ones used instead."));
+      Res = _error->Warning(_("Some index files failed to download. They have been ignored, or old ones used instead."));
    else if (Failed == true)
-      return _error->Error(_("Some index files failed to download. They have been ignored, or old ones used instead."));
+      Res = _error->Error(_("Some index files failed to download. They have been ignored, or old ones used instead."));
 
 
    // Run the success scripts if all was fine
    if (RunUpdateScripts == true)
    {
-      if(!TransientNetworkFailure && !Failed)
+      if(AllFailed == false)
 	 RunScripts("APT::Update::Post-Invoke-Success");
 
       // Run the other scripts
       RunScripts("APT::Update::Post-Invoke");
    }
-   return true;
+   return Res;
 }
 									/*}}}*/
