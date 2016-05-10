@@ -58,17 +58,24 @@ configuration documentation for more, and more up to date, information.
 - **APT::Solver**: the name of the solver to be used for
   dependency solving. Defaults to `internal`
 
+- **Dir::Bin::Solvers**: absolute path of the directory where to look for
+  external solvers. Defaults to `/usr/lib/apt/solvers`.
+
 - **APT::Solver::Strict-Pinning**: whether pinning must be strictly
   respected (as the internal solver does) or can be slightly deviated
   from. Defaults to `yes`.
 
-- **APT::Solver::NAME::Preferences** (where NAME is a solver name):
-  solver-specific user preference string used during dependency solving,
-  when the solver NAME is in use. Check solver-specific documentation
-  for what is supported here. Defaults to the empty string.
+- **APT::Solver::Preferences**: user preference string used during
+  dependency solving by the requested solver. Check the documentation
+  of the solver you are using if and what is supported as a value here.
+  Defaults to the empty string.
 
-- **Dir::Bin::Solvers**: absolute path of the directory where to look for
-  external solvers. Defaults to `/usr/lib/apt/solvers`.
+The options **Strict-Pinning** and **Preferences** can also be set for
+a specific solver only via **APT::Solver::NAME::Strict-Pinning** and
+**APT::Solver::NAME::Preferences** respectively where `NAME` is the name
+of the external solver this option should apply to. These options if set
+override the generic options; for simplicity the documentation will
+refer only to the generic options.
 
 
 ## Protocol
@@ -171,8 +178,13 @@ The following **preference fields** are supported in request stanzas:
   field comes from the `APT::Solver::Strict-Pinning` configuration
   option.
 
-- **Preferences:** a solver-specific optimization string, usually coming
-  from the `APT::Solver::Preferences` configuration option.
+- **Solver:** (optional, defaults to the empty string) a purely
+  informational string specifying to which solver this request was send
+  initially.
+
+- **Preferences:** (optional, defaults to the empty string)
+  a solver-specific optimization string, usually coming from the
+  `APT::Solver::Preferences` configuration option.
 
 
 #### Package universe

@@ -288,14 +288,15 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       fprintf(output, "Dist-Upgrade: yes\n");
    if (AutoRemove == true)
       fprintf(output, "Autoremove: yes\n");
-   if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
+   auto const solver = _config->Find("APT::Solver", "internal");
+   fprintf(output, "Solver: %s\n", solver.c_str());
+   auto const solverconf = std::string("APT::Solver::") + solver + "::";
+   if (_config->FindB(solverconf + "Strict-Pinning", _config->FindB("APT::Solver::Strict-Pinning", true)) == false)
       fprintf(output, "Strict-Pinning: no\n");
-   string solverpref("APT::Solver::");
-   solverpref.append(_config->Find("APT::Solver", "internal")).append("::Preferences");
-   if (_config->Exists(solverpref) == true)
-      fprintf(output, "Preferences: %s\n", _config->Find(solverpref,"").c_str());
+   auto const solverpref = _config->Find(solverconf + "Preferences", _config->Find("APT::Solver::Preferences", ""));
+   if (solverpref.empty() == false)
+      fprintf(output, "Preferences: %s\n", solverpref.c_str());
    fprintf(output, "\n");
-
    return true;
 }
 									/*}}}*/
@@ -468,6 +469,8 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    std::string const archs = line.c_str() + 15;
 	    _config->Set("APT::Architectures", SubstVar(archs, " ", ","));
 	 }
+	 else if (line.compare(0, 7, "Solver:") == 0)
+	    ; // purely informational line
 	 else
 	    _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
 
