@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+msgtest "Check that a repository with signed-by and two components works"
+echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
+
+testsuccess --nomsg aptcache policy

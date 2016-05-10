@@ -687,6 +687,8 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
 	 std::stringstream os;
 	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
 	 SignedBy = os.str();
+	 while (SignedBy[SignedBy.size() - 1] == ',')
+	    SignedBy.resize(SignedBy.size() - 1);
       }
    }
    else if (SignedBy != pSignedBy)
