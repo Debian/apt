@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -753,10 +753,6 @@ msgstr "Varasto ei ole ajan tasalla, pakettitiedostoa ei löydy kansiosta"
 msgid "Pinned packages:"
 msgstr "Paketit joissa tunniste:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(ei löydy)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -774,10 +770,6 @@ msgstr "  Ehdokas: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(ei mitään)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Paketin tunnistenumero: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1678,6 +1670,21 @@ msgstr "Kysely"
 msgid "Unable to invoke "
 msgstr "Käynnistys ei onnistu"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "LÖytyi ainakin yksi kelvoton allekirjoitus."
@@ -1693,14 +1700,6 @@ msgstr ""
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Ei käynnistynyt \"%s\" allekirjoitusta tarkistamaan (onko gnupg asennettu?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2434,14 +2433,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Tarkistussumma ei täsmää"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Tarkistussumma ei täsmää"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2490,10 +2489,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3675,6 +3670,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Käsitellään päivitystä"
+
+#~ msgid "(not found)"
+#~ msgstr "(ei löydy)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Paketin tunnistenumero: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

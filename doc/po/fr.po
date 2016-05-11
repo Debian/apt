@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2014-11-15 17:26+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1383,8 +1383,8 @@ msgid ""
 "command is mainly used as an interface for external tools working with APT "
 "to get information as well as filenames for downloaded files so they can use "
 "them as well instead of downloading them again on their own. Detailed "
-"documentation is omitted here and can instead be found in the source tree in "
-"<literal><filename>doc/acquire-additional-files.txt</filename></literal>."
+"documentation is omitted here and can instead be found in the file &apt-"
+"acquire-additional-files; shipped by the <package>apt-doc</package> package."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
@@ -7876,9 +7876,10 @@ msgid ""
 "<option>Targets</option> (<option>target</option>) is a multivalue option "
 "defining which download targets apt will try to acquire from this source. If "
 "not specified, the default set is defined by the <option>Acquire::"
-"IndexTargets</option> configuration scope.  Additionally, specific targets "
-"can be enabled or disabled by using the identifier as field name instead of "
-"using this multivalue option."
+"IndexTargets</option> configuration scope (targets are specified by their "
+"name in the <literal>Created-By</literal> field).  Additionally, targets can "
+"be enabled or disabled by using the <literal>Identifier</literal> field as "
+"an option with a boolean value instead of using this multivalue option."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
@@ -7942,13 +7943,14 @@ msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
 "absolute path to a keyring file (has to be accessible and readable for the "
 "<literal>_apt</literal> user, so ensure everyone has read-permissions on the "
-"file) or a fingerprint of a key either in the <filename>trusted.gpg</"
-"filename> keyring or in one of the keyrings in the <filename>trusted.gpg.d/</"
+"file) or one or more fingerprints of keys either in the <filename>trusted."
+"gpg</filename> keyring or in the keyrings in the <filename>trusted.gpg.d/</"
 "filename> directory (see <command>apt-key fingerprint</command>). If the "
-"option is set, only the key(s) in this keyring or only the key with this "
-"fingerprint is used for the &apt-secure; verification of this repository. "
-"Otherwise all keys in the trusted keyrings are considered valid signers for "
-"this repository."
+"option is set, only the key(s) in this keyring or only the keys with these "
+"fingerprints are used for the &apt-secure; verification of this repository. "
+"Defaults to the value of the option with the same name if set in the "
+"previously acquired <filename>Release</filename> file.  Otherwise all keys "
+"in the trusted keyrings are considered valid signers for this repository."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
@@ -8394,9 +8396,9 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 #, fuzzy
-#| msgid "&apt-cache; &apt-conf;"
-msgid "&apt-get;, &apt-conf;"
-msgstr "&apt-cache; &apt-conf;"
+#| msgid "&apt-cache;, &apt-config;, &apt-preferences;."
+msgid "&apt-get;, &apt-conf;, &apt-acquire-additional-files;"
+msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
 
 #. type: Content of: <refentry><refmeta><manvolnum>
 #: apt-extracttemplates.1.xml apt-sortpkgs.1.xml apt-ftparchive.1.xml
@@ -11138,6 +11140,11 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Cette commande utilisera les fichiers récupérés sur le disque."
+
+#, fuzzy
+#~| msgid "&apt-cache; &apt-conf;"
+#~ msgid "&apt-get;, &apt-conf;"
+#~ msgstr "&apt-cache; &apt-conf;"
 
 #~ msgid ""
 #~ "This is a space separated list of all the architectures that appear under "

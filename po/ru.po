@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2015-06-23 20:40+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -776,10 +776,6 @@ msgstr "Кэш рассинхронизирован, невозможно обн
 msgid "Pinned packages:"
 msgstr "Зафиксированные пакеты:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(не найдено)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -797,10 +793,6 @@ msgstr "  Кандидат: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(отсутствует)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Фиксатор пакета: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1730,6 +1722,25 @@ msgstr "Запрос"
 msgid "Unable to invoke "
 msgstr "Невозможно вызвать "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
+"аутентификация?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
+"аутентификация?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Найдена как минимум одна неправильная подпись."
@@ -1745,16 +1756,6 @@ msgstr ""
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Не удалось выполнить «apt-key» для проверки подписи (gnupg установлена?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
-"аутентификация?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2489,14 +2490,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Хеш сумма не совпадает"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "переименовать не удалось, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Хеш сумма не совпадает"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2548,10 +2549,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3785,6 +3782,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Расчёт обновлений"
+
+#~ msgid "(not found)"
+#~ msgstr "(не найдено)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Фиксатор пакета: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Недоступен открытый ключ для следующих ID ключей:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

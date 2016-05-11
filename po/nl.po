@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2016-04-27 18:12+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -246,10 +246,10 @@ msgstr ""
 "Er waren niet-geauthenticeerde pakketten en -y was gebruikt zonder --allow-"
 "unauthenticated"
 
-#: apt-private/private-download.cc
+#: apt-private/private-download.cc apt-pkg/update.cc
 #, c-format
-msgid "Failed to fetch %s  %s\n"
-msgstr "Ophalen van %s is mislukt  %s\n"
+msgid "Failed to fetch %s  %s"
+msgstr "Ophalen van %s is mislukt  %s"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -781,10 +781,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Vastgepinde pakketten:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(niet gevonden)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -802,10 +798,6 @@ msgstr "  Kandidaat: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(geen)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Pakketpin: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1761,6 +1753,25 @@ msgstr "Zoekopdracht"
 msgid "Unable to invoke "
 msgstr "Mislukking bij aanroepen van "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Bestand met niet-versleutelde ondertekening is ongeldig; kreeg '%s' (vereist "
+"het netwerk authenticatie?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Bestand met niet-versleutelde ondertekening is ongeldig; kreeg '%s' (vereist "
+"het netwerk authenticatie?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Er is tenminste één ongeldige ondertekening gevonden."
@@ -1777,16 +1788,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Kon 'apt-key' niet uitvoeren om ondertekening te verifiëren (is gnupg "
 "geïnstalleerd?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Bestand met niet-versleutelde ondertekening is ongeldig; kreeg '%s' (vereist "
-"het netwerk authenticatie?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2528,14 +2529,14 @@ msgstr ""
 "Zie de man-pagina apt-secure(8) voor details over het aanmaken van een "
 "pakketbron en over de configuratie langs gebruikerskant."
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Hash-som komt niet overeen"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "het hernoemen is mislukt, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Hash-som komt niet overeen"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2592,11 +2593,6 @@ msgstr ""
 "Opvragen van het in de configuratie vermeld bestand '%s' overgeslagen, "
 "vermits pakketbron '%s' er slechts zwakke veiligheidsinformatie voor "
 "verstrekt"
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Er zijn geen publieke sleutels beschikbaar voor de volgende sleutel-ID's:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3843,11 +3839,6 @@ msgid "Cannot convert %s to integer: out of range"
 msgstr "Kan %s niet naar een geheel getal omzetten: buiten het bereik"
 
 #: apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Ophalen van %s is mislukt  %s"
-
-#: apt-pkg/update.cc
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
@@ -3858,6 +3849,20 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Opwaardering wordt doorgerekend"
+
+#~ msgid "Failed to fetch %s  %s\n"
+#~ msgstr "Ophalen van %s is mislukt  %s\n"
+
+#~ msgid "(not found)"
+#~ msgstr "(niet gevonden)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Pakketpin: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Er zijn geen publieke sleutels beschikbaar voor de volgende sleutel-"
+#~ "ID's:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

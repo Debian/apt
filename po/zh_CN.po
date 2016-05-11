@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2016-03-27 07:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -736,10 +736,6 @@ msgstr "缓存尚未同步，无法交差引证(x-ref)一个软件包文件"
 msgid "Pinned packages:"
 msgstr "被锁定的软件包："
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(没有找到)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -757,10 +753,6 @@ msgstr "  候选："
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(无)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  软件包锁："
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1678,6 +1670,21 @@ msgstr "查询"
 msgid "Unable to invoke "
 msgstr "无法调用 "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr "明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr "明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "至少发现一个无效的签名。"
@@ -1690,14 +1697,6 @@ msgstr "内部错误：签名正确无误，但是无法确认密钥指纹？！
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "无法运行 apt-key 以验证签名(您安装了 gnupg 吗？)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr "明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2408,14 +2407,14 @@ msgid ""
 "details."
 msgstr "参见 apt-secure(8) 手册以了解仓库创建和用户配置方面的细节。"
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Hash 校验和不符"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Hash 校验和不符"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2465,10 +2464,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "以下 ID 的密钥没有可用的公钥：\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3650,6 +3645,15 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "正在计算更新"
+
+#~ msgid "(not found)"
+#~ msgstr "(没有找到)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  软件包锁："
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "以下 ID 的密钥没有可用的公钥：\n"
 
 #~ msgid "The repository is insufficiently signed by key %s (%s)"
 #~ msgstr "仓库 “%s” 数字签名不完整。"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -739,10 +739,6 @@ msgstr "快取資料未同步，無法 x-ref 套件檔"
 msgid "Pinned packages:"
 msgstr "鎖定的套件："
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(未找到)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -760,10 +756,6 @@ msgstr "  候選："
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(無)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  套件鎖定："
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1660,6 +1652,21 @@ msgstr "查詢"
 msgid "Unable to invoke "
 msgstr "無法 invoke "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "至少發現一個無效的簽章。"
@@ -1673,14 +1680,6 @@ msgstr "內部錯誤：簽章無誤，但卻無法辨識密鑰的指紋碼？！
 #, fuzzy
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "無法執行 '%s' 來驗證簽章（gnupg 是否安裝了？）"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2403,14 +2402,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Hash Sum 不符"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "無法重新命名，%s (%s -> %s)。"
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Hash Sum 不符"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2459,10 +2458,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "無法取得以下的密鑰 ID 的公鑰：\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3635,6 +3630,15 @@ msgstr "有一些索引檔不能下載，它們可能被略過了，或是替而
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "籌備升級中"
+
+#~ msgid "(not found)"
+#~ msgstr "(未找到)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  套件鎖定："
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "無法取得以下的密鑰 ID 的公鑰：\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

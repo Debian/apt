@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -764,10 +764,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Paquets etiquetats:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(no trobat)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -785,10 +781,6 @@ msgstr "  Candidat: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(cap)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Etiqueta del paquet: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1704,6 +1696,21 @@ msgstr "Consulta"
 msgid "Unable to invoke "
 msgstr "No es pot invocar"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "S'ha trobat almenys una signatura invàlida."
@@ -1720,14 +1727,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "No s'ha pogut executar el «apt-key» per a verificar la signatura (està "
 "instaŀlat el gnupg?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2459,14 +2458,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "La suma resum no concorda"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "no s'ha pogut canviar el nom, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "La suma resum no concorda"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2520,10 +2519,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "No hi ha cap clau pública disponible per als següents ID de clau:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3759,6 +3754,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "S'està calculant l'actualització"
+
+#~ msgid "(not found)"
+#~ msgstr "(no trobat)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Etiqueta del paquet: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "No hi ha cap clau pública disponible per als següents ID de clau:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

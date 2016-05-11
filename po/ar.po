@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -734,10 +734,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "الحزم المُدبّسة:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(غير موجود)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -755,10 +751,6 @@ msgstr "  مرشّح: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(لاشيء)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr ""
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1652,6 +1644,21 @@ msgstr "استعلام"
 msgid "Unable to invoke "
 msgstr ""
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr ""
@@ -1663,14 +1670,6 @@ msgstr ""
 
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
 msgstr ""
 
 #: methods/gpgv.cc
@@ -2334,15 +2333,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "فشل إعادة التسمية ، %s (%s -> %s)."
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "MD5Sum غير متطابقة"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "فشل إعادة التسمية ، %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2390,10 +2389,6 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
@@ -3559,6 +3554,9 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "حساب الترقية"
+
+#~ msgid "(not found)"
+#~ msgstr "(غير موجود)"
 
 #~ msgid "Failed to fetch %s  %s\n"
 #~ msgstr "فشل إحضار %s  %s\n"

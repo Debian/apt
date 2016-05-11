@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -765,10 +765,6 @@ msgstr "Cachen är inte synkroniserad, kan inte korsreferera en paketfil"
 msgid "Pinned packages:"
 msgstr "Fastnålade paket:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(hittades inte)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -786,10 +782,6 @@ msgstr "  Kandidat: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(ingen)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Paketnålning: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1710,6 +1702,25 @@ msgstr "Frågar"
 msgid "Unable to invoke "
 msgstr "Kunde inte starta "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Klartextsignerad fil är inte giltig, fick ”%s” (kräver nätverket "
+"autentisering?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Klartextsignerad fil är inte giltig, fick ”%s” (kräver nätverket "
+"autentisering?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Minst en ogiltig signatur träffades på."
@@ -1725,16 +1736,6 @@ msgstr ""
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Kunde inte köra ”apt-key” för att verifiera signatur (är gnupg installerad?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Klartextsignerad fil är inte giltig, fick ”%s” (kräver nätverket "
-"autentisering?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2473,14 +2474,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Hash-kontrollsumman stämmer inte"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "namnbyte misslyckades, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Hash-kontrollsumman stämmer inte"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2532,10 +2533,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Det finns ingen öppen nyckel tillgänglig för följande nyckel-id:n:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3759,6 +3756,16 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Beräknar uppgradering"
+
+#~ msgid "(not found)"
+#~ msgstr "(hittades inte)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Paketnålning: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Det finns ingen öppen nyckel tillgänglig för följande nyckel-id:n:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

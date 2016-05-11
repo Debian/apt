@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -773,10 +773,6 @@ msgstr "Predpomnilnik ni usklajen, x-ref datoteke paketa ni mogoč"
 msgid "Pinned packages:"
 msgstr "Pripeti paketi:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(ni najdeno)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -794,10 +790,6 @@ msgstr "  Kandidat: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(brez)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Bucika paketa: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1710,6 +1702,21 @@ msgstr "Poizvedba"
 msgid "Unable to invoke "
 msgstr "Ni mogoče klicati "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Najden je bil vsaj en neveljaven podpis."
@@ -1724,14 +1731,6 @@ msgstr ""
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Ni mogoče izvesti 'apt-key' za preverjanje podpisa (je gnupg nameščen?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2459,14 +2458,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Neujemanje vsote razpršil"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "preimenovanje je spodletelo, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Neujemanje vsote razpršil"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2519,10 +2518,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Za naslednje ID-je ključa ni na voljo javnih ključev:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3730,6 +3725,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Preračunavanje nadgradnje"
+
+#~ msgid "(not found)"
+#~ msgstr "(ni najdeno)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Bucika paketa: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Za naslednje ID-je ključa ni na voljo javnih ključev:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

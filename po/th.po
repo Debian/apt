@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -735,10 +735,6 @@ msgstr "ข้อมูลแคชไม่ตรงกับความเป
 msgid "Pinned packages:"
 msgstr "แพกเกจที่ถูกตรึง:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(ไม่พบ)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -756,10 +752,6 @@ msgstr "  รุ่นที่ติดตั้งได้: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(ไม่มี)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  การตรึงแพกเกจ: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1662,6 +1654,25 @@ msgstr "สอบถาม"
 msgid "Unable to invoke "
 msgstr "ไม่สามารถเรียก "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
+"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
+"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "พบลายเซ็นที่ใช้การไม่ได้อย่างน้อยหนึ่งรายการ"
@@ -1674,16 +1685,6 @@ msgstr "ข้อผิดพลาดภายใน: ลายเซ็นใ�
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "ไม่สามารถเรียก 'apt-key' เพื่อตรวจสอบลายเซ็น (ได้ติดตั้ง gnupg ไว้หรือไม่?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
-"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2401,14 +2402,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "ผลรวมแฮชไม่ตรงกัน"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "เปลี่ยนชื่อไม่สำเร็จ: %s (%s -> %s)"
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "ผลรวมแฮชไม่ตรงกัน"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2460,10 +2461,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "ไม่มีกุญแจสาธารณะสำหรับกุญแจหมายเลขต่อไปนี้:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3643,6 +3640,15 @@ msgstr "ดาวน์โหลดแฟ้มดัชนีบางแฟ้
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "กำลังคำนวณการปรับรุ่น"
+
+#~ msgid "(not found)"
+#~ msgstr "(ไม่พบ)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  การตรึงแพกเกจ: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "ไม่มีกุญแจสาธารณะสำหรับกุญแจหมายเลขต่อไปนี้:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

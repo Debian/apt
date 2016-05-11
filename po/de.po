@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -778,10 +778,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Mit Pinning verwaltete Pakete:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(nicht gefunden)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -799,10 +795,6 @@ msgstr "  Installationskandidat: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(keine)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Paket-Pinning: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1749,6 +1741,25 @@ msgstr "Abfrage"
 msgid "Unable to invoke "
 msgstr "Aufruf nicht möglich: "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Durch Clearsign signierte Datei ist nicht gültig, »%s« erhalten (erfordert "
+"das Netzwerk eine Authentifizierung?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Durch Clearsign signierte Datei ist nicht gültig, »%s« erhalten (erfordert "
+"das Netzwerk eine Authentifizierung?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Mindestens eine ungültige Signatur wurde entdeckt."
@@ -1765,16 +1776,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "»apt-key« konnte zur Überprüfung der Signatur nicht ausgeführt werden (ist "
 "gnupg installiert?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Durch Clearsign signierte Datei ist nicht gültig, »%s« erhalten (erfordert "
-"das Netzwerk eine Authentifizierung?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2519,14 +2520,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Hash-Summe stimmt nicht überein"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "Umbenennen fehlgeschlagen, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Hash-Summe stimmt nicht überein"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2579,11 +2580,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3837,6 +3833,16 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Paketaktualisierung (Upgrade) wird berechnet"
+
+#~ msgid "(not found)"
+#~ msgstr "(nicht gefunden)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Paket-Pinning: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

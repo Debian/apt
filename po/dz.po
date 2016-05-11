@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -753,10 +753,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(མ་ཐོབ།)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -774,10 +770,6 @@ msgstr "མི་ངོ:"
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(ཅི་མེད།)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "ཐུམ་སྒྲིལ་གྱི་ཁབ་གཟེར:"
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1682,6 +1674,21 @@ msgstr "འདྲི་དཔྱད།"
 msgid "Unable to invoke "
 msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "ཉུང་མཐའ་རང་ནུས་མེད་ཀྱི་མིང་རྟགས་ཅིག་གདོང་ཐུག་བྱུང་སྟེ་ཡོདཔ་ཨིན།"
@@ -1699,14 +1706,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "མིང་རྟགས་བདེན་སྦྱོར་འབད་ནི་ལུ་'%s'འདི་ལག་ལེན་འཐབ་མ་ཚུགས། (gnupg་དེ་ཁཞི་བཙུགས་འབད་ཡོདཔ་ཨིན་"
 "ན།?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2441,15 +2440,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "%s (%s -> %s)བསྐྱར་མིང་བཏགས་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "%s (%s -> %s)བསྐྱར་མིང་བཏགས་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2498,10 +2497,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "འོག་གི་ ཨའི་ཌི་་ ལྡེ་མིག་ཚུ་གི་དོན་ལུ་མི་དམང་གི་ལྡེ་མིག་འདི་འཐོབ་མི་ཚུགས་པས:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3687,6 +3682,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "ཡར་བསྐྱེད་རྩིས་བཏོན་དོ་"
+
+#~ msgid "(not found)"
+#~ msgstr "(མ་ཐོབ།)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "ཐུམ་སྒྲིལ་གྱི་ཁབ་གཟེར:"
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "འོག་གི་ ཨའི་ཌི་་ ལྡེ་མིག་ཚུ་གི་དོན་ལུ་མི་དམང་གི་ལྡེ་མིག་འདི་འཐོབ་མི་ཚུགས་པས:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

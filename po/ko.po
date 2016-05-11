@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -744,10 +744,6 @@ msgstr "캐시가 동기화되지 않았습니다. 패키지 파일을 상호 �
 msgid "Pinned packages:"
 msgstr "핀 패키지:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(없음)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -765,10 +761,6 @@ msgstr "  후보: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(없음)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  패키지 핀: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1669,6 +1661,21 @@ msgstr "질의"
 msgid "Unable to invoke "
 msgstr "다음을 실행할 수 없습니다: "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "최소한 하나 이상의 서명이 잘못되었습니다."
@@ -1683,14 +1690,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "서명을 확인하는 'apt-key' 프로그램을 실행할 수 없습니다. (gnupg를 설치했습니"
 "까?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2417,14 +2416,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "해시 합이 맞지 않습니다"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "이름 바꾸기가 실패했습니다. %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "해시 합이 맞지 않습니다"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2475,10 +2474,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "다음 키 ID의 공개키가 없습니다:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3671,6 +3666,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "업그레이드를 계산하는 중입니다"
+
+#~ msgid "(not found)"
+#~ msgstr "(없음)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  패키지 핀: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "다음 키 ID의 공개키가 없습니다:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

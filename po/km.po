@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -746,10 +746,6 @@ msgstr "ឃ្លាំង​សម្ងាត់​ឋិតនៅ​ក្រ
 msgid "Pinned packages:"
 msgstr "កញ្ចប់​ដែល​បាន​ខ្ទាស់ ៖"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(រក​មិន​ឃើញ)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -767,10 +763,6 @@ msgstr "  សាកល្បង ៖ "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(គ្មាន)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  ខ្ទាស់​កញ្ចប់ ៖ "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1672,6 +1664,21 @@ msgstr "សំណួរ​"
 msgid "Unable to invoke "
 msgstr "មិន​អាច​ហៅ​ "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "​បានជួប​ប្រទះ​​​​ហត្ថលេខា​យ៉ាងហោចណាស់មួយ ដែ​លត្រឹមត្រូវ​ ។"
@@ -1685,14 +1692,6 @@ msgstr "កំហុស​ខាងក្នុង​ ៖ ហត្ថលេខ
 #, fuzzy
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "មិន​អាច​ប្រតិបត្តិ '%s' ដើម្បី​ផ្ទៀងផ្ទាត់​ហត្ថលេខា (តើ gnupg ត្រូវ​បាន​ដំឡើង​ឬនៅ ?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2419,15 +2418,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "ប្តូរ​ឈ្មោះ​បានបរាជ័យ​, %s (%s -> %s) ។"
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "MD5Sum មិន​ផ្គួផ្គង​"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "ប្តូរ​ឈ្មោះ​បានបរាជ័យ​, %s (%s -> %s) ។"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2476,10 +2475,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "គ្មាន​កូនសោ​សាធារណៈ​អាច​រក​បាន​ក្នុងកូនសោ IDs ខាងក្រោម​នេះទេ ៖\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3157,13 +3152,8 @@ msgstr ""
 
 #: apt-pkg/deb/debmetaindex.cc
 #, fuzzy, c-format
-msgid "Invalid 'Date' entry in Release file %s"
+msgid "Invalid '%s' entry in Release file %s"
 msgstr "មិនអាច​ញែក​ឯកសារកញ្ចប់ %s (1) បានឡើយ"
-
-#: apt-pkg/deb/debmetaindex.cc
-#, fuzzy, c-format
-msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "បន្ទាត់​ដែលមិនត្រឹមត្រូវ​នៅក្នុង​ឯកសារ​បង្វែរ ៖ %s"
 
 #. TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
 #: apt-pkg/deb/debmetaindex.cc
@@ -3661,6 +3651,19 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "កំពុង​គណនា​ការ​ធ្វើ​ឲ្យ​ប្រសើរ"
+
+#~ msgid "(not found)"
+#~ msgstr "(រក​មិន​ឃើញ)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  ខ្ទាស់​កញ្ចប់ ៖ "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "គ្មាន​កូនសោ​សាធារណៈ​អាច​រក​បាន​ក្នុងកូនសោ IDs ខាងក្រោម​នេះទេ ៖\n"
+
+#, fuzzy
+#~ msgid "Invalid 'Valid-Until' entry in Release file %s"
+#~ msgstr "បន្ទាត់​ដែលមិនត្រឹមត្រូវ​នៅក្នុង​ឯកសារ​បង្វែរ ៖ %s"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

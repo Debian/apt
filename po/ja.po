@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2016-03-31 09:45+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -767,10 +767,6 @@ msgstr "キャッシュが同期しておらず、パッケージファイルを
 msgid "Pinned packages:"
 msgstr "Pin されたパッケージ:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(見つかりません)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -788,10 +784,6 @@ msgstr "  候補: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(なし)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  パッケージ Pin: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1736,6 +1728,25 @@ msgstr "問い合わせ"
 msgid "Unable to invoke "
 msgstr "呼び出せません"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"クリアサインされたファイルが有効ではなく、'%s' を得ました (認証にネットワーク"
+"が必要?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"クリアサインされたファイルが有効ではなく、'%s' を得ました (認証にネットワーク"
+"が必要?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "少なくとも 1 つの不正な署名が発見されました。"
@@ -1750,16 +1761,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "署名を検証するための 'apt-key' の実行ができませんでした (gnupg はインストール"
 "されていますか?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"クリアサインされたファイルが有効ではなく、'%s' を得ました (認証にネットワーク"
-"が必要?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2481,14 +2482,14 @@ msgstr ""
 "リポジトリの作成とユーザ設定の詳細は、apt-secure(8) man ページを参照してくだ"
 "さい。"
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "ハッシュサムが適合しません"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "名前の変更に失敗しました。%s (%s -> %s)"
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "ハッシュサムが適合しません"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2543,10 +2544,6 @@ msgid ""
 msgstr ""
 "リポジトリ '%2$s' は弱いセキュリティ情報のみを提供しているため、設定ファイル "
 "'%1$s' の取得をスキップします"
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3786,6 +3783,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "アップグレードパッケージを検出しています"
+
+#~ msgid "(not found)"
+#~ msgstr "(見つかりません)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  パッケージ Pin: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

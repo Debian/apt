@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2015-10-21 18:21+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -774,10 +774,6 @@ msgstr "Önbellek eşzamanlı değil, paket dosyası 'x-ref' yapılamıyor"
 msgid "Pinned packages:"
 msgstr "Sabitlenmiş paketler:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(bulunamadı)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -795,10 +791,6 @@ msgstr "  Aday: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(hiçbiri)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Paket sabitleme: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1716,6 +1708,25 @@ msgstr "Sorgu"
 msgid "Unable to invoke "
 msgstr "Çağrılamıyor "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Temiz-imzalı dosya geçerli değil, '%s' hatası alındı (ağ kimlik doğrulama "
+"gerektiriyor mu?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Temiz-imzalı dosya geçerli değil, '%s' hatası alındı (ağ kimlik doğrulama "
+"gerektiriyor mu?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "En az bir geçersiz imza ile karşılaşıldı."
@@ -1728,16 +1739,6 @@ msgstr "İç hata: İmza iyi, ancak anahtar parmak izi belirlenemedi?!"
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "İmza doğrulama için 'apt-key' çalıştırılamadı (gnupg kurulu mu?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Temiz-imzalı dosya geçerli değil, '%s' hatası alındı (ağ kimlik doğrulama "
-"gerektiriyor mu?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2469,14 +2470,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Sağlama toplamları eşleşmiyor"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "yeniden adlandırma başarısız, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Sağlama toplamları eşleşmiyor"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2527,11 +2528,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Aşağıdaki anahtar kimlikleri için kullanılır hiçbir genel anahtar yok:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3754,6 +3750,16 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Yükseltme hesaplanıyor"
+
+#~ msgid "(not found)"
+#~ msgstr "(bulunamadı)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Paket sabitleme: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Aşağıdaki anahtar kimlikleri için kullanılır hiçbir genel anahtar yok:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

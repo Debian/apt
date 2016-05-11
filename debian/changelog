@@ -1,3 +1,64 @@
+apt (1.3~exp1) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * make random acquire queues work less random
+  * add dep11 files to default Release patterns
+  * don't ask server if we have entire file in partial/
+  * properly format multiline error messages
+  * format multiline errors properly in acquire progress
+  * show more details for "Hash Sum mismatch" errors
+  * show more details for "Writing more data" errors, too
+  * use the same redirection mirror for all index files
+  * edsp: ask policy engine for the pin of the version directly
+  * give rc-status packages a pin of -1
+  * respect user pinning in M-A:same version (un)screwing
+  * deprecate confusing Pkg.CandVersion() method
+  * factor out Pkg/DepIterator prettyprinters into own header
+  * gpgv: use EXPKEYSIG instead of KEYEXPIRED
+  * gpgv: handle expired sig as worthless
+  * don't show NO_PUBKEY warning if repo is signed by another key
+    (Closes: 618445)
+  * support multiple fingerprints in signed-by
+  * support Signed-By in Release files as a sort of HPKP
+  * bugscript: include all configuration fragment files (Closes: 820861)
+  * move gnupg|gnupg2 from apt Depends to Recommends
+  * warn if apt-key is run unconditionally in maintainerscript
+  * remove 100-levels config nesting limit
+  * let DPKG_COLORS default to our APT::Color setting
+  * allow redirection for items without a space in the desc again
+  * delay progress until Release files are downloaded
+  * download arch:all also for NATIVE_ARCHITECTURE indextargets
+  * implement Fallback-Of for IndexTargets
+  * implement Identifier field for IndexTargets
+  * gpgv: show always webportal error on NODATA (Closes: 823746)
+  * don't sent uninstallable rc-only versions via EDSP
+  * edsp: support generic and solver-specific configs (Closes: 823918)
+
+  [ Julian Andres Klode ]
+  * policy: Get rid of old (pre-1.1) GetCandidateVer algorithm
+  * private-show: Get rid of old policy support code
+  * ftparchive: Support writing Signed-By fields
+  * Strip trailing commas for created signed-by fingerprint lists
+  * update: Run Post-Invoke-Success if not all sources failed
+
+  [ Patrick Cable ]
+  * refactored no_proxy code to work regardless of where https proxy is set
+
+  [ James McCoy ]
+  * deb822: Restore support for <multivalue>-{Add,Remove}
+
+  [ Zhou Mo ]
+  * zh_TW.po: remove several fuzzy tags after review
+
+  [ Adrian Wielgosik ]
+  * Don't copy strings in Startswith, Endswith
+  * Speed up GetLocalitySortedVersionSet.
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: 823976)
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 11 May 2016 10:48:27 +0200
+
 apt (1.2.11) unstable; urgency=medium
 
   [ David Kalnischkies ]

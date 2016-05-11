@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -755,10 +755,6 @@ msgstr "Nid yw'r storfa yn gydamserol, ni ellir croesgyfeirio ffeil pecym"
 msgid "Pinned packages:"
 msgstr "Pecynnau wedi eu Pinio:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(heb ganfod)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -776,11 +772,6 @@ msgstr "  Ymgeisydd: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(dim)"
-
-#: apt-private/private-show.cc
-#, fuzzy
-msgid "  Package pin: "
-msgstr "  Pin Pecyn: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1710,6 +1701,21 @@ msgstr "Ymholiad"
 msgid "Unable to invoke "
 msgstr "Methwyd gweithredu "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr ""
@@ -1721,14 +1727,6 @@ msgstr ""
 
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
 msgstr ""
 
 #: methods/gpgv.cc
@@ -2475,15 +2473,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "methwyd ailenwi, %s (%s -> %s)."
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "Camgyfatebiaeth swm MD5"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "methwyd ailenwi, %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2531,10 +2529,6 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
@@ -3744,6 +3738,13 @@ msgstr ""
 #, fuzzy
 msgid "Calculating upgrade"
 msgstr "Yn Cyfrifo'r Uwchraddiad"
+
+#~ msgid "(not found)"
+#~ msgstr "(heb ganfod)"
+
+#, fuzzy
+#~ msgid "  Package pin: "
+#~ msgstr "  Pin Pecyn: "
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

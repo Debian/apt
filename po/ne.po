@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -744,10 +744,6 @@ msgstr "क्यास sync  भन्दा बाहिर छ, प्या�
 msgid "Pinned packages:"
 msgstr "पिन गरिएका प्याकेजहरू:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(फेला परेन)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -765,10 +761,6 @@ msgstr "  उमेद्वार:"
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(कुनै पनि होइन)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "प्याकेज पिन:"
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1670,6 +1662,21 @@ msgstr "क्वेरी"
 msgid "Unable to invoke "
 msgstr "आह्वान गर्न असक्षम भयो"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "कम्तिमा एउटा अवैध हस्ताक्षर विरोध भयो ।"
@@ -1683,14 +1690,6 @@ msgstr "आन्तरिक त्रुटि: असल हस्ताक�
 #, fuzzy
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr "हस्ताक्षर रूजू गर्न '%s' कार्यन्वयन गर्न सकिएन (के gnupg स्थापना भयो?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2418,15 +2417,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "पुन:नामकरण असफल गरियो, %s (%s -> %s) ।"
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "MD5Sum मेल भएन"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "पुन:नामकरण असफल गरियो, %s (%s -> %s) ।"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2475,10 +2474,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "निम्न कुञ्जी IDs को लागि कुनै सार्वजनिक कुञ्जी उपलब्ध छैन:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3656,6 +3651,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "स्तर वृद्धि गणना गरिदैछ"
+
+#~ msgid "(not found)"
+#~ msgstr "(फेला परेन)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "प्याकेज पिन:"
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "निम्न कुञ्जी IDs को लागि कुनै सार्वजनिक कुञ्जी उपलब्ध छैन:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

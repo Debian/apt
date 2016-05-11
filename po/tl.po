@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -754,10 +754,6 @@ msgstr "Wala sa sync ang cache, hindi ma-x-ref ang talaksang pakete"
 msgid "Pinned packages:"
 msgstr "Mga naka-Pin na Pakete:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(hindi nahanap)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -775,10 +771,6 @@ msgstr "  Kandidato: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(wala)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Naka-Pin na Pakete: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1677,6 +1669,21 @@ msgstr "Tanong"
 msgid "Unable to invoke "
 msgstr "Hindi ma-invoke "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Hindi kukulang sa isang hindi tanggap na lagda ang na-enkwentro."
@@ -1693,14 +1700,6 @@ msgstr ""
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Hindi maitakbo ang '%s' upang maberipika ang lagda (nakaluklok ba ang gnupg?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2436,15 +2435,15 @@ msgid ""
 "details."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "pagpalit ng pangalan ay bigo, %s (%s -> %s)."
-
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
 msgstr "Di tugmang MD5Sum"
+
+#: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "pagpalit ng pangalan ay bigo, %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2493,10 +2492,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Walang public key na magamit para sa sumusunod na key ID:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3695,6 +3690,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Sinusuri ang pag-upgrade"
+
+#~ msgid "(not found)"
+#~ msgstr "(hindi nahanap)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Naka-Pin na Pakete: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Walang public key na magamit para sa sumusunod na key ID:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

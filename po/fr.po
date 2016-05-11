@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2013-12-15 16:45+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -777,10 +777,6 @@ msgstr "Le cache est désynchronisé, impossible de référencer un fichier"
 msgid "Pinned packages:"
 msgstr "Paquets épinglés :"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(non trouvé)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -798,10 +794,6 @@ msgstr "  Candidat : "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(aucun)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Épinglage de paquet : "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1733,6 +1725,25 @@ msgstr "Requête"
 msgid "Unable to invoke "
 msgstr "Impossible d'invoquer "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Le fichier signé en clair n'est pas valable, ce qui a été reçu est « %s ». "
+"Peut-être le réseau nécessite-t-il une authentification."
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Le fichier signé en clair n'est pas valable, ce qui a été reçu est « %s ». "
+"Peut-être le réseau nécessite-t-il une authentification."
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Au moins une signature non valable a été rencontrée."
@@ -1749,16 +1760,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Impossible d'exécuter « apt-key » pour contrôler la signature (veuillez "
 "vérifier si gnupg est installé)."
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Le fichier signé en clair n'est pas valable, ce qui a été reçu est « %s ». "
-"Peut-être le réseau nécessite-t-il une authentification."
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2497,14 +2498,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Somme de contrôle de hachage incohérente"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "impossible de changer le nom, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Somme de contrôle de hachage incohérente"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2557,11 +2558,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3821,6 +3817,16 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Calcul de la mise à jour"
+
+#~ msgid "(not found)"
+#~ msgstr "(non trouvé)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Épinglage de paquet : "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Aucune clé publique n'est disponible pour la/les clé(s) suivante(s) :\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

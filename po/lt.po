@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -745,10 +745,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Surišti paketai:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(nerasta)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -766,10 +762,6 @@ msgstr "  Kandidatas: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(nėra)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Paketo susiejimai: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1664,6 +1656,21 @@ msgstr "Užklausti"
 msgid "Unable to invoke "
 msgstr ""
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr ""
@@ -1675,14 +1682,6 @@ msgstr ""
 
 #: methods/gpgv.cc
 msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
 msgstr ""
 
 #: methods/gpgv.cc
@@ -2421,14 +2420,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Maišos sumos nesutapimas"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Maišos sumos nesutapimas"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2476,10 +2475,6 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
@@ -3649,6 +3644,12 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Skaičiuojami atnaujinimai"
+
+#~ msgid "(not found)"
+#~ msgstr "(nerasta)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Paketo susiejimai: "
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

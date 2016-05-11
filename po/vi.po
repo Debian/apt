@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -750,10 +750,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Các gói đã ghim:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(không tìm thấy)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -771,10 +767,6 @@ msgstr "  Ứng cử: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(không)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Ghim gói: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1699,6 +1691,25 @@ msgstr "Truy vấn"
 msgid "Unable to invoke "
 msgstr "Không thể gọi "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Tập tin Clearsigned không hợp lệ, nhận được “%s” (mạng yêu cầu xác nhận phải "
+"không?)"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Tập tin Clearsigned không hợp lệ, nhận được “%s” (mạng yêu cầu xác nhận phải "
+"không?)"
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Gặp ít nhất một chữ ký không hợp lệ."
@@ -1713,16 +1724,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Không thể thực hiện “apt-key” để thẩm tra chữ ký (gnupg đã được cài đặt "
 "chưa?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Tập tin Clearsigned không hợp lệ, nhận được “%s” (mạng yêu cầu xác nhận phải "
-"không?)"
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2472,14 +2473,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Mã băm tổng kiểm tra không khớp"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "gặp lỗi khi đổi tên, %s (%s → %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Mã băm tổng kiểm tra không khớp"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2532,10 +2533,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Không có khóa công sẵn sàng cho những mã số khoá theo đây:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3235,8 +3232,7 @@ msgstr ""
 #, c-format
 msgid "Invalid '%s' entry in Release file %s"
 msgstr ""
-"Gặp mục tin “%s” (hợp lệ đến khi) không hợp lệ trong tập tin Phát "
-"hành %s"
+"Gặp mục tin “%s” (hợp lệ đến khi) không hợp lệ trong tập tin Phát hành %s"
 
 #. TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
 #: apt-pkg/deb/debmetaindex.cc
@@ -3754,6 +3750,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Đang tính toán nâng cấp"
+
+#~ msgid "(not found)"
+#~ msgstr "(không tìm thấy)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Ghim gói: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Không có khóa công sẵn sàng cho những mã số khoá theo đây:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

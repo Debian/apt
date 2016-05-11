@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -763,10 +763,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Отбити пакети:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(не са намерени)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -784,10 +780,6 @@ msgstr "  Кандидат: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(няма)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr "  Отбиване на пакета: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1703,6 +1695,21 @@ msgstr "Запитване"
 msgid "Unable to invoke "
 msgstr "Неуспех при извикването на "
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Намерен е поне един невалиден подпис."
@@ -1719,14 +1726,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Неуспех при изпълнение на „apt-key“ за проверка на подписа (инсталиран ли е "
 "gnupg?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2460,14 +2459,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Несъответствие на контролната сума"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "преименуването се провали, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Несъответствие на контролната сума"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2520,10 +2519,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Няма налични публични ключове за следните идентификатори на ключове:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3757,6 +3752,16 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Изчисляване на актуализацията"
+
+#~ msgid "(not found)"
+#~ msgstr "(не са намерени)"
+
+#~ msgid "  Package pin: "
+#~ msgstr "  Отбиване на пакета: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr ""
+#~ "Няма налични публични ключове за следните идентификатори на ключове:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"

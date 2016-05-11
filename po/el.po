@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-04-25 15:24+0200\n"
+"POT-Creation-Date: 2016-05-11 10:50+0200\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -767,10 +767,6 @@ msgstr ""
 msgid "Pinned packages:"
 msgstr "Καθηλωμένα Πακέτα:"
 
-#: apt-private/private-show.cc
-msgid "(not found)"
-msgstr "(δε βρέθηκαν)"
-
 #. Print the package name and the version we are forcing to
 #: apt-private/private-show.cc
 #, c-format
@@ -788,10 +784,6 @@ msgstr "  Υποψήφιο: "
 #: apt-private/private-show.cc
 msgid "(none)"
 msgstr "(κανένα)"
-
-#: apt-private/private-show.cc
-msgid "  Package pin: "
-msgstr " Καθήλωση Πακέτου: "
 
 #. Show the priority tables
 #: apt-private/private-show.cc
@@ -1699,6 +1691,21 @@ msgstr "Επερώτηση"
 msgid "Unable to invoke "
 msgstr "Αδύνατη η εκτέλεση"
 
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
 msgstr "Βρέθηκε τουλάχιστον μια μη έγκυρη υπογραφή."
@@ -1716,14 +1723,6 @@ msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgstr ""
 "Αδυναμία εκτέλεσης του '%s' για την επαλήθευση της υπογραφής (είναι "
 "εγκατεστημένο το gnupg;)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
 
 #: methods/gpgv.cc
 msgid "Unknown error executing apt-key"
@@ -2460,14 +2459,14 @@ msgid ""
 "details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc
+msgid "Hash Sum mismatch"
+msgstr "Ανόμοιο MD5Sum"
+
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "απέτυχε η μετονομασία, %s (%s -> %s)."
-
-#: apt-pkg/acquire-item.cc
-msgid "Hash Sum mismatch"
-msgstr "Ανόμοιο MD5Sum"
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -2516,10 +2515,6 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "Δεν υπάρχει διαθέσιμο δημόσιο κλειδί για τα ακολουθα κλειδιά:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -3716,6 +3711,15 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Υπολογισμός της αναβάθμισης"
+
+#~ msgid "(not found)"
+#~ msgstr "(δε βρέθηκαν)"
+
+#~ msgid "  Package pin: "
+#~ msgstr " Καθήλωση Πακέτου: "
+
+#~ msgid "There is no public key available for the following key IDs:\n"
+#~ msgstr "Δεν υπάρχει διαθέσιμο δημόσιο κλειδί για τα ακολουθα κλειδιά:\n"
 
 #, fuzzy
 #~ msgid "The repository is insufficiently signed by key %s (%s)"
