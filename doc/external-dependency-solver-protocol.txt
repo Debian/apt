@@ -263,11 +263,11 @@ the user.
 
 #### Solution
 
-A solution is a list of Deb 822 stanzas. Each of them could be an
-install stanza (telling APT to install a specific package), a remove
-stanza (telling APT to remove one), or an autoremove stanza (telling APT
-about the *future* possibility of removing a package using the
-Autoremove action).
+A solution is a list of Deb 822 stanzas. Each of them could be an install
+stanza (telling APT to install a specific new package or to upgrade or
+downgrade a package to a specific version), a remove stanza (telling APT to
+remove one), or an autoremove stanza (telling APT about the *future*
+possibility of removing a package using the Autoremove action).
 
 An **install stanza** starts with an Install field and supports the
 following fields:
@@ -288,6 +288,11 @@ can now autoremove, as a consequence of the executed action. However,
 this protocol makes no assumption on the fact that a subsequent
 invocation of an Autoremove action will actually remove the very same
 packages indicated by Autoremove stanzas in the former solution.
+
+The package identifiers of install, remove and autoremove stanzas from a single
+solution are unique. That is, a package identifier does not occur more than
+once in the solution. Every package identifier is only associated with a single
+action (either install, remove or autoremove).
 
 In terms of expressivity, install and remove stanzas can carry one
 single field each, as APT-IDs are enough to pinpoint packages to be
