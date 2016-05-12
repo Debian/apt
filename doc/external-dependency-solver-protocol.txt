@@ -289,10 +289,15 @@ this protocol makes no assumption on the fact that a subsequent
 invocation of an Autoremove action will actually remove the very same
 packages indicated by Autoremove stanzas in the former solution.
 
-The package identifiers of install, remove and autoremove stanzas from a single
-solution are unique. That is, a package identifier does not occur more than
-once in the solution. Every package identifier is only associated with a single
-action (either install, remove or autoremove).
+A package can't be installed in multiple versions at the same time, so
+for each package there can at most one version be selected either for
+installation or removal. This especially means that a solver is neither
+allowed to represent package upgrades as a remove of the installed
+version and the installation of another (the remove is implicit and must
+be omitted from the solution) nor is it supported to revert previous
+actions in the solution with later actions. APT is allowed to show
+warnings and might even misbehave in earlier versions if a solver is
+violating this assumption.
 
 In terms of expressivity, install and remove stanzas can carry one
 single field each, as APT-IDs are enough to pinpoint packages to be

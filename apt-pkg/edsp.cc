@@ -320,6 +320,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 	pkgTagFile response(&in, 100);
 	pkgTagSection section;
 
+	std::set<decltype(Cache.PkgBegin()->ID)> seenOnce;
 	while (response.Step(section) == true) {
 		std::string type;
 		if (section.Exists("Install") == true)
@@ -362,18 +363,29 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 		}
 
 		pkgCache::VerIterator Ver(Cache.GetCache(), Cache.GetCache().VerP + VerIdx[id]);
-		Cache.SetCandidateVersion(Ver);
-		if (type == "Install")
-		{
-			pkgCache::PkgIterator const P = Ver.ParentPkg();
-			if (Cache[P].Mode != pkgDepCache::ModeInstall)
-				Cache.MarkInstall(P, false, 0, false);
-		}
-		else if (type == "Remove")
-			Cache.MarkDelete(Ver.ParentPkg(), false);
-		else if (type == "Autoremove") {
-			Cache[Ver.ParentPkg()].Marked = false;
-			Cache[Ver.ParentPkg()].Garbage = true;
+		auto const Pkg = Ver.ParentPkg();
+		if (type == "Autoremove") {
+			Cache[Pkg].Marked = false;
+			Cache[Pkg].Garbage = true;
+		} else if (seenOnce.emplace(Pkg->ID).second == false) {
+			_error->Warning("Ignoring %s stanza received for package %s which already had a previous stanza effecting it!", type.c_str(), Pkg.FullName(false).c_str());
+		} else if (type == "Install") {
+			if (Pkg.CurrentVer() == Ver) {
+				_error->Warning("Ignoring Install stanza received for version %s of package %s which is already installed!",
+				      Ver.VerStr(), Pkg.FullName(false).c_str());
+			} else {
+				Cache.SetCandidateVersion(Ver);
+				Cache.MarkInstall(Pkg, false, 0, false);
+			}
+		} else if (type == "Remove") {
+			if (Pkg->CurrentVer == 0)
+				_error->Warning("Ignoring Remove stanza received for version %s of package %s which isn't installed!",
+				      Ver.VerStr(), Pkg.FullName(false).c_str());
+			else if (Pkg.CurrentVer() != Ver)
+				_error->Warning("Ignoring Remove stanza received for version %s of package %s which isn't the installed version %s!",
+				      Ver.VerStr(), Pkg.FullName(false).c_str(), Pkg.CurrentVer().VerStr());
+			else
+				Cache.MarkDelete(Ver.ParentPkg(), false);
 		}
 	}
 	return true;

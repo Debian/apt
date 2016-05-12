@@ -113,7 +113,7 @@ The following package was automatically installed and is no longer required:
 Use '$AUTOREMOVE' to remove it.
 The following packages will be REMOVED:
   cool* somestuff*
-0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+0 upgraded, 0 newly installed, 2 to remove and 1 not upgraded.
 Purg somestuff [1]
 Purg cool [1]" aptget purge --solver apt cool -s
 
@@ -194,3 +194,53 @@ Priority: optional
 Section: other
 APT-Pin: 100
 ' aptinternalsolver scenario stuff
+
+cat > rootdir/usr/lib/apt/solvers/explicitremove << EOF
+#!/bin/sh
+set -e
+while read line; do
+	if [ "APT-ID" = "\${line%:*}" ]; then
+		cat << APT
+Install: \${line#*:}
+
+Remove: \${line#*:}
+
+APT
+	fi
+done
+EOF
+chmod +x rootdir/usr/lib/apt/solvers/explicitremove
+testfailure apt full-upgrade -s --solver explicitremove
+testsuccess grep 'had a previous stanza' rootdir/tmp/testfailure.output
+
+cat > rootdir/usr/lib/apt/solvers/removeall << EOF
+#!/bin/sh
+set -e
+while read line; do
+	if [ "APT-ID" = "\${line%:*}" ]; then
+		cat << APT
+Remove: \${line#*:}
+
+APT
+	fi
+done
+EOF
+chmod +x rootdir/usr/lib/apt/solvers/removeall
+testwarning apt full-upgrade -s --solver removeall
+testsuccess grep "which isn't installed!" rootdir/tmp/testwarning.output
+
+cat > rootdir/usr/lib/apt/solvers/installall << EOF
+#!/bin/sh
+set -e
+while read line; do
+	if [ "APT-ID" = "\${line%:*}" ]; then
+		cat << APT
+Install: \${line#*:}
+
+APT
+	fi
+done
+EOF
+chmod +x rootdir/usr/lib/apt/solvers/installall
+testfailure apt full-upgrade -s --solver installall
+testsuccess grep "is already installed!" rootdir/tmp/testfailure.output
