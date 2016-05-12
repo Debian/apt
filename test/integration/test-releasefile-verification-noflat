@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+
+export APT_DONT_SIGN='Release.gpg'
+insertpackage 'unstable' 'foo' 'i386' '1.0'
+setupaptarchive "now" "now + 1 year"
+changetowebserver
+
+SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+
+testsuccess aptget update
+
+msgmsg 'Warm archive with signed-by' 'Joe Sixpack'
+sed -i "/^Valid-Until: / a\
+Signed-By: ${SIXPACK}" rootdir/var/lib/apt/lists/*Release
+touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} unstable InRelease [$(stat -c '%s' 'aptarchive/dists/unstable/InRelease') B]
+Reading package lists..." aptget update
+testsuccess aptcache show foo

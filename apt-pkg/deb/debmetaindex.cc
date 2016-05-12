@@ -687,12 +687,19 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
 	 std::stringstream os;
 	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
 	 SignedBy = os.str();
-	 while (SignedBy[SignedBy.size() - 1] == ',')
-	    SignedBy.resize(SignedBy.size() - 1);
       }
+      // Normalize the string: Remove trailing commas
+      while (SignedBy[SignedBy.size() - 1] == ',')
+	 SignedBy.resize(SignedBy.size() - 1);
    }
-   else if (SignedBy != pSignedBy)
-      return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), pSignedBy.c_str());
+   else {
+      // Only compare normalized strings
+      auto pSignedByView = APT::StringView(pSignedBy);
+      while (pSignedByView[pSignedByView.size() - 1] == ',')
+	 pSignedByView = pSignedByView.substr(0, pSignedByView.size() - 1);
+      if (pSignedByView != SignedBy)
+	 return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), pSignedByView.to_string().c_str());
+   }
    return true;
 }
 									/*}}}*/
