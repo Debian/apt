@@ -17,7 +17,7 @@ rmdir rootdir/etc/apt/apt.conf
 msgtest "Good link instead of a file as apt.conf ignored"
 echo 'Test::APT::Link "good";' > rootdir/etc/apt/good-link.conf
 ln -s rootdir/etc/apt/good-link.conf rootdir/etc/apt/apt.conf
-test -n "$(aptconfig shell TestLink 'Test::APT::Link')" && msgfail || msgpass
+testempty aptconfig shell TestLink 'Test::APT::Link'
 rm rootdir/etc/apt/apt.conf
 
 msgtest "Broken link instead of a file as apt.conf ignored"
@@ -36,12 +36,12 @@ rmdir rootdir/etc/apt/sources.list
 msgtest "Good link instead of a file as sources.list ignored"
 echo 'deb file:///tmp/debian sid main' > rootdir/etc/apt/good-link.list
 ln -s rootdir/etc/apt/good-link.list rootdir/etc/apt/sources.list
-test -n "$(aptget update --print-uris)" && msgfail || msgpass
+testempty aptget update --print-uris
 rm rootdir/etc/apt/sources.list
 
 msgtest "Broken link instead of a file as sources.list ignored"
 ln -s /tmp/doesnt-exist rootdir/etc/apt/sources.list
-test -n "$(aptget update --print-uris)" && msgfail || msgpass
+testempty aptget update --print-uris
 rm rootdir/etc/apt/sources.list
 
 
@@ -57,7 +57,8 @@ echo 'Package: apt
 Pin: release a=now
 Pin-Value: 1000' > rootdir/etc/apt/good-link.pref
 ln -s rootdir/etc/apt/good-link.pref rootdir/etc/apt/preferences
-test -n "$(aptcache policy | grep '1000 ')" && msgfail || msgpass
+testsuccess aptcache policy
+testfailure grep '1000 ' rootdir/tmp/testsucess.output
 rm rootdir/etc/apt/preferences
 
 msgtest "Broken link instead of a file as preferences ignored"

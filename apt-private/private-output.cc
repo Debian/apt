@@ -650,8 +650,21 @@ void Stats(ostream &out,pkgDepCache &Dep)
 // YnPrompt - Yes No Prompt.						/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns true on a Yes.*/
-bool YnPrompt(bool Default)
+bool YnPrompt(char const * const Question, bool Default)
 {
+   auto const AssumeYes = _config->FindB("APT::Get::Assume-Yes",false);
+   auto const AssumeNo = _config->FindB("APT::Get::Assume-No",false);
+   // if we ask interactively, show warnings/notices before the question
+   if (AssumeYes == false && AssumeNo == false)
+   {
+      if (_config->FindI("quiet",0) > 0)
+	 _error->DumpErrors(c2out);
+      else
+	 _error->DumpErrors(c2out, GlobalError::DEBUG);
+   }
+
+   c2out << Question << std::flush;
+
    /* nl_langinfo does not support LANGUAGE setting, so we unset it here
       to have the help-message (hopefully) match the expected characters */
    char * language = getenv("LANGUAGE");
@@ -679,13 +692,13 @@ bool YnPrompt(bool Default)
       free(language);
    }
 
-   if (_config->FindB("APT::Get::Assume-Yes",false) == true)
+   if (AssumeYes)
    {
       // TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
       c1out << _("Y") << std::endl;
       return true;
    }
-   else if (_config->FindB("APT::Get::Assume-No",false) == true)
+   else if (AssumeNo)
    {
       // TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
       c1out << _("N") << std::endl;
@@ -722,8 +735,14 @@ bool YnPrompt(bool Default)
 // AnalPrompt - Annoying Yes No Prompt.					/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns true on a Yes.*/
-bool AnalPrompt(const char *Text)
+bool AnalPrompt(std::string const &Question, const char *Text)
 {
+   if (_config->FindI("quiet",0) > 0)
+      _error->DumpErrors(c2out);
+   else
+      _error->DumpErrors(c2out, GlobalError::DEBUG);
+   c2out << Question << std::flush;
+
    char Buf[1024];
    std::cin.getline(Buf,sizeof(Buf));
    if (strcmp(Buf,Text) == 0)

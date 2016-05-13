@@ -30,7 +30,6 @@ bool EditSources(CommandLine &CmdL)
 {
    bool res;
    pkgSourceList sl;
-   std::string outs;
 
    std::string sourceslist;
    if (CmdL.FileList[1] != NULL)
@@ -48,28 +47,25 @@ bool EditSources(CommandLine &CmdL)
    int lockfd = GetLock(sourceslist);
    if (lockfd < 0)
       return false;
-      
+
    do {
       EditFileInSensibleEditor(sourceslist);
       _error->PushToStack();
       res = sl.Read(sourceslist);
       if (!res) {
-         _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
-         strprintf(outs, _("Failed to parse %s. Edit again? "),
-                   sourceslist.c_str());
-         std::cout << outs;
+	 std::string outs;
+	 strprintf(outs, _("Failed to parse %s. Edit again? "), sourceslist.c_str());
          // FIXME: should we add a "restore previous" option here?
-         res = !YnPrompt(true);
+         res = !YnPrompt(outs.c_str(), true);
       }
       _error->RevertToStack();
    } while (res == false);
    close(lockfd);
 
    if (FileExists(sourceslist) && !before.VerifyFile(sourceslist)) {
-      strprintf(
-         outs, _("Your '%s' file changed, please run 'apt-get update'."),
+      ioprintf(
+         std::cout, _("Your '%s' file changed, please run 'apt-get update'."),
          sourceslist.c_str());
-      std::cout << outs << std::endl;
    }
 
    return true;

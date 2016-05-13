@@ -101,8 +101,8 @@ bool ShowEssential(std::ostream &out,CacheFile &Cache);
 void Stats(std::ostream &out, pkgDepCache &Dep);
 
 // prompting
-bool YnPrompt(bool Default=true);
-bool AnalPrompt(const char *Text);
+bool YnPrompt(char const * const Question, bool Default=true);
+bool AnalPrompt(std::string const &Question, const char *Text);
 
 std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);

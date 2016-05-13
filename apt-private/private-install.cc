@@ -234,12 +234,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       // TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
       //             careful with hard to type or special characters (like non-breaking spaces)
       const char *Prompt = _("Yes, do as I say!");
-      ioprintf(c2out,
+      std::string question;
+      strprintf(question,
 	       _("You are about to do something potentially harmful.\n"
 		 "To continue type in the phrase '%s'\n"
 		 " ?] "),Prompt);
-      c2out << std::flush;
-      if (AnalPrompt(Prompt) == false)
+      if (AnalPrompt(question, Prompt) == false)
       {
 	 c2out << _("Abort.") << std::endl;
 	 exit(1);
@@ -256,8 +256,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-            c2out << _("Do you want to continue?") << std::flush;
- 	    if (YnPrompt() == false)
+ 	    if (YnPrompt(_("Do you want to continue?")) == false)
 	    {
 	       c2out << _("Abort.") << std::endl;
 	       exit(1);
