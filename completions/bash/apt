@@ -6,16 +6,48 @@ _apt()
     local cur prev words cword
     _init_completion || return
 
+    local GENERIC_APT_GET_OPTIONS='
+        -d --download-only
+        -y --assume-yes
+        --assume-no
+        -u --show-upgraded
+        -m --ignore-missing
+        -t --target-release
+        --download
+        --fix-missing
+        --ignore-hold
+        --upgrade
+        --only-upgrade
+        --allow-change-held-packages
+        --allow-remove-essential
+        --allow-downgrades
+        --print-uris
+        --trivial-only
+        --remove
+        --arch-only
+        --allow-unauthenticated
+        --allow-insecure-repositories
+        --install-recommends
+        --install-suggests
+        --fix-policy
+    '
+
     # see if the user selected a command already
     local COMMANDS=(
         "list"
         "search"
-        "show"
+        "show" "showsrc"
         "install" "remove" "purge" "autoremove"
         "update"
         "upgrade" "full-upgrade" "dist-upgrade"
         "edit-sources"
-        "help")
+        "help"
+        "source" "build-dep"
+        "clean" "autoclean"
+        "download" "changelog"
+        "moo"
+        "depends" "rdepends"
+        "policy")
 
     local command i
     for (( i=0; i < ${#words[@]}-1; i++ )); do
@@ -25,24 +57,35 @@ _apt()
         fi
     done
 
+    # Complete a -t<SPACE><TAB>
+    case $prev in
+        -t|--target-release)
+            COMPREPLY=( $( compgen -W "$(apt-cache policy | egrep -o 'a=[^,]*|n=[^,]*' | cut -f2- -d= | sort -u)" -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
     # supported options per command
     if [[ "$cur" == -* ]]; then
         case $command in
             install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove)
                 COMPREPLY=( $( compgen -W '--show-progress
                   --fix-broken --purge --verbose-versions --auto-remove
-                  --simulate --dry-run
+                  -s --simulate --dry-run
                   --download
                   --fix-missing
                   --fix-policy
                   --ignore-hold
                   --force-yes
                   --trivial-only
-                  --reinstall --solver' -- "$cur" ) )
+                  --reinstall --solver
+                  -t --target-release'"$GENERIC_APT_GET_OPTIONS" -- "$cur" ) )
                 return 0
                 ;;
             update)
-                COMPREPLY=( $( compgen -W '--list-cleanup 
+                COMPREPLY=( $( compgen -W '--list-cleanup
+                  --print-uris
+                  --allow-insecure-repositories
                   ' -- "$cur" ) )
                 return 0
                 ;;
@@ -51,12 +94,74 @@ _apt()
                   --manual-installed
                   -v --verbose
                   -a --all-versions
+                  -t --target-release
                   ' -- "$cur" ) )
                 return 0
                 ;;
             show)
                 COMPREPLY=( $( compgen -W '-a --all-versions
                   ' -- "$cur" ) )
+                return 0
+                ;;
+            depends|rdepends)
+                COMPREPLY=( $( compgen -W '-i
+                    --important
+                    --installed
+                    --pre-depends
+                    --depends
+                    --recommends
+                    --suggests
+                    --replaces
+                    --breaks
+                    --conflicts
+                    --enhances
+                    --recurse
+                    --implicit' -- "$cur" ) )
+                return 0
+                ;;
+            search)
+                COMPREPLY=( $( compgen -W '
+                    -n --names-only
+                    -f --full' -- "$cur" ) )
+                return 0
+                ;;
+            showsrc)
+                COMPREPLY=( $( compgen -W '
+                    --only-source' -- "$cur" ) )
+                return 0
+                ;;
+            source)
+                COMPREPLY=( $( compgen -W '
+                    -s --simulate --dry-run
+                    -b --compile --build
+                    -P --build-profiles
+                    --diff-only --debian-only
+                    --tar-only
+                    --dsc-only
+                    -t --target-release
+                    '"$GENERIC_APT_GET_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+            build-dep)
+                COMPREPLY=( $( compgen -W '
+                    -a --host-architecture
+                    -s --simulate --dry-run
+                    -P --build-profiles
+                    -t --target-release
+                    --purge --solver
+                    '"$GENERIC_APT_GET_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+            moo)
+                COMPREPLY=( $( compgen -W '
+                    --color
+                    ' -- "$cur" ) )
+                return 0
+                ;;
+            clean|autocleean)
+                COMPREPLY=( $( compgen -W '
+                    -s --simulate --dry-run
+                    ' -- "$cur" ) )
                 return 0
                 ;;
         esac
@@ -76,7 +181,7 @@ _apt()
                 fi
                 return 0
                 ;;
-            show|list)
+            show|list|download|changelog|depends|rdepends)
                 COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
                     2> /dev/null ) )
                 return 0
@@ -87,8 +192,19 @@ _apt()
                 _filedir "*.deb"
                 return 0
                 ;;
+            source|build-dep|showsrc|policy)
+                COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
+                    2> /dev/null ) $( apt-cache dumpavail | \
+                    command grep "^Source: $cur" | sort -u | cut -f2 -d" " ) )
+                return 0
+                ;;
             edit-sources)
                 COMPREPLY=( $( compgen -W '$( command ls $sourcesdir )' \
+                    -- "$cur" ) )
+                return 0
+                ;;
+            moo)
+                COMPREPLY=( $( compgen -W 'moo' \
                     -- "$cur" ) )
                 return 0
                 ;;
