@@ -1143,7 +1143,7 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
    return WriteOkay(Okay, output, "\n");
 }
 									/*}}}*/
-static bool WriteScenarioEIPPVersion(pkgDepCache &Cache, FileFd &output, pkgCache::PkgIterator const &Pkg,/*{{{*/
+static bool WriteScenarioEIPPVersion(pkgDepCache &, FileFd &output, pkgCache::PkgIterator const &Pkg,/*{{{*/
 				pkgCache::VerIterator const &Ver)
 {
    bool Okay = true;
@@ -1159,37 +1159,70 @@ static bool WriteScenarioEIPPVersion(pkgDepCache &Cache, FileFd &output, pkgCach
 	 case pkgCache::State::TriggersPending: WriteOkay(Okay, output, "\nStatus: triggers-pending"); break;
 	 case pkgCache::State::Installed: WriteOkay(Okay, output, "\nStatus: installed"); break;
       }
-   if (Pkg->SelectedState == pkgCache::State::Hold)
-      WriteOkay(Okay, output, "\nHold: yes");
-   // FIXME: Ideally, an EIPP request contains at most two versions (installed and to install)
-   if (Cache.GetCandidateVersion(Pkg) == Ver)
-      WriteOkay(Okay, output, "\nAPT-Candidate: yes");
    return Okay;
 }
 									/*}}}*/
 // EIPP::WriteScenario - to the given file descriptor			/*{{{*/
+template<typename forVersion> void forAllInterestingVersions(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg, forVersion const &func)
+{
+   if (Pkg->CurrentState == pkgCache::State::NotInstalled)
+   {
+      auto P = Cache[Pkg];
+      if (P.Install() == false)
+	 return;
+      func(Pkg, P.InstVerIter(Cache));
+   }
+   else
+   {
+      if (Pkg->CurrentVer != 0)
+	 func(Pkg, Pkg.CurrentVer());
+      auto P = Cache[Pkg];
+      auto const V = P.InstVerIter(Cache);
+      if (P.Delete() == false && Pkg.CurrentVer() != V)
+	 func(Pkg, V);
+   }
+}
+
 bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const Progress)
 {
    if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to planer"));
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send scenario to planer"));
    unsigned long p = 0;
    bool Okay = output.Failed() == false;
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
-   std::vector<bool> pkgset(Cache.Head().VersionCount, true);
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
-   {
-      std::string const arch = Pkg.Arch();
-      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
-	 continue;
-      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false && likely(Okay); ++Ver, ++p)
+   std::vector<bool> pkgset(Cache.Head().PackageCount, false);
+   auto const MarkVersion = [&](pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver) {
+      pkgset[Pkg->ID] = true;
+      for (auto D = Ver.DependsList(); D.end() == false; ++D)
       {
-	 Okay &= WriteScenarioVersion(output, Pkg, Ver);
-	 Okay &= WriteScenarioEIPPVersion(Cache, output, Pkg, Ver);
-	 Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset, true);
-	 WriteOkay(Okay, output, "\n");
-	 if (Progress != NULL && p % 100 == 0)
-	    Progress->Progress(p);
+	 if (D.IsCritical() == false)
+	    continue;
+	 auto const P = D.TargetPkg();
+	 for (auto Prv = P.ProvidesList(); Prv.end() == false; ++Prv)
+	 {
+	    auto const V = Prv.OwnerVer();
+	    auto const PV = V.ParentPkg();
+	    if (V == PV.CurrentVer() || V == Cache[PV].InstVerIter(Cache))
+	       pkgset[PV->ID] = true;
+	 }
+	 pkgset[P->ID] = true;
       }
+   };
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+      forAllInterestingVersions(Cache, Pkg, MarkVersion);
+   auto const WriteVersion = [&](pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver) {
+      Okay &= WriteScenarioVersion(output, Pkg, Ver);
+      Okay &= WriteScenarioEIPPVersion(Cache, output, Pkg, Ver);
+      Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset, true);
+      WriteOkay(Okay, output, "\n");
+      if (Progress != NULL && p % 100 == 0)
+	 Progress->Progress(p);
+   };
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg, ++p)
+   {
+      if (pkgset[Pkg->ID] == false || Pkg->VersionList == 0)
+	 continue;
+      forAllInterestingVersions(Cache, Pkg, WriteVersion);
    }
    return true;
 }

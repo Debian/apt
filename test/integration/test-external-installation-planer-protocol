@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'libfoo' 'amd64' '3' 'experimental' 'Multi-Arch: same'
+buildsimplenativepackage 'foo' 'all' '3' 'experimental' 'Depends: newstuff'
+buildsimplenativepackage 'foo' 'all' '2' 'unstable' 'Depends: libfoo:amd64, stuff
+Conflicts: bar, libfoo:i386
+Recommends: unrelated'
+buildsimplenativepackage 'libfoo' 'amd64' '2' 'unstable' 'Multi-Arch: same'
+buildsimplenativepackage 'unrelated-2' 'amd64' '2' 'unstable'
+insertinstalledpackage 'foo' 'all' '1'
+insertinstalledpackage 'bar' 'all' '1'
+insertinstalledpackage 'stuff' 'all' '1'
+insertinstalledpackage 'unrelated-1' 'all' '1'
+
+setupaptarchive --no-update
+
+testsuccess apt update
+export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/eipp.dump"
+testfailure aptget install foo --planer dump -y
+testfailure grep 'unrelated-2' "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal '2' grep -c '^Package: foo$' "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal '1' grep -c '^Package: libfoo$' "$APT_EDSP_DUMP_FILENAME"
