@@ -157,41 +157,41 @@ rm -f "$APT_EDSP_DUMP_FILENAME"
 
 testsuccess aptinternalsolver scenario
 testsuccessequal 'Package: stuff
-Source: stuff
 Architecture: all
 Version: 3
-Source-Version: 3
 APT-ID: 1
+Multi-Arch: foreign
+Source: stuff
+Source-Version: 3
 Priority: optional
 Section: other
-Multi-Arch: foreign
 APT-Release:
  a=experimental,n=experimental,c=main,b=all
 APT-Pin: 1
 
 Package: stuff
-Source: stuff
 Architecture: all
 Version: 2
-Source-Version: 2
 APT-ID: 3
+Multi-Arch: foreign
+Source: stuff
+Source-Version: 2
 Priority: optional
 Section: other
-Multi-Arch: foreign
 APT-Release:
  a=unstable,n=sid,c=main,b=all
 APT-Pin: 500
 APT-Candidate: yes
 
 Package: stuff
-Source: stuff
 Architecture: all
 Version: 1
-Source-Version: 1
-Installed: yes
 APT-ID: 8
+Source: stuff
+Source-Version: 1
 Priority: optional
 Section: other
+Installed: yes
 APT-Pin: 100
 ' aptinternalsolver scenario stuff
 

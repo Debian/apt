@@ -114,51 +114,21 @@ static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::Pkg
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
       fprintf(output, "APT-Automatic: yes\n");
 }
-static bool WriteScenarioVersion(pkgDepCache &Cache, FileFd &output, pkgCache::PkgIterator const &Pkg,
+static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pkg,
 				pkgCache::VerIterator const &Ver)
 {
    bool Okay = WriteOkay(output, "Package: ", Pkg.Name(),
-	 "\nSource: ", Ver.SourcePkgName(),
 	 "\nArchitecture: ", Ver.Arch(),
-	 "\nVersion: ", Ver.VerStr(),
-	 "\nSource-Version: ", Ver.SourceVerStr());
-   if (Pkg.CurrentVer() == Ver)
-      WriteOkay(Okay, output, "\nInstalled: yes");
-   if (Pkg->SelectedState == pkgCache::State::Hold ||
-       (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
-      WriteOkay(Okay, output, "\nHold: yes");
+	 "\nVersion: ", Ver.VerStr());
    WriteOkay(Okay, output, "\nAPT-ID: ", Ver->ID);
-   if (PrioMap[Ver->Priority] != nullptr)
-      WriteOkay(Okay, output, "\nPriority: ", PrioMap[Ver->Priority]);
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       WriteOkay(Okay, output, "\nEssential: yes");
-   if (Ver->Section != 0)
-      WriteOkay(Okay, output, "\nSection: ", Ver.Section());
    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
       WriteOkay(Okay, output, "\nMulti-Arch: allowed");
    else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
       WriteOkay(Okay, output, "\nMulti-Arch: foreign");
    else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
       WriteOkay(Okay, output, "\nMulti-Arch: same");
-   std::set<string> Releases;
-   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
-      pkgCache::PkgFileIterator File = I.File();
-      if (File.Flagged(pkgCache::Flag::NotSource) == false) {
-	 string Release = File.RelStr();
-	 if (!Release.empty())
-	    Releases.insert(Release);
-      }
-   }
-   if (!Releases.empty()) {
-       WriteOkay(Okay, output, "\nAPT-Release:");
-       for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
-	   WriteOkay(Okay, output, "\n ", *R);
-   }
-   WriteOkay(Okay, output, "\nAPT-Pin: ", Cache.GetPolicy().GetPriority(Ver));
-   if (Cache.GetCandidateVersion(Pkg) == Ver)
-      WriteOkay(Okay, output, "\nAPT-Candidate: yes");
-   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
-      WriteOkay(Okay, output, "\nAPT-Automatic: yes");
    return Okay;
 }
 									/*}}}*/
@@ -201,13 +171,15 @@ static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &
    if (provides.empty() == false)
       fprintf(output, "Provides: %s\n", provides.c_str());
 }
-static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver)
+static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver, bool const OnlyCritical)
 {
    std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
       if (Dep.IsImplicit() == true)
+	 continue;
+      if (OnlyCritical && Dep.IsCritical() == false)
 	 continue;
       if (orGroup == false && dependencies[Dep->Type].empty() == false)
 	 dependencies[Dep->Type].append(", ");
@@ -300,13 +272,16 @@ static void WriteScenarioLimitedDependency(FILE* output,
 }
 static bool WriteScenarioLimitedDependency(FileFd &output,
 					  pkgCache::VerIterator const &Ver,
-					  std::vector<bool> const &pkgset)
+					  std::vector<bool> const &pkgset,
+					  bool const OnlyCritical)
 {
    std::array<std::string, _count(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
       if (Dep.IsImplicit() == true)
+	 continue;
+      if (OnlyCritical && Dep.IsCritical() == false)
 	 continue;
       if (orGroup == false)
       {
@@ -374,6 +349,42 @@ static bool SkipUnavailableVersions(pkgDepCache &Cache, pkgCache::PkgIterator co
    return true;
 }
 									/*}}}*/
+static bool WriteScenarioEDSPVersion(pkgDepCache &Cache, FileFd &output, pkgCache::PkgIterator const &Pkg,/*{{{*/
+				pkgCache::VerIterator const &Ver)
+{
+   bool Okay = WriteOkay(output, "\nSource: ", Ver.SourcePkgName(),
+	 "\nSource-Version: ", Ver.SourceVerStr());
+   if (PrioMap[Ver->Priority] != nullptr)
+      WriteOkay(Okay, output, "\nPriority: ", PrioMap[Ver->Priority]);
+   if (Ver->Section != 0)
+      WriteOkay(Okay, output, "\nSection: ", Ver.Section());
+   if (Pkg.CurrentVer() == Ver)
+      WriteOkay(Okay, output, "\nInstalled: yes");
+   if (Pkg->SelectedState == pkgCache::State::Hold ||
+       (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
+      WriteOkay(Okay, output, "\nHold: yes");
+   std::set<string> Releases;
+   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
+      pkgCache::PkgFileIterator File = I.File();
+      if (File.Flagged(pkgCache::Flag::NotSource) == false) {
+	 string Release = File.RelStr();
+	 if (!Release.empty())
+	    Releases.insert(Release);
+      }
+   }
+   if (!Releases.empty()) {
+       WriteOkay(Okay, output, "\nAPT-Release:");
+       for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
+	   WriteOkay(Okay, output, "\n ", *R);
+   }
+   WriteOkay(Okay, output, "\nAPT-Pin: ", Cache.GetPolicy().GetPriority(Ver));
+   if (Cache.GetCandidateVersion(Pkg) == Ver)
+      WriteOkay(Okay, output, "\nAPT-Candidate: yes");
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      WriteOkay(Okay, output, "\nAPT-Automatic: yes");
+   return Okay;
+}
+									/*}}}*/
 // EDSP::WriteScenario - to the given file descriptor			/*{{{*/
 bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 {
@@ -415,8 +426,9 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
       {
 	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
 	    continue;
-	 Okay &= WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 Okay &= WriteScenarioDependency(output, Ver);
+	 Okay &= WriteScenarioVersion(output, Pkg, Ver);
+	 Okay &= WriteScenarioEDSPVersion(Cache, output, Pkg, Ver);
+	 Okay &= WriteScenarioDependency(output, Ver, false);
 	 WriteOkay(Okay, output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -464,8 +476,9 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
       {
 	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
 	    continue;
-	 Okay &= WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset);
+	 Okay &= WriteScenarioVersion(output, Pkg, Ver);
+	 Okay &= WriteScenarioEDSPVersion(Cache, output, Pkg, Ver);
+	 Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset, false);
 	 WriteOkay(Okay, output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -722,8 +735,7 @@ static bool StringToBool(char const *answer, bool const defValue) {
    return defValue;
 }
 									/*}}}*/
-// EDSP::ReadRequest - first stanza from the given file descriptor	/*{{{*/
-static bool ReadFlag(unsigned int &flags, std::string const &line, APT::StringView const name, unsigned int const setflag)
+static bool ReadFlag(unsigned int &flags, std::string const &line, APT::StringView const name, unsigned int const setflag)/*{{{*/
 {
    if (line.compare(0, name.length(), name.data()) != 0)
       return false;
@@ -734,6 +746,8 @@ static bool ReadFlag(unsigned int &flags, std::string const &line, APT::StringVi
       flags &= ~setflag;
    return true;
 }
+									/*}}}*/
+// EDSP::ReadRequest - first stanza from the given file descriptor	/*{{{*/
 bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 			std::list<std::string> &remove, unsigned int &flags)
 {
@@ -944,13 +958,12 @@ bool EDSP::WriteError(char const * const uuid, std::string const &message, FileF
 	      "\n\n");
 }
 									/*}}}*/
-// EDSP::ExecuteSolver - fork requested solver and setup ipc pipes	{{{*/
-pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool) {
-	std::vector<std::string> const solverDirs = _config->FindVector("Dir::Bin::Solvers");
+static pid_t ExecuteExternal(char const* const type, char const * const binary, char const * const configdir, int * const solver_in, int * const solver_out) {/*{{{*/
+	std::vector<std::string> const solverDirs = _config->FindVector(configdir);
 	std::string file;
 	for (std::vector<std::string>::const_iterator dir = solverDirs.begin();
 	     dir != solverDirs.end(); ++dir) {
-		file = flCombine(*dir, solver);
+		file = flCombine(*dir, binary);
 		if (RealFileExists(file.c_str()) == true)
 			break;
 		file.clear();
@@ -958,7 +971,7 @@ pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int *
 
 	if (file.empty() == true)
 	{
-		_error->Error("Can't call external solver '%s' as it is not in a configured directory!", solver);
+		_error->Error("Can't call external %s '%s' as it is not in a configured directory!", type, binary);
 		return 0;
 	}
 	int external[4] = {-1, -1, -1, -1};
@@ -976,7 +989,7 @@ pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int *
 		dup2(external[3], STDOUT_FILENO);
 		const char* calling[2] = { file.c_str(), 0 };
 		execv(calling[0], (char**) calling);
-		std::cerr << "Failed to execute solver '" << solver << "'!" << std::endl;
+		std::cerr << "Failed to execute " << type << " '" << binary << "'!" << std::endl;
 		_exit(100);
 	}
 	close(external[0]);
@@ -984,13 +997,18 @@ pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int *
 
 	if (WaitFd(external[1], true, 5) == false)
 	{
-		_error->Errno("Resolve", "Timed out while Waiting on availability of solver stdin");
+		_error->Errno("Resolve", "Timed out while Waiting on availability of %s stdin", type);
 		return 0;
 	}
 
 	*solver_in = external[1];
 	*solver_out = external[2];
 	return Solver;
+}
+									/*}}}*/
+// EDSP::ExecuteSolver - fork requested solver and setup ipc pipes	{{{*/
+pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool) {
+	return ExecuteExternal("solver", solver, "Dir::Bin::Solvers", solver_in, solver_out);
 }
 bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_out) {
    if (ExecuteSolver(solver, solver_in, solver_out, true) == 0)
