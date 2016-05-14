@@ -236,4 +236,16 @@ namespace EDSP								/*{{{*/
 				    bool const autoRemove, OpProgress *Progress = NULL);
 }
 									/*}}}*/
+namespace EIPP								/*{{{*/
+{
+   APT_HIDDEN bool OrderInstall(char const * const solver, pkgDepCache &Cache,
+	 unsigned int const version, OpProgress * const Progress);
+   APT_HIDDEN bool WriteRequest(pkgDepCache &Cache, FileFd &output,
+	 unsigned int const version, OpProgress * const Progress);
+   APT_HIDDEN bool WriteScenario(pkgDepCache &Cache, FileFd &output,
+	 OpProgress * const Progress);
+   APT_HIDDEN bool ReadResponse(int const input, pkgDepCache &Cache,
+	 OpProgress * const Progress);
+}
+									/*}}}*/
 #endif

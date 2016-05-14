@@ -19,6 +19,7 @@
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/edsp.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/algorithms.h>
@@ -1035,6 +1036,11 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    
    if (Debug == true)
       clog << "Beginning to order" << endl;
+
+   std::string const planer = _config->Find("APT::Planer", "internal");
+   if (planer != "internal")
+      if (EIPP::OrderInstall(planer.c_str(), Cache, 0, nullptr) == false)
+	 return Failed;
 
    bool const ordering =
 	_config->FindB("PackageManager::UnpackAll",true) ?

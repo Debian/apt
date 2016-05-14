@@ -1,0 +1,243 @@
+# APT External Installation Planer Protocol (EIPP) - version 0.1
+
+This document describes the communication protocol between APT and
+external installation planer. The protocol is called APT EIPP, for "APT
+External Installation Planer Protocol".
+
+
+## Terminology
+
+In the following we use the term **architecture qualified package name**
+(or *arch-qualified package names* for short) to refer to package
+identifiers of the form "package:arch" where "package" is a package name
+and "arch" a dpkg architecture.
+
+
+## Components
+
+- **APT**: we know this one.
+- APT is equipped with its own **internal planer** for the order of
+  package installation (and removal) which is identified by the string
+  `internal`.
+- **External planer**: an *external* software component able to plan an
+  installation on behalf of APT.
+
+At each interaction with APT, a single planer is in use.  When there is
+a total of 2 or more planers, internals or externals, the user can
+choose which one to use.
+
+Each planer is identified by an unique string, the **planer name**.
+Planer names must be formed using only alphanumeric ASCII characters,
+dashes, and underscores; planer names must start with a lowercase ASCII
+letter.  The special name `internal` denotes APT's internal planer, is
+reserved, and cannot be used by external planers.
+
+
+## Installation
+
+Each external planer is installed as a file under Dir::Bin::Planers (see
+below), which defaults to `/usr/lib/apt/planers`. We will assume in the
+remainder of this section that such a default value is in effect.
+
+The naming scheme is `/usr/lib/apt/planers/NAME`, where `NAME` is the
+name of the external planer.
+
+Each file under `/usr/lib/apt/planers` corresponding to an external
+planer must be executable.
+
+No non-planer files must be installed under `/usr/lib/apt/planers`, so
+that an index of available external planers can be obtained by listing
+the content of that directory.
+
+
+## Configuration
+
+Several APT options can be used to affect installation planing in APT.
+An overview of them is given below. Please refer to proper APT
+configuration documentation for more, and more up to date, information.
+
+- **APT::Planer**: the name of the planer to be used for dependency
+  solving. Defaults to `internal`
+
+- **Dir::Bin::Planers**: absolute path of the directory where to look
+  for external solvers. Defaults to `/usr/lib/apt/planers`.
+
+
+## Protocol
+
+When configured to use an external planer, APT will resort to it to
+decide in which order packages should be installed, configured and
+removed.
+
+The interaction happens **in batch**: APT will invoke the external
+planer passing the current status of (half-)installed packages and of
+packages which should be installed, as well as a request denoting the
+packages to install, reinstall, remove and purge.  The external planer
+will compute a valid plan of when and how to call the low-level package
+manager (like dpkg) with each package to satisfy the request.
+
+External planers are invoked by executing them. Communications happens
+via the file descriptors: **stdin** (standard input) and **stdout**
+(standard output). stderr is not used by the EIPP protocol. Planers can
+therefore use stderr to dump debugging information that could be
+inspected separately.
+
+After invocation, the protocol passes through a sequence of phases:
+
+1. APT invokes the external planer
+2. APT send to the planer an installation planer **scenario**
+3. The planer calculates the order. During this phase the planer may
+   send, repeatedly, **progress** information to APT.
+4. The planer sends back to APT an **answer**, i.e. either a *solution*
+   or an *error* report.
+5. The external planer exits
+
+
+### Scenario
+
+A scenario is a text file encoded in a format very similar to the "Deb
+822" format (AKA "the format used by Debian `Packages` files"). A
+scenario consists of two distinct parts: a **request** and a **package
+universe**, occurring in that order. The request consists of a single
+Deb 822 stanza, while the package universe consists of several such
+stanzas. All stanzas occurring in a scenario are separated by an empty
+line.
+
+
+#### Request
+
+Within an installation planer scenario, a request represents the action
+on packages requested by the user explicitly as well as potentially
+additions calculated by a dependency resolver which the user has
+accepted.
+
+An installation planer is not allowed to suggest the modification of
+package states (e.g. removing additional packages) even if it can't
+calculate a solution otherwise – the planer must error out in such
+a case. An exception is made for scenarios which contain packages which
+aren't completely installed (like half-installed or trigger-awaiting):
+Solvers are free to move these packages to a fully installed state (but
+are still forbidden to remove them).
+
+A request is a single Deb 822 stanza opened by a mandatory Request field
+and followed by a mixture of action, preference, and global
+configuration fields.
+
+The value of the **Request:** field is a string describing the EIPP
+protocol which will be used to communicate and especially which answers
+APT will understand. At present, the string must be `EIPP 0.1`. Request
+fields are mainly used to identify the beginning of a request stanza;
+their actual values are otherwise not used by the EIPP protocol.
+
+The following **configuration fields** are supported in request stanzas:
+
+- **Architecture:** (mandatory) The name of the *native* architecture on
+  the user machine (see also: `dpkg --print-architecture`)
+
+- **Architectures:** (optional, defaults to the native architecture) A
+  space separated list of *all* architectures known to APT (this is
+  roughly equivalent to the union of `dpkg --print-architecture` and
+  `dpkg --print-foreign-architectures`)
+
+The following **action fields** are supported in request stanzas:
+
+- **Install:** (optional, defaults to the empty string) A space
+  separated list of arch-qualified package names, with *no version
+  attached*, to install. This field denotes a list of packages that the
+  user wants to install, usually via an APT `install` request.
+
+- **Remove:** (optional, defaults to the empty string) Same syntax of
+  Install. This field denotes a list of packages that the user wants to
+  remove, usually via APT `remove` or `purge` requests.
+
+- **ReInstall:** (optional, defaults to the empty string) Same syntax of
+  Install. This field denotes a list of packages which are installed,
+  but should be reinstalled again e.g. because files shipped by that
+  package were removed or corrupted accidentally, usually requested via
+  an APT `install` request with the `--reinstall` flag.
+
+The following **preference fields** are supported in request stanzas:
+
+- **Planer:** (optional, defaults to the empty string) a purely
+  informational string specifying to which planer this request was send
+  initially.
+
+
+#### Package universe
+
+A package universe is a list of Deb 822 stanzas, one per package, called
+**package stanzas**. Each package stanzas starts with a Package
+field. The following fields are supported in package stanzas:
+
+- The fields Package, Version, Architecture (all mandatory) and
+  Multi-Arch, Pre-Depends, Depends, Conflicts, Breaks, Essential
+  (optional) as they are contained in the dpkg database (see the manpage
+  `dpkg-query (1)`).
+
+- **Status:** (optional, defaults to `uninstalled`). Allowed values are
+  the "package status" names as listed in `dpkg-query (1)` and visible
+  e.g. in the dpkg database as the second value in the space separated
+  list of values in the Status field there. In other words: Neither
+  desired action nor error flags are present in this field in EIPP!
+
+- **APT-ID:** (mandatory). Unique package identifier, according to APT.
+
+
+### Answer
+
+An answer from the external planer to APT is either a *solution* or an
+*error*.
+
+The following invariant on **exit codes** must hold true. When the
+external planer is *able to find a solution*, it will write the solution
+to standard output and then exit with an exit code of 0. When the
+external planer is *unable to find a solution* (and is aware of that),
+it will write an error to standard output and then exit with an exit
+code of 0.  An exit code other than 0 will be interpreted as a planer
+crash with no meaningful error about dependency resolution to convey to
+the user.
+
+
+#### Solution
+
+  TODO
+
+
+#### Error
+
+An error is a single Deb 822 stanza, starting the field Error. The
+following fields are supported in error stanzas:
+
+- **Error:** (mandatory). The value of this field is ignored, although
+  it should be a unique error identifier, such as a UUID.
+
+- **Message:** (mandatory). The value of this field is a text string,
+  meant to be read by humans, that explains the cause of the planer
+  error.  Message fields might be multi-line, like the Description field
+  in the dpkg database. The first line conveys a short message, which
+  can be explained in more details using subsequent lines.
+
+
+### Progress
+
+During dependency solving, an external planer may send progress
+information to APT using **progress stanzas**. A progress stanza starts
+with the Progress field and might contain the following fields:
+
+- **Progress:** (mandatory). The value of this field is a date and time
+  timestamp, in RFC 2822 format. The timestamp provides a time
+  annotation for the progress report.
+
+- **Percentage:** (optional). An integer from 0 to 100, representing the
+  completion of the installation planning process, as declared by the
+  planer.
+
+- **Message:** (optional). A textual message, meant to be read by the
+  APT user, telling what is going on within the installation planer
+  (e.g. the current phase of planning, as declared by the planer).
+
+
+# Future extensions
+
+Potential future extensions to this protocol are to be discussed on
+deity@lists.debian.org.

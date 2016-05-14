@@ -1064,3 +1064,183 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
    return ResolveExternal(solver, Cache, flags, Progress);
 }
 									/*}}}*/
+
+bool EIPP::OrderInstall(char const * const solver, pkgDepCache &Cache,	/*{{{*/
+			 unsigned int const flags, OpProgress * const Progress)
+{
+   int solver_in, solver_out;
+   pid_t const solver_pid = ExecuteExternal("planer", solver, "Dir::Bin::Planers", &solver_in, &solver_out);
+   if (solver_pid == 0)
+      return false;
+
+   FileFd output;
+   if (output.OpenDescriptor(solver_in, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
+      return _error->Errno("OrderInstall", "Opening planer %s stdin on fd %d for writing failed", solver, solver_in);
+
+   bool Okay = output.Failed() == false;
+   if (Progress != NULL)
+      Progress->OverallProgress(0, 100, 5, _("Execute external planer"));
+   Okay &= EIPP::WriteRequest(Cache, output, flags, Progress);
+   if (Progress != NULL)
+      Progress->OverallProgress(5, 100, 20, _("Execute external planer"));
+   Okay &= EIPP::WriteScenario(Cache, output, Progress);
+   output.Close();
+
+   if (Progress != NULL)
+      Progress->OverallProgress(25, 100, 75, _("Execute external planer"));
+   if (Okay && EIPP::ReadResponse(solver_out, Cache, Progress) == false)
+      return false;
+
+   return ExecWait(solver_pid, solver);
+}
+									/*}}}*/
+bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
+			unsigned int const flags,
+			OpProgress * const Progress)
+{
+   (void)(flags);
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planer"));
+   unsigned long p = 0;
+   string del, purge, inst, reinst;
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
+   {
+      if (Progress != NULL && p % 100 == 0)
+         Progress->Progress(p);
+      string* req;
+      pkgDepCache::StateCache &P = Cache[Pkg];
+      if (P.Purge() == true)
+	 req = &purge;
+      if (P.Delete() == true)
+	 req = &del;
+      else if (P.NewInstall() == true || P.Upgrade() == true)
+	 req = &inst;
+      else if (P.ReInstall() == true)
+	 req = &reinst;
+      else
+	 continue;
+      req->append(" ").append(Pkg.FullName());
+   }
+   bool Okay = WriteOkay(output, "Request: EIPP 0.1\n");
+
+   const char *arch = _config->Find("APT::Architecture").c_str();
+   std::vector<string> archs = APT::Configuration::getArchitectures();
+   WriteOkay(Okay, output, "Architecture: ", arch, "\n",
+	 "Architectures:");
+   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
+       WriteOkay(Okay, output, " ", *a);
+   WriteOkay(Okay, output, "\n");
+
+   if (purge.empty() == false)
+      WriteOkay(Okay, output, "Purge:", purge, "\n");
+   if (del.empty() == false)
+      WriteOkay(Okay, output, "Remove:", del, "\n");
+   if (inst.empty() == false)
+      WriteOkay(Okay, output, "Install:", inst, "\n");
+   if (reinst.empty() == false)
+      WriteOkay(Okay, output, "ReInstall:", reinst, "\n");
+   WriteOkay(Okay, output, "Planer: ", _config->Find("APT::Planer", "internal"), "\n");
+   return WriteOkay(Okay, output, "\n");
+}
+									/*}}}*/
+static bool WriteScenarioEIPPVersion(pkgDepCache &Cache, FileFd &output, pkgCache::PkgIterator const &Pkg,/*{{{*/
+				pkgCache::VerIterator const &Ver)
+{
+   bool Okay = true;
+   if (Pkg.CurrentVer() == Ver)
+      switch (Pkg->CurrentState)
+      {
+	 case pkgCache::State::NotInstalled: WriteOkay(Okay, output, "\nStatus: not-installed"); break;
+	 case pkgCache::State::ConfigFiles: WriteOkay(Okay, output, "\nStatus: config-files"); break;
+	 case pkgCache::State::HalfInstalled: WriteOkay(Okay, output, "\nStatus: half-installed"); break;
+	 case pkgCache::State::UnPacked: WriteOkay(Okay, output, "\nStatus: unpacked"); break;
+	 case pkgCache::State::HalfConfigured: WriteOkay(Okay, output, "\nStatus: half-configured"); break;
+	 case pkgCache::State::TriggersAwaited: WriteOkay(Okay, output, "\nStatus: triggers-awaited"); break;
+	 case pkgCache::State::TriggersPending: WriteOkay(Okay, output, "\nStatus: triggers-pending"); break;
+	 case pkgCache::State::Installed: WriteOkay(Okay, output, "\nStatus: installed"); break;
+      }
+   if (Pkg->SelectedState == pkgCache::State::Hold)
+      WriteOkay(Okay, output, "\nHold: yes");
+   // FIXME: Ideally, an EIPP request contains at most two versions (installed and to install)
+   if (Cache.GetCandidateVersion(Pkg) == Ver)
+      WriteOkay(Okay, output, "\nAPT-Candidate: yes");
+   return Okay;
+}
+									/*}}}*/
+// EIPP::WriteScenario - to the given file descriptor			/*{{{*/
+bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const Progress)
+{
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to planer"));
+   unsigned long p = 0;
+   bool Okay = output.Failed() == false;
+   std::vector<std::string> archs = APT::Configuration::getArchitectures();
+   std::vector<bool> pkgset(Cache.Head().VersionCount, true);
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
+   {
+      std::string const arch = Pkg.Arch();
+      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
+	 continue;
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false && likely(Okay); ++Ver, ++p)
+      {
+	 Okay &= WriteScenarioVersion(output, Pkg, Ver);
+	 Okay &= WriteScenarioEIPPVersion(Cache, output, Pkg, Ver);
+	 Okay &= WriteScenarioLimitedDependency(output, Ver, pkgset, true);
+	 WriteOkay(Okay, output, "\n");
+	 if (Progress != NULL && p % 100 == 0)
+	    Progress->Progress(p);
+      }
+   }
+   return true;
+}
+									/*}}}*/
+// EIPP::ReadResponse - from the given file descriptor			/*{{{*/
+bool EIPP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress) {
+   /* We build an map id to mmap offset here
+      In theory we could use the offset as ID, but then VersionCount
+      couldn't be used to create other versionmappings anymore and it
+      would be too easy for a (buggy) solver to segfault APT… */
+   /*
+   unsigned long long const VersionCount = Cache.Head().VersionCount;
+   unsigned long VerIdx[VersionCount];
+   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P) {
+      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
+	 VerIdx[V->ID] = V.Index();
+   }
+   */
+
+   FileFd in;
+   in.OpenDescriptor(input, FileFd::ReadOnly);
+   pkgTagFile response(&in, 100);
+   pkgTagSection section;
+
+   std::set<decltype(Cache.PkgBegin()->ID)> seenOnce;
+   while (response.Step(section) == true) {
+      if (section.Exists("Progress") == true) {
+	 if (Progress != NULL) {
+	    string msg = section.FindS("Message");
+	    if (msg.empty() == true)
+	       msg = _("Prepare for receiving solution");
+	    Progress->SubProgress(100, msg, section.FindI("Percentage", 0));
+	 }
+	 continue;
+      } else if (section.Exists("Error") == true) {
+	 std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
+	 if (msg.empty() == true) {
+	    msg = _("External planer failed without a proper error message");
+	    _error->Error("%s", msg.c_str());
+	 } else
+	    _error->Error("External planer failed with: %s", msg.substr(0,msg.find('\n')).c_str());
+	 if (Progress != NULL)
+	    Progress->Done();
+	 std::cerr << "The planer encountered an error of type: " << section.FindS("Error") << std::endl;
+	 std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
+	 std::cerr << msg << std::endl << std::endl;
+	 return false;
+      } else {
+	 _error->Warning("Encountered an unexpected section with %d fields", section.Count());
+      }
+   }
+   return true;
+}
+									/*}}}*/

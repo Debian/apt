@@ -186,6 +186,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
+      addArg(0, "planer", "APT::Planer", CommandLine::HasArg);
       if (CmdMatches("upgrade"))
       {
          addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
