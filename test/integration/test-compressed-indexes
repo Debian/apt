@@ -70,7 +70,7 @@ The following NEW packages will be installed:
   testpkg
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst testpkg (1.0 unstable [i386])
-Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
+Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s -o Debug::pkgAcquire::Auth=0 -o Debug::pkgAcquire::Worker=0
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
 	testsuccessequal "$GOODSHOW" aptcache show testpkg
 	testsuccessequal "$GOODSHOW" aptcache show testpkg

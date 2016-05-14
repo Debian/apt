@@ -7,6 +7,8 @@ setupenvironment
 configarchitecture 'amd64'
 
 buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+buildsimplenativepackage 'unrelated2' 'all' '0.5~squeeze1' 'unstable'
+insertinstalledpackage 'unrelated2' 'all' '0.1'
 
 setupaptarchive --no-update
 changetowebserver -o aptwebserver::redirect::replace::/pool/=/newpool/ \
@@ -42,3 +44,18 @@ for CODE in 301 302 307; do
 	testrun "$CODE" "https://localhost:${APTHTTPSPORT}"
 	rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
 done
+
+testsuccess apt update
+testsuccess aptget install unrelated --download-only
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  unrelated
+The following packages have been kept back:
+  unrelated2
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst unrelated (0.5~squeeze1 unstable [all])
+Conf unrelated (0.5~squeeze1 unstable [all])' aptget dist-upgrade unrelated --no-download --fix-missing -s
+testsuccess aptget dist-upgrade unrelated --no-download --fix-missing -y
+testdpkginstalled unrelated
