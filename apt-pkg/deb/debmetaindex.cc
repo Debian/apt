@@ -692,7 +692,7 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
       }
    }
    else if (SignedBy != pSignedBy)
-      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Signed-By", URI.c_str(), Dist.c_str());
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), pSignedBy.c_str());
    return true;
 }
 									/*}}}*/
