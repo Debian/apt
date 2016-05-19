@@ -7,13 +7,13 @@
 # Dmitry Astapov <adept@umc.com.ua>, 2004.
 # Dmitry Astapov <adept@despammed.com>, 2004.
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
-# Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015.
+# Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.9.10\n"
+"Project-Id-Version: apt 1.2.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2016-05-11 10:50+0200\n"
-"PO-Revision-Date: 2015-06-23 20:40+0300\n"
+"PO-Revision-Date: 2016-05-19 20:50+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
@@ -28,28 +28,28 @@ msgstr ""
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Hit:%lu %s"
-msgstr ""
+msgstr "Сущ:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
 #. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Get:%lu %s"
-msgstr ""
+msgstr "Пол:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download, but the error is ignored (compare "Err:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Ign:%lu %s"
-msgstr ""
+msgstr "Игн:%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download and the error is critical (compare "Ign:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Err:%lu %s"
-msgstr ""
+msgstr "Ошк:%lu %s"
 
 #: apt-private/acqprogress.cc
 #, c-format
@@ -61,7 +61,7 @@ msgid " [Working]"
 msgstr " [Обработка]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
@@ -69,7 +69,7 @@ msgid ""
 msgstr ""
 "Смена носителя: вставьте диск с меткой\n"
 " «%s»\n"
-"в устройство «%s» и нажмите ввод\n"
+"в устройство «%s» и нажмите [Enter]\n"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -111,14 +111,14 @@ msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Заметьте, выбирается «%s» для задачи «%s»\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Заметьте, выбирается «%s» для регулярного выражения «%s»\n"
+msgstr "Заметьте, выбирается «%s» для glob «%s»\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Заметьте, выбирается «%s» для регулярного выражения «%s»\n"
+msgstr "Заметьте, выбирается «%s» для regex «%s»\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -126,9 +126,8 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "Пакет %s — виртуальный, его функции предоставляются пакетами:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
-msgstr "[установлен]"
+msgstr " [Установлен]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
@@ -183,12 +182,12 @@ msgstr "Заметьте, вместо «%2$s» выбирается «%1$s»\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "Основные команды:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "Дополнительную информацию о доступных командах смотрите в %s."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -197,6 +196,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Параметры настройки и синтаксис описаны в apt.conf(5).\n"
+"Информацию о том, как настроить источники, можно найти в sources.list(5).\n"
+"Выбор пакетов и версий описывается через apt_preferences(5).\n"
+"Информация о безопасности доступна в apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -232,13 +235,16 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes устарел, вместо него используйте параметры, начинающиеся с "
+"--allow."
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Существуют проблемы, а параметр -y указан без --force-yes"
+msgstr ""
+"Обнаружены неудостоверенные пакеты и был указан параметр -y без "
+"--allow-unauthenticated."
 
 #: apt-private/private-download.cc apt-pkg/update.cc
 #, c-format
@@ -299,22 +305,27 @@ msgid "Packages need to be removed but remove is disabled."
 msgstr "Пакеты необходимо удалить, но удаление запрещено."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Существуют проблемы, а параметр -y указан без --force-yes"
+msgstr ""
+"Удалены пакеты первой необходимости и был указан параметр -y "
+"без --allow-remove-essential."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Существуют проблемы, а параметр -y указан без --force-yes"
+msgstr ""
+"Пакеты заменены на старые версии и был указан параметр -y без "
+"--allow-downgrades."
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Были изменены зафиксированные пакеты и был указан параметр -y без "
+"--allow-change-held-"
+"packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -496,7 +507,6 @@ msgstr ""
 "не указывая имени пакета, (или найдите другое решение)."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "Будут установлены следующие дополнительные пакеты:"
 
@@ -526,9 +536,9 @@ msgstr "Переустановка %s невозможна, он не скачи
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "Уже установлена самая новая версия %s.\n"
+msgstr "Уже установлен пакет %s самой новой версии (%s).\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -598,7 +608,7 @@ msgstr "[установлен]"
 #: apt-private/private-output.cc
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr "[может быть обновлён до: %s]"
+msgstr "[может быть обновлён с: %s]"
 
 #: apt-private/private-output.cc
 msgid "[residual-config]"
@@ -780,7 +790,7 @@ msgstr "Зафиксированные пакеты:"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s с приоритетом %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -930,12 +940,12 @@ msgstr ""
 #: apt-private/private-source.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "Заметим, используется каталог «%s» для получения зависимостей сборки\n"
 
 #: apt-private/private-source.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Обработка зависимостей для сборки завершилась неудачно"
+msgstr "Заметим, используется файл «%s» для получения зависимостей сборки\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to process build dependencies"
@@ -979,9 +989,8 @@ msgid "All packages are up to date."
 msgstr "Все пакеты имеют последние версии."
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "Команде update не нужны аргументы"
+msgstr "Команде apt-cache stats не нужны аргументы"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -1063,6 +1072,15 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"Использование: apt-cache [параметры] команда\n"
+"       apt-cache [параметры] show пакет1 [пакет2 …]\n"
+"\n"
+"apt-cache ищет и выдаёт доступную информацию об установленных\n"
+"и неустановленных пакетах. Она работает только с данными локального\n"
+"кэша, созданного командой «update» программы apt-get. В следствие\n"
+"этого отображаемая информация может устаревшей, если обновление\n"
+"долго не выполнялось, но зато apt-cache работает независимо от\n"
+"доступности настроенных источников (например, без сети).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -1097,9 +1115,8 @@ msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Задайте имя для этого диска, например «Debian 5.0.3 Disk 1»"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Вставьте диск в устройство и нажмите ввод"
+msgstr "Вставьте диск в устройство и нажмите [Enter]"
 
 #: cmdline/apt-cdrom.cc
 #, c-format
@@ -1132,13 +1149,17 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"Использование: apt-cdrom [параметры] команда\n"
+"\n"
+"apt-cdrom используется для добавления CDROM, накопителей USB и других\n"
+"сменных носителей в качестве источников пакетов APT. Точка монтирования и\n"
+"информация об устройстве берётся из apt.conf(5), udev(7) и fstab(5).\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Непарные аргументы"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -1147,15 +1168,17 @@ msgid ""
 msgstr ""
 "Использование: apt-config [параметры] команда\n"
 "\n"
-"apt-config — простой инструмент для чтения файла настройки APT\n"
+"apt-config — интерфейс к параметрам настройки, используемым\n"
+"всеми инструментами APT, в основном, предназначен для отладки и\n"
+"использования в сценариях оболочки.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "получить значения настройки через вычисления оболочки"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "показать действующее значение настройки"
 
 #: cmdline/apt-get.cc
 #, c-format
@@ -1184,7 +1207,6 @@ msgid "Supported modules:"
 msgstr "Поддерживаемые модули:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1199,9 +1221,9 @@ msgstr ""
 "               apt-get [параметры] install|remove пакет1 [пакет2…]\n"
 "               apt-get [параметры] source пакет1 [пакет2…]\n"
 "\n"
-"apt-get — простая программа с интерфейсом командной строки\n"
-"для скачивания и установки пакетов. Наиболее часто используемые\n"
-"команды — update и install.\n"
+"apt-get — интерфейс командной строки для получения пакетов,\n"
+"информации из доверенных источников, а также установки,\n"
+"обновления и удаления пакетов вместе с их зависимостями.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -1280,10 +1302,9 @@ msgstr "Ошибка при скачивании"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "Ошибка GetSrvRec для %s"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -1293,9 +1314,11 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "Использование: apt-helper [параметры] команда\n"
+"       apt-helper [параметры] cat-файл файл …\n"
 "       apt-helper [параметры] download-file uri target-path\n"
 "\n"
-"apt-helper — вспомогательная программа для apt\n"
+"apt-helper — набор различных команд для сценариев оболочки,\n"
+"которые используются для обмена настройками между APT и системой.\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -1303,11 +1326,11 @@ msgstr "скачать файл по заданному uri в target-path"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "найти запись типа SRV (например, _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "склеить файлы, с автоматическим разжатием"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -1356,20 +1379,19 @@ msgstr "Отмена фиксации для %s.\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "Выбран %s для вычистки.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "Выбран %s для удаления.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "Выбран %s для установки.\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1378,11 +1400,12 @@ msgid ""
 "manipulate the dpkg(1) selection states of packages, and to list\n"
 "all packages with or without a certain marking.\n"
 msgstr ""
-"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2…]\n"
+"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2 …]\n"
 "\n"
 "apt-mark — простая программа с интерфейсом командной строки\n"
-"для отметки пакетов, что они установлены вручную или автоматически.\n"
-"Также может показывать списки помеченных пакетов.\n"
+"для пометки пакетов, что они установлены вручную или автоматически.\n"
+"Также может использоваться для изменения состояния выбора пакетов dpkg(1) и\n"
+"показывать списки пакетов с или без определённой метки.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -1422,6 +1445,13 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"Использование: apt [параметры] команда\n"
+"\n"
+"apt — менеджер пакетов с интерфейсом командной строки, предоставляет команды\n"
+"для поиска и управления, а также запросов информации о пакетах.\n"
+"Он выполняет те же задачи, что и специализированные инструменты APT,\n"
+"например apt-get и apt-cache, но содержит параметры, которые больше\n"
+"подходят для интерактивного использования по умолчанию.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -1734,11 +1764,11 @@ msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
+"Подписанный файл некорректен, получено «%s» (возможно в сети требуется "
 "аутентификация?)"
 
 #: methods/gpgv.cc
@@ -1765,7 +1795,7 @@ msgstr "Неизвестная ошибка при выполнении apt-key"
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
+msgstr "При подписи ключом %s используется нестойкий алгоритм свёртки (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -1902,6 +1932,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"Автоматическое отключение %s из-за некорректного ответа сервера/прокси (man 5 "
+"apt.conf)."
 
 #: methods/server.cc
 msgid "Internal error"
@@ -1917,9 +1949,8 @@ msgstr "Неправильное значение по умолчанию!"
 
 #: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
 #: dselect/install:106 dselect/update:45
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Для продолжения нажмите ввод."
+msgstr "Для продолжения нажмите [Enter]."
 
 #: dselect/install:92
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -1951,7 +1982,6 @@ msgid "Merging available information"
 msgstr "Слияние доступной информации"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1959,15 +1989,11 @@ msgid ""
 "from debian packages. It is used mainly by debconf(1) to prompt for\n"
 "configuration questions before installation of packages.\n"
 msgstr ""
-"Использование: apt-extracttemplates файл1 [файл2…]\n"
+"Использование: apt-extracttemplates файл1 [файл2 …]\n"
 "\n"
-"apt-extracttemplates извлекает из пакетов Debian данные config и template\n"
-"\n"
-"Параметры:\n"
-"  -h   Этот текст\n"
-"  -t   Задать каталог для временных файлов\n"
-"  -c=? Читать указанный файл настройки\n"
-"  -o=? Задать значение произвольной настройке, например, -o dir::cache=/tmp\n"
+"apt-extracttemplates извлекает из пакетов Debian файлы config и template.\n"
+"В основном, она используется debconf(1) для предложения\n"
+"вопросов настройки перед установкой пакетов.\n"
 
 #: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1984,7 +2010,6 @@ msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Невозможно определить версию debconf. Он установлен?"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1995,13 +2020,7 @@ msgstr ""
 "Использование: apt-internal-solver\n"
 "\n"
 "apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
-"для отладки, подобен интерфейсу внешнего решателя семейства APT\n"
-"\n"
-"Параметры:\n"
-"  -h   Этот текст\n"
-"  -q   Вывод протокола работы — индикатор выполнения отключён\n"
-"  -c=? Читать указанный файл настройки\n"
-"  -o=? Задать значение произвольной настройке, например, -o dir::cache=/tmp\n"
+"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
 
 #: cmdline/apt-sortpkgs.cc
 msgid "Unknown package record!"
@@ -2015,6 +2034,12 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"Использование: apt-sortpkgs [параметры] файл1 [файл2 …]\n"
+"\n"
+"apt-sortpkgs — простой инструмент для сортировки информационных файлов\n"
+"пакетов. По умолчанию, он сортирует информацию о двоичных пакетах,\n"
+"но можно указать параметр -s, и будет выполняться сортировка пакетов\n"
+"с исходным кодом.\n"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "Package extension list is too long"
@@ -2348,9 +2373,9 @@ msgid "Failed to read the archive headers"
 msgstr "Не удалось прочитать заголовки архива"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Не удалось найти аутентификационную запись для: %s"
+msgstr "Не удалось найти настроенную программу сжатия для «%s»"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -2477,18 +2502,24 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Обновление из этого репозитория нельзя выполнить безопасным способом, и "
+"поэтому по умолчанию он отключён."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"Данные из этого репозитория нельзя аутентифицировать, и "
+"поэтому потенциально из небезопасно использовать."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Смотрите справочную страницу apt-secure(8) о создании репозитория и "
+"настройке пользователя."
 
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
@@ -2508,18 +2539,17 @@ msgid "Invalid file format"
 msgstr "Неправильный формат файла"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "Ошибка записи"
+msgstr "Ошибка подписи"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
 "Произошла ошибка при проверке подписи. Репозиторий не обновлён и будут "
-"использованы предыдущие индексные файлы. Ошибка GPG: %s: %s\n"
+"использованы предыдущие индексные файлы. Ошибка GPG: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -2533,6 +2563,9 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"Пропускается получение настроенного файла «%s», так как репозиторий «%s» не "
+"поддерживает "
+"архитектуру «%s»"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2549,6 +2582,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"Пропускается получение настроенного файла «s», так как репозиторий «%s»  "
+"предоставляет только нестойкое шифрование информации"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -2571,28 +2606,30 @@ msgstr "Конфликт распространения: %s (ожидался %s
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "Каталог %s входит в список diverted"
+msgstr "Репозиторий «%s» не подписан."
 
 #. No Release file was present so fall
 #. back to queueing Packages files without verification
 #. only allow going further if the user explicitly wants it
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "Каталог %s входит в список diverted"
+msgstr "Репозиторий «%s» не содержит файла Release."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "Каталог %s входит в список diverted"
+msgstr "Репозиторий «%s» больше не подписан."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"Обычно это не разрешается, но указан параметр Acquire::"
+"AllowDowngradeToInsecureRepositories для игнорирования."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2616,9 +2653,9 @@ msgstr "Некорректный перечень пакетов. Нет пол�
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "Changelog для %s (%s)"
+msgstr "Changelog для %s=%s недоступен"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -2636,10 +2673,10 @@ msgid "Method %s did not start correctly"
 msgstr "Метод %s запустился не корректно"
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
+msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите [Enter]."
 
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
@@ -2660,6 +2697,7 @@ msgstr "Невозможно заблокировать каталог %s"
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
+"В системе не пользователя «%s» для песочницы, невозможно сбросить права"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -2667,6 +2705,8 @@ msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
 msgstr ""
+"Невозможно сбросить права для скачивания, так как файл «%s» "
+"недоступен для пользователя «%s»."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -2874,23 +2914,26 @@ msgid "Failed to stat the cdrom"
 msgstr "Невозможно получить атрибуты cdrom"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Неизвестный параметр командной строки «%c» [из %s]."
+msgstr ""
+"Параметр командной строки «%c» [из %s] непонятен в комбинации с другими "
+"параметрами."
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Не распознанный параметр командной строки %s"
+msgstr ""
+"Параметр командной строки «%s» непонятен в комбинации с другими параметрами"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Command line option %s is not boolean"
-msgstr "Параметр командной строки %s — не логический переключатель \"да/нет\""
+msgstr "Параметр командной строки %s — не логический переключатель «да/нет»"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -3066,7 +3109,7 @@ msgstr "Проблема закрытия gzip-файла %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Неожиданный конец файла"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -3221,7 +3264,7 @@ msgstr "Не найдено: %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "Для цели %s нужно получить такой же файл (%s) как %s из источника %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -3229,7 +3272,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "Цель %s (%s) настроена несколько раз в %s и %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3252,6 +3295,8 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Отсутствуют элементы Hash в файле Release %s, который считается достаточно "
+"стойким, с точки зрения безопасности"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -3262,17 +3307,17 @@ msgstr "Неправильный элемент «%s» в файле Release %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
-msgstr ""
+msgstr "Указаны конфликтующие значения параметра %s из источника %s %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
-msgstr ""
+msgstr "Указано некорректное значения параметра %s из источника %s %s (%s)"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse package file %s (%d)"
-msgstr "Невозможно разобрать содержимое пакета %s (1)"
+msgstr "Невозможно разобрать содержимое файла пакета %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
@@ -3587,14 +3632,13 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "Эта версия APT не поддерживает систему версий «%s»"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "Кэш пакетов был собран для другой архитектуры"
+msgstr "Кэш пакетов был собран для другой архитектуры: %s и %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "Кэш пакетов повреждён, он слишком мал"
+msgstr "Кэш пакетов повреждён, содержит некорректный хеш"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -3721,6 +3765,8 @@ msgstr "Неизвестный тип фиксации %s"
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
+"%s: значение %s находится вне диапазона корректных закрепляющих приоритетов "
+"(с %d по %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -3728,9 +3774,9 @@ msgstr "Для фиксации не указан приоритет (или у�
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Неправильная запись о переназначении (override) %s в строке %llu (%s)"
+msgstr "Искажённая запись %u в %s из файла %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -3748,7 +3794,7 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Неизвестный тип «%s» в строке %u в списке источников %s"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
 msgstr "Искажённая строка %u в списке источников %s (тип)"
 
@@ -3760,7 +3806,7 @@ msgstr "Неизвестный тип «%s» в строфе %u в списке 
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "В командной строке указан не поддерживаемый файл"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
@@ -3769,7 +3815,7 @@ msgstr "Вы должны заполнить sources.list, поместив ту
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "Невозможно преобразовать %s в целое число: выход за пределы диапазона"
 
 #: apt-pkg/update.cc
 msgid ""
