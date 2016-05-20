@@ -1117,7 +1117,6 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"pkgCdrom::DropTranslation(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)@APTPKG_5.0" 0.9.7.5
  (c++)"pkgCache::DepIterator::IsSatisfied(pkgCache::PrvIterator const&) const@APTPKG_5.0" 0.9.8
  (c++)"pkgCache::DepIterator::IsSatisfied(pkgCache::VerIterator const&) const@APTPKG_5.0" 0.9.8
- (c++)"operator<<(std::basic_ostream<char, std::char_traits<char> >&, GlobalError::Item)@APTPKG_5.0" 0.9.9
  (c++)"pkgDepCache::IsDeleteOkProtectInstallRequests(pkgCache::PkgIterator const&, bool, unsigned long, bool)@APTPKG_5.0" 0.9.9.1
  (c++)"pkgDepCache::IsInstallOkMultiArchSameVersionSynced(pkgCache::PkgIterator const&, bool, unsigned long, bool)@APTPKG_5.0" 0.9.9.1
  (c++)"pkgDPkgPM::SendPkgsInfo(_IO_FILE*, unsigned int const&)@APTPKG_5.0" 0.9.9.1
@@ -1563,6 +1562,8 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++|optional=std)"void std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> >::emplace_back<pkgCache::VerIterator>(pkgCache::VerIterator&&)@APTPKG_5.0" 1.1~exp15
  (c++|optional=std)"SrvRec* std::__move_merge<__gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, SrvRec*, __gnu_cxx::__ops::_Iter_less_iter>(__gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, __gnu_cxx::__normal_iterator<SrvRec*, std::vector<SrvRec, std::allocator<SrvRec> > >, SrvRec*, __gnu_cxx::__ops::_Iter_less_iter)@APTPKG_5.0" 1.1~exp15
  (c++|optional=std)"void std::vector<std::pair<char*, unsigned long>, std::allocator<std::pair<char*, unsigned long> > >::emplace_back<std::pair<char*, unsigned long> >(std::pair<char*, unsigned long>&&)@APTPKG_5.0" 1.1
+ (c++|optional=std)"char const* const* std::__find_if<char const* const*, __gnu_cxx::__ops::_Iter_equals_val<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const> >(char const* const*, char const* const*, __gnu_cxx::__ops::_Iter_equals_val<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const>, std::random_access_iterator_tag)@APTPKG_5.0" 1.3~exp1
+ (c++|optional=std)"std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> > std::__copy_move_a<false, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> >)@APTPKG_5.0" 1.3~exp1
 ### try to ignore std:: template instances
  (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@APTPKG_5.0$" 0.8.0
  (c++|regex|optional=std)"^(void |)std::[^ ]+<.+ >::(_|~).+\(.*\)@APTPKG_5.0$" 0.8.0
@@ -1570,6 +1571,7 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++|regex|optional=std)"^(void |DiffInfo\* |)std::_.*@APTPKG_5.0$" 0.8.0
  (c++|regex|optional=std)"^__gnu_cxx::__[^ ]+<.*@APTPKG_5.0$" 0.8.0
  (c++|optional=std)"std::ctype<char>::do_widen(char) const@APTPKG_5.0" 1.0.3
+###
  (c++)"APT::Configuration::Compressor::Compressor(APT::Configuration::Compressor&&)@APTPKG_5.0" 1.2
  (c++)"APT::Configuration::Compressor::operator=(APT::Configuration::Compressor&&)@APTPKG_5.0" 1.2
  (c++)"debStringPackageIndex::~debStringPackageIndex()@APTPKG_5.0" 1.2.2
@@ -1584,3 +1586,14 @@ libapt-pkg.so.5.0 libapt-pkg5.0 #MINVER#
  (c++)"typeinfo for debStringPackageIndex@APTPKG_5.0" 1.2.2
  (c++)"typeinfo name for debStringPackageIndex@APTPKG_5.0" 1.2.2
  (c++)"vtable for debStringPackageIndex@APTPKG_5.0" 1.2.2
+ (c++)"operator<<(std::basic_ostream<char, std::char_traits<char> >&, APT::PrettyDep const&)@APTPKG_5.0" 1.3~exp1
+ (c++)"operator<<(std::basic_ostream<char, std::char_traits<char> >&, APT::PrettyPkg const&)@APTPKG_5.0" 1.3~exp1
+ (c++)"URI::URI(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.0" 1.3~exp1
+ (c++)"EDSP::ReadRequest(int, std::__cxx11::list<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::__cxx11::list<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, unsigned int&)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::ResolveExternal(char const*, pkgDepCache&, unsigned int, OpProgress*)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteError(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, FileFd&)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteLimitedScenario(pkgDepCache&, FileFd&, std::vector<bool, std::allocator<bool> > const&, OpProgress*)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteProgress(unsigned short, char const*, FileFd&)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteRequest(pkgDepCache&, FileFd&, unsigned int, OpProgress*)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteScenario(pkgDepCache&, FileFd&, OpProgress*)@APTPKG_5.0" 1.3~exp2
+ (c++)"EDSP::WriteSolution(pkgDepCache&, FileFd&)@APTPKG_5.0" 1.3~exp2
