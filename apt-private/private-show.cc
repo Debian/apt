@@ -258,6 +258,8 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
    APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
+   if (select == APT::CacheSetHelper::CANDIDATE && CacheFile.GetDepCache() == nullptr)
+      return false;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    int const ShowVersion = _config->FindI("APT::Cache::Show::Version", 1);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
@@ -356,10 +358,14 @@ bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
 bool Policy(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgPolicy *Plcy = CacheFile.GetPolicy();
-   pkgSourceList *SrcList = CacheFile.GetSourceList();
-   if (unlikely(Cache == NULL || Plcy == NULL || SrcList == NULL))
+   pkgSourceList const * const SrcList = CacheFile.GetSourceList();
+   if (unlikely(SrcList == nullptr))
+      return false;
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr))
+      return false;
+   pkgPolicy * const Plcy = CacheFile.GetPolicy();
+   if (unlikely(Plcy == nullptr))
       return false;
 
    // Print out all of the package files

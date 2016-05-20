@@ -26,8 +26,8 @@
 static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr || CacheFile.GetDepCache() == nullptr))
       return false;
 
    CacheSetHelperVirtuals helper(false);

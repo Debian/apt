@@ -30,13 +30,18 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
                                  Matcher &matcher,
                                  OpProgress * const progress)
 {
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr))
+      return false;
+   if (progress != nullptr)
+      progress->SubProgress(Cache->Head().PackageCount, _("Sorting"));
+
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   if (unlikely(DepCache == nullptr))
+      return false;
    APT::CacheSetHelper helper(false);
 
    int Done=0;
-   if (progress != NULL)
-      progress->SubProgress(Cache->Head().PackageCount, _("Sorting"));
 
    bool const insertCurrentVer = _config->FindB("APT::Cmd::Installed", false);
    bool const insertUpgradable = _config->FindB("APT::Cmd::Upgradable", false);

@@ -173,6 +173,9 @@ bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 /* */
 bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
 {
+   if (BuildCaches(Progress, false) == false)
+      return false;
+
    std::unique_ptr<pkgDepCache> DCache;
    if (this->DCache != NULL)
       return true;
