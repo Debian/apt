@@ -111,6 +111,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       // force a hashsum for compatibility reasons
       _config->CndSet("Acquire::ForceHash", "md5sum");
    }
+   else if (_config->FindB("APT::Get::Simulate") == true)
+      ;
    else if (Fetcher.GetLock(_config->FindDir("Dir::Cache::Archives")) == false)
       return false;
 
