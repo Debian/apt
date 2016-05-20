@@ -414,7 +414,12 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
       return true;
    }
 
+   _error->PushToStack();
    vector<string> const List = GetListOfFilesInDir(Dir, "pref", true, true);
+   bool const PendingErrors = _error->PendingError();
+   _error->MergeWithStack();
+   if (PendingErrors)
+      return false;
 
    // Read the files
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)

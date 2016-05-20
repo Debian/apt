@@ -4,39 +4,83 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-configarchitecture 'amd64' 'i386'
+configarchitecture 'amd64'
 
-if [ "$(id -u)" = "0" ]; then
-    msgskip "Tests for unreadable sources.list do not work as root"
+if [ "$(id -u)" = '0' ]; then
+    msgskip 'Tests for unreadable files do not work as root'
     exit 0
 fi
 
-insertinstalledpackage 'apt' 'i386' '1'
-buildsimplenativepackage 'apt' 'i386' '2' 'unstable'
+insertinstalledpackage 'foo' 'amd64' '1'
+insertpackage 'unstable' 'foo' 'amd64' '2'
 
-setupaptarchive
+setupaptarchive --no-update
 
-# Test unreadable sources.list files
+touch rootdir/etc/apt/apt.conf.d/unreadable.conf
+touch rootdir/etc/apt/preferences.d/unreadable.pref
+
+addtrap 'prefix' "chmod -R +r '$(escape_shell "$TMPWORKINGDIRECTORY")/rootdir/etc/apt';"
+chmod -r rootdir/etc/apt/trusted.gpg.d
+testfailure apt update
+chmod +r rootdir/etc/apt/trusted.gpg.d
+testsuccess apt update
+testsuccess apt policy foo
+testsuccess apt search foo
+testsuccessequal "Listing...
+foo/unstable 2 amd64 [upgradable from: 1]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list --upgradable
+
+runthemall() {
+	local ERR1="$1"
+	local ERR2="$1$2"
+	testfailureequal "$ERR1" aptcache policy
+	testfailureequal "$ERR1" aptcache policy foo
+	testfailureequal "$ERR2" aptcache depends foo
+	testfailureequal "$ERR2" aptcache rdepends foo
+	testfailureequal "$ERR2" aptcache search foo
+	testfailureequal "$ERR1" apt policy
+	testfailureequal "$ERR1" apt policy foo
+	testfailureequal "$ERR2" apt depends foo
+	testfailureequal "$ERR2" apt rdepends foo
+	testfailureequal "$ERR2" apt search foo
+	testfailureequal "$ERR2" apt list --upgradable
+	testfailureequal "$ERR2" apt show foo
+	testfailureequal "$ERR2" aptcache show foo --no-all-versions
+	testfailureequal "$ERR2" aptmark auto foo
+	testfailureequal "$ERR2" aptmark manual foo
+	testfailureequal "$ERR2" aptmark auto foo
+}
+echo 'Apt::Cmd::Disable-Script-Warning "true";' >> aptconfig.conf
+
+msgmsg 'Unreadable sources file'
+chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+runthemall "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
+E: The list of sources could not be read."
+chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+
+msgmsg 'Unreadable config file'
+chmod -r rootdir/etc/apt/apt.conf.d/unreadable.conf
+runthemall "E: Opening configuration file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/unreadable.conf - ifstream::ifstream (13: Permission denied)"
+chmod +r rootdir/etc/apt/apt.conf.d/unreadable.conf
+
+msgmsg 'Unreadable preferences file'
+chmod -r rootdir/etc/apt/preferences.d/unreadable.pref
+runthemall "E: Could not open file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/unreadable.pref - open (13: Permission denied)"
+chmod +r rootdir/etc/apt/preferences.d/unreadable.pref
+
+msgmsg 'Unreadable sources directory'
 chmod -r rootdir/etc/apt/sources.list.d
-
-testfailureequal "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)
+runthemall "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)" "
 W: You may want to run apt-get update to correct these problems
-E: The package cache file is corrupted" aptcache policy apt
-testfailureequal "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)
-W: You may want to run apt-get update to correct these problems
-E: The package cache file is corrupted" apt search apt
-
+E: The package cache file is corrupted"
 chmod +r rootdir/etc/apt/sources.list.d
 
+msgmsg 'Unreadable config directory'
+chmod -r rootdir/etc/apt/apt.conf.d
+runthemall "E: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/ - opendir (13: Permission denied)"
+chmod +r rootdir/etc/apt/apt.conf.d
 
-# Test unreadable sources.list files
-chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
-
-testfailureequal "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
-E: The list of sources could not be read.
-E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
-E: The list of sources could not be read." aptcache policy apt
-testfailureequal "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
-E: The list of sources could not be read." apt search apt
-
-chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+msgmsg 'Unreadable preferences directory'
+chmod -r rootdir/etc/apt/preferences.d
+runthemall "E: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/ - opendir (13: Permission denied)"
+chmod +r rootdir/etc/apt/preferences.d

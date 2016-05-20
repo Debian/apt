@@ -93,8 +93,8 @@ static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
 bool DoList(CommandLine &Cmd)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr || CacheFile.GetDepCache() == nullptr))
       return false;
    pkgRecords records(CacheFile);
 

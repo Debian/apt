@@ -48,9 +48,8 @@ using namespace std;
 static bool DoAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
-   if (unlikely(Cache == NULL || DepCache == NULL))
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   if (unlikely(DepCache == nullptr))
       return false;
 
    APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
@@ -95,9 +94,8 @@ static bool DoAuto(CommandLine &CmdL)
 static bool DoMarkAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
-   if (unlikely(Cache == NULL || DepCache == NULL))
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   if (unlikely(DepCache == nullptr))
       return false;
 
    APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
@@ -132,9 +130,8 @@ static bool DoMarkAuto(CommandLine &CmdL)
 static bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgDepCache *DepCache = CacheFile.GetDepCache();
-   if (unlikely(Cache == NULL || DepCache == NULL))
+   pkgDepCache * const DepCache = CacheFile.GetDepCache();
+   if (unlikely(DepCache == nullptr))
       return false;
 
    std::vector<string> packages;
@@ -143,8 +140,8 @@ static bool ShowAuto(CommandLine &CmdL)
 
    if (CmdL.FileList[1] == 0)
    {
-      packages.reserve(Cache->HeaderP->PackageCount / 3);
-      for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
+      packages.reserve(DepCache->Head().PackageCount / 3);
+      for (pkgCache::PkgIterator P = DepCache->PkgBegin(); P.end() == false; ++P)
 	 if (P->CurrentVer != 0 &&
 	     (((*DepCache)[P].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto) == ShowAuto)
 	    packages.push_back(P.FullName(true));
@@ -172,8 +169,8 @@ static bool ShowAuto(CommandLine &CmdL)
 static bool DoSelection(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr))
       return false;
 
    APT::VersionVector pkgset = APT::VersionVector::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::INSTCAND);
@@ -238,8 +235,8 @@ static bool DoSelection(CommandLine &CmdL)
 static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
 {
    pkgCacheFile CacheFile;
-   pkgCache *Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
+   pkgCache * const Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == nullptr))
       return false;
 
    pkgCache::State::PkgSelectedState selector;
