@@ -155,7 +155,7 @@ libapt-pkg-doc: build-docbook
 			    doc/style.txt \
 			    $(BLD)/doc/doxygen/html
 	dh_installexamples -p$@
-
+	dh_lintian -p$@
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@ -X.xhtml
