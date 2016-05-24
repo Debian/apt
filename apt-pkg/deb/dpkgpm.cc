@@ -477,7 +477,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
       if (F == 0) {
-         result = _error->Errno("fdopen","Faild to open new FD");
+         result = _error->Errno("fdopen","Failed to open new FD");
          break;
       }
       

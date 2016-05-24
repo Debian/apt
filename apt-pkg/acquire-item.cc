@@ -956,7 +956,7 @@ void pkgAcqMetaBase::AbortTransaction()
    {
       case TransactionStarted: break;
       case TransactionAbort: _error->Fatal("Transaction %s was already aborted and is aborted again", TransactionManager->Target.URI.c_str()); return;
-      case TransactionCommit: _error->Fatal("Transaction %s was already aborted and is now commited", TransactionManager->Target.URI.c_str()); return;
+      case TransactionCommit: _error->Fatal("Transaction %s was already aborted and is now committed", TransactionManager->Target.URI.c_str()); return;
    }
    TransactionManager->State = TransactionAbort;
 
@@ -998,8 +998,8 @@ void pkgAcqMetaBase::CommitTransaction()
    switch (TransactionManager->State)
    {
       case TransactionStarted: break;
-      case TransactionAbort: _error->Fatal("Transaction %s was already commited and is now aborted", TransactionManager->Target.URI.c_str()); return;
-      case TransactionCommit: _error->Fatal("Transaction %s was already commited and is again commited", TransactionManager->Target.URI.c_str()); return;
+      case TransactionAbort: _error->Fatal("Transaction %s was already committed and is now aborted", TransactionManager->Target.URI.c_str()); return;
+      case TransactionCommit: _error->Fatal("Transaction %s was already committed and is again committed", TransactionManager->Target.URI.c_str()); return;
    }
    TransactionManager->State = TransactionCommit;
 
