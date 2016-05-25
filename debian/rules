@@ -42,23 +42,9 @@ endif
 # Default rule
 build:
 
-PKG=apt
-DEB_BUILD_PROG:=debuild --preserve-envvar PATH --preserve-envvar CCACHE_DIR -us -uc $(DEB_BUILD_PROG_OPTS)
-
 # Determine the build directory to use
-BASE=.
-ifdef BUILD
-BUILD_POSSIBLE := $(BUILD) $(BASE)/$(BUILD)
-else
-BUILD_POSSIBLE := $(BASE) $(BASE)/build-$(shell uname --machine) $(BASE)/build
-endif
-BUILDX:= $(foreach i,$(BUILD_POSSIBLE),$(wildcard $(i)/environment.mak*))
-BUILDX:= $(patsubst %/,%,$(firstword $(dir $(BUILDX))))
-override BLD := $(BUILDX)
-
-ifeq ($(words $(BLD)),0)
-override BLD := ./build
-endif
+override BASE := .
+override BLD := $(BASE)/build
 
 # When building without <nocheck>, the header is available and thus the test is
 # successful. When building with <nocheck>, the header is missing, but we still
