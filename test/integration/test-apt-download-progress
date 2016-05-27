@@ -11,13 +11,9 @@ setupenvironment
 changetohttpswebserver
 
 assertprogress() {
-    T="$1"
-    testsuccess grep "dlstatus:1:0:Retrieving file 1 of 1" "$T"
-    if ! grep -E -q "dlstatus:1:(0\..*|([1-9](\..*)?)|[1-9][0-9](\..*)?):Retrieving file 1 of 1" "$T"; then
-        cat "$T"
-        msgfail "Failed to detect download progress"
-    fi
-    testsuccess grep "dlstatus:1:100:Retrieving file 1 of 1" "$T"
+    testsuccess grep "dlstatus:1:0.0000:Retrieving file 1 of 1" "$1"
+    testsuccess grep -E "dlstatus:1:[1-9][0-9]{0,1}\.[0-9]{1,4}:Retrieving file 1 of 1" "$1"
+    testsuccess grep "dlstatus:1:100.0000:Retrieving file 1 of 1" "$1"
 }
 
 # we need to ensure the file is reasonable big so that apt has a chance to

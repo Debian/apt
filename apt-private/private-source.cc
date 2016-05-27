@@ -478,8 +478,8 @@ bool DoSource(CommandLine &CmdL)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
-	    I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
+	    std::to_string(I->Owner->FileSize) << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
 

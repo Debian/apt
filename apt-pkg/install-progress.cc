@@ -87,12 +87,10 @@ void PackageManagerProgressFd::StartDpkg()
    fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
 
    // send status information that we are about to fork dpkg
-   std::ostringstream status;
-   status << "pmstatus:dpkg-exec:" 
-          << (StepsDone/float(StepsTotal)*100.0) 
-          << ":" << _("Running dpkg")
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "pmstatus:dpkg-exec:%.4f:%s\n",
+	 (StepsDone/float(StepsTotal)*100.0), _("Running dpkg"));
+   WriteToStatusFd(std::move(status));
 }
 
 APT_CONST void PackageManagerProgressFd::Stop()
@@ -104,12 +102,10 @@ void PackageManagerProgressFd::Error(std::string PackageName,
                                      unsigned int TotalSteps,
                                      std::string ErrorMessage)
 {
-   std::ostringstream status;
-   status << "pmerror:" << PackageName
-          << ":"  << (StepsDone/float(TotalSteps)*100.0) 
-          << ":" << ErrorMessage
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "pmerror:%s:%.4f:%s\n", PackageName.c_str(),
+	 (StepsDone/float(TotalSteps)*100.0), ErrorMessage.c_str());
+   WriteToStatusFd(std::move(status));
 }
 
 void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
@@ -117,12 +113,10 @@ void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
                                               unsigned int TotalSteps,
                                               std::string ConfMessage)
 {
-   std::ostringstream status;
-   status << "pmconffile:" << PackageName
-          << ":"  << (StepsDone/float(TotalSteps)*100.0) 
-          << ":" << ConfMessage
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "pmconffile:%s:%.4f:%s\n", PackageName.c_str(),
+	 (StepsDone/float(TotalSteps)*100.0), ConfMessage.c_str());
+   WriteToStatusFd(std::move(status));
 }
 
 
@@ -135,12 +129,10 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
    StepsTotal = xTotalSteps;
 
    // build the status str
-   std::ostringstream status;
-   status << "pmstatus:" << StringSplit(PackageName, ":")[0]
-          << ":"  << (StepsDone/float(StepsTotal)*100.0) 
-          << ":" << pkg_action
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "pmstatus:%s:%.4f:%s\n", StringSplit(PackageName, ":")[0].c_str(),
+	 (StepsDone/float(StepsTotal)*100.0), pkg_action.c_str());
+   WriteToStatusFd(std::move(status));
 
    if(_config->FindB("Debug::APT::Progress::PackageManagerFd", false) == true)
       std::cerr << "progress: " << PackageName << " " << xStepsDone
@@ -171,12 +163,10 @@ void PackageManagerProgressDeb822Fd::StartDpkg()
    fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
 
    // send status information that we are about to fork dpkg
-   std::ostringstream status;
-   status << "Status: " << "progress" << std::endl
-          << "Percent: " << (StepsDone/float(StepsTotal)*100.0) << std::endl
-          << "Message: " << _("Running dpkg") << std::endl
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "Status: %s\nPercent: %.4f\nMessage: %s\n\n", "progress",
+	 (StepsDone/float(StepsTotal)*100.0), _("Running dpkg"));
+   WriteToStatusFd(std::move(status));
 }
 
 APT_CONST void PackageManagerProgressDeb822Fd::Stop()
@@ -188,13 +178,10 @@ void PackageManagerProgressDeb822Fd::Error(std::string PackageName,
                                      unsigned int TotalSteps,
                                      std::string ErrorMessage)
 {
-   std::ostringstream status;
-   status << "Status: " << "Error" << std::endl
-          << "Package:" << PackageName << std::endl
-          << "Percent: "  << (StepsDone/float(TotalSteps)*100.0) << std::endl
-          << "Message: " << ErrorMessage << std::endl
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "Error",
+	 PackageName.c_str(), (StepsDone/float(TotalSteps)*100.0), ErrorMessage.c_str());
+   WriteToStatusFd(std::move(status));
 }
 
 void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
@@ -202,13 +189,10 @@ void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
                                               unsigned int TotalSteps,
                                               std::string ConfMessage)
 {
-   std::ostringstream status;
-   status << "Status: " << "ConfFile" << std::endl
-          << "Package:" << PackageName << std::endl
-          << "Percent: "  << (StepsDone/float(TotalSteps)*100.0) << std::endl
-          << "Message: " << ConfMessage << std::endl
-          << std::endl;
-   WriteToStatusFd(status.str());
+   std::string status;
+   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "ConfFile",
+	 PackageName.c_str(), (StepsDone/float(TotalSteps)*100.0), ConfMessage.c_str());
+   WriteToStatusFd(std::move(status));
 }
 
 
@@ -220,15 +204,10 @@ bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
    StepsDone = xStepsDone;
    StepsTotal = xTotalSteps;
 
-   // build the status str
-   std::ostringstream status;
-   status << "Status: " << "progress" << std::endl
-          << "Package: " << PackageName << std::endl
-          << "Percent: "  << (StepsDone/float(StepsTotal)*100.0) << std::endl
-          << "Message: " << message << std::endl
-          << std::endl;
-   WriteToStatusFd(status.str());
-
+   std::string status;
+   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "progress",
+	 PackageName.c_str(), (StepsDone/float(StepsTotal)*100.0), message.c_str());
+   WriteToStatusFd(std::move(status));
    return true;
 }
 
@@ -289,7 +268,7 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      std::cout << "\0337";
          
      // set scroll region (this will place the cursor in the top left)
-     std::cout << "\033[0;" << nr_rows - 1 << "r";
+     std::cout << "\033[0;" << std::to_string(nr_rows - 1) << "r";
             
      // restore cursor but ensure its inside the scrolling area
      std::cout << "\0338";
@@ -390,7 +369,7 @@ bool PackageManagerFancy::DrawStatusLine()
 
    std::cout << save_cursor
       // move cursor position to last row
-             << "\033[" << size.rows << ";0f" 
+             << "\033[" << std::to_string(size.rows) << ";0f"
              << set_bg_color
              << set_fg_color
              << progress_str

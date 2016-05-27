@@ -58,8 +58,8 @@ bool DoUpdate(CommandLine &CmdL)
          if(compExt.empty() == false && 
             APT::String::Endswith(FileName, compExt))
             FileName = FileName.substr(0, FileName.size() - compExt.size() - 1);
-	 c1out << '\'' << I->URI << "' " << FileName << ' ' << 
-            I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+	 c1out << '\'' << I->URI << "' " << FileName << ' ' <<
+	    std::to_string(I->Owner->FileSize) << ' ' << I->Owner->HashSum() << std::endl;
       }
       return true;
    }
