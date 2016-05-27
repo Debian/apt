@@ -173,6 +173,29 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>Compressor</option></term>
+     <listitem><para>
+     This scope defines which compression formats are supported, how compression
+     and decompression can be performed if support for this format isn't built
+     into apt directly and a cost-value indicating how costly it is to compress
+     something in this format. As an example the following configuration stanza
+     would allow apt to download and uncompress as well as create and store
+     files with the low-cost <literal>.reversed</literal> file extension which
+     it will pass to the command <command>rev</command> without additional
+     commandline parameters for compression and uncompression:
+<informalexample><programlisting>
+APT::Compressor::rev {
+	Name "rev";
+	Extension ".reversed";
+	Binary "rev";
+	CompressArg {};
+	UncompressArg {};
+	Cost "10";
+};
+</programlisting></informalexample>
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>Build-Profiles</option></term>
      <listitem><para>
      List of all build profiles enabled for build-dependency resolution,
@@ -529,25 +552,25 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <varlistentry><term><option>CompressionTypes</option></term>
      <listitem><para>List of compression types which are understood by the acquire methods.
      Files like <filename>Packages</filename> can be available in various compression formats.
-     By default the acquire methods can decompress <command>bzip2</command>, <command>lzma</command>
-     and <command>gzip</command> compressed files; with this setting more formats can be added
-     on the fly or the used method can be changed. The syntax for this is:
+     By default the acquire methods can decompress and recompress many common formats like <command>xz</command> and
+     <command>gzip</command>; with this scope the supported formats can be queried, modified
+     as well as support for more formats added (see also <option>APT::Compressor</option>). The syntax for this is:
      <synopsis>Acquire::CompressionTypes::<replaceable>FileExtension</replaceable> "<replaceable>Methodname</replaceable>";</synopsis>
      </para><para>Also, the <literal>Order</literal> subgroup can be used to define in which order
      the acquire system will try to download the compressed files. The acquire system will try the first
      and proceed with the next compression type in this list on error, so to prefer one over the other type
-     simply add the preferred type first - default types not already added will be implicitly appended
+     simply add the preferred type first - types not already added will be implicitly appended
      to the end of the list, so e.g. <synopsis>Acquire::CompressionTypes::Order:: "gz";</synopsis> can
-     be used to prefer <command>gzip</command> compressed files over <command>bzip2</command> and <command>lzma</command>.
-     If <command>lzma</command> should be preferred over <command>gzip</command> and <command>bzip2</command> the
-     configure setting should look like this: <synopsis>Acquire::CompressionTypes::Order { "lzma"; "gz"; };</synopsis>
+     be used to prefer <command>gzip</command> compressed files over all other compression formats.
+     If <command>xz</command> should be preferred over <command>gzip</command> and <command>bzip2</command> the
+     configure setting should look like this: <synopsis>Acquire::CompressionTypes::Order { "xz"; "gz"; };</synopsis>
      It is not needed to add <literal>bz2</literal> to the list explicitly as it will be added automatically.</para>
      <para>Note that the
      <literal>Dir::Bin::<replaceable>Methodname</replaceable></literal>
-     will be checked at run time. If this option has been set, the
-     method will only be used if this file exists; e.g. for the
-     <literal>bzip2</literal> method (the inbuilt) setting is:
-     <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
+     will be checked at run time. If this option has been set and support for
+     this format isn't directly built into apt, the method will only be used if
+     this file exists; e.g. for the <literal>bzip2</literal> method (the
+     inbuilt) setting is: <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
      Note also that list entries specified on the command line will be added at the end of the list
      specified in the configuration files, but before the default entries. To prefer a type in this case
      over the ones specified in the configuration files you can set the option direct - not in list style.

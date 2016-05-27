@@ -466,7 +466,7 @@ void pkgAcquire::SetFds(int &Fd,fd_set *RSet,fd_set *WSet)
 void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 {
    RunFdsSane(RSet, WSet);
-};
+}
 									/*}}}*/
 // Acquire::RunFdsSane - Deal with active FDs				/*{{{*/
 // ---------------------------------------------------------------------

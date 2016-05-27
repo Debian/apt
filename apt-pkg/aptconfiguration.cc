@@ -35,6 +35,7 @@ namespace APT {
 // setDefaultConfigurationForCompressors				/*{{{*/
 static void setDefaultConfigurationForCompressors() {
 	// Set default application paths to check for optional compression types
+	_config->CndSet("Dir::Bin::gzip", "/bin/gzip");
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	_config->CndSet("Dir::Bin::lz4", "/usr/bin/lz4");
@@ -60,6 +61,12 @@ static void setDefaultConfigurationForCompressors() {
 			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
 		}
 	}
+	// setup the defaults for the compressiontypes => method mapping
+	_config->CndSet("Acquire::CompressionTypes::xz","xz");
+	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
+	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
+	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
+	_config->CndSet("Acquire::CompressionTypes::lz4","lz4");
 }
 									/*}}}*/
 // getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
@@ -75,14 +82,6 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 			types.clear();
 	}
 
-	// setup the defaults for the compressiontypes => method mapping
-	_config->CndSet("Acquire::CompressionTypes::xz","xz");
-	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
-	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
-	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
-	_config->CndSet("Acquire::CompressionTypes::lz4","lz4");
-
-	setDefaultConfigurationForCompressors();
 	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
 
 	// load the order setting into our vector
@@ -398,12 +397,12 @@ const Configuration::getCompressors(bool const Cached) {
 		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 400));
 #endif
 
-	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
-	for (std::vector<std::string>::const_iterator c = comp.begin();
-	     c != comp.end(); ++c) {
-		if (c->empty() || *c == "." || *c == "gzip" || *c == "bzip2" || *c == "lzma" || *c == "xz")
+	std::vector<std::string> const comp = _config->FindVector("APT::Compressor", "", true);
+	for (auto const &c: comp)
+	{
+		if (c.empty() || std::any_of(compressors.begin(), compressors.end(), [&c](Compressor const &ac) { return ac.Name == c; }))
 			continue;
-		compressors.push_back(Compressor(c->c_str(), std::string(".").append(*c).c_str(), c->c_str(), "-9", "-d", 100));
+		compressors.push_back(Compressor(c.c_str(), std::string(".").append(c).c_str(), c.c_str(), nullptr, nullptr, 1000));
 	}
 
 	return compressors;

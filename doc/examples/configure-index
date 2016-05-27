@@ -88,6 +88,16 @@ APT
      Post-Invoke {"touch /var/lib/apt/post-update-stamp"; };
   };
 
+  // define a new supported compressor on the fly
+  APT::Compressor::rev {
+     Name "rev";
+     Extension ".reversed";
+     Binary "rev";
+     CompressArg {};
+     UncompressArg {};
+     Cost "10";
+  };
+
   Authentication
   {
      TrustCDROM "false";            // consider the CD-ROM always trusted

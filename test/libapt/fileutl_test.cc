@@ -4,7 +4,9 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/configuration.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <stdlib.h>
@@ -162,26 +164,34 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
 
 static void TestFileFd(unsigned int const filemode)
 {
-   std::vector<APT::Configuration::Compressor> compressors = APT::Configuration::getCompressors();
-
-   // testing the (un)compress via pipe, as the 'real' compressors are usually built in via libraries
-   compressors.push_back(APT::Configuration::Compressor("rev", ".reversed", "rev", NULL, NULL, 42));
-   //compressors.push_back(APT::Configuration::Compressor("cat", ".ident", "cat", NULL, NULL, 42));
-
-   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin(); c != compressors.end(); ++c)
+   auto const compressors = APT::Configuration::getCompressors();
+   EXPECT_EQ(7, compressors.size());
+   bool atLeastOneWasTested = false;
+   for (auto const &c: compressors)
    {
       if ((filemode & FileFd::ReadWrite) == FileFd::ReadWrite &&
-	    (c->Name.empty() != true && c->Binary.empty() != true))
+	    (c.Name.empty() != true && c.Binary.empty() != true))
 	 continue;
-      TestFileFd(0002, 0664, filemode, *c);
-      TestFileFd(0022, 0644, filemode, *c);
-      TestFileFd(0077, 0600, filemode, *c);
-      TestFileFd(0026, 0640, filemode, *c);
+      atLeastOneWasTested = true;
+      TestFileFd(0002, 0664, filemode, c);
+      TestFileFd(0022, 0644, filemode, c);
+      TestFileFd(0077, 0600, filemode, c);
+      TestFileFd(0026, 0640, filemode, c);
    }
+   EXPECT_TRUE(atLeastOneWasTested);
 }
 
 TEST(FileUtlTest, FileFD)
 {
+   // testing the (un)compress via pipe, as the 'real' compressors are usually built in via libraries
+   _config->Set("APT::Compressor::rev::Name", "rev");
+   _config->Set("APT::Compressor::rev::Extension", ".reversed");
+   _config->Set("APT::Compressor::rev::Binary", "rev");
+   _config->Set("APT::Compressor::rev::Cost", 10);
+   auto const compressors = APT::Configuration::getCompressors(false);
+   EXPECT_EQ(7, compressors.size());
+   EXPECT_TRUE(std::any_of(compressors.begin(), compressors.end(), [](APT::Configuration::Compressor const &c) { return c.Name == "rev"; }));
+
    std::string const startdir = SafeGetCWD();
    EXPECT_FALSE(startdir.empty());
    std::string tempdir;

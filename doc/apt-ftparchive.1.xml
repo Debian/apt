@@ -88,23 +88,26 @@
      <varlistentry><term><option>release</option></term>
      <listitem><para>
      The <literal>release</literal> command generates a Release file from a
-     directory tree. It recursively searches the given directory for uncompressed
-     <filename>Packages</filename> and <filename>Sources</filename> files and ones
-     compressed with <command>gzip</command>, <command>bzip2</command> or <command>lzma</command>
-     as well as <filename>Release</filename> and <filename>md5sum.txt</filename> files by default
-     (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Additional filename patterns
-     can be added by listing them in <literal>APT::FTPArchive::Release::Patterns</literal>.
-     It then writes to stdout a <filename>Release</filename> file containing (by default) an MD5,
+     directory tree. It recursively searches the given directory for
+     uncompressed and compressed <filename>Packages</filename>,
+     <filename>Sources</filename>, <filename>Contents</filename>,
+     <filename>Components</filename> and <filename>icons</filename> files as
+     well as <filename>Release</filename>, <filename>Index</filename> and
+     <filename>md5sum.txt</filename> files by default
+     (<literal>APT::FTPArchive::Release::Default-Patterns</literal>).
+     Additional filename patterns can be added by listing them in
+     <literal>APT::FTPArchive::Release::Patterns</literal>.  It then writes to
+     stdout a <filename>Release</filename> file containing (by default) an MD5,
      SHA1, SHA256 and SHA512 digest for each file.</para>
      <para>
      Values for the additional metadata fields in the Release file are
      taken from the corresponding variables under
      <literal>APT::FTPArchive::Release</literal>,
-     e.g. <literal>APT::FTPArchive::Release::Origin</literal>.  The supported fields
-     are: <literal>Origin</literal>, <literal>Label</literal>, <literal>Suite</literal>,
+     e.g. <literal>APT::FTPArchive::Release::Origin</literal>. The supported fields
+     are <literal>Origin</literal>, <literal>Label</literal>, <literal>Suite</literal>,
      <literal>Version</literal>, <literal>Codename</literal>, <literal>Date</literal>,
-     <literal>Valid-Until</literal>, <literal>Architectures</literal>,
-     <literal>Components</literal>, <literal>Description</literal>.</para></listitem>
+     <literal>Valid-Until</literal>, <literal>Signed-By</literal>, <literal>Architectures</literal>,
+     <literal>Components</literal> and <literal>Description</literal>.</para></listitem>
 
      </varlistentry>
 
@@ -177,10 +180,11 @@
      <variablelist>     
       <varlistentry><term><option>Packages::Compress</option></term>
       <listitem><para>
-      Sets the default compression schemes to use 
-      for the package index files. It is a string that contains a space 
-      separated list of at least one of: '.' (no compression), 'gzip' and 
-      'bzip2'. The default for all compression schemes is '. gzip'.</para></listitem>
+      Sets the default compression schemes to use
+      for the package index files. It is a string that contains a space
+      separated list of at least one of the compressors configured via the
+      <option>APT::Compressor</option> configuration scope.
+      The default for all compression schemes is '. gzip'.</para></listitem>
       </varlistentry>
 
       <varlistentry><term><option>Packages::Extensions</option></term>
