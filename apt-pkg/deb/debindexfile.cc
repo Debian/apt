@@ -194,7 +194,7 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
       return _error->Error("Popen failed");
 
    content << "Filename: " << debfile << "\n";
-   content << "Size: " << Buf.st_size << "\n";
+   content << "Size: " << std::to_string(Buf.st_size) << "\n";
    bool first_line_seen = false;
    char buffer[1024];
    do {

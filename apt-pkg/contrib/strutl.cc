@@ -1653,7 +1653,7 @@ URI::operator string()
 	 Res << Host;
 
       if (Port != 0)
-	 Res << ':' << Port;
+	 Res << ':' << std::to_string(Port);
    }
 
    if (Path.empty() == false)

@@ -708,7 +708,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       C.f. https://tools.ietf.org/wg/httpbis/trac/ticket/158 */
    Req << "GET " << requesturi << " HTTP/1.1\r\n";
    if (Uri.Port != 0)
-      Req << "Host: " << ProperHost << ":" << Uri.Port << "\r\n";
+      Req << "Host: " << ProperHost << ":" << std::to_string(Uri.Port) << "\r\n";
    else
       Req << "Host: " << ProperHost << "\r\n";
 
@@ -717,7 +717,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req << "Cache-Control: no-cache\r\n"
 	 << "Pragma: no-cache\r\n";
    else if (Itm->IndexFile == true)
-      Req << "Cache-Control: max-age=" << _config->FindI("Acquire::http::Max-Age",0) << "\r\n";
+      Req << "Cache-Control: max-age=" << std::to_string(_config->FindI("Acquire::http::Max-Age",0)) << "\r\n";
    else if (_config->FindB("Acquire::http::No-Store",false) == true)
       Req << "Cache-Control: no-store\r\n";
 

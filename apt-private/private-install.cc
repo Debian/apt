@@ -257,7 +257,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
 	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
-	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
+	       std::to_string(I->Owner->FileSize) << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
 

@@ -102,7 +102,7 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
 	 _error->Error(_("GetSrvRec failed for %s"), name.c_str());
 
       for (SrvRec const &I : srv_records)
-	 c1out << I.target << "\t" << I.priority << "\t" << I.weight << "\t" << I.port << std::endl;
+	 ioprintf(c1out, "%s\t%d\t%d\t%d\n", I.target.c_str(), I.priority, I.weight, I.port);
    }
    return true;
 }

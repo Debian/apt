@@ -623,12 +623,12 @@ SourcesWriter::SourcesWriter(FileFd * const GivenOutput, string const &DB, strin
 // SourcesWriter::DoPackage - Process a single package			/*{{{*/
 static std::string getDscHash(unsigned int const DoHashes,
       Hashes::SupportedHashes const DoIt, pkgTagSection &Tags, char const * const FieldName,
-      HashString const * const Hash, unsigned long long Size, std::string FileName)
+      HashString const * const Hash, unsigned long long Size, std::string const &FileName)
 {
    if ((DoHashes & DoIt) != DoIt || Tags.Exists(FieldName) == false || Hash == NULL)
       return "";
    std::ostringstream out;
-   out << "\n " << Hash->HashValue() << " " << Size << " " << FileName
+   out << "\n " << Hash->HashValue() << " " << std::to_string(Size) << " " << FileName
       << "\n " << Tags.FindS(FieldName);
    return out.str();
 }
@@ -802,7 +802,7 @@ bool SourcesWriter::DoPackage(string FileName)
 	    if (Tags.Exists(fieldname) == true)
 	       continue;
 	    std::ostringstream streamout;
-	    streamout << "\n " << hs->HashValue() << " " << Db.GetFileSize() << " " << ParseJnk;
+	    streamout << "\n " << hs->HashValue() << " " << std::to_string(Db.GetFileSize()) << " " << ParseJnk;
 	    out->append(streamout.str());
 	 }
 
