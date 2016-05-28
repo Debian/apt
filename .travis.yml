@@ -3,13 +3,15 @@ sudo: required
 dist: trusty
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
+ - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
  - |
    sudo sh -c '/bin/echo -e "Package: *\nPin: release n=wily\nPin-Priority: 1" > /etc/apt/preferences.d/wily'
  - sudo apt-get update -qq
 install:
  - sudo ./prepare-release travis-ci
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - make
+ - sudo apt-get -qq -y install gcc-5 g++-5
+ - CC=gcc-5 CXX=g++-5 make
 script:
  - make test
  - ./test/integration/run-tests -q
