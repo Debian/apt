@@ -125,5 +125,59 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 }
 									/*}}}*/
 
+// ListParser::eippListParser - Constructor				/*{{{*/
+eippListParser::eippListParser(FileFd *File) : edspLikeListParser(File)
+{
+}
+									/*}}}*/
+// ListParser::ParseStatus - Parse the status field			/*{{{*/
+// ---------------------------------------------------------------------
+/* The Status: line here is not a normal dpkg one but just one which tells
+   use if the package is installed or not, where missing means not. */
+bool eippListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
+				pkgCache::VerIterator &Ver)
+{
+   // Process the flag field
+   static std::array<WordList, 8> const statusvalues = {{
+      {"not-installed",pkgCache::State::NotInstalled},
+      {"config-files",pkgCache::State::ConfigFiles},
+      {"half-installed",pkgCache::State::HalfInstalled},
+      {"unpacked",pkgCache::State::UnPacked},
+      {"half-configured",pkgCache::State::HalfConfigured},
+      {"triggers-awaited",pkgCache::State::TriggersAwaited},
+      {"triggers-pending",pkgCache::State::TriggersPending},
+      {"installed",pkgCache::State::Installed},
+   }};
+   auto const status = Section.Find("Status");
+   if (status.empty() == false)
+   {
+      for (auto && sv: statusvalues)
+      {
+	 if (status != sv.Str)
+	    continue;
+	 Pkg->CurrentState = sv.Val;
+	 switch (Pkg->CurrentState)
+	 {
+	    case pkgCache::State::NotInstalled:
+	    case pkgCache::State::ConfigFiles:
+	       break;
+	    case pkgCache::State::HalfInstalled:
+	    case pkgCache::State::UnPacked:
+	    case pkgCache::State::HalfConfigured:
+	    case pkgCache::State::TriggersAwaited:
+	    case pkgCache::State::TriggersPending:
+	    case pkgCache::State::Installed:
+	       Pkg->CurrentVer = Ver.Index();
+	       break;
+	 }
+	 break;
+      }
+   }
+
+   return true;
+}
+									/*}}}*/
+
 edspLikeListParser::~edspLikeListParser() {}
 edspListParser::~edspListParser() {}
+eippListParser::~eippListParser() {}

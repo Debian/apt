@@ -1039,8 +1039,12 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 
    std::string const planer = _config->Find("APT::Planer", "internal");
    if (planer != "internal")
-      if (EIPP::OrderInstall(planer.c_str(), Cache, 0, nullptr) == false)
+   {
+      if (EIPP::OrderInstall(planer.c_str(), this, 0, nullptr))
+	 return Completed;
+      else
 	 return Failed;
+   }
 
    bool const ordering =
 	_config->FindB("PackageManager::UnpackAll",true) ?

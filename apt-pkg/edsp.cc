@@ -12,6 +12,8 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/edsp.h>
@@ -659,8 +661,12 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			return false;
 		} else if (section.Exists("Autoremove") == true)
 			type = "Autoremove";
-		else
+		else {
+			char const *Start, *End;
+			section.GetSection(Start, End);
+			_error->Warning("Encountered an unexpected section with %d fields: %s", section.Count(), std::string(Start, End).c_str());
 			continue;
+		}
 
 		size_t const id = section.FindULL(type.c_str(), VersionCount);
 		if (id == VersionCount) {
@@ -1065,7 +1071,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 }
 									/*}}}*/
 
-bool EIPP::OrderInstall(char const * const solver, pkgDepCache &Cache,	/*{{{*/
+bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,	/*{{{*/
 			 unsigned int const flags, OpProgress * const Progress)
 {
    int solver_in, solver_out;
@@ -1080,15 +1086,15 @@ bool EIPP::OrderInstall(char const * const solver, pkgDepCache &Cache,	/*{{{*/
    bool Okay = output.Failed() == false;
    if (Progress != NULL)
       Progress->OverallProgress(0, 100, 5, _("Execute external planer"));
-   Okay &= EIPP::WriteRequest(Cache, output, flags, Progress);
+   Okay &= EIPP::WriteRequest(PM->Cache, output, flags, Progress);
    if (Progress != NULL)
       Progress->OverallProgress(5, 100, 20, _("Execute external planer"));
-   Okay &= EIPP::WriteScenario(Cache, output, Progress);
+   Okay &= EIPP::WriteScenario(PM->Cache, output, Progress);
    output.Close();
 
    if (Progress != NULL)
       Progress->OverallProgress(25, 100, 75, _("Execute external planer"));
-   if (Okay && EIPP::ReadResponse(solver_out, Cache, Progress) == false)
+   if (Okay && EIPP::ReadResponse(solver_out, PM, Progress) == false)
       return false;
 
    return ExecWait(solver_pid, solver);
@@ -1113,7 +1119,7 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
 	 req = &purge;
       if (P.Delete() == true)
 	 req = &del;
-      else if (P.NewInstall() == true || P.Upgrade() == true)
+      else if (P.NewInstall() == true || P.Upgrade() == true || P.Downgrade() == true)
 	 req = &inst;
       else if (P.ReInstall() == true)
 	 req = &reinst;
@@ -1228,27 +1234,25 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 }
 									/*}}}*/
 // EIPP::ReadResponse - from the given file descriptor			/*{{{*/
-bool EIPP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress) {
+bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgress *Progress) {
    /* We build an map id to mmap offset here
       In theory we could use the offset as ID, but then VersionCount
       couldn't be used to create other versionmappings anymore and it
       would be too easy for a (buggy) solver to segfault APT… */
-   /*
-   unsigned long long const VersionCount = Cache.Head().VersionCount;
+   unsigned long long const VersionCount = PM->Cache.Head().VersionCount;
    unsigned long VerIdx[VersionCount];
-   for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P) {
+   for (pkgCache::PkgIterator P = PM->Cache.PkgBegin(); P.end() == false; ++P) {
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 	 VerIdx[V->ID] = V.Index();
    }
-   */
 
    FileFd in;
    in.OpenDescriptor(input, FileFd::ReadOnly);
    pkgTagFile response(&in, 100);
    pkgTagSection section;
 
-   std::set<decltype(Cache.PkgBegin()->ID)> seenOnce;
    while (response.Step(section) == true) {
+      char const * type = nullptr;
       if (section.Exists("Progress") == true) {
 	 if (Progress != NULL) {
 	    string msg = section.FindS("Message");
@@ -1270,8 +1274,130 @@ bool EIPP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 	 std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
 	 std::cerr << msg << std::endl << std::endl;
 	 return false;
-      } else {
-	 _error->Warning("Encountered an unexpected section with %d fields", section.Count());
+      } else if (section.Exists("Install") == true)
+	 type = "Install";
+      else if (section.Exists("Configure") == true)
+	 type = "Configure";
+      else if (section.Exists("Remove") == true)
+	 type = "Remove";
+      else {
+	 char const *Start, *End;
+	 section.GetSection(Start, End);
+	 _error->Warning("Encountered an unexpected section with %d fields: %s", section.Count(), std::string(Start, End).c_str());
+	 continue;
+      }
+
+      if (type == nullptr)
+	 continue;
+      size_t const id = section.FindULL(type, VersionCount);
+      if (id == VersionCount) {
+	 _error->Warning("Unable to parse %s request with id value '%s'!", type, section.FindS(type).c_str());
+	 continue;
+      } else if (id > PM->Cache.Head().VersionCount) {
+	 _error->Warning("ID value '%s' in %s request stanza is to high to refer to a known version!", section.FindS(type).c_str(), type);
+	 continue;
+      }
+
+      pkgCache::VerIterator Ver(PM->Cache.GetCache(), PM->Cache.GetCache().VerP + VerIdx[id]);
+      auto const Pkg = Ver.ParentPkg();
+      if (strcmp(type, "Install") == 0)
+	 PM->Install(Pkg, PM->FileNames[Pkg->ID]);
+      else if (strcmp(type, "Configure") == 0)
+	 PM->Configure(Pkg);
+      else if (strcmp(type, "Remove") == 0)
+	 PM->Remove(Pkg, PM->Cache[Pkg].Purge());
+   }
+   return true;
+}
+									/*}}}*/
+bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTION>> &actions,/*{{{*/
+      unsigned int &flags)
+{
+   actions.clear();
+   flags = 0;
+   std::string line;
+   while (ReadLine(input, line) == true)
+   {
+      // Skip empty lines before request
+      if (line.empty() == true)
+	 continue;
+      // The first Tag must be a request, so search for it
+      if (line.compare(0, 8, "Request:") != 0)
+	 continue;
+
+      while (ReadLine(input, line) == true)
+      {
+	 // empty lines are the end of the request
+	 if (line.empty() == true)
+	    return true;
+
+	 PKG_ACTION pkgact = PKG_ACTION::NOOP;
+	 if (LineStartsWithAndStrip(line, "Install:"))
+	    pkgact = PKG_ACTION::INSTALL;
+	 else if (LineStartsWithAndStrip(line, "ReInstall:"))
+	    pkgact = PKG_ACTION::REINSTALL;
+	 else if (LineStartsWithAndStrip(line, "Remove:"))
+	    pkgact = PKG_ACTION::REMOVE;
+	 else if (LineStartsWithAndStrip(line, "Architecture:"))
+	    _config->Set("APT::Architecture", line);
+	 else if (LineStartsWithAndStrip(line, "Architectures:"))
+	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
+	 else if (LineStartsWithAndStrip(line, "Planer:"))
+	    ; // purely informational line
+	 else
+	    _error->Warning("Unknown line in EIPP Request stanza: %s", line.c_str());
+
+	 if (pkgact == PKG_ACTION::NOOP)
+	    continue;
+	 for (auto && p: VectorizeString(line, ' '))
+	    actions.emplace_back(std::move(p), pkgact);
+      }
+   }
+   return false;
+
+
+   return false;
+}
+									/*}}}*/
+bool EIPP::ApplyRequest(std::list<std::pair<std::string,PKG_ACTION>> &actions,/*{{{*/
+	 pkgDepCache &Cache)
+{
+   for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      short versions = 0;
+      for (auto Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      {
+	 ++versions;
+	 if (Pkg.CurrentVer() == Ver)
+	    continue;
+	 Cache.SetCandidateVersion(Ver);
+      }
+      if (unlikely(versions > 2))
+	 _error->Warning("Package %s has %d versions, but should have at most 2!", Pkg.FullName().c_str(), versions);
+   }
+   for (auto && a: actions)
+   {
+      pkgCache::PkgIterator P = Cache.FindPkg(a.first);
+      if (P.end() == true)
+      {
+	 _error->Warning("Package %s is not known, so can't be acted on", a.first.c_str());
+	 continue;
+      }
+      switch (a.second)
+      {
+	 case PKG_ACTION::NOOP:
+	    _error->Warning("Package %s has NOOP as action?!?", a.first.c_str());
+	    break;
+	 case PKG_ACTION::INSTALL:
+	    Cache.MarkInstall(P, false);
+	    break;
+	 case PKG_ACTION::REINSTALL:
+	    Cache.MarkInstall(P, false);
+	    Cache.SetReInstall(P, true);
+	    break;
+	 case PKG_ACTION::REMOVE:
+	    Cache.MarkDelete(P);
+	    break;
       }
    }
    return true;

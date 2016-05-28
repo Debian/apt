@@ -51,4 +51,14 @@ public:
    edspListParser(FileFd *File);
    virtual ~edspListParser();
 };
+
+class APT_HIDDEN eippListParser : public edspLikeListParser
+{
+protected:
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
+
+public:
+   eippListParser(FileFd *File);
+   virtual ~eippListParser();
+};
 #endif

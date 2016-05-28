@@ -57,4 +57,13 @@ public:
    virtual ~edspSystem();
 };
 
+class APT_HIDDEN eippSystem : public edspLikeSystem
+{
+   public:
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
+
+   eippSystem();
+   virtual ~eippSystem();
+};
+
 #endif

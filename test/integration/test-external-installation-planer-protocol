@@ -26,3 +26,6 @@ testfailure aptget install foo --planer dump -y
 testfailure grep 'unrelated-2' "$APT_EDSP_DUMP_FILENAME"
 testsuccessequal '2' grep -c '^Package: foo$' "$APT_EDSP_DUMP_FILENAME"
 testsuccessequal '1' grep -c '^Package: libfoo$' "$APT_EDSP_DUMP_FILENAME"
+#less "$APT_EDSP_DUMP_FILENAME"
+
+aptget install foo -ys #--planer apt

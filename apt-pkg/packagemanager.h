@@ -24,6 +24,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/init.h>
+#include <apt-pkg/edsp.h>
 #include <apt-pkg/macros.h>
 
 #include <string>
@@ -43,12 +44,13 @@ class pkgDepCache;
 class pkgSourceList;
 class pkgOrderList;
 class pkgRecords;
+class OpProgress;
+class pkgPackageManager;
 namespace APT {
    namespace Progress {
       class PackageManager;
    }
 }
-
 
 class pkgPackageManager : protected pkgCache::Namespace
 {
@@ -114,6 +116,11 @@ class pkgPackageManager : protected pkgCache::Namespace
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
    APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstall(int statusFd=-1);
+
+   friend bool EIPP::OrderInstall(char const * const planer, pkgPackageManager * const PM,
+	 unsigned int const version, OpProgress * const Progress);
+   friend bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM,
+	 OpProgress * const Progress);
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt

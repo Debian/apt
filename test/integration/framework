@@ -191,6 +191,7 @@ aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
 aptdumpsolver() { runapt "${APTDUMPSOLVER}" "$@"; }
+aptinternalplaner() { runapt "${APTINTERNALPLANER}" "$@"; }
 
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
@@ -289,6 +290,7 @@ setupenvironment() {
         APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}"
         APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}"
 	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}"
+	APTINTERNALPLANER="${APT_INTEGRATION_TESTS_INTERNAL_PLANER:-"${BUILDDIRECTORY}/apt-internal-planer"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
@@ -306,6 +308,7 @@ setupenvironment() {
 		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
 		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/planers/dump
 		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
+		ln -s "${BUILDDIRECTORY}/apt-internal-planer" usr/lib/apt/planers/apt
 		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" > etc/apt/apt.conf.d/externalsolver.conf
 		echo "Dir::Bin::Planers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planers\";" > etc/apt/apt.conf.d/externalplaner.conf
 	fi

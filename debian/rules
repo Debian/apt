@@ -189,8 +189,9 @@ apt: build-binary build-manpages debian/apt.install
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver internal-solver)
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver internal-solver internal-planer)
 	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
+	ln -s ../solvers/dump debian/$@/usr/lib/apt/planers/dump
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -252,6 +253,7 @@ apt-utils: build-binary build-manpages
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	cp $(BLD)/bin/apt-internal-solver debian/$@/usr/lib/apt/solvers/apt
+	cp $(BLD)/bin/apt-internal-planer debian/$@/usr/lib/apt/planers/apt
 
 	dh_install -p$@ --sourcedir=$(BLD)
 	dh_link -p$@

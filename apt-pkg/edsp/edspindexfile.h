@@ -46,4 +46,17 @@ public:
    virtual ~edspIndex();
 };
 
+class APT_HIDDEN eippIndex : public edspLikeIndex
+{
+protected:
+   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
+   virtual std::string GetComponent() const APT_OVERRIDE;
+
+public:
+   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+
+   eippIndex(std::string const &File);
+   virtual ~eippIndex();
+};
+
 #endif

@@ -35,6 +35,9 @@ edspLikeSystem::edspLikeSystem(char const * const Label) : pkgSystem(Label, &deb
 edspSystem::edspSystem() : edspLikeSystem("Debian APT solver interface")
 {
 }
+eippSystem::eippSystem() : edspLikeSystem("Debian APT planer interface")
+{
+}
 									/*}}}*/
 // System::Lock - Get the lock						/*{{{*/
 bool edspLikeSystem::Lock()
@@ -134,6 +137,19 @@ bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
    return true;
 }
 									/*}}}*/
+bool eippSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
+{
+   if (StatusFile == nullptr)
+   {
+      if (_config->Find("eipp::scenario", "") == "/nonexistent/stdin")
+	 StatusFile.reset(new eippIndex("/nonexistent/stdin"));
+      else
+	 StatusFile.reset(new eippIndex(_config->FindFile("eipp::scenario")));
+   }
+   List.push_back(StatusFile.get());
+   return true;
+}
+									/*}}}*/
 
 edspLikeSystem::~edspLikeSystem() {}
 edspSystem::~edspSystem()
@@ -145,5 +161,7 @@ edspSystem::~edspSystem()
    RemoveFile("~edspSystem", tempPrefsFile);
    rmdir(tempDir.c_str());
 }
+eippSystem::~eippSystem() {}
 
 APT_HIDDEN edspSystem edspSys;
+APT_HIDDEN eippSystem eippSys;

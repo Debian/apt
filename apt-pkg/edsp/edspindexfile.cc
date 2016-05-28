@@ -69,6 +69,25 @@ pkgCacheListParser * edspIndex::CreateListParser(FileFd &Pkg)
    return newError ? NULL : Parser;
 }
 									/*}}}*/
+// EIPP Index								/*{{{*/
+eippIndex::eippIndex(std::string const &File) : edspLikeIndex(File)
+{
+}
+std::string eippIndex::GetComponent() const
+{
+   return "eipp";
+}
+pkgCacheListParser * eippIndex::CreateListParser(FileFd &Pkg)
+{
+   if (Pkg.IsOpen() == false)
+      return NULL;
+   _error->PushToStack();
+   pkgCacheListParser * const Parser = new eippListParser(&Pkg);
+   bool const newError = _error->PendingError();
+   _error->MergeWithStack();
+   return newError ? NULL : Parser;
+}
+									/*}}}*/
 
 // Index File types for APT						/*{{{*/
 class APT_HIDDEN edspIFType: public pkgIndexFile::Type
@@ -82,12 +101,28 @@ class APT_HIDDEN edspIFType: public pkgIndexFile::Type
    edspIFType() {Label = "EDSP scenario file";};
 };
 APT_HIDDEN edspIFType _apt_Edsp;
-
 const pkgIndexFile::Type *edspIndex::GetType() const
 {
    return &_apt_Edsp;
+}
+
+class APT_HIDDEN eippIFType: public pkgIndexFile::Type
+{
+   public:
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &) const APT_OVERRIDE
+   {
+      // we don't have a record parser for this type as the file is not presistent
+      return NULL;
+   };
+   eippIFType() {Label = "EIPP scenario file";};
+};
+APT_HIDDEN eippIFType _apt_Eipp;
+const pkgIndexFile::Type *eippIndex::GetType() const
+{
+   return &_apt_Eipp;
 }
 									/*}}}*/
 
 edspLikeIndex::~edspLikeIndex() {}
 edspIndex::~edspIndex() {}
+eippIndex::~eippIndex() {}
