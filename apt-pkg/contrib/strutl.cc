@@ -21,16 +21,19 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <algorithm>
+#include <iomanip>
+#include <locale>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string>
-#include <vector>
 #include <ctype.h>
 #include <string.h>
-#include <sstream>
 #include <stdio.h>
-#include <algorithm>
 #include <unistd.h>
 #include <regex.h>
 #include <errno.h>
@@ -921,29 +924,56 @@ static time_t timegm(struct tm *t)
 }
 #endif
 									/*}}}*/
-// FullDateToTime - Converts a HTTP1.1 full date strings into a time_t	/*{{{*/
+// RFC1123StrToTime - Converts a HTTP1.1 full date strings into a time_t	/*{{{*/
 // ---------------------------------------------------------------------
-/* tries to parses a full date as specified in RFC2616 Section 3.3.1
-   with one exception: All timezones (%Z) are accepted but the protocol
-   says that it MUST be GMT, but this one is equal to UTC which we will
-   encounter from time to time (e.g. in Release files) so we accept all
-   here and just assume it is GMT (or UTC) later on */
+/* tries to parses a full date as specified in RFC7231 §7.1.1.1
+   with one exception: HTTP/1.1 valid dates need to have GMT as timezone.
+   As we encounter dates from UTC or with a numeric timezone in other places,
+   we allow them here to to be able to reuse the method. Either way, a date
+   must be in UTC or parsing will fail. Previous implementations of this
+   method used to ignore the timezone and assume always UTC. */
 bool RFC1123StrToTime(const char* const str,time_t &time)
 {
-   struct tm Tm;
-   setlocale (LC_ALL,"C");
-   bool const invalid =
-   // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
-      (strptime(str, "%a, %d %b %Y %H:%M:%S %Z", &Tm) == NULL &&
-   // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
-       strptime(str, "%A, %d-%b-%y %H:%M:%S %Z", &Tm) == NULL &&
-   // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
-       strptime(str, "%a %b %d %H:%M:%S %Y", &Tm) == NULL);
-   setlocale (LC_ALL,"");
-   if (invalid == true)
+   struct tm t;
+   auto const &posix = std::locale("C.UTF-8");
+   auto const parse_time = [&](char const * const s, bool const has_timezone) {
+      std::istringstream ss(str);
+      ss.imbue(posix);
+      ss >> std::get_time(&t, s);
+      if (has_timezone && ss.fail() == false)
+      {
+	 std::string timezone;
+	 ss >> timezone;
+	 if (timezone.empty())
+	    return false;
+	 if (timezone != "GMT" && timezone != "UTC" && timezone != "Z") // RFC 822
+	 {
+	    // numeric timezones as a should of RFC 1123 and generally preferred
+	    try {
+	       size_t pos;
+	       auto const zone = std::stoi(timezone, &pos);
+	       if (zone != 0 || pos != timezone.length())
+		  return false;
+	    } catch (...) {
+	       return false;
+	    }
+	 }
+      }
+      t.tm_isdst = 0;
+      return ss.fail() == false;
+   };
+
+   bool const good =
+      // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+      parse_time("%a, %d %b %Y %H:%M:%S", true) ||
+      // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+      parse_time("%A, %d-%b-%y %H:%M:%S", true) ||
+      // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+      parse_time("%c", false); // "%a %b %d %H:%M:%S %Y"
+   if (good == false)
       return false;
 
-   time = timegm(&Tm);
+   time = timegm(&t);
    return true;
 }
 									/*}}}*/
