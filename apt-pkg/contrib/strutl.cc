@@ -754,15 +754,11 @@ string TimeRFC1123(time_t Date)
    if (gmtime_r(&Date, &Conv) == NULL)
       return "";
 
-   char Buf[300];
-   const char *Day[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-   const char *Month[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul",
-                          "Aug","Sep","Oct","Nov","Dec"};
-
-   snprintf(Buf, sizeof(Buf), "%s, %02i %s %i %02i:%02i:%02i GMT",Day[Conv.tm_wday],
-	   Conv.tm_mday,Month[Conv.tm_mon],Conv.tm_year+1900,Conv.tm_hour,
-	   Conv.tm_min,Conv.tm_sec);
-   return Buf;
+   auto const posix = std::locale("C.UTF-8");
+   std::ostringstream datestr;
+   datestr.imbue(posix);
+   datestr << std::put_time(&Conv, "%a, %d %b %Y %H:%M:%S GMT");
+   return datestr.str();
 }
 									/*}}}*/
 // ReadMessages - Read messages from the FD				/*{{{*/
