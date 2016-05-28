@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <ctime>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <memory>
 #include <utility>
@@ -987,26 +988,20 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    AddPatterns(_config->FindVector("APT::FTPArchive::Release::Patterns"));
 
    time_t const now = time(NULL);
+   auto const posix = std::locale("C.UTF-8");
 
-   setlocale(LC_TIME, "C");
-
-   char datestr[128];
-   if (strftime(datestr, sizeof(datestr), "%a, %d %b %Y %H:%M:%S UTC",
-                gmtime(&now)) == 0)
-   {
-      datestr[0] = '\0';
-   }
+   // FIXME: use TimeRFC1123 here? But that uses GMT to satisfy HTTP/1.1
+   std::ostringstream datestr;
+   datestr.imbue(posix);
+   datestr << std::put_time(gmtime(&now), "%a, %d %b %Y %H:%M:%S UTC");
 
    time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
-   char validstr[128];
-   if (now == validuntil ||
-       strftime(validstr, sizeof(validstr), "%a, %d %b %Y %H:%M:%S UTC",
-                gmtime(&validuntil)) == 0)
+   std::ostringstream validstr;
+   if (validuntil != now)
    {
-      validstr[0] = '\0';
+      datestr.imbue(posix);
+      validstr << std::put_time(gmtime(&validuntil), "%a, %d %b %Y %H:%M:%S UTC");
    }
-
-   setlocale(LC_TIME, "");
 
    map<string,string> Fields;
    Fields["Origin"] = "";
@@ -1014,8 +1009,8 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Suite"] = "";
    Fields["Version"] = "";
    Fields["Codename"] = "";
-   Fields["Date"] = datestr;
-   Fields["Valid-Until"] = validstr;
+   Fields["Date"] = datestr.str();
+   Fields["Valid-Until"] = validstr.str();
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";
