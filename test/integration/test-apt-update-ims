@@ -97,9 +97,9 @@ runtest 'warning'
 
 # make the release file old
 find aptarchive -name '*Release' -exec sed -i \
-	-e "s#^Date: .*\$#Date: $(date -d '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')#" \
+	-e "s#^Date: .*\$#Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')#" \
 	-e '/^Valid-Until: / d' -e "/^Date: / a\
-Valid-Until: $(date -d '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
+Valid-Until: $(date -ud '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
 signreleasefiles
 logcurrentarchivedirectory
 
