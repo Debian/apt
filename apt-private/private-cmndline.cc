@@ -10,6 +10,7 @@
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cmndline.h>
+#include <apt-private/private-main.h>
 
 #include <stdarg.h>
 #include <string.h>
@@ -451,6 +452,7 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[],
       bool (*ShowHelp)(CommandLine &), std::vector<aptDispatchWithHelp> (*GetCommands)(void))
 {
+   InitLocale(Binary);
    if (Cnf != NULL && pkgInitConfig(**Cnf) == false)
    {
       _error->DumpErrors();

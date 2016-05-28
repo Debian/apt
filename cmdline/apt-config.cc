@@ -97,8 +97,6 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   InitLocale();
-
    // Parse the command line and initialize the package library
    CommandLine CmdL;
    auto const Cmds = ParseCommandLine(CmdL, APT_CMD::APT_CONFIG, &_config, &_system, argc, argv, &ShowHelp, &GetCommands);

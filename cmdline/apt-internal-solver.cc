@@ -65,8 +65,6 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-	InitLocale();
-
 	// we really don't need anything
 	DropPrivileges();
 

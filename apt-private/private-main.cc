@@ -16,11 +16,29 @@
 #include <apti18n.h>
 
 
-void InitLocale()							/*{{{*/
+void InitLocale(APT_CMD const binary)				/*{{{*/
 {
    std::locale::global(std::locale(""));
-   textdomain(PACKAGE);
+   switch(binary)
+   {
+      case APT_CMD::APT:
+      case APT_CMD::APT_CACHE:
+      case APT_CMD::APT_CDROM:
+      case APT_CMD::APT_CONFIG:
+      case APT_CMD::APT_HELPER:
+      case APT_CMD::APT_GET:
+      case APT_CMD::APT_MARK:
+	 textdomain("apt");
+	 break;
+      case APT_CMD::APT_EXTRACTTEMPLATES:
+      case APT_CMD::APT_FTPARCHIVE:
+      case APT_CMD::APT_INTERNAL_SOLVER:
+      case APT_CMD::APT_SORTPKG:
+	 textdomain("apt-utils");
+	 break;
+   }
 }
+void InitLocale() {}
 									/*}}}*/
 void InitSignals()							/*{{{*/
 {
