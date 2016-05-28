@@ -12,7 +12,6 @@
 #define APT_HTTP_H
 
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/acquire-method.h>
 
 #include <string>
 #include <sys/time.h>

@@ -15,7 +15,6 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
@@ -129,8 +128,5 @@ bool FileMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   FileMethod Mth;
-   return Mth.Run();
+   return FileMethod().Run();
 }

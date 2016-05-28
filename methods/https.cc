@@ -13,7 +13,6 @@
 #include <config.h>
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
@@ -528,11 +527,6 @@ std::unique_ptr<ServerState> HttpsMethod::CreateServerState(URI const &uri)/*{{{
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   HttpsMethod Mth;
-   curl_global_init(CURL_GLOBAL_SSL) ;
-
-   return Mth.Run();
+   return HttpsMethod().Run();
 }
 

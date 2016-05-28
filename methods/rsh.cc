@@ -17,7 +17,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 
 #include <stdlib.h>
@@ -547,8 +546,5 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 
 int main(int, const char *argv[])
 {
-   setlocale(LC_ALL, "");
-
-   RSHMethod Mth(flNotDir(argv[0]));
-   return Mth.Run();
+   return RSHMethod(flNotDir(argv[0])).Run();
 }

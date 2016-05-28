@@ -13,7 +13,6 @@
 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
@@ -95,9 +94,5 @@ bool CopyMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   CopyMethod Mth;
-
-   return Mth.Run();
+   return CopyMethod().Run();
 }

@@ -10,7 +10,6 @@
 #ifndef APT_FTP_H
 #define APT_FTP_H
 
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include "aptmethod.h"
 

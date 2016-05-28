@@ -7,6 +7,8 @@
 #include <apt-private/private-main.h>
 
 #include <iostream>
+#include <locale>
+
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
@@ -16,7 +18,7 @@
 
 void InitLocale()							/*{{{*/
 {
-   setlocale(LC_ALL,"");
+   std::locale::global(std::locale(""));
    textdomain(PACKAGE);
 }
 									/*}}}*/

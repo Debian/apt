@@ -10,7 +10,6 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/cdrom.h>
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/error.h>
@@ -18,6 +17,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+
+#include "aptmethod.h"
 
 #include <string>
 #include <vector>
@@ -29,7 +30,7 @@
 
 using namespace std;
 
-class CDROMMethod : public pkgAcqMethod
+class CDROMMethod : public aptMethod
 {
    bool DatabaseLoaded;
    bool Debug;
@@ -54,9 +55,9 @@ class CDROMMethod : public pkgAcqMethod
 // CDROMMethod::CDROMethod - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
+CDROMMethod::CDROMMethod() : aptMethod("cdrom", "1.0",SingleInstance | LocalOnly |
 					  SendConfig | NeedsCleanup |
-					  Removable), 
+					  Removable),
                                           DatabaseLoaded(false),
 					  Debug(false),
                                           MountedByApt(false)
@@ -279,8 +280,6 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   CDROMMethod Mth;
-   return Mth.Run();
+   _config->CndSet("Binary::cdrom::Debug::NoDropPrivs", true);
+   return CDROMMethod().Run();
 }

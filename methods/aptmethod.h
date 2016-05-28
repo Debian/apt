@@ -4,6 +4,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
 
+#include <locale>
 #include <string>
 
 class aptMethod : public pkgAcqMethod
@@ -44,7 +45,9 @@ public:
 
    aptMethod(char const * const Binary, char const * const Ver, unsigned long const Flags) :
       pkgAcqMethod(Ver, Flags), Binary(Binary)
-   {}
+   {
+      std::locale::global(std::locale(""));
+   }
 };
 
 #endif

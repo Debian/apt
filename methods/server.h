@@ -12,7 +12,6 @@
 #define APT_SERVER_H
 
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/acquire-method.h>
 #include "aptmethod.h"
 
 #include <time.h>

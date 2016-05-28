@@ -10,7 +10,6 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
@@ -704,8 +703,7 @@ int main(int argc, char **argv)
    Patch patch;
 
    if (argc <= 1) {
-      RredMethod Mth;
-      return Mth.Run();
+      return RredMethod().Run();
    }
 
    // Usage: rred -t input output diff ...

@@ -12,7 +12,6 @@
 
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/error.h>
@@ -465,11 +464,7 @@ void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   MirrorMethod Mth;
-
-   return Mth.Loop();
+   return MirrorMethod().Loop();
 }
 
 

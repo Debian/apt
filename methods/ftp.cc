@@ -18,7 +18,6 @@
 #include <config.h>
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
@@ -1115,9 +1114,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 									/*}}}*/
 
 int main(int, const char *argv[])
-{ 
-   setlocale(LC_ALL, "");
-
+{
    /* See if we should be come the http client - we do this for http
       proxy urls */
    if (getenv("ftp_proxy") != 0)
@@ -1140,8 +1137,5 @@ int main(int, const char *argv[])
 	 exit(100);
       }      
    }
-   
-   FtpMethod Mth;
-
-   return Mth.Run();
+   return FtpMethod().Run();
 }

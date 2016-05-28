@@ -1,6 +1,5 @@
 #include <config.h>
 
-#include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/gpgv.h>
@@ -427,9 +426,5 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 
 int main()
 {
-   setlocale(LC_ALL, "");
-
-   GPGVMethod Mth;
-
-   return Mth.Run();
+   return GPGVMethod().Run();
 }

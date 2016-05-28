@@ -11,8 +11,6 @@
 #ifndef APT_HTTPS_H
 #define APT_HTTPS_H
 
-#include <apt-pkg/acquire-method.h>
-
 #include <curl/curl.h>
 #include <iostream>
 #include <stddef.h>
@@ -82,6 +80,7 @@ class HttpsMethod : public ServerMethod
 
    HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig)
    {
+      curl_global_init(CURL_GLOBAL_SSL);
       curl = curl_easy_init();
    };
 

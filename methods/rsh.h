@@ -54,7 +54,6 @@ class RSHConn
    ~RSHConn();
 };
 
-#include <apt-pkg/acquire-method.h>
 #include "aptmethod.h"
 
 class RSHMethod : public aptMethod
