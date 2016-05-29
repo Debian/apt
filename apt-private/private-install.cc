@@ -521,8 +521,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
       std::string autocmd = "apt autoremove";
-      if (getenv("SUDO_USER") != NULL)
-	 autocmd = "sudo " + autocmd;
+      if (getenv("SUDO_USER") != nullptr)
+      {
+	 auto const envsudocmd = getenv("SUDO_COMMAND");
+	 auto const envshell = getenv("SHELL");
+	 if (envsudocmd == nullptr || envshell == nullptr || strcmp(envsudocmd, envshell) != 0)
+	    autocmd = "sudo " + autocmd;
+      }
       ioprintf(c1out, P_("Use '%s' to remove it.", "Use '%s' to remove them.", autoRemoveCount), autocmd.c_str());
       c1out << std::endl;
    }
