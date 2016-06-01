@@ -19,6 +19,8 @@ CXXFLAGS+= -Wctor-dtor-privacy -Wdisabled-optimization -Winit-self -Wmissing-inc
 #CXXFLAGS+= -fsanitize=address -fsanitize=undefined -fno-sanitize=vptr
 # a bit too pedantic to be run by default
 #CXXFLAGS+= -Wpedantic -Wno-long-long -Wno-vla -Wno-variadic-macros
+# hide inlines
+CXXFLAGS+= -fvisibility-inlines-hidden
 NUM_PROCS = @NUM_PROCS@
 
 # Linker stuff
