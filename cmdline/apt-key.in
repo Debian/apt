@@ -238,12 +238,9 @@ foreach_keyring_do() {
 	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
 	eval "$(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)"
 	if [ -d "$TRUSTEDPARTS" ]; then
-	    # strip / suffix as gpg will double-slash in that case (#665411)
-	    local STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
-	    if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
-		TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
-	    fi
-	    for trusted in $(find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -regex '^.*\.gpg$' | sort); do
+	    TRUSTEDPARTS="$(readlink -f "$TRUSTEDPARTS")"
+	    local TRUSTEDPARTSLIST="$(cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -name '*.gpg')"
+	    for trusted in $(echo "$TRUSTEDPARTSLIST" | sort); do
 		if [ -s "$trusted" ]; then
 		    $ACTION "$trusted" "$@"
 		fi
@@ -301,7 +298,7 @@ merge_all_trusted_keyrings_into_pubring() {
     # does the same as:
     # foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
     # but without using gpg, just cat and find
-    local PUBRING="${GPGHOMEDIR}/pubring.gpg"
+    local PUBRING="$(readlink -f "${GPGHOMEDIR}/pubring.gpg")"
     # if a --keyring was given, just use this one
     if [ -n "$FORCED_KEYRING" ]; then
 	if [ -s "$FORCED_KEYRING" ]; then
@@ -312,13 +309,12 @@ merge_all_trusted_keyrings_into_pubring() {
 	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
 	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
 	if [ -d "$TRUSTEDPARTS" ]; then
-	    # ignore errors mostly for non-existing $TRUSTEDFILE
-	    {
-	       cat "$TRUSTEDFILE" || true
-	       for parts in $(find -L "$TRUSTEDPARTS" -type f -name '*.gpg'); do
-		  cat "$parts" || true
-	       done
-	    } > "$PUBRING" 2>/dev/null
+	    rm -f "$PUBRING"
+	    if [ -s "$TRUSTEDFILE" ]; then
+		cat "$TRUSTEDFILE" > "$PUBRING"
+	    fi
+	    TRUSTEDPARTS="$(readlink -f "$TRUSTEDPARTS")"
+	    (cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -name '*.gpg' -exec cat {} + >> "$PUBRING";)
 	elif [ -s "$TRUSTEDFILE" ]; then
 	    cp --dereference "$TRUSTEDFILE" "$PUBRING"
 	fi

@@ -16,52 +16,49 @@ configarchitecture 'amd64'
 
 # start from a clean plate again
 cleanplate() {
-	rm -rf rootdir/etc/apt/trusted.gpg.d/ rootdir/etc/apt/trusted.gpg
-	mkdir rootdir/etc/apt/trusted.gpg.d/
+	rm -rf "${ROOTDIR}/etc/apt/trusted.gpg.d/" "${ROOTDIR}/etc/apt/trusted.gpg"
+	mkdir "${ROOTDIR}/etc/apt/trusted.gpg.d/"
 }
 testmultigpg() {
 	testfailure --nomsg aptkey --quiet --readonly "$@"
-	testsuccess grep "^gpgv: Can't check signature" rootdir/tmp/testfailure.output
-	testsuccess grep '^gpgv: Good signature from' rootdir/tmp/testfailure.output
+	testsuccess grep "^gpgv: Can't check signature" "${ROOTDIR}/tmp/testfailure.output"
+	testsuccess grep '^gpgv: Good signature from' "${ROOTDIR}/tmp/testfailure.output"
 }
 
-echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
-APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/aptkey.conf
-
 testrun() {
+	echo "APT::Key::ArchiveKeyring \"${KEYDIR}/joesixpack.pub\";
+APT::Key::RemovedKeys \"${KEYDIR}/rexexpired.pub\";" > "${ROOTDIR}/etc/apt/apt.conf.d/aptkey.conf"
+
 	cleanplate
-	ln -sf "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-
-	msgtest 'Check that paths in list output are not' 'double-slashed'
-	aptkey list 2>&1 | grep -q '//' && msgfail || msgpass
-
-	msgtest 'Check that paths in finger output are not' 'double-slashed'
-	aptkey finger 2>&1 | grep -q '//' && msgfail || msgpass
+	ln -sf "$(readlink -f "${KEYDIR}/joesixpack.pub")" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testaptkeys 'Joe Sixpack'
+
+	testsuccess aptkey list
+	msgtest 'Check that paths in list output are not' 'double-slashed'
+	testfailure --nomsg grep '//' "${ROOTDIR}/tmp/testsuccess.output"
+
+	testsuccess aptkey finger
+	msgtest 'Check that paths in finger output are not' 'double-slashed'
+	testfailure --nomsg grep '//' "${ROOTDIR}/tmp/testsuccess.output"
 
 	testsuccessequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1' aptkey --fakeroot update
 
 	testaptkeys 'Joe Sixpack'
-	testfailure test -e rootdir/etc/apt/trusted.gpg
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg"
 
-	testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
-	msgtest 'Check if trusted.gpg is created with permissions set to' '0644'
-	if [ "$(stat -c '%a' rootdir/etc/apt/trusted.gpg )" = '644' ]; then
-		msgpass
-	else
-		msgfail
-	fi
+	testsuccess aptkey --fakeroot add "${KEYDIR}/rexexpired.pub"
+	testfilestats "${ROOTDIR}/etc/apt/trusted.gpg" '%a' '=' '644'
 
 	testaptkeys 'Rex Expired' 'Joe Sixpack'
 
 	msgtest 'Check that Sixpack key can be' 'exported'
-	aptkey export 'Sixpack' > aptkey.export
-	aptkey --keyring rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg exportall > aptkey.exportall
-	testsuccess --nomsg cmp aptkey.export aptkey.exportall
-	testsuccess test -s aptkey.export
-	testsuccess test -s aptkey.exportall
+	aptkey export 'Sixpack' > "${TMPWORKINGDIRECTORY}/aptkey.export"
+	aptkey --keyring "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg" exportall > "${TMPWORKINGDIRECTORY}/aptkey.exportall"
+	testsuccess --nomsg cmp "${TMPWORKINGDIRECTORY}/aptkey.export" "${TMPWORKINGDIRECTORY}/aptkey.exportall"
+	testsuccess test -s "${TMPWORKINGDIRECTORY}/aptkey.export"
+	testsuccess test -s "${TMPWORKINGDIRECTORY}/aptkey.exportall"
 
 	msgtest 'Execute update again to trigger removal of' 'Rex Expired key'
 	testsuccess --nomsg aptkey --fakeroot update
@@ -69,7 +66,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testaptkeys 'Joe Sixpack'
 
 	msgtest "Try to remove a key which exists, but isn't in the" 'forced keyring'
-	testsuccess --nomsg aptkey --fakeroot --keyring rootdir/etc/apt/trusted.gpg del DBAC8DAE
+	testsuccess --nomsg aptkey --fakeroot --keyring "${ROOTDIR}/etc/apt/trusted.gpg" del DBAC8DAE
 
 	testaptkeys 'Joe Sixpack'
 
@@ -78,92 +75,92 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	msgtest 'Test key removal with' 'lowercase key ID' #keylength somewhere between 8byte and short
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
 	testempty aptkey list
 
 	msgtest 'Test key removal with' 'single key in real file'
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
 
 	msgtest 'Test key removal with' 'different key specs'
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	cp -a keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	cp -a "${KEYDIR}/marvinparanoid.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/marvinparanoid.gpg"
 	testsuccess --nomsg aptkey --fakeroot del 0xDBAC8DAE 528144E2
 	testempty aptkey list
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
-	testsuccess cmp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/marvinparanoid.gpg"
+	testsuccess cmp "${KEYDIR}/marvinparanoid.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/marvinparanoid.gpg~"
 
 	msgtest 'Test key removal with' 'long key ID'
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess --nomsg aptkey --fakeroot del 5A90D141DBAC8DAE
 	testempty aptkey list
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
 
 	msgtest 'Test key removal with' 'fingerprint'
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess --nomsg aptkey --fakeroot del 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
 	testempty aptkey list
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
 
 	msgtest 'Test key removal with' 'single key in softlink'
 	cleanplate
-	ln -s "$(readlink -f ./keys/joesixpack.pub)" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	ln -s "$(readlink -f "${KEYDIR}/joesixpack.pub")" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess test -L "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
 
 	cleanplate
-	testsuccess aptkey --fakeroot add ./keys/joesixpack.pub
-	ln -sf "$(readlink -f ./keys/marvinparanoid.pub)" "./keys/marvin paránöid.pub"
-	testsuccess aptkey --fakeroot add "./keys/marvin paránöid.pub"
+	testsuccess aptkey --fakeroot add "${KEYDIR}/joesixpack.pub"
+	ln -sf "$(readlink -f "${KEYDIR}/marvinparanoid.pub")" "${KEYDIR}/marvin paránöid.pub"
+	testsuccess aptkey --fakeroot add "${KEYDIR}/marvin paránöid.pub"
 	testaptkeys 'Joe Sixpack' 'Marvin Paranoid'
-	cp -a rootdir/etc/apt/trusted.gpg keys/testcase-multikey.pub # store for reuse
+	cp -a "${ROOTDIR}/etc/apt/trusted.gpg" "${KEYDIR}/testcase-multikey.pub" # store for reuse
 
 	msgtest 'Test key removal with' 'multi key in real file'
 	cleanplate
-	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	cp -a "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'Marvin Paranoid'
-	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
+	testsuccess cmp "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg~"
 
 	msgtest 'Test key removal with' 'multi key in softlink'
 	cleanplate
-	ln -s "$(readlink -f ./keys/testcase-multikey.pub)" rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	ln -s "$(readlink -f "${KEYDIR}/testcase-multikey.pub")" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'Marvin Paranoid'
-	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
-	testfailure test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg
-	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
+	testsuccess cmp "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg~"
+	testfailure test -L "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
+	testsuccess test -L "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg~"
 
 	msgtest 'Test key removal with' 'multiple files including key'
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	cp -a "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
 	testaptkeys 'Marvin Paranoid'
-	testfailure test -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
-	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
+	testsuccess cmp "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg~"
 
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	cp -a "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
 	testaptkeys 'Joe Sixpack' 'Joe Sixpack' 'Marvin Paranoid'
 	msgtest 'Test merge-back of' 'added keys'
-	testsuccess --nomsg aptkey adv --batch --yes --import keys/rexexpired.pub
+	testsuccess --nomsg aptkey adv --batch --yes --import "${KEYDIR}/rexexpired.pub"
 	testaptkeys 'Rex Expired' 'Joe Sixpack' 'Joe Sixpack' 'Marvin Paranoid'
 
 	msgtest 'Test merge-back of' 'removed keys'
@@ -175,107 +172,119 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testaptkeys 'Marvin Paranoid'
 
 	cleanplate
-	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
-	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	cp -a "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
+	local SIGNATURE="${TMPWORKINGDIRECTORY}/signature"
 	msgtest 'Test signing a file' 'with a key'
-	echo 'Verify me. This is my signature.' > signature
-	echo 'lalalalala' > signature2
-	testsuccess --nomsg aptkey --quiet --keyring keys/marvinparanoid.pub --secret-keyring keys/marvinparanoid.sec --readonly \
-		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output signature.gpg signature
-	testsuccess test -s signature.gpg -a -s signature
+	echo 'Verify me. This is my signature.' > "$SIGNATURE"
+	echo 'lalalalala' > "${SIGNATURE}2"
+	testsuccess --nomsg aptkey --quiet --keyring "${KEYDIR}/marvinparanoid.pub" --secret-keyring "${KEYDIR}/marvinparanoid.sec" --readonly \
+		adv --batch --yes --default-key 'Marvin' --armor --detach-sign --sign --output "${SIGNATURE}.gpg" "${SIGNATURE}"
+	testsuccess test -s "${SIGNATURE}.gpg" -a -s "${SIGNATURE}"
 
 	msgtest 'Test verify a file' 'with no sig'
-	testfailure --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature signature2
+	testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/testcase-multikey.pub" verify "${SIGNATURE}" "${SIGNATURE}2"
 
 	for GPGV in '' 'gpgv' 'gpgv2'; do
-		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 
 		msgtest 'Test verify a file' 'with all keys'
-		testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+		testsuccess --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test verify a file' 'with good keyring'
-		testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature
+		testsuccess --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/testcase-multikey.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a file' 'with bad keyring'
-		testfailure --nomsg aptkey --quiet --readonly --keyring keys/joesixpack.pub verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/joesixpack.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a file' 'with non-existing keyring'
-		testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
-		testfailure test -e keys/does-not-exist.pub
+		testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/does-not-exist.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
+		testfailure test -e "${KEYDIR}/does-not-exist.pub"
 
 		# note: this isn't how apts gpgv method implements keyid for verify
 		msgtest 'Test verify a file' 'with good keyid'
-		testsuccess --nomsg aptkey --quiet --readonly --keyid 'Paranoid' verify signature.gpg signature
+		testsuccess --nomsg aptkey --quiet --readonly --keyid 'Paranoid' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a file' 'with bad keyid'
-		testfailure --nomsg aptkey --quiet --readonly --keyid 'Sixpack' verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Sixpack' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a file' 'with non-existing keyid'
-		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test verify fails on' 'bad file'
-		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
+		testfailure --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}2"
 	done
-	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
+	rm -f "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 
 	msgtest 'Test verify a file' 'with good keyring'
-	testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature
+	testsuccess --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/testcase-multikey.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 	cleanplate
-	cat keys/joesixpack.pub keys/marvinparanoid.pub > keys/double.pub
-	cat keys/joesixpack.sec keys/marvinparanoid.sec > keys/double.sec
-	cp -a keys/double.pub rootdir/etc/apt/trusted.gpg.d/double.gpg
-	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
-	testsuccess aptkey --quiet --keyring keys/double.pub --secret-keyring keys/double.sec --readonly \
-		adv --batch --yes -u 'Marvin' -u 'Joe' --armor --detach-sign --sign --output signature.gpg signature
-	testsuccess test -s signature.gpg -a -s signature
+	cat "${KEYDIR}/joesixpack.pub" "${KEYDIR}/marvinparanoid.pub" > "${KEYDIR}/double.pub"
+	cat "${KEYDIR}/joesixpack.sec" "${KEYDIR}/marvinparanoid.sec" > "${KEYDIR}/double.sec"
+	cp -a "${KEYDIR}/double.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/double.gpg"
+	cp -a "${KEYDIR}/testcase-multikey.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/multikey.gpg"
+	rm -f "${SIGNATURE}.gpg"
+	testsuccess aptkey --quiet --keyring "${KEYDIR}/double.pub" --secret-keyring "${KEYDIR}/double.sec" --readonly \
+		adv --batch --yes -u 'Marvin' -u 'Joe' --armor --detach-sign --sign --output "${SIGNATURE}.gpg" "${SIGNATURE}"
+	testsuccess test -s "${SIGNATURE}.gpg" -a -s "${SIGNATURE}"
 
 	for GPGV in '' 'gpgv' 'gpgv2'; do
-		echo "APT::Key::GPGVCommand \"$GPGV\";" > rootdir/etc/apt/apt.conf.d/00gpgvcmd
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 
 		msgtest 'Test verify a doublesigned file' 'with all keys'
-		testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+		testsuccess --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test verify a doublesigned file' 'with good keyring joe'
-		testmultigpg --keyring keys/joesixpack.pub verify signature.gpg signature
+		testmultigpg --keyring "${KEYDIR}/joesixpack.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test verify a doublesigned file' 'with good keyring marvin'
-		testmultigpg --keyring keys/marvinparanoid.pub verify signature.gpg signature
+		testmultigpg --keyring "${KEYDIR}/marvinparanoid.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a doublesigned file' 'with bad keyring'
-		testfailure --nomsg aptkey --quiet --readonly --keyring keys/rexexpired.pub verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/rexexpired.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a doublesigned file' 'with non-existing keyring'
-		testfailure --nomsg aptkey --quiet --readonly --keyring keys/does-not-exist.pub verify signature.gpg signature
-		testfailure test -e keys/does-not-exist.pub
+		testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/does-not-exist.pub" verify "${SIGNATURE}.gpg" "${SIGNATURE}"
+		testfailure test -e "${KEYDIR}/does-not-exist.pub"
 
 		# note: this isn't how apts gpgv method implements keyid for verify
 		msgtest 'Test verify a doublesigned file' 'with good keyid'
-		testmultigpg --keyid 'Paranoid' verify signature.gpg signature
+		testmultigpg --keyid 'Paranoid' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a doublesigned file' 'with bad keyid'
-		testfailure --nomsg aptkey --quiet --readonly --keyid 'Rex' verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Rex' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test fail verify a doublesigned file' 'with non-existing keyid'
-		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify signature.gpg signature
+		testfailure --nomsg aptkey --quiet --readonly --keyid 'Kalnischkies' verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 
 		msgtest 'Test verify fails on' 'bad doublesigned file'
-		testfailure --nomsg aptkey --quiet --readonly verify signature.gpg signature2
+		testfailure --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}2"
 	done
-	rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
+	rm -f "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 }
 
 setupgpgcommand() {
-	echo "APT::Key::GPGCommand \"$1\";" > rootdir/etc/apt/apt.conf.d/00gpgcmd
+	echo "APT::Key::GPGCommand \"$1\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgcmd"
 	msgmsg 'Force tests to be run with' "$1"
 	testsuccess aptkey --readonly adv --version
-	cp rootdir/tmp/testsuccess.output aptkey.version
-	testsuccess grep "^gpg (GnuPG) $2\." aptkey.version
+	cp "${ROOTDIR}/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/aptkey.version"
+	testsuccess grep "^gpg (GnuPG) $2\." "${TMPWORKINGDIRECTORY}/aptkey.version"
 }
 
-# run with default (whatever this is)
+# run with default (whatever this is) in current CWD with relative paths
+ROOTDIR="./rootdir"
+KEYDIR="./keys"
 testrun
-# run with …
+
+# run with … and up the game with a strange CWD & absolute paths
+ROOTDIR="${TMPWORKINGDIRECTORY}/rootdir"
+KEYDIR="${TMPWORKINGDIRECTORY}/keys"
+mkdir inaccessible
+cd inaccessible
+chmod 600 ../inaccessible
+testfilestats "${TMPWORKINGDIRECTORY}/inaccessible" '%a' '=' '600'
+
 setupgpgcommand 'gpg' '1'
 testrun
 setupgpgcommand 'gpg2' '2'
