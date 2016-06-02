@@ -46,7 +46,11 @@ public:
    aptMethod(char const * const Binary, char const * const Ver, unsigned long const Flags) :
       pkgAcqMethod(Ver, Flags), Binary(Binary)
    {
-      std::locale::global(std::locale(""));
+      try {
+	 std::locale::global(std::locale(""));
+      } catch (...) {
+	 setlocale(LC_ALL, "");
+      }
    }
 };
 

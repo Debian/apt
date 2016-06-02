@@ -18,7 +18,11 @@
 
 void InitLocale(APT_CMD const binary)				/*{{{*/
 {
-   std::locale::global(std::locale(""));
+   try {
+      std::locale::global(std::locale(""));
+   } catch (...) {
+      setlocale(LC_ALL, "");
+   }
    switch(binary)
    {
       case APT_CMD::APT:

@@ -11,6 +11,8 @@ configarchitecture 'amd64'
 # but it also checks if the binary can find all methods in the library.
 # The later is quite handy for manual testing of non-abibreaking changes
 export LD_BIND_NOW=1
+# german variant of klingon used for testing usage of non-existent l10n
+export LC_ALL=tlh_DE.UTF-8
 
 checkversionmessage() {
 	testsuccess grep '^apt .* (' ${1}-help.output
