@@ -1094,6 +1094,14 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 
    if (Progress != NULL)
       Progress->OverallProgress(25, 100, 75, _("Execute external planer"));
+
+   // we don't tell the external planers about boring things
+   for (auto Pkg = PM->Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      if (Pkg->CurrentState == pkgCache::State::ConfigFiles && PM->Cache[Pkg].Purge() == true)
+	 PM->Remove(Pkg, true);
+   }
+
    if (Okay && EIPP::ReadResponse(solver_out, PM, Progress) == false)
       return false;
 
@@ -1108,15 +1116,15 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planer"));
    unsigned long p = 0;
-   string del, purge, inst, reinst;
+   string del, inst, reinst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
    {
       if (Progress != NULL && p % 100 == 0)
          Progress->Progress(p);
       string* req;
       pkgDepCache::StateCache &P = Cache[Pkg];
-      if (P.Purge() == true)
-	 req = &purge;
+      if (P.Purge() == true && Pkg->CurrentState == pkgCache::State::ConfigFiles)
+	 continue;
       if (P.Delete() == true)
 	 req = &del;
       else if (P.NewInstall() == true || P.Upgrade() == true || P.Downgrade() == true)
@@ -1137,8 +1145,6 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
        WriteOkay(Okay, output, " ", *a);
    WriteOkay(Okay, output, "\n");
 
-   if (purge.empty() == false)
-      WriteOkay(Okay, output, "Purge:", purge, "\n");
    if (del.empty() == false)
       WriteOkay(Okay, output, "Remove:", del, "\n");
    if (inst.empty() == false)
