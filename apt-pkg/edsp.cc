@@ -1218,6 +1218,35 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 	       pkgset[PV->ID] = true;
 	 }
 	 pkgset[P->ID] = true;
+	 if (strcmp(P.Arch(), "any") == 0)
+	 {
+	    APT::StringView const pkgname(P.Name());
+	    auto const idxColon = pkgname.find(':');
+	    if (idxColon != APT::StringView::npos)
+	    {
+	       pkgCache::PkgIterator PA;
+	       if (pkgname.substr(idxColon + 1) == "any")
+	       {
+		  auto const GA = Cache.FindGrp(pkgname.substr(0, idxColon).to_string());
+		  for (auto PA = GA.PackageList(); PA.end() == false; PA = GA.NextPkg(PA))
+		  {
+		     pkgset[PA->ID] = true;
+		  }
+	       }
+	       else
+	       {
+		  auto const PA = Cache.FindPkg(pkgname.to_string());
+		  if (PA.end() == false)
+		     pkgset[PA->ID] = true;
+	       }
+	    }
+	 }
+	 else
+	 {
+	    auto const PA = Cache.FindPkg(P.FullName(false), "any");
+	    if (PA.end() == false)
+	       pkgset[PA->ID] = true;
+	 }
       }
    };
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
