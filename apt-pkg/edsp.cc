@@ -871,7 +871,7 @@ bool EDSP::ApplyRequest(std::list<std::string> const &install,
 	return true;
 }
 									/*}}}*/
-// EDSP::WriteSolution - to the given file descriptor			/*{{{*/
+// EDSP::WriteSolutionStanza - to the given file descriptor		/*{{{*/
 bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 {
    bool const Debug = _config->FindB("Debug::EDSP::WriteSolution", false);
@@ -903,34 +903,13 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 
    return true;
 }
-bool EDSP::WriteSolution(pkgDepCache &Cache, FileFd &output)
+bool EDSP::WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache::VerIterator const &Ver)
 {
-   bool const Debug = _config->FindB("Debug::EDSP::WriteSolution", false);
    bool Okay = output.Failed() == false;
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
-   {
-      std::string action;
-      if (Cache[Pkg].Delete() == true)
-	 WriteOkay(Okay, output, "Remove: ", _system->GetVersionMapping(Pkg.CurrentVer()->ID), "\n");
-      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
-	 WriteOkay(Okay, output, "Install: ", _system->GetVersionMapping(Cache.GetCandidateVersion(Pkg)->ID), "\n");
-      else if (Cache[Pkg].Garbage == true)
-	 WriteOkay(Okay, output, "Autoremove: ", _system->GetVersionMapping(Pkg.CurrentVer()->ID), "\n");
-      else
-	 continue;
-
-      if (Debug)
-      {
-	 WriteOkay(Okay, output, "Package: ", Pkg.FullName(), "\nVersion: ");
-	 if (Cache[Pkg].Delete() == true || Cache[Pkg].Garbage == true)
-	    WriteOkay(Okay, output, Pkg.CurrentVer().VerStr(), "\n\n");
-	 else
-	    WriteOkay(Okay, output, Cache.GetCandidateVersion(Pkg).VerStr(), "\n\n");
-      }
-      else
-	 WriteOkay(Okay, output, "\n");
-   }
-   return Okay;
+   WriteOkay(Okay, output, Type, ": ", _system->GetVersionMapping(Ver->ID));
+   if (_config->FindB("Debug::EDSP::WriteSolution", false) == true)
+      WriteOkay(Okay, output, "\nPackage: ", Ver.ParentPkg().FullName(), "\nVersion: ", Ver.VerStr());
+   return WriteOkay(Okay, output, "\n\n");
 }
 									/*}}}*/
 // EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/

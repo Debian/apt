@@ -158,20 +158,20 @@ namespace EDSP								/*{{{*/
 				 std::list<std::string> const &remove,
 				 pkgDepCache &Cache);
 
-	/** \brief encodes the changes in the Cache as a EDSP solution
+	/** \brief formats a solution stanza for the given version
 	 *
-	 *  The markers in the Cache are observed and send to given
-	 *  file. The solution isn't checked for consistency or alike,
-	 *  so even broken solutions can be written successfully,
-	 *  but the front-end revicing it will properly fail then.
+	 *  EDSP uses a simple format for reporting solutions:
+	 *  A single required field name with an ID as value.
+	 *  Additional fields might appear as debug aids.
 	 *
-	 *  \param Cache which represents the solution
-	 *  \param output to write the stanzas forming the solution to
+	 *  \param output to write the stanza forming the solution to
+	 *  \param Type of the stanza, used as field name
+	 *  \param Ver this stanza applies to
 	 *
-	 *  \return true if solution could be written, otherwise false
+	 *  \return true if stanza could be written, otherwise false
 	 */
-	bool WriteSolution(pkgDepCache &Cache, FileFd &output);
-	bool WriteSolution(pkgDepCache &Cache, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
+	bool WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache::VerIterator const &Ver);
+	bool WriteSolution(pkgDepCache &Cache, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based single-stanza interface instead");
 
 	/** \brief sends a progress report
 	 *

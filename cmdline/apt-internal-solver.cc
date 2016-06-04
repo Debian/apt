@@ -63,6 +63,22 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
    return {};
 }
 									/*}}}*/
+static bool WriteSolution(pkgDepCache &Cache, FileFd &output)		/*{{{*/
+{
+   bool Okay = output.Failed() == false;
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
+   {
+      std::string action;
+      if (Cache[Pkg].Delete() == true)
+	 Okay &= EDSP::WriteSolutionStanza(output, "Remove", Pkg.CurrentVer());
+      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+	 Okay &= EDSP::WriteSolutionStanza(output, "Install", Cache.GetCandidateVersion(Pkg));
+      else if (Cache[Pkg].Garbage == true)
+	 Okay &= EDSP::WriteSolutionStanza(output, "Autoremove", Pkg.CurrentVer());
+   }
+   return Okay;
+}
+									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
 	// we really don't need anything
@@ -187,7 +203,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(95, "Write solution…", output);
 
-	if (EDSP::WriteSolution(CacheFile, output) == false)
+	if (WriteSolution(CacheFile, output) == false)
 		DIE("Failed to output the solution!");
 
 	EDSP::WriteProgress(100, "Done", output);
