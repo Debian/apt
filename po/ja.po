@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
-"PO-Revision-Date: 2016-03-31 09:45+0900\n"
+"POT-Creation-Date: 2016-06-04 20:28+0200\n"
+"PO-Revision-Date: 2016-05-18 15:31+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -153,7 +153,7 @@ msgstr "しかし、以下のパッケージが置き換えます:"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "パッケージ '%s' はインストール候補ではありません"
+msgstr "パッケージ '%s' にはインストール候補がありません"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -196,8 +196,8 @@ msgid ""
 msgstr ""
 "設定オプションと構文は apt.conf(5) に詳述されています。\n"
 "ソースを設定する方法の詳細は sources.list(5) で見つけることができます。\n"
-"パッケージとバージョンの選択肢は apt_preferences(5) で表すことができます。\n"
-"セキュリティの詳細は apt-secure(8) で利用可能です。\n"
+"パッケージとバージョンの選択は apt_preferences(5) で表現できます。\n"
+"セキュリティの詳細は apt-secure(8) を参照してください。\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -2337,7 +2337,7 @@ msgstr "アーカイブヘッダの読み込みに失敗しました"
 #: apt-inst/contrib/extracttar.cc
 #, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "設定された圧縮プログラム '%s' が見つかりません"
+msgstr "'%s' のために設定された圧縮プログラムが見つかりません"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -2465,14 +2465,16 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
-"セキュアに更新することができないリポジトリからの更新は、デフォルトで無効に"
-"なっています。"
+"このようなリポジトリから更新を安全に行うことができないので、デフォルトでは更"
+"新が無効になっています。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
-msgstr "認証されていないリポジトリのデータを使用することは、潜在的に危険です。"
+msgstr ""
+"このようなリポジトリから取得したデータは認証できないので、データの使用は潜在"
+"的に危険です。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -2662,9 +2664,7 @@ msgstr "ディレクトリ %s をロックできません"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
-"システムにサンドボックスユーザ '%s' がないため、特権を取り消すことができませ"
-"ん"
+msgstr "システムにサンドボックスユーザ '%s' がありません。権限を削除できません"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -2672,8 +2672,8 @@ msgid ""
 "Can't drop privileges for downloading as file '%s' couldn't be accessed by "
 "user '%s'."
 msgstr ""
-"ファイル '%s' がユーザ '%s' からアクセスできないため、ダウンロード権限を取り"
-"消すすことができません。"
+"ダウンロード権限を削除できません。ファイル '%s' がユーザ '%s' からアクセスで"
+"きません。"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -3072,7 +3072,7 @@ msgstr "gzip ファイル %s のクローズ中に問題が発生しました"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr "予期しないファイル終了 (EOF)"
+msgstr "予期しないファイル終端 (EOF)"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -3263,7 +3263,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid '%s' entry in Release file %s"
-msgstr "Release ファイル %s に無効な '%s' エントリがあります"
+msgstr "Release ファイル %2$s に無効な '%1$s' エントリがあります"
 
 #. TRANSLATOR: The first is an option name from sources.list manpage, the other two URI and Suite
 #: apt-pkg/deb/debmetaindex.cc
@@ -3276,6 +3276,11 @@ msgstr "ソース %2$s %3$s に関してオプション %1$s の値が競合し�
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr ""
 "ソース %2$s %3$s (%4$s) に関してオプション %1$s に設定された値が無効です"
+
+#: apt-pkg/deb/debmetaindex.cc
+#, fuzzy, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr "ソース %2$s %3$s に関してオプション %1$s の値が競合します"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -3784,11 +3789,17 @@ msgstr ""
 msgid "Calculating upgrade"
 msgstr "アップグレードパッケージを検出しています"
 
+#~ msgid "Failed to fetch %s  %s\n"
+#~ msgstr "%s の取得に失敗しました  %s\n"
+
 #~ msgid "(not found)"
 #~ msgstr "(見つかりません)"
 
 #~ msgid "  Package pin: "
 #~ msgstr "  パッケージ Pin: "
+
+#~ msgid "Invalid 'Valid-Until' entry in Release file %s"
+#~ msgstr "Release ファイル %s に無効な 'Valid-Until' エントリがあります"
 
 #~ msgid "There is no public key available for the following key IDs:\n"
 #~ msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\n"
