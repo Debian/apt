@@ -51,6 +51,7 @@ class pkgVersioningSystem;
 class Configuration;
 class pkgIndexFile;
 
+class pkgSystemPrivate;
 class pkgSystem
 {
    public:
@@ -114,10 +115,13 @@ class pkgSystem
     */
    std::vector<std::string> ArchitecturesSupported() const;
 
+   APT_HIDDEN void SetVersionMapping(map_id_t const in, map_id_t const out);
+   APT_HIDDEN map_id_t GetVersionMapping(map_id_t const in) const;
+
    pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
    virtual ~pkgSystem();
    private:
-   void * const d;
+   pkgSystemPrivate * const d;
 };
 
 // The environment we are operating in.

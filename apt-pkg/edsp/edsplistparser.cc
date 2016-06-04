@@ -19,6 +19,7 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgsystem.h>
 
 									/*}}}*/
 
@@ -47,7 +48,7 @@ edspListParser::edspListParser(FileFd *File) : debListParser(File), d(new edspLi
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 bool edspListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
-   Ver->ID = Section.FindI("APT-ID", Ver->ID);
+   _system->SetVersionMapping(Ver->ID, Section.FindI("APT-ID", Ver->ID));
    return debListParser::NewVersion(Ver);
 }
 									/*}}}*/

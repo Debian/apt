@@ -153,6 +153,11 @@ else
 	cat solver.result
 	msgfail
 fi
+testsuccess grep '^APT-ID: 1$' "$APT_EDSP_DUMP_FILENAME"
+sed -i -e 's#^APT-ID: 1$#APT-ID: 10000#' "$APT_EDSP_DUMP_FILENAME"
+cat "$APT_EDSP_DUMP_FILENAME" | aptinternalsolver > solver.result 2>&1 || true
+testsuccessequal 'Message: Done
+' tail -n2 solver.result
 rm -f "$APT_EDSP_DUMP_FILENAME"
 
 testsuccess aptinternalsolver scenario

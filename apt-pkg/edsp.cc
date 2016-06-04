@@ -17,6 +17,7 @@
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -878,20 +879,20 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
    {
       if (Cache[Pkg].Delete() == true)
       {
-	 fprintf(output, "Remove: %d\n", Pkg.CurrentVer()->ID);
+	 fprintf(output, "Remove: %d\n", _system->GetVersionMapping(Pkg.CurrentVer()->ID));
 	 if (Debug == true)
 	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
       }
       else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
       {
 	 pkgCache::VerIterator const CandVer = Cache.GetCandidateVersion(Pkg);
-	 fprintf(output, "Install: %d\n", CandVer->ID);
+	 fprintf(output, "Install: %d\n", _system->GetVersionMapping(CandVer->ID));
 	 if (Debug == true)
 	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), CandVer.VerStr());
       }
       else if (Cache[Pkg].Garbage == true)
       {
-	 fprintf(output, "Autoremove: %d\n", Pkg.CurrentVer()->ID);
+	 fprintf(output, "Autoremove: %d\n", _system->GetVersionMapping(Pkg.CurrentVer()->ID));
 	 if (Debug == true)
 	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
       }
@@ -910,11 +911,11 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FileFd &output)
    {
       std::string action;
       if (Cache[Pkg].Delete() == true)
-	 WriteOkay(Okay, output, "Remove: ", Pkg.CurrentVer()->ID, "\n");
+	 WriteOkay(Okay, output, "Remove: ", _system->GetVersionMapping(Pkg.CurrentVer()->ID), "\n");
       else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
-	 WriteOkay(Okay, output, "Install: ", Cache.GetCandidateVersion(Pkg)->ID, "\n");
+	 WriteOkay(Okay, output, "Install: ", _system->GetVersionMapping(Cache.GetCandidateVersion(Pkg)->ID), "\n");
       else if (Cache[Pkg].Garbage == true)
-	 WriteOkay(Okay, output, "Autoremove: ", Pkg.CurrentVer()->ID, "\n");
+	 WriteOkay(Okay, output, "Autoremove: ", _system->GetVersionMapping(Pkg.CurrentVer()->ID), "\n");
       else
 	 continue;
 
