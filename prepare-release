@@ -21,7 +21,7 @@ librarysymbolsfromfile() {
 	echo '=== Missing required symbols:'
 	echo -n "$MISSING" | grep -v '|optional=' || true
 	echo '=== New symbols:'
-	grep '^+ ' "$1" | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
+	grep '^+ ' "$1" | grep -v '^+ (c++' | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
 		echo " (c++)\"${line}@${SYMVER}\" $VERSION"
 	done | sort -u
 }
