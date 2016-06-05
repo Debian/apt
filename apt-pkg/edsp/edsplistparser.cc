@@ -23,30 +23,22 @@
 
 									/*}}}*/
 
-class edspListParserPrivate						/*{{{*/
-{
-public:
-   FileFd extendedstates;
-   FileFd preferences;
-
-   edspListParserPrivate()
-   {
-      std::string const states = _config->FindFile("Dir::State::extended_states");
-      RemoveFile("edspListParserPrivate", states);
-      extendedstates.Open(states, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
-      std::string const prefs = _config->FindFile("Dir::Etc::preferences");
-      RemoveFile("edspListParserPrivate", prefs);
-      preferences.Open(prefs, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
-   }
-};
-									/*}}}*/
 // ListParser::edspListParser - Constructor				/*{{{*/
-edspListParser::edspListParser(FileFd *File) : debListParser(File), d(new edspListParserPrivate())
+edspLikeListParser::edspLikeListParser(FileFd * const File) : debListParser(File)
 {
+}
+edspListParser::edspListParser(FileFd * const File) : edspLikeListParser(File)
+{
+   std::string const states = _config->FindFile("Dir::State::extended_states");
+   RemoveFile("edspListParserPrivate", states);
+   extendedstates.Open(states, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
+   std::string const prefs = _config->FindFile("Dir::Etc::preferences");
+   RemoveFile("edspListParserPrivate", prefs);
+   preferences.Open(prefs, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, 0600);
 }
 									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
-bool edspListParser::NewVersion(pkgCache::VerIterator &Ver)
+bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    _system->SetVersionMapping(Ver->ID, Section.FindI("APT-ID", Ver->ID));
    return debListParser::NewVersion(Ver);
@@ -55,25 +47,30 @@ bool edspListParser::NewVersion(pkgCache::VerIterator &Ver)
 // ListParser::Description - Return the description string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Sorry, no description for the resolvers… */
-std::vector<std::string> edspListParser::AvailableDescriptionLanguages()
+std::vector<std::string> edspLikeListParser::AvailableDescriptionLanguages()
 {
    return {};
 }
-MD5SumValue edspListParser::Description_md5()
+MD5SumValue edspLikeListParser::Description_md5()
 {
    return MD5SumValue("");
 }
 									/*}}}*/
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-unsigned short edspListParser::VersionHash()
+unsigned short edspLikeListParser::VersionHash()
 {
    if (Section.Exists("APT-Hash") == true)
       return Section.FindI("APT-Hash");
    else if (Section.Exists("APT-ID") == true)
       return Section.FindI("APT-ID");
    return 0;
+}
+									/*}}}*/
+// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
+APT_CONST bool edspLikeListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
+				    FileFd & /*File*/, std::string const &/*component*/)
+{
+   return true;
 }
 									/*}}}*/
 // ListParser::ParseStatus - Parse the status field			/*{{{*/
@@ -102,7 +99,7 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    {
       std::string out;
       strprintf(out, "Package: %s\nArchitecture: %s\nAuto-Installed: 1\n\n", Pkg.Name(), Pkg.Arch());
-      if (d->extendedstates.Write(out.c_str(), out.length()) == false)
+      if (extendedstates.Write(out.c_str(), out.length()) == false)
 	 return false;
    }
 
@@ -111,7 +108,7 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    {
       std::string out;
       strprintf(out, "Package: %s\nPin: version %s\nPin-Priority: 9999\n\n", Pkg.FullName().c_str(), Ver.VerStr());
-      if (d->preferences.Write(out.c_str(), out.length()) == false)
+      if (preferences.Write(out.c_str(), out.length()) == false)
 	 return false;
    }
 
@@ -120,22 +117,13 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    {
       std::string out;
       strprintf(out, "Package: %s\nPin: version %s\nPin-Priority: %d\n\n", Pkg.FullName().c_str(), Ver.VerStr(), pinvalue);
-      if (d->preferences.Write(out.c_str(), out.length()) == false)
+      if (preferences.Write(out.c_str(), out.length()) == false)
 	 return false;
    }
 
    return true;
 }
 									/*}}}*/
-// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
-				    FileFd & /*File*/, std::string const &/*component*/)
-{
-   return true;
-}
-									/*}}}*/
-edspListParser::~edspListParser()					/*{{{*/
-{
-   delete d;
-}
-									/*}}}*/
+
+edspLikeListParser::~edspLikeListParser() {}
+edspListParser::~edspListParser() {}

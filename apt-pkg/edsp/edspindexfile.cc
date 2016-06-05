@@ -21,37 +21,42 @@
 #include <string>
 									/*}}}*/
 
-// EDSP Index								/*{{{*/
-edspIndex::edspIndex(std::string const &File) : pkgDebianIndexRealFile(File, true), d(NULL)
+// EDSP-like Index							/*{{{*/
+edspLikeIndex::edspLikeIndex(std::string const &File) : pkgDebianIndexRealFile(File, true)
 {
 }
-std::string edspIndex::GetComponent() const
-{
-   return "edsp";
-}
-std::string edspIndex::GetArchitecture() const
+std::string edspLikeIndex::GetArchitecture() const
 {
    return std::string();
 }
-bool edspIndex::HasPackages() const
+bool edspLikeIndex::HasPackages() const
 {
    return true;
 }
-bool edspIndex::Exists() const
+bool edspLikeIndex::Exists() const
 {
    return true;
 }
-uint8_t edspIndex::GetIndexFlags() const
+uint8_t edspLikeIndex::GetIndexFlags() const
 {
    return 0;
 }
-bool edspIndex::OpenListFile(FileFd &Pkg, std::string const &FileName)
+bool edspLikeIndex::OpenListFile(FileFd &Pkg, std::string const &FileName)
 {
    if (FileName.empty() == false && FileName != "/nonexistent/stdin")
       return pkgDebianIndexRealFile::OpenListFile(Pkg, FileName);
    if (Pkg.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
       return _error->Error("Problem opening %s",FileName.c_str());
    return true;
+}
+									/*}}}*/
+// EDSP Index								/*{{{*/
+edspIndex::edspIndex(std::string const &File) : edspLikeIndex(File)
+{
+}
+std::string edspIndex::GetComponent() const
+{
+   return "edsp";
 }
 pkgCacheListParser * edspIndex::CreateListParser(FileFd &Pkg)
 {
@@ -84,4 +89,5 @@ const pkgIndexFile::Type *edspIndex::GetType() const
 }
 									/*}}}*/
 
+edspLikeIndex::~edspLikeIndex() {}
 edspIndex::~edspIndex() {}

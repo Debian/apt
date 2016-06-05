@@ -14,6 +14,7 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 
+#include <memory>
 #include <vector>
 
 #include <apt-pkg/macros.h>
@@ -22,27 +23,35 @@ class Configuration;
 class pkgDepCache;
 class pkgIndexFile;
 class pkgPackageManager;
-class edspIndex;
 
-class edspSystemPrivate;
-class APT_HIDDEN edspSystem : public pkgSystem
+class APT_HIDDEN edspLikeSystem : public pkgSystem
 {
-   /** \brief dpointer placeholder (for later in case we need it) */
-   edspSystemPrivate * const d;
+protected:
+   std::unique_ptr<pkgIndexFile> StatusFile;
 
-   edspIndex *StatusFile;
-
-   public:
-
+public:
    virtual bool Lock() APT_OVERRIDE APT_CONST;
    virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_CONST;
    virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_CONST;
    virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
    virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE APT_CONST;
    virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const APT_OVERRIDE;
+
+   edspLikeSystem(char const * const Label);
+   virtual ~edspLikeSystem();
+};
+
+class APT_HIDDEN edspSystem : public edspLikeSystem
+{
+   std::string tempDir;
+   std::string tempStatesFile;
+   std::string tempPrefsFile;
+
+public:
+   virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
+   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
 
    edspSystem();
    virtual ~edspSystem();

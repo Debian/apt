@@ -28,63 +28,22 @@
 
 									/*}}}*/
 
-class edspSystemPrivate {
-   std::string tempDir;
-   std::string tempStatesFile;
-   std::string tempPrefsFile;
-
-public:
-   edspSystemPrivate() {}
-
-   void Initialize(Configuration &Cnf)
-   {
-      DeInitialize();
-      Cnf.Set("Dir::State::extended_states", "/dev/null");
-      Cnf.Set("Dir::Etc::preferences", "/dev/null");
-      std::string const tmp = GetTempDir();
-      char tmpname[100];
-      snprintf(tmpname, sizeof(tmpname), "%s/apt-edsp-solver-XXXXXX", tmp.c_str());
-      if (NULL == mkdtemp(tmpname))
-	 return;
-      tempDir = tmpname;
-      tempStatesFile = flCombine(tempDir, "extended_states");
-      Cnf.Set("Dir::State::extended_states", tempStatesFile);
-      tempPrefsFile = flCombine(tempDir, "apt_preferences");
-      Cnf.Set("Dir::Etc::preferences", tempPrefsFile);
-   }
-
-   void DeInitialize()
-   {
-      if (tempDir.empty())
-	 return;
-
-      RemoveFile("DeInitialize", tempStatesFile);
-      RemoveFile("DeInitialize", tempPrefsFile);
-      rmdir(tempDir.c_str());
-   }
-
-   ~edspSystemPrivate() { DeInitialize(); }
-};
-// System::edspSystem - Constructor					/*{{{*/
-edspSystem::edspSystem() : pkgSystem("Debian APT solver interface", &debVS), d(new edspSystemPrivate()), StatusFile(NULL)
+// System::System - Constructor						/*{{{*/
+edspLikeSystem::edspLikeSystem(char const * const Label) : pkgSystem(Label, &debVS)
 {
 }
-									/*}}}*/
-// System::~debSystem - Destructor					/*{{{*/
-edspSystem::~edspSystem()
+edspSystem::edspSystem() : edspLikeSystem("Debian APT solver interface")
 {
-   delete StatusFile;
-   delete d;
 }
 									/*}}}*/
 // System::Lock - Get the lock						/*{{{*/
-bool edspSystem::Lock()
+bool edspLikeSystem::Lock()
 {
    return true;
 }
 									/*}}}*/
 // System::UnLock - Drop a lock						/*{{{*/
-bool edspSystem::UnLock(bool /*NoErrors*/)
+bool edspLikeSystem::UnLock(bool /*NoErrors*/)
 {
    return true;
 }
@@ -93,68 +52,89 @@ bool edspSystem::UnLock(bool /*NoErrors*/)
 // ---------------------------------------------------------------------
 /* we can't use edsp input as input for real installations - just a
    simulation can work, but everything else will fail bigtime */
-pkgPackageManager *edspSystem::CreatePM(pkgDepCache * /*Cache*/) const
+pkgPackageManager *edspLikeSystem::CreatePM(pkgDepCache * /*Cache*/) const
 {
-   return NULL;
+   return nullptr;
 }
 									/*}}}*/
 // System::Initialize - Setup the configuration space..			/*{{{*/
-bool edspSystem::Initialize(Configuration &Cnf)
+bool edspLikeSystem::Initialize(Configuration &Cnf)
 {
-   d->Initialize(Cnf);
    Cnf.Set("Dir::Etc::preferencesparts", "/dev/null");
    Cnf.Set("Dir::State::status","/dev/null");
    Cnf.Set("Dir::State::lists","/dev/null");
-
    Cnf.Set("Debug::NoLocking", "true");
    Cnf.Set("APT::Get::Simulate", "true");
-
-   if (StatusFile) {
-     delete StatusFile;
-     StatusFile = 0;
-   }
+   StatusFile.reset(nullptr);
+   return true;
+}
+bool edspSystem::Initialize(Configuration &Cnf)
+{
+   if (edspLikeSystem::Initialize(Cnf) == false)
+      return false;
+   std::string const tmp = GetTempDir();
+   char tmpname[300];
+   snprintf(tmpname, sizeof(tmpname), "%s/apt-edsp-solver-XXXXXX", tmp.c_str());
+   if (nullptr == mkdtemp(tmpname))
+      return false;
+   tempDir = tmpname;
+   tempStatesFile = flCombine(tempDir, "extended_states");
+   Cnf.Set("Dir::State::extended_states", tempStatesFile);
+   tempPrefsFile = flCombine(tempDir, "apt_preferences");
+   Cnf.Set("Dir::Etc::preferences", tempPrefsFile);
    return true;
 }
 									/*}}}*/
 // System::ArchiveSupported - Is a file format supported		/*{{{*/
-bool edspSystem::ArchiveSupported(const char * /*Type*/)
+bool edspLikeSystem::ArchiveSupported(const char * /*Type*/)
 {
    return false;
 }
 									/*}}}*/
 // System::Score - Never use the EDSP system automatically		/*{{{*/
-signed edspSystem::Score(Configuration const &)
+signed edspLikeSystem::Score(Configuration const &)
 {
    return -1000;
 }
 									/*}}}*/
-bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
-{
-   if (StatusFile == 0)
-   {
-      if (_config->Find("edsp::scenario", "") == "/nonexistent/stdin")
-	 StatusFile = new edspIndex("/nonexistent/stdin");
-      else
-	 StatusFile = new edspIndex(_config->FindFile("edsp::scenario"));
-   }
-   List.push_back(StatusFile);
-   return true;
-}
-									/*}}}*/
 // System::FindIndex - Get an index file for status files		/*{{{*/
-bool edspSystem::FindIndex(pkgCache::PkgFileIterator File,
+bool edspLikeSystem::FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const
 {
    if (StatusFile == 0)
       return false;
    if (StatusFile->FindInCache(*File.Cache()) == File)
    {
-      Found = StatusFile;
+      Found = StatusFile.get();
       return true;
    }
 
    return false;
 }
 									/*}}}*/
+bool edspSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)	/*{{{*/
+{
+   if (StatusFile == nullptr)
+   {
+      if (_config->Find("edsp::scenario", "") == "/nonexistent/stdin")
+	 StatusFile.reset(new edspIndex("/nonexistent/stdin"));
+      else
+	 StatusFile.reset(new edspIndex(_config->FindFile("edsp::scenario")));
+   }
+   List.push_back(StatusFile.get());
+   return true;
+}
+									/*}}}*/
+
+edspLikeSystem::~edspLikeSystem() {}
+edspSystem::~edspSystem()
+{
+   if (tempDir.empty())
+      return;
+
+   RemoveFile("~edspSystem", tempStatesFile);
+   RemoveFile("~edspSystem", tempPrefsFile);
+   rmdir(tempDir.c_str());
+}
 
 APT_HIDDEN edspSystem edspSys;

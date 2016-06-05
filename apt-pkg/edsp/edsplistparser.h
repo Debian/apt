@@ -14,6 +14,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/fileutl.h>
 
 #include <string>
 
@@ -23,12 +24,8 @@
 #include <apt-pkg/tagfile.h>
 #endif
 
-class FileFd;
-class edspListParserPrivate;
-
-class APT_HIDDEN edspListParser : public debListParser
+class APT_HIDDEN edspLikeListParser : public debListParser
 {
-   edspListParserPrivate * const d;
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
@@ -38,12 +35,20 @@ class APT_HIDDEN edspListParser : public debListParser
    bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
 			std::string const &section);
 
-   edspListParser(FileFd *File);
-   virtual ~edspListParser();
-
-   protected:
-   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
-
+   edspLikeListParser(FileFd *File);
+   virtual ~edspLikeListParser();
 };
 
+class APT_HIDDEN edspListParser : public edspLikeListParser
+{
+   FileFd extendedstates;
+   FileFd preferences;
+
+protected:
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
+
+public:
+   edspListParser(FileFd *File);
+   virtual ~edspListParser();
+};
 #endif
