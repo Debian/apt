@@ -1112,7 +1112,6 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
 			unsigned int const flags,
 			OpProgress * const Progress)
 {
-   (void)(flags);
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planer"));
    unsigned long p = 0;
@@ -1152,6 +1151,10 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
    if (reinst.empty() == false)
       WriteOkay(Okay, output, "ReInstall:", reinst, "\n");
    WriteOkay(Okay, output, "Planer: ", _config->Find("APT::Planer", "internal"), "\n");
+   if ((flags & Request::IMMEDIATE_CONFIGURATION_ALL) != 0)
+      WriteOkay(Okay, output, "Immediate-Configuration: yes\n");
+   else if ((flags & Request::NO_IMMEDIATE_CONFIGURATION) != 0)
+      WriteOkay(Okay, output, "Immediate-Configuration: no\n");
    return WriteOkay(Okay, output, "\n");
 }
 									/*}}}*/
@@ -1379,6 +1382,13 @@ bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTI
 	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
 	 else if (LineStartsWithAndStrip(line, "Planer:"))
 	    ; // purely informational line
+	 else if (LineStartsWithAndStrip(line, "Immediate-Configuration:"))
+	 {
+	    if (localStringToBool(line, true))
+	       flags |= Request::IMMEDIATE_CONFIGURATION_ALL;
+	    else
+	       flags |= Request::NO_IMMEDIATE_CONFIGURATION;
+	 }
 	 else
 	    _error->Warning("Unknown line in EIPP Request stanza: %s", line.c_str());
 

@@ -1040,7 +1040,13 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    std::string const planer = _config->Find("APT::Planer", "internal");
    if (planer != "internal")
    {
-      if (EIPP::OrderInstall(planer.c_str(), this, 0, nullptr))
+      unsigned int flags = 0;
+      if (_config->FindB("APT::Immediate-Configure", true) == false)
+	 flags |= EIPP::Request::NO_IMMEDIATE_CONFIGURATION;
+      else if (_config->FindB("APT::Immediate-Configure-All", false))
+	 flags |= EIPP::Request::IMMEDIATE_CONFIGURATION_ALL;
+
+      if (EIPP::OrderInstall(planer.c_str(), this, flags, nullptr))
 	 return Completed;
       else
 	 return Failed;

@@ -239,8 +239,17 @@ namespace EDSP								/*{{{*/
 class pkgPackageManager;
 namespace EIPP								/*{{{*/
 {
+   namespace Request
+   {
+      enum Flags
+      {
+	 IMMEDIATE_CONFIGURATION_ALL = (1 << 0), /*!< try to keep the least amount of packages unconfigured as possible at all times */
+	 NO_IMMEDIATE_CONFIGURATION = (1 << 1), /*!< do not perform immediate configuration at all */
+      };
+   }
+
    APT_HIDDEN bool WriteRequest(pkgDepCache &Cache, FileFd &output,
-	 unsigned int const version, OpProgress * const Progress);
+	 unsigned int const flags, OpProgress * const Progress);
    APT_HIDDEN bool WriteScenario(pkgDepCache &Cache, FileFd &output,
 	 OpProgress * const Progress);
 

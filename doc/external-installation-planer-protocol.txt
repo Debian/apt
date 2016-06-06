@@ -162,6 +162,14 @@ The following **preference fields** are supported in request stanzas:
   informational string specifying to which planer this request was send
   initially.
 
+- *Immediate-Configuration:** (option, unset by default) A boolean value
+  defining if the planer should try to configure all packages as quickly
+  as possible (true) or shouldn't perform any kind of immediate
+  configuration at all (false). If not explicitly set with this field
+  the planer is free to pick either mode or implementing e.g. a mode
+  which configures only packages immediately if they are flagged as
+  `Essential` (or are dependencies of packages marked as `Essential`).
+
 
 #### Package universe
 

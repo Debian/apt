@@ -150,6 +150,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 	unsigned int flags;
 	if (EIPP::ReadRequest(input, actions, flags) == false)
 		DIE("Parsing the request failed!");
+	_config->Set("APT::Immediate-Configure", (flags & EIPP::Request::NO_IMMEDIATE_CONFIGURATION) == 0);
+	_config->Set("APT::Immediate-Configure-All", (flags & EIPP::Request::IMMEDIATE_CONFIGURATION_ALL) != 0);
 
 	EDSP::WriteProgress(5, "Read scenario…", output);
 
