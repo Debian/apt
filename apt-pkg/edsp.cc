@@ -1155,6 +1155,8 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
       WriteOkay(Okay, output, "Immediate-Configuration: yes\n");
    else if ((flags & Request::NO_IMMEDIATE_CONFIGURATION) != 0)
       WriteOkay(Okay, output, "Immediate-Configuration: no\n");
+   else if ((flags & Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS) != 0)
+      WriteOkay(Okay, output, "Allow-Temporary-Remove-of-Essentials: yes\n");
    return WriteOkay(Okay, output, "\n");
 }
 									/*}}}*/
@@ -1389,6 +1391,8 @@ bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTI
 	    else
 	       flags |= Request::NO_IMMEDIATE_CONFIGURATION;
 	 }
+	 else if (ReadFlag(flags, line, "Allow-Temporary-Remove-of-Essentials:", Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS))
+	    ;
 	 else
 	    _error->Warning("Unknown line in EIPP Request stanza: %s", line.c_str());
 

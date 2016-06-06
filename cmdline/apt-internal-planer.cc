@@ -152,6 +152,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 		DIE("Parsing the request failed!");
 	_config->Set("APT::Immediate-Configure", (flags & EIPP::Request::NO_IMMEDIATE_CONFIGURATION) == 0);
 	_config->Set("APT::Immediate-Configure-All", (flags & EIPP::Request::IMMEDIATE_CONFIGURATION_ALL) != 0);
+	_config->Set("APT::Force-LoopBreak", (flags & EIPP::Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS) != 0);
 
 	EDSP::WriteProgress(5, "Read scenario…", output);
 

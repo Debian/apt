@@ -245,6 +245,7 @@ namespace EIPP								/*{{{*/
       {
 	 IMMEDIATE_CONFIGURATION_ALL = (1 << 0), /*!< try to keep the least amount of packages unconfigured as possible at all times */
 	 NO_IMMEDIATE_CONFIGURATION = (1 << 1), /*!< do not perform immediate configuration at all */
+	 ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS = (1 << 2), /*!< just as the name suggests, very special case and dangerous! */
       };
    }
 

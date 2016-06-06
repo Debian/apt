@@ -1045,6 +1045,8 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 flags |= EIPP::Request::NO_IMMEDIATE_CONFIGURATION;
       else if (_config->FindB("APT::Immediate-Configure-All", false))
 	 flags |= EIPP::Request::IMMEDIATE_CONFIGURATION_ALL;
+      else if (_config->FindB("APT::Force-LoopBreak", false))
+	 flags |= EIPP::Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS;
 
       if (EIPP::OrderInstall(planer.c_str(), this, flags, nullptr))
 	 return Completed;
