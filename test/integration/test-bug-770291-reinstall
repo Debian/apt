@@ -58,11 +58,11 @@ Conf dependsa (1 unstable [i386])' aptget install --reinstall dependsa dependsb 
 # there is a chance dpkg can actually do these, BUT this depends on the maintainerscripts (not) present
 # which is very very risky to depend on (and apt doesn't know about that anyhow).
 testfailure aptget install --reinstall predependsa predependsb -s -o Debug::pkgPackageManager=1
-testequal "E: Couldn't configure predependsa:i386, probably a dependency cycle." tail -n1 rootdir/tmp/testfailure.output
+testsuccess grep "^E: Couldn't configure predependsa:i386, probably a dependency cycle.$" rootdir/tmp/testfailure.output
 
 # FIXME: the error message is a catch all here, not like the one above
 testfailure aptget install --reinstall predependsdependsa predependsdependsb -s -o Debug::pkgPackageManager=1
-testequal "E: Could not configure 'predependsdependsb:i386'. " tail -n1 rootdir/tmp/testfailure.output
+testsuccess grep "^E: Could not configure 'predependsdependsb:i386'. $" rootdir/tmp/testfailure.output
 
 
 msgmsg 'While we are at it, lets try these loops without reinstall as well'
@@ -91,8 +91,8 @@ Conf dependsa (1 unstable [i386])' aptget install dependsa dependsb -s
 # there is a chance dpkg can actually do these, BUT this depends on the maintainerscripts (not) present
 # which is very very risky to depend on (and apt doesn't know about that anyhow).
 testfailure aptget install predependsa predependsb -s -o Debug::pkgPackageManager=1
-testequal "E: Couldn't configure predependsa:i386, probably a dependency cycle." tail -n1 rootdir/tmp/testfailure.output
+testsuccess grep "^E: Couldn't configure predependsa:i386, probably a dependency cycle.$" rootdir/tmp/testfailure.output
 
 # FIXME: the error message is a catch all here, not like the one above
 testfailure aptget install predependsdependsa predependsdependsb -s -o Debug::pkgPackageManager=1
-testequal "E: Could not configure 'predependsdependsb:i386'. " tail -n1 rootdir/tmp/testfailure.output
+testsuccess grep "^E: Could not configure 'predependsdependsb:i386'. $" rootdir/tmp/testfailure.output

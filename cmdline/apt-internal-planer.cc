@@ -172,15 +172,21 @@ int main(int argc,const char *argv[])					/*{{{*/
 	if (PM.ApplyRequest(actions) == false)
 		DIE("Failed to apply request to packagemanager!");
 	pkgPackageManager::OrderResult const Res = PM.DoInstallPreFork();
+	std::ostringstream broken;
 	switch (Res)
 	{
 	   case pkgPackageManager::Completed:
 	      EDSP::WriteProgress(100, "Done", output);
 	      break;
 	   case pkgPackageManager::Incomplete:
-	      EDSP::WriteError("pm-incomplete", "Planer could only plan Incompletely", output);
+	      broken << "Planer could only incompletely plan an installation order!" << std::endl;
+	      _error->DumpErrors(broken, GlobalError::DEBUG);
+	      EDSP::WriteError("pm-incomplete", broken.str(), output);
+	      break;
 	   case pkgPackageManager::Failed:
-	      EDSP::WriteError("pm-failed", "Planer failed to find an order", output);
+	      broken << "Planer failed to find an installation order!" << std::endl;
+	      _error->DumpErrors(broken, GlobalError::DEBUG);
+	      EDSP::WriteError("pm-failed", broken.str(), output);
 	      break;
 	}
 
