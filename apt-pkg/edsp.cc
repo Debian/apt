@@ -17,6 +17,7 @@
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/pkgsystem.h>
 
 #include <ctype.h>
@@ -724,24 +725,31 @@ static bool ReadLine(int const input, std::string &line) {
 // StringToBool - convert yes/no to bool				/*{{{*/
 // ---------------------------------------------------------------------
 /* we are not as lazy as we are in the global StringToBool as we really
-   only accept yes/no here - but we will ignore leading spaces */
-static bool StringToBool(char const *answer, bool const defValue) {
-   for (; isspace(*answer) != 0; ++answer);
-   if (strncasecmp(answer, "yes", 3) == 0)
+   only accept yes/no here */
+static bool localStringToBool(std::string answer, bool const defValue) {
+   std::transform(answer.begin(), answer.end(), answer.begin(), ::tolower);
+   if (answer == "yes")
       return true;
-   else if (strncasecmp(answer, "no", 2) == 0)
+   else if (answer == "no")
       return false;
    else
-      _error->Warning("Value '%s' is not a boolean 'yes' or 'no'!", answer);
+      _error->Warning("Value '%s' is not a boolean 'yes' or 'no'!", answer.c_str());
    return defValue;
 }
 									/*}}}*/
-static bool ReadFlag(unsigned int &flags, std::string const &line, APT::StringView const name, unsigned int const setflag)/*{{{*/
+static bool LineStartsWithAndStrip(std::string &line, APT::StringView const with)/*{{{*/
 {
-   if (line.compare(0, name.length(), name.data()) != 0)
+   if (line.compare(0, with.size(), with.data()) != 0)
       return false;
-   auto const l = line.c_str() + name.length() + 1;
-   if (StringToBool(l, false))
+   line = APT::String::Strip(line.substr(with.length()));
+   return true;
+}
+									/*}}}*/
+static bool ReadFlag(unsigned int &flags, std::string &line, APT::StringView const name, unsigned int const setflag)/*{{{*/
+{
+   if (LineStartsWithAndStrip(line, name) == false)
+      return false;
+   if (localStringToBool(line, false))
       flags |= setflag;
    else
       flags &= ~setflag;
@@ -762,7 +770,7 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
       if (line.empty() == true)
 	 continue;
       // The first Tag must be a request, so search for it
-      if (line.compare(0, 8, "Request:") != 0)
+      if (LineStartsWithAndStrip(line, "Request:"))
 	 continue;
 
       while (ReadLine(input, line) == true)
@@ -772,16 +780,10 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    return true;
 
 	 std::list<std::string> *request = NULL;
-	 if (line.compare(0, 8, "Install:") == 0)
-	 {
-	    line.erase(0, 8);
+	 if (LineStartsWithAndStrip(line, "Install:"))
 	    request = &install;
-	 }
-	 else if (line.compare(0, 7, "Remove:") == 0)
-	 {
-	    line.erase(0, 7);
+	 else if (LineStartsWithAndStrip(line, "Remove:"))
 	    request = &remove;
-	 }
 	 else if (ReadFlag(flags, line, "Upgrade:", (Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL)) ||
 	       ReadFlag(flags, line, "Dist-Upgrade:", Request::UPGRADE_ALL) ||
 	       ReadFlag(flags, line, "Upgrade-All:", Request::UPGRADE_ALL) ||
@@ -789,33 +791,19 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	       ReadFlag(flags, line, "Forbid-Remove:", Request::FORBID_REMOVE) ||
 	       ReadFlag(flags, line, "Autoremove:", Request::AUTOREMOVE))
 	    ;
-	 else if (line.compare(0, 13, "Architecture:") == 0)
-	    _config->Set("APT::Architecture", line.c_str() + 14);
-	 else if (line.compare(0, 14, "Architectures:") == 0)
-	 {
-	    std::string const archs = line.c_str() + 15;
-	    _config->Set("APT::Architectures", SubstVar(archs, " ", ","));
-	 }
-	 else if (line.compare(0, 7, "Solver:") == 0)
+	 else if (LineStartsWithAndStrip(line, "Architecture:"))
+	    _config->Set("APT::Architecture", line);
+	 else if (LineStartsWithAndStrip(line, "Architectures:"))
+	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
+	 else if (LineStartsWithAndStrip(line, "Solver:"))
 	    ; // purely informational line
 	 else
 	    _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
 
 	 if (request == NULL)
 	    continue;
-	 size_t end = line.length();
-	 do {
-	    size_t begin = line.rfind(' ');
-	    if (begin == std::string::npos)
-	    {
-	       request->push_back(line.substr(0, end));
-	       break;
-	    }
-	    else if (begin < end)
-	       request->push_back(line.substr(begin + 1, end));
-	    line.erase(begin);
-	    end = line.find_last_not_of(' ');
-	 } while (end != std::string::npos);
+	 auto const pkgs = VectorizeString(line, ' ');
+	 std::move(pkgs.begin(), pkgs.end(), std::back_inserter(*request));
       }
    }
    return false;
