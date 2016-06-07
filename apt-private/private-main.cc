@@ -29,12 +29,12 @@ void InitLocale(APT_CMD const binary)				/*{{{*/
       case APT_CMD::APT_CACHE:
       case APT_CMD::APT_CDROM:
       case APT_CMD::APT_CONFIG:
+      case APT_CMD::APT_DUMP_SOLVER:
       case APT_CMD::APT_HELPER:
       case APT_CMD::APT_GET:
       case APT_CMD::APT_MARK:
 	 textdomain("apt");
 	 break;
-      case APT_CMD::APT_DUMP_SOLVER:
       case APT_CMD::APT_EXTRACTTEMPLATES:
       case APT_CMD::APT_FTPARCHIVE:
       case APT_CMD::APT_INTERNAL_SOLVER:
