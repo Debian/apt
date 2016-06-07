@@ -25,11 +25,17 @@ insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
 
 setupaptarchive
 
+testsuccess aptget install --solver apt coolstuff -s
+testempty find -name 'edsp.last.*'
+echo 'Dir::Log::Solver "edsp.last.xz";' > rootdir/etc/apt/apt.conf.d/log-edsp.conf
+
 testfailure aptget install --solver dump coolstuff -s
-testsuccess grep ERR_NO_FILENAME rootdir/tmp/testfailure.output
+testsuccess grep 'ERR_NO_FILENAME' rootdir/tmp/testfailure.output
+testfailure test -s rootdir/var/log/apt/edsp.last.xz
 export APT_EDSP_DUMP_FILENAME="/nonexistent/apt/edsp.dump"
 testfailure aptget install --solver dump coolstuff -s
-testsuccess grep ERR_WRITE_ERROR rootdir/tmp/testfailure.output
+testsuccess grep 'ERR_CREATE_FILE' rootdir/tmp/testfailure.output
+testfailure test -s rootdir/var/log/apt/edsp.last.xz
 export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/downloaded/dump.edsp"
 
 testfailureequal 'Reading package lists...
@@ -41,8 +47,8 @@ I am too dumb, i can just dump!
 Please use one of my friends instead!
 
 E: External solver failed with: I am too dumb, i can just dump!' aptget install --solver dump coolstuff -s
+testfailure test -s rootdir/var/log/apt/edsp.last.xz
 testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
-rm -f "$APT_EDSP_DUMP_FILENAME"
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -52,6 +58,12 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
 Inst coolstuff (2 unstable [amd64])
 Conf coolstuff (2 unstable [amd64])' aptget install --solver apt coolstuff -s
+testsuccess test -s rootdir/var/log/apt/edsp.last.xz
+sed -i -e 's#^Solver: dump$#Solver: apt#' "$APT_EDSP_DUMP_FILENAME"
+testequal "$(cat "$APT_EDSP_DUMP_FILENAME")
+" apthelper cat-file rootdir/var/log/apt/edsp.last.xz
+cp rootdir/var/log/apt/edsp.last.xz rootdir/var/log/apt/edsp.last.xz.1
+rm -f "$APT_EDSP_DUMP_FILENAME"
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -61,6 +73,7 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
 Inst coolstuff (3 experimental [amd64])
 Conf coolstuff (3 experimental [amd64])' aptget install --solver apt coolstuff -s -t experimental
+testfailure cmp rootdir/var/log/apt/edsp.last.xz rootdir/var/log/apt/edsp.last.xz.1
 
 testsuccessequal "Reading package lists...
 Building dependency tree...

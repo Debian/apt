@@ -60,9 +60,12 @@ pkgPackageManager *edspLikeSystem::CreatePM(pkgDepCache * /*Cache*/) const
 // System::Initialize - Setup the configuration space..			/*{{{*/
 bool edspLikeSystem::Initialize(Configuration &Cnf)
 {
+   Cnf.Set("Dir::Log", "/dev/null");
    // state is included completely in the input files
+   Cnf.Set("Dir::Etc::preferences", "/dev/null");
    Cnf.Set("Dir::Etc::preferencesparts", "/dev/null");
    Cnf.Set("Dir::State::status","/dev/null");
+   Cnf.Set("Dir::State::extended_states","/dev/null");
    Cnf.Set("Dir::State::lists","/dev/null");
    // do not store an mmap cache
    Cnf.Set("Dir::Cache::pkgcache", "");

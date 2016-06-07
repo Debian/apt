@@ -88,8 +88,8 @@ include $(PROGRAM_H)
 
 # This just dumps out the state
 PROGRAM=apt-dump-solver
-SLIBS = -lapt-pkg $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-dump-solver.cc
 include $(PROGRAM_H)
 

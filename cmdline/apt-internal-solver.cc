@@ -123,6 +123,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	_config->Set("APT::System", "Debian APT solver interface");
 	_config->Set("APT::Solver", "internal");
 	_config->Set("edsp::scenario", "/nonexistent/stdin");
+	_config->Clear("Dir::Log");
 	FileFd output;
 	if (output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
 	   DIE("stdout couldn't be opened");

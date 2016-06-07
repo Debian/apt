@@ -56,7 +56,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Cache::archives","archives/");
    Cnf.CndSet("Dir::Cache::srcpkgcache","srcpkgcache.bin");
    Cnf.CndSet("Dir::Cache::pkgcache","pkgcache.bin");
-   
+
    // Configuration
    Cnf.CndSet("Dir::Etc","etc/apt/");
    Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
@@ -72,7 +72,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Bin::solvers::","/usr/lib/apt/solvers");
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
-   // State   
+   // State
    Cnf.CndSet("Dir::Log","var/log/apt");
    Cnf.CndSet("Dir::Log::Terminal","term.log");
    Cnf.CndSet("Dir::Log::History","history.log");

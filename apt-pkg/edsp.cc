@@ -597,10 +597,12 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
       WriteOkay(Okay, output, "Forbid-New-Install: yes\n");
    if (flags & Request::FORBID_REMOVE)
       WriteOkay(Okay, output, "Forbid-Remove: yes\n");
+   auto const solver = _config->Find("APT::Solver", "internal");
+   WriteOkay(Okay, output, "Solver: ", solver, "\n");
    if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
       WriteOkay(Okay, output, "Strict-Pinning: no\n");
    string solverpref("APT::Solver::");
-   solverpref.append(_config->Find("APT::Solver", "internal")).append("::Preferences");
+   solverpref.append(solver).append("::Preferences");
    if (_config->Exists(solverpref) == true)
       WriteOkay(Okay, output, "Preferences: ", _config->Find(solverpref,""), "\n");
    return WriteOkay(Okay, output, "\n");
@@ -926,15 +928,23 @@ bool EDSP::WriteError(char const * const uuid, std::string const &message, FileF
 	      "\n\n");
 }
 									/*}}}*/
+static std::string findExecutable(std::vector<std::string> const &dirs, char const * const binary) {/*{{{*/
+	for (auto && dir : dirs) {
+		std::string const file = flCombine(dir, binary);
+		if (RealFileExists(file) == true)
+			return file;
+	}
+	return "";
+}
+									/*}}}*/
 static pid_t ExecuteExternal(char const* const type, char const * const binary, char const * const configdir, int * const solver_in, int * const solver_out) {/*{{{*/
-	std::vector<std::string> const solverDirs = _config->FindVector(configdir);
-	std::string file;
-	for (std::vector<std::string>::const_iterator dir = solverDirs.begin();
-	     dir != solverDirs.end(); ++dir) {
-		file = flCombine(*dir, binary);
-		if (RealFileExists(file.c_str()) == true)
-			break;
-		file.clear();
+	auto const solverDirs = _config->FindVector(configdir);
+	auto const file = findExecutable(solverDirs, binary);
+	std::string dumper;
+	{
+		dumper = findExecutable(solverDirs, "apt-dump-solver");
+		if (dumper.empty())
+			dumper = findExecutable(solverDirs, "dump");
 	}
 
 	if (file.empty() == true)
@@ -955,8 +965,18 @@ static pid_t ExecuteExternal(char const* const type, char const * const binary, 
 	if (Solver == 0) {
 		dup2(external[0], STDIN_FILENO);
 		dup2(external[3], STDOUT_FILENO);
-		const char* calling[2] = { file.c_str(), 0 };
-		execv(calling[0], (char**) calling);
+		auto const dumpfile = _config->FindFile((std::string("Dir::Log::") + type).c_str());
+		auto const dumpdir = flNotFile(dumpfile);
+		if (dumper.empty() || dumpfile.empty() || dumper == file || CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false)
+		{
+		   char const * const calling[] = { file.c_str(), nullptr };
+		   execv(calling[0], const_cast<char**>(calling));
+		}
+		else
+		{
+		   char const * const calling[] = { dumper.c_str(), dumpfile.c_str(), file.c_str(), nullptr };
+		   execv(calling[0], const_cast<char**>(calling));
+		}
 		std::cerr << "Failed to execute " << type << " '" << binary << "'!" << std::endl;
 		_exit(100);
 	}

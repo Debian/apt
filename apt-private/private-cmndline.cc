@@ -131,6 +131,11 @@ static bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char con
    return true;
 }
 									/*}}}*/
+static bool addArgumentsAPTDumpSolver(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+{
+   return true;
+}
+									/*}}}*/
 static bool addArgumentsAPTExtractTemplates(std::vector<CommandLine::Args> &Args, char const * const)/*{{{*/
 {
    addArg('t',"tempdir","APT::ExtractTemplates::TempDir",CommandLine::HasArg);
@@ -347,6 +352,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 	 case APT_CMD::APT_CACHE: addArgumentsAPTCache(Args, Cmd); break;
 	 case APT_CMD::APT_CDROM: addArgumentsAPTCDROM(Args, Cmd); break;
 	 case APT_CMD::APT_CONFIG: addArgumentsAPTConfig(Args, Cmd); break;
+	 case APT_CMD::APT_DUMP_SOLVER: addArgumentsAPTDumpSolver(Args, Cmd); break;
 	 case APT_CMD::APT_EXTRACTTEMPLATES: addArgumentsAPTExtractTemplates(Args, Cmd); break;
 	 case APT_CMD::APT_FTPARCHIVE: addArgumentsAPTFTPArchive(Args, Cmd); break;
 	 case APT_CMD::APT_HELPER: addArgumentsAPTHelper(Args, Cmd); break;
@@ -402,6 +408,7 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
       case APT_CMD::APT_CACHE: cmd = "apt-cache(8)"; break;
       case APT_CMD::APT_CDROM: cmd = "apt-cdrom(8)"; break;
       case APT_CMD::APT_CONFIG: cmd = "apt-config(8)"; break;
+      case APT_CMD::APT_DUMP_SOLVER: cmd = nullptr; break;
       case APT_CMD::APT_EXTRACTTEMPLATES: cmd = "apt-extracttemplates(1)"; break;
       case APT_CMD::APT_FTPARCHIVE: cmd = "apt-ftparchive(1)"; break;
       case APT_CMD::APT_GET: cmd = "apt-get(8)"; break;
@@ -412,14 +419,15 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
    }
    if (cmd != nullptr)
       ioprintf(std::cout, _("See %s for more information about the available commands."), cmd);
-   std::cout << std::endl <<
-      _("Configuration options and syntax is detailed in apt.conf(5).\n"
-	    "Information about how to configure sources can be found in sources.list(5).\n"
-	    "Package and version choices can be expressed via apt_preferences(5).\n"
-	    "Security details are available in apt-secure(8).\n");
+   if (Binary != APT_CMD::APT_DUMP_SOLVER && Binary != APT_CMD::APT_INTERNAL_SOLVER)
+      std::cout << std::endl <<
+	 _("Configuration options and syntax is detailed in apt.conf(5).\n"
+	       "Information about how to configure sources can be found in sources.list(5).\n"
+	       "Package and version choices can be expressed via apt_preferences(5).\n"
+	       "Security details are available in apt-secure(8).\n");
    if (Binary == APT_CMD::APT_GET || Binary == APT_CMD::APT)
       std::cout << std::right << std::setw(70) << _("This APT has Super Cow Powers.") << std::endl;
-   else if (Binary == APT_CMD::APT_HELPER)
+   else if (Binary == APT_CMD::APT_HELPER || Binary == APT_CMD::APT_DUMP_SOLVER)
       std::cout << std::right << std::setw(70) << _("This APT helper has Super Meep Powers.") << std::endl;
    return true;
 }
