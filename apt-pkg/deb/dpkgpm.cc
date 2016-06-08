@@ -1248,14 +1248,27 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
 
+   decltype(List)::const_iterator::difference_type const notconfidx =
+      _config->FindB("Dpkg::ExplicitLastConfigure", false) ? std::numeric_limits<decltype(notconfidx)>::max() :
+      std::distance(List.cbegin(), std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }).base());
+
    // support subpressing of triggers processing for special
    // cases like d-i that runs the triggers handling manually
    bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
-   if (_config->FindB("DPkg::ConfigurePending", true) == true)
+   bool const ConfigurePending = _config->FindB("DPkg::ConfigurePending", true);
+   if (ConfigurePending)
       List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
    // for the progress
    BuildPackagesProgressMap();
+
+   if (notconfidx != std::numeric_limits<decltype(notconfidx)>::max())
+   {
+      if (ConfigurePending)
+	 List.erase(std::next(List.cbegin(), notconfidx), std::prev(List.cend()));
+      else
+	 List.erase(std::next(List.cbegin(), notconfidx), List.cend());
+   }
 
    d->stdin_is_dev_null = false;
 

@@ -16,12 +16,15 @@ setupaptarchive
 
 testqualifier() {
 	msgtest 'Test with' $1 'for correct qualifier mode' $2
-	GIVEN="$(aptget install $1 -qq -o Debug::pkgDPkgPM=1 2>&1 | grep -v -- '--unpack' | sed -e 's/^.*--[^u][^ ]* \([^ ]*\).*$/\1/')"
+	#aptget install $1 -qq -o Debug::pkgDPkgPM=1 || true
+	aptget install $1 -qq -o Debug::pkgDPkgPM=1 -o Dpkg::ExplicitLastConfigure=1 > testqualifier.output 2>&1 || true
+	GIVEN="$(grep -v -- '--unpack' testqualifier.output | sed -e 's/^.*--[^u][^ ]* \([^ ]*\).*$/\1/')"
 	if [ "$GIVEN" = "$2" ]; then
 		msgpass
 	else
-		echo
-		echo "$GIVEN"
+		cat >&2 testqualifier.output
+		echo >&2
+		echo >&2 "$GIVEN"
 		msgfail
 	fi
 }
