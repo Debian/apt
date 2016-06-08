@@ -20,6 +20,7 @@
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/pkgsystem.h>
 
+#include <sys/stat.h>
 #include <ctype.h>
 #include <stddef.h>
 #include <string.h>
@@ -1007,6 +1008,19 @@ bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_o
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 unsigned int const flags, OpProgress *Progress) {
+	if (strcmp(solver, "internal") == 0)
+	{
+		auto const dumpfile = _config->FindFile("Dir::Log::Solver");
+		if (dumpfile.empty())
+			return false;
+		auto const dumpdir = flNotFile(dumpfile);
+		FileFd output;
+		if (CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
+		      output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false)
+			return _error->WarningE("EDSP::Resolve", _("Could not open file '%s'"), dumpfile.c_str());
+		bool Okay = EDSP::WriteRequest(Cache, output, flags, nullptr);
+		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
+	}
 	int solver_in, solver_out;
 	pid_t const solver_pid = EDSP::ExecuteSolver(solver, &solver_in, &solver_out, true);
 	if (solver_pid == 0)

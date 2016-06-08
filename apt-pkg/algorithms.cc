@@ -636,8 +636,9 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 bool pkgProblemResolver::Resolve(bool BrokenFix, OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
+   auto const ret = EDSP::ResolveExternal(solver.c_str(), Cache, 0, Progress);
    if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, 0, Progress);
+      return ret;
    return ResolveInternal(BrokenFix);
 }
 									/*}}}*/
@@ -1133,10 +1134,10 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
+   constexpr auto flags = EDSP::Request::UPGRADE_ALL | EDSP::Request::FORBID_NEW_INSTALL | EDSP::Request::FORBID_REMOVE;
+   auto const ret = EDSP::ResolveExternal(solver.c_str(), Cache, flags, Progress);
    if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache,
-	    EDSP::Request::UPGRADE_ALL | EDSP::Request::FORBID_NEW_INSTALL | EDSP::Request::FORBID_REMOVE,
-	    Progress);
+      return ret;
    return ResolveByKeepInternal();
 }
 									/*}}}*/
