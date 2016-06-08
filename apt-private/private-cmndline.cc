@@ -24,6 +24,8 @@
 
 APT_SENTINEL static bool strcmp_match_in_list(char const * const Cmd, ...)		/*{{{*/
 {
+   if (Cmd == nullptr)
+      return false;
    va_list args;
    bool found = false;
    va_start(args, Cmd);
@@ -131,8 +133,9 @@ static bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char con
    return true;
 }
 									/*}}}*/
-static bool addArgumentsAPTDumpSolver(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+static bool addArgumentsAPTDumpSolver(std::vector<CommandLine::Args> &Args, char const * const)/*{{{*/
 {
+   addArg(0,"user","APT::Solver::RunAsUser",CommandLine::HasArg);
    return true;
 }
 									/*}}}*/
@@ -337,12 +340,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 {
    std::vector<CommandLine::Args> Args;
    Args.reserve(50);
-   if (Cmd == nullptr)
-   {
-      if (Program == APT_CMD::APT_EXTRACTTEMPLATES)
-	 addArgumentsAPTExtractTemplates(Args, Cmd);
-   }
-   else if (strcmp(Cmd, "help") == 0)
+   if (Cmd != nullptr && strcmp(Cmd, "help") == 0)
       ; // no options for help so no need to implement it in each
    else
       switch (Program)

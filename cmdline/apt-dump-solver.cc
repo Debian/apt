@@ -107,6 +107,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 
       Solver = ExecFork();
       if (Solver == 0) {
+	 _config->Set("APT::Sandbox::User", _config->Find("APT::Solver::RunAsUser", _config->Find("APT::Sandbox::User")));
+	 DropPrivileges();
 	 dup2(external[0], STDIN_FILENO);
 	 execv(CmdL.FileList[1], const_cast<char**>(CmdL.FileList + 1));
 	 std::cerr << "Failed to execute  '" << CmdL.FileList[1] << "'!" << std::endl;

@@ -70,6 +70,11 @@ configuration documentation for more, and more up to date, information.
   of the solver you are using if and what is supported as a value here.
   Defaults to the empty string.
 
+- **APT::Solver::RunAsUser**: if APT itself is run as root it will
+  change to this user before executing the solver. Defaults to the value
+  of APT::Sandbox::User, which itself defaults to `_apt`. Can be
+  disabled by set this option to `root`.
+
 The options **Strict-Pinning** and **Preferences** can also be set for
 a specific solver only via **APT::Solver::NAME::Strict-Pinning** and
 **APT::Solver::NAME::Preferences** respectively where `NAME` is the name

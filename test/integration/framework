@@ -339,7 +339,9 @@ setupenvironment() {
 	# destroys coverage reporting though, so we disable changing user for the calling gpgv
 	echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	if [ "$(id -u)" = '0' ]; then
-		echo 'Binary::gpgv::Debug::NoDropPrivs "true";' >>aptconfig.conf
+		echo 'Binary::gpgv::APT::Sandbox::User "root";' >> aptconfig.conf
+		# same for the solver executables
+		echo 'APT::Solver::RunAsUser "root";' >> aptconfig.conf
 	fi
 
 	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF

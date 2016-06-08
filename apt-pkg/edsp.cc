@@ -968,14 +968,19 @@ static pid_t ExecuteExternal(char const* const type, char const * const binary, 
 		dup2(external[3], STDOUT_FILENO);
 		auto const dumpfile = _config->FindFile((std::string("Dir::Log::") + type).c_str());
 		auto const dumpdir = flNotFile(dumpfile);
+		auto const runasuser = _config->Find(std::string("APT::") + type + "::" + binary + "::RunAsUser",
+		      _config->Find(std::string("APT::") + type + "::RunAsUser",
+			 _config->Find("APT::Sandbox::User")));
 		if (dumper.empty() || dumpfile.empty() || dumper == file || CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false)
 		{
+		   _config->Set("APT::Sandbox::User", runasuser);
+		   DropPrivileges();
 		   char const * const calling[] = { file.c_str(), nullptr };
 		   execv(calling[0], const_cast<char**>(calling));
 		}
 		else
 		{
-		   char const * const calling[] = { dumper.c_str(), dumpfile.c_str(), file.c_str(), nullptr };
+		   char const * const calling[] = { dumper.c_str(), "--user", runasuser.c_str(), dumpfile.c_str(), file.c_str(), nullptr };
 		   execv(calling[0], const_cast<char**>(calling));
 		}
 		std::cerr << "Failed to execute " << type << " '" << binary << "'!" << std::endl;
