@@ -115,7 +115,7 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
       }
    }
 
-   bool const success = Fix.Resolve(false, Progress);
+   bool const success = Fix.ResolveInternal(false);
    if (Progress != NULL)
       Progress->Done();
    return success;
@@ -158,7 +158,7 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache, OpProgress * const Pr
       Progress->Progress(50);
 
    // resolve remaining issues via keep
-   bool const success = Fix.ResolveByKeep(Progress);
+   bool const success = Fix.ResolveByKeepInternal();
    if (Progress != NULL)
       Progress->Done();
    return success;
@@ -218,7 +218,7 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
       Progress->Progress(60);
 
    // resolve remaining issues via keep
-   bool const success = Fix.ResolveByKeep(Progress);
+   bool const success = Fix.ResolveByKeepInternal();
    if (Progress != NULL)
       Progress->Done();
    return success;

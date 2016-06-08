@@ -124,9 +124,6 @@ class pkgProblemResolver						/*{{{*/
    APT_HIDDEN void MakeScores();
    APT_HIDDEN bool DoUpgrade(pkgCache::PkgIterator Pkg);
 
-   APT_HIDDEN bool ResolveInternal(bool const BrokenFix = false);
-   APT_HIDDEN bool ResolveByKeepInternal();
-
    protected:
    bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);
 
@@ -138,9 +135,11 @@ class pkgProblemResolver						/*{{{*/
 
    // Try to intelligently resolve problems by installing and removing packages
    bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);
+   APT_HIDDEN bool ResolveInternal(bool const BrokenFix = false);
 
    // Try to resolve problems only by using keep
    bool ResolveByKeep(OpProgress * const Progress = NULL);
+   APT_HIDDEN bool ResolveByKeepInternal();
 
    APT_DEPRECATED_MSG("NOOP as MarkInstall enforces not overriding FromUser markings") void InstallProtect();
 
