@@ -1231,9 +1231,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    fd_set rfds;
    struct timespec tv;
 
-   // FIXME: do we really need this limit when we have MaxArgBytes?
-   unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",32*1024);
-
    // try to figure out the max environment size
    int OSArgMax = sysconf(_SC_ARG_MAX);
    if(OSArgMax < 0)
@@ -1305,33 +1302,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 for (; J != List.end() && J->Op == I->Op; ++J)
 	    /* nothing */;
 
-      // keep track of allocated strings for multiarch package names
-      std::vector<char *> Packages;
+      auto const size = (J - I) + 10;
 
       // start with the baseset of arguments
-      unsigned long Size = StartSize;
+      auto Size = StartSize;
       Args.erase(Args.begin() + BaseArgs, Args.end());
-
-      // Now check if we are within the MaxArgs limit
-      //
-      // this code below is problematic, because it may happen that
-      // the argument list is split in a way that A depends on B
-      // and they are in the same "--configure A B" run
-      // - with the split they may now be configured in different
-      //   runs, using Immediate-Configure-All can help prevent this.
-      if (J - I > (signed)MaxArgs)
-      {
-	 J = I + MaxArgs;
-	 unsigned long const size = MaxArgs + 10;
-	 Args.reserve(size);
-	 Packages.reserve(size);
-      }
-      else
-      {
-	 unsigned long const size = (J - I) + 10;
-	 Args.reserve(size);
-	 Packages.reserve(size);
-      }
+      Args.reserve(size);
+      // keep track of allocated strings for multiarch package names
+      std::vector<char *> Packages(size, nullptr);
 
       int fd[2];
       if (pipe(fd) != 0)
