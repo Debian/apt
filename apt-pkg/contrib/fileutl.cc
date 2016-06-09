@@ -1978,6 +1978,11 @@ public:
    virtual bool InternalClose(std::string const &) APT_OVERRIDE
    {
       bool Ret = true;
+      if (filefd->iFd != -1)
+      {
+	 close(filefd->iFd);
+	 filefd->iFd = -1;
+      }
       if (compressor_pid > 0)
 	 Ret &= ExecWait(compressor_pid, "FileFdCompressor", true);
       compressor_pid = -1;

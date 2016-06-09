@@ -539,6 +539,10 @@ EOF
 	testempty --nomsg gcc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
 }
 configcompression() {
+	if [ "$1" = 'ALL' ]; then
+		configcompression '.' $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Extension \.\(.*\)$#\1#p')
+		return
+	fi
 	local CMD='apthelper cat-file -C'
 	while [ -n "$1" ]; do
 		case "$1" in
@@ -963,7 +967,7 @@ buildaptarchivefromfiles() {
 }
 
 compressfile() {
-	cat "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf" | while read compressor extension command; do
+	while read compressor extension command; do
 		if [ "$compressor" = '.' ]; then
 			if [ -n "$2" ]; then
 				touch -d "$2" "$1"
@@ -974,7 +978,7 @@ compressfile() {
 		if [ -n "$2" ]; then
 			touch -d "$2" "${1}.${extension}"
 		fi
-	done
+	done < "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf"
 }
 
 # can be overridden by testcases for their pleasure
