@@ -33,6 +33,12 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = test_udevcdrom.cc
 include $(PROGRAM_H)
 
+PROGRAM=test_fileutl
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = test_fileutl.cc
+include $(PROGRAM_H)
+
 # Program for checking rpm versions
 #PROGRAM=rpmver
 #SLIBS = -lapt-pkg -lrpm

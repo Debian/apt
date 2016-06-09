@@ -74,7 +74,7 @@ void helperCreateTemporaryFile(std::string const &id, FileFd &fd, std::string * 
       unlink(tempfile);
    free(tempfile);
 
-   EXPECT_TRUE(fd.OpenDescriptor(tempfile_fd, FileFd::ReadWrite));
+   EXPECT_TRUE(fd.OpenDescriptor(tempfile_fd, FileFd::ReadWrite, true));
    if (content != NULL)
    {
       ASSERT_TRUE(fd.Write(content, strlen(content)));
