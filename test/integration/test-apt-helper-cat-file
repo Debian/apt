@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+
+cat >rootdir/etc/apt/apt.conf.d/rev-as-compressor <<EOF
+APT::Compressor::rev {
+	Name "rev";
+	Extension ".rev";
+	Binary "rev";
+	Cost "1";
+};
+EOF
+
+configcompression 'ALL'
+cat >./test.txt <<EOF
+This is a test.
+EOF
+
+compressfile ./test.txt
+while read compressor extension command; do
+	if [ "$compressor" = '.' ]; then
+		FILE='./test.txt'
+	else
+		FILE="./test.txt.${extension}"
+	fi
+	testsuccessequal "$(cat ./test.txt)" apthelper cat-file "$FILE"
+done < "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf"

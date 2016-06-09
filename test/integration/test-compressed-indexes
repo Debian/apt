@@ -5,7 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
-configcompression '.' $(aptconfig dump APT::Compressor --format '%t %v%n' | sed -n 's#^Extension \.\(.*\)$#\1#p')
+configcompression 'ALL'
 configarchitecture 'i386'
 LOWCOSTEXT='lz4'
 
