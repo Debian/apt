@@ -1406,6 +1406,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       p != Packages.end(); ++p)
 	    free(*p);
 	 Packages.clear();
+	 close(fd[0]);
+	 close(fd[1]);
 	 continue;
       }
       Args.push_back(NULL);
