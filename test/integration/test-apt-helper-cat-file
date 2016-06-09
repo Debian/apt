@@ -5,6 +5,15 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 
+TESTTOOL="${BUILDDIRECTORY}/test_fileutl"
+msgtest 'Check if we have build the test tool' "$TESTTOOL"
+if [ -x "$TESTTOOL" ]; then
+	msgpass
+else
+	msgskip 'not available'
+	exit 0
+fi
+
 cat >rootdir/etc/apt/apt.conf.d/rev-as-compressor <<EOF
 APT::Compressor::rev {
 	Name "rev";
@@ -25,6 +34,13 @@ while read compressor extension command; do
 		FILE='./test.txt'
 	else
 		FILE="./test.txt.${extension}"
+	fi
+	if [ -d /proc/self/fd ]; then
+		testsuccess runapt "${TESTTOOL}" "$FILE"
+		testequal '3' grep -c '/test.txt' rootdir/tmp/testsuccess.output
+	else
+		msgtest 'Test if /proc interface is available'
+		msgskip 'seems not'
 	fi
 	testsuccessequal "$(cat ./test.txt)" apthelper cat-file "$FILE"
 done < "${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf"
