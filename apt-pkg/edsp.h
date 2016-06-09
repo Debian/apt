@@ -109,8 +109,9 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  This method takes care of interpreting whatever the solver sends
 	 *  through the standard output like a solution, progress or an error.
-	 *  The main thread should handle his control over to this method to
-	 *  wait for the solver to finish the given task
+	 *  The main thread should hand his control over to this method to
+	 *  wait for the solver to finish the given task. The file descriptor
+	 *  used as input is completely consumed and closed by the method.
 	 *
 	 *  \param input file descriptor with the response from the solver
 	 *  \param Cache the solution should be applied on if any

@@ -625,7 +625,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 	}
 
 	FileFd in;
-	in.OpenDescriptor(input, FileFd::ReadOnly);
+	in.OpenDescriptor(input, FileFd::ReadOnly, true);
 	pkgTagFile response(&in, 100);
 	pkgTagSection section;
 
