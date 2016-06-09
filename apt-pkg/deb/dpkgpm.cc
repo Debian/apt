@@ -22,6 +22,7 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/version.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -36,6 +37,8 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
@@ -1221,6 +1224,34 @@ void pkgDPkgPM::StopPtyMagic()						/*{{{*/
       d->master = -1;
    }
 }
+									/*}}}*/
+static void cleanUpTmpDir(char * const tmpdir)				/*{{{*/
+{
+   if (tmpdir == nullptr)
+      return;
+   DIR * const D = opendir(tmpdir);
+   if (D == nullptr)
+      _error->Errno("opendir", _("Unable to read %s"), tmpdir);
+   else
+   {
+      auto const dfd = dirfd(D);
+      for (struct dirent *Ent = readdir(D); Ent != nullptr; Ent = readdir(D))
+      {
+	 if (Ent->d_name[0] == '.')
+	    continue;
+#ifdef _DIRENT_HAVE_D_TYPE
+	 if (unlikely(Ent->d_type != DT_LNK && Ent->d_type != DT_UNKNOWN))
+	    continue;
+#endif
+	 if (unlikely(unlinkat(dfd, Ent->d_name, 0) != 0))
+	    break;
+      }
+      closedir(D);
+      rmdir(tmpdir);
+   }
+   free(tmpdir);
+}
+									/*}}}*/
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -1275,6 +1306,19 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // store auto-bits as they are supposed to be after dpkg is run
    if (noopDPkgInvocation == false)
       Cache.writeStateFile(NULL);
+
+   bool dpkg_recursive_install = _config->FindB("dpkg::install::recursive", false);
+   if (_config->FindB("dpkg::install::recursive::force", false) == false)
+   {
+      // dpkg uses a sorted treewalk since that version which enables the workaround to work
+      auto const dpkgpkg = Cache.FindPkg("dpkg");
+      if (likely(dpkgpkg.end() == false && dpkgpkg->CurrentVer != 0))
+	 dpkg_recursive_install = Cache.VS().CmpVersion("1.18.5", dpkgpkg.CurrentVer().VerStr()) <= 0;
+   }
+   // no point in doing this dance for a handful of packages only
+   unsigned int const dpkg_recursive_install_min = _config->FindB("dpkg::install::recursive::minimum", 5);
+   // FIXME: workaround for dpkg bug, see our ./test-bug-740843-versioned-up-down-breaks test
+   bool const dpkg_recursive_install_numbered = _config->FindB("dpkg::install::recursive::numbered", true);
 
    decltype(List)::const_iterator::difference_type const notconfidx =
       _config->FindB("Dpkg::ExplicitLastConfigure", false) ? std::numeric_limits<decltype(notconfidx)>::max() :
@@ -1396,17 +1440,47 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       {
 	 ADDARGC("--no-triggers");
       }
-#undef ADDARGC
+      char * tmpdir_to_free = nullptr;
 
       // Write in the file or package names
       if (I->Op == Item::Install)
       {
-	 for (;I != J && Size < MaxArgBytes; ++I)
+	 auto const installsToDo = J - I;
+	 if (dpkg_recursive_install == true && dpkg_recursive_install_min < installsToDo)
 	 {
-	    if (I->File[0] != '/')
-	       return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
-	    Args.push_back(I->File.c_str());
-	    Size += I->File.length();
+	    std::string tmpdir;
+	    strprintf(tmpdir, "%s/apt-dpkg-install-XXXXXX", GetTempDir().c_str());
+	    tmpdir_to_free = strndup(tmpdir.data(), tmpdir.length());
+	    if (mkdtemp(tmpdir_to_free) == nullptr)
+	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_to_free);
+
+	    char p = 1;
+	    for (auto c = installsToDo - 1; (c = c/10) != 0; ++p);
+	    for (unsigned long n = 0; I != J; ++n, ++I)
+	    {
+	       if (I->File[0] != '/')
+		  return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
+	       auto const file = flNotDir(I->File);
+	       std::string linkpath;
+	       if (dpkg_recursive_install_numbered)
+		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_to_free, p, n, file.c_str());
+	       else
+		  strprintf(linkpath, "%s/%s", tmpdir_to_free, file.c_str());
+	       if (symlink(I->File.c_str(), linkpath.c_str()) != 0)
+		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
+	    }
+	    ADDARGC("--recursive");
+	    ADDARG(tmpdir_to_free);
+	 }
+	 else
+	 {
+	    for (;I != J && Size < MaxArgBytes; ++I)
+	    {
+	       if (I->File[0] != '/')
+		  return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
+	       Args.push_back(I->File.c_str());
+	       Size += I->File.length();
+	    }
 	 }
       }
       else
@@ -1454,6 +1528,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 if (oldSize == Size)
 	    continue;
       }
+#undef ADDARGC
 #undef ADDARG
 
       J = I;
@@ -1470,6 +1545,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 Packages.clear();
 	 close(fd[0]);
 	 close(fd[1]);
+	 cleanUpTmpDir(tmpdir_to_free);
 	 continue;
       }
       Args.push_back(NULL);
@@ -1604,6 +1680,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
       signal(SIGHUP,old_SIGHUP);
+
+      cleanUpTmpDir(tmpdir_to_free);
 
       if (waitpid_failure == true)
       {
@@ -1775,7 +1853,17 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // find the package version and source package name
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
    if (Pkg.end() == true)
-      return;
+   {
+      if (pos == std::string::npos || _config->FindB("dpkg::install::recursive::numbered", true) == false)
+	 return;
+      auto const dash = pkgname.find_first_not_of("0123456789");
+      if (dash == std::string::npos || pkgname[dash] != '-')
+	 return;
+      pkgname.erase(0, dash + 1);
+      Pkg = Cache.FindPkg(pkgname);
+      if (Pkg.end() == true)
+	 return;
+   }
    pkgCache::VerIterator Ver = Cache.GetCandidateVersion(Pkg);
    if (Ver.end() == true)
       return;
