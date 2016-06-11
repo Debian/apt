@@ -1,3 +1,30 @@
+apt (1.2.13) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * fail instead of segfault on unreadable config files (Closes: 824503)
+  * prevent C++ locale number formatting in text APIs (Closes: #825396)
+  * apt-key: change to / before find to satisfy its CWD needs.
+    Thanks to Samuel Thibault for 'finding' the culprit! (Closes: 826043)
+  * do not hang on piped input in PipedFileFdPrivate
+  * don't leak an FD in lz4 (de)compression
+  * don't leak FD in AutoProxyDetect command return parsing
+
+  [ Julian Andres Klode ]
+  * Provide complete apt bash completion.
+    Thanks to Elias Fröhner and Svyatoslav Gryaznov for the initial work
+    (LP: #1573547)
+
+  [ Zhou Mo ]
+  * zh_TW.po: remove several fuzzy tags after review
+
+  [ Yuri Kozlov ]
+  * Russian program translation update (Closes: 824702)
+
+  [ Takuma Yamada ]
+  * Japanese program translation update (Closes: 826291)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 11 Jun 2016 17:28:25 +0200
+
 apt (1.2.12) unstable; urgency=medium
 
   [ Patrick Cable ]
