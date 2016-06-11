@@ -1,3 +1,66 @@
+apt (1.3~exp2) experimental; urgency=medium
+
+  [ Johannes 'josch' Schauer ]
+  * edsp: document unique package identifiers
+
+  [ David Kalnischkies ]
+  * edsp: warn if unexpected stanzas appear in the solution
+  * show globalerrors before asking for confirmation
+  * show final solution in --no-download --fix-missing mode
+  * document --no- as --show-upgraded is the default (Closes: 824456)
+  * fail instead of segfault on unreadable config files (Closes: 824503)
+  * convert EDSP to be based on FileFd instead of FILE*
+  * edsp: dump: support dumping into compressed file
+  * edsp: add Forbid-{New-Install,Remove} and Upgrade-All
+  * update symbols file
+  * no-change bump of Standards-Version to 3.9.8
+  * override lintian on doxygens embedded-javascript-library
+  * fix and document on the fly compressor config
+  * prevent C++ locale number formatting in text APIs (Closes: #825396)
+  * accept only the expected UTC timezones in date parsing (Closes: 819697)
+  * avoid changing the global LC_TIME for Release writing
+  * use de-localed std::put_time instead rolling our own
+  * use std::locale::global instead of setlocale
+  * look into the right textdomain for apt-utils again
+  * try to detect sudo spawned root-shell in prefixing (Closes: 825742)
+  * ignore std::locale exception on non-existent "" locale
+  * apt-key: change to / before find to satisfy its CWD needs.
+    Thanks to Samuel Thibault for 'finding' the culprit! (Closes: 826043)
+  * edsp: use an ID mapping for the internal solver
+  * edsp: use a stanza based interface for solution writing
+  * edsp: optionally store a compressed copy of the last scenario
+  * move 'dump' solver from apt-utils to apt package
+  * edsp: if internal is used, keep this decision
+  * edsp: if logging is requested, do it for internal, too
+  * edsp: drop privileges before executing solvers
+  * don't explicitly configure the last round of packages
+  * drop Dpkg::MaxArgs in favor of Dpkg::MaxArgsBytes
+  * do not hang on piped input in PipedFileFdPrivate
+  * don't leak an FD in lz4 (de)compression
+  * don't leak EDSP solver output fd
+  * don't leak FD in AutoProxyDetect command return parsing
+
+  [ Julian Andres Klode ]
+  * Provide complete apt bash completion.
+    Thanks to Elias Fröhner and Svyatoslav Gryaznov for the initial work
+    (LP: #1573547)
+  * apt.systemd.daily: Put opening brace of check_power on extra line
+    (LP: #1581985)
+  * Add conflicting Signed-By values to error message
+  * Normalize Signed-By values by removing trailing commas everywhere
+  * Pass -fvisibility-inlines-hidden to g++
+
+  [ Zhou Mo ]
+  * zh_CN.po: update simplified Chinese translation.
+
+  [ Yuri Kozlov ]
+  * Russian program translation update (Closes: 824702)
+
+  [ Takuma Yamada ]
+  * Japanese program translation update (Closes: 826291)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 11 Jun 2016 17:23:19 +0200
+
 apt (1.3~exp1) experimental; urgency=medium
 
   [ David Kalnischkies ]

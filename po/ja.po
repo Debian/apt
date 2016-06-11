@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-04 20:28+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2016-05-18 15:31+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -1950,6 +1950,20 @@ msgstr "が重要です。これを修正して「導入」を再度実行して
 msgid "Merging available information"
 msgstr "入手可能情報をマージしています"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s を待ちましたが、そこにはありませんでした"
+
 #: cmdline/apt-extracttemplates.cc
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -3040,11 +3054,6 @@ msgstr ""
 "ディレクトリ '%2$s' の '%1$s' が無効なファイル名拡張子を持っているため、無視"
 "します"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s を待ちましたが、そこにはありませんでした"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3352,7 +3361,7 @@ msgstr "インストール後トリガ %s を実行しています"
 msgid "Directory '%s' missing"
 msgstr "ディレクトリ '%s' が見つかりません"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "ファイル '%s' をオープンできませんでした"

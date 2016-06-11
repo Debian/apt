@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1923,6 +1923,20 @@ msgstr ""
 msgid "Merging available information"
 msgstr "S'està fusionant la informació disponible"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Esperava %s però no hi era"
+
 #: cmdline/apt-extracttemplates.cc
 #, fuzzy
 msgid ""
@@ -3008,11 +3022,6 @@ msgstr ""
 "S'està descartant «%s» al directori «%s» perquè té una extensió del nom de "
 "fitxer invàlida"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Esperava %s però no hi era"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3243,6 +3252,11 @@ msgstr ""
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr ""
 
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr ""
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3312,7 +3326,7 @@ msgstr "S'està executant l'activador de postinstaŀlació %s"
 msgid "Directory '%s' missing"
 msgstr "Manca el directori «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "No s'ha pogut obrir el fitxer «%s»"

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2016-04-27 18:12+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1990,6 +1990,20 @@ msgstr ""
 msgid "Merging available information"
 msgstr "De beschikbare informatie wordt samengevoegd"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Er is gewacht op %s, maar die kwam niet"
+
 #: cmdline/apt-extracttemplates.cc
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -3095,11 +3109,6 @@ msgstr ""
 "Negeren van bestand '%s' in map '%s' omdat het een ongeldige "
 "bestandsextensie heeft"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Er is gewacht op %s, maar die kwam niet"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3334,6 +3343,12 @@ msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr ""
 "Ongeldige waarde ingesteld voor optie %s in verband met pakketbron %s %s (%s)"
 
+#: apt-pkg/deb/debmetaindex.cc
+#, fuzzy, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr ""
+"Tegengestelde waarden ingesteld voor optie %s in verband met pakketbron %s %s"
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3402,7 +3417,7 @@ msgstr "Post-installatie-trigger %s wordt uitgevoerd"
 msgid "Directory '%s' missing"
 msgstr "Map '%s' ontbreekt"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Kon het bestand '%s' niet openen"

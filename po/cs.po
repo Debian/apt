@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -1910,6 +1910,20 @@ msgstr "chyby nad touto hláškou. Opravte je a poté znovu spusťte [I]nstalova
 msgid "Merging available information"
 msgstr "Slučují se dostupné informace"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Čekali jsme na %s, ale nebyl tam"
+
 #: cmdline/apt-extracttemplates.cc
 #, fuzzy
 msgid ""
@@ -2978,11 +2992,6 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr "Ignoruji soubor „%s“ v adresáři „%s“, jelikož má neplatnou příponu"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Čekali jsme na %s, ale nebyl tam"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3211,6 +3220,11 @@ msgstr "Pro volbu %s byly nastaveny kolidující hodnoty zdroje %s %s"
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr "Pro volbu %s byla nastavena kolidující hodnota zdroje %s %s (%s)"
 
+#: apt-pkg/deb/debmetaindex.cc
+#, fuzzy, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr "Pro volbu %s byly nastaveny kolidující hodnoty zdroje %s %s"
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3276,7 +3290,7 @@ msgstr "Spouští se poinstalační spouštěč %s"
 msgid "Directory '%s' missing"
 msgstr "Adresář „%s“ chybí"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Nelze otevřít soubor „%s“"

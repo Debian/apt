@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -1919,6 +1919,20 @@ msgstr ""
 msgid "Merging available information"
 msgstr "A juntar a informação disponível"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Esperou por %s mas não estava lá"
+
 #: cmdline/apt-extracttemplates.cc
 #, fuzzy
 msgid ""
@@ -3010,11 +3024,6 @@ msgstr ""
 "A ignorar o ficheiro '%s' no directório '%s' porque tem uma extensão "
 "inválida no nome do ficheiro"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Esperou por %s mas não estava lá"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3245,6 +3254,11 @@ msgstr ""
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr ""
 
+#: apt-pkg/deb/debmetaindex.cc
+#, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr ""
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3316,7 +3330,7 @@ msgstr "A correr o 'trigger' de pós-instalação %s"
 msgid "Directory '%s' missing"
 msgstr "Falta o directório '%s'"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Não foi possível abrir ficheiro o '%s'"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2016-03-27 07:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1884,6 +1884,20 @@ msgstr "这个提示之前的错误消息才值得您注意。请更正它们，
 msgid "Merging available information"
 msgstr "正在合并可用信息"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "等待子进程 %s 的退出，但是它并不存在"
+
 #: cmdline/apt-extracttemplates.cc
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -2931,11 +2945,6 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr "忽略‘%s’(于目录‘%s’)，鉴于它的文件扩展名无效"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "等待子进程 %s 的退出，但是它并不存在"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3162,6 +3171,11 @@ msgstr "软件源 %2$s %3$s 的选项 %1$s 中含有互相冲突的值"
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr "软件源 %2$s %3$s (%4$s) 的选项 %1$s 中含有无效值"
 
+#: apt-pkg/deb/debmetaindex.cc
+#, fuzzy, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr "软件源 %2$s %3$s 的选项 %1$s 中含有互相冲突的值"
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3227,7 +3241,7 @@ msgstr "执行安装后执行的触发器 %s"
 msgid "Directory '%s' missing"
 msgstr "目录 %s 缺失"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "无法打开文件 %s"

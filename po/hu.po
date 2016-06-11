@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-05-11 10:50+0200\n"
+"POT-Creation-Date: 2016-06-11 17:24+0200\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1957,6 +1957,20 @@ msgstr "előtti hibák fontosak. Javítsa azokat, és futtassa az [I]nstallt új
 msgid "Merging available information"
 msgstr "Elérhető információk egyesítése"
 
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Nem található a(z) %s, a várakozás után sem"
+
 #: cmdline/apt-extracttemplates.cc
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
@@ -3045,11 +3059,6 @@ msgstr ""
 "„%s” fájl figyelmen kívül hagyása a(z) „%s” könyvtárban, mert érvénytelen "
 "fájlkiterjesztése van"
 
-#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Nem található a(z) %s, a várakozás után sem"
-
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3288,6 +3297,13 @@ msgstr ""
 "Érvénytelen érték van megadva a(z) %s beállításhoz ezen forrásra "
 "vonatkozóan: %s %s (%s)"
 
+#: apt-pkg/deb/debmetaindex.cc
+#, fuzzy, c-format
+msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
+msgstr ""
+"Ütköző értékek vannak megadva a(z) %s beállításhoz ezen forrásra "
+"vonatkozóan: %s %s"
+
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
@@ -3358,7 +3374,7 @@ msgstr "A(z) %s telepítés utáni trigger futtatása"
 msgid "Directory '%s' missing"
 msgstr "A(z) „%s” könyvtár hiányzik"
 
-#: apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "A(z) „%s” fájl megnyitása sikertelen"
