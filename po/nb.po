@@ -7,20 +7,21 @@
 # Klaus Ade Johnstad <klaus@skolelinux.no>, 2004.
 # Bjorn Steensrud <bjornst@powertech.no>, 2004.
 # Hans Fredrik Nordhaug <hans@nordhaug.priv.no>, 2003, 2005-2010.
+# Petter Reinholdtsen <pere@hungry.com>, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-11 17:24+0200\n"
-"PO-Revision-Date: 2010-09-01 21:10+0200\n"
-"Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
-"Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
+"POT-Creation-Date: 2016-06-13 11:54+0200\n"
+"PO-Revision-Date: 2016-06-11 22:38+0200\n"
+"Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
+"Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.6.1\n"
+"X-Generator: Lokalize 1.5\n"
 
 #. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
 #: apt-private/acqprogress.cc
@@ -99,7 +100,7 @@ msgstr "Uinnfridde avhengighetsforhold - Prøv «-f»."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
-msgstr ""
+msgstr "Sorterer"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -122,7 +123,6 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "Pakken %s er en virtuell pakke, som oppfylt av:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
 msgstr " [Installert]"
 
@@ -161,9 +161,11 @@ msgstr "Virtuelle pakker som «%s» kan ikke fjernes\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Pakken %s er ikke installert, og derfor heller ikke fjernet\n"
+msgstr ""
+"Pakken '%s' er ikke installert, og derfor heller ikke fjernet. Mente du "
+"'%s'?\n"
 
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, fuzzy, c-format
@@ -177,12 +179,12 @@ msgstr "Merk, velger «%s» istedenfor «%s»\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "Mest brukte kommandoer:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "Se %s for mer informasjon om de tilgjengelige kommandoene."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -191,6 +193,9 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Detaljer om oppsettvalg og syntaks finnes i apt.conf(5).\n"
+"Informasjon om hvordan en setter opp kilder finnes i sources.list(5).\n"
+"Sikkerhetsdetaljer er tilgjengelig i apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -226,6 +231,7 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes er utdatert, bruk en av valgene som starter med --allow istedet."
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -308,6 +314,8 @@ msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Pakker som er holdt igjen ble endret og -y ble brukt uten --allow-change-"
+"held-packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -462,7 +470,7 @@ msgstr[1] "%lu pakker ble automatisk installert og er ikke lenger påkrevet.\n"
 #, fuzzy, c-format
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
-msgstr[0] "Bruk «%s» for å fjerne dem."
+msgstr[0] "Bruk «%s» for å fjerne den."
 msgstr[1] "Bruk «%s» for å fjerne dem."
 
 #: apt-private/private-install.cc
@@ -478,9 +486,8 @@ msgstr ""
 "angi en løsning)."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
-msgstr "Følgende ekstra pakker vil bli installert."
+msgstr "Følgende ekstra pakker vil bli installert:"
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -531,7 +538,7 @@ msgstr "Utvalgt versjon «%s» (%s) for «%s»\n"
 
 #: apt-private/private-list.cc
 msgid "Listing"
-msgstr ""
+msgstr "Lister opp"
 
 #: apt-private/private-list.cc
 #, c-format
@@ -539,7 +546,9 @@ msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional versions. Please use the '-a' switch to see them."
 msgstr[0] ""
+"Det er %i ekstra versjon.  Vær så snill å bruk '-a'-bryteren for å se den"
 msgstr[1] ""
+"Det er %i ekstra versjoner.  Vær så snill å bruk '-a'-bryteren for å se dem."
 
 #: apt-private/private-main.cc
 msgid ""
@@ -555,7 +564,7 @@ msgstr ""
 
 #: apt-private/private-output.cc apt-private/private-show.cc
 msgid "unknown"
-msgstr ""
+msgstr "ukjent"
 
 #: apt-private/private-output.cc
 #, fuzzy, c-format
@@ -569,7 +578,7 @@ msgstr " [Installert]"
 
 #: apt-private/private-output.cc
 msgid "[installed,auto-removable]"
-msgstr ""
+msgstr "[installert,auto-fjernbar]"
 
 #: apt-private/private-output.cc
 #, fuzzy
@@ -584,7 +593,7 @@ msgstr " [Installert]"
 #: apt-private/private-output.cc
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr ""
+msgstr "[oppgraderbar fra: %s]"
 
 #: apt-private/private-output.cc
 msgid "[residual-config]"
@@ -710,7 +719,7 @@ msgstr "J"
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
 #: apt-private/private-output.cc
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: apt-private/private-output.cc apt-pkg/cachefilter.cc
 #, c-format
@@ -723,7 +732,7 @@ msgstr "Du må oppgi minst ett søkemønster"
 
 #: apt-private/private-search.cc
 msgid "Full Text Search"
-msgstr ""
+msgstr "Fulltekstsøk"
 
 #: apt-private/private-show.cc cmdline/apt-cache.cc
 #, c-format
@@ -736,11 +745,14 @@ msgid "There is %i additional record. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional records. Please use the '-a' switch to see them."
 msgstr[0] ""
+"Det er %i ekstra oppføring.  Vær så snill å bruk '-a'-bryteren for å se den"
 msgstr[1] ""
+"Det er %i ekstra oppføringer.  Vær så snill å bruk '-a'-bryteren for å se "
+"dem."
 
 #: apt-private/private-show.cc
 msgid "not a real package (virtual)"
-msgstr ""
+msgstr "ikke en virkelig pakke (virtuell)"
 
 #: apt-private/private-show.cc apt-pkg/cacheset.cc
 #, c-format
@@ -765,7 +777,7 @@ msgstr "Låste pakker:"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s med prioritet %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -906,11 +918,13 @@ msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+"Ingen arkitekturinformasjon tilgjengelig for %s.  Se apt.conf(5) APT::"
+"Architectures for oppsett."
 
 #: apt-private/private-source.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "Merk, bruker '%s'-katalogen for å få tak i byggavhengigheter\n"
 
 #: apt-private/private-source.cc
 #, fuzzy, c-format
@@ -929,7 +943,7 @@ msgstr "Klarte ikke å endre navnet på %s til %s"
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
+msgstr "'%s'-filen din ble endret, vær så snill å kjør 'apt-get update'."
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -946,11 +960,13 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
+"%i pakke kan oppgraderes.  Kjør 'apt list --upgradable' for å se den.\n"
 msgstr[1] ""
+"%i pakker kan oppgraderes.  Kjør 'apt list --upgradable' for å se dem.\n"
 
 #: apt-private/private-update.cc
 msgid "All packages are up to date."
-msgstr ""
+msgstr "Alle pakkene er oppdatert."
 
 #: cmdline/apt-cache.cc
 #, fuzzy
@@ -1024,6 +1040,8 @@ msgstr "Samlet mengde redegjort plass: "
 #: cmdline/apt-cache.cc
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
+"Denne kommandoen er utdatert.  Vær så snill å bruke 'apt-mark showauto' "
+"istedet."
 
 #: cmdline/apt-cache.cc
 msgid ""
@@ -1140,6 +1158,8 @@ msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
+"Denne kommandoen er utdatert. Vær så snill å bruk 'apt-mark auto' og 'apt-"
+"mark manual' istedet."
 
 #: cmdline/apt-get.cc
 msgid "Internal error, problem resolver broke stuff"
@@ -1223,15 +1243,15 @@ msgstr "Last ned kildekode fra arkivene"
 
 #: cmdline/apt-get.cc
 msgid "Download the binary package into the current directory"
-msgstr ""
+msgstr "Last ned binærpakke til gjeldende katalog"
 
 #: cmdline/apt-get.cc
 msgid "Download and display the changelog for the given package"
-msgstr ""
+msgstr "Last ned og vis endringsloggen for den oppgitte pakken"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "Trenger en URL som argument"
 
 #: cmdline/apt-helper.cc
 #, fuzzy
@@ -1240,12 +1260,12 @@ msgstr "Du må angi minst en pakke du vil ha kildekoden til"
 
 #: cmdline/apt-helper.cc
 msgid "Download Failed"
-msgstr ""
+msgstr "Nedlasting feilet"
 
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec feilet for %s"
 
 #: cmdline/apt-helper.cc
 msgid ""
@@ -1263,11 +1283,11 @@ msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "Slå opp en SRV-oppføring (f.eks. _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "slå sammen filer, med automatisk utpakking"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -1300,7 +1320,7 @@ msgstr "%s er allerede nyeste versjon.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Executing dpkg failed. Are you root?"
-msgstr ""
+msgstr "Klarte ikke kjøre dpkg.  Er du root?"
 
 #: cmdline/apt-mark.cc
 #, fuzzy, c-format
@@ -1320,12 +1340,12 @@ msgstr ""
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "Valgte %s for fjerning.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "Valgte %s for installering.\n"
 
 #: cmdline/apt-mark.cc
 msgid ""
@@ -1349,11 +1369,11 @@ msgstr "Sjekk om pakken «dpkg-dev» er installert.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
-msgstr ""
+msgstr "Marker en pakke som holdt tilbake"
 
 #: cmdline/apt-mark.cc
 msgid "Unset a package set as held back"
-msgstr ""
+msgstr "Fjern markering som holdt tilbake for en pakke"
 
 #: cmdline/apt-mark.cc
 #, fuzzy
@@ -1367,7 +1387,7 @@ msgstr "%s satt til manuell installasjon.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Print the list of package on hold"
-msgstr ""
+msgstr "Skriv listen med pakker som holdes tilbake"
 
 #: cmdline/apt.cc
 msgid ""
@@ -1383,7 +1403,7 @@ msgstr ""
 #. query
 #: cmdline/apt.cc
 msgid "list packages based on package names"
-msgstr ""
+msgstr "list pakker basert på pakkenavn"
 
 #: cmdline/apt.cc
 #, fuzzy
@@ -1392,7 +1412,7 @@ msgstr "Leser pakkelister"
 
 #: cmdline/apt.cc
 msgid "show package details"
-msgstr ""
+msgstr "vis pakkedetaljer"
 
 #. package stuff
 #: cmdline/apt.cc
@@ -1413,11 +1433,11 @@ msgstr "%s satt til manuell installasjon.\n"
 
 #: cmdline/apt.cc
 msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
+msgstr "oppgrader systemet ved å installere/oppgradere pakker"
 
 #: cmdline/apt.cc
 msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
+msgstr "oppgrader systemet ved å fjerne/installere/oppgradere pakker"
 
 #. misc
 #: cmdline/apt.cc
@@ -1720,7 +1740,7 @@ msgstr "Ukjent feil ved kjøring av apt-key"
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
+msgstr "Signatur med nøkkel %s bruker svak oppsummeringsalgoritme (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -1864,7 +1884,7 @@ msgstr "Intern feil"
 
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
-msgstr ""
+msgstr "Tomme filer kan ikke være gyldige arkiver"
 
 #: dselect/install:33
 msgid "Bad default setting!"
@@ -3012,7 +3032,7 @@ msgstr "Problem ved låsing av gzip-fila %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Uventet slutt på fil"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -3061,9 +3081,9 @@ msgid "Can't mmap an empty file"
 msgstr "Kan ikke utføre mmap på en tom fil"
 
 #: apt-pkg/contrib/mmap.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Klarte ikke lage mmap av %lu bytes"
+msgstr "Klarte ikke lage mmap av %llu bytes"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
@@ -3124,7 +3144,7 @@ msgstr "%c%s ... Ferdig"
 
 #: apt-pkg/contrib/progress.cc
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc
@@ -3332,13 +3352,13 @@ msgid "Completely removed %s"
 msgstr "Fjernet %s fullstendig"
 
 #: apt-pkg/deb/dpkgpm.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Can not write log (%s)"
-msgstr "Kan ikke skrive til %s"
+msgstr "Kan ikke skrive logg (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc
 msgid "Is /dev/pts mounted?"
-msgstr ""
+msgstr "Er /dev/pts montert?"
 
 #: apt-pkg/deb/dpkgpm.cc
 msgid "Operation was interrupted before it could finish"
@@ -3378,13 +3398,12 @@ msgstr ""
 "minne»-feil"
 
 #: apt-pkg/deb/dpkgpm.cc
-#, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
-"Ingen apport-rapport skrevet fordi feilmeldingen indikerer en «full disk»-"
-"feil"
+"Ingen apport-rapport skrevet fordi feilmeldingen indikerer et problem på det "
+"lokale systemet."
 
 #: apt-pkg/deb/dpkgpm.cc
 msgid ""
@@ -3704,7 +3723,7 @@ msgstr ""
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "Kan ikke gjøre om %s til heltall: utenfor rekkevidde"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3719,11 +3738,17 @@ msgstr ""
 msgid "Calculating upgrade"
 msgstr "Beregner oppgradering"
 
+#~ msgid "Failed to fetch %s  %s\n"
+#~ msgstr "Klarte ikke å skaffe %s  %s\n"
+
 #~ msgid "(not found)"
 #~ msgstr "(ikke funnet)"
 
 #~ msgid "  Package pin: "
 #~ msgstr "  Pakke låst til: "
+
+#~ msgid "Invalid 'Valid-Until' entry in Release file %s"
+#~ msgstr "Ugyldig «Valid-Until»-oppføring i Release-fila %s"
 
 #~ msgid "There is no public key available for the following key IDs:\n"
 #~ msgstr ""
