@@ -221,7 +221,7 @@ signed debSystem::Score(Configuration const &Cnf)
    signed Score = 0;
    if (FileExists(Cnf.FindFile("Dir::State::status","/var/lib/dpkg/status")) == true)
        Score += 10;
-   if (FileExists(Cnf.FindFile("Dir::Bin::dpkg","/usr/bin/dpkg")) == true)
+   if (FileExists(Cnf.Find("Dir::Bin::dpkg","/usr/bin/dpkg")) == true)
       Score += 10;
    if (FileExists("/etc/debian_version") == true)
       Score += 10;

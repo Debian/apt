@@ -47,7 +47,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2], std::string const &key)
 {
    #define EINTERNAL 111
-   std::string const aptkey = _config->FindFile("Dir::Bin::apt-key", "/usr/bin/apt-key");
+   std::string const aptkey = _config->Find("Dir::Bin::apt-key", "/usr/bin/apt-key");
 
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
 
