@@ -23,6 +23,7 @@ requires_root() {
 }
 
 command_available() {
+    if [ -x "$1" ]; then return 0; fi
     # command -v "$1" >/dev/null 2>&1 # not required by policy, see #747320
     # which "$1" >/dev/null 2>&1 # is in debianutils (essential) but not on non-debian systems
     local OLDIFS="$IFS"
