@@ -894,9 +894,10 @@ pkgAcquire::Queue::~Queue()
 /* */
 bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
+   QItem **OptimalI = &Items;
    QItem **I = &Items;
    // move to the end of the queue and check for duplicates here
-   for (; *I != 0; I = &(*I)->Next)
+   for (; *I != 0; ) {
       if (Item.URI == (*I)->URI)
       {
 	 if (_config->FindB("Debug::pkgAcquire::Worker",false) == true)
@@ -905,12 +906,22 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 	 Item.Owner->Status = (*I)->Owner->Status;
 	 return false;
       }
+      // Determine the optimal position to insert: before anything with a
+      // higher priority.
+      int priority = (*I)->GetPriority();
+
+      I = &(*I)->Next;
+      if (priority >= Item.Owner->Priority()) {
+	 OptimalI = I;
+      }
+   }
+
 
    // Create a new item
    QItem *Itm = new QItem;
    *Itm = Item;
-   Itm->Next = 0;
-   *I = Itm;
+   Itm->Next = *OptimalI;
+   *OptimalI = Itm;
    
    Item.Owner->QueueCounter++;   
    if (Items->Next == 0)
@@ -1060,16 +1071,24 @@ bool pkgAcquire::Queue::Cycle()
 
    // Look for a queable item
    QItem *I = Items;
+   int ActivePriority = 0;
    while (PipeDepth < (signed)MaxPipeDepth)
    {
-      for (; I != 0; I = I->Next)
+      for (; I != 0; I = I->Next) {
+	 if (I->Owner->Status == pkgAcquire::Item::StatFetching)
+	    ActivePriority = std::max(ActivePriority, I->GetPriority());
 	 if (I->Owner->Status == pkgAcquire::Item::StatIdle)
 	    break;
+      }
 
       // Nothing to do, queue is idle.
       if (I == 0)
 	 return true;
 
+      // This item has a lower priority than stuff in the pipeline, pretend
+      // the queue is idle
+      if (I->GetPriority() < ActivePriority)
+	 return true;
       I->Worker = Workers;
       for (auto const &O: I->Owners)
 	 O->Status = pkgAcquire::Item::StatFetching;
@@ -1133,6 +1152,15 @@ APT_PURE unsigned long long pkgAcquire::Queue::QItem::GetMaximumSize() const	/*{
    if (Maximum == std::numeric_limits<unsigned long long>::max())
       return 0;
    return Maximum;
+}
+									/*}}}*/
+APT_PURE int pkgAcquire::Queue::QItem::GetPriority() const	/*{{{*/
+{
+   int Priority = 0;
+   for (auto const &O: Owners)
+      Priority = std::max(Priority, O->Priority());
+
+   return Priority;
 }
 									/*}}}*/
 void pkgAcquire::Queue::QItem::SyncDestinationFiles() const		/*{{{*/

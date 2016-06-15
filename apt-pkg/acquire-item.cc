@@ -1019,6 +1019,28 @@ bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
 }
 									/*}}}*/
 
+																		/*}}}*/
+int pkgAcquire::Item::Priority() 				/*{{{*/
+{
+   // Stage 1: Meta indices and diff indices
+   // - those need to be fetched first to have progress reporting working
+   //   for the rest
+   if (dynamic_cast<pkgAcqMetaSig*>(this) != nullptr
+       || dynamic_cast<pkgAcqMetaBase*>(this) != nullptr
+       || dynamic_cast<pkgAcqDiffIndex*>(this) != nullptr)
+      return 1000;
+   // Stage 2: Diff files
+   // - fetch before complete indexes so we can apply the diffs while fetching
+   //   larger files.
+   if (dynamic_cast<pkgAcqIndexDiffs*>(this) != nullptr ||
+       dynamic_cast<pkgAcqIndexMergeDiffs*>(this) != nullptr)
+      return 800;
+
+   // Stage 3: The rest - complete index files and other stuff
+   return 500;
+}
+									/*}}}*/
+
 pkgAcqTransactionItem::pkgAcqTransactionItem(pkgAcquire * const Owner,	/*{{{*/
       pkgAcqMetaClearSig * const transactionManager, IndexTarget const &target) :
    pkgAcquire::Item(Owner), d(NULL), Target(target), TransactionManager(transactionManager)
