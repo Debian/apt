@@ -441,12 +441,12 @@ bool HttpServerState::RunData(FileFd * const File)
    {
       /* Closes encoding is used when the server did not specify a size, the
          loss of the connection means we are done */
-      if (Persistent == false)
-	 In.Limit(-1);
-      else if (JunkSize != 0)
+      if (JunkSize != 0)
 	 In.Limit(JunkSize);
-      else
+      else if (DownloadSize != 0)
 	 In.Limit(DownloadSize);
+      else if (Persistent == false)
+	 In.Limit(-1);
       
       // Just transfer the whole block.
       do
