@@ -9,7 +9,7 @@ configarchitecture 'i386'
 confighashes 'SHA512'
 
 insertpackage 'unstable' 'foo' 'i386' '1.0'
-insertpackage 'testing' 'foo' 'any' '1.0'
+insertpackage 'testing' 'foo' 'i386' '1.0'
 
 setupaptarchive --no-update
 APTARCHIVE="$(readlink -f ./aptarchive)"
@@ -28,16 +28,22 @@ testsuccess grep "SUCCESS" aptupdate.output
 
 msgmsg "Some sources broken => run Post-Invoke-Success and Post-Invoke"
 sed -i -e '/^ / d' -e '/^SHA512:/ d' "$APTARCHIVE/dists/unstable/Release"
+testsuccess rm "$(aptget indextargets 'Created-By: Packages' 'Suite: testing' --format '$(FILENAME)')"
 signreleasefiles
-testfailure aptget update
+listcurrentlistsdirectory > lists.before
+testfailure apt update
 cp rootdir/tmp/testfailure.output aptupdate.output
+listcurrentlistsdirectory > lists.after
+testfailure cmp lists.before lists.after
 testsuccess grep "RUN" aptupdate.output
 testsuccess grep "SUCCESS" aptupdate.output
 
 msgmsg "All sources broken => run Post-Invoke"
 sed -i -e '/^ / d' -e '/^SHA512:/ d' "$APTARCHIVE/dists/testing/Release"
 signreleasefiles
-testfailure aptget update
+mv lists.after lists.before
+testfailure apt update
 cp rootdir/tmp/testfailure.output aptupdate.output
+testfileequal lists.before "$(listcurrentlistsdirectory)"
 testsuccess grep "RUN" aptupdate.output
 testfailure grep "SUCCESS" aptupdate.output
