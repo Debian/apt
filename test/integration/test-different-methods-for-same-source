@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'stable' 'foo' 'all' '1'
+insertsource 'stable' 'foo' 'all' '1'
+setupaptarchive --no-update
+
+# install a slowed down file: otherwise its to fast to reproduce combining
+NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
+OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
+rm "$NEWMETHODS"
+mkdir "$NEWMETHODS"
+backupIFS="$IFS"
+IFS="$(printf "\n\b")"
+for METH in $(find "$OLDMETHODS" ! -type d); do
+	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
+done
+IFS="$backupIFS"
+ln -s "${OLDMETHODS}/http" "${NEWMETHODS}/http-ng"
+
+changetowebserver
+sed -i -e 's# http:# http-ng:#' $(find rootdir/etc/apt/sources.list.d -name '*-deb-src.list')
+
+testsuccess apt update
+cp rootdir/tmp/testsuccess.output update.log
+# all requests are folded into the first Release file
+testsuccess grep ' http-ng://' update.log
+testfailure grep ' http://' update.log

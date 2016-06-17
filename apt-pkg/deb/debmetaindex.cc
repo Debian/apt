@@ -80,20 +80,19 @@ std::string debReleaseIndex::MetaIndexFile(const char *Type) const
    return _config->FindDir("Dir::State::lists") +
       URItoFileName(MetaIndexURI(Type));
 }
-
+static std::string constructMetaIndexURI(std::string URI, std::string const &Dist, char const * const Type)
+{
+   if (Dist == "/")
+      ;
+   else if (Dist[Dist.size()-1] == '/')
+      URI += Dist;
+   else
+      URI += "dists/" + Dist + "/";
+   return URI + Type;
+}
 std::string debReleaseIndex::MetaIndexURI(const char *Type) const
 {
-   std::string Res;
-
-   if (Dist == "/")
-      Res = URI;
-   else if (Dist[Dist.size()-1] == '/')
-      Res = URI + Dist;
-   else
-      Res = URI + "dists/" + Dist + "/";
-   
-   Res += Type;
-   return Res;
+   return constructMetaIndexURI(URI, Dist, Type);
 }
 									/*}}}*/
 // ReleaseIndex Con- and Destructors					/*{{{*/
@@ -919,27 +918,30 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 			   std::string const &Dist, std::string const &Section,
 			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
    {
-      debReleaseIndex *Deb = NULL;
-      for (std::vector<metaIndex *>::const_iterator I = List.begin();
-	   I != List.end(); ++I)
+      debReleaseIndex * Deb = nullptr;
+      std::string const FileName = URItoFileName(constructMetaIndexURI(URI, Dist, "Release"));
+      for (auto const &I: List)
       {
 	 // We only worry about debian entries here
-	 if (strcmp((*I)->GetType(), "deb") != 0)
+	 if (strcmp(I->GetType(), "deb") != 0)
 	    continue;
 
-	 /* This check insures that there will be only one Release file
+	 auto const D = dynamic_cast<debReleaseIndex*>(I);
+	 if (unlikely(D == nullptr))
+	    continue;
+
+	 /* This check ensures that there will be only one Release file
 	    queued for all the Packages files and Sources files it
 	    corresponds to. */
-	 if ((*I)->GetURI() == URI && (*I)->GetDist() == Dist)
+	 if (URItoFileName(D->MetaIndexURI("Release")) == FileName)
 	 {
-	    Deb = dynamic_cast<debReleaseIndex*>(*I);
-	    if (Deb != NULL)
-	       break;
+	    Deb = D;
+	    break;
 	 }
       }
 
       // No currently created Release file indexes this entry, so we create a new one.
-      if (Deb == NULL)
+      if (Deb == nullptr)
       {
 	 Deb = new debReleaseIndex(URI, Dist);
 	 List.push_back(Deb);
