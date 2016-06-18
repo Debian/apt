@@ -124,7 +124,7 @@ preparetest() {
 msgmsg 'Moving between Release files with good and bad hashes'
 rm -rf rootdir/var/lib/apt/lists
 confighashes 'MD5'
-generatereleasefiles 'now - 1 day'
+generatereleasefiles 'now - 7 days'
 signreleasefiles
 testfailure apt update
 testnopkg 'foo'
@@ -135,7 +135,7 @@ confighashes 'MD5' 'SHA256'
 rm -rf aptarchive/dists
 insertpackage 'unstable' 'foo2' 'i386' '1.0'
 insertsource 'unstable' 'foo2' 'any' '1.0'
-setupaptarchive --no-update 'now - 12 hours'
+setupaptarchive --no-update 'now - 5 days'
 testsuccess apt update
 testnopkg foo
 testnotempty find rootdir/var/lib/apt/lists -maxdepth 1 -name '*InRelease' -o -name '*Release.gpg'
@@ -146,7 +146,7 @@ confighashes 'MD5'
 rm -rf aptarchive/dists
 insertpackage 'unstable' 'foo3' 'i386' '1.0'
 insertsource 'unstable' 'foo3' 'any' '1.0'
-setupaptarchive --no-update
+setupaptarchive --no-update 'now - 3 days'
 testfailure apt update
 testnopkg foo
 testnopkg foo3
@@ -156,3 +156,32 @@ testnotempty apt showsrc foo2
 testwarning apt update --allow-insecure-repositories
 testnopkg foo2
 testbadpkg foo3
+
+msgmsg 'Working with packages guarded only by weak hashes'
+confighashes 'MD5'
+rm -rf aptarchive/dists
+buildsimplenativepackage 'foo4' 'i386' '1' 'unstable'
+setupaptarchive --no-update
+testfailure apt update
+confighashes 'SHA256'
+generatereleasefiles 'now - 1 day'
+signreleasefiles
+testsuccess apt update
+cd downloaded
+testfailure apt download foo4
+cp ../rootdir/tmp/testfailure.output download.output
+testfailure grep 'Hash Sum mismatch' download.output
+testsuccess grep 'Insufficient information' download.output
+
+testsuccess apt install foo4 -s
+testfailure apt install foo4 -dy
+cp ../rootdir/tmp/testfailure.output install.output
+testfailure grep 'Hash Sum mismatch' install.output
+testsuccess grep 'Insufficient information' download.output
+
+testsuccess apt source foo4
+cp ../rootdir/tmp/testsuccess.output source.output
+testsuccess grep 'Skipping download of file' source.output
+testfailure test -e foo4_1.dsc
+testsuccess test -e foo4_1.tar.*
+cd ..

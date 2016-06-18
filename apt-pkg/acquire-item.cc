@@ -731,9 +731,11 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
    }
 
    string const FailReason = LookupTag(Message, "FailReason");
-   enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, OTHER } failreason = OTHER;
+   enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, WEAK_HASHSUMS, OTHER } failreason = OTHER;
    if ( FailReason == "MaximumSizeExceeded")
       failreason = MAXIMUM_SIZE_EXCEEDED;
+   else if ( FailReason == "WeakHashSums")
+      failreason = WEAK_HASHSUMS;
    else if (Status == StatAuthError)
       failreason = HASHSUM_MISMATCH;
 
@@ -746,6 +748,9 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	 {
 	    case HASHSUM_MISMATCH:
 	       out << _("Hash Sum mismatch") << std::endl;
+	       break;
+	    case WEAK_HASHSUMS:
+	       out << _("Insufficient information available to perform this download securely") << std::endl;
 	       break;
 	    case MAXIMUM_SIZE_EXCEEDED:
 	    case OTHER:
@@ -781,6 +786,7 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
    {
       case MAXIMUM_SIZE_EXCEEDED: RenameOnError(MaximumSizeExceeded); break;
       case HASHSUM_MISMATCH: RenameOnError(HashSumMismatch); break;
+      case WEAK_HASHSUMS: break;
       case OTHER: break;
    }
 
