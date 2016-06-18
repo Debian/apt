@@ -762,7 +762,12 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	 {
 	    out << "Hashes of expected file:" << std::endl;
 	    for (auto const &hs: ExpectedHashes)
-	       out << " - " << hs.toStr() << std::endl;
+	    {
+	       out << " - " << hs.toStr();
+	       if (hs.usable() == false)
+		  out << " [weak]";
+	       out << std::endl;
+	    }
 	 }
 	 if (failreason == HASHSUM_MISMATCH)
 	 {
@@ -772,7 +777,13 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	       std::string const tagname = std::string(*type) + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
 	       if (hashsum.empty() == false)
-		  out << " - " << HashString(*type, hashsum).toStr() << std::endl;
+	       {
+		  auto const hs = HashString(*type, hashsum);
+		  out << " - " << hs.toStr();
+		  if (hs.usable() == false)
+		     out << " [weak]";
+		  out << std::endl;
+	       }
 	    }
 	    out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
 	 }
