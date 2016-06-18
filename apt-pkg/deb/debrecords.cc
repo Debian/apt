@@ -90,6 +90,9 @@ HashStringList debRecordParserBase::Hashes() const
       if (hash.empty() == false)
 	 hashes.push_back(HashString(*type, hash));
    }
+   auto const size = Section.FindULL("Size", 0);
+   if (size != 0)
+      hashes.FileSize(size);
    return hashes;
 }
 									/*}}}*/
