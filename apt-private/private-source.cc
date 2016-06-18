@@ -438,6 +438,7 @@ bool DoSource(CommandLine &CmdL)
 	 {
 	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
 		  localFile.c_str());
+	    Dsc[J].Dsc.clear();
 	    continue;
 	 }
 
