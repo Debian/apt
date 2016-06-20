@@ -434,7 +434,24 @@ static void hex2bytes(uint8_t *bytes, const char *hex, int length) {
 }
 bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
 {
-   unsigned int FlHashes = DoHashes & (Hashes::MD5SUM | Hashes::SHA1SUM | Hashes::SHA256SUM | Hashes::SHA512SUM);
+   unsigned int notCachedHashes = 0;
+   if ((CurStat.Flags & FlMD5) != FlMD5)
+   {
+      notCachedHashes = notCachedHashes | Hashes::MD5SUM;
+   }
+   if ((CurStat.Flags & FlSHA1) != FlSHA1)
+   {
+      notCachedHashes = notCachedHashes | Hashes::SHA1SUM;
+   }
+   if ((CurStat.Flags & FlSHA256) != FlSHA256)
+   {
+      notCachedHashes = notCachedHashes | Hashes::SHA256SUM;
+   }
+   if ((CurStat.Flags & FlSHA512) != FlSHA512)
+   {
+      notCachedHashes = notCachedHashes | Hashes::SHA512SUM;
+   }
+   unsigned int FlHashes = DoHashes & notCachedHashes;
    HashesList.clear();
 
    if (FlHashes != 0)
