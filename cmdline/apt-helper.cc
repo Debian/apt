@@ -39,7 +39,8 @@ static bool DoAutoDetectProxy(CommandLine &CmdL)			/*{{{*/
    if (CmdL.FileSize() != 2)
       return _error->Error(_("Need one URL as argument"));
    URI ServerURL(CmdL.FileList[1]);
-   AutoDetectProxy(ServerURL);
+   if (AutoDetectProxy(ServerURL) == false)
+      return false;
    std::string SpecificProxy = _config->Find("Acquire::"+ServerURL.Access+"::Proxy::" + ServerURL.Host);
    ioprintf(std::cout, "Using proxy '%s' for URL '%s'\n",
             SpecificProxy.c_str(), std::string(ServerURL).c_str());

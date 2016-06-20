@@ -51,19 +51,26 @@ bool AutoDetectProxy(URI &URL)
    if(Popen(&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("ProxyAutoDetect command '%s' failed!", AutoDetectProxyCmd.c_str());
    char buf[512];
-   if (PipeFd.ReadLine(buf, sizeof(buf)) == nullptr)
-      return true;
+   bool const goodread = PipeFd.ReadLine(buf, sizeof(buf)) != nullptr;
    PipeFd.Close();
-   ExecWait(Child, "ProxyAutoDetect", true);
+   if (ExecWait(Child, "ProxyAutoDetect") == false)
+      return false;
+   // no output means the detector has no idea which proxy to use
+   // and apt will use the generic proxy settings
+   if (goodread == false)
+      return true;
    auto const cleanedbuf = _strstrip(buf);
-
+   // We warn about this as the implementor probably meant to use DIRECT instead
    if (cleanedbuf[0] == '\0')
-      return _error->Warning("ProxyAutoDetect returned no data");
+   {
+      _error->Warning("ProxyAutoDetect command returned an empty line");
+      return true;
+   }
 
    if (Debug)
       std::clog << "auto detect command returned: '" << cleanedbuf << "'" << std::endl;
 
-   if (strstr(cleanedbuf, URL.Access.c_str()) == cleanedbuf)
+   if (strstr(cleanedbuf, URL.Access.c_str()) == cleanedbuf || strcmp(cleanedbuf, "DIRECT") == 0)
       _config->Set("Acquire::"+URL.Access+"::proxy::"+URL.Host, cleanedbuf);
 
    return true;

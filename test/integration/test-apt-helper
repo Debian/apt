@@ -71,44 +71,43 @@ E: Download Failed"
     testfileequal './downloaded/foo10' 'bar'
 }
 
+setupproxydetect() {
+	local METH="$1"
+	shift
+	{
+		echo '#!/bin/sh -e'
+		echo "$@"
+	} > "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+	chmod 755 "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+	echo "Acquire::${METH}::Proxy-Auto-Detect \"${TMPWORKINGDIRECTORY}/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
+}
+
 test_apt_helper_detect_proxy() {
-    # no proxy
+    msgmsg 'apt-helper auto-detect-proxy' 'no proxy'
     testsuccessequal "Using proxy '' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
-    cat > apt-proxy-detect <<'EOF'
-#!/bin/sh -e
-exit 0
-EOF
-    chmod 755 apt-proxy-detect
-    echo "Acquire::http::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
-    testsuccessequal "Using proxy '' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
+    setupproxydetect 'http' 'exit 0'
+    testsuccessequal "Using proxy '' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
+    setupproxydetect 'http' 'exit 1'
+    testfailureequal 'E: Sub-process ProxyAutoDetect returned an error code (1)' apthelper auto-detect-proxy http://example.com/
+    setupproxydetect 'http' 'echo'
+    testwarningequal "Using proxy '' for URL 'http://example.com/'
+W: ProxyAutoDetect command returned an empty line" apthelper auto-detect-proxy http://example.com/
+    setupproxydetect 'http' 'echo DIRECT'
+    testsuccessequal "Using proxy 'DIRECT' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
 
-    # http auto detect proxy script
-    cat > apt-proxy-detect <<'EOF'
-#!/bin/sh -e
-echo "http://some-proxy"
-EOF
-    chmod 755 apt-proxy-detect
-    echo "Acquire::http::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
-
+    msgmsg 'apt-helper auto-detect-proxy' 'http proxy'
+    setupproxydetect 'http' 'echo "http://some-proxy"'
     testsuccessequal "Using proxy 'http://some-proxy' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
 
-
-    # https auto detect proxy script
-    cat > apt-proxy-detect <<'EOF'
-#!/bin/sh -e
-echo "https://https-proxy"
-EOF
-    chmod 755 apt-proxy-detect
-    echo "Acquire::https::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
-
+    msgmsg 'apt-helper auto-detect-proxy' 'https proxy'
+    setupproxydetect 'https' 'echo "https://https-proxy"'
     testsuccessequal "Using proxy 'https://https-proxy' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
 }
 
 test_apt_helper_download "http://localhost:${APTHTTPPORT}"
 test_apt_helper_download "https://localhost:${APTHTTPSPORT}"
 test_apt_helper_detect_proxy
-
-# test failure modes
+msgmsg 'test various failure modes'
 testfailureequal 'E: Invalid operation download' apthelper download
 testfailureequal 'E: Must specify at least one pair url/filename' apthelper download-file
 testfailureequal 'E: Must specify at least one pair url/filename' apthelper download-file 'http://example.org/'
