@@ -175,7 +175,7 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
 }
 									/*}}}*/
 
-static bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)/*{{{*/
+static APT_NONNULL(2) bool MessageInsecureRepository(bool const isError, char const * const msg, std::string const &repo)/*{{{*/
 {
    std::string m;
    strprintf(m, msg, repo.c_str());
@@ -195,7 +195,28 @@ static bool MessageInsecureRepository(bool const isError, char const * const msg
 									/*}}}*/
 // AllowInsecureRepositories						/*{{{*/
 enum class InsecureType { UNSIGNED, WEAK, NORELEASE };
-static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType msg, std::string const &repo,
+static bool TargetIsAllowedToBe(IndexTarget const &Target, InsecureType const type)
+{
+   if (_config->FindB("Acquire::AllowInsecureRepositories"))
+      return true;
+
+   if (Target.OptionBool(IndexTarget::ALLOW_INSECURE))
+      return true;
+
+   switch (type)
+   {
+      case InsecureType::UNSIGNED: break;
+      case InsecureType::NORELEASE: break;
+      case InsecureType::WEAK:
+	 if (_config->FindB("Acquire::AllowWeakRepositories"))
+	    return true;
+	 if (Target.OptionBool(IndexTarget::ALLOW_WEAK))
+	    return true;
+	 break;
+   }
+   return false;
+}
+static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType const msg, std::string const &repo,
       metaIndex const * const MetaIndexParser, pkgAcqMetaClearSig * const TransactionManager, pkgAcquire::Item * const I)
 {
    // we skip weak downgrades as its unlikely that a repository gets really weaker –
@@ -213,7 +234,8 @@ static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType msg, std
 	    case InsecureType::NORELEASE: msgstr = _("The repository '%s' does no longer have a Release file."); break;
 	    case InsecureType::WEAK: /* unreachable */ break;
 	 }
-	 if (_config->FindB("Acquire::AllowDowngradeToInsecureRepositories"))
+	 if (_config->FindB("Acquire::AllowDowngradeToInsecureRepositories") ||
+	       TransactionManager->Target.OptionBool(IndexTarget::ALLOW_DOWNGRADE_TO_INSECURE))
 	 {
 	    // meh, the users wants to take risks (we still mark the packages
 	    // from this repository as unauthenticated)
@@ -241,7 +263,7 @@ static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType msg, std
       case InsecureType::WEAK: msgstr = _("The repository '%s' provides only weak security information."); break;
    }
 
-   if (_config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if (TargetIsAllowedToBe(TransactionManager->Target, msg) == true)
    {
       MessageInsecureRepository(false, msgstr, repo);
       return true;
@@ -277,7 +299,20 @@ APT_CONST bool pkgAcqTransactionItem::HashesRequired() const
       we can at least trust them for integrity of the download itself.
       Only repositories without a Release file can (obviously) not have
       hashes – and they are very uncommon and strongly discouraged */
-   return TransactionManager->MetaIndexParser->GetLoadedSuccessfully() == metaIndex::TRI_YES;
+   if (TransactionManager->MetaIndexParser->GetLoadedSuccessfully() != metaIndex::TRI_YES)
+      return false;
+   if (TargetIsAllowedToBe(Target, InsecureType::WEAK))
+   {
+      /* If we allow weak hashes, we check that we have some (weak) and then
+         declare hashes not needed. That will tip us in the right direction
+	 as if hashes exist, they will be used, even if not required */
+      auto const hsl = GetExpectedHashes();
+      if (hsl.usable())
+	 return true;
+      if (hsl.empty() == false)
+	 return false;
+   }
+   return true;
 }
 HashStringList pkgAcqTransactionItem::GetExpectedHashes() const
 {
@@ -1333,7 +1368,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	    auto const hashes = GetExpectedHashesFor(Target.MetaKey);
 	    if (hashes.empty() == false)
 	    {
-	       if (hashes.usable() == false)
+	       if (hashes.usable() == false && TargetIsAllowedToBe(TransactionManager->Target, InsecureType::WEAK) == false)
 	       {
 		  new CleanupItem(Owner, TransactionManager, Target);
 		  _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' provides only weak security information for it"),
@@ -1525,8 +1560,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire * const Owner,	/*{{{*/
       IndexTarget const &DetachedDataTarget, IndexTarget const &DetachedSigTarget,
       metaIndex * const MetaIndexParser) :
    pkgAcqMetaIndex(Owner, this, ClearsignedTarget, DetachedSigTarget),
-   d(NULL), ClearsignedTarget(ClearsignedTarget),
-   DetachedDataTarget(DetachedDataTarget),
+   d(NULL), DetachedDataTarget(DetachedDataTarget),
    MetaIndexParser(MetaIndexParser), LastMetaIndexParser(NULL)
 {
    // index targets + (worst case:) Release/Release.gpg
@@ -1640,7 +1674,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
       if(CheckStopAuthentication(this, Message))
          return;
 
-      if(AllowInsecureRepositories(InsecureType::UNSIGNED, ClearsignedTarget.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+      if(AllowInsecureRepositories(InsecureType::UNSIGNED, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
       {
 	 Status = StatDone;
 

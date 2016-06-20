@@ -550,7 +550,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       if(Debug)
 	 cout << "Signature verify for: " << *I << endl;
 
-      metaIndex *MetaIndex = new debReleaseIndex("","");
+      metaIndex *MetaIndex = new debReleaseIndex("","", {});
       string prefix = *I; 
 
       string const releasegpg = *I+"Release.gpg";

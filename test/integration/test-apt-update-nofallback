@@ -93,10 +93,16 @@ test_from_inrelease_to_unsigned_with_override()
     find "$APTARCHIVE" -name '*Packages*' -exec touch -d '+2 hours' {} \;
 
     # and ensure we can update to it (with enough force) 
+    testfailure apt update
     testfailure aptget update
     testfailure aptget update --allow-insecure-repositories
-    testwarning aptget update --allow-insecure-repositories \
-        -o Acquire::AllowDowngradeToInsecureRepositories=1 -o Debug::pkgAcquire::Worker=1 -o Debug::pkgAcquire::Auth=1
+    testfailure aptget update --no-allow-insecure-repositories
+    sed -i 's#^deb\(-src\)\? #deb\1 [allow-downgrade-to-insecure=yes] #' rootdir/etc/apt/sources.list.d/*
+    testfailure aptget update --no-allow-insecure-repositories
+    testfailure apt update
+    testwarning apt update --allow-insecure-repositories \
+        -o Debug::pkgAcquire::Worker=1 -o Debug::pkgAcquire::Auth=1
+    sed -i 's#^deb\(-src\)\? \[allow-downgrade-to-insecure=yes\] #deb\1 #' rootdir/etc/apt/sources.list.d/*
     # but that the individual packages are still considered untrusted
     testfailureequal "WARNING: The following packages cannot be authenticated!
   evil

@@ -378,6 +378,7 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
 	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
+	    auto const forcedHash = _config->Find("Acquire::ForceHash");
 	    for (auto const Owner: ItmOwners)
 	    {
 	       HashStringList const ExpectedHashes = Owner->GetExpectedHashes();
@@ -395,9 +396,10 @@ bool pkgAcquire::Worker::RunMessages()
 
 	       // decide if what we got is what we expected
 	       bool consideredOkay = false;
-	       if (ExpectedHashes.usable())
+	       if ((forcedHash.empty() && ExpectedHashes.empty() == false) ||
+		     (forcedHash.empty() == false && ExpectedHashes.usable()))
 	       {
-		  if (ReceivedHashes.usable() == false)
+		  if (ReceivedHashes.empty())
 		  {
 		     /* IMS-Hits can't be checked here as we will have uncompressed file,
 			but the hashes for the compressed file. What we have was good through
@@ -410,16 +412,8 @@ bool pkgAcquire::Worker::RunMessages()
 		     consideredOkay = false;
 
 	       }
-	       else if (Owner->HashesRequired() == true)
-		  consideredOkay = false;
 	       else
-	       {
-		  consideredOkay = true;
-		  // even if the hashes aren't usable to declare something secure
-		  // we can at least use them to declare it an integrity failure
-		  if (ExpectedHashes.empty() == false && ReceivedHashes != ExpectedHashes && _config->Find("Acquire::ForceHash").empty())
-		     consideredOkay = false;
-	       }
+		  consideredOkay = !Owner->HashesRequired();
 
 	       if (consideredOkay == true)
 		  consideredOkay = Owner->VerifyDone(Message, Config);

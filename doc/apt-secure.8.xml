@@ -75,7 +75,10 @@
    <para>
    You can force all APT clients to raise only warnings by setting the
    configuration option <option>Acquire::AllowInsecureRepositories</option> to
-   <literal>true</literal>. Note that this option will eventually be removed.
+   <literal>true</literal>. Individual repositories can also be allowed to be insecure
+   via the &sources-list; option <literal>allow-insecure=yes</literal>.
+   Note that insecure repositories are strongly discouraged and all options
+   to force apt to continue supporting them will eventually be removed.
    Users also have the <option>Trusted</option> option available to disable
    even the warnings, but be sure to understand the implications as detailed in
    &sources-list;.
@@ -87,7 +90,8 @@
    irrespective of the option to allow or forbid usage of insecure repositories.
    The error can be overcome by additionally setting
    <option>Acquire::AllowDowngradeToInsecureRepositories</option>
-   to <literal>true</literal>.
+   to <literal>true</literal> or for Individual repositories with the &sources-list;
+   option <literal>allow-downgrade-to-insecure=yes</literal>.
    </para>
 
    <para>

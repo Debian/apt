@@ -269,6 +269,14 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
        anomalies.
 
        <itemizedlist>
+	  <listitem><para><option>Allow-Insecure</option> (<option>allow-insecure</option>),
+		<option>Allow-Weak</option> (<option>allow-weak</option>) and
+		<option>Allow-Downgrade-To-Insecure</option> (<option>allow-downgrade-to-insecure</option>)
+		are boolean values which all default to <literal>no</literal>.
+		If set to <literal>yes</literal> they circumvent parts of &apt-secure;
+		and should therefore not be used lightly!
+	  </para></listitem>
+
 	  <listitem><para><option>Trusted</option> (<option>trusted</option>)
 		is a tri-state value which defaults to APT deciding if a source
 		is considered trusted or if warnings should be raised before e.g.

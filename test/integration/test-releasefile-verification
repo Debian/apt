@@ -414,6 +414,11 @@ runfailure() {
 		testnopackage 'apt'
 		testwarning aptget update --allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 		failaptold
+		rm -rf rootdir/var/lib/apt/lists
+		sed -i 's#^deb\(-src\)\? #deb\1 [allow-insecure=yes] #' rootdir/etc/apt/sources.list.d/*
+		testwarning aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		failaptold
+		sed -i 's#^deb\(-src\)\? \[allow-insecure=yes\] #deb\1 #' rootdir/etc/apt/sources.list.d/*
 
 		msgmsg 'Cold archive signed by' 'Marvin Paranoid'
 		prepare "${PKGFILE}"

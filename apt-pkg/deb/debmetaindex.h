@@ -34,8 +34,8 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    APT_HIDDEN std::string MetaIndexFile(const char *Types) const;
    APT_HIDDEN std::string MetaIndexURI(const char *Type) const;
 
-   debReleaseIndex(std::string const &URI, std::string const &Dist);
-   debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted);
+   debReleaseIndex(std::string const &URI, std::string const &Dist, std::map<std::string,std::string> const &Options);
+   debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted, std::map<std::string,std::string> const &Options);
    virtual ~debReleaseIndex();
 
    virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE {return URI + File;};
@@ -56,6 +56,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool SetValidUntilMin(time_t const Valid);
    bool SetValidUntilMax(time_t const Valid);
    bool SetSignedBy(std::string const &SignedBy);
+   std::map<std::string, std::string> GetReleaseOptions();
 
    virtual bool IsTrusted() const APT_OVERRIDE;
    bool IsArchitectureSupported(std::string const &arch) const;

@@ -58,6 +58,16 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 		testbadpkg 'foo'
 	fi
 
+	msgmsg "$TYPE contains only weak hashes, but source allows weak"
+	sed -i 's#^deb\(-src\)\? #deb\1 [allow-weak=yes] #' rootdir/etc/apt/sources.list.d/*
+	genericprepare
+	testwarningmsg "W: No Hash entry in Release file ${MANGLED} which is considered strong enough for security purposes
+W: The repository 'file:${APTARCHIVE} unstable $(basename "$FILENAME")' provides only weak security information.
+N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
+N: See apt-secure(8) manpage for repository creation and user configuration details." apt update "$@"
+	testbadpkg 'foo'
+	sed -i 's#^deb\(-src\)\? \[allow-weak=yes\] #deb\1 #' rootdir/etc/apt/sources.list.d/*
+
 	msgmsg "$TYPE contains no hashes"
 	generatereleasefiles
 	sed -i -e '/^ / d' -e '/^MD5Sum:/ d' "$APTARCHIVE/dists/unstable/Release"
@@ -85,10 +95,15 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 	sed -i '/^ [0-9a-fA-Z]\{64\} .*Sources$/d' "$APTARCHIVE/dists/unstable/Release"
 	signreleasefiles
 	preparetest
-	# trust is a repository property, so individual files can't be insecure
-	testwarningmsg "W: Skipping acquire of configured file 'main/source/Sources' as repository 'file:${APTARCHIVE} unstable InRelease' provides only weak security information for it" apt update "$@"
+	if [ -z "$1" ]; then
+		testwarningmsg "W: Skipping acquire of configured file 'main/source/Sources' as repository 'file:${APTARCHIVE} unstable InRelease' provides only weak security information for it" apt update
+		testnosrcpackage foo
+	else
+		rm -f rootdir/var/lib/apt/lists/partial/*
+		testsuccess apt update "$@"
+		testnotempty apt showsrc foo
+	fi
 	testsuccess apt show foo
-	testnosrcpackage foo
 }
 
 genericprepare() {
@@ -107,14 +122,14 @@ preparetest() {
 	genericprepare
 }
 testrun 'InRelease' "${APTARCHIVE}/dists/unstable/InRelease"
-testrun 'InRelease' "${APTARCHIVE}/dists/unstable/InRelease" --allow-insecure-repositories -o APT::Get::List-Cleanup=0
+testrun 'InRelease' "${APTARCHIVE}/dists/unstable/InRelease" --allow-weak-repositories -o APT::Get::List-Cleanup=0
 
 preparetest() {
 	rm -f "${APTARCHIVE}/dists/unstable/InRelease"
 	genericprepare
 }
 testrun 'Release+Release.gpg' "${APTARCHIVE}/dists/unstable/Release"
-testrun 'Release+Release.gpg' "${APTARCHIVE}/dists/unstable/Release" --allow-insecure-repositories -o APT::Get::List-Cleanup=0
+testrun 'Release+Release.gpg' "${APTARCHIVE}/dists/unstable/Release" --allow-weak-repositories -o APT::Get::List-Cleanup=0
 
 preparetest() {
 	rm -f "${APTARCHIVE}/dists/unstable/InRelease" "${APTARCHIVE}/dists/unstable/Release.gpg"
@@ -128,7 +143,7 @@ generatereleasefiles 'now - 7 days'
 signreleasefiles
 testfailure apt update
 testnopkg 'foo'
-testwarning apt update --allow-insecure-repositories
+testwarning apt update --allow-weak-repositories
 testbadpkg 'foo'
 
 confighashes 'MD5' 'SHA256'
@@ -153,7 +168,7 @@ testnopkg foo3
 testnotempty find rootdir/var/lib/apt/lists -maxdepth 1 -name '*InRelease' -o -name '*Release.gpg'
 testnotempty apt show foo2
 testnotempty apt showsrc foo2
-testwarning apt update --allow-insecure-repositories
+testwarning apt update --allow-weak-repositories
 testnopkg foo2
 testbadpkg foo3
 

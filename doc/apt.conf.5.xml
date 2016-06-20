@@ -653,7 +653,17 @@ APT::Compressor::rev {
 	   Allow update operations to load data files from
 	   repositories without sufficient security information.
 	   The default value is "<literal>false</literal>".
-	   Concept and implications of this are detailed in &apt-secure;.
+	   Concept, implications as well as alternatives are detailed in &apt-secure;.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>AllowWeakRepositories</option></term>
+	 <listitem><para>
+	   Allow update operations to load data files from
+	   repositories which provide security information, but these
+	   are deemed no longer cryptographically strong enough.
+	   The default value is "<literal>false</literal>".
+	   Concept, implications as well as alternatives are detailed in &apt-secure;.
 	 </para></listitem>
      </varlistentry>
 
@@ -664,9 +674,7 @@ APT::Compressor::rev {
 	   for a previously trusted repository apt will refuse the update. This
 	   option can be used to override this protection. You almost certainly
 	   never want to enable this. The default is <literal>false</literal>.
-
-	   Note that apt will still consider packages from this source
-	   untrusted and warns about them if you try to install them.
+	   Concept, implications as well as alternatives are detailed in &apt-secure;.
 	 </para></listitem>
      </varlistentry>
 

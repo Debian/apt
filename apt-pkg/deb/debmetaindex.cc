@@ -51,8 +51,9 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 
    std::vector<std::string> Architectures;
    std::vector<std::string> NoSupportForAll;
+   std::map<std::string, std::string> const ReleaseOptions;
 
-   debReleaseIndexPrivate() : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0) {}
+   debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), ReleaseOptions(Options) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -96,11 +97,11 @@ std::string debReleaseIndex::MetaIndexURI(const char *Type) const
 }
 									/*}}}*/
 // ReleaseIndex Con- and Destructors					/*{{{*/
-debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist) :
-					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate())
+debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, std::map<std::string, std::string> const &Options) :
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate(Options))
 {}
-debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const pTrusted) :
-					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate())
+debReleaseIndex::debReleaseIndex(std::string const &URI, std::string const &Dist, bool const pTrusted, std::map<std::string, std::string> const &Options) :
+					metaIndex(URI, Dist, "deb"), d(new debReleaseIndexPrivate(Options))
 {
    Trusted = pTrusted ? TRI_YES : TRI_NO;
 }
@@ -112,17 +113,10 @@ debReleaseIndex::~debReleaseIndex() {
 // ReleaseIndex::GetIndexTargets					/*{{{*/
 static void GetIndexTargetsFor(char const * const Type, std::string const &URI, std::string const &Dist,
       std::vector<debReleaseIndexPrivate::debSectionEntry> const &entries,
-      std::vector<IndexTarget> &IndexTargets)
+      std::vector<IndexTarget> &IndexTargets, std::map<std::string, std::string> const &ReleaseOptions)
 {
    bool const flatArchive = (Dist[Dist.length() - 1] == '/');
-   std::string baseURI = URI;
-   if (flatArchive)
-   {
-      if (Dist != "/")
-         baseURI += Dist;
-   }
-   else
-      baseURI += "dists/" + Dist + "/";
+   std::string const baseURI = constructMetaIndexURI(URI, Dist, "");
    std::string const Release = (Dist == "/") ? "" : Dist;
    std::string const Site = ::URI::ArchiveOnly(URI);
 
@@ -292,8 +286,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  }
 
 		  // not available in templates, but in the indextarget
-		  Options.insert(std::make_pair("BASE_URI", baseURI));
-		  Options.insert(std::make_pair("REPO_URI", URI));
+		  Options.insert(ReleaseOptions.begin(), ReleaseOptions.end());
 		  Options.insert(std::make_pair("IDENTIFIER", Identifier));
 		  Options.insert(std::make_pair("TARGET_OF", Type));
 		  Options.insert(std::make_pair("CREATED_BY", *T));
@@ -317,7 +310,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 			MetaKey,
 			ShortDesc,
 			LongDesc,
-			Options.find("BASE_URI")->second + MetaKey,
+			baseURI + MetaKey,
 			IsOpt,
 			KeepCompressed,
 			Options
@@ -344,8 +337,8 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
 {
    std::vector<IndexTarget> IndexTargets;
-   GetIndexTargetsFor("deb-src", URI, Dist, d->DebSrcEntries, IndexTargets);
-   GetIndexTargetsFor("deb", URI, Dist, d->DebEntries, IndexTargets);
+   GetIndexTargetsFor("deb-src", URI, Dist, d->DebSrcEntries, IndexTargets, d->ReleaseOptions);
+   GetIndexTargetsFor("deb", URI, Dist, d->DebEntries, IndexTargets, d->ReleaseOptions);
    return IndexTargets;
 }
 									/*}}}*/
@@ -542,11 +535,11 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 metaIndex * debReleaseIndex::UnloadedClone() const			/*{{{*/
 {
    if (Trusted == TRI_NO)
-      return new debReleaseIndex(URI, Dist, false);
+      return new debReleaseIndex(URI, Dist, false, d->ReleaseOptions);
    else if (Trusted == TRI_YES)
-      return new debReleaseIndex(URI, Dist, true);
+      return new debReleaseIndex(URI, Dist, true, d->ReleaseOptions);
    else
-      return new debReleaseIndex(URI, Dist);
+      return new debReleaseIndex(URI, Dist, d->ReleaseOptions);
 }
 									/*}}}*/
 bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
@@ -611,7 +604,7 @@ bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
 
 bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll)/*{{{*/
 {
-#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, false, std::map<std::string,std::string>())
+#define APT_TARGET(X) IndexTarget("", X, MetaIndexInfo(X), MetaIndexURI(X), false, false, d->ReleaseOptions)
    pkgAcqMetaClearSig * const TransactionManager = new pkgAcqMetaClearSig(Owner,
 	 APT_TARGET("InRelease"), APT_TARGET("Release"), APT_TARGET("Release.gpg"), this);
 #undef APT_TARGET
@@ -751,6 +744,10 @@ std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/
    return Indexes;
 }
 									/*}}}*/
+std::map<std::string, std::string> debReleaseIndex::GetReleaseOptions()
+{
+   return d->ReleaseOptions;
+}
 
 static bool ReleaseFileName(debReleaseIndex const * const That, std::string &ReleaseFile)/*{{{*/
 {
@@ -900,12 +897,63 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       return metaIndex::TRI_DONTCARE;
    }
 
-   time_t GetTimeOption(std::map<std::string, std::string>const &Options, char const * const name) const
+   static time_t GetTimeOption(std::map<std::string, std::string>const &Options, char const * const name)
    {
       std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
       if (opt == Options.end())
 	 return 0;
       return strtoull(opt->second.c_str(), NULL, 10);
+   }
+
+   static bool GetBoolOption(std::map<std::string, std::string> const &Options, char const * const name, bool const defVal)
+   {
+      std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
+      if (opt == Options.end())
+	 return defVal;
+      return StringToBool(opt->second, defVal);
+   }
+
+   static std::vector<std::string> GetMapKeys(std::map<std::string, std::string> const &Options)
+   {
+      std::vector<std::string> ret;
+      ret.reserve(Options.size());
+      for (auto &&O: Options)
+	 ret.emplace_back(O.first);
+      std::sort(ret.begin(), ret.end());
+      return ret;
+   }
+
+   static bool MapsAreEqual(std::map<std::string, std::string> const &OptionsA,
+	 std::map<std::string, std::string> const &OptionsB,
+	 std::string const &URI, std::string const &Dist)
+   {
+      auto const KeysA = GetMapKeys(OptionsA);
+      auto const KeysB = GetMapKeys(OptionsB);
+      auto const m = std::mismatch(KeysA.begin(), KeysA.end(), KeysB.begin());
+      if (m.first != KeysA.end())
+      {
+	 if (std::find(KeysB.begin(), KeysB.end(), *m.first) == KeysB.end())
+	    return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), m.first->c_str(), "<set>", "<unset>");
+	 else
+	    return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), m.second->c_str(), "<set>", "<unset>");
+      }
+      if (m.second != KeysB.end())
+      {
+	 if (std::find(KeysA.begin(), KeysA.end(), *m.second) == KeysA.end())
+	    return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), m.first->c_str(), "<set>", "<unset>");
+	 else
+	    return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), m.second->c_str(), "<set>", "<unset>");
+      }
+      for (auto&& key: KeysA)
+      {
+	 if (key == "BASE_URI" || key == "REPO_URI")
+	    continue;
+	 auto const a = OptionsA.find(key);
+	 auto const b = OptionsB.find(key);
+	 if (unlikely(a == OptionsA.end() || b == OptionsB.end()) || a->second != b->second)
+	    return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), key.c_str(), URI.c_str(), Dist.c_str());
+      }
+      return true;
    }
 
    protected:
@@ -914,6 +962,17 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 			   std::string const &Dist, std::string const &Section,
 			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
    {
+      std::map<std::string,std::string> ReleaseOptions = {{
+	 { "BASE_URI", constructMetaIndexURI(URI, Dist, "") },
+	 { "REPO_URI", URI },
+      }};
+      if (GetBoolOption(Options, "allow-insecure", _config->FindB("Acquire::AllowInsecureRepositories")))
+	 ReleaseOptions.emplace("ALLOW_INSECURE", "true");
+      if (GetBoolOption(Options, "allow-weak", _config->FindB("Acquire::AllowWeakRepositories")))
+	 ReleaseOptions.emplace("ALLOW_WEAK", "true");
+      if (GetBoolOption(Options, "allow-downgrade-to-insecure", _config->FindB("Acquire::AllowDowngradeToInsecureRepositories")))
+	 ReleaseOptions.emplace("ALLOW_DOWNGRADE_TO_INSECURE", "true");
+
       debReleaseIndex * Deb = nullptr;
       std::string const FileName = URItoFileName(constructMetaIndexURI(URI, Dist, "Release"));
       for (auto const &I: List)
@@ -931,6 +990,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    corresponds to. */
 	 if (URItoFileName(D->MetaIndexURI("Release")) == FileName)
 	 {
+	    if (MapsAreEqual(ReleaseOptions, D->GetReleaseOptions(), URI, Dist) == false)
+	       return false;
 	    Deb = D;
 	    break;
 	 }
@@ -939,7 +1000,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       // No currently created Release file indexes this entry, so we create a new one.
       if (Deb == nullptr)
       {
-	 Deb = new debReleaseIndex(URI, Dist);
+	 Deb = new debReleaseIndex(URI, Dist, ReleaseOptions);
 	 List.push_back(Deb);
       }
 
@@ -993,12 +1054,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 }), mytargets.end());
       }
 
-      bool UsePDiffs = _config->FindB("Acquire::PDiffs", true);
-      {
-	 std::map<std::string, std::string>::const_iterator const opt = Options.find("pdiffs");
-	 if (opt != Options.end())
-	    UsePDiffs = StringToBool(opt->second);
-      }
+      bool const UsePDiffs = GetBoolOption(Options, "pdiffs", _config->FindB("Acquire::PDiffs", true));
 
       std::string UseByHash = _config->Find("APT::Acquire::By-Hash", "yes");
       UseByHash = _config->Find("Acquire::By-Hash", UseByHash);

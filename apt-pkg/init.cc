@@ -87,6 +87,7 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Repository security
    Cnf.CndSet("Acquire::AllowInsecureRepositories", false);
+   Cnf.CndSet("Acquire::AllowWeakRepositories", false);
    Cnf.CndSet("Acquire::AllowDowngradeToInsecureRepositories", false);
 
    // Default cdrom mount point

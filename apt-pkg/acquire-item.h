@@ -368,12 +368,13 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
 {
    void * const d;
    protected:
-   IndexTarget const Target;
    HashStringList GetExpectedHashesFor(std::string const &MetaKey) const;
 
    bool QueueURI(pkgAcquire::ItemDesc &Item) APT_OVERRIDE;
 
    public:
+   IndexTarget const Target;
+
    /** \brief storge name until a transaction is finished */
    std::string PartialFile;
 
@@ -559,8 +560,6 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 {
    void * const d;
-
-   IndexTarget const ClearsignedTarget;
    IndexTarget const DetachedDataTarget;
 
  public:
