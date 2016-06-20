@@ -61,7 +61,13 @@ E: Download Failed"
 test_apt_helper_detect_proxy() {
     # no proxy
     testsuccessequal "Using proxy '' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
-
+    cat > apt-proxy-detect <<'EOF'
+#!/bin/sh -e
+exit 0
+EOF
+    chmod 755 apt-proxy-detect
+    echo "Acquire::http::Proxy-Auto-Detect \"$(pwd)/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
+    testsuccessequal "Using proxy '' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
 
     # http auto detect proxy script
     cat > apt-proxy-detect <<'EOF'

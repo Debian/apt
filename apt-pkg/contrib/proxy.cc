@@ -52,7 +52,7 @@ bool AutoDetectProxy(URI &URL)
       return _error->Error("ProxyAutoDetect command '%s' failed!", AutoDetectProxyCmd.c_str());
    char buf[512];
    if (PipeFd.ReadLine(buf, sizeof(buf)) == nullptr)
-      return _error->Error("Failed to read in AutoDetectProxy");
+      return true;
    PipeFd.Close();
    ExecWait(Child, "ProxyAutoDetect", true);
    auto const cleanedbuf = _strstrip(buf);
