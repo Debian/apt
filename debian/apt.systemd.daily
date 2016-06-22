@@ -290,26 +290,6 @@ debug_echo()
     fi
 }
 
-check_power(){
-    # laptop check, on_ac_power returns:
-    #       0 (true)    System is on main power
-    #       1 (false)   System is not on main power
-    #       255 (false) Power status could not be determined
-    # Desktop systems always return 255 it seems
-    if which on_ac_power >/dev/null 2>&1; then
-        on_ac_power
-        POWER=$?
-        if [ $POWER -eq 1 ]; then
-	    debug_echo "exit: system NOT on main power"
-	    return 1
-        elif [ $POWER -ne 0 ]; then
-	    debug_echo "power status ($POWER) undetermined, continuing"
-        fi
-        debug_echo "system is on main power."
-    fi
-    return 0
-}
-
 # ------------------------ main ----------------------------
 
 if test -r /var/lib/apt/extended_states; then
@@ -356,8 +336,6 @@ if [ "$VERBOSE" -ge 3 ]; then
     # trace output
     set -x
 fi
-
-check_power || exit 0
 
 # check if we can lock the cache and if the cache is clean
 if which apt-get >/dev/null 2>&1 && ! eval apt-get check $XAPTOPT $XSTDERR ; then
@@ -408,9 +386,6 @@ fi
 
 # deal with BackupArchiveInterval
 do_cache_backup $BackupArchiveInterval
-
-# ensure we don't do this on battery
-check_power || exit 0
 
 # include default system language so that "apt-get update" will
 # fetch the right translated package descriptions
