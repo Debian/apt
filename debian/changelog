@@ -1,3 +1,34 @@
+apt (1.3~exp3) experimental; urgency=medium
+
+  [ Petter Reinholdtsen ]
+  * Norwegian Bokmål program translation update (Closes: 827067)
+
+  [ David Kalnischkies ]
+  * apt-key: don't search PATH if command is a path already
+  * don't use FindFile for external Dir::Bin commands
+  * http: don't hang on redirect with length + connection close
+  * merge sources.list lines based on Release filename (Closes: 826944)
+  * avoid std::get_time usage to sidestep libstdc++6 bug (LP: 1593583)
+  * do not error if auto-detect-proxy cmd has no output (Closes: 827713)
+  * implement and document DIRECT for auto-detect-proxy
+  * run update post-invokes even on (partial) failures
+  * handle weak-security repositories as unauthenticated (Closes: 827364)
+  * generalize secure->insecure downgrade protection
+  * forbid insecure repositories by default expect in apt-get (Closes: 808367)
+  * source: if download is skipped, don't try to unpack
+  * better error message for insufficient hashsums (Closes: 827758)
+  * add [weak] tag to hash errors to indicate insufficiency
+  * ensure filesize of deb is included in the hashes list
+  * add insecure (and weak) allow-options for sources.list
+
+  [ Dominic Benson ]
+  * Reinstate caching of file hashes in apt-ftparchive (Closes: #806924)
+
+  [ Zhou Mo ]
+  * zh_CN.po: update simplified chinese translation
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 22 Jun 2016 14:50:12 +0200
+
 apt (1.3~exp2) experimental; urgency=medium
 
   [ Johannes 'josch' Schauer ]

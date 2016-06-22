@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-11 17:24+0200\n"
+"POT-Creation-Date: 2016-06-22 14:51+0200\n"
 "PO-Revision-Date: 2016-04-27 18:12+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -2544,8 +2544,48 @@ msgstr ""
 "pakketbron en over de configuratie langs gebruikerskant."
 
 #: apt-pkg/acquire-item.cc
+#, c-format
+msgid "The repository '%s' is no longer signed."
+msgstr "De pakketbron '%s' heeft niet langer een ondertekening."
+
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+msgid "The repository '%s' does no longer have a Release file."
+msgstr "De pakketbron '%s' heeft geen Release-bestand."
+
+#: apt-pkg/acquire-item.cc
+msgid ""
+"This is normally not allowed, but the option Acquire::"
+"AllowDowngradeToInsecureRepositories was given to override it."
+msgstr ""
+"Normaal gezien is dit niet toegelaten, maar de optie Acquire::"
+"AllowDowngradeToInsecureRepositories werd gegeven om dit te omzeilen."
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "The repository '%s' is not signed."
+msgstr "De pakketbron '%s' is niet ondertekend."
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "The repository '%s' does not have a Release file."
+msgstr "De pakketbron '%s' heeft geen Release-bestand."
+
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+msgid "The repository '%s' provides only weak security information."
+msgstr ""
+"Opvragen van het in de configuratie vermeld bestand '%s' overgeslagen, "
+"vermits pakketbron '%s' er slechts zwakke veiligheidsinformatie voor "
+"verstrekt"
+
+#: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "Hash-som komt niet overeen"
+
+#: apt-pkg/acquire-item.cc
+msgid "Insufficient information available to perform this download securely"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -2624,35 +2664,6 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Tegenstrijdige distributie: %s (verwachtte %s, maar kreeg %s)"
-
-#. No Release file was present, or verification failed, so fall
-#. back to queueing Packages files without verification
-#. only allow going further if the user explicitly wants it
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "The repository '%s' is not signed."
-msgstr "De pakketbron '%s' is niet ondertekend."
-
-#. No Release file was present so fall
-#. back to queueing Packages files without verification
-#. only allow going further if the user explicitly wants it
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "The repository '%s' does not have a Release file."
-msgstr "De pakketbron '%s' heeft geen Release-bestand."
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "The repository '%s' is no longer signed."
-msgstr "De pakketbron '%s' heeft niet langer een ondertekening."
-
-#: apt-pkg/acquire-item.cc
-msgid ""
-"This is normally not allowed, but the option Acquire::"
-"AllowDowngradeToInsecureRepositories was given to override it."
-msgstr ""
-"Normaal gezien is dit niet toegelaten, maar de optie Acquire::"
-"AllowDowngradeToInsecureRepositories werd gegeven om dit te omzeilen."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
