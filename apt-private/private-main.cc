@@ -3,6 +3,7 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/private-main.h>
 
@@ -61,11 +62,12 @@ void CheckIfSimulateMode(CommandLine &CmdL)				/*{{{*/
 	  strcmp(CmdL.FileList[0], "changelog") != 0)))
    {
       if (getuid() != 0 && _config->FindB("APT::Get::Show-User-Simulation-Note",true) == true)
-         std::cout << _("NOTE: This is only a simulation!\n"
-	    "      apt-get needs root privileges for real execution.\n"
+	 // TRANSLATORS: placeholder is a binary name like apt or apt-get
+	 ioprintf(std::cout, _("NOTE: This is only a simulation!\n"
+	    "      %s needs root privileges for real execution.\n"
 	    "      Keep also in mind that locking is deactivated,\n"
-	    "      so don't depend on the relevance to the real current situation!"
-	 ) << std::endl;
+	    "      so don't depend on the relevance to the real current situation!\n"),
+	    _config->Find("Binary").c_str());
       _config->Set("Debug::NoLocking",true);
    }
 }
