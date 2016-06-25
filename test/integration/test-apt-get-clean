@@ -9,6 +9,7 @@ configarchitecture 'amd64'
 
 insertpackage 'testing' 'foo' 'all' '1'
 insertpackage 'unstable' 'foo' 'all' '2'
+insertpackage 'experimental' 'foo' 'all' '1:1'
 insertinstalledpackage 'foo' 'all' '3'
 
 setupaptarchive --no-update
@@ -21,17 +22,33 @@ testsuccess aptget clean
 testsuccess aptget clean -s
 
 # generate some dirt and clean it up
-touch rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
-mkdir -p rootdir/var/cache/apt/archives/lost+found
-touch rootdir/var/cache/apt/archives/foo_1_all.deb
-touch rootdir/var/cache/apt/archives/foo_2_all.deb
-touch rootdir/var/cache/apt/archives/foo_3_all.deb
-touch rootdir/var/cache/apt/archives/foo_4_all.deb
+generatedirt() {
+	touch rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
+	mkdir -p rootdir/var/cache/apt/archives/lost+found
+	touch rootdir/var/cache/apt/archives/foo_1_all.deb
+	touch rootdir/var/cache/apt/archives/foo_1%3a1_all.deb
+	touch rootdir/var/cache/apt/archives/foo_2%3a1_all.deb
+	touch rootdir/var/cache/apt/archives/foo_2_all.deb
+	touch rootdir/var/cache/apt/archives/foo_3_all.deb
+	touch rootdir/var/cache/apt/archives/foo_4_all.deb
+}
 
+generatedirt
+testsuccess aptget autoclean
+testsuccess test -e rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
+testsuccess test -e rootdir/var/cache/apt/archives/foo_1_all.deb
+testsuccess test -e rootdir/var/cache/apt/archives/foo_1%3a1_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_2%3a1_all.deb
+testsuccess test -e rootdir/var/cache/apt/archives/foo_2_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
+
+generatedirt
 testsuccess aptget clean
-
 testfailure test -e rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
 testfailure test -e rootdir/var/cache/apt/archives/foo_1_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_1%3a1_all.deb
+testfailure test -e rootdir/var/cache/apt/archives/foo_2%3a1_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_2_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
