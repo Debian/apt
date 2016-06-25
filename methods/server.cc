@@ -556,6 +556,7 @@ int ServerMethod::Loop()
 	 {
 	    _error->Error(_("Bad header data"));
 	    Fail(true);
+	    Server->Close();
 	    RotateDNS();
 	    continue;
 	 }
