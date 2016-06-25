@@ -1314,8 +1314,8 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
 	 std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
 	 std::cerr << msg << std::endl << std::endl;
 	 return false;
-      } else if (section.Exists("Install") == true)
-	 type = "Install";
+      } else if (section.Exists("Unpack") == true)
+	 type = "Unpack";
       else if (section.Exists("Configure") == true)
 	 type = "Configure";
       else if (section.Exists("Remove") == true)
@@ -1340,7 +1340,7 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
 
       pkgCache::VerIterator Ver(PM->Cache.GetCache(), PM->Cache.GetCache().VerP + VerIdx[id]);
       auto const Pkg = Ver.ParentPkg();
-      if (strcmp(type, "Install") == 0)
+      if (strcmp(type, "Unpack") == 0)
 	 PM->Install(Pkg, PM->FileNames[Pkg->ID]);
       else if (strcmp(type, "Configure") == 0)
 	 PM->Configure(Pkg);

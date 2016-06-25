@@ -216,8 +216,47 @@ the user.
 
 #### Solution
 
-  TODO
+A solution is a list of Deb 822 stanzas. Each of them could be an:
 
+- unpack stanza to cause the extraction of a package to the disk
+
+- configure stanza to cause an unpacked package to be configured and
+  therefore the installation to be completed
+
+- remove stanza to cause the removal of a package from the system
+
+An **unpack stanza** starts with an Unpack field and supports the
+following fields:
+
+- **Unpack:** (mandatory). The value is a package identifier,
+  referencing one of the package stanzas of the package universe via its
+  APT-ID field.
+
+- All fields supported by package stanzas.
+
+**Configure** and **Remove stanzas** require and support the same
+fields with the exception of the Unpack field which is replaced in
+these instances with the Configure or Remove field respectively.
+
+The order of the stanzas is significant (unlike in the EDSP protocol),
+with the first stanza being the first performed action. If multiple
+stanzas of the same type appear in direct succession the order in such
+a set isn't significant through.
+
+The solution needs to be valid (it is not allowed to configure a package
+before it was unpacked, dependency relations must be satisfied, …), but
+they don't need to be complete: A planer can and should expect that any
+package which wasn't explicitly configured will be configured at the end
+automatically. That also means through that a planer is not allowed to
+produce a solution in which a package remains unconfigured.
+
+In terms of expressivity, all stanzas can carry one single field each, as
+APT-IDs are enough to pinpoint packages to be installed/removed. Nonetheless,
+for protocol readability, it is recommended that planers either add
+unconditionally the fields Package, Version, and Architecture to all
+install/remove stanzas or, alternatively, that they support a `--verbose`
+command line flag that explicitly enables the output of those fields in
+solutions.
 
 #### Error
 

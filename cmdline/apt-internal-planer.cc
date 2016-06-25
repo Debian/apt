@@ -72,7 +72,7 @@ protected:
    virtual bool Install(PkgIterator Pkg,std::string) APT_OVERRIDE
    {
       //std::cerr << "INSTALL: " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
-      return EDSP::WriteSolutionStanza(output, "Install", Cache[Pkg].InstVerIter(Cache));
+      return EDSP::WriteSolutionStanza(output, "Unpack", Cache[Pkg].InstVerIter(Cache));
    }
    virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE
    {
