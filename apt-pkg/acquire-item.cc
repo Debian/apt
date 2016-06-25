@@ -1836,6 +1836,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    HashStringList ServerHashes;
    unsigned long long ServerSize = 0;
 
+   auto const &posix = std::locale("C.UTF-8");
    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
    {
       std::string tagname = *type;
@@ -1847,6 +1848,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       string hash;
       unsigned long long size;
       std::stringstream ss(tmp);
+      ss.imbue(posix);
       ss >> hash >> size;
       if (unlikely(hash.empty() == true))
 	 continue;
@@ -1925,6 +1927,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       string hash, filename;
       unsigned long long size;
       std::stringstream ss(tmp);
+      ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
       {
@@ -1983,6 +1986,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       string hash, filename;
       unsigned long long size;
       std::stringstream ss(tmp);
+      ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
       {
@@ -2020,6 +2024,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       string hash, filename;
       unsigned long long size;
       std::stringstream ss(tmp);
+      ss.imbue(posix);
 
       // FIXME: all of pdiff supports only .gz compressed patches
       while (ss >> hash >> size >> filename)
