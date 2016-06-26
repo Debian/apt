@@ -1074,6 +1074,20 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,	/*{{{*/
 			 unsigned int const flags, OpProgress * const Progress)
 {
+   if (strcmp(solver, "internal") == 0)
+   {
+      auto const dumpfile = _config->FindFile("Dir::Log::Planer");
+      if (dumpfile.empty())
+	 return false;
+      auto const dumpdir = flNotFile(dumpfile);
+      FileFd output;
+      if (CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
+	    output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false)
+	 return _error->WarningE("EIPP::OrderInstall", _("Could not open file '%s'"), dumpfile.c_str());
+      bool Okay = EIPP::WriteRequest(PM->Cache, output, flags, nullptr);
+      return Okay && EIPP::WriteScenario(PM->Cache, output, nullptr);
+   }
+
    int solver_in, solver_out;
    pid_t const solver_pid = ExecuteExternal("planer", solver, "Dir::Bin::Planers", &solver_in, &solver_out);
    if (solver_pid == 0)
@@ -1081,7 +1095,7 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 
    FileFd output;
    if (output.OpenDescriptor(solver_in, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
-      return _error->Errno("OrderInstall", "Opening planer %s stdin on fd %d for writing failed", solver, solver_in);
+      return _error->Errno("EIPP::OrderInstall", "Opening planer %s stdin on fd %d for writing failed", solver, solver_in);
 
    bool Okay = output.Failed() == false;
    if (Progress != NULL)

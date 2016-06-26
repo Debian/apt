@@ -1033,26 +1033,21 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       return Failed;
 
    Reset();
-   
+
    if (Debug == true)
       clog << "Beginning to order" << endl;
 
    std::string const planer = _config->Find("APT::Planer", "internal");
+   unsigned int flags = 0;
+   if (_config->FindB("APT::Immediate-Configure", true) == false)
+      flags |= EIPP::Request::NO_IMMEDIATE_CONFIGURATION;
+   else if (_config->FindB("APT::Immediate-Configure-All", false))
+      flags |= EIPP::Request::IMMEDIATE_CONFIGURATION_ALL;
+   else if (_config->FindB("APT::Force-LoopBreak", false))
+      flags |= EIPP::Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS;
+   auto const ret = EIPP::OrderInstall(planer.c_str(), this, flags, nullptr);
    if (planer != "internal")
-   {
-      unsigned int flags = 0;
-      if (_config->FindB("APT::Immediate-Configure", true) == false)
-	 flags |= EIPP::Request::NO_IMMEDIATE_CONFIGURATION;
-      else if (_config->FindB("APT::Immediate-Configure-All", false))
-	 flags |= EIPP::Request::IMMEDIATE_CONFIGURATION_ALL;
-      else if (_config->FindB("APT::Force-LoopBreak", false))
-	 flags |= EIPP::Request::ALLOW_TEMPORARY_REMOVE_OF_ESSENTIALS;
-
-      if (EIPP::OrderInstall(planer.c_str(), this, flags, nullptr))
-	 return Completed;
-      else
-	 return Failed;
-   }
+      return ret ? Completed : Failed;
 
    bool const ordering =
 	_config->FindB("PackageManager::UnpackAll",true) ?
@@ -1062,7 +1057,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       _error->Error("Internal ordering error");
       return Failed;
    }
-   
+
    if (Debug == true)
       clog << "Done ordering" << endl;
 

@@ -309,8 +309,8 @@ setupenvironment() {
 		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/planers/dump
 		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
 		ln -s "${BUILDDIRECTORY}/apt-internal-planer" usr/lib/apt/planers/apt
-		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" > etc/apt/apt.conf.d/externalsolver.conf
-		echo "Dir::Bin::Planers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planers\";" > etc/apt/apt.conf.d/externalplaner.conf
+		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" >> ../aptconfig.conf
+		echo "Dir::Bin::Planers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planers\";" >> ../aptconfig.conf
 	fi
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
@@ -333,7 +333,7 @@ setupenvironment() {
 	chmod 644 keys/*
 	ln -s "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
-	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
+	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
@@ -1571,12 +1571,13 @@ msgfailoutput() {
 	local MSG="$1"
 	local OUTPUT="$2"
 	shift 2
-	if [ "$1" = 'grep' ]; then
+	local CMD="$1"
+	if [ "$1" = 'grep' -o "$1" = 'tail' -o "$1" = 'head' ]; then
 		echo >&2
 		while [ -n "$2" ]; do shift; done
 		echo "#### Complete file: $1 ####"
 		catfile "$1"
-		echo '#### grep output ####'
+		echo "#### $CMD output ####"
 	elif [ "$1" = 'test' ]; then
 		echo >&2
 		# doesn't support ! or non-file flags

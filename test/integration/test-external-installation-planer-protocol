@@ -20,12 +20,56 @@ insertinstalledpackage 'unrelated-1' 'all' '1'
 
 setupaptarchive --no-update
 
+EIPPLOG="${TMPWORKINGDIRECTORY}/rootdir/var/log/apt/eipp.log"
+echo "Dir::Log::Planer \"$EIPPLOG\";" > ./rootdir/etc/apt/apt.conf.d/eipp-logging
+
 testsuccess apt update
 export APT_EDSP_DUMP_FILENAME="${TMPWORKINGDIRECTORY}/eipp.dump"
+testfailure test -r "$EIPPLOG"
 testfailure aptget install foo --planer dump -y
+testfailure test -r "$EIPPLOG"
 testfailure grep 'unrelated-2' "$APT_EDSP_DUMP_FILENAME"
 testsuccessequal '2' grep -c '^Package: foo$' "$APT_EDSP_DUMP_FILENAME"
 testsuccessequal '1' grep -c '^Package: libfoo$' "$APT_EDSP_DUMP_FILENAME"
-#less "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal 'Planer: dump' grep '^Planer: ' "$APT_EDSP_DUMP_FILENAME"
 
-aptget install foo -ys #--planer apt
+testsuccess aptget install foo -s
+testsuccess aptget install foo -y
+testsuccess test -r "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+Remove: bar:amd64
+Install: libfoo:amd64 foo:amd64
+Planer: internal' head -n 6 "$EIPPLOG"
+aptinternalplaner < "$EIPPLOG" > planer.log || true
+testsuccessequal 'Remove: 6
+Unpack: 2
+Unpack: 4
+Configure: 2
+Configure: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planer.log
+
+rm -f "$EIPPLOG"
+testsuccess aptget install foo -s --reinstall
+testsuccess aptget install foo -y --reinstall
+testsuccess test -r "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+ReInstall: foo:amd64
+Planer: internal' head -n 5 "$EIPPLOG"
+aptinternalplaner < "$EIPPLOG" > planer.log || true
+testsuccessequal 'Unpack: 4
+Configure: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planer.log
+
+rm -f "$EIPPLOG"
+testsuccess aptget purge foo -s
+testsuccess aptget purge foo -y
+testsuccess test -r "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+Remove: foo:amd64
+Planer: internal' head -n 5 "$EIPPLOG"
+aptinternalplaner < "$EIPPLOG" > planer.log || true
+testsuccessequal 'Remove: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planer.log
