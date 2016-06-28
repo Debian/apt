@@ -357,8 +357,12 @@ unsigned short debListParser::VersionHash()
 	    continue;
 	 *J++ = tolower_ascii(*Start);
 
-	 if ((*Start == '<' || *Start == '>') && Start[1] != *Start && Start[1] != '=')
-	    *J++ = '=';
+	 /* Normalize <= to < and >= to >. This is the wrong way around, but
+	  * more efficient that the right way. And since we're only hashing
+	  * it does not matter which way we normalize. */
+	 if ((*Start == '<' || *Start == '>') && Start[1] == '=') {
+	    Start++;
+	 }
       }
 
       Result = AddCRC16(Result,S,J - S);
