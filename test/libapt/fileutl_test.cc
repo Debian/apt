@@ -317,6 +317,7 @@ TEST(FileUtlTest, flAbsPath)
 
 static void TestDevNullFileFd(unsigned int const filemode)
 {
+   SCOPED_TRACE(filemode);
    FileFd f("/dev/null", filemode);
    EXPECT_FALSE(f.Failed());
    EXPECT_TRUE(f.IsOpen());
@@ -343,4 +344,38 @@ TEST(FileUtlTest, WorkingWithDevNull)
    TestDevNullFileFd(FileFd::WriteAny);
    TestDevNullFileFd(FileFd::WriteTemp);
    TestDevNullFileFd(FileFd::WriteAtomic);
+}
+constexpr char const * const TESTSTRING = "This is a test";
+static void TestFailingAtomicKeepsFile(char const * const label, std::string const &filename)
+{
+   SCOPED_TRACE(label);
+   EXPECT_TRUE(FileExists(filename));
+   FileFd fd;
+   EXPECT_TRUE(fd.Open(filename, FileFd::ReadOnly));
+   char buffer[50];
+   EXPECT_NE(nullptr, fd.ReadLine(buffer, sizeof(buffer)));
+   EXPECT_STREQ(TESTSTRING, buffer);
+}
+TEST(FileUtlTest, FailingAtomic)
+{
+   FileFd fd;
+   std::string filename;
+   createTemporaryFile("failingatomic", fd, &filename, TESTSTRING);
+   TestFailingAtomicKeepsFile("init", filename);
+
+   FileFd f;
+   EXPECT_TRUE(f.Open(filename, FileFd::ReadWrite | FileFd::Atomic));
+   f.EraseOnFailure();
+   EXPECT_FALSE(f.Failed());
+   EXPECT_TRUE(f.IsOpen());
+   TestFailingAtomicKeepsFile("before-fail", filename);
+   EXPECT_TRUE(f.Write("Bad file write", 10));
+   f.OpFail();
+   EXPECT_TRUE(f.Failed());
+   TestFailingAtomicKeepsFile("after-fail", filename);
+   EXPECT_TRUE(f.Close());
+   TestFailingAtomicKeepsFile("closed", filename);
+
+   if (filename.empty() == false)
+      unlink(filename.c_str());
 }

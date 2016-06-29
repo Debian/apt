@@ -2619,7 +2619,7 @@ bool FileFd::Close()
    }
 
    if ((Flags & Replace) == Replace) {
-      if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
+      if (Failed() == false && rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
 	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
 
       FileName = TemporaryFileName; // for the unlink() below.
