@@ -326,6 +326,11 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
 	    return false;
       }
    }
+   if (StateFile.Failed())
+   {
+      OutFile.OpFail();
+      return false;
+   }
    if (OutFile.Close() == false)
       return false;
    chmod(state.c_str(), 0644);
