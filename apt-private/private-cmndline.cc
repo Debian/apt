@@ -160,7 +160,7 @@ static bool addArgumentsAPTFTPArchive(std::vector<CommandLine::Args> &Args, char
    return true;
 }
 									/*}}}*/
-static bool addArgumentsAPTInternalPlaner(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
+static bool addArgumentsAPTInternalPlanner(std::vector<CommandLine::Args> &, char const * const)/*{{{*/
 {
    return true;
 }
@@ -191,7 +191,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
-      addArg(0, "planer", "APT::Planer", CommandLine::HasArg);
+      addArg(0, "planner", "APT::Planner", CommandLine::HasArg);
       if (CmdMatches("upgrade"))
       {
          addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
@@ -361,7 +361,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 	 case APT_CMD::APT_EXTRACTTEMPLATES: addArgumentsAPTExtractTemplates(Args, Cmd); break;
 	 case APT_CMD::APT_FTPARCHIVE: addArgumentsAPTFTPArchive(Args, Cmd); break;
 	 case APT_CMD::APT_HELPER: addArgumentsAPTHelper(Args, Cmd); break;
-	 case APT_CMD::APT_INTERNAL_PLANER: addArgumentsAPTInternalPlaner(Args, Cmd); break;
+	 case APT_CMD::APT_INTERNAL_PLANNER: addArgumentsAPTInternalPlanner(Args, Cmd); break;
 	 case APT_CMD::APT_INTERNAL_SOLVER: addArgumentsAPTInternalSolver(Args, Cmd); break;
 	 case APT_CMD::APT_MARK: addArgumentsAPTMark(Args, Cmd); break;
 	 case APT_CMD::APT_SORTPKG: addArgumentsAPTSortPkgs(Args, Cmd); break;
@@ -418,7 +418,7 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
       case APT_CMD::APT_FTPARCHIVE: cmd = "apt-ftparchive(1)"; break;
       case APT_CMD::APT_GET: cmd = "apt-get(8)"; break;
       case APT_CMD::APT_HELPER: cmd = nullptr; break;
-      case APT_CMD::APT_INTERNAL_PLANER: cmd = nullptr; break;
+      case APT_CMD::APT_INTERNAL_PLANNER: cmd = nullptr; break;
       case APT_CMD::APT_INTERNAL_SOLVER: cmd = nullptr; break;
       case APT_CMD::APT_MARK: cmd = "apt-mark(8)"; break;
       case APT_CMD::APT_SORTPKG: cmd = "apt-sortpkgs(1)"; break;
@@ -426,7 +426,7 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
    if (cmd != nullptr)
       ioprintf(std::cout, _("See %s for more information about the available commands."), cmd);
    if (Binary != APT_CMD::APT_DUMP_SOLVER && Binary != APT_CMD::APT_INTERNAL_SOLVER &&
-	 Binary != APT_CMD::APT_INTERNAL_PLANER)
+	 Binary != APT_CMD::APT_INTERNAL_PLANNER)
       std::cout << std::endl <<
 	 _("Configuration options and syntax is detailed in apt.conf(5).\n"
 	       "Information about how to configure sources can be found in sources.list(5).\n"

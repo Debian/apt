@@ -22,7 +22,7 @@ enum class APT_CMD {
    APT_MARK,
    APT_SORTPKG,
    APT_DUMP_SOLVER,
-   APT_INTERNAL_PLANER,
+   APT_INTERNAL_PLANNER,
 };
 struct aptDispatchWithHelp
 {

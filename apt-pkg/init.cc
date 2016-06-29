@@ -76,7 +76,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Log","var/log/apt");
    Cnf.CndSet("Dir::Log::Terminal","term.log");
    Cnf.CndSet("Dir::Log::History","history.log");
-   Cnf.CndSet("Dir::Log::Planer","eipp.log.xz");
+   Cnf.CndSet("Dir::Log::Planner","eipp.log.xz");
 
    Cnf.Set("Dir::Ignore-Files-Silently::", "~$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");

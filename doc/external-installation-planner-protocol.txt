@@ -1,8 +1,8 @@
-# APT External Installation Planer Protocol (EIPP) - version 0.1
+# APT External Installation Planner Protocol (EIPP) - version 0.1
 
 This document describes the communication protocol between APT and
-external installation planer. The protocol is called APT EIPP, for "APT
-External Installation Planer Protocol".
+external installation planner. The protocol is called APT EIPP, for "APT
+External Installation Planner Protocol".
 
 
 ## Terminology
@@ -16,37 +16,37 @@ and "arch" a dpkg architecture.
 ## Components
 
 - **APT**: we know this one.
-- APT is equipped with its own **internal planer** for the order of
+- APT is equipped with its own **internal planner** for the order of
   package installation (and removal) which is identified by the string
   `internal`.
-- **External planer**: an *external* software component able to plan an
+- **External planner**: an *external* software component able to plan an
   installation on behalf of APT.
 
-At each interaction with APT, a single planer is in use.  When there is
-a total of 2 or more planers, internals or externals, the user can
+At each interaction with APT, a single planner is in use.  When there is
+a total of 2 or more planners, internals or externals, the user can
 choose which one to use.
 
-Each planer is identified by an unique string, the **planer name**.
-Planer names must be formed using only alphanumeric ASCII characters,
-dashes, and underscores; planer names must start with a lowercase ASCII
-letter.  The special name `internal` denotes APT's internal planer, is
-reserved, and cannot be used by external planers.
+Each planner is identified by an unique string, the **planner name**.
+Planner names must be formed using only alphanumeric ASCII characters,
+dashes, and underscores; planner names must start with a lowercase ASCII
+letter.  The special name `internal` denotes APT's internal planner, is
+reserved, and cannot be used by external planners.
 
 
 ## Installation
 
-Each external planer is installed as a file under Dir::Bin::Planers (see
-below), which defaults to `/usr/lib/apt/planers`. We will assume in the
-remainder of this section that such a default value is in effect.
+Each external planner is installed as a file under Dir::Bin::Planners
+(see below), which defaults to `/usr/lib/apt/planners`. We will assume
+in the remainder of this section that such a default value is in effect.
 
-The naming scheme is `/usr/lib/apt/planers/NAME`, where `NAME` is the
-name of the external planer.
+The naming scheme is `/usr/lib/apt/planners/NAME`, where `NAME` is the
+name of the external planner.
 
-Each file under `/usr/lib/apt/planers` corresponding to an external
-planer must be executable.
+Each file under `/usr/lib/apt/planners` corresponding to an external
+planner must be executable.
 
-No non-planer files must be installed under `/usr/lib/apt/planers`, so
-that an index of available external planers can be obtained by listing
+No non-planner files must be installed under `/usr/lib/apt/planners`, so
+that an index of available external planners can be obtained by listing
 the content of that directory.
 
 
@@ -56,41 +56,41 @@ Several APT options can be used to affect installation planing in APT.
 An overview of them is given below. Please refer to proper APT
 configuration documentation for more, and more up to date, information.
 
-- **APT::Planer**: the name of the planer to be used for dependency
-  solving. Defaults to `internal`
+- **APT::Planner**: the name of the planner to be used for dependency
+  solving.  Defaults to `internal`
 
-- **Dir::Bin::Planers**: absolute path of the directory where to look
-  for external solvers. Defaults to `/usr/lib/apt/planers`.
+- **Dir::Bin::Planners**: absolute path of the directory where to look
+  for external solvers. Defaults to `/usr/lib/apt/planners`.
 
 
 ## Protocol
 
-When configured to use an external planer, APT will resort to it to
+When configured to use an external planner, APT will resort to it to
 decide in which order packages should be installed, configured and
 removed.
 
 The interaction happens **in batch**: APT will invoke the external
-planer passing the current status of (half-)installed packages and of
+planner passing the current status of (half-)installed packages and of
 packages which should be installed, as well as a request denoting the
-packages to install, reinstall, remove and purge.  The external planer
+packages to install, reinstall, remove and purge.  The external planner
 will compute a valid plan of when and how to call the low-level package
 manager (like dpkg) with each package to satisfy the request.
 
-External planers are invoked by executing them. Communications happens
+External planners are invoked by executing them. Communications happens
 via the file descriptors: **stdin** (standard input) and **stdout**
-(standard output). stderr is not used by the EIPP protocol. Planers can
+(standard output). stderr is not used by the EIPP protocol. Planners can
 therefore use stderr to dump debugging information that could be
 inspected separately.
 
 After invocation, the protocol passes through a sequence of phases:
 
-1. APT invokes the external planer
-2. APT send to the planer an installation planer **scenario**
-3. The planer calculates the order. During this phase the planer may
+1. APT invokes the external planner
+2. APT send to the planner an installation planner **scenario**
+3. The planner calculates the order. During this phase the planner may
    send, repeatedly, **progress** information to APT.
-4. The planer sends back to APT an **answer**, i.e. either a *solution*
+4. The planner sends back to APT an **answer**, i.e. either a *solution*
    or an *error* report.
-5. The external planer exits
+5. The external planner exits
 
 
 ### Scenario
@@ -106,14 +106,14 @@ line.
 
 #### Request
 
-Within an installation planer scenario, a request represents the action
+Within an installation planner scenario, a request represents the action
 on packages requested by the user explicitly as well as potentially
 additions calculated by a dependency resolver which the user has
 accepted.
 
-An installation planer is not allowed to suggest the modification of
+An installation planner is not allowed to suggest the modification of
 package states (e.g. removing additional packages) even if it can't
-calculate a solution otherwise – the planer must error out in such
+calculate a solution otherwise – the planner must error out in such
 a case. An exception is made for scenarios which contain packages which
 aren't completely installed (like half-installed or trigger-awaiting):
 Solvers are free to move these packages to a fully installed state (but
@@ -158,22 +158,22 @@ The following **action fields** are supported in request stanzas:
 
 The following **preference fields** are supported in request stanzas:
 
-- **Planer:** (optional, defaults to the empty string) a purely
-  informational string specifying to which planer this request was send
+- **Planner:** (optional, defaults to the empty string) a purely
+  informational string specifying to which planner this request was send
   initially.
 
 - **Immediate-Configuration:** (option, unset by default) A boolean
-  value defining if the planer should try to configure all packages as
+  value defining if the planner should try to configure all packages as
   quickly as possible (true) or shouldn't perform any kind of immediate
   configuration at all (false). If not explicitly set with this field
-  the planer is free to pick either mode or implementing e.g. a mode
+  the planner is free to pick either mode or implementing e.g. a mode
   which configures only packages immediately if they are flagged as
   `Essential` (or are dependencies of packages marked as `Essential`).
 
 - **Allow-Temporary-Remove-of-Essentials** (optional, defaults to `no`).
-  A boolean value allowing the planer (if set to yes) to temporarily
+  A boolean value allowing the planner (if set to yes) to temporarily
   remove an essential package. Associated with the APT::Force-LoopBreak
-  configuration option its main use is highlighting that planers who do
+  configuration option its main use is highlighting that planners who do
   temporary removes must take special care in terms of essentials. Legit
   uses of this option by users is very uncommon, traditionally
   a situation in which it is needed indicates a packaging error.
@@ -201,17 +201,17 @@ field. The following fields are supported in package stanzas:
 
 ### Answer
 
-An answer from the external planer to APT is either a *solution* or an
+An answer from the external planner to APT is either a *solution* or an
 *error*.
 
 The following invariant on **exit codes** must hold true. When the
-external planer is *able to find a solution*, it will write the solution
-to standard output and then exit with an exit code of 0. When the
-external planer is *unable to find a solution* (and is aware of that),
-it will write an error to standard output and then exit with an exit
-code of 0.  An exit code other than 0 will be interpreted as a planer
-crash with no meaningful error about dependency resolution to convey to
-the user.
+external planner is *able to find a solution*, it will write the
+solution to standard output and then exit with an exit code of 0. When
+the external planner is *unable to find a solution* (and is aware of
+that), it will write an error to standard output and then exit with an
+exit code of 0.  An exit code other than 0 will be interpreted as
+a planner crash with no meaningful error about dependency resolution to
+convey to the user.
 
 
 #### Solution
@@ -245,18 +245,18 @@ a set isn't significant through.
 
 The solution needs to be valid (it is not allowed to configure a package
 before it was unpacked, dependency relations must be satisfied, …), but
-they don't need to be complete: A planer can and should expect that any
+they don't need to be complete: A planner can and should expect that any
 package which wasn't explicitly configured will be configured at the end
-automatically. That also means through that a planer is not allowed to
+automatically. That also means through that a planner is not allowed to
 produce a solution in which a package remains unconfigured.
 
 In terms of expressivity, all stanzas can carry one single field each, as
-APT-IDs are enough to pinpoint packages to be installed/removed. Nonetheless,
-for protocol readability, it is recommended that planers either add
-unconditionally the fields Package, Version, and Architecture to all
-install/remove stanzas or, alternatively, that they support a `--verbose`
-command line flag that explicitly enables the output of those fields in
-solutions.
+APT-IDs are enough to pinpoint packages to be installed/removed.
+Nonetheless, for protocol readability, it is recommended that planners
+either add unconditionally the fields Package, Version, and Architecture
+to all install/remove stanzas or, alternatively, that they support
+a `--verbose` command line flag that explicitly enables the output of
+those fields in solutions.
 
 #### Error
 
@@ -267,7 +267,7 @@ following fields are supported in error stanzas:
   it should be a unique error identifier, such as a UUID.
 
 - **Message:** (mandatory). The value of this field is a text string,
-  meant to be read by humans, that explains the cause of the planer
+  meant to be read by humans, that explains the cause of the planner
   error.  Message fields might be multi-line, like the Description field
   in the dpkg database. The first line conveys a short message, which
   can be explained in more details using subsequent lines.
@@ -275,7 +275,7 @@ following fields are supported in error stanzas:
 
 ### Progress
 
-During dependency solving, an external planer may send progress
+During dependency solving, an external planner may send progress
 information to APT using **progress stanzas**. A progress stanza starts
 with the Progress field and might contain the following fields:
 
@@ -285,11 +285,11 @@ with the Progress field and might contain the following fields:
 
 - **Percentage:** (optional). An integer from 0 to 100, representing the
   completion of the installation planning process, as declared by the
-  planer.
+  planner.
 
 - **Message:** (optional). A textual message, meant to be read by the
-  APT user, telling what is going on within the installation planer
-  (e.g. the current phase of planning, as declared by the planer).
+  APT user, telling what is going on within the installation planner
+  (e.g. the current phase of planning, as declared by the planner).
 
 
 # Future extensions

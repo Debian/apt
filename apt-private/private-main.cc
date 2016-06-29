@@ -38,7 +38,7 @@ void InitLocale(APT_CMD const binary)				/*{{{*/
 	 break;
       case APT_CMD::APT_EXTRACTTEMPLATES:
       case APT_CMD::APT_FTPARCHIVE:
-      case APT_CMD::APT_INTERNAL_PLANER:
+      case APT_CMD::APT_INTERNAL_PLANNER:
       case APT_CMD::APT_INTERNAL_SOLVER:
       case APT_CMD::APT_SORTPKG:
 	 textdomain("apt-utils");

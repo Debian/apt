@@ -191,7 +191,7 @@ aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
 aptdumpsolver() { runapt "${APTDUMPSOLVER}" "$@"; }
-aptinternalplaner() { runapt "${APTINTERNALPLANER}" "$@"; }
+aptinternalplanner() { runapt "${APTINTERNALPLANNER}" "$@"; }
 
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
@@ -290,7 +290,7 @@ setupenvironment() {
         APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}"
         APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}"
 	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}"
-	APTINTERNALPLANER="${APT_INTEGRATION_TESTS_INTERNAL_PLANER:-"${BUILDDIRECTORY}/apt-internal-planer"}"
+	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/apt-internal-planner"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
@@ -304,13 +304,13 @@ setupenvironment() {
 	mkdir -p usr/lib/apt
 	ln -s "${METHODSDIR}" usr/lib/apt/methods
 	if [ "$BUILDDIRECTORY" = "$LIBRARYPATH" ]; then
-		mkdir -p usr/lib/apt/solvers usr/lib/apt/planers
+		mkdir -p usr/lib/apt/solvers usr/lib/apt/planners
 		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
-		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/planers/dump
+		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/planners/dump
 		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
-		ln -s "${BUILDDIRECTORY}/apt-internal-planer" usr/lib/apt/planers/apt
+		ln -s "${BUILDDIRECTORY}/apt-internal-planner" usr/lib/apt/planners/apt
 		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" >> ../aptconfig.conf
-		echo "Dir::Bin::Planers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planers\";" >> ../aptconfig.conf
+		echo "Dir::Bin::Planners \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planners\";" >> ../aptconfig.conf
 	fi
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
@@ -347,6 +347,7 @@ setupenvironment() {
 		echo 'Binary::gpgv::APT::Sandbox::User "root";' >> aptconfig.conf
 		# same for the solver executables
 		echo 'APT::Solver::RunAsUser "root";' >> aptconfig.conf
+		echo 'APT::Planner::RunAsUser "root";' >> aptconfig.conf
 	fi
 
 	cat > "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF

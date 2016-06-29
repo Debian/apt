@@ -117,7 +117,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // compat
    APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstall(int statusFd=-1);
 
-   friend bool EIPP::OrderInstall(char const * const planer, pkgPackageManager * const PM,
+   friend bool EIPP::OrderInstall(char const * const planner, pkgPackageManager * const PM,
 	 unsigned int const version, OpProgress * const Progress);
    friend bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM,
 	 OpProgress * const Progress);

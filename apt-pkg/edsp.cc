@@ -1076,7 +1076,7 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 {
    if (strcmp(solver, "internal") == 0)
    {
-      auto const dumpfile = _config->FindFile("Dir::Log::Planer");
+      auto const dumpfile = _config->FindFile("Dir::Log::Planner");
       if (dumpfile.empty())
 	 return false;
       auto const dumpdir = flNotFile(dumpfile);
@@ -1089,27 +1089,27 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
    }
 
    int solver_in, solver_out;
-   pid_t const solver_pid = ExecuteExternal("planer", solver, "Dir::Bin::Planers", &solver_in, &solver_out);
+   pid_t const solver_pid = ExecuteExternal("planner", solver, "Dir::Bin::Planners", &solver_in, &solver_out);
    if (solver_pid == 0)
       return false;
 
    FileFd output;
    if (output.OpenDescriptor(solver_in, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
-      return _error->Errno("EIPP::OrderInstall", "Opening planer %s stdin on fd %d for writing failed", solver, solver_in);
+      return _error->Errno("EIPP::OrderInstall", "Opening planner %s stdin on fd %d for writing failed", solver, solver_in);
 
    bool Okay = output.Failed() == false;
    if (Progress != NULL)
-      Progress->OverallProgress(0, 100, 5, _("Execute external planer"));
+      Progress->OverallProgress(0, 100, 5, _("Execute external planner"));
    Okay &= EIPP::WriteRequest(PM->Cache, output, flags, Progress);
    if (Progress != NULL)
-      Progress->OverallProgress(5, 100, 20, _("Execute external planer"));
+      Progress->OverallProgress(5, 100, 20, _("Execute external planner"));
    Okay &= EIPP::WriteScenario(PM->Cache, output, Progress);
    output.Close();
 
    if (Progress != NULL)
-      Progress->OverallProgress(25, 100, 75, _("Execute external planer"));
+      Progress->OverallProgress(25, 100, 75, _("Execute external planner"));
 
-   // we don't tell the external planers about boring things
+   // we don't tell the external planners about boring things
    for (auto Pkg = PM->Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       if (Pkg->CurrentState == pkgCache::State::ConfigFiles && PM->Cache[Pkg].Purge() == true)
@@ -1127,7 +1127,7 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
 			OpProgress * const Progress)
 {
    if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planer"));
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planner"));
    unsigned long p = 0;
    string del, inst, reinst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
@@ -1164,7 +1164,7 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
       WriteOkay(Okay, output, "Install:", inst, "\n");
    if (reinst.empty() == false)
       WriteOkay(Okay, output, "ReInstall:", reinst, "\n");
-   WriteOkay(Okay, output, "Planer: ", _config->Find("APT::Planer", "internal"), "\n");
+   WriteOkay(Okay, output, "Planner: ", _config->Find("APT::Planner", "internal"), "\n");
    if ((flags & Request::IMMEDIATE_CONFIGURATION_ALL) != 0)
       WriteOkay(Okay, output, "Immediate-Configuration: yes\n");
    else if ((flags & Request::NO_IMMEDIATE_CONFIGURATION) != 0)
@@ -1217,7 +1217,7 @@ template<typename forVersion> void forAllInterestingVersions(pkgDepCache &Cache,
 bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const Progress)
 {
    if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().PackageCount, _("Send scenario to planer"));
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send scenario to planner"));
    unsigned long p = 0;
    bool Okay = output.Failed() == false;
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
@@ -1318,13 +1318,13 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
       } else if (section.Exists("Error") == true) {
 	 std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 	 if (msg.empty() == true) {
-	    msg = _("External planer failed without a proper error message");
+	    msg = _("External planner failed without a proper error message");
 	    _error->Error("%s", msg.c_str());
 	 } else
-	    _error->Error("External planer failed with: %s", msg.substr(0,msg.find('\n')).c_str());
+	    _error->Error("External planner failed with: %s", msg.substr(0,msg.find('\n')).c_str());
 	 if (Progress != NULL)
 	    Progress->Done();
-	 std::cerr << "The planer encountered an error of type: " << section.FindS("Error") << std::endl;
+	 std::cerr << "The planner encountered an error of type: " << section.FindS("Error") << std::endl;
 	 std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
 	 std::cerr << msg << std::endl << std::endl;
 	 return false;
@@ -1396,7 +1396,7 @@ bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTI
 	    _config->Set("APT::Architecture", line);
 	 else if (LineStartsWithAndStrip(line, "Architectures:"))
 	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
-	 else if (LineStartsWithAndStrip(line, "Planer:"))
+	 else if (LineStartsWithAndStrip(line, "Planner:"))
 	    ; // purely informational line
 	 else if (LineStartsWithAndStrip(line, "Immediate-Configuration:"))
 	 {

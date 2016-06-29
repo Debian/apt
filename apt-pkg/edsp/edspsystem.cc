@@ -35,7 +35,7 @@ edspLikeSystem::edspLikeSystem(char const * const Label) : pkgSystem(Label, &deb
 edspSystem::edspSystem() : edspLikeSystem("Debian APT solver interface")
 {
 }
-eippSystem::eippSystem() : edspLikeSystem("Debian APT planer interface")
+eippSystem::eippSystem() : edspLikeSystem("Debian APT planner interface")
 {
 }
 									/*}}}*/

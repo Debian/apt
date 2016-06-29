@@ -44,10 +44,10 @@
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
 	std::cout <<
-		_("Usage: apt-internal-planer\n"
+		_("Usage: apt-internal-planner\n"
 		"\n"
-		"apt-internal-planer is an interface to use the current internal\n"
-		"installation planer for the APT family like an external one,\n"
+		"apt-internal-planner is an interface to use the current internal\n"
+		"installation planner for the APT family like an external one,\n"
 		"for debugging or the like.\n");
 	return true;
 }
@@ -118,7 +118,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	DropPrivileges();
 
 	CommandLine CmdL;
-	ParseCommandLine(CmdL, APT_CMD::APT_INTERNAL_PLANER, &_config, NULL, argc, argv, &ShowHelp, &GetCommands);
+	ParseCommandLine(CmdL, APT_CMD::APT_INTERNAL_PLANNER, &_config, NULL, argc, argv, &ShowHelp, &GetCommands);
 
 	// Deal with stdout not being a tty
 	if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
@@ -127,8 +127,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 	if (_config->FindI("quiet", 0) < 1)
 		_config->Set("Debug::EIPP::WriteSolution", true);
 
-	_config->Set("APT::System", "Debian APT planer interface");
-	_config->Set("APT::Planer", "internal");
+	_config->Set("APT::System", "Debian APT planner interface");
+	_config->Set("APT::Planner", "internal");
 	_config->Set("eipp::scenario", "/nonexistent/stdin");
 	FileFd output;
 	if (output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::BufferedWrite, true) == false)
@@ -136,7 +136,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	int const input = STDIN_FILENO;
 	SetNonBlock(input, false);
 
-	EDSP::WriteProgress(0, "Start up planer…", output);
+	EDSP::WriteProgress(0, "Start up planner…", output);
 
 	if (pkgInitSystem(*_config,_system) == false)
 		DIE("System could not be initialized!");
@@ -144,7 +144,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	EDSP::WriteProgress(1, "Read request…", output);
 
 	if (WaitFd(input, false, 5) == false)
-		DIE("WAIT timed out in the planer");
+		DIE("WAIT timed out in the planner");
 
 	std::list<std::pair<std::string,EIPP::PKG_ACTION>> actions;
 	unsigned int flags;
@@ -180,12 +180,12 @@ int main(int argc,const char *argv[])					/*{{{*/
 	      EDSP::WriteProgress(100, "Done", output);
 	      break;
 	   case pkgPackageManager::Incomplete:
-	      broken << "Planer could only incompletely plan an installation order!" << std::endl;
+	      broken << "Planner could only incompletely plan an installation order!" << std::endl;
 	      _error->DumpErrors(broken, GlobalError::DEBUG);
 	      EDSP::WriteError("pm-incomplete", broken.str(), output);
 	      break;
 	   case pkgPackageManager::Failed:
-	      broken << "Planer failed to find an installation order!" << std::endl;
+	      broken << "Planner failed to find an installation order!" << std::endl;
 	      _error->DumpErrors(broken, GlobalError::DEBUG);
 	      EDSP::WriteError("pm-failed", broken.str(), output);
 	      break;

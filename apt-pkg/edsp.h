@@ -254,7 +254,7 @@ namespace EIPP								/*{{{*/
    APT_HIDDEN bool WriteScenario(pkgDepCache &Cache, FileFd &output,
 	 OpProgress * const Progress);
 
-   APT_HIDDEN bool OrderInstall(char const * const planer, pkgPackageManager * const PM,
+   APT_HIDDEN bool OrderInstall(char const * const planner, pkgPackageManager * const PM,
 	 unsigned int const version, OpProgress * const Progress);
    APT_HIDDEN bool ReadResponse(int const input, pkgPackageManager * const PM,
 	 OpProgress * const Progress);
