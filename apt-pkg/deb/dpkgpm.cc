@@ -1216,6 +1216,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (RunScriptsWithPkgs("DPkg::Pre-Install-Pkgs") == false)
       return false;
 
+   auto const noopDPkgInvocation = _config->FindB("Debug::pkgDPkgPM",false);
+   // store auto-bits as they are supposed to be after dpkg is run
+   if (noopDPkgInvocation == false)
+      Cache.writeStateFile(NULL);
+
    decltype(List)::const_iterator::difference_type const notconfidx =
       _config->FindB("Dpkg::ExplicitLastConfigure", false) ? std::numeric_limits<decltype(notconfidx)>::max() :
       std::distance(List.cbegin(), std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }).base());
@@ -1396,7 +1401,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
       J = I;
 
-      if (_config->FindB("Debug::pkgDPkgPM",false) == true)
+      if (noopDPkgInvocation == true)
       {
 	 for (std::vector<const char *>::const_iterator a = Args.begin();
 	      a != Args.end(); ++a)
@@ -1577,7 +1582,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));
 
-   if (_config->FindB("Debug::pkgDPkgPM",false) == false)
+   if (noopDPkgInvocation == false)
    {
       std::string const oldpkgcache = _config->FindFile("Dir::cache::pkgcache");
       if (oldpkgcache.empty() == false && RealFileExists(oldpkgcache) == true &&
@@ -1594,7 +1599,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       }
    }
 
-   Cache.writeStateFile(NULL);
+   // disappearing packages can forward their auto-bit
+   if (disappearedPkgs.empty() == false)
+      Cache.writeStateFile(NULL);
 
    d->progress->Stop();
 
