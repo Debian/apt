@@ -15,6 +15,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/macros.h>
 
 #include <string.h>
@@ -134,14 +135,14 @@ bool pkgInitConfig(Configuration &Cnf)
    }
 
    // Read the configuration parts dir
-   std::string Parts = Cnf.FindDir("Dir::Etc::parts");
+   std::string const Parts = Cnf.FindDir("Dir::Etc::parts", "/dev/null");
    if (DirectoryExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
-   else
+   else if (APT::String::Endswith(Parts, "/dev/null") == false)
       _error->WarningE("DirectoryExists",_("Unable to read %s"),Parts.c_str());
 
    // Read the main config file
-   std::string FName = Cnf.FindFile("Dir::Etc::main");
+   std::string const FName = Cnf.FindFile("Dir::Etc::main", "/dev/null");
    if (RealFileExists(FName) == true)
       Res &= ReadConfigFile(Cnf,FName);
 

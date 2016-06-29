@@ -307,11 +307,11 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &Fi
 bool ReadPinDir(pkgPolicy &Plcy,string Dir)
 {
    if (Dir.empty() == true)
-      Dir = _config->FindDir("Dir::Etc::PreferencesParts");
+      Dir = _config->FindDir("Dir::Etc::PreferencesParts", "/dev/null");
 
    if (DirectoryExists(Dir) == false)
    {
-      if (Dir != "/dev/null")
+      if (APT::String::Endswith(Dir, "/dev/null") == false)
 	 _error->WarningE("DirectoryExists",_("Unable to read %s"),Dir.c_str());
       return true;
    }
