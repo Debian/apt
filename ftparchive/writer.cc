@@ -967,6 +967,15 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 // ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+static std::string formatUTCDateTime(time_t const now)
+{
+   // TimeRFC1123 uses GMT to satisfy HTTP/1.1
+   std::string datetime = TimeRFC1123(now);
+   auto const lastspace = datetime.rfind(' ');
+   if (likely(lastspace != std::string::npos))
+      datetime.replace(lastspace + 1, 3, "UTC");
+   return datetime;
+}
 ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) : FTWScanner(GivenOutput)
 {
    if (_config->FindB("APT::FTPArchive::Release::Default-Patterns", true) == true)
@@ -988,20 +997,7 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    AddPatterns(_config->FindVector("APT::FTPArchive::Release::Patterns"));
 
    time_t const now = time(NULL);
-   auto const posix = std::locale("C.UTF-8");
-
-   // FIXME: use TimeRFC1123 here? But that uses GMT to satisfy HTTP/1.1
-   std::ostringstream datestr;
-   datestr.imbue(posix);
-   datestr << std::put_time(gmtime(&now), "%a, %d %b %Y %H:%M:%S UTC");
-
    time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
-   std::ostringstream validstr;
-   if (validuntil != now)
-   {
-      datestr.imbue(posix);
-      validstr << std::put_time(gmtime(&validuntil), "%a, %d %b %Y %H:%M:%S UTC");
-   }
 
    map<string,string> Fields;
    Fields["Origin"] = "";
@@ -1009,8 +1005,9 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Suite"] = "";
    Fields["Version"] = "";
    Fields["Codename"] = "";
-   Fields["Date"] = datestr.str();
-   Fields["Valid-Until"] = validstr.str();
+   Fields["Date"] = formatUTCDateTime(now);
+   if (validuntil != now)
+      Fields["Valid-Until"] = formatUTCDateTime(validuntil);
    Fields["Architectures"] = "";
    Fields["Components"] = "";
    Fields["Description"] = "";

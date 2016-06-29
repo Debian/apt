@@ -1233,9 +1233,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (notconfidx != std::numeric_limits<decltype(notconfidx)>::max())
    {
       if (ConfigurePending)
-	 List.erase(std::next(List.cbegin(), notconfidx), std::prev(List.cend()));
+	 List.erase(std::next(List.begin(), notconfidx), std::prev(List.end()));
       else
-	 List.erase(std::next(List.cbegin(), notconfidx), List.cend());
+	 List.erase(std::next(List.begin(), notconfidx), List.end());
    }
 
    d->stdin_is_dev_null = false;

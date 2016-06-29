@@ -757,7 +757,10 @@ string TimeRFC1123(time_t Date)
    auto const posix = std::locale("C.UTF-8");
    std::ostringstream datestr;
    datestr.imbue(posix);
-   datestr << std::put_time(&Conv, "%a, %d %b %Y %H:%M:%S GMT");
+   APT::StringView const fmt("%a, %d %b %Y %H:%M:%S GMT");
+   std::use_facet<std::time_put<char>>(posix).put(
+                    std::ostreambuf_iterator<char>(datestr),
+                    datestr, ' ', &Conv, fmt.data(), fmt.data() + fmt.size());
    return datestr.str();
 }
 									/*}}}*/
