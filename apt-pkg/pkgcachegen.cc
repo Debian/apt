@@ -392,8 +392,21 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	 if (Res > 0)
 	    break;
 	 // Versionstrings are equal - is hash also equal?
-	 if (Res == 0 && List.SameVersion(Hash, Ver) == true)
-	    break;
+	 if (Res == 0)
+	 {
+	    if (List.SameVersion(Hash, Ver) == true)
+	       break;
+	    // sort (volatile) sources above not-sources like the status file
+	    if ((CurrentFile->Flags & pkgCache::Flag::NotSource) == 0)
+	    {
+	       auto VF = Ver.FileList();
+	       for (; VF.end() == false; ++VF)
+		  if (VF.File().Flagged(pkgCache::Flag::NotSource) == false)
+		     break;
+	       if (VF.end() == true)
+		  break;
+	    }
+	 }
 	 // proceed with the next till we have either the right
 	 // or we found another version (which will be lower)
       }
