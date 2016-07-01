@@ -999,7 +999,7 @@ bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
    // status file is parsed last, so the first version we encounter is
    // probably also the version we have downloaded
    unsigned long long const Size = Section.FindULL("Size");
-   if (Size != 0 && Size != Ver->Size)
+   if (Size != 0 && Ver->Size != 0 && Size != Ver->Size)
       return false;
    // available everywhere, but easier to check here than to include in VersionHash
    unsigned char MultiArch = ParseMultiArch(false);
