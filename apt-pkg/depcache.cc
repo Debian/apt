@@ -12,6 +12,7 @@
 
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/versionmatch.h>
+#include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
@@ -1927,10 +1928,11 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 continue;
 
       // handle the virtual part first
+      APT::VersionVector providers;
       for(auto Prv = T.ProvidesList(); Prv.end() == false; ++Prv)
       {
 	 auto PP = Prv.OwnerPkg();
-	 if (PkgState[PP->ID].Marked || IsPkgInBoringState(PP, PkgState))
+	 if (IsPkgInBoringState(PP, PkgState))
 	    continue;
 
 	 // we want to ignore provides from uninteresting versions
@@ -1939,10 +1941,37 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 if (unlikely(PV.end()) || PV != Prv.OwnerVer() || D.IsSatisfied(Prv) == false)
 	    continue;
 
-	 if (debug_autoremove)
-	    std::clog << "Following dep: " << APT::PrettyDep(this, D)
-	       << ", provided by " << PP.FullName() << " " << PV.VerStr() << std::endl;
-	 MarkPackage(PP, PV, follow_recommends, follow_suggests);
+	 providers.emplace_back(PV);
+      }
+      if (providers.empty() == false)
+      {
+	 // sort providers by source version so that only the latest versioned
+	 // binary package of a source package is marked instead of all
+	 std::sort(providers.begin(), providers.end(),
+	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
+	       auto const nameret = strcmp(A.SourcePkgName(), B.SourcePkgName());
+	       if (nameret != 0)
+	          return nameret < 0;
+	       auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
+	       if (verret != 0)
+	          return verret > 0;
+	       return strcmp(A.ParentPkg().Name(), B.ParentPkg().Name()) < 0;
+	 });
+	 auto const prvsize = providers.size();
+	 providers.erase(std::unique(providers.begin(), providers.end(),
+	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
+	       return strcmp(A.SourcePkgName(), B.SourcePkgName()) == 0 &&
+	          strcmp(A.SourceVerStr(), B.SourceVerStr()) != 0;
+	    }), providers.end());
+	 for (auto && PV: providers)
+	 {
+	    auto const PP = PV.ParentPkg();
+	    if (debug_autoremove)
+	       std::clog << "Following dep: " << APT::PrettyDep(this, D)
+		  << ", provided by " << PP.FullName() << " " << PV.VerStr()
+		  << " (" << providers.size() << "/" << prvsize << ")"<< std::endl;
+	    MarkPackage(PP, PV, follow_recommends, follow_suggests);
+	 }
       }
 
       // now deal with the real part of the package
