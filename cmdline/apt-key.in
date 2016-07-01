@@ -156,6 +156,13 @@ net_update() {
 }
 
 update() {
+    if [ -z "$APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE" ]; then
+	echo >&2 "Warning: 'apt-key update' is deprecated and should not be used anymore!"
+	if [ -z "$ARCHIVE_KEYRING" ]; then
+	    echo >&2 "Note: In your distribution this command is a no-op and can therefore be removed safely."
+	    exit 0
+	fi
+    fi
     if [ ! -f "$ARCHIVE_KEYRING" ]; then
 	echo >&2 "ERROR: Can't find the archive-keyring"
 	echo >&2 "Is the &keyring-package; package installed?"

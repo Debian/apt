@@ -128,17 +128,21 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>update</option></term>
+     <varlistentry><term><option>update</option></term> (deprecated)
      <listitem>
      <para>
-
        Update the local keyring with the archive keyring and remove from
        the local keyring the archive keys which are no longer valid.
        The archive keyring is shipped in the <literal>archive-keyring</literal> package of your
        distribution, e.g. the &keyring-package; package in &keyring-distro;.
-
      </para>
-
+     <para>
+       Note that a distribution does not need to and in fact should not use
+       this command any longer and instead ship keyring files in the
+       <filename>/etc/apt/trusted.gpg</filename> directory directly as this
+       avoids a dependency on <package>gnupg</package> and it is easier to manage
+       keys by simply adding and removing files for maintainers and users alike.
+     </para>
      </listitem>
      </varlistentry>
      
@@ -180,18 +184,6 @@
    <variablelist>
 
      &file-trustedgpg;
-
-     <varlistentry><term><filename>/etc/apt/trustdb.gpg</filename></term>
-     <listitem><para>Local trust database of archive keys.</para></listitem>
-     </varlistentry>
-
-     <varlistentry><term>&keyring-filename;</term>
-     <listitem><para>Keyring of &keyring-distro; archive trusted keys.</para></listitem>
-     </varlistentry>
-
-     <varlistentry><term>&keyring-removed-filename;</term>
-     <listitem><para>Keyring of &keyring-distro; archive removed trusted keys.</para></listitem>
-     </varlistentry>
 
    </variablelist>
 
