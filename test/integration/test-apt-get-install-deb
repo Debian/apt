@@ -45,8 +45,10 @@ testsuccess aptget install ./incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
 testdpkginstalled 'foo:i386'
 testfailure aptget install incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1
 cd downloaded
-testsuccess aptget install "$(readlink -f ../incoming/foo_1.0_i386.deb)" -o Debug::pkgCacheGen=1 -y --allow-downgrades
-testsuccess aptget install ../incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1 -y --allow-downgrades
+testsuccess aptget install "$(readlink -f ../incoming/foo_1.0_i386.deb)" -o Debug::pkgCacheGen=1 -y --reinstall
+testfailure grep 'is already the newest version' ../rootdir/tmp/testsuccess.output
+testsuccess aptget install ../incoming/foo_1.0_i386.deb -o Debug::pkgCacheGen=1 -y --reinstall
+testfailure grep 'is already the newest version' ../rootdir/tmp/testsuccess.output
 cd ..
 
 testsuccessequal "Reading package lists...
@@ -109,13 +111,21 @@ testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
 testsuccess aptget install ./incoming/pkg-leading-newline_0_all.deb
 testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
 
-# see if permission dropping is checked before usage
+testempty apt clean
 if [ "$(id -u)" = '0' ]; then
-	apt clean
+	# see if permission dropping is checked before usage
 	chmod 711 ./incoming
-	testsuccess aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
+	testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
+	testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
 	chmod 710 ./incoming
-	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
+	testsuccesswithnotice aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
+	testfailure grep 'is already the newest version' rootdir/tmp/testsuccesswithnotice.output
 	chmod 700 ./incoming
-	testsuccesswithnotice aptget install -y --allow-downgrades ./incoming/pkg-as-it-should-be_0_all.deb
+	testsuccesswithnotice aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
+	testfailure grep 'is already the newest version' rootdir/tmp/testsuccesswithnotice.output
+else
+	testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
+	testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
 fi
+
+
