@@ -93,6 +93,7 @@ Version: 0
 Priority: extra
 Maintainer: No Body <no@example.org>
 Architecture: all
+Depends: foo:i386
 Description: test package" >> ./incoming/$PKG/DEBIAN/control
 	if [ -n "$3" ]; then
 		echo -n "$3" >> ./incoming/$PKG/DEBIAN/control
@@ -123,9 +124,12 @@ if [ "$(id -u)" = '0' ]; then
 	chmod 700 ./incoming
 	testsuccesswithnotice aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
 	testfailure grep 'is already the newest version' rootdir/tmp/testsuccesswithnotice.output
+	chmod 711 ./incoming
 else
 	testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb --reinstall
 	testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
 fi
 
-
+sed -i -e '/^Depends: foo/ d' rootdir/var/lib/dpkg/status
+testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb
+testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
