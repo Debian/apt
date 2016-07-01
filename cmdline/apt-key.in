@@ -583,10 +583,7 @@ case "$command" in
 	net_update
 	merge_back_changes
 	;;
-    list)
-	foreach_keyring_do 'run_cmd_on_keyring' --list-keys "$@"
-	;;
-    finger*)
+    list|finger*)
 	foreach_keyring_do 'run_cmd_on_keyring' --fingerprint "$@"
 	;;
     export|exportall)
