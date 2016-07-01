@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2015-10-15T00:00:00Z</date>
+   <date>2016-07-01T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -36,6 +36,15 @@
    by apt to authenticate packages.  Packages which have been
    authenticated using these keys will be considered trusted.
    </para>
+   <para>
+   Note that if usage of <command>apt-key</command> is desired the additional
+   installation of the GNU Privacy Guard suite (packaged in
+   <package>gnupg</package>) is required. For this reason alone the programatic
+   usage (especially in package maintainerscripts!) is strongly discouraged.
+   Further more the output format of all commands is undefined and can and does
+   change whenever the underlying commands change. <command>apt-key</command> will
+   try to detect such usage and generates warnings on stderr in these cases.
+   </para>
 </refsect1>
 
 <refsect1><title>Commands</title>
@@ -52,6 +61,12 @@
      It is critical that keys added manually via <command>apt-key</command> are
      verified to belong to the owner of the repositories they claim to be for
      otherwise the &apt-secure; infrastructure is completely undermined.
+     </para>
+     <para>
+       Instead of using this command a keyring can be placed directly in the
+       <filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive name
+       (same rules for filename apply as for &apt-conf; files) and "<literal>gpg</literal>"
+       as file extension.
      </para>
      </listitem>
      </varlistentry>

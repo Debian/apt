@@ -494,7 +494,7 @@ prepare_gpg_home() {
     # package depends on gnupg or not. We accept recommends here as
     # well as the script hopefully uses apt-key optionally then like e.g.
     # debian-archive-keyring for (upgrade) cleanup did
-    if [ -n "$DPKG_MAINTSCRIPT_PACKAGE" ]; then
+    if [ -n "$DPKG_MAINTSCRIPT_PACKAGE" ] && [ -z "$APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE" ]; then
 	if ! dpkg-query --show --showformat '${Pre-Depends}${Depends}${Recommends}\n' "$DPKG_MAINTSCRIPT_PACKAGE" 2>/dev/null | grep -q gnupg; then
 	    cat >&2 <<EOF
 Warning: The $DPKG_MAINTSCRIPT_NAME maintainerscript of the package $DPKG_MAINTSCRIPT_PACKAGE
@@ -554,12 +554,25 @@ exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-def
     fi
 }
 
+warn_on_script_usage() {
+    if [ -n "$APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE" ]; then
+	return
+    fi
+    # (Maintainer) scripts should not be using apt-key
+    if [ -n "$DPKG_MAINTSCRIPT_PACKAGE" ]; then
+	echo >&2 "Warning: apt-key should not be used in scripts (called from $DPKG_MAINTSCRIPT_NAME maintainerscript of the package ${DPKG_MAINTSCRIPT_PACKAGE})"
+    elif [ ! -t 1 ]; then
+	echo >&2 "Warning: apt-key output should not be parsed (stdout is not a terminal)"
+    fi
+}
+
 if [ "$command" != 'help' ] && [ "$command" != 'verify' ]; then
     prepare_gpg_home
 fi
 
 case "$command" in
     add)
+	warn_on_script_usage
 	requires_root
 	setup_merged_keyring
 	aptkey_execute "$GPG" --quiet --batch --import "$@"
@@ -567,11 +580,13 @@ case "$command" in
 	aptkey_echo "OK"
         ;;
     del|rm|remove)
+	# no script warning here as removing 'add' usage needs 'del' for cleanup
 	requires_root
 	foreach_keyring_do 'remove_key_from_keyring' "$@"
 	aptkey_echo "OK"
         ;;
     update)
+	warn_on_script_usage
 	requires_root
 	setup_merged_keyring
 	update
@@ -584,13 +599,16 @@ case "$command" in
 	merge_back_changes
 	;;
     list|finger*)
+	warn_on_script_usage
 	foreach_keyring_do 'run_cmd_on_keyring' --fingerprint "$@"
 	;;
     export|exportall)
+	warn_on_script_usage
 	merge_all_trusted_keyrings_into_pubring
 	aptkey_execute "$GPG_SH" --keyring "${GPGHOMEDIR}/pubring.gpg" --armor --export "$@"
 	;;
     adv*)
+	warn_on_script_usage
 	setup_merged_keyring
 	aptkey_echo "Executing: $GPG $*"
 	aptkey_execute "$GPG" "$@"

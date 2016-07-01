@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+unset APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE
 configarchitecture 'native'
 configdpkgnoopchroot
 
@@ -14,7 +15,7 @@ buildingpkg() {
 	setupsimplenativepackage "$PKG" 'native' '1' 'unstable' "$@"
 	BUILDDIR="incoming/${PKG}-1"
 	echo '#!/bin/sh
-apt-key list' > "${BUILDDIR}/debian/postinst"
+apt-key list >/dev/null' > "${BUILDDIR}/debian/postinst"
 	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 	rm -rf "$BUILDDIR"
 }
@@ -27,8 +28,15 @@ insertinstalledpackage 'unrelated' 'native' '1'
 insertinstalledpackage 'gnupg' 'native' '1'
 
 testsuccess apt install aptkeyuser-depends -y
-testfailure grep '^Warning: This will BREAK' rootdir/tmp/testsuccess.output
+cp rootdir/tmp/testsuccess.output apt.output
+testfailure grep '^Warning: This will BREAK' apt.output
+testsuccess grep '^Warning: apt-key' apt.output
 
 testsuccess apt install aptkeyuser-nodepends -y
 cp rootdir/tmp/testsuccess.output apt.output
 testsuccess grep '^Warning: This will BREAK' apt.output
+testsuccess grep '^Warning: apt-key' apt.output
+
+testsuccess aptkey list
+cp rootdir/tmp/testsuccess.output aptkey.list
+testsuccess grep '^Warning: apt-key' aptkey.list
