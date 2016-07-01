@@ -108,3 +108,39 @@ testdpkgnotinstalled 'po-debconf' 'debhelper'
 testmarkedauto
 testsuccess aptget install debhelper --solver apt -y -o Debug::pkgDepCache::Marker=1
 testmarkedauto 'po-debconf'
+
+insertinstalledpackage 'bar' 'all' '1' 'Depends: foo-provider'
+insertinstalledpackage 'foo-multi1-1' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (1)'
+insertinstalledpackage 'foo-multi1-2' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (2)'
+insertinstalledpackage 'foo-multi1-3' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (3)'
+insertinstalledpackage 'foo-multi2-1' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (1)'
+insertinstalledpackage 'foo-multi2-2' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (2)'
+insertinstalledpackage 'foo-multi2-3' 'all' '1' 'Provides: foo-provider
+Source: foo-multi (3)'
+insertinstalledpackage 'foo-plus-1' 'all' '1' 'Provides: foo-provider
+Source: foo-plus (1)'
+insertinstalledpackage 'foo-plus-2' 'all' '1' 'Provides: foo-provider
+Source: foo-plus (2)'
+insertinstalledpackage 'foo-plus-3' 'all' '1' 'Provides: foo-provider
+Source: foo-plus (3)'
+insertinstalledpackage 'foo-single-1' 'all' '1' 'Provides: foo-provider'
+insertinstalledpackage 'foo-single-2' 'all' '1' 'Provides: foo-provider'
+
+testsuccess aptmark auto 'foo-*'
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  foo-multi1-1 foo-multi1-2 foo-multi2-1 foo-multi2-2 foo-plus-1 foo-plus-2
+0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
+Remv foo-multi1-1 [1]
+Remv foo-multi1-2 [1]
+Remv foo-multi2-1 [1]
+Remv foo-multi2-2 [1]
+Remv foo-plus-1 [1]
+Remv foo-plus-2 [1]' apt autoremove -s
