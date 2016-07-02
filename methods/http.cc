@@ -737,9 +737,9 @@ void HttpMethod::SendReq(FetchItem *Itm)
    struct stat SBuf;
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
       Req << "Range: bytes=" << SBuf.st_size << "-\r\n"
-	 << "If-Range: " << TimeRFC1123(SBuf.st_mtime) << "\r\n";
+	 << "If-Range: " << TimeRFC1123(SBuf.st_mtime, false) << "\r\n";
    else if (Itm->LastModified != 0)
-      Req << "If-Modified-Since: " << TimeRFC1123(Itm->LastModified).c_str() << "\r\n";
+      Req << "If-Modified-Since: " << TimeRFC1123(Itm->LastModified, false).c_str() << "\r\n";
 
    if (Server->Proxy.User.empty() == false || Server->Proxy.Password.empty() == false)
       Req << "Proxy-Authorization: Basic "

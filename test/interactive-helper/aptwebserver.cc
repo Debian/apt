@@ -99,7 +99,7 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
    if (_config->FindB("aptwebserver::support::last-modified", true) == true)
    {
       std::string lastmodified("Last-Modified: ");
-      lastmodified.append(TimeRFC1123(data.ModificationTime()));
+      lastmodified.append(TimeRFC1123(data.ModificationTime(), false));
       headers.push_back(lastmodified);
    }
 }
@@ -128,7 +128,7 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
       headers.push_back(*h);
 
    std::string date("Date: ");
-   date.append(TimeRFC1123(time(NULL)));
+   date.append(TimeRFC1123(time(NULL), false));
    headers.push_back(date);
 
    if (chunkedTransferEncoding(headers) == true)
@@ -359,7 +359,7 @@ static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*
 		 << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>"
 		 << "<td>" << SizeToStr(fs.st_size) << "B</td>";
       }
-      listing << "<td>" << TimeRFC1123(fs.st_mtime) << "</td></tr>" << std::endl;
+      listing << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>" << std::endl;
    }
    listing << "</table></body></html>" << std::endl;
 

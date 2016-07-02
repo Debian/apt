@@ -750,6 +750,10 @@ int StringToBool(const string &Text,int Default)
    year 2000 complient and timezone neutral */
 string TimeRFC1123(time_t Date)
 {
+   return TimeRFC1123(Date, false);
+}
+string TimeRFC1123(time_t Date, bool const NumericTimezone)
+{
    struct tm Conv;
    if (gmtime_r(&Date, &Conv) == NULL)
       return "";
@@ -757,10 +761,14 @@ string TimeRFC1123(time_t Date)
    auto const posix = std::locale("C.UTF-8");
    std::ostringstream datestr;
    datestr.imbue(posix);
-   APT::StringView const fmt("%a, %d %b %Y %H:%M:%S GMT");
+   APT::StringView const fmt("%a, %d %b %Y %H:%M:%S");
    std::use_facet<std::time_put<char>>(posix).put(
                     std::ostreambuf_iterator<char>(datestr),
                     datestr, ' ', &Conv, fmt.data(), fmt.data() + fmt.size());
+   if (NumericTimezone)
+      datestr << " +0000";
+   else
+      datestr << " GMT";
    return datestr.str();
 }
 									/*}}}*/

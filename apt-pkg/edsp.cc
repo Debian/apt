@@ -911,14 +911,14 @@ bool EDSP::WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache
 									/*}}}*/
 // EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/
 bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FILE* output) {
-	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL)).c_str());
+	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL), true).c_str());
 	fprintf(output, "Percentage: %d\n", percent);
 	fprintf(output, "Message: %s\n\n", message);
 	fflush(output);
 	return true;
 }
 bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FileFd &output) {
-	return WriteOkay(output, "Progress: ", TimeRFC1123(time(NULL)), "\n",
+	return WriteOkay(output, "Progress: ", TimeRFC1123(time(NULL), true), "\n",
 	      "Percentage: ", percent, "\n",
 	      "Message: ", message, "\n\n") && output.Flush();
 }

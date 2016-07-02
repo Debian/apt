@@ -969,11 +969,15 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 /* */
 static std::string formatUTCDateTime(time_t const now)
 {
+   bool const NumericTimezone = _config->FindB("APT::FTPArchive::Release::NumericTimezone", true);
    // TimeRFC1123 uses GMT to satisfy HTTP/1.1
-   std::string datetime = TimeRFC1123(now);
-   auto const lastspace = datetime.rfind(' ');
-   if (likely(lastspace != std::string::npos))
-      datetime.replace(lastspace + 1, 3, "UTC");
+   std::string datetime = TimeRFC1123(now, NumericTimezone);
+   if (NumericTimezone == false)
+   {
+      auto const lastspace = datetime.rfind(' ');
+      if (likely(lastspace != std::string::npos))
+	 datetime.replace(lastspace + 1, 3, "UTC");
+   }
    return datetime;
 }
 ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) : FTWScanner(GivenOutput)

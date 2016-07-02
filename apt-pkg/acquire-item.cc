@@ -1167,7 +1167,7 @@ string pkgAcqMetaBase::Custom600Headers() const
    string const FinalFile = GetFinalFilename();
    struct stat Buf;
    if (stat(FinalFile.c_str(),&Buf) == 0)
-      Header += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+      Header += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime, false);
 
    return Header;
 }
@@ -1916,7 +1916,7 @@ void pkgAcqBaseIndex::Failed(std::string const &Message,pkgAcquire::MethodConfig
    if (timespec == 0)
       ErrorText.append("<unknown>");
    else
-      ErrorText.append(TimeRFC1123(timespec));
+      ErrorText.append(TimeRFC1123(timespec, true));
    ErrorText.append("\n");
 }
 									/*}}}*/
@@ -1969,7 +1969,7 @@ string pkgAcqDiffIndex::Custom600Headers() const
    if (stat(Final.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
    
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime, false);
 }
 									/*}}}*/
 void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
@@ -2881,7 +2881,7 @@ string pkgAcqIndex::Custom600Headers() const
 
       struct stat Buf;
       if (stat(Final.c_str(),&Buf) == 0)
-	 msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+	 msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime, false);
    }
 
    if(Target.IsOptional)

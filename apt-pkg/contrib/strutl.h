@@ -66,7 +66,17 @@ std::string TimeToStr(unsigned long Sec);
 std::string Base64Encode(const std::string &Str);
 std::string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 std::string URItoFileName(const std::string &URI);
-std::string TimeRFC1123(time_t Date);
+APT_DEPRECATED_MSG("Specify if GMT is required or a numeric timezone can be used") std::string TimeRFC1123(time_t Date);
+/** returns a datetime string as needed by HTTP/1.1 and Debian files.
+ *
+ * Note: The date will always be represented in a UTC timezone
+ *
+ * @param Date to be represented as a string
+ * @param NumericTimezone is preferred in general, but HTTP/1.1 requires the use
+ *    of GMT as timezone instead. \b true means that the timezone should be denoted
+ *    as "+0000" while \b false uses "GMT".
+ */
+std::string TimeRFC1123(time_t Date, bool const NumericTimezone);
 /** parses time as needed by HTTP/1.1 and Debian files.
  *
  * HTTP/1.1 prefers dates in RFC1123 format (but the other two obsolete date formats

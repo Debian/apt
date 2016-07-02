@@ -388,7 +388,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       std::string Buf;
       strprintf(Buf, "Range: bytes=%lli-", (long long) SBuf.st_size);
       headers = curl_slist_append(headers, Buf.c_str());
-      strprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
+      strprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime, false).c_str());
       headers = curl_slist_append(headers, Buf.c_str());
    }
    else if(Itm->LastModified > 0)

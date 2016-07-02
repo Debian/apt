@@ -380,7 +380,7 @@ static bool Dump(CommandLine &)
       std::cout << " Size: " << F->Size << std::endl;
       std::cout << " ID: " << F->ID << std::endl;
       std::cout << " Flags: " << F->Flags << std::endl;
-      std::cout << " Time: " << TimeRFC1123(F->mtime) << std::endl;
+      std::cout << " Time: " << TimeRFC1123(F->mtime, true) << std::endl;
       std::cout << " Archive: " << DeNull(F.Archive()) << std::endl;
       std::cout << " Component: " << DeNull(F.Component()) << std::endl;
       std::cout << " Version: " << DeNull(F.Version()) << std::endl;

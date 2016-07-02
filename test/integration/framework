@@ -219,10 +219,10 @@ gdb() {
 	runapt command gdb --quiet -ex run "$CMD" --args "$CMD" "$@"
 }
 lastmodification() {
-	date -u -d "@$(stat -c '%Y' "${TMPWORKINGDIRECTORY}/$1")" '+%a, %d %b %Y %H:%M:%S GMT'
+	date -u -d "@$(stat -c '%Y' "${TMPWORKINGDIRECTORY}/$1")" -R
 }
 releasefiledate() {
-	grep "^${2:-Date}:" "$1" | cut -d' ' -f 2- | sed -e 's#UTC#GMT#'
+	grep "^${2:-Date}:" "$1" | cut -d' ' -f 2-
 }
 
 exitwithstatus() {
@@ -1016,13 +1016,13 @@ NotAutomatic: yes' "$dir/Release"
 	fi
 	if [ -n "$DATE" -a "$DATE" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
-			sed -i "s/^Date: .*$/Date: $(date -u -d "$DATE" '+%a, %d %b %Y %H:%M:%S %Z')/" "$release"
+			sed -i "s/^Date: .*$/Date: $(date -u -d "$DATE" -R)/" "$release"
 			touch -d "$DATE" "$release"
 		done
 	fi
 	if [ -n "$VALIDUNTIL" ]; then
 		sed -i "/^Date: / a\
-Valid-Until: $(date -u -d "$VALIDUNTIL" '+%a, %d %b %Y %H:%M:%S %Z')" $(find ./aptarchive -name 'Release')
+Valid-Until: $(date -u -d "$VALIDUNTIL" -R)" $(find ./aptarchive -name 'Release')
 	fi
 	msgdone "info"
 }
@@ -1154,7 +1154,7 @@ signreleasefiles() {
 }
 
 redatereleasefiles() {
-	local DATE="$(date -u -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')"
+	local DATE="$(date -u -d "$1" -R)"
 	for release in $(find aptarchive/ -name 'Release'); do
 		sed -i "s/^Date: .*$/Date: ${DATE}/" "$release"
 		touch -d "$DATE" "$release"

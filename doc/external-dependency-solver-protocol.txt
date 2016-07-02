@@ -352,8 +352,9 @@ information to APT using **progress stanzas**. A progress stanza starts
 with the Progress field and might contain the following fields:
 
 - **Progress:** (mandatory). The value of this field is a date and time
-  timestamp, in RFC 2822 format. The timestamp provides a time
-  annotation for the progress report.
+  timestamp from the UTC timezone, in RFC 2822 format (see 'date -uR' as
+  an example). The timestamp provides a time annotation for the
+  progress report.
 
 - **Percentage:** (optional). An integer from 0 to 100, representing the
   completion of the dependency solving process, as declared by the
