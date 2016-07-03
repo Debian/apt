@@ -19,6 +19,7 @@
 #include <apt-pkg/install-progress.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/statechanges.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
@@ -206,6 +207,14 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 	       return Ver;
 	 }
    return Ver;
+}
+									/*}}}*/
+static pkgCache::VerIterator FindToBeRemovedVersion(pkgCache::PkgIterator const &Pkg)/*{{{*/
+{
+   auto const PV = Pkg.CurrentVer();
+   if (PV.end() == false)
+      return PV;
+   return FindNowVersion(Pkg);
 }
 									/*}}}*/
 
@@ -1342,6 +1351,28 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 List.erase(std::next(List.begin(), notconfidx), List.end());
    }
 
+   APT::StateChanges currentStates;
+   if (_config->FindB("dpkg::selection::current::saveandrestore", true))
+   {
+      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	 if (Pkg->CurrentVer == 0)
+	    continue;
+	 else if (Pkg->SelectedState == pkgCache::State::Purge)
+	    currentStates.Purge(FindToBeRemovedVersion(Pkg));
+	 else if (Pkg->SelectedState == pkgCache::State::DeInstall)
+	    currentStates.Remove(FindToBeRemovedVersion(Pkg));
+      if (currentStates.empty() == false)
+      {
+	 APT::StateChanges cleanStates;
+	 for (auto && P: currentStates.Remove())
+	    cleanStates.Install(P);
+	 for (auto && P: currentStates.Purge())
+	    cleanStates.Install(P);
+	 if (cleanStates.Save(false) == false)
+	    return _error->Error("Couldn't clean the currently selected dpkg states");
+      }
+   }
+
    d->stdin_is_dev_null = false;
 
    // create log
@@ -1505,12 +1536,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    {
 	       pkgCache::VerIterator PkgVer;
 	       std::string name = I->Pkg.Name();
-	       if (Op == Item::Remove || Op == Item::Purge) 
-               {
-		  PkgVer = I->Pkg.CurrentVer();
-                  if(PkgVer.end() == true)
-                     PkgVer = FindNowVersion(I->Pkg);
-               }
+	       if (Op == Item::Remove || Op == Item::Purge)
+		  PkgVer = FindToBeRemovedVersion(I->Pkg);
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
 	       if (strcmp(I->Pkg.Arch(), "none") == 0)
@@ -1713,6 +1740,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // dpkg is done at this point
    StopPtyMagic();
    CloseLog();
+
+   if (currentStates.Save(false) == false)
+      _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));

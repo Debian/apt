@@ -25,7 +25,8 @@ public:
 #define APT_GETTERSETTER(Name, Container) \
 void StateChanges::Name(pkgCache::VerIterator const &Ver) \
 { \
-   Container.push_back(Ver); \
+   if (Ver.end() == false) \
+      Container.push_back(Ver); \
 }\
 APT::VersionVector& StateChanges::Name() \
 { \
