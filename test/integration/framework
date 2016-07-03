@@ -433,6 +433,10 @@ EOF
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
 
+	if [ -r "${TESTDIRECTORY}/extra-environment" ]; then
+		. "${TESTDIRECTORY}/extra-environment"
+	fi
+
 	msgdone "info"
 }
 
