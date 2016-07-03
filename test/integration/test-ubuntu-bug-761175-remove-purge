@@ -30,6 +30,8 @@ runtests() {
 	testsuccess aptget install compiz-core-${PKG} -t "${RELEASE}" "$@"
 	testdpkginstalled compiz-core-${PKG}
 
+	testsuccess aptget remove compiz-core-${PKG} -y "$@" -o Debug::pkgDpkgPm=1
+	testfailure grep -- '--force-remove-essential' rootdir/tmp/testsuccess.output
 	testsuccess aptget remove compiz-core-${PKG} -y "$@"
 	testdpkgnotinstalled compiz-core-${PKG}
 	testdpkgstatus 'rc' '1' "compiz-core-${PKG}"
@@ -61,6 +63,8 @@ The following packages will be REMOVED:
 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
 Purg compiz-core-${PKG}" aptget purge compiz-core-${PKG} -s "$@"
 	fi
+	testsuccess aptget purge compiz-core-${PKG} -y "$@" -o Debug::pkgDpkgPm=1
+	testfailure grep -- '--force-remove-essential' rootdir/tmp/testsuccess.output
 	testsuccess aptget purge compiz-core-${PKG} -y "$@"
 	echo -n '' > rootdir/var/lib/dpkg/available # dpkg -l < 1.16.2 reads the available file by default, where the package can be found
 	testequalor2 "dpkg-query: no packages found matching compiz-core-${PKG}" "No packages found matching compiz-core-${PKG}." dpkg -l compiz-core-${PKG}
