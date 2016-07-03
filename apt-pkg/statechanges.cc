@@ -3,6 +3,7 @@
 #include <apt-pkg/debsystem.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/statechanges.h>
+#include <apt-pkg/prettyprinters.h>
 
 #include <algorithm>
 #include <memory>
@@ -63,6 +64,7 @@ bool StateChanges::empty() const
 
 bool StateChanges::Save(bool const DiscardOutput)
 {
+   bool const Debug = _config->FindB("Debug::pkgDpkgPm", false);
    d->error.clear();
    if (d->hold.empty() && d->unhold.empty() && d->install.empty() && d->deinstall.empty() && d->purge.empty())
       return true;
@@ -83,75 +85,135 @@ bool StateChanges::Save(bool const DiscardOutput)
 	 // FIXME: supported only since 1.17.7 in dpkg
 	 Args.push_back("-");
 	 int dummyAvail = -1;
-	 pid_t const dpkgMergeAvail = debSystem::ExecDpkg(Args, &dummyAvail, nullptr, true);
+	 if (Debug)
+	 {
+	    for (auto const &V: makeDpkgAvailable)
+	    {
+	       std::clog << "echo 'Dummy record for " << V.ParentPkg().FullName(false) << "' | ";
+	       std::copy(Args.begin(), Args.end(), std::ostream_iterator<std::string>(std::clog, " "));
+	       std::clog << std::endl;
+	    }
+	 }
+	 else
+	 {
+	    pid_t const dpkgMergeAvail = debSystem::ExecDpkg(Args, &dummyAvail, nullptr, true);
 
-	 FILE* dpkg = fdopen(dummyAvail, "w");
-	 for (auto const &V: makeDpkgAvailable)
-	    fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
-		  "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", V.ParentPkg().Name(), V.Arch());
-	 fclose(dpkg);
+	    FILE* dpkg = fdopen(dummyAvail, "w");
+	    for (auto const &V: makeDpkgAvailable)
+	       fprintf(dpkg, "Package: %s\nVersion: 0~\nArchitecture: %s\nMaintainer: Dummy Example <dummy@example.org>\n"
+		     "Description: dummy package record\n A record is needed to put a package on hold, so here it is.\n\n", V.ParentPkg().Name(), V.Arch());
+	    fclose(dpkg);
 
-	 ExecWait(dpkgMergeAvail, "dpkg --merge-avail", true);
+	    ExecWait(dpkgMergeAvail, "dpkg --merge-avail", true);
+	 }
 	 Args.erase(Args.begin() + BaseArgs, Args.end());
       }
    }
    bool const dpkgMultiArch = _system->MultiArchSupported();
 
    Args.push_back("--set-selections");
-   int selections = -1;
-   pid_t const dpkgSelections = debSystem::ExecDpkg(Args, &selections, nullptr, DiscardOutput);
-
-   FILE* dpkg = fdopen(selections, "w");
-   std::string state;
-   auto const dpkgName = [&](pkgCache::VerIterator const &V) {
-      pkgCache::PkgIterator P = V.ParentPkg();
-      if (dpkgMultiArch == false)
-	 fprintf(dpkg, "%s %s\n", P.FullName(true).c_str(), state.c_str());
-      else
-	 fprintf(dpkg, "%s:%s %s\n", P.Name(), V.Arch(), state.c_str());
-   };
-   for (auto const &V: d->unhold)
+   if (Debug)
    {
-      if (V.ParentPkg()->CurrentVer != 0)
-	 state = "install";
-      else
+      std::string state;
+      auto const dpkgName = [&](pkgCache::VerIterator const &V) {
+	 pkgCache::PkgIterator P = V.ParentPkg();
+	 if (strcmp(V.Arch(), "none") == 0)
+	    ioprintf(std::clog, "echo '%s %s' | ", P.Name(), state.c_str());
+	 else if (dpkgMultiArch == false)
+	    ioprintf(std::clog, "echo '%s %s' | ", P.FullName(true).c_str(), state.c_str());
+	 else
+	    ioprintf(std::clog, "echo '%s:%s %s' | ", P.Name(), V.Arch(), state.c_str());
+	 std::copy(Args.begin(), Args.end(), std::ostream_iterator<std::string>(std::clog, " "));
+	 std::clog << std::endl;
+      };
+      for (auto const &V: d->unhold)
+      {
+	 if (V.ParentPkg()->CurrentVer != 0)
+	    state = "install";
+	 else
+	    state = "deinstall";
+	 dpkgName(V);
+      }
+      if (d->purge.empty() == false)
+      {
+	 state = "purge";
+	 std::for_each(d->purge.begin(), d->purge.end(), dpkgName);
+      }
+      if (d->deinstall.empty() == false)
+      {
 	 state = "deinstall";
-      dpkgName(V);
+	 std::for_each(d->deinstall.begin(), d->deinstall.end(), dpkgName);
+      }
+      if (d->hold.empty() == false)
+      {
+	 state = "hold";
+	 std::for_each(d->hold.begin(), d->hold.end(), dpkgName);
+      }
+      if (d->install.empty() == false)
+      {
+	 state = "install";
+	 std::for_each(d->install.begin(), d->install.end(), dpkgName);
+      }
    }
-   if (d->purge.empty() == false)
+   else
    {
-      state = "purge";
-      std::for_each(d->purge.begin(), d->purge.end(), dpkgName);
-   }
-   if (d->deinstall.empty() == false)
-   {
-      state = "deinstall";
-      std::for_each(d->deinstall.begin(), d->deinstall.end(), dpkgName);
-   }
-   if (d->hold.empty() == false)
-   {
-      state = "hold";
-      std::for_each(d->hold.begin(), d->hold.end(), dpkgName);
-   }
-   if (d->install.empty() == false)
-   {
-      state = "install";
-      std::for_each(d->install.begin(), d->install.end(), dpkgName);
-   }
-   fclose(dpkg);
+      int selections = -1;
+      pid_t const dpkgSelections = debSystem::ExecDpkg(Args, &selections, nullptr, DiscardOutput);
 
-   if (ExecWait(dpkgSelections, "dpkg --set-selections") == false)
-   {
-      std::move(d->purge.begin(), d->purge.end(), std::back_inserter(d->error));
-      d->purge.clear();
-      std::move(d->deinstall.begin(), d->deinstall.end(), std::back_inserter(d->error));
-      d->deinstall.clear();
-      std::move(d->hold.begin(), d->hold.end(), std::back_inserter(d->error));
-      d->hold.clear();
-      std::move(d->unhold.begin(), d->unhold.end(), std::back_inserter(d->error));
-      d->unhold.clear();
-      std::move(d->install.begin(), d->install.end(), std::back_inserter(d->error));
-      d->install.clear();
+      FILE* dpkg = fdopen(selections, "w");
+      std::string state;
+      auto const dpkgName = [&](pkgCache::VerIterator const &V) {
+	 pkgCache::PkgIterator P = V.ParentPkg();
+	 if (strcmp(V.Arch(), "none") == 0)
+	    fprintf(dpkg, "%s %s\n", P.Name(), state.c_str());
+	 else if (dpkgMultiArch == false)
+	    fprintf(dpkg, "%s %s\n", P.FullName(true).c_str(), state.c_str());
+	 else
+	    fprintf(dpkg, "%s:%s %s\n", P.Name(), V.Arch(), state.c_str());
+      };
+      for (auto const &V: d->unhold)
+      {
+	 if (V.ParentPkg()->CurrentVer != 0)
+	    state = "install";
+	 else
+	    state = "deinstall";
+	 dpkgName(V);
+      }
+      if (d->purge.empty() == false)
+      {
+	 state = "purge";
+	 std::for_each(d->purge.begin(), d->purge.end(), dpkgName);
+      }
+      if (d->deinstall.empty() == false)
+      {
+	 state = "deinstall";
+	 std::for_each(d->deinstall.begin(), d->deinstall.end(), dpkgName);
+      }
+      if (d->hold.empty() == false)
+      {
+	 state = "hold";
+	 std::for_each(d->hold.begin(), d->hold.end(), dpkgName);
+      }
+      if (d->install.empty() == false)
+      {
+	 state = "install";
+	 std::for_each(d->install.begin(), d->install.end(), dpkgName);
+      }
+      fclose(dpkg);
+
+      if (ExecWait(dpkgSelections, "dpkg --set-selections") == false)
+      {
+	 std::move(d->purge.begin(), d->purge.end(), std::back_inserter(d->error));
+	 d->purge.clear();
+	 std::move(d->deinstall.begin(), d->deinstall.end(), std::back_inserter(d->error));
+	 d->deinstall.clear();
+	 std::move(d->hold.begin(), d->hold.end(), std::back_inserter(d->error));
+	 d->hold.clear();
+	 std::move(d->unhold.begin(), d->unhold.end(), std::back_inserter(d->error));
+	 d->unhold.clear();
+	 std::move(d->install.begin(), d->install.end(), std::back_inserter(d->error));
+	 d->install.clear();
+      }
    }
    return d->error.empty();
 }
