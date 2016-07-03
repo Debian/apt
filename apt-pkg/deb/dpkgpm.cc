@@ -1233,6 +1233,15 @@ void pkgDPkgPM::StopPtyMagic()						/*{{{*/
  */
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
+   auto const ItemIsEssential = [](pkgDPkgPM::Item const &I) {
+      static auto const cachegen = _config->Find("pkgCacheGen::Essential");
+      if (cachegen == "none" || cachegen == "native")
+	 return true;
+      if (unlikely(I.Pkg.end()))
+	 return true;
+      return (I.Pkg->Flags & pkgCache::Flag::Essential) != 0;
+   };
+
    pkgPackageManager::SigINTStop = false;
    d->progress = progress;
 
@@ -1350,13 +1359,15 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       {
 	 case Item::Remove:
 	 ADDARGC("--force-depends");
-	 ADDARGC("--force-remove-essential");
+	 if (std::any_of(I, J, ItemIsEssential))
+	    ADDARGC("--force-remove-essential");
 	 ADDARGC("--remove");
 	 break;
 
 	 case Item::Purge:
 	 ADDARGC("--force-depends");
-	 ADDARGC("--force-remove-essential");
+	 if (std::any_of(I, J, ItemIsEssential))
+	    ADDARGC("--force-remove-essential");
 	 ADDARGC("--purge");
 	 break;
 
