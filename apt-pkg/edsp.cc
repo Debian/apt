@@ -1026,8 +1026,20 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			return false;
 		auto const dumpdir = flNotFile(dumpfile);
 		FileFd output;
-		if (CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
-		      output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false)
+		_error->PushToStack();
+		bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
+		   output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
+		std::vector<std::string> downgrademsgs;
+		while (_error->empty() == false)
+		{
+		   std::string msg;
+		   _error->PopMessage(msg);
+		   downgrademsgs.emplace_back(std::move(msg));
+		}
+		_error->RevertToStack();
+		for (auto && msg : downgrademsgs)
+		   _error->Warning("%s", msg.c_str());
+		if (errored_out)
 			return _error->WarningE("EDSP::Resolve", _("Could not open file '%s'"), dumpfile.c_str());
 		bool Okay = EDSP::WriteRequest(Cache, output, flags, nullptr);
 		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
@@ -1081,8 +1093,20 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 	 return false;
       auto const dumpdir = flNotFile(dumpfile);
       FileFd output;
-      if (CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
-	    output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false)
+      _error->PushToStack();
+      bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
+	    output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
+      std::vector<std::string> downgrademsgs;
+      while (_error->empty() == false)
+      {
+	 std::string msg;
+	 _error->PopMessage(msg);
+	 downgrademsgs.emplace_back(std::move(msg));
+      }
+      _error->RevertToStack();
+      for (auto && msg : downgrademsgs)
+	 _error->Warning("%s", msg.c_str());
+      if (errored_out)
 	 return _error->WarningE("EIPP::OrderInstall", _("Could not open file '%s'"), dumpfile.c_str());
       bool Okay = EIPP::WriteRequest(PM->Cache, output, flags, nullptr);
       return Okay && EIPP::WriteScenario(PM->Cache, output, nullptr);
