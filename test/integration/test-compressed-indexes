@@ -92,7 +92,8 @@ Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s -o Debug::pkgAcqui
 " aptcache dumpavail
 }
 
-echo 'Debug::pkgAcquire::worker "true";
+echo 'Dir::Log::Planner "/dev/null";
+Debug::pkgAcquire::worker "true";
 debug::pkgAcquire::Auth "true";
 Debug::pkgAcquire::Diffs "true";
 Debug::Acquire::http "true";' > rootdir/etc/apt/apt.conf.d/99debugconf
