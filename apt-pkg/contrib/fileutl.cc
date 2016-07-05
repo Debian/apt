@@ -1882,6 +1882,9 @@ public:
 
       if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
 	 return filefd->FileFdError("ReadWrite mode is not supported for file %s", filefd->FileName.c_str());
+      if (compressor.Binary == "false")
+	 return filefd->FileFdError("libapt has inbuilt support for the %s compression,"
+	       " but was forced to ignore it in favor of an external binary – which isn't installed.", compressor.Name.c_str());
 
       bool const Comp = (Mode & FileFd::WriteOnly) == FileFd::WriteOnly;
       if (Comp == false)
