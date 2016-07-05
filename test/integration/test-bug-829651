@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+if [ "$(id -u)" = '0' ]; then
+    msgskip 'Tests for unreadable files do not work as root'
+    exit 0
+fi
+
+insertinstalledpackage 'foo' 'amd64' '1'
+insertpackage 'unstable' 'foo' 'amd64' '2'
+
+setupaptarchive
+
+
+testsuccess aptget indextargets
+
+aptget clean
+chmod -r  rootdir/var/lib/dpkg/status
+
+testfailureequal "E: Could not open file ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status - open (13: Permission denied)
+E: Problem opening ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+E: The package lists or status file could not be parsed or opened." aptget indextargets

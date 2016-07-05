@@ -248,8 +248,9 @@ static bool DoIndexTargets(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgSourceList *SrcList = CacheFile.GetSourceList();
+   pkgCache *Cache = CacheFile.GetPkgCache();
 
-   if (SrcList == NULL)
+   if (SrcList == nullptr || Cache == nullptr)
       return false;
 
    std::string const Format = _config->Find("APT::Get::IndexTargets::Format");
@@ -262,8 +263,7 @@ static bool DoIndexTargets(CommandLine &CmdL)
       if (ReleaseInfo)
       {
 	 AddOptions.insert(std::make_pair("TRUSTED", ((*S)->IsTrusted() ? "yes" : "no")));
-	 pkgCache &Cache = *CacheFile.GetPkgCache();
-	 pkgCache::RlsFileIterator const RlsFile = (*S)->FindInCache(Cache, false);
+	 pkgCache::RlsFileIterator const RlsFile = (*S)->FindInCache(*Cache, false);
 	 if (RlsFile.end())
 	    continue;
 #define APT_RELEASE(X,Y) if (RlsFile.Y() != NULL) AddOptions.insert(std::make_pair(X, RlsFile.Y()))
