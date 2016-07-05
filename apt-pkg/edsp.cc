@@ -439,7 +439,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
 	    Progress->Progress(p);
       }
    }
-   return true;
+   return Okay;
 }
 									/*}}}*/
 // EDSP::WriteLimitedScenario - to the given file descriptor		/*{{{*/
@@ -1284,7 +1284,7 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 	 continue;
       forAllInterestingVersions(Cache, Pkg, WriteVersion);
    }
-   return true;
+   return Okay;
 }
 									/*}}}*/
 // EIPP::ReadResponse - from the given file descriptor			/*{{{*/
@@ -1361,7 +1361,7 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
       else if (strcmp(type, "Remove") == 0)
 	 PM->Remove(Pkg, PM->Cache[Pkg].Purge());
    }
-   return true;
+   return in.Failed() == false;
 }
 									/*}}}*/
 bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTION>> &actions,/*{{{*/
@@ -1416,9 +1416,6 @@ bool EIPP::ReadRequest(int const input, std::list<std::pair<std::string,PKG_ACTI
 	    actions.emplace_back(std::move(p), pkgact);
       }
    }
-   return false;
-
-
    return false;
 }
 									/*}}}*/
