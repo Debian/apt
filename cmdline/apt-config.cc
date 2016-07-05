@@ -29,6 +29,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <string.h>
 
 #include <apt-private/private-cmndline.h>
@@ -113,12 +114,19 @@ int main(int argc,const char *argv[])					/*{{{*/
    for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
       _config->Set("APT::Architectures::", *a);
 
+   string const conf = "APT::Compressor::";
+   std::map<std::string,std::string> CompressorNames;
+   for (auto && key : _config->FindVector("APT::Compressor", "", true))
+   {
+      auto const comp = conf + key + "::Name";
+      CompressorNames.emplace(_config->Find(comp, key), key);
+   }
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    _config->Clear("APT::Compressor");
-   string conf = "APT::Compressor::";
    for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin(); c != compressors.end(); ++c)
    {
-      string comp = conf + c->Name + "::";
+      auto const n = CompressorNames.find(c->Name);
+      string comp = conf + (n == CompressorNames.end() ? c->Name : n->second) + "::";
       _config->Set(comp + "Name", c->Name);
       _config->Set(comp + "Extension", c->Extension);
       _config->Set(comp + "Binary", c->Binary);
