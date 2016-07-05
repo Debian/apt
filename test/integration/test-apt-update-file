@@ -18,6 +18,7 @@ insertpackage 'unstable' 'bar' 'amd64' '1'
 insertsource 'unstable' 'foo' 'all' '1'
 
 setupaptarchive --no-update
+logcurrentarchivedirectory
 
 # ensure the archive is not writable
 addtrap 'prefix' 'chmod 755 aptarchive/dists/unstable/main/binary-all;'
@@ -37,8 +38,11 @@ if [ "$(id -u)" = '0' ]; then
 	rm -rf rootdir/var/lib/apt/lists
 	chmod 500 aptarchive/dists/
 	testsuccesswithnotice aptget update
-	exit
+	chmod 755 aptarchive/dists/
+else
+	testsuccess aptget update
 fi
+mv rootdir/var/lib/apt/lists/_* rootdir/var/lib/apt/lists/partial
 chmod 555 aptarchive/dists/unstable/main/binary-all
 testsuccess aptget update -o Debug::pkgAcquire::Worker=1
 cp -a rootdir/tmp/testsuccess.output rootdir/tmp/update.output

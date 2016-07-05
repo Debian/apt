@@ -126,20 +126,8 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
    if (Failed == true)
       return false;
 
-   // Transfer the modification times
-   if (Itm->DestFile != "/dev/null")
-   {
-      struct stat Buf;
-      if (stat(Path.c_str(),&Buf) != 0)
-	 return _error->Errno("stat",_("Failed to stat"));
-
-      struct timeval times[2];
-      times[0].tv_sec = Buf.st_atime;
-      Res.LastModified = times[1].tv_sec = Buf.st_mtime;
-      times[0].tv_usec = times[1].tv_usec = 0;
-      if (utimes(Itm->DestFile.c_str(), times) != 0)
-	 return _error->Errno("utimes",_("Failed to set modification time"));
-   }
+   if (TransferModificationTimes(Path.c_str(), Itm->DestFile.c_str(), Res.LastModified) == false)
+      return false;
 
    // Return a Done response
    Res.TakeHashes(Hash);

@@ -916,9 +916,12 @@ bool ChangeOwnerAndPermissionOfFile(char const * const requester, char const * c
       // ensure the file is owned by root and has good permissions
       struct passwd const * const pw = getpwnam(user);
       struct group const * const gr = getgrnam(group);
-      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
+      if (pw != NULL && gr != NULL && lchown(file, pw->pw_uid, gr->gr_gid) != 0)
 	 Res &= _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
    }
+   struct stat Buf;
+   if (lstat(file, &Buf) != 0 || S_ISLNK(Buf.st_mode))
+      return Res;
    if (chmod(file, mode) != 0)
       Res &= _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
    return Res;
