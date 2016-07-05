@@ -47,7 +47,7 @@ class HttpsServerState : public ServerState
    virtual bool Close() APT_OVERRIDE { return false; }
    virtual bool InitHashes(HashStringList const &ExpectedHashes) APT_OVERRIDE;
    virtual Hashes * GetHashes() APT_OVERRIDE;
-   virtual bool Die(FileFd &/*File*/) APT_OVERRIDE { return false; }
+   virtual bool Die(FileFd * const /*File*/) APT_OVERRIDE { return false; }
    virtual bool Flush(FileFd * const /*File*/) APT_OVERRIDE { return false; }
    virtual bool Go(bool /*ToFile*/, FileFd * const /*File*/) APT_OVERRIDE { return false; }
 
