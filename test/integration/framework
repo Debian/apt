@@ -1862,6 +1862,11 @@ pause() {
 	read IGNORE
 }
 
+logcurrentarchivedirectory() {
+	find "${TMPWORKINGDIRECTORY}/aptarchive/dists" -type f | while read line; do
+		stat --format '%U:%G:%a:%n' "$line"
+	done | sort > "${TMPWORKINGDIRECTORY}/rootdir/var/log/aptgetupdate.before.lst"
+}
 listcurrentlistsdirectory() {
 	{
 		find rootdir/var/lib/apt/lists -maxdepth 1 -type d | while read line; do
@@ -1939,6 +1944,10 @@ aptautotest_aptget_update() {
 	if [ "$TESTCALL" = 'testsuccess' ]; then
 		# failure cases can retain partial files and such
 		testempty find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial" -mindepth 1 ! \( -name 'lock' -o -name '*.FAILED' \)
+	fi
+	if [ -s "${TMPWORKINGDIRECTORY}/rootdir/var/log/aptgetupdate.before.lst" ]; then
+		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/var/log/aptgetupdate.before.lst" \
+			"$(find "${TMPWORKINGDIRECTORY}/aptarchive/dists" -type f | while read line; do stat --format '%U:%G:%a:%n' "$line"; done | sort)"
 	fi
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }

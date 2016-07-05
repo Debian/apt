@@ -11,6 +11,7 @@ insertpackage 'unstable' 'unrelated2' 'amd64' '0.5~squeeze1'
 insertsource 'unstable' 'unrelated' 'all' '0.5~squeeze1'
 
 setupaptarchive --no-update
+logcurrentarchivedirectory
 changetowebserver
 
 runtest() {
@@ -70,6 +71,7 @@ EXPECT="Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Hit:2 http://localhost:${APTHTTPPORT} unstable Release
 Reading package lists..."
 find aptarchive -name 'InRelease' -delete
+logcurrentarchivedirectory
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -86,6 +88,7 @@ W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' is not sign
 N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
 N: See apt-secure(8) manpage for repository creation and user configuration details."
 find aptarchive -name 'Release.gpg' -delete
+logcurrentarchivedirectory
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'warning'
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -98,6 +101,7 @@ find aptarchive -name '*Release' -exec sed -i \
 	-e '/^Valid-Until: / d' -e "/^Date: / a\
 Valid-Until: $(date -d '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
 signreleasefiles
+logcurrentarchivedirectory
 
 msgmsg 'expired InRelease'
 EXPECT="Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
@@ -115,6 +119,7 @@ Hit:2 http://localhost:${APTHTTPPORT} unstable Release
 Reading package lists...
 E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'InRelease' -delete
+logcurrentarchivedirectory
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure'
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -132,6 +137,7 @@ N: Data from such a repository can't be authenticated and is therefore potential
 N: See apt-secure(8) manpage for repository creation and user configuration details.
 E: Release file for http://localhost:${APTHTTPPORT}/dists/unstable/Release is expired (invalid since). Updates for this repository will not be applied."
 find aptarchive -name 'Release.gpg' -delete
+logcurrentarchivedirectory
 echo 'Acquire::GzipIndexes "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'failure' 'warning'
 echo 'Acquire::GzipIndexes "1";' > rootdir/etc/apt/apt.conf.d/02compressindex
@@ -176,6 +182,7 @@ W: The repository 'http://localhost:${APTHTTPPORT} unstable Release' does not ha
 N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
 N: See apt-secure(8) manpage for repository creation and user configuration details."
 find aptarchive -name '*Release*' -delete
+logcurrentarchivedirectory
 echo 'Acquire::GzipIndexes "0";
 Acquire::PDiffs "0";' > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest 'warning'
