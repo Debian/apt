@@ -437,7 +437,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	    break;
       }
 #pragma GCC diagnostic pop
-      return _error->Error("%s", curl_errorstr);
+      // only take curls technical errors if we haven't our own
+      // (e.g. for the maximum size limit we have and curls can be confusing)
+      if (_error->PendingError() == false)
+	 _error->Error("%s", curl_errorstr);
+      else
+	 _error->Warning("curl: %s", curl_errorstr);
+      return false;
    }
 
    // server says file not modified
