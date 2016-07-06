@@ -21,9 +21,11 @@ insertinstalledpackage 'linux-image-amd64' 'amd64' '200-1'
 insertinstalledpackage 'linux-image-686-pae' 'i386' '300-1'
 # ensure that the '.' is really a dot and not a wildcard
 insertinstalledpackage 'linux-headers-1000000-1-generic' 'amd64' '100.0.0-1'
+# ensure that the '+' is really a plus and not a regexp quantifier
+insertinstalledpackage "${CURRENTKERNEL}+variant" 'amd64' '5-1'
 
 testsuccess aptmark auto "$CURRENTKERNEL" "${CURRENTKERNEL}-dbg" "${CURRENTKERNEL}-686-pae:i386" "${CURRENTKERNEL}-rt" \
-	'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic' 'linux-headers-1000000-1-generic'
+	'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic' 'linux-headers-1000000-1-generic' "${CURRENTKERNEL}+variant"
 testsuccess aptmark hold "${CURRENTKERNEL}-rt"
 
 testprotected() {
@@ -65,6 +67,7 @@ The following packages were automatically installed and are no longer required:
    linux-image-1.0.0-2-generic (1.0.0-2)
    linux-image-100.0.0-1-generic (100.0.0-1)
    $CURRENTKERNEL (5-1)
+   ${CURRENTKERNEL}+variant (5-1)
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
 Use '$AUTOREMOVE' to remove them.
@@ -77,6 +80,7 @@ The following packages were automatically installed and are no longer required:
    linux-image-1.0.0-2-generic (1.0.0-2)
    linux-image-100.0.0-1-generic (100.0.0-1)
    $CURRENTKERNEL (5-1)
+   ${CURRENTKERNEL}+variant (5-1)
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
    ${CURRENTKERNEL}-rt (5-1)
@@ -85,7 +89,7 @@ Use '$AUTOREMOVE' to remove them.
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
-6 packages were automatically installed and are no longer required.
+7 packages were automatically installed and are no longer required.
 Use '$AUTOREMOVE' to remove them.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
 testequal "Reading package lists...
@@ -96,13 +100,15 @@ The following packages will be REMOVED:
    linux-image-1.0.0-2-generic (1.0.0-2)
    linux-image-100.0.0-1-generic (100.0.0-1)
    $CURRENTKERNEL (5-1)
+   ${CURRENTKERNEL}+variant (5-1)
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
-0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
+0 upgraded, 0 newly installed, 7 to remove and 0 not upgraded.
 Remv linux-headers-1000000-1-generic [100.0.0-1]
 Remv linux-image-1.0.0-2-generic [1.0.0-2]
 Remv linux-image-100.0.0-1-generic [100.0.0-1]
 Remv $CURRENTKERNEL [5-1]
+Remv ${CURRENTKERNEL}+variant [5-1]
 Remv ${CURRENTKERNEL}-686-pae:i386 [5-1]
 Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV
 
