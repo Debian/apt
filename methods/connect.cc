@@ -280,19 +280,35 @@ bool Connect(std::string Host,int Port,const char *Service,
       if (_config->FindB("Acquire::EnableSrvRecords", true) == true)
          GetSrvRecords(Host, DefPort, SrvRecords);
    }
-   // we have no SrvRecords for this host, connect right away
-   if(SrvRecords.size() == 0)
-      return ConnectToHostname(Host, Port, Service, DefPort, Fd, 
-                                    TimeOut, Owner);
 
+   size_t stackSize = 0;
    // try to connect in the priority order of the srv records
-   while(SrvRecords.size() > 0)
+   std::string initialHost{std::move(Host)};
+   while(SrvRecords.empty() == false)
    {
+      _error->PushToStack();
+      ++stackSize;
       // PopFromSrvRecs will also remove the server
       Host = PopFromSrvRecs(SrvRecords).target;
-      if(ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner))
+      auto const ret = ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner);
+      if (ret)
+      {
+	 while(stackSize--)
+	    _error->RevertToStack();
          return true;
+      }
    }
+   Host = std::move(initialHost);
 
-   return false;
+   // we have no (good) SrvRecords for this host, connect right away
+   _error->PushToStack();
+   ++stackSize;
+   auto const ret = ConnectToHostname(Host, Port, Service, DefPort, Fd,
+	 TimeOut, Owner);
+   while(stackSize--)
+      if (ret)
+	 _error->RevertToStack();
+      else
+	 _error->MergeWithStack();
+   return ret;
 }
