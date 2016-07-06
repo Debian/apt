@@ -80,9 +80,20 @@ void pkgAcqMethod::Fail(bool Transient)
 {
    string Err = "Undetermined Error";
    if (_error->empty() == false)
-      _error->PopMessage(Err);   
-   _error->Discard();
-   Fail(Err,Transient);
+   {
+      Err.clear();
+      while (_error->empty() == false)
+      {
+	 std::string msg;
+	 if (_error->PopMessage(msg))
+	 {
+	    if (Err.empty() == false)
+	       Err.append("\n");
+	    Err.append(msg);
+	 }
+      }
+   }
+   Fail(Err, Transient);
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
