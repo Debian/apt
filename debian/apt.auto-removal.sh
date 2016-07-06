@@ -38,7 +38,7 @@ $running_version
 $previous_version" | sort -u | sed -e '/^$/ d')"
 kernels="$( (echo "$1
 $unamer"; for deb in $debkernels; do echo "$list" | awk "\$2 == \"$deb\" { print \$1; }"; done; ) \
-   | sed -e 's#\.#\\.#g' -e '/^$/ d' | sort -u)"
+   | sed -e 's#\([\.\+]\)#\\\1#g' -e '/^$/ d' | sort -u)"
 
 generateconfig() {
 	cat <<EOF
