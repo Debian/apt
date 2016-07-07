@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.7\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-22 14:50+0200\n"
+"POT-Creation-Date: 2016-07-07 20:38+0200\n"
 "PO-Revision-Date: 2014-08-29 00:34+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -758,7 +758,7 @@ msgstr ""
 "conflito de pacotes."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml
+#: apt.8.xml apt-key.8.xml
 msgid ","
 msgstr ""
 
@@ -2695,6 +2695,18 @@ msgstr ""
 "pelo apt para autenticar pacotes. Os pacotes que foram autenticados com "
 "estas chaves serão considerados de confiança."
 
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid ""
+"Note that if usage of <command>apt-key</command> is desired the additional "
+"installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
+"package>) is required. For this reason alone the programatic usage "
+"(especially in package maintainerscripts!) is strongly discouraged.  Further "
+"more the output format of all commands is undefined and can and does change "
+"whenever the underlying commands change. <command>apt-key</command> will try "
+"to detect such usage and generates warnings on stderr in these cases."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
 msgid "Commands"
@@ -2721,6 +2733,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
+msgid ""
+"Instead of using this command a keyring can be placed directly in the "
+"<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
+"name (same rules for filename apply as for &apt-conf; files) and "
+"\"<literal>gpg</literal>\" as file extension."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml
 msgid "Remove a key from the list of trusted keys."
 msgstr "Remove uma chave da lista de chaves de confiança."
 
@@ -2736,13 +2757,10 @@ msgstr "Escreve todas as chaves de confiança na saída standard."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
-msgid "List trusted keys."
+#, fuzzy
+#| msgid "List trusted keys."
+msgid "List trusted keys with fingerprints."
 msgstr "Lista as chaves de confiança."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "List fingerprints of trusted keys."
-msgstr "Lista as fingerprints das chaves de confiança."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2751,6 +2769,11 @@ msgid ""
 "e.g. download key from keyservers directly into the the trusted set of keys. "
 "Note that there are <emphasis>no</emphasis> checks performed, so it is easy "
 "to completely undermine the &apt-secure; infrastructure if used without care."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(deprecated)"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2765,6 +2788,16 @@ msgstr ""
 "local as chaves de arquivo que já não são válidas. O chaveiro do arquivo é "
 "submetido no pacote <literal>archive-keyring</literal> da sua distribuição, "
 "por exemplo o pacote &keyring-package; em &keyring-distro;."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml
+msgid ""
+"Note that a distribution does not need to and in fact should not use this "
+"command any longer and instead ship keyring files in the <filename>/etc/apt/"
+"trusted.gpg</filename> directory directly as this avoids a dependency on "
+"<package>gnupg</package> and it is easier to manage keys by simply adding "
+"and removing files for maintainers and users alike."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2814,37 +2847,6 @@ msgstr ""
 "directório <filename>trusted.gpg.d</filename>, assim <filename>trusted.gpg</"
 "filename> é o chaveiro principal o que significa que, por exemplo, as novas "
 "chaves são adicionadas a este."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "<filename>/etc/apt/trustdb.gpg</filename>"
-msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Local trust database of archive keys."
-msgstr "Base de dados local de confiança de chaves de arquivos."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "&keyring-filename;"
-msgstr "&keyring-filename;"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Keyring of &keyring-distro; archive trusted keys."
-msgstr "Chaveiro das chaves de confiança dos arquivos &keyring-distro;."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "&keyring-removed-filename;"
-msgstr "&keyring-removed-filename;"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Keyring of &keyring-distro; archive removed trusted keys."
-msgstr ""
-"Chaveiro das chaves de confiança removidas dos arquivos &keyring-distro;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -11201,6 +11203,28 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "O qual irá usar os arquivos já obtidos e que estão no disco."
+
+#~ msgid "List fingerprints of trusted keys."
+#~ msgstr "Lista as fingerprints das chaves de confiança."
+
+#~ msgid "<filename>/etc/apt/trustdb.gpg</filename>"
+#~ msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
+
+#~ msgid "Local trust database of archive keys."
+#~ msgstr "Base de dados local de confiança de chaves de arquivos."
+
+#~ msgid "&keyring-filename;"
+#~ msgstr "&keyring-filename;"
+
+#~ msgid "Keyring of &keyring-distro; archive trusted keys."
+#~ msgstr "Chaveiro das chaves de confiança dos arquivos &keyring-distro;."
+
+#~ msgid "&keyring-removed-filename;"
+#~ msgstr "&keyring-removed-filename;"
+
+#~ msgid "Keyring of &keyring-distro; archive removed trusted keys."
+#~ msgstr ""
+#~ "Chaveiro das chaves de confiança removidas dos arquivos &keyring-distro;."
 
 #, fuzzy
 #~| msgid "&apt-cache; &apt-conf;"

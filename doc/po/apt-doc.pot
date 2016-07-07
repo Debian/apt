@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.3~exp3\n"
+"Project-Id-Version: apt-doc 1.3~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-22 14:50+0200\n"
+"POT-Creation-Date: 2016-07-07 20:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -574,7 +574,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml:1 apt.8.xml:1
+#: apt.8.xml:1 apt.8.xml:1 apt-key.8.xml:1
 msgid ","
 msgstr ""
 
@@ -1887,6 +1887,19 @@ msgid ""
 "keys will be considered trusted."
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml:1
+msgid ""
+"Note that if usage of <command>apt-key</command> is desired the additional "
+"installation of the GNU Privacy Guard suite (packaged in "
+"<package>gnupg</package>) is required. For this reason alone the programatic "
+"usage (especially in package maintainerscripts!) is strongly discouraged.  "
+"Further more the output format of all commands is undefined and can and does "
+"change whenever the underlying commands change. <command>apt-key</command> "
+"will try to detect such usage and generates warnings on stderr in these "
+"cases."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml:1
 msgid "Commands"
@@ -1910,6 +1923,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:1
+msgid ""
+"Instead of using this command a keyring can be placed directly in the "
+"<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
+"name (same rules for filename apply as for &apt-conf; files) and "
+"\"<literal>gpg</literal>\" as file extension."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml:1
 msgid "Remove a key from the list of trusted keys."
 msgstr ""
 
@@ -1925,12 +1947,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:1
-msgid "List trusted keys."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml:1
-msgid "List fingerprints of trusted keys."
+msgid "List trusted keys with fingerprints."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -1943,6 +1960,11 @@ msgid ""
 "care."
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml:1
+msgid "(deprecated)"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:1
 msgid ""
@@ -1950,6 +1972,16 @@ msgid ""
 "keyring the archive keys which are no longer valid.  The archive keyring is "
 "shipped in the <literal>archive-keyring</literal> package of your "
 "distribution, e.g. the &keyring-package; package in &keyring-distro;."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml:1
+msgid ""
+"Note that a distribution does not need to and in fact should not use this "
+"command any longer and instead ship keyring files in the "
+"<filename>/etc/apt/trusted.gpg</filename> directory directly as this avoids "
+"a dependency on <package>gnupg</package> and it is easier to manage keys by "
+"simply adding and removing files for maintainers and users alike."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -1984,36 +2016,6 @@ msgid ""
 "<filename>trusted.gpg.d</filename> directory, though "
 "<filename>trusted.gpg</filename> is the primary keyring which means that "
 "e.g. new keys are added to this one."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml:1
-msgid "<filename>/etc/apt/trustdb.gpg</filename>"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml:1
-msgid "Local trust database of archive keys."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml:1
-msgid "&keyring-filename;"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml:1
-msgid "Keyring of &keyring-distro; archive trusted keys."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml:1
-msgid "&keyring-removed-filename;"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml:1
-msgid "Keyring of &keyring-distro; archive removed trusted keys."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>

@@ -1,3 +1,57 @@
+apt (1.3~pre1) unstable; urgency=medium
+
+  Upload to unstable from the pub because Niels wanted it
+
+  [ David Kalnischkies ]
+  * show right binary name in simulation notice (Closes: 825216)
+  * imbue datetime parsing with C.UTF-8 locale (Closes: 828011)
+  * imbue .diff/Index parsing with C.UTF-8 as well
+  * close server if parsing of header field failed
+  * add myself to Uploaders
+  * eipp: implement version 0.1 of the protocol
+  * eipp: provide the internal planer as an external one
+  * eipp: make no difference between remove & purge
+  * eipp: properly handle arch-specific provides
+  * eipp: implement Immediate-Configuration flag
+  * eipp: add Allow-Temporary-Remove-of-Essentials
+  * eipp: rename stanza 'Install' to 'Unpack'
+  * eipp: enable xz-compressed scenario logging
+  * if conf unset, don't read / as conf/pref/sources dir
+  * don't do atomic overrides with failed files (Closes: 828908)
+  * if reading of autobit state failed, let write fail
+  * write auto-bits before calling dpkg & again after if needed
+  * protect only the latest same-source providers from autoremove
+  * reinstalling local deb file is no downgrade
+  * do not treat same-version local debs as downgrade
+  * alias apt-key list to finger (Closes: 829232)
+  * warn if apt-key is used in scripts/its output parsed
+  * deprecate 'apt-key update' and no-op it in Debian
+  * use +0000 instead of UTC by default as timezone in output
+  * avoid 416 response teardown binding to null pointer
+  * report write errors in EDSP/EIPP properly back to caller
+  * EIPP/EDSP log can't be written is a warning, not an error
+  * don't change owner/perms/times through file:// symlinks
+  * report all instead of first error up the acquire chain
+  * keep trying with next if connection to a SRV host failed
+
+  [ Zhou Mo ]
+  * zh_CN.po: update simplified chinese translation
+
+  [ Julian Andres Klode ]
+  * methods/ftp: Cope with weird PASV responses.
+    Thanks to Lukasz Stelmach for the initial patch (Closes: #420940)
+  * Fix buffer overflow in debListParser::VersionHash() (Closes: #828812)
+  * cache: Bump minor version to 6
+  * indextargets: Check that cache could be built before using it
+    (Closes: #829651)
+
+  [ Nicolas Le Cam ]
+  * Use the ConditionACPower feature of systemd in the apt-daily service
+    (Closes: #827930)
+  * Add a apt suggests powermgmt-base
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 07 Jul 2016 20:25:18 +0200
+
 apt (1.3~exp3) experimental; urgency=medium
 
   [ Petter Reinholdtsen ]

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.1.10-nl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-22 14:50+0200\n"
+"POT-Creation-Date: 2016-07-07 20:38+0200\n"
 "PO-Revision-Date: 2016-02-01 16:17+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -770,7 +770,7 @@ msgstr ""
 "systeem volledig op te waarderen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml
+#: apt.8.xml apt-key.8.xml
 msgid ","
 msgstr ","
 
@@ -2754,6 +2754,18 @@ msgstr ""
 "Pakketten die met deze sleutels geauthenticeerd werden, worden als "
 "betrouwbaar beschouwd."
 
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid ""
+"Note that if usage of <command>apt-key</command> is desired the additional "
+"installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
+"package>) is required. For this reason alone the programatic usage "
+"(especially in package maintainerscripts!) is strongly discouraged.  Further "
+"more the output format of all commands is undefined and can and does change "
+"whenever the underlying commands change. <command>apt-key</command> will try "
+"to detect such usage and generates warnings on stderr in these cases."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
 msgid "Commands"
@@ -2786,6 +2798,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
+msgid ""
+"Instead of using this command a keyring can be placed directly in the "
+"<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
+"name (same rules for filename apply as for &apt-conf; files) and "
+"\"<literal>gpg</literal>\" as file extension."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml
 msgid "Remove a key from the list of trusted keys."
 msgstr "Een sleutel verwijderen uit de lijst van betrouwbare sleutels."
 
@@ -2801,13 +2822,10 @@ msgstr "Alle betrouwbare sleutels op de standaarduitvoer weergeven."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
-msgid "List trusted keys."
+#, fuzzy
+#| msgid "List trusted keys."
+msgid "List trusted keys with fingerprints."
 msgstr "Betrouwbare sleutels weergeven."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "List fingerprints of trusted keys."
-msgstr "De vingerafdrukken van de betrouwbare sleutels weergeven."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2824,6 +2842,11 @@ msgstr ""
 "secure;-infrastructuur volledig ondermijnen als het onzorgvuldig gebruikt "
 "wordt."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(deprecated)"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
@@ -2837,6 +2860,16 @@ msgstr ""
 "sleutelbos. De sleutelbos van het archief bevindt zich in het pakket "
 "<literal>archive-keyring</literal> van uw distributie, bijvoorbeeld het "
 "pakket &keyring-package; in &keyring-distro;."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-key.8.xml
+msgid ""
+"Note that a distribution does not need to and in fact should not use this "
+"command any longer and instead ship keyring files in the <filename>/etc/apt/"
+"trusted.gpg</filename> directory directly as this avoids a dependency on "
+"<package>gnupg</package> and it is easier to manage keys by simply adding "
+"and removing files for maintainers and users alike."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2887,38 +2920,6 @@ msgstr ""
 "<filename>trusted.gpg.d</filename>, hoewel <filename>trusted.gpg</filename> "
 "de primaire sleutelbos is, wat betekent dat bijvoorbeeld alle nieuwe "
 "sleutels daar toegevoegd worden."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "<filename>/etc/apt/trustdb.gpg</filename>"
-msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Local trust database of archive keys."
-msgstr "Lokale database van betrouwbare archiefsleutels."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "&keyring-filename;"
-msgstr "&keyring-filename;"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Keyring of &keyring-distro; archive trusted keys."
-msgstr "Sleutelbos met betrouwbare sleutels van het archief &keyring-distro;."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "&keyring-removed-filename;"
-msgstr "&keyring-removed-filename;"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-key.8.xml
-msgid "Keyring of &keyring-distro; archive removed trusted keys."
-msgstr ""
-"Sleutelbos met uit het archief &keyring-distro; verwijderde betrouwbare "
-"sleutels."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -11650,6 +11651,30 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
+
+#~ msgid "List fingerprints of trusted keys."
+#~ msgstr "De vingerafdrukken van de betrouwbare sleutels weergeven."
+
+#~ msgid "<filename>/etc/apt/trustdb.gpg</filename>"
+#~ msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
+
+#~ msgid "Local trust database of archive keys."
+#~ msgstr "Lokale database van betrouwbare archiefsleutels."
+
+#~ msgid "&keyring-filename;"
+#~ msgstr "&keyring-filename;"
+
+#~ msgid "Keyring of &keyring-distro; archive trusted keys."
+#~ msgstr ""
+#~ "Sleutelbos met betrouwbare sleutels van het archief &keyring-distro;."
+
+#~ msgid "&keyring-removed-filename;"
+#~ msgstr "&keyring-removed-filename;"
+
+#~ msgid "Keyring of &keyring-distro; archive removed trusted keys."
+#~ msgstr ""
+#~ "Sleutelbos met uit het archief &keyring-distro; verwijderde betrouwbare "
+#~ "sleutels."
 
 #~ msgid ""
 #~ "In the future APT will refuse to work with unauthenticated repositories "
