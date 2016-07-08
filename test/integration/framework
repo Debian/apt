@@ -300,18 +300,15 @@ setupenvironment() {
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
 	mkdir -p usr/bin var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
+	mkdir -p usr/lib/apt/solvers usr/lib/apt/planners
 	touch var/lib/dpkg/available
-	mkdir -p usr/lib/apt
 	ln -s "${METHODSDIR}" usr/lib/apt/methods
-	if [ "$BUILDDIRECTORY" = "$LIBRARYPATH" ]; then
-		mkdir -p usr/lib/apt/solvers usr/lib/apt/planners
-		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
-		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/planners/dump
-		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
-		ln -s "${BUILDDIRECTORY}/apt-internal-planner" usr/lib/apt/planners/apt
-		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" >> ../aptconfig.conf
-		echo "Dir::Bin::Planners \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planners\";" >> ../aptconfig.conf
-	fi
+	ln -s "${APTDUMPSOLVER}" usr/lib/apt/solvers/dump
+	ln -s "${APTDUMPSOLVER}" usr/lib/apt/planners/dump
+	ln -s "${APTINTERNALSOLVER}" usr/lib/apt/solvers/apt
+	ln -s "${APTINTERNALPLANNER}" usr/lib/apt/planners/apt
+	echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" >> ../aptconfig.conf
+	echo "Dir::Bin::Planners \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planners\";" >> ../aptconfig.conf
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
         if [ -e "${BUILDDIRECTORY}/../../debian/apt.conf.autoremove" ]; then
