@@ -81,6 +81,7 @@ static const char *iTFRewriteSourceOrder[] = {
    "Build-Conflicts-Arch",
    "Build-Conflicts-Indep",
    "Testsuite",
+   "Testsuite-Triggers",
    "Homepage",
    "Vcs-Browser",
    "Vcs-Browse", // dak only (nickname?)
