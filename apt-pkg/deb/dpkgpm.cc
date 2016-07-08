@@ -1372,6 +1372,50 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    return _error->Error("Couldn't clean the currently selected dpkg states");
       }
    }
+   APT::StateChanges approvedStates;
+   if (_config->FindB("dpkg::selection::remove::approved", true))
+   {
+      for (auto && I: List)
+	 if (I.Op == Item::Remove && Cache[I.Pkg].Delete())
+	    approvedStates.Remove(FindToBeRemovedVersion(I.Pkg));
+	 else if (I.Op == Item::Purge && Cache[I.Pkg].Purge())
+	    approvedStates.Purge(FindToBeRemovedVersion(I.Pkg));
+      if (approvedStates.Save(false) == false)
+      {
+	 _error->Error("Couldn't record the approved state changes as dpkg selection states");
+	 if (currentStates.Save(false) == false)
+	    _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
+	 return false;
+      }
+
+      {
+	 std::vector<bool> toBeRemoved(Cache.Head().PackageCount, false);
+	 std::vector<bool> toBePurged(Cache.Head().PackageCount, false);
+	 for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	    if (Cache[Pkg].Purge())
+	       toBePurged[Pkg->ID] = true;
+	    else if (Cache[Pkg].Delete())
+	       toBeRemoved[Pkg->ID] = true;
+	 for (auto && I: approvedStates.Remove())
+	    toBeRemoved[I.ParentPkg()->ID] = false;
+	 for (auto && I: approvedStates.Purge())
+	    toBePurged[I.ParentPkg()->ID] = false;
+	 if (std::find(toBeRemoved.begin(), toBeRemoved.end(), true) != toBeRemoved.end())
+	 {
+	    if (ConfigurePending)
+	       List.emplace(std::prev(List.end()), Item::RemovePending, pkgCache::PkgIterator());
+	    else
+	       List.emplace_back(Item::RemovePending, pkgCache::PkgIterator());
+	 }
+	 if (std::find(toBePurged.begin(), toBePurged.end(), true) != toBePurged.end())
+	 {
+	    if (ConfigurePending)
+	       List.emplace(std::prev(List.end()), Item::PurgePending, pkgCache::PkgIterator());
+	    else
+	       List.emplace_back(Item::PurgePending, pkgCache::PkgIterator());
+	 }
+      }
+   }
 
    d->stdin_is_dev_null = false;
 
@@ -1457,6 +1501,16 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
 	 case Item::TriggersPending:
 	 ADDARGC("--triggers-only");
+	 ADDARGC("--pending");
+	 break;
+
+	 case Item::RemovePending:
+	 ADDARGC("--remove");
+	 ADDARGC("--pending");
+	 break;
+
+	 case Item::PurgePending:
+	 ADDARGC("--purge");
 	 ADDARGC("--pending");
 	 break;
 
@@ -1741,6 +1795,17 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    StopPtyMagic();
    CloseLog();
 
+   if (d->dpkg_error.empty() == false)
+   {
+      APT::StateChanges undo;
+      auto && undoRem = approvedStates.Remove();
+      std::move(undoRem.begin(), undoRem.end(), std::back_inserter(undo.Remove()));
+      auto && undoPur = approvedStates.Purge();
+      std::move(undoPur.begin(), undoPur.end(), std::back_inserter(undo.Purge()));
+      approvedStates.clear();
+      if (undo.Save(false) == false)
+	 _error->Error("Couldn't revert dpkg selection for approved remove/purge after an error was encountered!");
+   }
    if (currentStates.Save(false) == false)
       _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
 
@@ -1991,20 +2056,24 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    }
 
    // log the ordering, see dpkgpm.h and the "Ops" enum there
-   const char *ops_str[] = {
-      "Install",
-      "Configure",
-      "Remove",
-      "Purge",
-      "ConfigurePending",
-      "TriggersPending",
-   };
    fprintf(report, "AptOrdering:\n");
-   for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
-      if ((*I).Pkg != NULL)
-         fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
-      else
-         fprintf(report, " %s: %s\n", "NULL", ops_str[(*I).Op]);
+   for (auto && I : List)
+   {
+      char const * opstr = nullptr;
+      switch (I.Op)
+      {
+	 case Item::Install: opstr = "Install"; break;
+	 case Item::Configure: opstr = "Configure"; break;
+	 case Item::Remove: opstr = "Remove"; break;
+	 case Item::Purge: opstr = "Purge"; break;
+	 case Item::ConfigurePending: opstr = "ConfigurePending"; break;
+	 case Item::TriggersPending: opstr = "TriggersPending"; break;
+	 case Item::RemovePending: opstr = "RemovePending"; break;
+	 case Item::PurgePending: opstr = "PurgePending"; break;
+      }
+      auto const pkgname = I.Pkg.end() ? "NULL" : I.Pkg.FullName();
+      fprintf(report, " %s: %s\n", pkgname.c_str(), opstr);
+   }
 
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))

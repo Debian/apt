@@ -79,7 +79,8 @@ class pkgDPkgPM : public pkgPackageManager
   
    struct Item
    {
-      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending} Op;
+      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending,
+         RemovePending, PurgePending } Op;
       std::string File;
       PkgIterator Pkg;
       Item(Ops Op,PkgIterator Pkg,std::string File = "") : Op(Op),

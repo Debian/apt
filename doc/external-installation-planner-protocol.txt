@@ -248,7 +248,9 @@ before it was unpacked, dependency relations must be satisfied, …), but
 they don't need to be complete: A planner can and should expect that any
 package which wasn't explicitly configured will be configured at the end
 automatically. That also means through that a planner is not allowed to
-produce a solution in which a package remains unconfigured.
+produce a solution in which a package remains unconfigured. Also,
+packages which are requested to be removed will be automatically removed
+at the end if not marked for removal explicitly earlier.
 
 In terms of expressivity, all stanzas can carry one single field each, as
 APT-IDs are enough to pinpoint packages to be installed/removed.
