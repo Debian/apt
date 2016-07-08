@@ -644,7 +644,7 @@ static void WriteBuildDependencyPackage(std::ostringstream &buildDepsPkgFile,
 bool DoBuildDep(CommandLine &CmdL)
 {
    CacheFile Cache;
-   std::vector<char const *> VolatileCmdL;
+   std::vector<std::string> VolatileCmdL;
    Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
 
    _config->Set("APT::Install-Recommends", false);
@@ -702,18 +702,18 @@ bool DoBuildDep(CommandLine &CmdL)
       {
 	 for (size_t i = 0; i < VolatileSources.size(); ++i)
 	 {
-	    char const * const Src = VolatileCmdL[i];
+	    auto const Src = VolatileCmdL[i];
 	    if (DirectoryExists(Src))
-	       ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), Src);
+	       ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), Src.c_str());
 	    else
-	       ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), Src);
+	       ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), Src.c_str());
 	    std::unique_ptr<pkgSrcRecords::Parser> Last(VolatileSources[i]->CreateSrcParser());
 	    if (Last == nullptr)
-	       return _error->Error(_("Unable to find a source package for %s"), Src);
+	       return _error->Error(_("Unable to find a source package for %s"), Src.c_str());
 
 	    std::string const pseudo = std::string("builddeps:") + Src;
 	    WriteBuildDependencyPackage(buildDepsPkgFile, pseudo, pseudoArch,
-		  GetBuildDeps(Last.get(), Src, StripMultiArch, hostArch));
+		  GetBuildDeps(Last.get(), Src.c_str(), StripMultiArch, hostArch));
 	    pseudoPkgs.emplace_back(pseudo, pseudoArch);
 	 }
       }

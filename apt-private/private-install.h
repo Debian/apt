@@ -18,9 +18,9 @@ class pkgProblemResolver;
 
 APT_PUBLIC bool DoInstall(CommandLine &Cmd);
 
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache,
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode);
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache, int UpgradeMode);
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache, int UpgradeMode);
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode);
 
 APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,

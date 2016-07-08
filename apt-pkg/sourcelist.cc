@@ -22,6 +22,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/debindexfile.h>
+#include <apt-pkg/debsrcrecords.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -543,7 +544,7 @@ void pkgSourceList::AddVolatileFile(pkgIndexFile * const File)		/*{{{*/
       VolatileFiles.push_back(File);
 }
 									/*}}}*/
-bool pkgSourceList::AddVolatileFile(std::string const &File)		/*{{{*/
+bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::string> * const VolatileCmdL)/*{{{*/
 {
    // Note: FileExists matches directories and links, too!
    if (File.empty() || FileExists(File) == false)
@@ -556,13 +557,49 @@ bool pkgSourceList::AddVolatileFile(std::string const &File)		/*{{{*/
       AddVolatileFile(new debDscFileIndex(File));
    else if (FileExists(flCombine(File, "debian/control")))
       AddVolatileFile(new debDscFileIndex(flCombine(File, "debian/control")));
+   else if (ext == "changes")
+   {
+      debDscRecordParser changes(File, nullptr);
+      std::vector<pkgSrcRecords::File2> fileslst;
+      if (changes.Files2(fileslst) == false || fileslst.empty())
+	 return false;
+      auto const basedir = flNotFile(File);
+      for (auto && file: fileslst)
+      {
+	 auto const name = flCombine(basedir, file.Path);
+	 AddVolatileFile(name, VolatileCmdL);
+	 if (file.Hashes.VerifyFile(name) == false)
+	    return _error->Error("The file %s does not match with the hashes in the %s file!", name.c_str(), File.c_str());
+      }
+      return true;
+   }
    else
       return false;
 
+   if (VolatileCmdL != nullptr)
+      VolatileCmdL->push_back(File);
    return true;
 }
+bool pkgSourceList::AddVolatileFile(std::string const &File)
+{
+   return AddVolatileFile(File, nullptr);
+}
 									/*}}}*/
-void pkgSourceList::AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL)/*{{{*/
+void pkgSourceList::AddVolatileFiles(CommandLine &CmdL, std::vector<std::string> * const VolatileCmdL)/*{{{*/
+{
+   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const * const I) {
+      if (I != nullptr && (I[0] == '/' || (I[0] == '.' && ((I[1] == '.' && I[2] == '/') || I[1] == '/'))))
+      {
+	 if (AddVolatileFile(I, VolatileCmdL))
+	    ;
+	 else
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 return true;
+      }
+      return false;
+   });
+}
+void pkgSourceList::AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL)
 {
    std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const * const I) {
       if (I != nullptr && (I[0] == '/' || (I[0] == '.' && ((I[1] == '.' && I[2] == '/') || I[1] == '/'))))

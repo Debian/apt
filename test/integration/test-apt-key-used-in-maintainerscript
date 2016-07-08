@@ -22,18 +22,19 @@ apt-key list >/dev/null' > "${BUILDDIR}/debian/postinst"
 buildingpkg 'aptkeyuser-nodepends' 'Depends: unrelated'
 buildingpkg 'aptkeyuser-depends' 'Depends: gnupg'
 
-setupaptarchive
-
 insertinstalledpackage 'unrelated' 'native' '1'
 insertinstalledpackage 'gnupg' 'native' '1'
+testdpkgnotinstalled 'aptkeyuser-depends' 'aptkeyuser-nodepends'
 
-testsuccess apt install aptkeyuser-depends -y
+testsuccess apt install ./incoming/aptkeyuser-depends_*.changes -y
 cp rootdir/tmp/testsuccess.output apt.output
+testdpkginstalled 'aptkeyuser-depends'
 testfailure grep '^Warning: This will BREAK' apt.output
 testsuccess grep '^Warning: apt-key' apt.output
 
-testsuccess apt install aptkeyuser-nodepends -y
+testsuccess apt install ./incoming/aptkeyuser-nodepends_*.changes -y
 cp rootdir/tmp/testsuccess.output apt.output
+testdpkginstalled 'aptkeyuser-nodepends'
 testsuccess grep '^Warning: This will BREAK' apt.output
 testsuccess grep '^Warning: apt-key' apt.output
 

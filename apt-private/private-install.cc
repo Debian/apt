@@ -540,15 +540,15 @@ static const unsigned short MOD_INSTALL = 2;
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode)
 {
-   std::vector<const char*> VolatileCmdL;
+   std::vector<std::string> VolatileCmdL;
    return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, UpgradeMode);
 }
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
 {
    std::map<unsigned short, APT::VersionSet> verset;
    return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode);
 }
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache,
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode)
 {
    // Enter the special broken fixing mode if the user specified arguments
@@ -694,7 +694,7 @@ struct PkgIsExtraInstalled {
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   std::vector<char const *> VolatileCmdL;
+   std::vector<std::string> VolatileCmdL;
    Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
 
    // then open the cache

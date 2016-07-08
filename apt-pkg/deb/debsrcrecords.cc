@@ -41,7 +41,15 @@ debSrcRecordParser::debSrcRecordParser(std::string const &File,pkgIndexFile cons
 	 Tags.Init(&Fd, 102400);
    }
 }
-
+std::string debSrcRecordParser::Package() const				/*{{{*/
+{
+   auto const name = Sect.FindS("Package");
+   if (iIndex == nullptr)
+      return name.empty() ? Sect.FindS("Source") : name;
+   else
+      return name;
+}
+									/*}}}*/
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
 // ---------------------------------------------------------------------
 /* This member parses the binaries field into a pair of class arrays and
@@ -189,6 +197,15 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	       ParseQuoteWord(C, size) == false ||
 	       ParseQuoteWord(C, path) == false)
 	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+
+	 if (iIndex == nullptr && checksumField == "Files")
+	 {
+	    // the Files field has a different format than the rest in deb-changes files
+	    std::string ignore;
+	    if (ParseQuoteWord(C, ignore) == false ||
+		  ParseQuoteWord(C, path) == false)
+	       return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+	 }
 
 	 HashString const hashString(*type, hash);
 	 if (Base.empty() == false)

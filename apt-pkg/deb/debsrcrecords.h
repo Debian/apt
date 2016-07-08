@@ -40,7 +40,7 @@ class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Step() APT_OVERRIDE {iOffset = Tags.Offset(); return Tags.Step(Sect);};
    virtual bool Jump(unsigned long const &Off) APT_OVERRIDE {iOffset = Off; return Tags.Jump(Sect,Off);};
 
-   virtual std::string Package() const APT_OVERRIDE {return Sect.FindS("Package");};
+   virtual std::string Package() const APT_OVERRIDE;
    virtual std::string Version() const APT_OVERRIDE {return Sect.FindS("Version");};
    virtual std::string Maintainer() const APT_OVERRIDE {return Sect.FindS("Maintainer");};
    virtual std::string Section() const APT_OVERRIDE {return Sect.FindS("Section");};
