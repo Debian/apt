@@ -698,28 +698,55 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 
    if (prefix == "status")
    {
-      vector<struct DpkgState> const &states = PackageOps[pkg];
-      if(PackageOpsDone[pkg] < states.size())
+      std::vector<struct DpkgState> &states = PackageOps[pkg];
+      if (action == "triggers-pending")
       {
-         char const * const next_action = states[PackageOpsDone[pkg]].state;
-	 if (next_action && Debug == true)
+	 if (Debug == true)
 	    std::clog << "(parsed from dpkg) pkg: " << short_pkgname
-	       << " action: " << action << " (expected: '" << next_action << "' "
+	       << " action: " << action << " (prefix 2 to "
 	       << PackageOpsDone[pkg] << " of " << states.size() << ")" << endl;
 
-	 // check if the package moved to the next dpkg state
-	 if(next_action && (action == next_action))
+	 states.insert(states.begin(), {"installed", N_("Installed %s")});
+	 states.insert(states.begin(), {"half-configured", N_("Configuring %s")});
+	 PackagesTotal += 2;
+      }
+      else if(PackageOpsDone[pkg] < states.size())
+      {
+	 char const * next_action = states[PackageOpsDone[pkg]].state;
+	 if (next_action)
 	 {
-	    // only read the translation if there is actually a next action
-	    char const * const translation = _(states[PackageOpsDone[pkg]].str);
+	    /*
+	    if (action == "half-installed" && strcmp("half-configured", next_action) == 0 &&
+		  PackageOpsDone[pkg] + 2 < states.size() && action == states[PackageOpsDone[pkg] + 2].state)
+	    {
+	       if (Debug == true)
+		  std::clog << "(parsed from dpkg) pkg: " << short_pkgname << " action: " << action
+		     << " pending trigger defused by unpack" << std::endl;
+	       // unpacking a package defuses the pending trigger
+	       PackageOpsDone[pkg] += 2;
+	       PackagesDone += 2;
+	       next_action = states[PackageOpsDone[pkg]].state;
+	    }
+	    */
+	    if (Debug == true)
+	       std::clog << "(parsed from dpkg) pkg: " << short_pkgname
+		  << " action: " << action << " (expected: '" << next_action << "' "
+		  << PackageOpsDone[pkg] << " of " << states.size() << ")" << endl;
 
-	    // we moved from one dpkg state to a new one, report that
-	    ++PackageOpsDone[pkg];
-	    ++PackagesDone;
+	    // check if the package moved to the next dpkg state
+	    if(action == next_action)
+	    {
+	       // only read the translation if there is actually a next action
+	       char const * const translation = _(states[PackageOpsDone[pkg]].str);
 
-	    std::string msg;
-	    strprintf(msg, translation, i18n_pkgname.c_str());
-	    d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
+	       // we moved from one dpkg state to a new one, report that
+	       ++PackageOpsDone[pkg];
+	       ++PackagesDone;
+
+	       std::string msg;
+	       strprintf(msg, translation, i18n_pkgname.c_str());
+	       d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
+	    }
 	 }
       }
    }
