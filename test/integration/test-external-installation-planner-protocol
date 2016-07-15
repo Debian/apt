@@ -2,18 +2,17 @@
 set -e
 
 TESTDIR="$(readlink -f "$(dirname "$0")")"
-NATIVE="$(command dpkg --print-architecture)"
 . "$TESTDIR/framework"
 setupenvironment
-configarchitecture "${NATIVE}"
+configarchitecture 'amd64'
 
-buildsimplenativepackage 'libfoo' "${NATIVE}" '3' 'experimental' 'Multi-Arch: same'
+buildsimplenativepackage 'libfoo' 'amd64' '3' 'experimental' 'Multi-Arch: same'
 buildsimplenativepackage 'foo' 'all' '3' 'experimental' 'Depends: newstuff'
-buildsimplenativepackage 'foo' 'all' '2' 'unstable' "Depends: libfoo:$NATIVE, stuff
+buildsimplenativepackage 'foo' 'all' '2' 'unstable' 'Depends: libfoo:amd64, stuff
 Conflicts: bar, libfoo:i386
-Recommends: unrelated"
-buildsimplenativepackage 'libfoo' "${NATIVE}" '2' 'unstable' 'Multi-Arch: same'
-buildsimplenativepackage 'unrelated-2' "${NATIVE}" '2' 'unstable'
+Recommends: unrelated'
+buildsimplenativepackage 'libfoo' 'amd64' '2' 'unstable' 'Multi-Arch: same'
+buildsimplenativepackage 'unrelated-2' 'amd64' '2' 'unstable'
 insertinstalledpackage 'foo' 'all' '1'
 insertinstalledpackage 'bar' 'all' '1'
 insertinstalledpackage 'stuff' 'all' '1'
@@ -37,12 +36,12 @@ testsuccessequal 'Planner: dump' grep '^Planner: ' "$APT_EDSP_DUMP_FILENAME"
 testsuccess aptget install foo -s
 testsuccess aptget install foo -y
 testsuccess test -r "$EIPPLOG"
-testsuccessequal "Request: EIPP 0.1
-Architecture: ${NATIVE}
-Architectures: ${NATIVE}
-Remove: bar:${NATIVE}
-Install: libfoo:${NATIVE} foo:${NATIVE}
-Planner: internal" head -n 6 "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+Remove: bar:amd64
+Install: libfoo:amd64 foo:amd64
+Planner: internal' head -n 6 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Remove: 6
 Unpack: 2
@@ -54,11 +53,11 @@ rm -f "$EIPPLOG"
 testsuccess aptget install foo -s --reinstall
 testsuccess aptget install foo -y --reinstall
 testsuccess test -r "$EIPPLOG"
-testsuccessequal "Request: EIPP 0.1
-Architecture: ${NATIVE}
-Architectures: ${NATIVE}
-ReInstall: foo:${NATIVE}
-Planner: internal" head -n 5 "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+ReInstall: foo:amd64
+Planner: internal' head -n 5 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Unpack: 4
 Configure: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
@@ -67,10 +66,10 @@ rm -f "$EIPPLOG"
 testsuccess aptget purge foo -s
 testsuccess aptget purge foo -y
 testsuccess test -r "$EIPPLOG"
-testsuccessequal "Request: EIPP 0.1
-Architecture: ${NATIVE}
-Architectures: ${NATIVE}
-Remove: foo:${NATIVE}
-Planner: internal" head -n 5 "$EIPPLOG"
+testsuccessequal 'Request: EIPP 0.1
+Architecture: amd64
+Architectures: amd64
+Remove: foo:amd64
+Planner: internal' head -n 5 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Remove: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
