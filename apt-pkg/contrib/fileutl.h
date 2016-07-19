@@ -234,6 +234,8 @@ std::string flCombine(std::string Dir,std::string File);
 /** \brief Takes a file path and returns the absolute path
  */
 std::string flAbsPath(std::string File);
+/** \brief removes superfluous /./ and // from path */
+APT_HIDDEN std::string flNormalize(std::string file);
 
 // simple c++ glob
 std::vector<std::string> Glob(std::string const &pattern, int flags=0);

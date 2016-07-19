@@ -694,6 +694,25 @@ string flAbsPath(string File)
    return AbsPath;
 }
 									/*}}}*/
+std::string flNormalize(std::string file)				/*{{{*/
+{
+   if (file.empty())
+      return file;
+   // do some normalisation by removing // and /./ from the path
+   size_t found = string::npos;
+   while ((found = file.find("/./")) != string::npos)
+      file.replace(found, 3, "/");
+   while ((found = file.find("//")) != string::npos)
+      file.replace(found, 2, "/");
+
+   if (APT::String::Startswith(file, "/dev/null"))
+   {
+      file.erase(strlen("/dev/null"));
+      return file;
+   }
+   return file;
+}
+									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

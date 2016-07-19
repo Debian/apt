@@ -112,6 +112,34 @@ TEST(ConfigurationTest,DirsAndFiles)
 	EXPECT_EQ("/rootdir/dev/null", Cnf.FindDir("Dir::State"));
 	EXPECT_EQ("/rootdir/dev/null", Cnf.FindDir("Dir::State::lists"));
 }
+TEST(ConfigurationTest,DevNullInPaths)
+{
+	Configuration Cnf;
+	EXPECT_EQ("", Cnf.FindFile("Dir"));
+	EXPECT_EQ("", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("", Cnf.FindFile("Dir::State::status"));
+	Cnf.Set("Dir::State", "/dev/null");
+	EXPECT_EQ("/dev/null", Cnf.FindFile("Dir::State"));
+	Cnf.Set("Dir", "/");
+	Cnf.Set("Dir::State::status", "status");
+	EXPECT_EQ("/dev/null", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("/dev/null", Cnf.FindFile("Dir::State::status"));
+	Cnf.Set("Dir::State", "");
+	EXPECT_EQ("", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("/status", Cnf.FindFile("Dir::State::status"));
+	Cnf.Set("Dir", "/dev/null");
+	EXPECT_EQ("/dev/null", Cnf.FindFile("Dir"));
+	EXPECT_EQ("", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("/dev/null", Cnf.FindFile("Dir::State::status"));
+	Cnf.Set("Dir", "/rootdir");
+	EXPECT_EQ("/rootdir", Cnf.FindFile("Dir"));
+	EXPECT_EQ("", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("/rootdir/status", Cnf.FindFile("Dir::State::status"));
+	Cnf.Set("Dir::State::status", "/foo/status");
+	EXPECT_EQ("/rootdir", Cnf.FindFile("Dir"));
+	EXPECT_EQ("", Cnf.FindFile("Dir::State"));
+	EXPECT_EQ("/foo/status", Cnf.FindFile("Dir::State::status"));
+}
 TEST(ConfigurationTest,Vector)
 {
 	Configuration Cnf;

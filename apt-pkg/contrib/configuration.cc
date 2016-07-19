@@ -225,15 +225,7 @@ string Configuration::FindFile(const char *Name,const char *Default) const
       }
       result.append(val);
    }
-
-   // do some normalisation by removing // and /./ from the path
-   size_t found = string::npos;
-   while ((found = result.find("/./")) != string::npos)
-      result.replace(found, 3, "/");
-   while ((found = result.find("//")) != string::npos)
-      result.replace(found, 2, "/");
-
-   return result;
+   return flNormalize(result);
 }
 									/*}}}*/
 // Configuration::FindDir - Find a directory name			/*{{{*/
