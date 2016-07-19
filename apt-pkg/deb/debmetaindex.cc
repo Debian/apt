@@ -856,39 +856,105 @@ pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache, bool con
 }
 									/*}}}*/
 
-static std::vector<std::string> parsePlusMinusOptions(std::string const &Name, /*{{{*/
-      std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
-{
-   std::map<std::string, std::string>::const_iterator val = Options.find(Name);
-   std::vector<std::string> Values;
-   if (val != Options.end())
-      Values = VectorizeString(val->second, ',');
-   else
-      Values = defaultValues;
-
-   // all is a very special architecture users shouldn't be concerned with explicitly
-   if (Name == "arch" && std::find(Values.begin(), Values.end(), "all") == Values.end())
-      Values.push_back("all");
-
-   if ((val = Options.find(Name + "+")) != Options.end())
-   {
-      std::vector<std::string> const plus = VectorizeString(val->second, ',');
-      std::copy_if(plus.begin(), plus.end(), std::back_inserter(Values), [&Values](std::string const &v) {
-	 return std::find(Values.begin(), Values.end(), v) == Values.end();
-      });
-   }
-   if ((val = Options.find(Name + "-")) != Options.end())
-   {
-      std::vector<std::string> const minus = VectorizeString(val->second, ',');
-      Values.erase(std::remove_if(Values.begin(), Values.end(), [&minus](std::string const &v) {
-	 return std::find(minus.begin(), minus.end(), v) != minus.end();
-      }), Values.end());
-   }
-   return Values;
-}
-									/*}}}*/
 class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 {
+   static std::vector<std::string> getDefaultSetOf(std::string const &Name,
+	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
+   {
+      auto const val = Options.find(Name);
+      if (val != Options.end())
+	 return VectorizeString(val->second, ',');
+      return defaultValues;
+   }
+   static std::vector<std::string> applyPlusMinusOptions(std::string const &Name,
+	 std::map<std::string, std::string> const &Options, std::vector<std::string> &&Values)
+   {
+      auto val = Options.find(Name + "+");
+      if (val != Options.end())
+      {
+	 std::vector<std::string> const plus = VectorizeString(val->second, ',');
+	 std::copy_if(plus.begin(), plus.end(), std::back_inserter(Values), [&Values](std::string const &v) {
+	       return std::find(Values.begin(), Values.end(), v) == Values.end();
+	       });
+      }
+      if ((val = Options.find(Name + "-")) != Options.end())
+      {
+	 std::vector<std::string> const minus = VectorizeString(val->second, ',');
+	 Values.erase(std::remove_if(Values.begin(), Values.end(), [&minus](std::string const &v) {
+		  return std::find(minus.begin(), minus.end(), v) != minus.end();
+		  }), Values.end());
+      }
+      return Values;
+   }
+   static std::vector<std::string> parsePlusMinusOptions(std::string const &Name,
+	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
+   {
+      return applyPlusMinusOptions(Name, Options, getDefaultSetOf(Name, Options, defaultValues));
+   }
+   static std::vector<std::string> parsePlusMinusArchOptions(std::string const &Name,
+	 std::map<std::string, std::string> const &Options)
+   {
+      auto Values = getDefaultSetOf(Name, Options, APT::Configuration::getArchitectures());
+      // all is a very special architecture users shouldn't be concerned with explicitly
+      if (Name == "arch" && std::find(Values.begin(), Values.end(), "all") == Values.end())
+	 Values.push_back("all");
+      return applyPlusMinusOptions(Name, Options, std::move(Values));
+   }
+   static std::vector<std::string> parsePlusMinusTargetOptions(char const * const Name,
+	 std::map<std::string, std::string> const &Options)
+   {
+      std::vector<std::string> const alltargets = _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true);
+      std::vector<std::string> deftargets;
+      deftargets.reserve(alltargets.size());
+      std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(deftargets), [&](std::string const &t) {
+	 std::string c = "Acquire::IndexTargets::";
+	 c.append(Name).append("::").append(t).append("::DefaultEnabled");
+	 return _config->FindB(c, true);
+      });
+      std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, deftargets);
+      for (auto const &target : alltargets)
+      {
+	 std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
+	 if (opt == Options.end())
+	    continue;
+	 auto const idMatch = [&](std::string const &t) {
+	    return target == _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + t + "::Identifier", t);
+	 };
+	 if (StringToBool(opt->second))
+	    std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(mytargets), idMatch);
+	 else
+	    mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), idMatch), mytargets.end());
+      }
+      // if we can't order it in a 1000 steps we give up… probably a cycle
+      for (auto i = 0; i < 1000; ++i)
+      {
+	 bool Changed = false;
+	 for (auto t = mytargets.begin(); t != mytargets.end(); ++t)
+	 {
+	    std::string const fallback = _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + *t + "::Fallback-Of");
+	    if (fallback.empty())
+	       continue;
+	    auto const faller = std::find(mytargets.begin(), mytargets.end(), fallback);
+	    if (faller == mytargets.end() || faller < t)
+	       continue;
+	    Changed = true;
+	    auto const tv = *t;
+	    mytargets.erase(t);
+	    mytargets.emplace_back(tv);
+	 }
+	 if (Changed == false)
+	    break;
+      }
+      // remove duplicates without changing the order (in first appearance)
+      {
+	 std::set<std::string> seenOnce;
+	 mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), [&](std::string const &t) {
+	    return seenOnce.insert(t).second == false;
+	 }), mytargets.end());
+      }
+      return mytargets;
+   }
+
    metaIndex::TriState GetTriStateOption(std::map<std::string, std::string>const &Options, char const * const name) const
    {
       std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
@@ -956,11 +1022,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       return true;
    }
 
-   protected:
-
-   bool CreateItemInternal(std::vector<metaIndex *> &List, std::string const &URI,
-			   std::string const &Dist, std::string const &Section,
-			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
+   static debReleaseIndex * GetDebReleaseIndexBy(std::vector<metaIndex *> &List, std::string const &URI,
+			   std::string const &Dist, std::map<std::string, std::string> const &Options)
    {
       std::map<std::string,std::string> ReleaseOptions = {{
 	 { "BASE_URI", constructMetaIndexURI(URI, Dist, "") },
@@ -991,7 +1054,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 if (URItoFileName(D->MetaIndexURI("Release")) == FileName)
 	 {
 	    if (MapsAreEqual(ReleaseOptions, D->GetReleaseOptions(), URI, Dist) == false)
-	       return false;
+	       return nullptr;
 	    Deb = D;
 	    break;
 	 }
@@ -1003,56 +1066,16 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 Deb = new debReleaseIndex(URI, Dist, ReleaseOptions);
 	 List.push_back(Deb);
       }
+      return Deb;
+   }
 
-      std::vector<std::string> const alltargets = _config->FindVector(std::string("Acquire::IndexTargets::") + Name, "", true);
-      std::vector<std::string> deftargets;
-      deftargets.reserve(alltargets.size());
-      std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(deftargets), [&](std::string const &t) {
-	 std::string c = "Acquire::IndexTargets::";
-	 c.append(Name).append("::").append(t).append("::DefaultEnabled");
-	 return _config->FindB(c, true);
-      });
-      std::vector<std::string> mytargets = parsePlusMinusOptions("target", Options, deftargets);
-      for (auto const &target : alltargets)
-      {
-	 std::map<std::string, std::string>::const_iterator const opt = Options.find(target);
-	 if (opt == Options.end())
-	    continue;
-	 auto const idMatch = [&](std::string const &t) {
-	    return target == _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + t + "::Identifier", t);
-	 };
-	 if (StringToBool(opt->second))
-	    std::copy_if(alltargets.begin(), alltargets.end(), std::back_inserter(mytargets), idMatch);
-	 else
-	    mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), idMatch), mytargets.end());
-      }
-      // if we can't order it in a 1000 steps we give up… probably a cycle
-      for (auto i = 0; i < 1000; ++i)
-      {
-	 bool Changed = false;
-	 for (auto t = mytargets.begin(); t != mytargets.end(); ++t)
-	 {
-	    std::string const fallback = _config->Find(std::string("Acquire::IndexTargets::") + Name + "::" + *t + "::Fallback-Of");
-	    if (fallback.empty())
-	       continue;
-	    auto const faller = std::find(mytargets.begin(), mytargets.end(), fallback);
-	    if (faller == mytargets.end() || faller < t)
-	       continue;
-	    Changed = true;
-	    auto const tv = *t;
-	    mytargets.erase(t);
-	    mytargets.emplace_back(tv);
-	 }
-	 if (Changed == false)
-	    break;
-      }
-      // remove duplicates without changing the order (in first appearance)
-      {
-	 std::set<std::string> seenOnce;
-	 mytargets.erase(std::remove_if(mytargets.begin(), mytargets.end(), [&](std::string const &t) {
-	    return seenOnce.insert(t).second == false;
-	 }), mytargets.end());
-      }
+   protected:
+
+   bool CreateItemInternal(std::vector<metaIndex *> &List, std::string const &URI,
+			   std::string const &Dist, std::string const &Section,
+			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
+   {
+      auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
 
       bool const UsePDiffs = GetBoolOption(Options, "pdiffs", _config->FindB("Acquire::PDiffs", true));
 
@@ -1072,8 +1095,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    entry->second,
 	    IsSrc,
 	    Section,
-	    mytargets,
-	    parsePlusMinusOptions("arch", Options, APT::Configuration::getArchitectures()),
+	    parsePlusMinusTargetOptions(Name, Options),
+	    parsePlusMinusArchOptions("arch", Options),
 	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true)),
 	    UsePDiffs,
 	    UseByHash
