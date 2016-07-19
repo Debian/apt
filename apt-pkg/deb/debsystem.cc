@@ -86,7 +86,7 @@ bool debSystem::Lock()
    }
 
    // Create the lockfile
-   string AdminDir = flNotFile(_config->Find("Dir::State::status"));
+   string AdminDir = flNotFile(_config->FindFile("Dir::State::status"));
    d->LockFD = GetLock(AdminDir + "lock");
    if (d->LockFD == -1)
    {
@@ -145,7 +145,7 @@ bool debSystem::UnLock(bool NoErrors)
 bool debSystem::CheckUpdates()
 {
    // Check for updates.. (dirty)
-   string File = flNotFile(_config->Find("Dir::State::status")) + "updates/";
+   string File = flNotFile(_config->FindFile("Dir::State::status")) + "updates/";
    DIR *DirP = opendir(File.c_str());
    if (DirP == 0)
       return false;
@@ -184,13 +184,35 @@ pkgPackageManager *debSystem::CreatePM(pkgDepCache *Cache) const
 // System::Initialize - Setup the configuration space..			/*{{{*/
 // ---------------------------------------------------------------------
 /* These are the Debian specific configuration variables.. */
+static std::string getDpkgStatusLocation(Configuration &Cnf) {
+   auto const cnfstatedir = Cnf.Find("Dir::State", "var/lib/apt/");
+   std::string statedir;
+   if (APT::String::Endswith(cnfstatedir, "/apt/"))
+      statedir.assign(cnfstatedir, 0, cnfstatedir.length() - 5);
+   else if (APT::String::Endswith(cnfstatedir, "/apt"))
+      statedir.assign(cnfstatedir, 0, cnfstatedir.length() - 4);
+   if (statedir.empty())
+      Cnf.Set("Dir::State", "var/lib/dpkg");
+   else
+      Cnf.Set("Dir::State", flCombine(statedir, "dpkg"));
+   auto const cnfrootdir = Cnf.Find("RootDir");
+   if (Cnf.Exists("RootDir") == true)
+      Cnf.Set("RootDir", "");
+   Cnf.Set("Dir::State::status", "status");
+   auto const statusfile = Cnf.FindFile("Dir::State::status");
+   if (cnfrootdir.empty() == false)
+      Cnf.Set("RootDir", cnfrootdir);
+   Cnf.Set("Dir::State", cnfstatedir);
+   return statusfile;
+}
 bool debSystem::Initialize(Configuration &Cnf)
 {
    /* These really should be jammed into a generic 'Local Database' engine
       which is yet to be determined. The functions in pkgcachegen should
       be the only users of these */
    Cnf.CndSet("Dir::State::extended_states", "extended_states");
-   Cnf.CndSet("Dir::State::status","/var/lib/dpkg/status");
+   if (Cnf.Exists("Dir::State::status") == false)
+      Cnf.Set("Dir::State::status", getDpkgStatusLocation(Cnf));
    Cnf.CndSet("Dir::Bin::dpkg","/usr/bin/dpkg");
 
    if (d->StatusFile) {
