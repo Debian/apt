@@ -1311,8 +1311,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       // than invent an entirely new flag we would need to carry for all of eternity.
       if (hasReleaseFile && Target.Option(IndexTarget::ARCHITECTURE) == "all")
       {
-	 if (TransactionManager->MetaIndexParser->IsArchitectureSupported("all") == false ||
-	       TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(Target) == false)
+	 if (TransactionManager->MetaIndexParser->IsArchitectureAllSupportedFor(Target) == false)
 	 {
 	    new CleanupItem(Owner, TransactionManager, Target);
 	    continue;

@@ -18,6 +18,7 @@ Acquire::IndexTargets::deb::Contents {
 	KeepCompressed "true";
 };
 EOF
+cp -a rootdir/etc/apt/sources.list.d rootdir/etc/apt/sources.list.d.bak
 
 msgmsg 'Releasefile with Architectures field and all included'
 testsuccess apt update
@@ -39,6 +40,16 @@ testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 
 rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile with Architectures field and all included, but arch-=all'
+sed -i 's#^deb\(-src\)\? #deb\1 [arch-=all] #' rootdir/etc/apt/sources.list.d/*
+testsuccesswithnotice apt update
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testfailure grep '^Get.* all Packages ' aptupdate.output
+testfailure grep '^Get.* all Contents ' aptupdate.output
+testequal 'foo-2' aptcache pkgnames foo-
+
+rm -rf rootdir/var/lib/apt/lists
 msgmsg 'Releasefile has all, but forbids its usage'
 configarchitecture 'amd64'
 sed -i '/^Architectures: / a\
@@ -49,6 +60,16 @@ cp rootdir/tmp/testsuccess.output aptupdate.output
 testfailure grep '^Get.* all Packages ' aptupdate.output
 testsuccess grep '^Get.* all Contents ' aptupdate.output
 sed -i '/^No-Support-for-Architecture-all: / d' $(find ./aptarchive -name 'Release')
+
+rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile has all, forbids its usage, but it is forced with arch=all'
+sed -i 's#^deb\(-src\)\? #deb\1 [arch=all] #' rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
+testequal 'foo-1' aptcache pkgnames foo-
 
 rm -rf rootdir/var/lib/apt/lists
 msgmsg 'Releasefile with Architectures field but without all'
@@ -68,6 +89,17 @@ cp rootdir/tmp/testsuccess.output aptupdate.output
 testfailure grep '^Get.* all Packages ' aptupdate.output
 testfailure grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-2' aptcache pkgnames foo-
+
+rm -rf rootdir/var/lib/apt/lists
+msgmsg 'Releasefile with Architectures field but without all forced with arch+=all'
+sed -i 's#^deb\(-src\)\? #deb\1 [arch+=all] #' rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep '^Get.* all Packages ' aptupdate.output
+testsuccess grep '^Get.* all Contents ' aptupdate.output
+testequal 'foo-1
+foo-2' aptcache pkgnames foo-
 
 rm -rf rootdir/var/lib/apt/lists
 msgmsg 'Releasefile without Architectures field'

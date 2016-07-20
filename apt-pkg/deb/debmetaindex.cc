@@ -147,7 +147,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
       DefKeepCompressedAs += "uncompressed";
    }
 
-   std::vector<std::string> const NativeArchs = { _config->Find("APT::Architecture"), "all" };
+   std::vector<std::string> const NativeArchs = { _config->Find("APT::Architecture"), "implicit:all" };
    bool const GzipIndex = _config->FindB("Acquire::GzipIndexes", false);
    for (std::vector<debReleaseIndexPrivate::debSectionEntry>::const_iterator E = entries.begin(); E != entries.end(); ++E)
    {
@@ -210,15 +210,15 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("SITE", Site));
 		  Options.insert(std::make_pair("RELEASE", Release));
 		  if (tplMetaKey.find("$(COMPONENT)") != std::string::npos)
-		     Options.insert(std::make_pair("COMPONENT", E->Name));
+		     Options.emplace("COMPONENT", E->Name);
 		  if (tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
-		     Options.insert(std::make_pair("LANGUAGE", *L));
+		     Options.emplace("LANGUAGE", *L);
 		  if (tplMetaKey.find("$(ARCHITECTURE)") != std::string::npos)
-		     Options.insert(std::make_pair("ARCHITECTURE", *A));
+		     Options.emplace("ARCHITECTURE", (*A == "implicit:all") ? "all" : *A);
 		  else if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
-		     Options.insert(std::make_pair("ARCHITECTURE", NativeArch));
+		     Options.emplace("ARCHITECTURE", (NativeArch == "implicit:all") ? "all" : NativeArch);
 		  if (tplMetaKey.find("$(NATIVE_ARCHITECTURE)") != std::string::npos)
-		     Options.insert(std::make_pair("NATIVE_ARCHITECTURE", NativeArch));
+		     Options.emplace("NATIVE_ARCHITECTURE", (NativeArch == "implicit:all") ? "all" : NativeArch);
 
 		  std::string MetaKey = tplMetaKey;
 		  std::string ShortDesc = tplShortDesc;
@@ -299,11 +299,16 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
 
 		  bool IsOpt = IsOptional;
-		  if (IsOpt == false)
 		  {
 		     auto const arch = Options.find("ARCHITECTURE");
 		     if (arch != Options.end() && arch->second == "all")
-			IsOpt = true;
+		     {
+			// one of them must be implicit:all then
+			if (*A != "all" && NativeArch != "all")
+			   IsOpt = true;
+			else // user used arch=all explicitly
+			   Options.emplace("Force-Support-For-All", "yes");
+		     }
 		  }
 
 		  IndexTarget Target(
@@ -719,6 +724,10 @@ bool debReleaseIndex::IsArchitectureSupported(std::string const &arch) const/*{{
 									/*}}}*/
 bool debReleaseIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*{{{*/
 {
+   if (target.Options.find("Force-Support-For-All") != target.Options.end())
+      return true;
+   if (IsArchitectureSupported("all") == false)
+      return false;
    if (d->NoSupportForAll.empty())
       return true;
    return std::find(d->NoSupportForAll.begin(), d->NoSupportForAll.end(), target.Option(IndexTarget::CREATED_BY)) == d->NoSupportForAll.end();
@@ -896,9 +905,18 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    {
       auto Values = getDefaultSetOf(Name, Options, APT::Configuration::getArchitectures());
       // all is a very special architecture users shouldn't be concerned with explicitly
-      if (Name == "arch" && std::find(Values.begin(), Values.end(), "all") == Values.end())
-	 Values.push_back("all");
-      return applyPlusMinusOptions(Name, Options, std::move(Values));
+      // but if the user does, do not override the choice
+      auto const val = Options.find(Name + "-");
+      if (val != Options.end())
+      {
+	 std::vector<std::string> const minus = VectorizeString(val->second, ',');
+	 if (std::find(minus.begin(), minus.end(), "all") != minus.end())
+	    return applyPlusMinusOptions(Name, Options, std::move(Values));
+      }
+      Values = applyPlusMinusOptions(Name, Options, std::move(Values));
+      if (std::find(Values.begin(), Values.end(), "all") == Values.end())
+	 Values.push_back("implicit:all");
+      return Values;
    }
    static std::vector<std::string> parsePlusMinusTargetOptions(char const * const Name,
 	 std::map<std::string, std::string> const &Options)

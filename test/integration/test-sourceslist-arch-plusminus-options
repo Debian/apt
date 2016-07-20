@@ -89,3 +89,6 @@ testbinaries 'substract all from arch-set' 'i386'
 
 echo 'deb [arch=i386 arch+=all] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testbinaries 'useless addition of all' 'i386' 'all'
+
+echo 'deb [arch=all] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'explicit all' 'all'
