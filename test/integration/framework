@@ -2001,3 +2001,11 @@ aptautotest_aptget_purge() { testaptautotestnodpkgwarning "$@"; }
 aptautotest_apt_install() { testaptautotestnodpkgwarning "$@"; }
 aptautotest_apt_remove() { testaptautotestnodpkgwarning "$@"; }
 aptautotest_apt_purge() { testaptautotestnodpkgwarning "$@"; }
+
+testaptmarknodefaultsections() {
+	testfailure grep '^Auto-Installed: 0$' "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/extended_states"
+}
+aptautotest_aptmark_auto() { testaptmarknodefaultsections "$@"; }
+aptautotest_aptmark_manual() { testaptmarknodefaultsections "$@"; }
+aptautotest_aptget_markauto() { testaptmarknodefaultsections "$@"; }
+aptautotest_aptget_markmanual() { testaptmarknodefaultsections "$@"; }

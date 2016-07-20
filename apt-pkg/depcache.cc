@@ -274,23 +274,27 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
 	    continue;
 	 StateCache const &P = PkgState[pkg->ID];
 	 bool newAuto = (P.Flags & Flag::Auto);
-	 // skip not installed or now-removed ones if requested
+	 // reset to default (=manual) not installed or now-removed ones if requested
 	 if (InstalledOnly && (
 	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
 	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
+	    newAuto = false;
+	 if (newAuto == false)
 	 {
 	    // The section is obsolete if it contains no other tag
-	    unsigned int const count = section.Count();
+	    auto const count = section.Count();
 	    if (count < 2 ||
 		(count == 2 && section.Exists("Auto-Installed")) ||
 		(count == 3 && section.Exists("Auto-Installed") && section.Exists("Architecture")))
+	    {
+	       if(debug_autoremove)
+		  std::clog << "Drop obsolete section with " << count << " fields for " << APT::PrettyPkg(this, pkg) << std::endl;
 	       continue;
-	    else
-	       newAuto = false;
+	    }
 	 }
-	 if(_config->FindB("Debug::pkgAutoRemove",false))
-	    std::clog << "Update existing AutoInstall info: " 
-		      << pkg.FullName() << std::endl;
+
+	 if(debug_autoremove)
+	    std::clog << "Update existing AutoInstall to " << newAuto << " for " << APT::PrettyPkg(this, pkg) << std::endl;
 
 	 std::vector<pkgTagSection::Tag> rewrite;
 	 rewrite.push_back(pkgTagSection::Tag::Rewrite("Architecture", pkg.Arch()));
@@ -307,7 +311,7 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
       if(P.Flags & Flag::Auto) {
 	 if (pkgs_seen.find(pkg.FullName()) != pkgs_seen.end()) {
 	    if(debug_autoremove)
-	       std::clog << "Skipping already written " << pkg.FullName() << std::endl;
+	       std::clog << "Skipping already written " << APT::PrettyPkg(this, pkg) << std::endl;
 	    continue;
 	 }
 	 // skip not installed ones if requested
@@ -315,14 +319,11 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
 	     (pkg->CurrentVer == 0 && P.Mode != ModeInstall) ||
 	     (pkg->CurrentVer != 0 && P.Mode == ModeDelete)))
 	    continue;
-	 const char* const pkgarch = pkg.Arch();
-	 if (strcmp(pkgarch, "all") == 0)
-	    continue;
 	 if(debug_autoremove)
-	    std::clog << "Writing new AutoInstall: " << pkg.FullName() << std::endl;
+	    std::clog << "Writing new AutoInstall: " << APT::PrettyPkg(this, pkg) << std::endl;
 	 std::string stanza = "Package: ";
 	 stanza.append(pkg.Name())
-	      .append("\nArchitecture: ").append(pkgarch)
+	      .append("\nArchitecture: ").append(pkg.Arch())
 	      .append("\nAuto-Installed: 1\n\n");
 	 if (OutFile.Write(stanza.c_str(), stanza.length()) == false)
 	    return false;
