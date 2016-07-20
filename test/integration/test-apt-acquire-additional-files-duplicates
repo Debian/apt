@@ -48,6 +48,8 @@ ${APTLISTS}/example.org_debian_dists_stable_rocks_i18n_Translation-en" aptget in
 cat >> rootdir/etc/apt/sources.list <<EOF
 deb http://example.org/debian stable main rocks
 EOF
+rm -r rootdir/var/cache/apt/*.bin
+testwarning aptcache gencaches
 testwarningequal "${APTLISTS}/example.org_debian_dists_stable_main_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_rocks_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-amd64_Packages
@@ -71,6 +73,8 @@ cat >> rootdir/etc/apt/sources.list <<EOF
 deb [target=Contents1,Contents2,Contentsflat arch=amd64] http://example.org/debian stable main rocks
 deb-src [target=Contents1,Contents2,Contentsflat arch=amd64] http://example.org/debian stable main rocks
 EOF
+rm -r rootdir/var/cache/apt/*.bin
+testwarning aptcache gencaches
 testwarningequal "${APTLISTS}/example.org_debian_dists_stable_main_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_rocks_source_Sources
 ${APTLISTS}/example.org_debian_dists_stable_main_binary-amd64_Packages
