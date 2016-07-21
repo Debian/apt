@@ -51,6 +51,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include <sstream>
@@ -1273,6 +1274,15 @@ static void cleanUpTmpDir(char * const tmpdir)				/*{{{*/
  */
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
+   // we remove the last configures (and after that removes) from the list here
+   // as they will be covered by the pending calls, so explicit calls are busy work
+   decltype(List)::const_iterator::difference_type const explicitIdx =
+      std::distance(List.cbegin(),
+	    _config->FindB("Dpkg::ExplicitLastConfigure", false) ? List.cend() :
+	    std::find_if_not(
+	       std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }),
+	       List.crend(), [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; }).base());
+
    auto const ItemIsEssential = [](pkgDPkgPM::Item const &I) {
       static auto const cachegen = _config->Find("pkgCacheGen::Essential");
       if (cachegen == "none" || cachegen == "native")
@@ -1280,6 +1290,13 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       if (unlikely(I.Pkg.end()))
 	 return true;
       return (I.Pkg->Flags & pkgCache::Flag::Essential) != 0;
+   };
+
+   auto const StripAlreadyDoneFromPending = [&](APT::VersionVector & Pending) {
+      Pending.erase(std::remove_if(Pending.begin(), Pending.end(), [&](pkgCache::VerIterator const &Ver) {
+	    auto const PN = Ver.ParentPkg().FullName();
+	    return PackageOps[PN].size() <= PackageOpsDone[PN];
+	 }), Pending.end());
    };
 
    pkgPackageManager::SigINTStop = false;
@@ -1329,27 +1346,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // FIXME: workaround for dpkg bug, see our ./test-bug-740843-versioned-up-down-breaks test
    bool const dpkg_recursive_install_numbered = _config->FindB("dpkg::install::recursive::numbered", true);
 
-   decltype(List)::const_iterator::difference_type const notconfidx =
-      _config->FindB("Dpkg::ExplicitLastConfigure", false) ? std::numeric_limits<decltype(notconfidx)>::max() :
-      std::distance(List.cbegin(), std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }).base());
-
-   // support subpressing of triggers processing for special
-   // cases like d-i that runs the triggers handling manually
-   bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
-   bool const ConfigurePending = _config->FindB("DPkg::ConfigurePending", true);
-   if (ConfigurePending)
-      List.push_back(Item(Item::ConfigurePending, PkgIterator()));
-
    // for the progress
    BuildPackagesProgressMap();
-
-   if (notconfidx != std::numeric_limits<decltype(notconfidx)>::max())
-   {
-      if (ConfigurePending)
-	 List.erase(std::next(List.begin(), notconfidx), std::prev(List.end()));
-      else
-	 List.erase(std::next(List.begin(), notconfidx), List.end());
-   }
 
    APT::StateChanges currentStates;
    if (_config->FindB("dpkg::selection::current::saveandrestore", true))
@@ -1388,34 +1386,29 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 return false;
       }
 
-      {
-	 std::vector<bool> toBeRemoved(Cache.Head().PackageCount, false);
-	 std::vector<bool> toBePurged(Cache.Head().PackageCount, false);
-	 for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-	    if (Cache[Pkg].Purge())
-	       toBePurged[Pkg->ID] = true;
-	    else if (Cache[Pkg].Delete())
-	       toBeRemoved[Pkg->ID] = true;
-	 for (auto && I: approvedStates.Remove())
-	    toBeRemoved[I.ParentPkg()->ID] = false;
-	 for (auto && I: approvedStates.Purge())
-	    toBePurged[I.ParentPkg()->ID] = false;
-	 if (std::find(toBeRemoved.begin(), toBeRemoved.end(), true) != toBeRemoved.end())
-	 {
-	    if (ConfigurePending)
-	       List.emplace(std::prev(List.end()), Item::RemovePending, pkgCache::PkgIterator());
-	    else
-	       List.emplace_back(Item::RemovePending, pkgCache::PkgIterator());
-	 }
-	 if (std::find(toBePurged.begin(), toBePurged.end(), true) != toBePurged.end())
-	 {
-	    if (ConfigurePending)
-	       List.emplace(std::prev(List.end()), Item::PurgePending, pkgCache::PkgIterator());
-	    else
-	       List.emplace_back(Item::PurgePending, pkgCache::PkgIterator());
-	 }
-      }
+      List.erase(std::next(List.begin(), explicitIdx), List.end());
+
+      std::vector<bool> toBeRemoved(Cache.Head().PackageCount, false);
+      for (auto && I: approvedStates.Remove())
+	 toBeRemoved[I.ParentPkg()->ID] = true;
+      for (auto && I: approvedStates.Purge())
+	 toBeRemoved[I.ParentPkg()->ID] = true;
+
+      for (auto && I: List)
+	 if (I.Op == Item::Remove || I.Op == Item::Purge)
+	    toBeRemoved[I.Pkg->ID] = false;
+
+      if (std::find(toBeRemoved.begin(), toBeRemoved.end(), true) != toBeRemoved.end())
+	 List.emplace_back(Item::RemovePending, pkgCache::PkgIterator());
+      if (approvedStates.Purge().empty() == false)
+	 List.emplace_back(Item::PurgePending, pkgCache::PkgIterator());
+
+      // support subpressing of triggers processing for special
+      // cases like d-i that runs the triggers handling manually
+      if (_config->FindB("DPkg::ConfigurePending", true))
+	 List.emplace_back(Item::ConfigurePending, pkgCache::PkgIterator());
    }
+   bool const TriggersPending = _config->FindB("DPkg::TriggersPending", false);
 
    d->stdin_is_dev_null = false;
 
@@ -1431,7 +1424,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    d->progress->Start(d->master);
 
    // this loop is runs once per dpkg operation
-   vector<Item>::const_iterator I = List.begin();
+   vector<Item>::const_iterator I = List.cbegin();
    while (I != List.end())
    {
       // Do all actions with the same Op in one run
@@ -1448,9 +1441,10 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       continue;
 	    break;
 	 }
+      else if (J->Op == Item::Remove || J->Op == Item::Purge)
+	 J = std::find_if(J, List.cend(), [](Item const &I) { return I.Op != Item::Remove && I.Op != Item::Purge; });
       else
-	 for (; J != List.end() && J->Op == I->Op; ++J)
-	    /* nothing */;
+	 J = std::find_if(J, List.cend(), [&J](Item const &I) { return I.Op != J->Op; });
 
       auto const size = (J - I) + 10;
 
@@ -1483,17 +1477,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       switch (I->Op)
       {
 	 case Item::Remove:
-	 ADDARGC("--force-depends");
-	 if (std::any_of(I, J, ItemIsEssential))
-	    ADDARGC("--force-remove-essential");
-	 ADDARGC("--remove");
-	 break;
-
 	 case Item::Purge:
 	 ADDARGC("--force-depends");
 	 if (std::any_of(I, J, ItemIsEssential))
 	    ADDARGC("--force-remove-essential");
-	 ADDARGC("--purge");
+	 ADDARGC("--remove");
 	 break;
 
 	 case Item::Configure:
@@ -1569,10 +1557,37 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    }
 	 }
       }
+      else if (I->Op == Item::RemovePending)
+      {
+	 ++I;
+	 StripAlreadyDoneFromPending(approvedStates.Remove());
+	 if (approvedStates.Remove().empty())
+	    continue;
+      }
+      else if (I->Op == Item::PurgePending)
+      {
+	 ++I;
+	 // explicit removes of packages without conffiles passthrough the purge states instantly, too.
+	 // Setting these non-installed packages up for purging generates 'unknown pkg' warnings from dpkg
+	 StripAlreadyDoneFromPending(approvedStates.Purge());
+	 if (approvedStates.Purge().empty())
+	    continue;
+	 std::remove_reference<decltype(approvedStates.Remove())>::type approvedRemoves;
+	 std::swap(approvedRemoves, approvedStates.Remove());
+	 // we apply it again here as an explicit remove in the ordering will have cleared the purge state
+	 if (approvedStates.Save(false) == false)
+	 {
+	    _error->Error("Couldn't record the approved purges as dpkg selection states");
+	    if (currentStates.Save(false) == false)
+	       _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
+	    return false;
+	 }
+	 std::swap(approvedRemoves, approvedStates.Remove());
+      }
       else
       {
 	 string const nativeArch = _config->Find("APT::Architecture");
-	 unsigned long const oldSize = I->Op == Item::Configure ? Size : 0;
+	 unsigned long const oldSize = I->Pkg.end() == false ? Size : 0;
 	 for (;I != J && Size < MaxArgBytes; ++I)
 	 {
 	    if((*I).Pkg.end() == true)
@@ -1591,8 +1606,15 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    {
 	       pkgCache::VerIterator PkgVer;
 	       std::string name = I->Pkg.Name();
-	       if (Op == Item::Remove || Op == Item::Purge)
-		  PkgVer = FindToBeRemovedVersion(I->Pkg);
+	       if (Op == Item::Remove)
+		  PkgVer = I->Pkg.CurrentVer();
+	       else if (Op == Item::Purge)
+	       {
+		  // we purge later with --purge --pending, so if it isn't installed (aka rc-only), skip it here
+		  PkgVer = I->Pkg.CurrentVer();
+		  if (PkgVer.end() == true)
+		     continue;
+	       }
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
 	       if (strcmp(I->Pkg.Arch(), "none") == 0)
@@ -1798,11 +1820,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    if (d->dpkg_error.empty() == false)
    {
+      // no point in reseting packages we already completed removal for
+      StripAlreadyDoneFromPending(approvedStates.Remove());
+      StripAlreadyDoneFromPending(approvedStates.Purge());
       APT::StateChanges undo;
       auto && undoRem = approvedStates.Remove();
-      std::move(undoRem.begin(), undoRem.end(), std::back_inserter(undo.Remove()));
+      std::move(undoRem.begin(), undoRem.end(), std::back_inserter(undo.Install()));
       auto && undoPur = approvedStates.Purge();
-      std::move(undoPur.begin(), undoPur.end(), std::back_inserter(undo.Purge()));
+      std::move(undoPur.begin(), undoPur.end(), std::back_inserter(undo.Install()));
       approvedStates.clear();
       if (undo.Save(false) == false)
 	 _error->Error("Couldn't revert dpkg selection for approved remove/purge after an error was encountered!");
