@@ -39,7 +39,9 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
+
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <iostream>
 #include <map>
@@ -960,51 +962,60 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 {
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
-   static const struct DpkgState DpkgStatesOpMap[][7] = {
+   static const std::array<std::array<DpkgState, 3>, 4> DpkgStatesOpMap = {{
       // Install operation
-      {
+      {{
 	 {"half-installed", N_("Preparing %s")},
 	 {"unpacked", N_("Unpacking %s") },
-	 {NULL, NULL}
-      },
+	 {nullptr, nullptr}
+      }},
       // Configure operation
-      {
+      {{
 	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
 	 { "installed", N_("Installed %s")},
-	 {NULL, NULL}
-      },
+      }},
       // Remove operation
-      {
+      {{
 	 {"half-configured", N_("Preparing for removal of %s")},
 	 {"half-installed", N_("Removing %s")},
 	 {"config-files",  N_("Removed %s")},
-	 {NULL, NULL}
-      },
+      }},
       // Purge operation
-      {
+      {{
 	 {"config-files", N_("Preparing to completely remove %s")},
 	 {"not-installed", N_("Completely removed %s")},
-	 {NULL, NULL}
-      },
-   };
+	 {nullptr, nullptr}
+      }},
+   }};
+   static_assert(Item::Purge == 3, "Enum item has unexpected index for mapping array");
 
    // init the PackageOps map, go over the list of packages that
    // that will be [installed|configured|removed|purged] and add
    // them to the PackageOps map (the dpkg states it goes through)
    // and the PackageOpsTranslations (human readable strings)
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end(); ++I)
+   for (auto &&I : List)
    {
-      if((*I).Pkg.end() == true)
+      if(I.Pkg.end() == true)
 	 continue;
 
-      string const name = (*I).Pkg.FullName();
+      string const name = I.Pkg.FullName();
       PackageOpsDone[name] = 0;
-      for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL; ++i)
+      auto AddToPackageOps = std::back_inserter(PackageOps[name]);
+      if (I.Op == Item::Purge && I.Pkg->CurrentVer != 0)
       {
-	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
-	 PackagesTotal++;
+	 // purging a package which is installed first passes through remove states
+	 auto const DpkgOps = DpkgStatesOpMap[Item::Remove];
+	 std::copy(DpkgOps.begin(), DpkgOps.end(), AddToPackageOps);
+	 PackagesTotal += DpkgOps.size();
       }
+      auto const DpkgOps = DpkgStatesOpMap[I.Op];
+      std::copy_if(DpkgOps.begin(), DpkgOps.end(), AddToPackageOps, [&](DpkgState const &state) {
+	 if (state.state == nullptr)
+	    return false;
+	 ++PackagesTotal;
+	 return true;
+      });
    }
    /* one extra: We don't want the progress bar to reach 100%, especially not
       if we call dpkg --configure --pending and process a bunch of triggers
