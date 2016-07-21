@@ -1741,7 +1741,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    //    we overwrite it. This is the same behaviour as apport
    // - if we have a report with the same pkgversion already
    //   then we skip it
-   reportfile = flCombine("/var/crash",pkgname+".0.crash");
+   _config->CndSet("Dir::Apport", "var/crash");
+   reportfile = flCombine(_config->FindDir("Dir::Apport", "var/crash"), pkgname+".0.crash");
    if(FileExists(reportfile))
    {
       struct stat buf;
