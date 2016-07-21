@@ -1303,7 +1303,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       OSArgMax = 32*1024;
    OSArgMax -= EnvironmentSize() - 2*1024;
    unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes", OSArgMax);
-   bool const NoTriggers = _config->FindB("DPkg::NoTriggers", false);
+   bool const NoTriggers = _config->FindB("DPkg::NoTriggers", true);
 
    if (RunScripts("DPkg::Pre-Invoke") == false)
       return false;
@@ -1474,6 +1474,12 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       ADDARG(status_fd_buf);
       unsigned long const Op = I->Op;
 
+      if (NoTriggers == true && I->Op != Item::TriggersPending &&
+	  I->Op != Item::ConfigurePending)
+      {
+	 ADDARGC("--no-triggers");
+      }
+
       switch (I->Op)
       {
 	 case Item::Remove:
@@ -1520,11 +1526,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 break;
       }
 
-      if (NoTriggers == true && I->Op != Item::TriggersPending &&
-	  I->Op != Item::ConfigurePending)
-      {
-	 ADDARGC("--no-triggers");
-      }
       char * tmpdir_to_free = nullptr;
 
       // Write in the file or package names
