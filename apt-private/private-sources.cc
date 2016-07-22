@@ -13,6 +13,8 @@
 #include <apt-private/private-sources.h>
 #include <apt-private/private-utils.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <iostream>
@@ -46,6 +48,12 @@ bool EditSources(CommandLine &CmdL)
    HashString before;
    if (FileExists(sourceslist))
        before.FromFile(sourceslist);
+   else
+   {
+      FileFd filefd;
+      if (filefd.Open(sourceslist, FileFd::Create | FileFd::WriteOnly, FileFd::None, 0644) == false)
+	 return false;
+   }
 
    ScopedGetLock lock(sourceslist);
    if (lock.fd < 0)
@@ -56,7 +64,13 @@ bool EditSources(CommandLine &CmdL)
    do {
       if (EditFileInSensibleEditor(sourceslist) == false)
 	 return false;
-      if (FileExists(sourceslist) && !before.VerifyFile(sourceslist))
+      if (before.empty())
+      {
+	 struct stat St;
+	 if (stat(sourceslist.c_str(), &St) == 0 && St.st_size == 0)
+	       RemoveFile("edit-sources", sourceslist);
+      }
+      else if (FileExists(sourceslist) && !before.VerifyFile(sourceslist))
       {
 	 file_changed = true;
 	 pkgCacheFile::RemoveCaches();

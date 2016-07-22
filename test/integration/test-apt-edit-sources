@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'native'
+
+echo 'Dir::Bin::Editor "cat";' > rootdir/etc/apt/apt.conf.d/editor.conf
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list.d/rocks.list
+testsuccessequal "$(cat rootdir/etc/apt/sources.list.d/rocks.list)" apt edit-sources rocks.list
+
+cat >editor.sh <<EOF
+#!/bin/sh
+umask 077
+touch "\$@"
+EOF
+chmod +x ./editor.sh
+echo 'Dir::Bin::Editor "./editor.sh";' > rootdir/etc/apt/apt.conf.d/editor.conf
+testsuccess apt edit-sources blub.list
+testfailure test -e 'rootdir/etc/apt/sources.list.d/blub.list'
+
+cat >editor.sh <<EOF
+#!/bin/sh
+umask 077
+echo '#comment' > "\$1"
+EOF
+testsuccess apt edit-sources blub.list
+testfilestats 'rootdir/etc/apt/sources.list.d/blub.list' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
+
+echo 'Dir::Bin::Editor "cat";' > rootdir/etc/apt/apt.conf.d/editor.conf
+echo 'blub' > rootdir/etc/apt/sources.list.d/blub.list
+testfailure apt edit-sources blub.list --assume-no
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list.d/blub.list
+touch -m -d 'now + 1 hour' rootdir/etc/apt/sources.list.d/blub.list
+testwarning apt edit-sources blub.list --assume-no
