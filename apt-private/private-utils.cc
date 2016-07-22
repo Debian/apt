@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 // DisplayFileInPager - Display File with pager				/*{{{*/
-void DisplayFileInPager(std::string const &filename)
+bool DisplayFileInPager(std::string const &filename)
 {
    pid_t Process = ExecFork();
    if (Process == 0)
@@ -39,11 +39,11 @@ void DisplayFileInPager(std::string const &filename)
    }
 
    // Wait for the subprocess
-   ExecWait(Process, "pager", false);
+   return ExecWait(Process, "pager", false);
 }
 									/*}}}*/
 // EditFileInSensibleEditor - Edit File with editor			/*{{{*/
-void EditFileInSensibleEditor(std::string const &filename)
+bool EditFileInSensibleEditor(std::string const &filename)
 {
    pid_t Process = ExecFork();
    if (Process == 0)
@@ -71,6 +71,6 @@ void EditFileInSensibleEditor(std::string const &filename)
    }
 
    // Wait for the subprocess
-   ExecWait(Process, "editor", false);
+   return ExecWait(Process, "editor", false);
 }
 									/*}}}*/
