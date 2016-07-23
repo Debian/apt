@@ -1258,9 +1258,8 @@ public:
 
 	 writebuffer.bufferstart += written;
       }
-
       writebuffer.reset();
-      return true;
+      return wrapped->InternalFlush();
    }
    virtual ssize_t InternalWrite(void const * const From, unsigned long long const Size) APT_OVERRIDE
    {
