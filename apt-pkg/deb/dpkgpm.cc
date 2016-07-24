@@ -53,6 +53,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <unordered_set>
 #include <vector>
 #include <sstream>
 #include <numeric>
@@ -1282,6 +1283,22 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    std::find_if_not(
 	       std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }),
 	       List.crend(), [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; }).base());
+
+   // explicitely configure everything for hookscripts and progress building
+   {
+      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyConfigured;
+      for (auto && I : List)
+	 if (I.Op == Item::Configure)
+	    alreadyConfigured.insert(I.Pkg->ID);
+      decltype(List) AppendList;
+      for (auto && I : List)
+	 if (I.Op == Item::Install && alreadyConfigured.insert(I.Pkg->ID).second == true)
+	    AppendList.emplace_back(Item::Configure, I.Pkg);
+      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	 if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && alreadyConfigured.insert(Pkg->ID).second == true)
+	    AppendList.emplace_back(Item::Configure, Pkg);
+      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
+   }
 
    auto const ItemIsEssential = [](pkgDPkgPM::Item const &I) {
       static auto const cachegen = _config->Find("pkgCacheGen::Essential");
