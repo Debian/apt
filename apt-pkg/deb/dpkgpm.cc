@@ -1284,6 +1284,19 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }),
 	       List.crend(), [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; }).base());
 
+   // explicitely remove everything for hookscripts and progress building
+   {
+      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyRemoved;
+      for (auto && I : List)
+	 if (I.Op == Item::Remove || I.Op == Item::Purge)
+	    alreadyRemoved.insert(I.Pkg->ID);
+      decltype(List) AppendList;
+      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	 if (Cache[Pkg].Delete() && alreadyRemoved.insert(Pkg->ID).second == true)
+	    AppendList.emplace_back(Cache[Pkg].Purge() ? Item::Purge : Item::Remove, Pkg);
+      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
+   }
+
    // explicitely configure everything for hookscripts and progress building
    {
       std::unordered_set<decltype(pkgCache::Package::ID)> alreadyConfigured;
