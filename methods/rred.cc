@@ -336,26 +336,30 @@ class Patch {
    FileChanges filechanges;
    MemBlock add_text;
 
-   static bool retry_fwrite(char *b, size_t l, FileFd &f, Hashes *hash)
+   static bool retry_fwrite(char *b, size_t l, FileFd &f, Hashes * const start_hash, Hashes * const end_hash = nullptr)
    {
       if (f.Write(b, l) == false)
 	 return false;
-      if (hash)
-	 hash->Add((unsigned char*)b, l);
+      if (start_hash)
+	 start_hash->Add((unsigned char*)b, l);
+      if (end_hash)
+	 end_hash->Add((unsigned char*)b, l);
       return true;
    }
 
-   static void dump_rest(FileFd &o, FileFd &i, Hashes *hash)
+   static void dump_rest(FileFd &o, FileFd &i,
+	 Hashes * const start_hash, Hashes * const end_hash)
    {
       char buffer[BLOCK_SIZE];
       unsigned long long l = 0;
       while (i.Read(buffer, sizeof(buffer), &l)) {
-	 if (l ==0  || !retry_fwrite(buffer, l, o, hash))
+	 if (l ==0  || !retry_fwrite(buffer, l, o, start_hash, end_hash))
 	    break;
       }
    }
 
-   static void dump_lines(FileFd &o, FileFd &i, size_t n, Hashes *hash)
+   static void dump_lines(FileFd &o, FileFd &i, size_t n,
+	 Hashes * const start_hash, Hashes * const end_hash)
    {
       char buffer[BLOCK_SIZE];
       while (n > 0) {
@@ -364,11 +368,11 @@ class Patch {
 	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
 	    n--;
-	 retry_fwrite(buffer, l, o, hash);
+	 retry_fwrite(buffer, l, o, start_hash, end_hash);
       }
    }
 
-   static void skip_lines(FileFd &i, int n)
+   static void skip_lines(FileFd &i, int n, Hashes * const start_hash)
    {
       char buffer[BLOCK_SIZE];
       while (n > 0) {
@@ -377,6 +381,8 @@ class Patch {
 	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
 	    n--;
+	 if (start_hash)
+	    start_hash->Add((unsigned char*)buffer, l);
       }
    }
 
@@ -526,15 +532,16 @@ class Patch {
       }
    }
 
-   void apply_against_file(FileFd &out, FileFd &in, Hashes *hash = NULL)
+   void apply_against_file(FileFd &out, FileFd &in,
+	 Hashes * const start_hash = nullptr, Hashes * const end_hash = nullptr)
    {
       std::list<struct Change>::iterator ch;
       for (ch = filechanges.begin(); ch != filechanges.end(); ++ch) {
-	 dump_lines(out, in, ch->offset, hash);
-	 skip_lines(in, ch->del_cnt);
-	 dump_mem(out, ch->add, ch->add_len, hash);
+	 dump_lines(out, in, ch->offset, start_hash, end_hash);
+	 skip_lines(in, ch->del_cnt, start_hash);
+	 dump_mem(out, ch->add, ch->add_len, end_hash);
       }
-      dump_rest(out, in, hash);
+      dump_rest(out, in, start_hash, end_hash);
       out.Flush();
    }
 };
@@ -581,6 +588,16 @@ class RredMethod : public aptMethod {
 
 	 std::vector<PDiffFile> patchfiles;
 	 Patch patch;
+
+	 HashStringList StartHashes;
+	 for (char const * const * type = HashString::SupportedHashes(); *type != nullptr; ++type)
+	 {
+	    std::string tagname;
+	    strprintf(tagname, "Start-%s-Hash", *type);
+	    std::string const hashsum = LookupTag(Message, tagname.c_str());
+	    if (hashsum.empty() == false)
+	       StartHashes.push_back(HashString(*type, hashsum));
+	 }
 
 	 if (FileExists(Path + ".ed") == true)
 	 {
@@ -654,8 +671,16 @@ class RredMethod : public aptMethod {
 	    return _error->Error("Failed to open out %s", Itm->DestFile.c_str());
 	 }
 
-	 Hashes hash(Itm->ExpectedHashes);
-	 patch.apply_against_file(out, inp, &hash);
+	 Hashes end_hash(Itm->ExpectedHashes);
+	 if (StartHashes.usable())
+	 {
+	    Hashes start_hash(StartHashes);
+	    patch.apply_against_file(out, inp, &start_hash, &end_hash);
+	    if (start_hash.GetHashStringList() != StartHashes)
+	       _error->Error("The input file hadn't the expected hash!");
+	 }
+	 else
+	    patch.apply_against_file(out, inp, nullptr, &end_hash);
 
 	 out.Close();
 	 inp.Close();
@@ -686,7 +711,7 @@ class RredMethod : public aptMethod {
 
 	 Res.LastModified = bufbase.st_mtime;
 	 Res.Size = bufbase.st_size;
-	 Res.TakeHashes(hash);
+	 Res.TakeHashes(end_hash);
 	 URIDone(Res);
 
 	 return true;

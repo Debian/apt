@@ -2435,9 +2435,10 @@ std::string pkgAcqIndexDiffs::Custom600Headers() const			/*{{{*/
    if(State != StateApplyDiff)
       return pkgAcqBaseIndex::Custom600Headers();
    std::ostringstream patchhashes;
-   HashStringList const ExpectedHashes = available_patches[0].patch_hashes;
-   for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
-      patchhashes <<  "\nPatch-0-" << hs->HashType() << "-Hash: " << hs->HashValue();
+   for (auto && hs : available_patches[0].result_hashes)
+      patchhashes <<  "\nStart-" << hs.HashType() << "-Hash: " << hs.HashValue();
+   for (auto && hs : available_patches[0].patch_hashes)
+      patchhashes <<  "\nPatch-0-" << hs.HashType() << "-Hash: " << hs.HashValue();
    patchhashes << pkgAcqBaseIndex::Custom600Headers();
    return patchhashes.str();
 }
@@ -2584,6 +2585,8 @@ std::string pkgAcqIndexMergeDiffs::Custom600Headers() const		/*{{{*/
       return pkgAcqBaseIndex::Custom600Headers();
    std::ostringstream patchhashes;
    unsigned int seen_patches = 0;
+   for (auto && hs : (*allPatches)[0]->patch.result_hashes)
+      patchhashes <<  "\nStart-" << hs.HashType() << "-Hash: " << hs.HashValue();
    for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	 I != allPatches->end(); ++I)
    {
