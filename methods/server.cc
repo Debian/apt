@@ -427,6 +427,8 @@ bool ServerMethod::Fetch(FetchItem *)
    decltype(PipelineDepth) CurrentDepth = 0;
    for (FetchItem const *I = Queue; I != QueueBack; I = I->Next)
       ++CurrentDepth;
+   if (CurrentDepth > AllowedDepth)
+      return true;
 
    do {
       // Make sure we stick with the same server
