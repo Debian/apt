@@ -38,6 +38,8 @@ testrred() {
 		cat Packages | runapt "${METHODSDIR}/rred" "$@"
 	}
 	testsuccessequal "$4" --nomsg rred -f Packages.ed
+	testsuccess runapt "${METHODSDIR}/rred" -t Packages Packages-patched Packages.ed
+	testfileequal Packages-patched "$4"
 }
 
 testrred 'Remove' 'first line' '1d' "$(tail -n +2 ./Packages)"
@@ -152,6 +154,7 @@ failrred() {
 		cat Packages | runapt "${METHODSDIR}/rred" "$@"
 	}
 	testfailure --nomsg rred -f Packages.ed
+	testfailure runapt "${METHODSDIR}/rred" -t Packages Packages-patched Packages.ed
 }
 
 failrred 'Bogus content' '<html>
