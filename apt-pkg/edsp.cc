@@ -7,6 +7,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/depcache.h>
@@ -1016,32 +1017,38 @@ bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_o
    return true;
 }
 									/*}}}*/
+static bool CreateDumpFile(char const * const id, char const * const type, FileFd &output)/*{{{*/
+{
+	auto const dumpfile = _config->FindFile((std::string("Dir::Log::") + type).c_str());
+	if (dumpfile.empty())
+		return false;
+	auto const dumpdir = flNotFile(dumpfile);
+	_error->PushToStack();
+	bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
+	   output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
+	std::vector<std::string> downgrademsgs;
+	while (_error->empty() == false)
+	{
+		std::string msg;
+		_error->PopMessage(msg);
+		downgrademsgs.emplace_back(std::move(msg));
+	}
+	_error->RevertToStack();
+	for (auto && msg : downgrademsgs)
+	   _error->Warning("%s", msg.c_str());
+	if (errored_out)
+		return _error->WarningE(id, _("Could not open file '%s'"), dumpfile.c_str());
+	return true;
+}
+									/*}}}*/
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 unsigned int const flags, OpProgress *Progress) {
 	if (strcmp(solver, "internal") == 0)
 	{
-		auto const dumpfile = _config->FindFile("Dir::Log::Solver");
-		if (dumpfile.empty())
-			return false;
-		auto const dumpdir = flNotFile(dumpfile);
 		FileFd output;
-		_error->PushToStack();
-		bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
-		   output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
-		std::vector<std::string> downgrademsgs;
-		while (_error->empty() == false)
-		{
-		   std::string msg;
-		   _error->PopMessage(msg);
-		   downgrademsgs.emplace_back(std::move(msg));
-		}
-		_error->RevertToStack();
-		for (auto && msg : downgrademsgs)
-		   _error->Warning("%s", msg.c_str());
-		if (errored_out)
-			return _error->WarningE("EDSP::Resolve", _("Could not open file '%s'"), dumpfile.c_str());
-		bool Okay = EDSP::WriteRequest(Cache, output, flags, nullptr);
+		bool Okay = CreateDumpFile("EDSP::Resolve", "solver", output);
+		Okay &= EDSP::WriteRequest(Cache, output, flags, nullptr);
 		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
 	}
 	int solver_in, solver_out;
@@ -1088,27 +1095,16 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 {
    if (strcmp(solver, "internal") == 0)
    {
-      auto const dumpfile = _config->FindFile("Dir::Log::Planner");
-      if (dumpfile.empty())
-	 return false;
-      auto const dumpdir = flNotFile(dumpfile);
       FileFd output;
       _error->PushToStack();
-      bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
-	    output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
-      std::vector<std::string> downgrademsgs;
-      while (_error->empty() == false)
+      bool Okay = CreateDumpFile("EIPP::OrderInstall", "planner", output);
+      if (Okay == false && dynamic_cast<pkgSimulate*>(PM) != nullptr)
       {
-	 std::string msg;
-	 _error->PopMessage(msg);
-	 downgrademsgs.emplace_back(std::move(msg));
+	 _error->RevertToStack();
+	 return false;
       }
-      _error->RevertToStack();
-      for (auto && msg : downgrademsgs)
-	 _error->Warning("%s", msg.c_str());
-      if (errored_out)
-	 return _error->WarningE("EIPP::OrderInstall", _("Could not open file '%s'"), dumpfile.c_str());
-      bool Okay = EIPP::WriteRequest(PM->Cache, output, flags, nullptr);
+      _error->MergeWithStack();
+      Okay &= EIPP::WriteRequest(PM->Cache, output, flags, nullptr);
       return Okay && EIPP::WriteScenario(PM->Cache, output, nullptr);
    }
 
