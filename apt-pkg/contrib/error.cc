@@ -68,13 +68,12 @@ bool GlobalError::NAME (const char *Function, const char *Description,...) { \
 	va_list args; \
 	size_t msgSize = 400; \
 	int const errsv = errno; \
-	while (true) { \
+	bool retry; \
+	do { \
 		va_start(args,Description); \
-		bool const retry = InsertErrno(TYPE, Function, Description, args, errsv, msgSize); \
+		retry = InsertErrno(TYPE, Function, Description, args, errsv, msgSize); \
 		va_end(args); \
-		if (retry == false) \
-			break; \
-	} \
+	} while (retry); \
 	return false; \
 }
 GEMessage(FatalE, FATAL)
@@ -90,13 +89,12 @@ bool GlobalError::InsertErrno(MsgType const &type, const char *Function,
 	va_list args;
 	size_t msgSize = 400;
 	int const errsv = errno;
-	while (true) {
+	bool retry;
+	do {
 		va_start(args,Description);
-		bool const retry = InsertErrno(type, Function, Description, args, errsv, msgSize);
+		retry = InsertErrno(type, Function, Description, args, errsv, msgSize);
 		va_end(args);
-		if (retry == false)
-		   break;
-	}
+	} while (retry);
 	return false;
 }
 									/*}}}*/
@@ -127,12 +125,12 @@ bool GlobalError::InsertErrno(MsgType type, const char* Function,
 bool GlobalError::NAME (const char *Description,...) { \
 	va_list args; \
 	size_t msgSize = 400; \
-	while (true) { \
+	bool retry; \
+	do { \
 		va_start(args,Description); \
-		if (Insert(TYPE, Description, args, msgSize) == false) \
-			break; \
+		retry = Insert(TYPE, Description, args, msgSize); \
 		va_end(args); \
-	} \
+	} while (retry); \
 	return false; \
 }
 GEMessage(Fatal, FATAL)
@@ -147,12 +145,12 @@ bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 {
 	va_list args;
 	size_t msgSize = 400;
-	while (true) {
+	bool retry;
+	do {
 		va_start(args,Description);
-		if (Insert(type, Description, args, msgSize) == false)
-			break;
+		retry = Insert(type, Description, args, msgSize);
 		va_end(args);
-	}
+	} while (retry);
 	return false;
 }
 									/*}}}*/

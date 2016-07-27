@@ -2656,13 +2656,12 @@ bool FileFd::FileFdErrno(const char *Function, const char *Description,...)
    va_list args;
    size_t msgSize = 400;
    int const errsv = errno;
-   while (true)
-   {
+   bool retry;
+   do {
       va_start(args,Description);
-      if (_error->InsertErrno(GlobalError::ERROR, Function, Description, args, errsv, msgSize) == false)
-	 break;
+      retry = _error->InsertErrno(GlobalError::ERROR, Function, Description, args, errsv, msgSize);
       va_end(args);
-   }
+   } while (retry);
    return false;
 }
 									/*}}}*/
@@ -2671,13 +2670,12 @@ bool FileFd::FileFdError(const char *Description,...) {
    Flags |= Fail;
    va_list args;
    size_t msgSize = 400;
-   while (true)
-   {
+   bool retry;
+   do {
       va_start(args,Description);
-      if (_error->Insert(GlobalError::ERROR, Description, args, msgSize) == false)
-	 break;
+      retry = _error->Insert(GlobalError::ERROR, Description, args, msgSize);
       va_end(args);
-   }
+   } while (retry);
    return false;
 }
 									/*}}}*/
