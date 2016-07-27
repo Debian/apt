@@ -1978,6 +1978,18 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
    new pkgAcqIndexDiffs(Owner, TransactionManager, Target);
 }
 									/*}}}*/
+static bool RemoveFileForBootstrapLinking(bool const Debug, std::string const &For, std::string const &Boot)/*{{{*/
+{
+   if (FileExists(Boot) && RemoveFile("Bootstrap-linking", Boot) == false)
+   {
+      if (Debug)
+	 std::clog << "Bootstrap-linking for patching " << For
+	    << " by removing stale " << Boot << " failed!" << std::endl;
+      return false;
+   }
+   return true;
+}
+									/*}}}*/
 bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 {
    ExpectedAdditionalItems = 0;
@@ -2318,23 +2330,15 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       if (unlikely(Final.empty())) // because we wouldn't be called in such a case
 	 return false;
       std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
-      if (FileExists(PartialFile) && RemoveFile("Bootstrap-linking", PartialFile) == false)
-      {
-	 if (Debug)
-	    std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
-	       << " by removing stale " << PartialFile << " failed!" << std::endl;
+      std::string const PatchedFile = GetKeepCompressedFileName(PartialFile + "-patched", Target);
+      if (RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PartialFile) == false ||
+	    RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PatchedFile) == false)
 	 return false;
-      }
       for (auto const &ext : APT::Configuration::getCompressorExtensions())
       {
-	 std::string const Partial = PartialFile + ext;
-	 if (FileExists(Partial) && RemoveFile("Bootstrap-linking", Partial) == false)
-	 {
-	    if (Debug)
-	       std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
-		  << " by removing stale " << Partial << " failed!" << std::endl;
+	 if (RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PartialFile + ext) == false ||
+	       RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PatchedFile + ext) == false)
 	    return false;
-	 }
       }
       std::string const Ext = Final.substr(CurrentPackagesFile.length());
       std::string const Partial = PartialFile + Ext;
