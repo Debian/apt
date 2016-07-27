@@ -340,7 +340,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 static bool SkipUnavailableVersions(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver)/*{{{*/
 {
    /* versions which aren't current and aren't available in
-      any "online" source file are bad, expect if they are the choosen
+      any "online" source file are bad, expect if they are the chosen
       candidate: The exception is for build-dep implementation as it creates
       such pseudo (package) versions and removes them later on again.
       We filter out versions at all so packages in 'rc' state only available
