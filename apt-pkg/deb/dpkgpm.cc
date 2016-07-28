@@ -1297,6 +1297,44 @@ static void cleanUpTmpDir(char * const tmpdir)				/*{{{*/
  * through to human readable (and i10n-able)
  * names and calculates a percentage for each step.
  */
+static bool ItemIsEssential(pkgDPkgPM::Item const &I)
+{
+   static auto const cachegen = _config->Find("pkgCacheGen::Essential");
+   if (cachegen == "none" || cachegen == "native")
+      return true;
+   if (unlikely(I.Pkg.end()))
+      return true;
+   return (I.Pkg->Flags & pkgCache::Flag::Essential) != 0;
+}
+bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
+{
+   {
+      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyRemoved;
+      for (auto && I : List)
+	 if (I.Op == Item::Remove || I.Op == Item::Purge)
+	    alreadyRemoved.insert(I.Pkg->ID);
+      std::remove_reference<decltype(List)>::type AppendList;
+      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	 if (Cache[Pkg].Delete() && alreadyRemoved.insert(Pkg->ID).second == true)
+	    AppendList.emplace_back(Cache[Pkg].Purge() ? Item::Purge : Item::Remove, Pkg);
+      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
+   }
+   {
+      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyConfigured;
+      for (auto && I : List)
+	 if (I.Op == Item::Configure)
+	    alreadyConfigured.insert(I.Pkg->ID);
+      std::remove_reference<decltype(List)>::type AppendList;
+      for (auto && I : List)
+	 if (I.Op == Item::Install && alreadyConfigured.insert(I.Pkg->ID).second == true)
+	    AppendList.emplace_back(Item::Configure, I.Pkg);
+      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+	 if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && alreadyConfigured.insert(Pkg->ID).second == true)
+	    AppendList.emplace_back(Item::Configure, Pkg);
+      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
+   }
+   return true;
+}
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
    // we remove the last configures (and after that removes) from the list here
@@ -1308,43 +1346,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }),
 	       List.crend(), [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; }).base());
 
-   // explicitely remove everything for hookscripts and progress building
-   {
-      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyRemoved;
-      for (auto && I : List)
-	 if (I.Op == Item::Remove || I.Op == Item::Purge)
-	    alreadyRemoved.insert(I.Pkg->ID);
-      decltype(List) AppendList;
-      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-	 if (Cache[Pkg].Delete() && alreadyRemoved.insert(Pkg->ID).second == true)
-	    AppendList.emplace_back(Cache[Pkg].Purge() ? Item::Purge : Item::Remove, Pkg);
-      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
-   }
-
-   // explicitely configure everything for hookscripts and progress building
-   {
-      std::unordered_set<decltype(pkgCache::Package::ID)> alreadyConfigured;
-      for (auto && I : List)
-	 if (I.Op == Item::Configure)
-	    alreadyConfigured.insert(I.Pkg->ID);
-      decltype(List) AppendList;
-      for (auto && I : List)
-	 if (I.Op == Item::Install && alreadyConfigured.insert(I.Pkg->ID).second == true)
-	    AppendList.emplace_back(Item::Configure, I.Pkg);
-      for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-	 if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && alreadyConfigured.insert(Pkg->ID).second == true)
-	    AppendList.emplace_back(Item::Configure, Pkg);
-      std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
-   }
-
-   auto const ItemIsEssential = [](pkgDPkgPM::Item const &I) {
-      static auto const cachegen = _config->Find("pkgCacheGen::Essential");
-      if (cachegen == "none" || cachegen == "native")
-	 return true;
-      if (unlikely(I.Pkg.end()))
-	 return true;
-      return (I.Pkg->Flags & pkgCache::Flag::Essential) != 0;
-   };
+   // explicitely remove&configure everything for hookscripts and progress building
+   ExpandPendingCalls(List, Cache);
 
    auto const StripAlreadyDoneFromPending = [&](APT::VersionVector & Pending) {
       Pending.erase(std::remove_if(Pending.begin(), Pending.end(), [&](pkgCache::VerIterator const &Ver) {

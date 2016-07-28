@@ -99,7 +99,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go(APT::Progress::PackageManager * /*progress*/) {return true;};
-   virtual bool Go(int /*statusFd*/=-1) {return true;};
+   APT_DEPRECATED_MSG("Use overload with explicit progress manager") virtual bool Go(int /*statusFd*/=-1) {return true;};
 
    virtual void Reset() {};
 
