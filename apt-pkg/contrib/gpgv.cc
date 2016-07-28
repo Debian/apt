@@ -118,9 +118,9 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (sigFd == -1 || dataFd == -1)
       {
 	 if (dataFd != -1)
-	    unlink(sig);
-	 if (sigFd != -1)
 	    unlink(data);
+	 if (sigFd != -1)
+	    unlink(sig);
 	 ioprintf(std::cerr, "Couldn't create tempfiles for splitting up %s", File.c_str());
 	 exit(EINTERNAL);
       }
@@ -134,9 +134,9 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	    SplitClearSignedFile(File, &message, &dataHeader, &signature) == false)
       {
 	 if (dataFd != -1)
-	    unlink(sig);
-	 if (sigFd != -1)
 	    unlink(data);
+	 if (sigFd != -1)
+	    unlink(sig);
 	 ioprintf(std::cerr, "Splitting up %s into data and signature failed", File.c_str());
 	 exit(112);
       }
