@@ -72,11 +72,15 @@ checkpurge() {
 	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
 	testfileequal 'terminal.log' "$(cat terminal.output)"
 
-	testequal "startup packages purge
+	testequal "startup packages remove
+status installed $PKGNAME 1.0
 remove $PKGNAME 1.0 <none>
 status half-configured $PKGNAME 1.0
 status half-installed $PKGNAME 1.0
 status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+startup packages purge
+remove $PKGNAME 1.0 <none>
 purge $PKGNAME 1.0 <none>
 status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0

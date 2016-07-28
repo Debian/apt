@@ -48,33 +48,42 @@ DPkg::Tools::options::\"./${hook}-v${1}.sh\"::Version \"$1\";" > rootdir/etc/apt
 observehook() {
 	rm -f ${hook}-v2.list ${hook}-v3.list
 	msgtest 'Observe hooks while' "$*"
-	testsuccess --nomsg aptget "$@" -y --allow-downgrades
+	testsuccess --nomsg aptget "$@" -y --allow-downgrades --planner $planner
+	# different planners have different orders – we don't care in this test here
+	if [ -e ${hook}-v2.list ]; then
+		sort < ${hook}-v2.list > ${hook}-v2.list.new
+		mv ${hook}-v2.list.new ${hook}-v2.list
+	fi
+	if [ -e ${hook}-v3.list ]; then
+		sort < ${hook}-v3.list > ${hook}-v3.list.new
+		mv ${hook}-v3.list.new ${hook}-v3.list
+	fi
 }
 
 testrun() {
 	observehook install stuff -t stable
 	testfileequal "${hook}-v2.list" 'libsame - < 1 **CONFIGURE**
-toolkit - < 1 **CONFIGURE**
-stuff - < 1 **CONFIGURE**'
+stuff - < 1 **CONFIGURE**
+toolkit - < 1 **CONFIGURE**'
 	testfileequal "${hook}-v3.list" 'libsame - - none < 1 amd64 same **CONFIGURE**
-toolkit - - none < 1 all foreign **CONFIGURE**
-stuff - - none < 1 amd64 none **CONFIGURE**'
+stuff - - none < 1 amd64 none **CONFIGURE**
+toolkit - - none < 1 all foreign **CONFIGURE**'
 
 	observehook install stuff -t unstable
 	testfileequal "${hook}-v2.list" 'libsame 1 < 2 **CONFIGURE**
-toolkit 1 < 2 **CONFIGURE**
-stuff 1 < 2 **CONFIGURE**'
+stuff 1 < 2 **CONFIGURE**
+toolkit 1 < 2 **CONFIGURE**'
 	testfileequal "${hook}-v3.list" 'libsame 1 amd64 same < 2 amd64 same **CONFIGURE**
-toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**
-stuff 1 amd64 none < 2 amd64 none **CONFIGURE**'
+stuff 1 amd64 none < 2 amd64 none **CONFIGURE**
+toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**'
 
 	observehook install stuff:i386 -t unstable
-	testfileequal "${hook}-v2.list" 'stuff 2 > - **REMOVE**
-libsame - < 2 **CONFIGURE**
-stuff - < 2 **CONFIGURE**'
-	testfileequal "${hook}-v3.list" 'stuff 2 amd64 none > - - none **REMOVE**
-libsame - - none < 2 i386 same **CONFIGURE**
-stuff - - none < 2 i386 none **CONFIGURE**'
+	testfileequal "${hook}-v2.list" 'libsame - < 2 **CONFIGURE**
+stuff - < 2 **CONFIGURE**
+stuff 2 > - **REMOVE**'
+	testfileequal "${hook}-v3.list" 'libsame - - none < 2 i386 same **CONFIGURE**
+stuff - - none < 2 i386 none **CONFIGURE**
+stuff 2 amd64 none > - - none **REMOVE**'
 
 	observehook remove libsame
 	testfileequal "${hook}-v2.list" 'libsame 2 > - **REMOVE**'
@@ -82,30 +91,30 @@ stuff - - none < 2 i386 none **CONFIGURE**'
 
 	observehook install stuff:i386/stable libsame:i386/stable toolkit/stable
 	testfileequal "${hook}-v2.list" 'libsame 2 > 1 **CONFIGURE**
-toolkit 2 > 1 **CONFIGURE**
-stuff 2 > 1 **CONFIGURE**'
+stuff 2 > 1 **CONFIGURE**
+toolkit 2 > 1 **CONFIGURE**'
 	testfileequal "${hook}-v3.list" 'libsame 2 i386 same > 1 i386 same **CONFIGURE**
-toolkit 2 amd64 foreign > 1 all foreign **CONFIGURE**
-stuff 2 i386 none > 1 i386 none **CONFIGURE**'
+stuff 2 i386 none > 1 i386 none **CONFIGURE**
+toolkit 2 amd64 foreign > 1 all foreign **CONFIGURE**'
 
 	observehook install 'libsame:*'
-	testfileequal "${hook}-v2.list" 'libsame 1 < 2 **CONFIGURE**
-libsame - < 2 **CONFIGURE**
-toolkit 1 < 2 **CONFIGURE**
-stuff 1 < 2 **CONFIGURE**'
-	testfileequal "${hook}-v3.list" 'libsame 1 i386 same < 2 i386 same **CONFIGURE**
-libsame - - none < 2 amd64 same **CONFIGURE**
-toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**
-stuff 1 i386 none < 2 i386 none **CONFIGURE**'
+	testfileequal "${hook}-v2.list" 'libsame - < 2 **CONFIGURE**
+libsame 1 < 2 **CONFIGURE**
+stuff 1 < 2 **CONFIGURE**
+toolkit 1 < 2 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'libsame - - none < 2 amd64 same **CONFIGURE**
+libsame 1 i386 same < 2 i386 same **CONFIGURE**
+stuff 1 i386 none < 2 i386 none **CONFIGURE**
+toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**'
 
 	observehook purge stuff:i386 'libsame:*' toolkit
 	testfileequal "${hook}-v2.list" 'libsame 2 > - **REMOVE**
-stuff 2 > - **REMOVE**
 libsame 2 > - **REMOVE**
+stuff 2 > - **REMOVE**
 toolkit 2 > - **REMOVE**'
 	testfileequal "${hook}-v3.list" 'libsame 2 amd64 same > - - none **REMOVE**
-stuff 2 i386 none > - - none **REMOVE**
 libsame 2 i386 same > - - none **REMOVE**
+stuff 2 i386 none > - - none **REMOVE**
 toolkit 2 amd64 foreign > - - none **REMOVE**'
 
 	observehook install confpkg
@@ -127,10 +136,17 @@ toolkit 2 amd64 foreign > - - none **REMOVE**'
 	dpkg -l confpkg 2>/dev/null | grep -q '^rc' && msgfail || msgpass
 }
 
-enablehookversion 2
-enablehookversion 3
-testrun
+runwithplanner()
+{
+	msgmsg 'Running with planner' "$1"
+	planner="$1"
+	enablehookversion 2
+	enablehookversion 3
+	testrun
 
-enablehookversion 2 13
-enablehookversion 3 13
-testrun
+	enablehookversion 2 13
+	enablehookversion 3 13
+	testrun
+}
+
+runwithplanner 'apt'

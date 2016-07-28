@@ -1337,16 +1337,10 @@ bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
 }
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
-   // we remove the last configures (and after that removes) from the list here
-   // as they will be covered by the pending calls, so explicit calls are busy work
-   decltype(List)::const_iterator::difference_type explicitIdx =
-      std::distance(List.cbegin(),
-	    _config->FindB("Dpkg::ExplicitLastConfigure", false) ? List.cend() :
-	    std::find_if_not(
-	       std::find_if_not(List.crbegin(), List.crend(), [](Item const &i) { return i.Op == Item::Configure; }),
-	       List.crend(), [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; }).base());
-
    // explicitely remove&configure everything for hookscripts and progress building
+   // we need them only temporarily through, so keep the length and erase afterwards
+   decltype(List)::const_iterator::difference_type explicitIdx =
+      std::distance(List.cbegin(), List.cend());
    ExpandPendingCalls(List, Cache);
 
    auto const StripAlreadyDoneFromPending = [&](APT::VersionVector & Pending) {
