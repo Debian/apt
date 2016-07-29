@@ -1061,20 +1061,21 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 		return _error->Errno("ResolveExternal", "Opening solver %s stdin on fd %d for writing failed", solver, solver_in);
 
 	bool Okay = output.Failed() == false;
-	if (Progress != NULL)
+	if (Okay && Progress != NULL)
 		Progress->OverallProgress(0, 100, 5, _("Execute external solver"));
 	Okay &= EDSP::WriteRequest(Cache, output, flags, Progress);
-	if (Progress != NULL)
+	if (Okay && Progress != NULL)
 		Progress->OverallProgress(5, 100, 20, _("Execute external solver"));
 	Okay &= EDSP::WriteScenario(Cache, output, Progress);
 	output.Close();
 
-	if (Progress != NULL)
+	if (Okay && Progress != NULL)
 		Progress->OverallProgress(25, 100, 75, _("Execute external solver"));
 	if (Okay && EDSP::ReadResponse(solver_out, Cache, Progress) == false)
 		return false;
 
-	return ExecWait(solver_pid, solver);
+	bool const waited = ExecWait(solver_pid, solver);
+	return Okay && waited;
 }
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 bool const upgrade, bool const distUpgrade,
@@ -1118,28 +1119,32 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
       return _error->Errno("EIPP::OrderInstall", "Opening planner %s stdin on fd %d for writing failed", solver, solver_in);
 
    bool Okay = output.Failed() == false;
-   if (Progress != NULL)
+   if (Okay && Progress != NULL)
       Progress->OverallProgress(0, 100, 5, _("Execute external planner"));
    Okay &= EIPP::WriteRequest(PM->Cache, output, flags, Progress);
-   if (Progress != NULL)
+   if (Okay && Progress != NULL)
       Progress->OverallProgress(5, 100, 20, _("Execute external planner"));
    Okay &= EIPP::WriteScenario(PM->Cache, output, Progress);
    output.Close();
 
-   if (Progress != NULL)
-      Progress->OverallProgress(25, 100, 75, _("Execute external planner"));
-
-   // we don't tell the external planners about boring things
-   for (auto Pkg = PM->Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   if (Okay)
    {
-      if (Pkg->CurrentState == pkgCache::State::ConfigFiles && PM->Cache[Pkg].Purge() == true)
-	 PM->Remove(Pkg, true);
+      if (Progress != nullptr)
+	 Progress->OverallProgress(25, 100, 75, _("Execute external planner"));
+
+      // we don't tell the external planners about boring things
+      for (auto Pkg = PM->Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+      {
+	 if (Pkg->CurrentState == pkgCache::State::ConfigFiles && PM->Cache[Pkg].Purge() == true)
+	    PM->Remove(Pkg, true);
+      }
    }
 
-   if (Okay && EIPP::ReadResponse(solver_out, PM, Progress) == false)
+   if (EIPP::ReadResponse(solver_out, PM, Progress) == false)
       return false;
 
-   return ExecWait(solver_pid, solver);
+   bool const waited = ExecWait(solver_pid, solver);
+   return Okay && waited;
 }
 									/*}}}*/
 bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
