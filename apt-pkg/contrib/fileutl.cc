@@ -2375,7 +2375,7 @@ FileFd::~FileFd()
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    ssize_t Res = 1;
    errno = 0;
@@ -2426,7 +2426,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return nullptr;
    return d->InternalReadLine(To, Size);
 }
@@ -2434,6 +2434,8 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 // FileFd::Flush - Flush the file  					/*{{{*/
 bool FileFd::Flush()
 {
+   if (Failed())
+      return false;
    if (d == nullptr)
       return true;
 
@@ -2443,7 +2445,7 @@ bool FileFd::Flush()
 // FileFd::Write - Write to the file					/*{{{*/
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    ssize_t Res = 1;
    errno = 0;
@@ -2499,7 +2501,7 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 // FileFd::Seek - Seek in the file					/*{{{*/
 bool FileFd::Seek(unsigned long long To)
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    Flags &= ~HitEof;
    return d->InternalSeek(To);
@@ -2508,7 +2510,7 @@ bool FileFd::Seek(unsigned long long To)
 // FileFd::Skip - Skip over data in the file				/*{{{*/
 bool FileFd::Skip(unsigned long long Over)
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    return d->InternalSkip(Over);
 }
@@ -2516,7 +2518,7 @@ bool FileFd::Skip(unsigned long long Over)
 // FileFd::Truncate - Truncate the file					/*{{{*/
 bool FileFd::Truncate(unsigned long long To)
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    // truncating /dev/null is always successful - as we get an error otherwise
    if (To == 0 && FileName == "/dev/null")
@@ -2529,7 +2531,7 @@ bool FileFd::Truncate(unsigned long long To)
 /* */
 unsigned long long FileFd::Tell()
 {
-   if (d == nullptr)
+   if (d == nullptr || Failed())
       return false;
    off_t const Res = d->InternalTell();
    if (Res == (off_t)-1)
@@ -2592,7 +2594,7 @@ time_t FileFd::ModificationTime()
 unsigned long long FileFd::Size()
 {
    if (d == nullptr)
-      return false;
+      return 0;
    return d->InternalSize();
 }
 									/*}}}*/
