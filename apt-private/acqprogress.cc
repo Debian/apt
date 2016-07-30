@@ -194,7 +194,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 // Add in the short description
 	 S << " [";
 	 if (I->CurrentItem->Owner->ID != 0)
-	    S << I->CurrentItem->Owner->ID << " ";
+	    S << std::to_string(I->CurrentItem->Owner->ID) << " ";
 	 S << I->CurrentItem->ShortDesc;
 
 	 // Show the short mode string
@@ -204,7 +204,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 enum {Long = 0,Medium,Short} Mode = Medium;
 	 // Add the current progress
 	 if (Mode == Long)
-	    S << " " << I->CurrentSize;
+	    S << " " << std::to_string(I->CurrentSize);
 	 else
 	 {
 	    if (Mode == Medium || I->TotalSize == 0)

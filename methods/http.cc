@@ -739,7 +739,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    // Check for a partial file and send if-queries accordingly
    struct stat SBuf;
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
-      Req << "Range: bytes=" << SBuf.st_size << "-\r\n"
+      Req << "Range: bytes=" << std::to_string(SBuf.st_size) << "-\r\n"
 	 << "If-Range: " << TimeRFC1123(SBuf.st_mtime) << "\r\n";
    else if (Itm->LastModified != 0)
       Req << "If-Modified-Since: " << TimeRFC1123(Itm->LastModified).c_str() << "\r\n";
