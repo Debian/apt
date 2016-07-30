@@ -2777,7 +2777,7 @@ std::string pkgAcqIndexMergeDiffs::Custom600Headers() const		/*{{{*/
    {
       HashStringList const ExpectedHashes = (*I)->patch.patch_hashes;
       for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
-	 patchhashes <<  "\nPatch-" << seen_patches << "-" << hs->HashType() << "-Hash: " << hs->HashValue();
+	 patchhashes <<  "\nPatch-" << std::to_string(seen_patches) << "-" << hs->HashType() << "-Hash: " << hs->HashValue();
       ++seen_patches;
    }
    patchhashes << pkgAcqBaseIndex::Custom600Headers();
