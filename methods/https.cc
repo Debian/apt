@@ -205,9 +205,20 @@ void HttpsMethod::SetupProxy()						/*{{{*/
    }
 
    // Determine what host and port to use based on the proxy settings
-   if (UseProxy.empty() == false) 
+   if (UseProxy.empty() == false)
    {
       Proxy = UseProxy;
+      if (Proxy.Access == "socks5h")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
+      else if (Proxy.Access == "socks5")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+      else if (Proxy.Access == "socks4a")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4A);
+      else if (Proxy.Access == "socks")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
+      else
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+
       if (Proxy.Port != 1)
 	 curl_easy_setopt(curl, CURLOPT_PROXYPORT, Proxy.Port);
       curl_easy_setopt(curl, CURLOPT_PROXY, Proxy.Host.c_str());
