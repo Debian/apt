@@ -63,13 +63,13 @@ const unsigned int CircleBuf::BW_HZ=10;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long long Size)
+CircleBuf::CircleBuf(HttpMethod const * const Owner, unsigned long long Size)
    : Size(Size), Hash(NULL), TotalWriten(0)
 {
    Buf = new unsigned char[Size];
    Reset();
 
-   CircleBuf::BwReadLimit = _config->FindI("Acquire::http::Dl-Limit",0)*1024;
+   CircleBuf::BwReadLimit = Owner->ConfigFindI("Dl-Limit", 0) * 1024;
 }
 									/*}}}*/
 // CircleBuf::Reset - Reset to the default state			/*{{{*/
@@ -287,9 +287,9 @@ CircleBuf::~CircleBuf()
 }
 
 // HttpServerState::HttpServerState - Constructor			/*{{{*/
-HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(64*1024), Out(4*1024)
+HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, 64*1024), Out(Owner, 4*1024)
 {
-   TimeOut = _config->FindI("Acquire::http::Timeout",TimeOut);
+   TimeOut = Owner->ConfigFindI("Timeout", TimeOut);
    Reset();
 }
 									/*}}}*/
@@ -309,7 +309,7 @@ bool HttpServerState::Open()
    
    // Determine the proxy setting
    AutoDetectProxy(ServerName);
-   string SpecificProxy = _config->Find("Acquire::http::Proxy::" + ServerName.Host);
+   string SpecificProxy = Owner->ConfigFind("Proxy::" + ServerName.Host, "");
    if (!SpecificProxy.empty())
    {
 	   if (SpecificProxy == "DIRECT")
@@ -319,7 +319,7 @@ bool HttpServerState::Open()
    }
    else
    {
-	   string DefProxy = _config->Find("Acquire::http::Proxy");
+	   string DefProxy = Owner->ConfigFind("Proxy", "");
 	   if (!DefProxy.empty())
 	   {
 		   Proxy = DefProxy;
@@ -616,7 +616,7 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
       FD_SET(FileFD,&wfds);
 
    // Add stdin
-   if (_config->FindB("Acquire::http::DependOnSTDIN", true) == true)
+   if (Owner->ConfigFindB("DependOnSTDIN", true) == true)
       FD_SET(STDIN_FILENO,&rfds);
 	  
    // Figure out the max fd
@@ -688,6 +688,11 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
 void HttpMethod::SendReq(FetchItem *Itm)
 {
    URI Uri = Itm->Uri;
+   {
+      auto const plus = Binary.find('+');
+      if (plus != std::string::npos)
+	 Uri.Access = Binary.substr(plus + 1);
+   }
 
    // The HTTP server expects a hostname with a trailing :port
    std::stringstream Req;
@@ -705,7 +710,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    if (Server->Proxy.empty() == true || Server->Proxy.Host.empty())
       requesturi = Uri.Path;
    else
-      requesturi = Itm->Uri;
+      requesturi = Uri;
 
    // The "+" is encoded as a workaround for a amazon S3 bug
    // see LP bugs #1003633 and #1086997.
@@ -722,12 +727,12 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req << "Host: " << ProperHost << "\r\n";
 
    // generate a cache control header (if needed)
-   if (_config->FindB("Acquire::http::No-Cache",false) == true)
+   if (ConfigFindB("No-Cache",false) == true)
       Req << "Cache-Control: no-cache\r\n"
 	 << "Pragma: no-cache\r\n";
    else if (Itm->IndexFile == true)
-      Req << "Cache-Control: max-age=" << std::to_string(_config->FindI("Acquire::http::Max-Age",0)) << "\r\n";
-   else if (_config->FindB("Acquire::http::No-Store",false) == true)
+      Req << "Cache-Control: max-age=" << std::to_string(ConfigFindI("Max-Age", 0)) << "\r\n";
+   else if (ConfigFindB("No-Store", false) == true)
       Req << "Cache-Control: no-store\r\n";
 
    // If we ask for uncompressed files servers might respond with content-
@@ -735,7 +740,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    // see 657029, 657560 and co, so if we have no extension on the request
    // ask for text only. As a sidenote: If there is nothing to negotate servers
    // seem to be nice and ignore it.
-   if (_config->FindB("Acquire::http::SendAccept", true) == true)
+   if (ConfigFindB("SendAccept", true) == true)
    {
       size_t const filepos = Itm->Uri.find_last_of('/');
       string const file = Itm->Uri.substr(filepos + 1);
@@ -760,7 +765,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req << "Authorization: Basic "
 	 << Base64Encode(Uri.User + ":" + Uri.Password) << "\r\n";
 
-   Req << "User-Agent: " << _config->Find("Acquire::http::User-Agent",
+   Req << "User-Agent: " << ConfigFind("User-Agent",
 		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
 
    Req << "\r\n";
@@ -769,22 +774,6 @@ void HttpMethod::SendReq(FetchItem *Itm)
       cerr << Req.str() << endl;
 
    Server->WriteResponse(Req.str());
-}
-									/*}}}*/
-// HttpMethod::Configuration - Handle a configuration message		/*{{{*/
-// ---------------------------------------------------------------------
-/* We stash the desired pipeline depth */
-bool HttpMethod::Configuration(string Message)
-{
-   if (ServerMethod::Configuration(Message) == false)
-      return false;
-
-   AllowRedirect = _config->FindB("Acquire::http::AllowRedirect",true);
-   PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
-				  PipelineDepth);
-   Debug = _config->FindB("Debug::Acquire::http",false);
-
-   return true;
 }
 									/*}}}*/
 std::unique_ptr<ServerState> HttpMethod::CreateServerState(URI const &uri)/*{{{*/
@@ -824,5 +813,17 @@ ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res
 
    SetNonBlock(File->Fd(),true);
    return FILE_IS_OPEN;
+}
+									/*}}}*/
+HttpMethod::HttpMethod(std::string &&pProg) : ServerMethod(pProg.c_str(), "1.2", Pipeline | SendConfig)/*{{{*/
+{
+   auto addName = std::inserter(methodNames, methodNames.begin());
+   if (Binary != "http")
+      addName = "http";
+   auto const plus = Binary.find('+');
+   if (plus != std::string::npos)
+      addName = Binary.substr(0, plus);
+   File = 0;
+   Server = 0;
 }
 									/*}}}*/

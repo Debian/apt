@@ -24,10 +24,23 @@ IFS="$backupIFS"
 ln -s "${OLDMETHODS}/http" "${NEWMETHODS}/http-ng"
 
 changetowebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
 sed -i -e 's# http:# http-ng:#' $(find rootdir/etc/apt/sources.list.d -name '*-deb-src.list')
 
-testsuccess apt update
+testsuccess apt update -o Debug::Acquire::http-ng=1
 cp rootdir/tmp/testsuccess.output update.log
 # all requests are folded into the first Release file
 testsuccess grep ' http-ng://' update.log
 testfailure grep ' http://' update.log
+# see if method-specific debug was enabled
+testsuccess grep '^Answer for: http-ng:' update.log
+
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e "s#:${APTHTTPPORT}/#:${APTHTTPPORT}/redirectme#" rootdir/etc/apt/sources.list.d/*
+testsuccess apt update -o Debug::Acquire::http-ng=1
+cp rootdir/tmp/testsuccess.output update.log
+# all requests are folded into the first Release file
+testsuccess grep ' http-ng://' update.log
+testfailure grep '^[^L].* http://' update.log
+# see if method-specific debug was enabled
+testsuccess grep '^Answer for: http-ng:' update.log

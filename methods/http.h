@@ -86,7 +86,7 @@ class CircleBuf
    // Dump everything
    void Stats();
 
-   explicit CircleBuf(unsigned long long Size);
+   CircleBuf(HttpMethod const * const Owner, unsigned long long Size);
    ~CircleBuf();
 };
 
@@ -126,8 +126,6 @@ class HttpMethod : public ServerMethod
    public:
    virtual void SendReq(FetchItem *Itm) APT_OVERRIDE;
 
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
-
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    virtual void RotateDNS() APT_OVERRIDE;
    virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res) APT_OVERRIDE;
@@ -138,11 +136,7 @@ class HttpMethod : public ServerMethod
    public:
    friend struct HttpServerState;
 
-   HttpMethod() : ServerMethod("http", "1.2",Pipeline | SendConfig)
-   {
-      File = 0;
-      Server = 0;
-   };
+   explicit HttpMethod(std::string &&pProg);
 };
 
 #endif

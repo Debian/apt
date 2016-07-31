@@ -313,10 +313,30 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       {
 	 NextURI = DeQuoteString(Server->Location);
 	 URI tmpURI = NextURI;
-	 if (tmpURI.Access == "http" && Binary == "https+http")
+	 if (tmpURI.Access.find('+') != std::string::npos)
 	 {
-	    tmpURI.Access = "https+http";
-	    NextURI = tmpURI;
+	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
+	 URI Uri = Queue->Uri;
+	 if (Binary.find('+') != std::string::npos)
+	 {
+	    auto base = Binary.substr(0, Binary.find('+'));
+	    if (base != tmpURI.Access)
+	    {
+	       tmpURI.Access = base + '+' + tmpURI.Access;
+	       if (tmpURI.Access == Binary)
+	       {
+		  std::string tmpAccess = Uri.Access;
+		  std::swap(tmpURI.Access, Uri.Access);
+		  NextURI = tmpURI;
+		  std::swap(tmpURI.Access, Uri.Access);
+	       }
+	       else
+		  NextURI = tmpURI;
+	    }
 	 }
 	 if (Queue->Uri == NextURI)
 	 {
@@ -326,7 +346,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
-	 URI Uri = Queue->Uri;
+	 Uri.Access = Binary;
 	 // same protocol redirects are okay
 	 if (tmpURI.Access == Uri.Access)
 	    return TRY_AGAIN_OR_REDIRECT;
@@ -334,7 +354,22 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 else if ((Uri.Access == "http" || Uri.Access == "https+http") && tmpURI.Access == "https")
 	    return TRY_AGAIN_OR_REDIRECT;
 	 else
-	    _error->Error("Redirection from %s to '%s' is forbidden", Uri.Access.c_str(), NextURI.c_str());
+	 {
+	    auto const tmpplus = tmpURI.Access.find('+');
+	    if (tmpplus != std::string::npos && tmpURI.Access.substr(tmpplus + 1) == "https")
+	    {
+	       auto const uriplus = Uri.Access.find('+');
+	       if (uriplus == std::string::npos)
+	       {
+		  if (Uri.Access == tmpURI.Access.substr(0, tmpplus)) // foo -> foo+https
+		     return TRY_AGAIN_OR_REDIRECT;
+	       }
+	       else if (Uri.Access.substr(uriplus + 1) == "http" &&
+		     Uri.Access.substr(0, uriplus) == tmpURI.Access.substr(0, tmpplus)) // foo+http -> foo+https
+		  return TRY_AGAIN_OR_REDIRECT;
+	    }
+	 }
+	 _error->Error("Redirection from %s to '%s' is forbidden", Uri.Access.c_str(), NextURI.c_str());
       }
       /* else pass through for error message */
    }
@@ -513,7 +548,7 @@ int ServerMethod::Loop()
       if (Result != -1 && (Result != 0 || Queue == 0))
       {
 	 if(FailReason.empty() == false ||
-	    _config->FindB("Acquire::http::DependOnSTDIN", true) == true)
+	    ConfigFindB("DependOnSTDIN", true) == true)
 	    return 100;
 	 else
 	    return 0;
@@ -524,7 +559,13 @@ int ServerMethod::Loop()
       
       // Connect to the server
       if (Server == 0 || Server->Comp(Queue->Uri) == false)
+      {
 	 Server = CreateServerState(Queue->Uri);
+	 setPostfixForMethodNames(::URI(Queue->Uri).Host.c_str());
+	 AllowRedirect = ConfigFindB("AllowRedirect", true);
+	 PipelineDepth = ConfigFindI("Pipeline-Depth", 10);
+	 Debug = DebugEnabled();
+      }
 
       /* If the server has explicitly said this is the last connection
          then we pre-emptively shut down the pipeline and tear down 
@@ -747,8 +788,8 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
    return MaxSizeInQueue;
 }
 									/*}}}*/
-ServerMethod::ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(Binary, Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
+ServerMethod::ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
+   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }

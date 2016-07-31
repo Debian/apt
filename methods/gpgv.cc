@@ -147,7 +147,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<Signer> &SoonWorthlessSigners,
 					 vector<string> &NoPubKeySigners)
 {
-   bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
+   bool const Debug = DebugEnabled();
 
    if (Debug == true)
       std::clog << "inside VerifyGetSigners" << std::endl;
@@ -415,10 +415,8 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    std::move(NoPubKeySigners.begin(), NoPubKeySigners.end(), std::back_inserter(Res.GPGVOutput));
    URIDone(Res);
 
-   if (_config->FindB("Debug::Acquire::gpgv", false))
-   {
+   if (DebugEnabled())
       std::clog << "apt-key succeeded\n";
-   }
 
    return true;
 }

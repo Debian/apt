@@ -57,7 +57,7 @@ using namespace std;
  */
 
 MirrorMethod::MirrorMethod()
-   : HttpMethod(), DownloadedMirrorFile(false), Debug(false)
+   : HttpMethod("mirror"), DownloadedMirrorFile(false), Debug(false)
 {
 }
 
@@ -68,7 +68,7 @@ bool MirrorMethod::Configuration(string Message)
 {
    if (pkgAcqMethod::Configuration(Message) == false)
       return false;
-   Debug = _config->FindB("Debug::Acquire::mirror",false);
+   Debug = DebugEnabled();
    
    return true;
 }

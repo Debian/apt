@@ -74,21 +74,12 @@ class HttpsMethod : public ServerMethod
 
    public:
 
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    using pkgAcqMethod::FetchResult;
    using pkgAcqMethod::FetchItem;
 
-   HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig)
-   {
-      curl_global_init(CURL_GLOBAL_SSL);
-      curl = curl_easy_init();
-   };
-
-   ~HttpsMethod()
-   {
-      curl_easy_cleanup(curl);
-   };
+   explicit HttpsMethod(std::string &&pProg);
+   virtual ~HttpsMethod();
 };
 
 #include <apt-pkg/strutl.h>

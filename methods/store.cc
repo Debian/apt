@@ -32,12 +32,15 @@
 
 class StoreMethod : public aptMethod
 {
-   std::string const Prog;
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 
    public:
 
-   explicit StoreMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.2",SingleInstance | SendConfig), Prog(pProg) {};
+   explicit StoreMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig)
+   {
+      if (Binary != "store")
+	 methodNames.insert(methodNames.begin(), "store");
+   }
 };
 
 static bool OpenFileWithCompressorByName(FileFd &fileFd, std::string const &Filename, unsigned int const Mode, std::string const &Name)
@@ -70,7 +73,7 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
    FileFd From;
    if (_config->FindB("Method::Compress", false) == false)
    {
-      if (OpenFileWithCompressorByName(From, Path, FileFd::ReadOnly, Prog) == false)
+      if (OpenFileWithCompressorByName(From, Path, FileFd::ReadOnly, Binary) == false)
 	 return false;
       if(From.IsCompressed() && From.FileSize() == 0)
 	 return _error->Error(_("Empty files can't be valid archives"));
@@ -85,7 +88,7 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
    {
       if (_config->FindB("Method::Compress", false) == false)
 	 To.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Atomic, FileFd::Extension);
-      else if (OpenFileWithCompressorByName(To, Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, Prog) == false)
+      else if (OpenFileWithCompressorByName(To, Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, Binary) == false)
 	    return false;
 
       if (To.IsOpen() == false || To.Failed() == true)

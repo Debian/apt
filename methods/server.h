@@ -157,7 +157,7 @@ class ServerMethod : public aptMethod
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) = 0;
    virtual void RotateDNS() = 0;
 
-   ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags);
+   ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags);
    virtual ~ServerMethod() {};
 };
 
