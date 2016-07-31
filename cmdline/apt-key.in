@@ -483,7 +483,7 @@ shift
 cleanup_gpg_home() {
     if [ -z "$GPGHOMEDIR" ]; then return; fi
     if command_available 'gpgconf'; then
-	GNUPGHOME="${GPGHOMEDIR}" gpgconf --kill gpg-agent
+	GNUPGHOME="${GPGHOMEDIR}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
     fi
     rm -rf "$GPGHOMEDIR"
 }
