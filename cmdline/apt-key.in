@@ -480,6 +480,14 @@ if [ -z "$command" ]; then
 fi
 shift
 
+cleanup_gpg_home() {
+    if [ -z "$GPGHOMEDIR" ]; then return; fi
+    if command_available 'gpgconf'; then
+	GNUPGHOME="${GPGHOMEDIR}" gpgconf --kill gpg-agent
+    fi
+    rm -rf "$GPGHOMEDIR"
+}
+
 create_gpg_home() {
     # gpg needs (in different versions more or less) files to function correctly,
     # so we give it its own homedir and generate some valid content for it later on
@@ -491,8 +499,12 @@ create_gpg_home() {
 	fi
     fi
     GPGHOMEDIR="$(mktemp -d)"
-    CURRENTTRAP="${CURRENTTRAP} rm -rf '$(escape_shell "${GPGHOMEDIR}")';"
+    CURRENTTRAP="${CURRENTTRAP} cleanup_gpg_home;"
     trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+    if [ -z "$GPGHOMEDIR" ]; then
+	echo "ERROR: Could not create temporary gpg home directory in apt-key ($TMPDIR)"
+	exit 28
+    fi
     chmod 700 "$GPGHOMEDIR"
 }
 
