@@ -97,8 +97,10 @@ bool pkgAcquire::Worker::Start()
    if (FileExists(Method) == false)
    {
       _error->Error(_("The method driver %s could not be found."),Method.c_str());
-      if (Access == "https")
-	 _error->Notice(_("Is the package %s installed?"), "apt-transport-https");
+      std::string const A(Access.cbegin(), std::find(Access.cbegin(), Access.cend(), '+'));
+      std::string pkg;
+      strprintf(pkg, "apt-transport-%s", A.c_str());
+      _error->Notice(_("Is the package %s installed?"), pkg.c_str());
       return false;
    }
 
