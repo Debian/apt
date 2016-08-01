@@ -28,6 +28,18 @@ TEST(URITest, BasicHTTP)
    EXPECT_EQ("http://ualberta.ca", URI::SiteOnly(U));
    EXPECT_EQ("http://ualberta.ca/blah", URI::ArchiveOnly(U));
    EXPECT_EQ("http://ualberta.ca/blah", URI::NoUserPassword(U));
+   // just a user
+   U = URI("https://apt@example.org/blah");
+   EXPECT_EQ("https", U.Access);
+   EXPECT_EQ("apt", U.User);
+   EXPECT_EQ("", U.Password);
+   EXPECT_EQ(0, U.Port);
+   EXPECT_EQ("example.org", U.Host);
+   EXPECT_EQ("/blah", U.Path);
+   EXPECT_EQ("https://apt@example.org/blah", (std::string)U);
+   EXPECT_EQ("https://example.org", URI::SiteOnly(U));
+   EXPECT_EQ("https://example.org/blah", URI::ArchiveOnly(U));
+   EXPECT_EQ("https://example.org/blah", URI::NoUserPassword(U));
 }
 TEST(URITest, SingeSlashFile)
 {
