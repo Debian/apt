@@ -130,6 +130,7 @@ class HttpMethod : public ServerMethod
 
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    virtual void RotateDNS() APT_OVERRIDE;
+   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res) APT_OVERRIDE;
 
    protected:
    std::string AutoDetectProxyCmd;

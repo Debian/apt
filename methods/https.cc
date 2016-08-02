@@ -60,6 +60,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
    if (line.empty() == true)
    {
+      me->https->Server->JunkSize = 0;
       if (me->https->Server->Result != 416 && me->https->Server->StartPos != 0)
 	 ;
       else if (me->https->Server->Result == 416)
@@ -99,11 +100,13 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
       // we expect valid data, so tell our caller we get the file now
       if (me->https->Server->Result >= 200 && me->https->Server->Result < 300)
       {
-	 if (me->https->Server->JunkSize == 0 && me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
+	 if (me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
 	    me->https->URIStart(*me->Res);
 	 if (me->https->Server->AddPartialFileToHashes(*(me->https->File)) == false)
 	    return 0;
       }
+      else
+	 me->https->Server->JunkSize = std::numeric_limits<decltype(me->https->Server->JunkSize)>::max();
    }
    else if (me->https->Server->HeaderLine(line) == false)
       return 0;
@@ -266,6 +269,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // options
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
+   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0);
    // only allow curl to handle https, not the other stuff it supports
    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
    curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
@@ -372,10 +376,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, DL_MIN_SPEED);
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
-   // set redirect options and default to 10 redirects
-   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
-   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
-
    // debug
    if (Debug == true)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
@@ -428,6 +428,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // met, CURLINFO_CONDITION_UNMET will be set to 1
    long curl_condition_unmet = 0;
    curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
+   if (curl_condition_unmet == 1)
+      Server->Result = 304;
 
    File->Close();
    curl_slist_free_all(headers);
@@ -460,70 +462,54 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
 
-   // server says file not modified
-   if (Server->Result == 304 || curl_condition_unmet == 1)
+   switch (DealWithHeaders(Res))
    {
-      RemoveFile("https", File->Name());
-      Res.IMSHit = true;
-      Res.LastModified = Itm->LastModified;
-      Res.Size = 0;
-      URIDone(Res);
-      return true;
+      case ServerMethod::IMS_HIT:
+	 URIDone(Res);
+	 break;
+
+      case ServerMethod::ERROR_WITH_CONTENT_PAGE:
+	 // unlink, no need keep 401/404 page content in partial/
+	 RemoveFile(Binary.c_str(), File->Name());
+      case ServerMethod::ERROR_UNRECOVERABLE:
+      case ServerMethod::ERROR_NOT_FROM_SERVER:
+	 return false;
+
+      case ServerMethod::TRY_AGAIN_OR_REDIRECT:
+	 Redirect(NextURI);
+	 break;
+
+      case ServerMethod::FILE_IS_OPEN:
+	 struct stat resultStat;
+	 if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
+	 {
+	    _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
+	    return false;
+	 }
+	 Res.Size = resultStat.st_size;
+
+	 // Timestamp
+	 curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
+	 if (Res.LastModified != -1)
+	 {
+	    struct timeval times[2];
+	    times[0].tv_sec = Res.LastModified;
+	    times[1].tv_sec = Res.LastModified;
+	    times[0].tv_usec = times[1].tv_usec = 0;
+	    utimes(File->Name().c_str(), times);
+	 }
+	 else
+	    Res.LastModified = resultStat.st_mtime;
+
+	 // take hashes
+	 Res.TakeHashes(*(Server->GetHashes()));
+
+	 // keep apt updated
+	 URIDone(Res);
+	 break;
    }
-   Res.IMSHit = false;
 
-   if (Server->Result != 200 && // OK
-	 Server->Result != 206 && // Partial
-	 Server->Result != 416) // invalid Range
-   {
-      char err[255];
-      snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
-      SetFailReason(err);
-      _error->Error("%i %s", Server->Result, Server->Code);
-      // unlink, no need keep 401/404 page content in partial/
-      RemoveFile("https", File->Name());
-      return false;
-   }
-
-   // invalid range-request
-   if (Server->Result == 416)
-   {
-      RemoveFile("https", File->Name());
-      delete File;
-      Redirect(Itm->Uri);
-      return true;
-   }
-
-   struct stat resultStat;
-   if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
-   {
-      _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
-      return false;
-   }
-   Res.Size = resultStat.st_size;
-
-   // Timestamp
-   curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
-   if (Res.LastModified != -1)
-   {
-      struct timeval times[2];
-      times[0].tv_sec = Res.LastModified;
-      times[1].tv_sec = Res.LastModified;
-      times[0].tv_usec = times[1].tv_usec = 0;
-      utimes(File->Name().c_str(), times);
-   }
-   else
-      Res.LastModified = resultStat.st_mtime;
-
-   // take hashes
-   Res.TakeHashes(*(Server->GetHashes()));
-
-   // keep apt updated
-   URIDone(Res);
-
-   // cleanup
    delete File;
-
    return true;
 }
 									/*}}}*/

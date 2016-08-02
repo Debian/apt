@@ -170,7 +170,7 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
 
       unsigned long long * DownloadSizePtr = &DownloadSize;
-      if (Result == 416)
+      if (Result == 416 || (Result >= 300 && Result < 400))
 	 DownloadSizePtr = &JunkSize;
 
       *DownloadSizePtr = strtoull(Val.c_str(), NULL, 10);
@@ -272,6 +272,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       RemoveFile("server", Queue->DestFile);
       Res.IMSHit = true;
       Res.LastModified = Queue->LastModified;
+      Res.Size = 0;
       return IMS_HIT;
    }
 
@@ -288,7 +289,8 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
            && Server->Result != 304    // Not Modified
            && Server->Result != 306))  // (Not part of HTTP/1.1, reserved)
    {
-      if (Server->Location.empty() == true);
+      if (Server->Location.empty() == true)
+	 ;
       else if (Server->Location[0] == '/' && Queue->Uri.empty() == false)
       {
 	 URI Uri = Queue->Uri;
@@ -329,8 +331,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 if (tmpURI.Access == Uri.Access)
 	    return TRY_AGAIN_OR_REDIRECT;
 	 // as well as http to https
-	 else if (Uri.Access == "http" && tmpURI.Access == "https")
+	 else if ((Uri.Access == "http" || Uri.Access == "https+http") && tmpURI.Access == "https")
 	    return TRY_AGAIN_OR_REDIRECT;
+	 else
+	    _error->Error("Redirection from %s to '%s' is forbidden", Uri.Access.c_str(), NextURI.c_str());
       }
       /* else pass through for error message */
    }
@@ -358,11 +362,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	    // the file is completely downloaded, but was not moved
 	    if (Server->HaveContent == true)
 	    {
-	       // Send to error page to dev/null
-	       FileFd DevNull("/dev/null",FileFd::WriteExists);
-	       Server->RunData(&DevNull);
+	       // nuke the sent error page
+	       Server->RunDataToDevNull();
+	       Server->HaveContent = false;
 	    }
-	    Server->HaveContent = false;
 	    Server->StartPos = Server->TotalFileSize;
 	    Server->Result = 200;
 	 }
@@ -378,10 +381,13 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
-      std::string err;
-      strprintf(err, "HttpError%u", Server->Result);
-      SetFailReason(err);
-      _error->Error("%u %s", Server->Result, Server->Code);
+      if (_error->PendingError() == false)
+      {
+	 std::string err;
+	 strprintf(err, "HttpError%u", Server->Result);
+	 SetFailReason(err);
+	 _error->Error("%u %s", Server->Result, Server->Code);
+      }
       if (Server->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
@@ -390,27 +396,6 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    // This is some sort of 2xx 'data follows' reply
    Res.LastModified = Server->Date;
    Res.Size = Server->TotalFileSize;
-   
-   // Open the file
-   delete File;
-   File = new FileFd(Queue->DestFile,FileFd::WriteAny);
-   if (_error->PendingError() == true)
-      return ERROR_NOT_FROM_SERVER;
-
-   FailFile = Queue->DestFile;
-   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
-   FailFd = File->Fd();
-   FailTime = Server->Date;
-
-   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
-   {
-      _error->Errno("read",_("Problem hashing file"));
-      return ERROR_NOT_FROM_SERVER;
-   }
-   if (Server->StartPos > 0)
-      Res.ResumePoint = Server->StartPos;
-
-   SetNonBlock(File->Fd(),true);
    return FILE_IS_OPEN;
 }
 									/*}}}*/
@@ -729,12 +714,7 @@ int ServerMethod::Loop()
 	 case ERROR_WITH_CONTENT_PAGE:
 	 {
 	    Fail();
-	    
-	    // Send to content to dev/null
-	    File = new FileFd("/dev/null",FileFd::WriteExists);
-	    Server->RunData(File);
-	    delete File;
-	    File = 0;
+	    Server->RunDataToDevNull();
 	    break;
 	 }
 

@@ -797,3 +797,32 @@ void HttpMethod::RotateDNS()						/*{{{*/
    ::RotateDNS();
 }
 									/*}}}*/
+ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res)/*{{{*/
+{
+   auto ret = ServerMethod::DealWithHeaders(Res);
+   if (ret != ServerMethod::FILE_IS_OPEN)
+      return ret;
+
+   // Open the file
+   delete File;
+   File = new FileFd(Queue->DestFile,FileFd::WriteAny);
+   if (_error->PendingError() == true)
+      return ERROR_NOT_FROM_SERVER;
+
+   FailFile = Queue->DestFile;
+   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
+   FailFd = File->Fd();
+   FailTime = Server->Date;
+
+   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
+   {
+      _error->Errno("read",_("Problem hashing file"));
+      return ERROR_NOT_FROM_SERVER;
+   }
+   if (Server->StartPos > 0)
+      Res.ResumePoint = Server->StartPos;
+
+   SetNonBlock(File->Fd(),true);
+   return FILE_IS_OPEN;
+}
+									/*}}}*/

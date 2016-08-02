@@ -141,7 +141,7 @@ class ServerMethod : public aptMethod
       TRY_AGAIN_OR_REDIRECT
    };
    /** \brief Handle the retrieved header data */
-   DealWithHeadersResult DealWithHeaders(FetchResult &Res);
+   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res);
 
    // In the event of a fatal signal this file will be closed and timestamped.
    static std::string FailFile;
