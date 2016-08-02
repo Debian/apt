@@ -269,6 +269,16 @@ bool pkgAcquire::Worker::RunMessages()
 	    for (auto const &Owner: ItmOwners)
 	    {
 	       pkgAcquire::ItemDesc &desc = Owner->GetItemDesc();
+	       if (Owner->IsRedirectionLoop(NewURI))
+	       {
+		  std::string msg = Message;
+		  msg.append("\nFailReason: RedirectionLoop");
+		  Owner->Failed(msg, Config);
+		  if (Log != nullptr)
+		     Log->Fail(Owner->GetItemDesc());
+		  continue;
+	       }
+
 	       if (Log != nullptr)
 		  Log->Done(desc);
 

@@ -106,6 +106,7 @@ struct HttpServerState: public ServerState
    virtual void Reset() APT_OVERRIDE { ServerState::Reset(); ServerFd = -1; };
 
    virtual bool RunData(FileFd * const File) APT_OVERRIDE;
+   virtual bool RunDataToDevNull() APT_OVERRIDE;
 
    virtual bool Open() APT_OVERRIDE;
    virtual bool IsOpen() APT_OVERRIDE;

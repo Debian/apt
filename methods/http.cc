@@ -465,6 +465,12 @@ bool HttpServerState::RunData(FileFd * const File)
    return Owner->Flush() && !_error->PendingError();
 }
 									/*}}}*/
+bool HttpServerState::RunDataToDevNull()				/*{{{*/
+{
+   FileFd DevNull("/dev/null", FileFd::WriteOnly);
+   return RunData(&DevNull);
+}
+									/*}}}*/
 bool HttpServerState::ReadHeaderLines(std::string &Data)		/*{{{*/
 {
    return In.WriteTillEl(Data);

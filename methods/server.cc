@@ -297,12 +297,33 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 else
 	    NextURI.clear();
 	 NextURI.append(DeQuoteString(Server->Location));
+	 if (Queue->Uri == NextURI)
+	 {
+	    SetFailReason("RedirectionLoop");
+	    _error->Error("Redirection loop encountered");
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
 	 return TRY_AGAIN_OR_REDIRECT;
       }
       else
       {
 	 NextURI = DeQuoteString(Server->Location);
 	 URI tmpURI = NextURI;
+	 if (tmpURI.Access == "http" && Binary == "https+http")
+	 {
+	    tmpURI.Access = "https+http";
+	    NextURI = tmpURI;
+	 }
+	 if (Queue->Uri == NextURI)
+	 {
+	    SetFailReason("RedirectionLoop");
+	    _error->Error("Redirection loop encountered");
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
 	 URI Uri = Queue->Uri;
 	 // same protocol redirects are okay
 	 if (tmpURI.Access == Uri.Access)
@@ -486,10 +507,6 @@ bool ServerMethod::Fetch(FetchItem *)
 // ServerMethod::Loop - Main loop					/*{{{*/
 int ServerMethod::Loop()
 {
-   typedef vector<string> StringVector;
-   typedef vector<string>::iterator StringVectorIterator;
-   map<string, StringVector> Redirected;
-
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    
@@ -720,46 +737,16 @@ int ServerMethod::Loop()
 	    File = 0;
 	    break;
 	 }
-	 
-         // Try again with a new URL
-         case TRY_AGAIN_OR_REDIRECT:
-         {
-            // Clear rest of response if there is content
-            if (Server->HaveContent)
-            {
-               File = new FileFd("/dev/null",FileFd::WriteExists);
-               Server->RunData(File);
-               delete File;
-               File = 0;
-            }
 
-            /* Detect redirect loops.  No more redirects are allowed
-               after the same URI is seen twice in a queue item. */
-            StringVector &R = Redirected[Queue->DestFile];
-            bool StopRedirects = false;
-            if (R.empty() == true)
-               R.push_back(Queue->Uri);
-            else if (R[0] == "STOP" || R.size() > 10)
-               StopRedirects = true;
-            else
-            {
-               for (StringVectorIterator I = R.begin(); I != R.end(); ++I)
-                  if (Queue->Uri == *I)
-                  {
-                     R[0] = "STOP";
-                     break;
-                  }
- 
-               R.push_back(Queue->Uri);
-            }
- 
-            if (StopRedirects == false)
-               Redirect(NextURI);
-            else
-               Fail();
- 
-            break;
-         }
+	 // Try again with a new URL
+	 case TRY_AGAIN_OR_REDIRECT:
+	 {
+	    // Clear rest of response if there is content
+	    if (Server->HaveContent)
+	       Server->RunDataToDevNull();
+	    Redirect(NextURI);
+	    break;
+	 }
 
 	 default:
 	 Fail(_("Internal error"));

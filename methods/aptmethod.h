@@ -17,7 +17,8 @@
 
 class aptMethod : public pkgAcqMethod
 {
-   char const * const Binary;
+protected:
+   std::string Binary;
 
 public:
    virtual bool Configuration(std::string Message) APT_OVERRIDE

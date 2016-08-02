@@ -91,6 +91,7 @@ struct ServerState
 
    /** \brief Transfer the data from the socket */
    virtual bool RunData(FileFd * const File) = 0;
+   virtual bool RunDataToDevNull() = 0;
 
    virtual bool Open() = 0;
    virtual bool IsOpen() = 0;

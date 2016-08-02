@@ -39,6 +39,7 @@ class HttpsServerState : public ServerState
 
    /** \brief Transfer the data from the socket */
    virtual bool RunData(FileFd * const /*File*/) APT_OVERRIDE { return false; }
+   virtual bool RunDataToDevNull() APT_OVERRIDE { return false; }
 
    virtual bool Open() APT_OVERRIDE { return false; }
    virtual bool IsOpen() APT_OVERRIDE { return false; }

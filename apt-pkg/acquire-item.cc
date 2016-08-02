@@ -685,10 +685,15 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
+class pkgAcquire::Item::Private
+{
+public:
+   std::vector<std::string> PastRedirections;
+};
 APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner), d(NULL)
+    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner), d(new Private())
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -699,6 +704,7 @@ APT_IGNORE_DEPRECATED_POP
 pkgAcquire::Item::~Item()
 {
    Owner->Remove(this);
+   delete d;
 }
 									/*}}}*/
 std::string pkgAcquire::Item::Custom600Headers() const			/*{{{*/
@@ -766,32 +772,40 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
    }
 
    string const FailReason = LookupTag(Message, "FailReason");
-   enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, WEAK_HASHSUMS, OTHER } failreason = OTHER;
+   enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, WEAK_HASHSUMS, REDIRECTION_LOOP, OTHER } failreason = OTHER;
    if ( FailReason == "MaximumSizeExceeded")
       failreason = MAXIMUM_SIZE_EXCEEDED;
    else if ( FailReason == "WeakHashSums")
       failreason = WEAK_HASHSUMS;
+   else if (FailReason == "RedirectionLoop")
+      failreason = REDIRECTION_LOOP;
    else if (Status == StatAuthError)
       failreason = HASHSUM_MISMATCH;
 
    if(ErrorText.empty())
    {
+      std::ostringstream out;
+      switch (failreason)
+      {
+	 case HASHSUM_MISMATCH:
+	    out << _("Hash Sum mismatch") << std::endl;
+	    break;
+	 case WEAK_HASHSUMS:
+	    out << _("Insufficient information available to perform this download securely") << std::endl;
+	    break;
+	 case REDIRECTION_LOOP:
+	    out << "Redirection loop encountered" << std::endl;
+	    break;
+	 case MAXIMUM_SIZE_EXCEEDED:
+	    out << LookupTag(Message, "Message") << std::endl;
+	    break;
+	 case OTHER:
+	    out << LookupTag(Message, "Message");
+	    break;
+      }
+
       if (Status == StatAuthError)
       {
-	 std::ostringstream out;
-	 switch (failreason)
-	 {
-	    case HASHSUM_MISMATCH:
-	       out << _("Hash Sum mismatch") << std::endl;
-	       break;
-	    case WEAK_HASHSUMS:
-	       out << _("Insufficient information available to perform this download securely") << std::endl;
-	       break;
-	    case MAXIMUM_SIZE_EXCEEDED:
-	    case OTHER:
-	       out << LookupTag(Message, "Message") << std::endl;
-	       break;
-	 }
 	 auto const ExpectedHashes = GetExpectedHashes();
 	 if (ExpectedHashes.empty() == false)
 	 {
@@ -822,10 +836,8 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	    }
 	    out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
 	 }
-	 ErrorText = out.str();
       }
-      else
-	 ErrorText = LookupTag(Message,"Message");
+      ErrorText = out.str();
    }
 
    switch (failreason)
@@ -833,6 +845,7 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
       case MAXIMUM_SIZE_EXCEEDED: RenameOnError(MaximumSizeExceeded); break;
       case HASHSUM_MISMATCH: RenameOnError(HashSumMismatch); break;
       case WEAK_HASHSUMS: break;
+      case REDIRECTION_LOOP: break;
       case OTHER: break;
    }
 
@@ -974,6 +987,24 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
    HashStringList const hashes = GetExpectedHashes();
    HashString const * const hs = hashes.find(NULL);
    return hs != NULL ? hs->toStr() : "";
+}
+									/*}}}*/
+bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
+{
+   if (d->PastRedirections.empty())
+   {
+      d->PastRedirections.push_back(NewURI);
+      return false;
+   }
+   auto const LastURI = std::prev(d->PastRedirections.end());
+   // redirections to the same file are a way of restarting/resheduling,
+   // individual methods will have to make sure that they aren't looping this way
+   if (*LastURI == NewURI)
+      return false;
+   if (std::find(d->PastRedirections.begin(), LastURI, NewURI) != LastURI)
+      return true;
+   d->PastRedirections.push_back(NewURI);
+   return false;
 }
 									/*}}}*/
 

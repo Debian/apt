@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'stable' 'apt' 'all' '1'
+setupaptarchive --no-update
+
+echo 'alright' > aptarchive/working
+changetohttpswebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme3/' '/redirectme/'
+webserverconfig 'aptwebserver::redirect::replace::/redirectme2/' '/redirectme3/'
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' '/redirectme2/'
+
+testfailure apthelper download-file "http://localhost:${APTHTTPPORT}/redirectme/working" httpfile
+testsuccess grep 'Redirection loop encountered' rootdir/tmp/testfailure.output
+
+testfailure apthelper download-file "https://localhost:${APTHTTPSPORT}/redirectme/working" httpsfile
+testsuccess grep 'Redirection loop encountered' rootdir/tmp/testfailure.output
