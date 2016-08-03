@@ -162,7 +162,7 @@ APT_PURE Hashes * HttpsServerState::GetHashes()				/*{{{*/
 }
 									/*}}}*/
 
-void HttpsMethod::SetupProxy()						/*{{{*/
+bool HttpsMethod::SetupProxy()						/*{{{*/
 {
    URI ServerName = Queue->Uri;
 
@@ -184,12 +184,12 @@ void HttpsMethod::SetupProxy()						/*{{{*/
 
    // User want to use NO proxy, so nothing to setup
    if (UseProxy == "DIRECT")
-      return;
+      return true;
 
    // Parse no_proxy, a comma (,) separated list of domains we don't want to use    
    // a proxy for so we stop right here if it is in the list
    if (getenv("no_proxy") != 0 && CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
-      return;
+      return true;
 
    if (UseProxy.empty() == true)
    {
@@ -216,8 +216,10 @@ void HttpsMethod::SetupProxy()						/*{{{*/
 	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4A);
       else if (Proxy.Access == "socks")
 	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
-      else
+      else if (Proxy.Access == "http" || Proxy.Access == "https")
 	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      else
+	 return false;
 
       if (Proxy.Port != 1)
 	 curl_easy_setopt(curl, CURLOPT_PROXYPORT, Proxy.Port);
@@ -228,6 +230,7 @@ void HttpsMethod::SetupProxy()						/*{{{*/
          curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, Proxy.Password.c_str());
       }
    }
+   return true;
 }									/*}}}*/
 // HttpsMethod::Fetch - Fetch an item					/*{{{*/
 // ---------------------------------------------------------------------
@@ -247,7 +250,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    //       - more debug options? (CURLOPT_DEBUGFUNCTION?)
 
    curl_easy_reset(curl);
-   SetupProxy();
+   if (SetupProxy() == false)
+      return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 

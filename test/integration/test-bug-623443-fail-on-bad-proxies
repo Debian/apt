@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive --no-update
+changetowebserver
+
+testsuccess apt update
+rm -rf rootdir/var/lib/apt/lists
+
+export http_proxy=enrico:password@proxy-cache.localnet:3128
+testfailure apt update
+unset http_proxy
+testsuccess grep 'Unsupported proxy configured' rootdir/tmp/testfailure.output
+
+changetohttpswebserver
+
+testsuccess apt update
+rm -rf rootdir/var/lib/apt/lists
+
+export http_proxy=enrico:password@proxy-cache.localnet:3128
+testfailure apt update
+unset http_proxy
+testsuccess grep 'Unsupported proxy configured' rootdir/tmp/testfailure.output
+
+
+

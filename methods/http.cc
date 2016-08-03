@@ -347,6 +347,8 @@ bool HttpServerState::Open()
 	 Port = ServerName.Port;
       Host = ServerName.Host;
    }
+   else if (Proxy.Access != "http")
+      return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
    else
    {
       if (Proxy.Port != 0)
