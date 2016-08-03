@@ -50,6 +50,14 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    std::string const aptkey = _config->Find("Dir::Bin::apt-key", "/usr/bin/apt-key");
 
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
+   struct exiter {
+      std::vector<const char *> files;
+      void operator ()(int code) APT_NORETURN {
+	 std::for_each(files.begin(), files.end(), unlink);
+	 exit(code);
+      }
+   } local_exit;
+
 
    std::vector<const char *> Args;
    Args.reserve(10);
@@ -110,19 +118,19 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (sig == NULL || data == NULL)
       {
 	 ioprintf(std::cerr, "Couldn't create tempfile names for splitting up %s", File.c_str());
-	 exit(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
 
       int const sigFd = mkstemp(sig);
       int const dataFd = mkstemp(data);
+      if (dataFd != -1)
+	 local_exit.files.push_back(data);
+      if (sigFd != -1)
+	 local_exit.files.push_back(sig);
       if (sigFd == -1 || dataFd == -1)
       {
-	 if (dataFd != -1)
-	    unlink(data);
-	 if (sigFd != -1)
-	    unlink(sig);
 	 ioprintf(std::cerr, "Couldn't create tempfiles for splitting up %s", File.c_str());
-	 exit(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
 
       FileFd signature;
@@ -133,12 +141,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (signature.Failed() == true || message.Failed() == true ||
 	    SplitClearSignedFile(File, &message, &dataHeader, &signature) == false)
       {
-	 if (dataFd != -1)
-	    unlink(data);
-	 if (sigFd != -1)
-	    unlink(sig);
 	 ioprintf(std::cerr, "Splitting up %s into data and signature failed", File.c_str());
-	 exit(112);
+	 local_exit(112);
       }
       Args.push_back(sig);
       Args.push_back(data);
@@ -175,19 +179,16 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    {
       execvp(Args[0], (char **) &Args[0]);
       ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
-      exit(EINTERNAL);
+      local_exit(EINTERNAL);
    }
    else
    {
-//#define UNLINK_EXIT(X) exit(X)
-#define UNLINK_EXIT(X) unlink(sig);unlink(data);exit(X)
-
       // for clear-signed files we have created tempfiles we have to clean up
       // and we do an additional check, so fork yet another time …
       pid_t pid = ExecFork();
       if(pid < 0) {
 	 ioprintf(std::cerr, "Fork failed for %s to check %s", Args[0], File.c_str());
-	 UNLINK_EXIT(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
       if(pid == 0)
       {
@@ -195,7 +196,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	    dup2(fd[1], statusfd);
 	 execvp(Args[0], (char **) &Args[0]);
 	 ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
-	 UNLINK_EXIT(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
 
       // Wait and collect the error code - taken from WaitPid as we need the exact Status
@@ -205,33 +206,27 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 if (errno == EINTR)
 	    continue;
 	 ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "apt-key");
-	 UNLINK_EXIT(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
-#undef UNLINK_EXIT
-      // we don't need the files any longer
-      unlink(sig);
-      unlink(data);
-      free(sig);
-      free(data);
 
       // check if it exit'ed normally …
       if (WIFEXITED(Status) == false)
       {
 	 ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "apt-key");
-	 exit(EINTERNAL);
+	 local_exit(EINTERNAL);
       }
 
       // … and with a good exit code
       if (WEXITSTATUS(Status) != 0)
       {
 	 ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
-	 exit(WEXITSTATUS(Status));
+	 local_exit(WEXITSTATUS(Status));
       }
 
       // everything fine
-      exit(0);
+      local_exit(0);
    }
-   exit(EINTERNAL); // unreachable safe-guard
+   local_exit(EINTERNAL); // unreachable safe-guard
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
