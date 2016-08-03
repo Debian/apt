@@ -175,58 +175,49 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       putenv((char *)"LC_MESSAGES=");
    }
 
-   if (releaseSignature == DETACHED)
+
+   // We have created tempfiles we have to clean up
+   // and we do an additional check, so fork yet another time …
+   pid_t pid = ExecFork();
+   if(pid < 0) {
+      ioprintf(std::cerr, "Fork failed for %s to check %s", Args[0], File.c_str());
+      local_exit(EINTERNAL);
+   }
+   if(pid == 0)
    {
+      if (statusfd != -1)
+	 dup2(fd[1], statusfd);
       execvp(Args[0], (char **) &Args[0]);
       ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
       local_exit(EINTERNAL);
    }
-   else
+
+   // Wait and collect the error code - taken from WaitPid as we need the exact Status
+   int Status;
+   while (waitpid(pid,&Status,0) != pid)
    {
-      // for clear-signed files we have created tempfiles we have to clean up
-      // and we do an additional check, so fork yet another time …
-      pid_t pid = ExecFork();
-      if(pid < 0) {
-	 ioprintf(std::cerr, "Fork failed for %s to check %s", Args[0], File.c_str());
-	 local_exit(EINTERNAL);
-      }
-      if(pid == 0)
-      {
-	 if (statusfd != -1)
-	    dup2(fd[1], statusfd);
-	 execvp(Args[0], (char **) &Args[0]);
-	 ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
-	 local_exit(EINTERNAL);
-      }
-
-      // Wait and collect the error code - taken from WaitPid as we need the exact Status
-      int Status;
-      while (waitpid(pid,&Status,0) != pid)
-      {
-	 if (errno == EINTR)
-	    continue;
-	 ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "apt-key");
-	 local_exit(EINTERNAL);
-      }
-
-      // check if it exit'ed normally …
-      if (WIFEXITED(Status) == false)
-      {
-	 ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "apt-key");
-	 local_exit(EINTERNAL);
-      }
-
-      // … and with a good exit code
-      if (WEXITSTATUS(Status) != 0)
-      {
-	 ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
-	 local_exit(WEXITSTATUS(Status));
-      }
-
-      // everything fine
-      local_exit(0);
+      if (errno == EINTR)
+	 continue;
+      ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "apt-key");
+      local_exit(EINTERNAL);
    }
-   local_exit(EINTERNAL); // unreachable safe-guard
+
+   // check if it exit'ed normally …
+   if (WIFEXITED(Status) == false)
+   {
+      ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "apt-key");
+      local_exit(EINTERNAL);
+   }
+
+   // … and with a good exit code
+   if (WEXITSTATUS(Status) != 0)
+   {
+      ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
+      local_exit(WEXITSTATUS(Status));
+   }
+
+   // everything fine
+   local_exit(0);
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
