@@ -18,6 +18,7 @@
 #include <stddef.h>
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -105,6 +106,28 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    std::vector<std::string> dataHeader;
    char * sig = NULL;
    char * data = NULL;
+   char * conf = nullptr;
+
+   // Dump the configuration so apt-key picks up the correct Dir values
+   {
+      conf = GenerateTemporaryFileTemplate("apt.conf");
+      if (conf == nullptr) {
+	 ioprintf(std::cerr, "Couldn't create tempfile names for passing config to apt-key");
+	 local_exit(EINTERNAL);
+      }
+      int confFd = mkstemp(conf);
+      if (confFd == -1) {
+	 ioprintf(std::cerr, "Couldn't create temporary file %s for passing config to apt-key", conf);
+	 local_exit(EINTERNAL);
+      }
+      local_exit.files.push_back(conf);
+
+      std::ofstream confStream(conf);
+      close(confFd);
+      _config->Dump(confStream);
+      confStream.close();
+      setenv("APT_CONFIG", conf, 1);
+   }
 
    if (releaseSignature == DETACHED)
    {
