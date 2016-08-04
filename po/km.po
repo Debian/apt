@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -1508,13 +1508,9 @@ msgstr "ការ​ដោះស្រាយ​អ្វី​អាក្រក
 msgid "Unable to connect to %s:%s:"
 msgstr "មិន​អាច​តភ្ជាប់​ទៅកាន់​​ %s %s ៖"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "បរាជ័យ​ក្នុងការថ្លែង"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "បរាជ័យក្នុងការកំណត់​ពេលវេលា​ការកែប្រែ​"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1788,6 +1784,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "បាន​បរាជ័យ​ក្នុង​ការថ្លែង  %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "បរាជ័យក្នុងការកំណត់​ពេលវេលា​ការកែប្រែ​"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "បរាជ័យ​ក្នុង​ការ​បង្កើត​បំពង់​ IPC សម្រាប់​ដំណើរ​ការ​រង​"
@@ -1931,6 +1931,26 @@ msgstr "មិន​អាច​សរសេរ​ទៅ %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "មិន​អាច​ទទួល​យក​កំណែ​ debconf  ។ តើ​ debconf បានដំឡើង​ឬ ?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"ការ​ប្រើប្រាស់​ ៖ apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates ជាឧបករណ៍ដើម្បី​ស្រង់​ព័ត៌មាន​ការ​រចនាសម្ព័ន្ធ​​និង​ពុម្ព​\n"
+"ពី​កញ្ចប់​​ដេបៀន \n"
+"\n"
+"ជម្រើស ៖ ​\n"
+"  -h   អត្ថបទ​ជំនួយ​\n"
+"  -t  កំណត់​ថត​បណ្ដោះ​អាសន្ន\n"
+"  -c=? អាន​ឯកសារ​ការ​កំណត់​រចនាស្ព័ន្ធ​នេះ\n"
+"  -o=? កំណត់​ជម្រើស​ការ​កំណត់​រចនា​សម្ព័ន្ធ​តាម​ចិត្ត ឧ. eg -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3249,6 +3269,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr ""
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "បាន​ដំឡើង %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, fuzzy, c-format
@@ -3274,11 +3299,6 @@ msgstr "កំពុង​ស្រាយ %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "កំពុងរៀបចំ​កំណត់រចនាសម្ព័ន្ធ %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "បាន​ដំឡើង %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3396,6 +3416,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

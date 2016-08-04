@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -1505,13 +1505,9 @@ msgstr " '%s:%s' (%i) हल गर्दा केही दुष्ट घट
 msgid "Unable to connect to %s:%s:"
 msgstr "%s %s मा जडान गर्न असफल भयो:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "स्थिर गर्न असफल भयो"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "परिमार्जन समय सेट असफल भयो"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1786,6 +1782,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr " %s स्थिर गर्न असफल"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "परिमार्जन समय सेट असफल भयो"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "सहायक प्रक्रियामा IPC पाइप सिर्जना गर्न असफल"
@@ -1931,6 +1931,26 @@ msgstr " %s मा लेख्न असक्षम"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr " debconf संस्करण प्राप्त गर्न सकिएन । के debconf स्थापना भयो ? "
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"उपयोग: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+" apt-extracttemplates डवियन प्याकेजहरुबाट कनफिगरेसन र टेम्प्लेट सूचना झिक्ने उपकरण हो\n"
+"\n"
+"\n"
+"विकल्पहरू:\n"
+"  -h   यो मद्दत पाठ\n"
+"  -t   टेम्प्लेट डाइरेक्ट्री सेट गर्नुहोस्\n"
+"  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
+"  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3248,6 +3268,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr ""
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr " %s स्थापना भयो"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, fuzzy, c-format
@@ -3273,11 +3298,6 @@ msgstr " %s अनप्याक गरिदैछ"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr " %s कनफिगर गर्न तयार गरिदैछ"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr " %s स्थापना भयो"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3395,6 +3415,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

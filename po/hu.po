@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1571,13 +1571,9 @@ msgstr "Hiba történt „%s:%s” feloldásakor (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nem lehet csatlakozni ehhez: %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Nem érhető el"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "A módosítási idő beállítása sikertelen"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1862,6 +1858,10 @@ msgstr "[Tükör: %s]"
 msgid "Failed to stat %s"
 msgstr "%s elérése sikertelen"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "A módosítási idő beállítása sikertelen"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nem sikerült IPC-adatcsatornát létrehozni az alfolyamathoz"
@@ -2000,6 +2000,20 @@ msgstr "Nem lehet írni ebbe: %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nem lehet megállapítani a debconf verziót. A debconf telepítve van?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Használat: apt-internal-solver\n"
+"\n"
+"Az apt-internal-solver felülettel az aktuális belső feloldó külső\n"
+"feloldóként használható az APT családhoz hibakeresési vagy hasonló céllal\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3380,6 +3394,11 @@ msgstr "„%s” eltűnése feljegyezve"
 msgid "Running post-installation trigger %s"
 msgstr "A(z) %s telepítés utáni trigger futtatása"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s telepítve"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3405,11 +3424,6 @@ msgstr "%s kicsomagolása"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s konfigurálásának előkészítése"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s telepítve"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3536,6 +3550,26 @@ msgstr "A külső solver megfelelő hibaüzenet nélkül hibázott"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Külső solver végrehajtása"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Külső solver végrehajtása"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Kérés küldése a solvernek"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "A helyzet elküldése a solvernek"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "A külső solver megfelelő hibaüzenet nélkül hibázott"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

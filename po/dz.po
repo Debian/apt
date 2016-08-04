@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -1517,13 +1517,9 @@ msgstr "'%s:%s' (%i)་མོས་མཐུན་འབདཝ་ད་ངན་
 msgid "Unable to connect to %s:%s:"
 msgstr "%s %s:ལུ་མཐུད་མ་ཚུགས།"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1803,6 +1799,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "%s་སིཊེཊི་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "ཡན་ལག་ལས་སྦྱོར་ལུ་ཨའི་པི་སི་རྒྱུད་དུང་གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
@@ -1950,6 +1950,26 @@ msgstr " %sལུ་འབྲི་མ་ཚུགས།"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf ་་འཐོན་རིམ་འདི་ལེན་མ་ཚུགས། debconf འདི་གཞི་བཙུགས་འབད་ཡི་ག་?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"ལག་ལེན་: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates འདི་ཌེ་བི་ཡཱན་ ཐུམ་སྒྲིལ་ཚུ་ནང་ལས་\n"
+"རིམ་སྒྲིག་དང་ ཊེམ་པེལེཊི་ བརྡ་དོན་ཕྱིར་དོན་འབད་ནིའི་ལག་ཆས་ཅིགཨིན།\n"
+"གདམ་ཁ་ཚུ།\n"
+"  -h   འདི་གིས་ཚིག་ཡིག་འདི་གྲོགས་རམ་འབདཝ་ཨིན།\n"
+"  -t   འདི་གིས་temp་སྣོད་ཐོ་འདི་གཞི་སྒྲིག་འབདཝ་ཨིན།\n"
+"  -c=? འདི་གིས་ རིམ་སྒྲིག་ཡིག་སྣོད་འདི་ལྷགཔ་ཨིན།\n"
+"  -o=? འདི་གིས་མཐུན་སྒྲིག་རིམ་སྒྲིག་གདམ་ཁ་ཅིག་གཞི་སྒྲིག་འབདཝ་ཨིན་  དཔེར་ན་-o dir::cache=/tmp་"
+"བཟུམ།\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3275,6 +3295,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr ""
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, fuzzy, c-format
@@ -3300,11 +3325,6 @@ msgstr " %s་ གི་སྦུང་ཚན་བཟོ་བཤོལ་འ�
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s་ རིམ་སྒྲིག་ལུ་གྲ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3422,6 +3442,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

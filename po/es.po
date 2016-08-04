@@ -34,7 +34,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta <venturi@openmailbox."
 "org>\n"
@@ -1642,13 +1642,9 @@ msgstr "Algo raro pasó al resolver «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "No se pudo conectar a %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Fallo al leer"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Fallo al establecer el tiempo de modificación"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1932,6 +1928,10 @@ msgstr "[Réplica: %s]"
 msgid "Failed to stat %s"
 msgstr "Fallo al leer %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Fallo al establecer el tiempo de modificación"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Fallo al crear una tubería IPC para el subproceso"
@@ -2075,6 +2075,21 @@ msgstr "No se pudo escribir en %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "No se puede encontrar la versión de debconf. ¿Está debconf instalado?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Uso: apt-internal-solver\n"
+"\n"
+"apt-internal-solver es una interfaz para utilizar el resolutor\n"
+"interno actual para la familia APT como uno externo, para depuración o\n"
+"similares.\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3471,6 +3486,11 @@ msgstr "Se detectó la desaparición de %s"
 msgid "Running post-installation trigger %s"
 msgstr "Ejecutando disparador post-instalación %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s instalado"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3496,11 +3516,6 @@ msgstr "Desempaquetando %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Preparándose para configurar %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s instalado"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3630,6 +3645,26 @@ msgstr "Falló solucionador externo sin un mensaje de error apropiado"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Ejecutar solucionador externo"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Ejecutar solucionador externo"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Enviar petición al solucionador"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Enviar situación al solucionador"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Falló solucionador externo sin un mensaje de error apropiado"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

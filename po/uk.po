@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -1558,14 +1558,10 @@ msgstr "Сталося щось дивне при спробі отримати 
 msgid "Unable to connect to %s:%s:"
 msgstr "Неможливо під'єднатися до %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 #, fuzzy
 msgid "Failed to stat"
 msgstr "Не вдалося одержати атрибути (stat)"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Не вдалося встановити час модифікації"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1844,6 +1840,10 @@ msgstr "[Дзеркало: %s]"
 msgid "Failed to stat %s"
 msgstr "Не вдалося одержати атрибути %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Не вдалося встановити час модифікації"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Не вдалося створити IPC канал для підпроцесу"
@@ -1990,6 +1990,28 @@ msgstr "Неможливо записати в %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Неможливо визначити версію debconf. Він встановлений?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Використання: apt-internal-solver\n"
+"\n"
+"apt-internal-solver це інтерфейс для використання поточного\n"
+"внутрішнього розв'язувача (як зовнішнього) для АРТ програм\n"
+"для дебагу чи інших цілей\n"
+"\n"
+"Опції:\n"
+"  -h     Цей текст допомоги.\n"
+"  -q     Виводити повідомлення, придатні для запису у файл журналу.\n"
+"          Не виводити індикатор прогресу\n"
+"  -c=? Читати зазначений конфігураційний файл\n"
+"  -o=? Вказати умовну опцію, наприклад, -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3355,6 +3377,11 @@ msgstr "Взято до відома зникнення %s"
 msgid "Running post-installation trigger %s"
 msgstr "Виконується післяустановочний ініціатор %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Встановлено %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3380,11 +3407,6 @@ msgstr "Розпакування %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Підготовка до конфігурації %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Встановлено %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3521,6 +3543,28 @@ msgstr ""
 #, fuzzy
 msgid "Execute external solver"
 msgstr "Виконати зовнішній розв'язувач"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Виконати зовнішній розв'язувач"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Відправити запит розв'язувачу"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Відправити сценарій розв'язувачу"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr ""
+"Зовнішній розв'язувач завершився невдало без відповідного повідомлення про "
+"помилку"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

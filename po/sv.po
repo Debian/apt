@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -1544,13 +1544,9 @@ msgstr "Något konstigt hände när ”%s:%s” slogs upp (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kunde inte ansluta till %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Misslyckades med att ta status"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Misslyckades med att ställa in ändringstid"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1835,6 +1831,10 @@ msgstr "[Spegel: %s]"
 msgid "Failed to stat %s"
 msgstr "Misslyckades med att ta status på %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Misslyckades med att ställa in ändringstid"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Misslyckades med att skapa IPC-rör till underprocess"
@@ -1981,6 +1981,27 @@ msgstr "Kunde inte skriva till %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan inte ta reda på debconf-version. Är debconf installerat?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Användning: apt-internal-solver\n"
+"\n"
+"apt-internal-solver är ett gränssnitt för att använda den interna\n"
+"lösaren som en extern lösare för APT-familjen för felsökning eller\n"
+"liknande\n"
+"\n"
+"Flaggor:\n"
+"  -h   Denna hjälptext.\n"
+"  -q  Loggbar utmatning - ingen förloppsindikator\n"
+"  -c=? Läs denna konfigurationsfil.\n"
+"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3334,6 +3355,11 @@ msgstr "Uppmärksammar försvinnandet av %s"
 msgid "Running post-installation trigger %s"
 msgstr "Kör efterinstallationsutlösare %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Installerade %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3359,11 +3385,6 @@ msgstr "Packar upp %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Förbereder konfigurering av %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Installerade %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3491,6 +3512,26 @@ msgstr "Extern lösare misslyckades utan något informativt felmeddelande"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Kör extern lösare"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Kör extern lösare"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Skicka förfrågan till lösare"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Skicka scenario till lösare"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Extern lösare misslyckades utan något informativt felmeddelande"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

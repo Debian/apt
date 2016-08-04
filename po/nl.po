@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-04-27 18:12+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1595,13 +1595,9 @@ msgstr "Er gebeurde iets raars bij het opzoeken van '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kan geen verbinding maken met %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Kon status niet bepalen"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Instellen van de aanpassingstijd is mislukt"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1889,6 +1885,10 @@ msgstr "[Spiegelserver: %s]"
 msgid "Failed to stat %s"
 msgstr "Opvragen van de status van %s is mislukt"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Instellen van de aanpassingstijd is mislukt"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Aanmaken van IPC-pijp naar subproces is mislukt"
@@ -2036,6 +2036,20 @@ msgstr "Kan niet naar %s schrijven"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan versie van debconf niet bepalen. Is debconf geïnstalleerd?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Gebruik: apt-internal-solver\n"
+"\n"
+"apt--internal-solver is een interface om voor de APT-familie de actuele\n"
+"interne oplosser als een externe te gebruiken voor debugging e.d.\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3424,6 +3438,11 @@ msgstr "De verdwijning van %s wordt opgemerkt"
 msgid "Running post-installation trigger %s"
 msgstr "Post-installatie-trigger %s wordt uitgevoerd"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s is geïnstalleerd"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3449,11 +3468,6 @@ msgstr "%s wordt uitgepakt"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Configuratie van %s wordt voorbereid"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s is geïnstalleerd"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3583,6 +3597,26 @@ msgstr "Externe oplosser faalde zonder passende foutmelding"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Externe oplosser uitvoeren"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Externe oplosser uitvoeren"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Verzoek naar de oplosser sturen"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Scenario naar de oplosser sturen"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Externe oplosser faalde zonder passende foutmelding"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

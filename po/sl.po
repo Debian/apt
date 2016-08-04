@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -1545,13 +1545,9 @@ msgstr "Nekaj čudnega se je zgodilo med razreševanjem '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Ni se mogoče povezati z %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Določitev ni uspela"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Nastavitev časa spremembe je spodletela"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1828,6 +1824,10 @@ msgstr "[Zrcalni strežnik: %s]"
 msgid "Failed to stat %s"
 msgstr "Napaka med določitvijo %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Nastavitev časa spremembe je spodletela"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Ustvarjanje cevi IPC do podopravila je spodletelo"
@@ -1972,6 +1972,27 @@ msgstr "Ni mogoče pisati na %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Ni mogoče ugotoviti različice debconfa. Je sploh nameščen?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Uporaba: apt-internal-solver\n"
+"\n"
+"apt-internal-solver je vmesnik za uporabo trenutnega notranjega\n"
+"reševalnika kot zunanji reševalnik za družino APT za razhroščevanje ali "
+"podobno.\n"
+"\n"
+"Možnosti:\n"
+"  -h To besedilo pomoči\n"
+"  -q Izhod se beleži - ni kazalnika napredka\n"
+"  -c=? Prebere to nastavitveno datoteko\n"
+"  -o=? Nastavi poljubno nastavitveno možnost, na primer dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3308,6 +3329,11 @@ msgstr "%s je izginil"
 msgid "Running post-installation trigger %s"
 msgstr "Poganjanje sprožilca po namestitvi %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s je bil nameščen"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3333,11 +3359,6 @@ msgstr "Razširjanje %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Pripravljanje na nastavljanje %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s je bil nameščen"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3466,6 +3487,26 @@ msgstr "Zunanji reševalnik je spodletel brez pravega sporočila o napakah"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Izvedi zunanji reševalnik"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Izvedi zunanji reševalnik"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Pošlji zahtevo reševalniku"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Pošlji scenarij reševalniku"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Zunanji reševalnik je spodletel brez pravega sporočila o napakah"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

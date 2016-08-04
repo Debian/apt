@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -1502,13 +1502,9 @@ msgstr "%s:%s' (%i) रिझॉल्व्ह होत असताना क
 msgid "Unable to connect to %s:%s:"
 msgstr "%s %s ला जोडण्यास असमर्थ:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "स्टॅट करण्यास असमर्थ"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "बदलण्याचा वेळ निश्चित करण्यास असमर्थ"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1784,6 +1780,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "%s स्टेट करण्यास असमर्थ"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "बदलण्याचा वेळ निश्चित करण्यास असमर्थ"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "उपक्रियेचा आयपीसी वाहिनी तयार करण्यास असमर्थ"
@@ -1928,6 +1928,26 @@ msgstr "%s मध्ये लिहिण्यास असमर्थ "
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf आवृत्ती मिळू शकत नाही,debconf अधिष्ठापित झाली काय?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"उपयोग : ऍप्ट - एक्स्ट्रॅक्ट टेंप्लेट्स संचिका १[संचिका २..... ]\n"
+" \n"
+"ऍप्ट- एक्स्टॅक्ट टेंम्प्लेट्स हे संरचना व नमुन्याची माहिती काढण्याचे साधन आहे \n"
+"डेबियन पॅकेजेस मधून \n"
+"\n"
+"पर्याय : \n"
+" -h    हा साह्याकारी मजकूर \n"
+" -t     टेंप डिर निर्धारित करा \n"
+"  -c=?  ही संरचना संचिका वाचा \n"
+" -o=?  एखादा अहेतुक संरचना पर्याय निर्धारित करा जसे-  -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3248,6 +3268,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr "संस्थापना-पश्चात ट्रिगर %s चालवत आहे"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s संस्थापित झाले"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3273,11 +3298,6 @@ msgstr "%s सुटे/मोकळे करीत आहे "
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s संरचने साठी तयार करत आहे"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s संस्थापित झाले"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3394,6 +3414,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

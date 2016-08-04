@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -1512,13 +1512,9 @@ msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Hindi maka-konekta sa %s %s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Bigo ang pag-stat"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Bigo ang pagtakda ng oras ng pagbago"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1798,6 +1794,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "Bigo ang pag-stat ng %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Bigo ang pagtakda ng oras ng pagbago"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Bigo sa paglikha ng IPC pipe sa subprocess"
@@ -1944,6 +1944,26 @@ msgstr "Hindi makapagsulat sa %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Hindi makuha ang bersyon ng debconf. Nakaluklok ba ang debconf?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
+"\n"
+"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
+"sa pagkaayos at template mula sa mga paketeng debian\n"
+"\n"
+"Mga opsyon:\n"
+"  -h   Itong tulong na ito\n"
+"  -t   Itakda ang dir na pansamantala\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3283,6 +3303,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr ""
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Iniluklok ang %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, fuzzy, c-format
@@ -3308,11 +3333,6 @@ msgstr "Binubuklat ang %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Hinahanda ang %s upang isaayos"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Iniluklok ang %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3430,6 +3450,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

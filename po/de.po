@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -1582,13 +1582,9 @@ msgid "Unable to connect to %s:%s:"
 msgstr "Verbindung mit %s:%s nicht möglich:"
 
 # looks like someone hardcoded English grammar
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Abfrage mit »stat« fehlgeschlagen"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Änderungszeitpunkt kann nicht gesetzt werden."
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1877,6 +1873,10 @@ msgstr "[Spiegelserver: %s]"
 msgid "Failed to stat %s"
 msgstr "%s mit »stat« abfragen fehlgeschlagen"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Änderungszeitpunkt kann nicht gesetzt werden."
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr ""
@@ -2027,6 +2027,27 @@ msgstr "Schreiben nach %s nicht möglich"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr ""
 "Debconf-Version konnte nicht ermittelt werden. Ist debconf installiert?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Aufruf: apt-internal-solver\n"
+"\n"
+"apt-internal-solver ist eine Schnittstelle, um den derzeitigen internen\n"
+"Problemlöser für die APT-Familie wie einen externen zu verwenden, zwecks\n"
+"Fehlersuche oder ähnlichem.\n"
+"\n"
+"Optionen:\n"
+"  -h   dieser Hilfetext\n"
+"  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
+"  -c=? Diese Konfigurationsdatei benutzen\n"
+"  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3401,6 +3422,11 @@ msgstr "Verschwinden von %s festgestellt"
 msgid "Running post-installation trigger %s"
 msgstr "Aufruf des Nach-Installations-Triggers %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s installiert"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3426,11 +3452,6 @@ msgstr "%s wird entpackt."
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Konfiguration von %s wird vorbereitet."
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s installiert"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3561,6 +3582,27 @@ msgstr ""
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Externen Problemlöser ausführen"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Externen Problemlöser ausführen"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Anfrage an Problemlöser senden"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Szenario an Problemlöser senden"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr ""
+"Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
 
 #: apt-pkg/indexcopy.cc
 #, c-format

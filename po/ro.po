@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -1527,13 +1527,9 @@ msgstr "S-a întâmplat ceva „necurat” la rezolvarea lui „%s:%s” (%i)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nu s-a putut realiza conexiunea cu %s %s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Eșec la „stat”"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Eșec la ajustarea timpului de modificare"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1817,6 +1813,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "Eșec la „stat” pentru %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Eșec la ajustarea timpului de modificare"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Eșec la crearea conexiunii IPC către subproces"
@@ -1963,6 +1963,26 @@ msgstr "Nu s-a putut scrie în %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nu s-a putut citi versiunea debconf. Este instalat debconf?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Utilizare: apt-extracttemplates fișier1 [fișier2 ...]\n"
+"\n"
+"apt-extracttemplates este o unealtă pentru extragerea informațiilor \n"
+"de configurare și a șabloanelor dintr-un pachet Debian\n"
+"\n"
+"Opțiuni\n"
+"  -h   Acest text de ajutor.\n"
+"  -t   Impune directorul temporar\n"
+"  -c=? Citește acest fișier de configurare\n"
+"  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3301,6 +3321,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr "Se rulează declanșatorul post-instalare %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Instalat %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3326,11 +3351,6 @@ msgstr "Se despachetează %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Se pregătește configurarea %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Instalat %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3447,6 +3467,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2015-08-29 15:24+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -1531,13 +1531,9 @@ msgstr "Něco hodně ošklivého se přihodilo při překladu „%s:%s“ (%i - 
 msgid "Unable to connect to %s:%s:"
 msgstr "Nelze se připojit k %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Selhalo vyhodnocení"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Nelze nastavit čas modifikace"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1817,6 +1813,10 @@ msgstr "[Zrcadlo: %s]"
 msgid "Failed to stat %s"
 msgstr "Nelze vyhodnotit %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Nelze nastavit čas modifikace"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Selhalo vytvoření meziprocesové roury k podprocesu"
@@ -1958,6 +1958,26 @@ msgstr "Nelze zapsat do %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nelze určit verzi programu debconf. Je debconf nainstalován?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Použití: apt-internal-solver\n"
+"\n"
+"apt-internal-solver je rozhraní k aktuálnímu internímu řešiteli\n"
+"závislostí, jako by šlo o externí nástroj - vhodné pro ladění\n"
+"\n"
+"Volby:\n"
+"  -h   Tato nápověda.\n"
+"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
+"  -c=? Načte daný konfigurační soubor\n"
+"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3294,6 +3314,11 @@ msgstr "Značím si zmizení %s"
 msgid "Running post-installation trigger %s"
 msgstr "Spouští se poinstalační spouštěč %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Nainstalován %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3319,11 +3344,6 @@ msgstr "Rozbaluje se %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Připravuje se nastavení %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Nainstalován %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3452,6 +3472,26 @@ msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Spuštění externího řešitele"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Spuštění externího řešitele"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Požadavek odeslán řešiteli"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Scénář odeslán řešiteli"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

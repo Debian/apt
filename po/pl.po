@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -1568,13 +1568,9 @@ msgstr "Coś niewłaściwego stało się przy tłumaczeniu \"%s:%s\" (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nie udało się połączyć z %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Nie udało się wykonać operacji stat"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Nie udało się ustawić czasu modyfikacji"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1855,6 +1851,10 @@ msgstr "[Serwer lustrzany: %s]"
 msgid "Failed to stat %s"
 msgstr "Nie udało się wykonać operacji stat na %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Nie udało się ustawić czasu modyfikacji"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nie udało się utworzyć potoku IPC do podprocesu"
@@ -2001,6 +2001,27 @@ msgstr "Nie udało się pisać do %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nie udało się pobrać wersji debconf. Czy debconf jest zainstalowany?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Użycie: apt-internal-solver\n"
+"\n"
+"apt-internal-solver jest interfejsem do używania bieżącego, wewnętrznego\n"
+"mechanizmu rozwiązywania zależności - w sposób podobny jak zewnętrznego\n"
+"mechanizmu rodziny APT - do celów debugowania itp.\n"
+"\n"
+"Opcje:\n"
+"  -h   Ten tekst pomocy.\n"
+"  -q   Zapisywalne wyjście - brak wskaźnika postępu\n"
+"  -c=? Czyta wskazany plik konfiguracyjny\n"
+"  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3360,6 +3381,11 @@ msgstr "Proszę odnotować zniknięcie %s"
 msgid "Running post-installation trigger %s"
 msgstr "Uruchamianie wyzwalacza post-installation %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Pakiet %s został zainstalowany"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3385,11 +3411,6 @@ msgstr "Rozpakowywanie %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Przygotowywanie do konfiguracji %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Pakiet %s został zainstalowany"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3520,6 +3541,28 @@ msgstr ""
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Wykonywanie zewnętrznego mechanizmu rozwiązywania zależności"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Wykonywanie zewnętrznego mechanizmu rozwiązywania zależności"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Wysyłanie żądania do mechanizmu rozwiązywania zależności"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Wysyłanie scenariusza do mechanizmu rozwiązywania zależności"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr ""
+"Zewnętrzny mechanizm rozwiązywania zależności zawiódł, bez podania "
+"prawidłowego komunikatu o błędzie"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

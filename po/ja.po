@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-05-18 15:31+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -1571,13 +1571,9 @@ msgstr "'%s:%s' (%i - %s) の解決中に何か問題が起こりました"
 msgid "Unable to connect to %s:%s:"
 msgstr "%s:%s へ接続できません:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "状態の取得に失敗しました"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "変更時刻の設定に失敗しました"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1857,6 +1853,10 @@ msgstr "[ミラー: %s]"
 msgid "Failed to stat %s"
 msgstr "%s の状態を取得するのに失敗しました"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "変更時刻の設定に失敗しました"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "子プロセスへの IPC パイプの作成に失敗しました"
@@ -1994,6 +1994,20 @@ msgstr "%s に書き込めません"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr ""
 "debconf のバージョンを取得できません。debconf はインストールされていますか?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"使用方法: apt-internal-solver\n"
+"\n"
+"apt-internal-solver は、デバッグなどの用途で、現在の内部リゾルバを\n"
+"APT ファミリの外部リゾルバのように使うためのインターフェイスです。\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3367,6 +3381,11 @@ msgstr "%s の消失を記録しています"
 msgid "Running post-installation trigger %s"
 msgstr "インストール後トリガ %s を実行しています"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s をインストールしました"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3392,11 +3411,6 @@ msgstr "%s を展開しています"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s の設定を準備しています"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s をインストールしました"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3524,6 +3538,26 @@ msgstr "外部ソルバが適切なエラーメッセージなしに失敗しま
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "外部ソルバを実行"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "外部ソルバを実行"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "ソルバにリクエストを送信"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "ソルバにシナリオを送信"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "外部ソルバが適切なエラーメッセージなしに失敗しました"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

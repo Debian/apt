@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -1534,13 +1534,9 @@ msgstr "Κάτι παράξενο συνέβη κατά την εύρεση το
 msgid "Unable to connect to %s:%s:"
 msgstr "Αδύνατη η σύνδεση στο %s %s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Αποτυχία εύρεσης της κατάστασης"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Αποτυχία ορισμού του χρόνου τροποποίησης"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1822,6 +1818,10 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr "Αποτυχία εύρεσης της κατάστασης του %s."
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Αποτυχία ορισμού του χρόνου τροποποίησης"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Αποτυχία κατά τη δημιουργία διασωλήνωσης IPC στην υποδιεργασία"
@@ -1969,6 +1969,26 @@ msgstr "Αδύνατη η εγγραφή στο %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Δεν βρέθηκε η έκδοση του debconf. Είναι το debconf εγκατεστημένο;"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
+"\n"
+"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
+"και πρότυπα από πακέτα debian\n"
+"\n"
+"Επιλογές:\n"
+"  -h   Το παρόν κείμενο βοήθειας\n"
+"  -t   Καθορισμός προσωρινού καταλόγου\n"
+"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3304,6 +3324,11 @@ msgstr ""
 msgid "Running post-installation trigger %s"
 msgstr "Εκτέλεση του post-installation trigger %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Έγινε εγκατάσταση του %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3329,11 +3354,6 @@ msgstr "Ξεπακετάρισμα του %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Προετοιμασία ρύθμισης του %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Έγινε εγκατάσταση του %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3450,6 +3470,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1538,13 +1538,9 @@ msgstr "Ha passat alguna cosa estranya en resoldre «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "No es pot connectar amb %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "L'estat ha fallat"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "No s'ha pogut establir el temps de modificació"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1826,6 +1822,10 @@ msgstr "[Rèplica: %s]"
 msgid "Failed to stat %s"
 msgstr "No es pot determinar l'estat de %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "No s'ha pogut establir el temps de modificació"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "No s'ha pogut crear el conducte IPC al subprocés"
@@ -1972,6 +1972,26 @@ msgstr "No es pot escriure en %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "No es pot determinar la versió de debconf. Està instaŀlat debconf?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Forma d'ús: apt-extracttemplates fitxer1 [fitxer2 …]\n"
+"\n"
+"apt-extracttemplates és una eina per a extreure informació de\n"
+"configuració i plantilles dels paquets debian\n"
+"\n"
+"Opcions:\n"
+"  -h   Aquest text d'ajuda.\n"
+"  -t   Estableix el directori temporal\n"
+"  -c=? Llegeix aquest fitxer de configuració\n"
+"  -o=? Estableix una opció de conf arbitrària, p.e. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3330,6 +3350,11 @@ msgstr "S'està anotant la desaparició de %s"
 msgid "Running post-installation trigger %s"
 msgstr "S'està executant l'activador de postinstaŀlació %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "S'ha instaŀlat el paquet %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3355,11 +3380,6 @@ msgstr "S'està desempaquetant %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "S'està preparant per a configurar el paquet %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "S'ha instaŀlat el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3488,6 +3508,26 @@ msgstr "El resoledor extern ha fallat sense un missatge d'error adient"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Executa un resoledor extern"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Executa un resoledor extern"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Envia la petició al resoledor"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Envia l'escenari al resoledor"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "El resoledor extern ha fallat sense un missatge d'error adient"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-05-19 20:50+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -1591,13 +1591,9 @@ msgstr "Что-то странное произошло при определе�
 msgid "Unable to connect to %s:%s:"
 msgstr "Невозможно соединиться с %s: %s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Не удалось получить атрибуты"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Не удалось установить время модификации"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1884,6 +1880,10 @@ msgstr "[Зеркало: %s]"
 msgid "Failed to stat %s"
 msgstr "Не удалось получить атрибуты %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Не удалось установить время модификации"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Не удалось создать IPC-канал для порождённого процесса"
@@ -2024,6 +2024,20 @@ msgstr "Невозможно записать в %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Невозможно определить версию debconf. Он установлен?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Использование: apt-internal-solver\n"
+"\n"
+"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
+"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3404,6 +3418,11 @@ msgstr "Уведомление об исчезновении %s"
 msgid "Running post-installation trigger %s"
 msgstr "Выполняется послеустановочный триггер %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Установлен %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3429,11 +3448,6 @@ msgstr "Распаковывается %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Подготавливается для настройки %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Установлен %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3561,6 +3575,26 @@ msgstr "Внешний решатель завершился с ошибкой �
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Запустить внешний решатель"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Запустить внешний решатель"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Отправка запроса решателю"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Отправка сценария решателю"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Внешний решатель завершился с ошибкой не передав сообщения об ошибке"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

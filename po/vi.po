@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1534,13 +1534,9 @@ msgstr "Một số hư hỏng đã xảy ra khi phân giải “%s:%s” (%i - %
 msgid "Unable to connect to %s:%s:"
 msgstr "Không thể kết nối đến %s: %s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Gặp lỗi khi lấy thống kê"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Gặp lỗi khi đặt giờ sửa đổi"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1821,6 +1817,10 @@ msgstr "[Bản sao: %s]"
 msgid "Failed to stat %s"
 msgstr "Việc lấy thông tin thống kê cho %s bị lỗi"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Gặp lỗi khi đặt giờ sửa đổi"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Gặp lỗi khi tạo ống IPC đến tiến trình con"
@@ -1972,6 +1972,27 @@ msgstr "Không thể ghi vào %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Không thể lấy phiên bản debconf. Debconf có được cài đặt chưa?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Cách dùng: apt-internal-solver\n"
+"\n"
+"apt-internal-solver là một giao diện để dùng cho bộ phân giải nội bộ\n"
+"hiện tại giống như bộ phân giải bên ngoài dành cho họ chương trình APT\n"
+"để phục vụ cho việc gỡ lỗi hay tương tự thế\n"
+"\n"
+"Tùy chọn:\n"
+"  -h  Trợ giúp này.\n"
+"  -q  Làm việc ở chế độ im lặng - không hiển thị tiến triển công việc\n"
+"  -c=? Đọc tập tin cấu hình này\n"
+"  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. “-o dir::cache=/tmp”\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3332,6 +3353,11 @@ msgstr "Đang ghi chép sự biến mất của %s"
 msgid "Running post-installation trigger %s"
 msgstr "Đang chạy bẫy sau-cài-đặt %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Đã cài đặt %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3357,11 +3383,6 @@ msgstr "Đang mở gói %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Đang chuẩn bị cấu hình %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Đã cài đặt %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3488,6 +3509,26 @@ msgstr "Bộ phân giải bên ngoài gặp lỗi mà không trả về thông t
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Thi hành bộ phân giải từ bên ngoài"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Thi hành bộ phân giải từ bên ngoài"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Gửi yêu cầu đến bộ phân giải"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Gửi kịch bản đến bộ phân giải"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Bộ phân giải bên ngoài gặp lỗi mà không trả về thông tin lỗi thích hợp"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

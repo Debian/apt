@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2013-12-15 16:45+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1566,13 +1566,9 @@ msgstr ""
 msgid "Unable to connect to %s:%s:"
 msgstr "Impossible de se connecter à %s:%s :"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Impossible de statuer"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Impossible de modifier l'heure "
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1858,6 +1854,10 @@ msgstr "[Miroir : %s]"
 msgid "Failed to stat %s"
 msgstr "Impossible de statuer %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Impossible de modifier l'heure "
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Impossible de créer le tube IPC sur le sous-processus"
@@ -2005,6 +2005,29 @@ msgstr "Impossible d'écrire sur %s"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr ""
 "Impossible d'obtenir la version de debconf. Est-ce que debconf est installé ?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Utilisation: apt-internal-solver\n"
+"\n"
+"apt-internal-solver est une interface en ligne de commande\n"
+"permettant d'utiliser la résolution interne d'apt de manière externe\n"
+"avec les outils de la famille d'APT à des fins de déboguage ou\n"
+"équivalent.\n"
+"\n"
+"Options:\n"
+"  -h  La présente aide.\n"
+"  -q  Affichage journalisable - pas de barre de progression\n"
+"  -c=? lecture du fichier de configuration indiqué\n"
+"  -o=? utilisation d'une option de configuration,\n"
+"       p. ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3386,6 +3409,11 @@ msgstr "Disparition de %s constatée"
 msgid "Running post-installation trigger %s"
 msgstr "Exécution des actions différées (« trigger ») de %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s installé"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3411,11 +3439,6 @@ msgstr "Décompression de %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Préparation de la configuration de %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s installé"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3542,6 +3565,26 @@ msgstr "Échec du solveur externe sans message d'erreur adapté"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Exécution du solveur externe"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Exécution du solveur externe"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Envoi d'une requête au solveur"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Envoi du scénario au solveur"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "Échec du solveur externe sans message d'erreur adapté"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

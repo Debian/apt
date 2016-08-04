@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-06-11 22:38+0200\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -1545,13 +1545,9 @@ msgstr "Noe galt skjedde ved oppslag av «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Klarte ikke koble til %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Klarte ikke å få status"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Klarte ikke å sette endringstidspunkt"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1829,6 +1825,10 @@ msgstr "[Speil: %s]"
 msgid "Failed to stat %s"
 msgstr "Klarte ikke å få statusen på %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Klarte ikke å sette endringstidspunkt"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Klarte ikke å opprette IPC-rør til underprosessen"
@@ -1974,6 +1974,27 @@ msgstr "Kan ikke skrive til %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Kan ikke fastslå debconf-versjonen. Er debconf installert?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Bruk: apt-extracttemplates fil1 [fil2 ...]\n"
+"\n"
+"apt-extracttemplates er et verktøy til å hente ut informasjon om "
+"innstillinger\n"
+"og maler fra debianpakker.\n"
+"\n"
+"Innstillinger:\n"
+"  -h   Denne hjelpeteksten\n"
+"  -t   Lag en midlertidig mappe\n"
+"  -c=? Les denne innstillingsfila.\n"
+"  -o=? Sett en vilkårlig innstilling, f.eks. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3310,6 +3331,11 @@ msgstr "Legger merke til at %s forsvinner"
 msgid "Running post-installation trigger %s"
 msgstr "Kjører etter-installasjonsutløser %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Installerte %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3335,11 +3361,6 @@ msgstr "Pakker ut %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Forbereder oppsett av %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Installerte %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3465,6 +3486,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

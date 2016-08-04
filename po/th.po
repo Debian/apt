@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -1499,13 +1499,9 @@ msgstr "เกิดปัญหาร้ายแรงบางอย่าง
 msgid "Unable to connect to %s:%s:"
 msgstr "ไม่สามารถเชื่อมต่อไปยัง %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "stat ไม่สำเร็จ"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "กำหนดเวลาแก้ไขไม่สำเร็จ"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1781,6 +1777,10 @@ msgstr "[แหล่งสำเนา: %s]"
 msgid "Failed to stat %s"
 msgstr "stat %s ไม่สำเร็จ"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "กำหนดเวลาแก้ไขไม่สำเร็จ"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "ไม่สามารถสร้างไปป์ IPC ไปยังโพรเซสย่อย"
@@ -1922,6 +1922,27 @@ msgstr "ไม่สามารถเขียนลงแฟ้ม %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "ไม่สามารถอ่านรุ่นของ debconf ได้ ได้ติดตั้ง debconf ไว้หรือไม่?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"วิธีใช้: apt-internal-solver\n"
+"\n"
+"apt-internal-solver "
+"เป็นเครื่องมือสำหรับเรียกใช้กลไกภายในปัจจุบันเสมือนเป็นกลไกการแก้ปัญหาภายนอกสำหรับโปรแกรมตระกูล "
+"APT เพื่อการดีบั๊กหรืออะไรทำนองนี้\n"
+"\n"
+"ตัวเลือก:\n"
+"  -h  แสดงข้อความช่วยเหลือนี้\n"
+"  -q  แสดงผลลัพธ์แบบบันทึกลงแฟ้มได้ - ไม่ต้องแสดงความคืบหน้า\n"
+"  -c=?  อ่านแฟ้มค่าตั้งนี้\n"
+"  -o=?  กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3236,6 +3257,11 @@ msgstr "กำลังจดบันทึกการหายไปของ
 msgid "Running post-installation trigger %s"
 msgstr "กำลังเรียกการสะกิด %s หลังการติดตั้ง"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "ติดตั้ง %s แล้ว"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3261,11 +3287,6 @@ msgstr "กำลังแตกแพกเกจ %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "กำลังเตรียมตั้งค่า %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "ติดตั้ง %s แล้ว"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3386,6 +3407,26 @@ msgstr "กลไกการแก้ปัญหาภายนอกทำง
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "เรียกกลไกการแก้ปัญหาภายนอก"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "เรียกกลไกการแก้ปัญหาภายนอก"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "ส่งคำสั่งไปยังกลไกการแก้ปัญหา"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "ส่งสภาวการณ์ไปยังกลไกการแก้ปัญหา"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "กลไกการแก้ปัญหาภายนอกทำงานล้มเหลวโดยไม่มีข้อความข้อผิดพลาดที่เหมาะสม"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

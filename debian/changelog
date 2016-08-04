@@ -1,3 +1,37 @@
+apt (1.3~pre3) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * ExecGPGV: Fork in all cases
+  * ExecGPGV: Pass current config state to apt-key via temp file (LP: #1607283)
+
+  [ David Kalnischkies ]
+  * tests: activate dpkg multi-arch even if test is single arch
+  * ensure Cnf::FindFile doesn't return files below /dev/null
+  * don't hardcode /var/lib/dpkg/status as dir::state::status
+  * allow arch=all to override No-Support-for-Architecture-all
+  * support "install ./foo.changes"
+  * clean up default-stanzas from extended_states on write
+  * report warnings&errors consistently in edit-sources
+  * create non-existent files in edit-sources with 644 instead of 640
+  * report progress for removing while purging pkgs
+  * use a configurable location for apport report storage
+  * report progress for triggered actions
+  * call flush on the wrapped writebuffered FileFd
+  * verify hash of input file in rred
+  * use proper warning for automatic pipeline disable
+  * http: skip requesting if pipeline is full
+  * rred: truncate result file before writing to it (Closes: #831762)
+  * eipp: avoid producing file warnings in simulation (Closes: 832614)
+  * if the FileFd failed already following calls should fail, too
+  * edsp: try to read responses even if writing failed
+  * prevent C++ locale number formatting in text APIs (try 2) (Closes: 832044)
+  * apt-key: kill gpg-agent explicitly in cleanup
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 832039)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 04 Aug 2016 10:23:49 +0200
+
 apt (1.3~pre2) unstable; urgency=medium
 
   [ Andrew Patterson ]

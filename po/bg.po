@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1536,13 +1536,9 @@ msgstr "Нещо лошо се случи при намирането на IP а
 msgid "Unable to connect to %s:%s:"
 msgstr "Неуспех при свързване с %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Неуспех при получаването на атрибути"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Неуспех при задаването на време на промяна"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1824,6 +1820,10 @@ msgstr "[Огледален сървър: %s]"
 msgid "Failed to stat %s"
 msgstr "Грешка при получаването на атрибути за %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Неуспех при задаването на време на промяна"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Неуспех при създаването на IPC pipe към подпроцеса"
@@ -1969,6 +1969,26 @@ msgstr "Неуспех при записа на %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Не може да се извлече версията на debconf. Debconf инсталиран ли е?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Употреба: apt-internal-solver\n"
+"\n"
+"apt-internal-solver е интерфейс към вградения в APT механизъм за "
+"удовлетворяване на зависимости\n"
+"\n"
+"Опции:\n"
+"  -h  Този помощен текст\n"
+"  -q  Изход, подходящ за журнал — без индикатор на напредъка\n"
+"  -c=? Указване на файл с настройки\n"
+"  -o=? Указване на произволна настройка, напр. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3329,6 +3349,11 @@ msgstr "Отбелязване на изчезването на %s"
 msgid "Running post-installation trigger %s"
 msgstr "Изпълнение на тригер след инсталиране %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s е инсталиран"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3354,11 +3379,6 @@ msgstr "Разпакетиране на %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Подготвяне на %s за конфигуриране"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s е инсталиран"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3490,6 +3510,28 @@ msgstr ""
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Изпълняване на външна програма за удовлетворяване на зависимости"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "Изпълняване на външна програма за удовлетворяване на зависимости"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "Изпращане на заявка към програмата за удовлетворяване на зависимости"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "Изпращане на сценарий към програмата за удовлетворяване на зависимости"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr ""
+"Външната програма за удовлетворяване на зависимости се провали без да изведе "
+"съобщение за грешка"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

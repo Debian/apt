@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -1504,13 +1504,9 @@ msgstr "'%s:%s'의 주소를 알아내는데 무언가 이상한 일이 발생�
 msgid "Unable to connect to %s:%s:"
 msgstr "%s:%s에 연결할 수 없습니다:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "파일 정보를 읽는데 실패했습니다"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "파일 변경 시각을 설정하는데 실패했습니다"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1786,6 +1782,10 @@ msgstr "[미러 사이트: %s]"
 msgid "Failed to stat %s"
 msgstr "%s의 정보를 읽는데 실패했습니다"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "파일 변경 시각을 설정하는데 실패했습니다"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "하위 프로세스에 대한 IPC 파이프를 만드는데 실패했습니다"
@@ -1928,6 +1928,26 @@ msgstr "%s에 쓸 수 없습니다"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf 버전을 알 수 없습니다. debconf가 설치되었습니까?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"사용법: apt-extracttemplates 파일1 [파일2 ...]\n"
+"\n"
+"apt-extracttemplates는 데비안 패키지에서 설정 및 서식 정보를 뽑아내는\n"
+"도구입니다\n"
+"\n"
+"옵션:\n"
+"  -h   이 도움말\n"
+"  -t   임시 디렉토리 설정\n"
+"  -c=? 설정 파일을 읽습니다\n"
+"  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3257,6 +3277,11 @@ msgstr "%s 사라짐 발견했습니다"
 msgid "Running post-installation trigger %s"
 msgstr "설치 후 트리거 %s 실행하는 중입니다"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "%s 설치"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3282,11 +3307,6 @@ msgstr "%s 푸는 중입니다"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s 패키지를 설정할 준비하는 중입니다"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "%s 설치"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3409,6 +3429,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc

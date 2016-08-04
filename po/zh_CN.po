@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2016-06-27 08:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1514,13 +1514,9 @@ msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "不能连接到 %s：%s："
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "无法读取状态"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "无法设置文件的修改日期"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1793,6 +1789,10 @@ msgstr "[镜像：%s]"
 msgid "Failed to stat %s"
 msgstr "无法获得 %s 的状态"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "无法设置文件的修改日期"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "无法为子进程创建 IPC 管道"
@@ -1930,6 +1930,20 @@ msgstr "无法写入 %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"用法： apt-internal-solver\n"
+"\n"
+"apt-internal-solver 可以像外部解析器那样使用当前的APT家族内部解析器，\n"
+"以便调试等用途。\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3249,6 +3263,11 @@ msgstr "注意到 %s 已经消失"
 msgid "Running post-installation trigger %s"
 msgstr "执行安装后执行的触发器 %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "已安装 %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3274,11 +3293,6 @@ msgstr "正在解压缩 %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在准备配置 %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "已安装 %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3396,6 +3410,26 @@ msgstr "外部solver出错，错误信息不恰当"
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "执行外部solver"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Execute external planner"
+msgstr "执行外部solver"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send request to planner"
+msgstr "向solver发送请求"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "Send scenario to planner"
+msgstr "向solver发送情景"
+
+#: apt-pkg/edsp.cc
+#, fuzzy
+msgid "External planner failed without a proper error message"
+msgstr "外部solver出错，错误信息不恰当"
 
 #: apt-pkg/indexcopy.cc
 #, c-format

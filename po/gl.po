@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-23 09:02+0200\n"
+"POT-Creation-Date: 2016-08-04 10:25+0200\n"
 "PO-Revision-Date: 2011-05-12 15:28+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
@@ -1531,13 +1531,9 @@ msgstr "Aconteceu algo malo, buscando «%s:%s» (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Non é posíbel conectar %s:%s:"
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "Non foi posíbel determinar o estado"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "Non foi posíbel estabelecer a hora de modificación"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1819,6 +1815,10 @@ msgstr "[Replica: %s]"
 msgid "Failed to stat %s"
 msgstr "Non foi posíbel determinar o estado %s"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Non foi posíbel estabelecer a hora de modificación"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Non foi posíbel crear a canle IPC ao subproceso"
@@ -1965,6 +1965,27 @@ msgstr "Non é posíbel escribir en %s"
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Non é posíbel obter a versión de debconf. Debconf está instalado?"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Uso: apt-extracttemplates fich1 [fich2 ...]\n"
+"\n"
+"apt-extracttemplates é unha ferramenta para extraer información\n"
+"de configuración e patróns dos paquetes debian\n"
+"\n"
+"Opcións:\n"
+"  -h   Este texto de axuda\n"
+"  -t   Estabelece o directorio temporal\n"
+"  -c=? Le este ficheiro de configuración\n"
+"  -o=? Estabelece unha opción de configuración, por exemplo: -o dir::cache=/"
+"tmp\n"
 
 #: cmdline/apt-internal-solver.cc
 #, fuzzy
@@ -3324,6 +3345,11 @@ msgstr "Tomando nota da desaparición de %s"
 msgid "Running post-installation trigger %s"
 msgstr "Executando o disparador de post-instalación %s"
 
+#: apt-pkg/deb/dpkgpm.cc
+#, c-format
+msgid "Installed %s"
+msgstr "Instalouse %s"
+
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3349,11 +3375,6 @@ msgstr "Desempaquetando %s"
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Preparandose para configurar %s"
-
-#: apt-pkg/deb/dpkgpm.cc
-#, c-format
-msgid "Installed %s"
-msgstr "Instalouse %s"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -3483,6 +3504,22 @@ msgstr ""
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Execute external planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send request to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "Send scenario to planner"
+msgstr ""
+
+#: apt-pkg/edsp.cc
+msgid "External planner failed without a proper error message"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc
