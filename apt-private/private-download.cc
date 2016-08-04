@@ -143,7 +143,7 @@ bool CheckFreeSpaceBeforeDownload(std::string const &Dir, unsigned long long Fet
       {
 	 struct statfs Stat;
 	 if (statfs(Dir.c_str(),&Stat) != 0
-#if HAVE_STRUCT_STATFS_F_TYPE
+#ifdef HAVE_STRUCT_STATFS_F_TYPE
 	       || Stat.f_type != RAMFS_MAGIC
 #endif
 	    )
