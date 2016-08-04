@@ -1,0 +1,116 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+# We don't do a real proxy here, we just look how the implementation
+# reacts to certain responses from a "proxy" provided by socat
+# Checks HTTP, but requesting https instead will check HTTPS (curl) which
+# uses different error messages through – also: https://github.com/curl/curl/issues/944
+
+# FIXME: Not run automatically as it uses a hardcoded port (5555)
+
+msgtest 'Check that everything is installed' 'socat'
+if dpkg-checkbuilddeps -d 'socat' /dev/null >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip "$(command dpkg -l socat)"
+	exit
+fi
+
+runclient() {
+	# this doesn't need to be an actually reachable webserver for this test
+	# in fact, its better if it isn't.
+	rm -f index.html
+	apthelper download-file http://localhost:2903/ index.html \
+		-o Acquire::http::Proxy="socks5h://${1}localhost:5555" \
+		-o Acquire::http::Timeout=2 -o Debug::Acquire::http=1 > client.output 2>&1 || true
+}
+runserver() {
+	socat -x tcp-listen:5555,reuseaddr \
+		system:"echo -n '$*' | xxd -r -p; echo 'HTTP/1.1 200 OK'; echo 'Content-Length: 5'; echo 'Connection: close'; echo; echo 'HTML'" \
+		> server.output 2>&1 &
+}
+PROXY="socks5h://localhost:5555"
+
+msgmsg 'SOCKS does not run'
+runclient
+testsuccess grep 'Could not connect to localhost:5555' client.output
+
+msgmsg 'SOCKS greets back with wrong version'
+runserver '04 00'
+runclient
+testsuccess grep 'greets back with wrong version: 4' client.output
+
+msgmsg 'SOCKS tries GSSAPI auth we have not advertised'
+runserver '05 01'
+runclient
+testsuccess grep 'greets back having not found a common authorization method: 1' client.output
+
+msgmsg 'SOCKS tries user&pass auth we have not advertised'
+runserver '05 02'
+runclient
+testsuccess grep 'pass auth, but we had not offered it' client.output
+
+msgmsg 'SOCKS user:pass wrong version'
+runserver '05 02' '05 00'
+runclient 'user:pass@'
+testsuccess grep 'auth status response with wrong version: 5' client.output
+
+msgmsg 'SOCKS user:pass wrong auth'
+runserver '05 02' '01 01'
+runclient 'user:pass@'
+testsuccess grep 'reported authorization failure: username or password incorrect? (1)' client.output
+
+msgmsg 'SOCKS user:pass request not granted no hostname'
+runserver '05 02' '01 00' '05 01 00 03 00 1f 90'
+runclient 'user:pass@'
+testsuccess grep 'grant the connect to :8080 due to: general SOCKS server failure (1)' client.output
+
+msgmsg 'SOCKS user:pass request not granted with hostname'
+runserver '05 02' '01 00' '05 01 00 03 09 68 6f 73 74 6c 6f 63 61 6c 1f 90'
+runclient 'user:pass@'
+testsuccess grep 'grant the connect to hostlocal:8080 due to: general SOCKS server failure (1)' client.output
+
+msgmsg 'SOCKS user:pass request not granted ipv4'
+runserver '05 02' '01 00' '05 04 00 01 ac 10 fe 01 1f 90'
+runclient 'user:pass@'
+testsuccess grep 'grant the connect to 172.16.254.1:8080 due to: Host unreachable (4)' client.output
+
+msgmsg 'SOCKS user:pass request not granted ipv6'
+runserver '05 02' '01 00' '05 12 00 04 20 01 0d b8 ac 10 fe 00 00 00 00 00 00 00 00 00 1f 90'
+runclient 'user:pass@'
+testsuccess grep 'grant the connect to \[2001:0DB8:AC10:FE00:0000:0000:0000:0000\]:8080 due to: Unknown error (18)' client.output
+
+msgmsg 'SOCKS user:pass request granted ipv4'
+runserver '05 02' '01 00' '05 00 00 01 ac 10 fe 01 1f 90'
+runclient 'user:pass@'
+testequal "http: SOCKS proxy $PROXY connection established to 172.16.254.1:8080" head -n 1 client.output
+testfileequal index.html 'HTML'
+
+msgmsg 'SOCKS user:pass request granted ipv6'
+runserver '05 02' '01 00' '05 00 00 04 20 01 0d b8 ac 10 fe 00 00 00 00 00 00 00 00 00 1f 90'
+runclient 'user:pass@'
+testequal "http: SOCKS proxy $PROXY connection established to [2001:0DB8:AC10:FE00:0000:0000:0000:0000]:8080" head -n 1 client.output
+testfileequal index.html 'HTML'
+
+msgmsg 'SOCKS no auth no hostname'
+runserver '05 00 05 00 00 03 00 1f 90'
+runclient
+testequal "http: SOCKS proxy $PROXY connection established to :8080" head -n 1 client.output
+testfileequal index.html 'HTML'
+
+msgmsg 'SOCKS no auth with hostname'
+runserver '05 00 05 00 00 03 09 68 6f 73 74 6c 6f 63 61 6c 1f 90'
+runclient
+testequal "http: SOCKS proxy $PROXY connection established to hostlocal:8080" head -n 1 client.output
+testfileequal index.html 'HTML'
+
+msgmsg 'SOCKS user-only request granted ipv4'
+runserver '05 02' '01 00' '05 00 00 01 ac 10 fe 01 1f 90'
+runclient 'apt@'
+testequal "http: SOCKS proxy $PROXY connection established to 172.16.254.1:8080" head -n 1 client.output
+testfileequal index.html 'HTML'

@@ -67,7 +67,7 @@ class CircleBuf
 
    // Read data in
    bool Read(int Fd);
-   bool Read(std::string Data);
+   bool Read(std::string const &Data);
 
    // Write data out
    bool Write(int Fd);
