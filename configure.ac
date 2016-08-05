@@ -55,12 +55,12 @@ SOCKETLIBS="$LIBS"
 AC_SUBST(SOCKETLIBS)
 LIBS="$SAVE_LIBS"
 
-dnl Checks for pthread -- disabled due to glibc bugs jgg
-dnl AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
+dnl Checks for pthread
+AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
 AC_SUBST(PTHREADLIB)
-dnl if test "$PTHREADLIB" != "-lpthread"; then
-dnl   AC_MSG_ERROR(failed: I need posix threads, pthread)
-dnl fi
+if test "$PTHREADLIB" != "-lpthread"; then
+  AC_MSG_ERROR(failed: I need posix threads, pthread)
+fi
 
 dnl Check for BDB
 saveLIBS="$LIBS"
