@@ -17,7 +17,7 @@ rm "$NEWMETHODS"
 mkdir "$NEWMETHODS"
 backupIFS="$IFS"
 IFS="$(printf "\n\b")"
-for METH in $(find "$OLDMETHODS" ! -type d); do
+for METH in $(find "$OLDMETHODS" -maxdepth 1 ! -type d); do
 	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
 done
 IFS="$backupIFS"
