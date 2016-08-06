@@ -127,7 +127,14 @@ elif [ "$1" = 'post-build' ]; then
 
 elif [ "$1" = 'library' ]; then
 	librarysymbols() {
+		local libname=$(echo "${1}" | cut -c 4-)
 		local buildlib="build/bin/${1}.so.${2}"
+		for dir in $libname */$libname; do
+			local new_buildlib="$dir/${1}.so.${2}"
+			if [  -r "${new_buildlib}" ] && [ ! -e "$buildlib" -o "$new_buildlib" -nt "$buildlib" ]; then
+				local buildlib="${new_buildlib}"
+			fi
+		done
 		if [ ! -r "$buildlib" ]; then
 			echo "ERROR: The library ${1} has to be built before symbols can be checked!"
 			return
