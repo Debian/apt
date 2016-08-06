@@ -47,6 +47,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Breaks: apt (<< 1.1~exp14), libapt-inst1.5 (<< 0.9.9~), appstream (<< 0.9.0-3~)
 Recommends: apt (>= ${binary:Version})
 Section: libs
+Provides: libapt-pkg (= ${binary:Version})
 Description: package management runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
@@ -69,6 +70,7 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Section: libs
+Provides: libapt-inst (= ${binary:Version})
 Description: deb package format runtime library
  This library provides methods to query and extract information
  from deb packages. This includes the control data and the package
@@ -88,7 +90,7 @@ Architecture: any
 Multi-Arch: same
 Priority: optional
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${libapt-pkg-name} (= ${binary:Version}), ${libapt-inst-name} (= ${binary:Version}), ${misc:Depends}, zlib1g-dev
+Depends: libapt-pkg (= ${binary:Version}), libapt-inst (= ${binary:Version}), ${misc:Depends}, zlib1g-dev
 Section: libdevel
 Description: development files for APT's libapt-pkg and libapt-inst
  This package contains the header files and libraries for
