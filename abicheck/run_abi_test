@@ -8,7 +8,7 @@ if [ ! -d ../build ]; then
 	exit 1
 fi
 
-if command -v abi-compliance-checker 2>/dev/null >&2; then
+if ! command -v abi-compliance-checker 2>/dev/null >&2; then
 	echo "Please install the 'abi-compliance-checker' package"
 	exit 1
 fi
