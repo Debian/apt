@@ -3,15 +3,21 @@ sudo: required
 dist: trusty
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
+ - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main' -y
  - |
    sudo sh -c '/bin/echo -e "Package: *\nPin: release n=wily\nPin-Priority: 1" > /etc/apt/preferences.d/wily'
+   sudo sh -c '/bin/echo -e "Package: *\nPin: release n=xenial\nPin-Priority: 1" > /etc/apt/preferences.d/xenial'
  - sudo apt-get update -qq
 install:
  - sudo ./prepare-release travis-ci
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - make
+ - sudo apt-get -qq -y -t xenial install cmake
+before_script:
+ - ( mkdir build && cd build && cmake .. )
+ - make -C build -j4
 script:
- - make test
  - ./test/integration/run-tests -q
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
  - sudo ./test/integration/run-tests -q
+ - make -C build install DESTDIR=$PWD/rootdir
+ - find rootdir -print0 | xargs -0 ls -ld
