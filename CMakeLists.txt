@@ -17,6 +17,7 @@ endif()
 
 # Include stuff
 include(Misc)
+include(Translations)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckStructHasMember)
@@ -130,3 +131,4 @@ add_subdirectory(cmdline)
 add_subdirectory(dselect)
 add_subdirectory(ftparchive)
 add_subdirectory(methods)
+add_subdirectory(po)
