@@ -54,7 +54,7 @@ endif()
 
 
 # apt-transport-https dependencies
-pkg_check_modules(CURL libcurl REQUIRED)
+find_package(CURL REQUIRED)
 if (CURL_FOUND)
   set(HAVE_CURL 1)
 endif()
