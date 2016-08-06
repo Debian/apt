@@ -38,27 +38,11 @@ cd - >/dev/null
 testsuccess aptget install apt -y
 testdpkginstalled 'apt'
 
-# install a slowed down file: otherwise its to fast to reproduce combining
-NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
-OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
-rm "$NEWMETHODS"
-mkdir "$NEWMETHODS"
-backupIFS="$IFS"
-IFS="$(printf "\n\b")"
-for METH in $(find "$OLDMETHODS" -maxdepth 1 ! -type d); do
-	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
-done
-IFS="$backupIFS"
-rm "$NEWMETHODS/https"
-
 cd downloaded
-testfailureequal "E: The method driver $(readlink -f './../')/rootdir/usr/lib/apt/methods/https could not be found.
-N: Is the package apt-transport-https installed?" aptget download apt
+testfailureequal "E: The method 'https' is explicitly disabled via configuration.
+N: If you meant to use Tor remember to use tor+https instead of https." aptget download apt -o Dir::Bin::Methods::https=false
 testfailure test -e apt_1.0_all.deb
 cd - >/dev/null
-
-# revert to all methods
-ln -s "$OLDMETHODS/https" "$NEWMETHODS"
 
 # check that downgrades from https to http are not allowed
 webserverconfig 'aptwebserver::support::http' 'true'
