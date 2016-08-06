@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+cd downloaded
+testfailureequal 'Err:1 http://vwakviie2ienjx6t.onion/
+  Direct connection to .onion domains is blocked by default. If you meant to use Tor remember to use tor+http instead of http.
+E: Failed to fetch http://vwakviie2ienjx6t.onion/  Direct connection to .onion domains is blocked by default. If you meant to use Tor remember to use tor+http instead of http.
+E: Download Failed' apthelper download-file 'http://vwakviie2ienjx6t.onion/' ftp.debian.org.html

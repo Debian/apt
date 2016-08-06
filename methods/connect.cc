@@ -61,10 +61,23 @@ void RotateDNS()
       LastUsed = LastHostAddr;
 }
 									/*}}}*/
+static bool ConnectionAllowed(char const * const Service, std::string const &Host)/*{{{*/
+{
+   if (APT::String::Endswith(Host, ".onion") && _config->FindB("Acquire::BlockDotOnion", true))
+   {
+      // TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+      _error->Error(_("Direct connection to %s domains is blocked by default."), ".onion");
+      if (strcmp(Service, "http") == 0)
+	_error->Error(_("If you meant to use Tor remember to use %s instead of %s."), "tor+http", "http");
+      return false;
+   }
+   return true;
+}
+									/*}}}*/
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
-static bool DoConnect(struct addrinfo *Addr,std::string Host,
+static bool DoConnect(struct addrinfo *Addr,std::string const &Host,
 		      unsigned long TimeOut,int &Fd,pkgAcqMethod *Owner)
 {
    // Show a status indicator
@@ -138,6 +151,8 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
       const char * const Service, int DefPort, int &Fd,
       unsigned long const TimeOut, pkgAcqMethod * const Owner)
 {
+   if (ConnectionAllowed(Service, Host) == false)
+      return false;
    // Convert the port name/number
    char ServStr[300];
    if (Port != 0)
@@ -272,6 +287,9 @@ bool Connect(std::string Host,int Port,const char *Service,
                             unsigned long TimeOut,pkgAcqMethod *Owner)
 {
    if (_error->PendingError() == true)
+      return false;
+
+   if (ConnectionAllowed(Service, Host) == false)
       return false;
 
    if(LastHost != Host || LastPort != Port)
