@@ -403,6 +403,7 @@ bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
 bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 {
    bool result = true;
+   static bool interrupted = false;
 
    Configuration::Item const *Opts = _config->Tree(Cnf);
    if (Opts == 0 || Opts->Child == 0)
@@ -410,6 +411,9 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    Opts = Opts->Child;
 
    sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
+   sighandler_t old_sigint = signal(SIGINT, [](int signum){
+	 interrupted = true;
+   });
 
    unsigned int Count = 1;
    for (; Opts != 0; Opts = Opts->Next, Count++)
@@ -508,7 +512,11 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
          break;
       }
    }
+   signal(SIGINT, old_sigint);
    signal(SIGPIPE, old_sigpipe);
+
+   if (interrupted)
+      result = _error->Error("Interrupted");
 
    return result;
 }
