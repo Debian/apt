@@ -357,6 +357,9 @@ bool HttpServerState::Open()
 	 Proxy = "";
    }
 
+   if (Proxy.empty() == false)
+      Owner->AddProxyAuth(Proxy, ServerName);
+
    if (Proxy.Access == "socks5h")
    {
       if (Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner) == false)

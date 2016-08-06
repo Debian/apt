@@ -794,3 +794,29 @@ ServerMethod::ServerMethod(std::string &&Binary, char const * const Ver,unsigned
 {
 }
 									/*}}}*/
+bool ServerMethod::Configuration(std::string Message)			/*{{{*/
+{
+   if (aptMethod::Configuration(Message) == false)
+      return false;
+
+   _config->CndSet("Acquire::tor::Proxy",
+	 "socks5h://apt-transport-tor@localhost:9050");
+   return true;
+}
+									/*}}}*/
+bool ServerMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
+{
+   if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
+	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())
+   {
+      std::string pass = Server.Host;
+      pass.erase(std::remove_if(pass.begin(), pass.end(), [](char const c) { return std::isalnum(c) == 0; }), pass.end());
+      if (pass.length() > 255)
+	 Proxy.Password = pass.substr(0, 255);
+      else
+	 Proxy.Password = std::move(pass);
+   }
+   // FIXME: should we support auth.conf for proxies?
+   return true;
+}
+									/*}}}*/

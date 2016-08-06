@@ -213,6 +213,8 @@ bool HttpsMethod::SetupProxy()						/*{{{*/
    if (UseProxy.empty() == false)
    {
       Proxy = UseProxy;
+      AddProxyAuth(Proxy, ServerName);
+
       if (Proxy.Access == "socks5h")
 	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
       else if (Proxy.Access == "socks5")

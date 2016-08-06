@@ -156,6 +156,9 @@ class ServerMethod : public aptMethod
    virtual void SendReq(FetchItem *Itm) = 0;
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) = 0;
    virtual void RotateDNS() = 0;
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
+
+   bool AddProxyAuth(URI &Proxy, URI const &Server) const;
 
    ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags);
    virtual ~ServerMethod() {};
