@@ -5,6 +5,8 @@
 project(apt)
 cmake_minimum_required(VERSION 3.3.0)
 
+enable_testing()
+
 option(WITH_DOC "Build documentation." OFF)
 option(USE_NLS "Localisation support." ON)
 

@@ -16,6 +16,7 @@ before_script:
  - ( mkdir build && cd build && cmake .. )
  - make -C build -j4
 script:
+ - make -C build test
  - ./test/integration/run-tests -q
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
  - sudo ./test/integration/run-tests -q
