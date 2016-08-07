@@ -1,9 +1,13 @@
 # Determine the current vendor, export to CURRENT_VENDOR
-execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getinfo current
-                OUTPUT_VARIABLE CURRENT_VENDOR OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CURRENT_VENDOR ${CURRENT_VENDOR} PARENT_SCOPE)
+if (NOT DEFINED CURRENT_VENDOR)
+    execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getinfo current
+                    OUTPUT_VARIABLE CURRENT_VENDOR_OUT OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-message(STATUS "Detected vendor: ${CURRENT_VENDOR}")
+    set(CURRENT_VENDOR "${CURRENT_VENDOR_OUT}" CACHE STRING "Select the system vendor")
+    message(STATUS "Detected vendor: ${CURRENT_VENDOR_OUT}")
+else()
+    message(STATUS "Detected vendor: ${CURRENT_VENDOR} (cached)")
+endif()
 
 # Handle sources.list example
 add_vendor_file(OUTPUT sources.list
