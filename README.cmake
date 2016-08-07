@@ -32,6 +32,5 @@ TODO
 The following features have not been implemented yet:
 
  - Translated docbook guides
- - dselect translations
  - unit tests
  - update-po

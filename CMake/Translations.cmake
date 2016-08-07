@@ -1,11 +1,30 @@
 # translations.cmake - Translations using APT's translation system.
 # Copyright (C) 2009, 2016 Julian Andres Klode <jak@debian.org>
 
-function(apt_add_translation_domain domain)
-    set(targets ${ARGN})
+function(apt_add_translation_domain)
+    set(options)
+    set(oneValueArgs DOMAIN)
+    set(multiValueArgs TARGETS SCRIPTS)
+    cmake_parse_arguments(NLS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     # Build the list of source files of the target
     set(files "")
     set(abs_files "")
+    set(scripts "")
+    set(abs_scripts "")
+    set(targets ${NLS_TARGETS})
+    set(domain ${NLS_DOMAIN})
+    foreach(source ${NLS_SCRIPTS})
+            string(SUBSTRING ${source} 0 1 init_char)
+            string(COMPARE EQUAL ${init_char} "/" is_absolute)
+            if (${is_absolute})
+                set(file "${source}")
+            else()
+                set(file "${CMAKE_CURRENT_SOURCE_DIR}/${source}")
+            endif()
+            file(RELATIVE_PATH relfile ${PROJECT_SOURCE_DIR} ${file})
+            list(APPEND scripts ${relfile})
+            list(APPEND abs_scripts ${file})
+        endforeach()
     foreach(target ${targets})
         get_target_property(source_dir ${target} SOURCE_DIR)
         get_target_property(sources ${target} SOURCES)
@@ -25,12 +44,35 @@ function(apt_add_translation_domain domain)
         target_compile_definitions(${target} PRIVATE -DAPT_DOMAIN="${domain}")
     endforeach()
 
-    # Create the template for this specific sub-domain
-    add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
+    if("${scripts}" STREQUAL "")
+        set(sh_pot "/dev/null")
+    else()
+        set(sh_pot ${PROJECT_BINARY_DIR}/${domain}.sh.pot)
+        # Create the template for this specific sub-domain
+        add_custom_command (OUTPUT ${sh_pot}
+            COMMAND xgettext --add-comments --foreign -L Shell
+                             -o ${sh_pot} ${scripts}
+            DEPENDS ${abs_scripts}
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        )
+    endif()
+
+
+    add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.c.pot
         COMMAND xgettext --add-comments --foreign -k_ -kN_
-                         --add-location=file --keyword=P_:1,2
-                         -o ${PROJECT_BINARY_DIR}/${domain}.pot ${files}
+                         --keyword=P_:1,2
+                         -o ${PROJECT_BINARY_DIR}/${domain}.c.pot ${files}
         DEPENDS ${abs_files}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    )
+
+    add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
+        COMMAND msgcomm --more-than=0 --sort-by-file
+                         ${sh_pot}
+                         ${PROJECT_BINARY_DIR}/${domain}.c.pot
+                         --output=${PROJECT_BINARY_DIR}/${domain}.pot
+        DEPENDS ${sh_pot}
+                ${PROJECT_BINARY_DIR}/${domain}.c.pot
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
