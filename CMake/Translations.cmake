@@ -5,6 +5,7 @@ function(apt_add_translation_domain domain)
     set(targets ${ARGN})
     # Build the list of source files of the target
     set(files "")
+    set(abs_files "")
     foreach(target ${targets})
         get_target_property(source_dir ${target} SOURCE_DIR)
         get_target_property(sources ${target} SOURCES)
@@ -18,6 +19,7 @@ function(apt_add_translation_domain domain)
             endif()
             file(RELATIVE_PATH relfile ${PROJECT_SOURCE_DIR} ${file})
             set(files ${files} ${relfile})
+            set(abs_files ${abs_files} ${file})
         endforeach()
 
         target_compile_definitions(${target} PRIVATE -DAPT_DOMAIN="${domain}")
@@ -27,6 +29,7 @@ function(apt_add_translation_domain domain)
     add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
         COMMAND xgettext --add-comments --foreign -k_ -kN_
                          -o ${PROJECT_BINARY_DIR}/${domain}.pot ${files}
+        DEPENDS ${abs_files}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
