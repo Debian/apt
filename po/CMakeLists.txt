@@ -26,3 +26,13 @@ apt_add_translation_domain(
     DOMAIN libapt-inst${APT_INST_MAJOR}
     TARGETS apt-inst
 )
+
+apt_add_update_po(
+    TEMPLATE
+        apt-all
+    DOMAINS
+        libapt-pkg${APT_PKG_MAJOR}
+        libapt-inst${APT_INST_MAJOR}
+        apt
+        apt-utils
+)
