@@ -24,16 +24,30 @@ function(add_vendor_file)
     set(oneValueArgs OUTPUT INPUT MODE)
     set(multiValueArgs VARIABLES)
     cmake_parse_arguments(AVF "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    message(STATUS "Configuring vendor file ${AVF_OUTPUT}")
 
-    FILE(READ ${CMAKE_CURRENT_SOURCE_DIR}/${AVF_INPUT} input)
-    foreach(variable ${AVF_VARIABLES})
-        execute_process(COMMAND ../vendor/getinfo ${variable} OUTPUT_VARIABLE value OUTPUT_STRIP_TRAILING_WHITESPACE)
-        string(REPLACE "&${variable};" "${value}" input "${input}")
-    endforeach()
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${AVF_OUTPUT} "${input}")
+    set(in ${CMAKE_CURRENT_SOURCE_DIR}/${AVF_INPUT})
+    set(out ${CMAKE_CURRENT_BINARY_DIR}/${AVF_OUTPUT})
 
-    execute_process(COMMAND chmod ${AVF_MODE} ${CMAKE_CURRENT_BINARY_DIR}/${AVF_OUTPUT})
+    add_custom_command(
+        OUTPUT ${out}
+        COMMAND ${CMAKE_COMMAND} -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+                                 "-DVARS=${AVF_VARIABLES}"
+                                 -DCURRENT_VENDOR=${CURRENT_VENDOR}
+                                 -DIN=${in}
+                                 -DOUT=${out}
+                                 -P ${PROJECT_SOURCE_DIR}/CMake/vendor_substitute.cmake
+        COMMAND chmod ${AVF_MODE} ${out}
+        DEPENDS ${in}
+                ${PROJECT_SOURCE_DIR}/doc/apt-verbatim.ent
+                ${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent
+                ${PROJECT_SOURCE_DIR}/vendor/getinfo
+                ${PROJECT_SOURCE_DIR}/CMake/vendor_substitute.cmake
+        VERBATIM
+    )
+
+    # Woud like to use ${AVF_OUTPUT} as target name, but then ninja gets
+    # cycles.
+    add_custom_target(vendor-${AVF_OUTPUT} ALL DEPENDS ${out})
 endfunction()
 
 # Add symbolic links to a file
