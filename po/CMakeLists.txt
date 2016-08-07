@@ -5,7 +5,9 @@ apt_add_translation_domain(apt              # Domain
                            apt-helper apt-mark
                            apt-private
                            # Methods
-                           file copy store gpgv cdrom http https ftp rred rsh)
+                           file copy store gpgv cdrom http https ftp rred rsh
+                           mirror
+)
 
 
 apt_add_translation_domain(apt-utils        # Domain
