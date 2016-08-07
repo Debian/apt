@@ -108,7 +108,8 @@ if (CMAKE_USE_PTHREADS_INIT)
 endif()
 
 # Configure some variables like package, version and architecture.
-set(PACKAGE "apt")
+set(PACKAGE ${PROJECT_NAME})
+set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
 
 execute_process(COMMAND dpkg-parsechangelog -SVersion -l${PROJECT_SOURCE_DIR}/debian/changelog
                 OUTPUT_VARIABLE PACKAGE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
