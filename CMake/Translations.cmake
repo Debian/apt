@@ -42,10 +42,13 @@ function(apt_add_translation_domain domain)
         set(outdir ${PROJECT_BINARY_DIR}/locale/${langcode}/LC_MESSAGES)
         file(MAKE_DIRECTORY ${outdir})
         # Command to merge and compile the messages
-        add_custom_command(OUTPUT ${outdir}/${domain}.mo
-            COMMAND msgmerge -qo - ${file} ${PROJECT_BINARY_DIR}/${domain}.pot |
-                    msgfmt --statistics -o ${outdir}/${domain}.mo -
+        add_custom_command(OUTPUT ${outdir}/${domain}.po
+            COMMAND msgmerge -qo ${outdir}/${domain}.po ${file} ${PROJECT_BINARY_DIR}/${domain}.pot
             DEPENDS ${file} ${PROJECT_BINARY_DIR}/${domain}.pot
+        )
+        add_custom_command(OUTPUT ${outdir}/${domain}.mo
+            COMMAND msgfmt --statistics -o ${outdir}/${domain}.mo  ${outdir}/${domain}.po
+            DEPENDS ${outdir}/${domain}.po
         )
 
         set(mofiles ${mofiles} ${outdir}/${domain}.mo)
