@@ -36,7 +36,13 @@ getcurrent() {
 	return 0
 }
 
-INFO="$(readlink -f "${BASEDIR}/$(getcurrent)/apt-vendor.ent")"
+if [ "$1" = "--vendor" ]; then
+	CURRENT_VENDOR="$2"
+	shift 2
+else
+	CURRENT_VENDOR=$(getcurrent)
+fi
+INFO="$(readlink -f "${BASEDIR}/$CURRENT_VENDOR/apt-vendor.ent")"
 VERBATIM="${BASEDIR}/../doc/apt-verbatim.ent"
 
 if [ -z "$INFO" ] || [ ! -e "$INFO" ]; then
@@ -59,7 +65,7 @@ debian-stable-codename|debian-oldstable-codename|debian-testing-codename|ubuntu-
 	getrawfield "$1" "$VERBATIM"
 	;;
 sourceslist-list-format|keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
-	exec $0 'vendor' "$@"
+	exec $0 --vendor $CURRENT_VENDOR 'vendor' "$@"
 	;;
 vendor)
 	getfield "$2"
@@ -67,9 +73,8 @@ vendor)
 verbatim)
 	getfield "$2" "$VERBATIM"
 	;;
-
 current)
-	getcurrent
+	echo $CURRENT_VENDOR
 	;;
 *)
 	echo >&2 "Unknown data field $1 requested"
