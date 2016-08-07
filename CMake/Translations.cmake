@@ -28,6 +28,7 @@ function(apt_add_translation_domain domain)
     # Create the template for this specific sub-domain
     add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
         COMMAND xgettext --add-comments --foreign -k_ -kN_
+                         --add-location=file --keyword=P_:1,2
                          -o ${PROJECT_BINARY_DIR}/${domain}.pot ${files}
         DEPENDS ${abs_files}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -43,7 +44,7 @@ function(apt_add_translation_domain domain)
         # Command to merge and compile the messages
         add_custom_command(OUTPUT ${outdir}/${domain}.mo
             COMMAND msgmerge -qo - ${file} ${PROJECT_BINARY_DIR}/${domain}.pot |
-                    msgfmt -o ${outdir}/${domain}.mo -
+                    msgfmt --statistics -o ${outdir}/${domain}.mo -
             DEPENDS ${file} ${PROJECT_BINARY_DIR}/${domain}.pot
         )
 
