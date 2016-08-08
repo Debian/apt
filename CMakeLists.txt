@@ -113,10 +113,14 @@ endif()
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
 
-execute_process(COMMAND dpkg-parsechangelog -SVersion -l${PROJECT_SOURCE_DIR}/debian/changelog
-                OUTPUT_VARIABLE PACKAGE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
-                OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+if (NOT DEFINED PACKAGE_VERSION)
+  execute_process(COMMAND dpkg-parsechangelog -SVersion -l${PROJECT_SOURCE_DIR}/debian/changelog
+                  OUTPUT_VARIABLE PACKAGE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+if (NOT DEFINED COMMON_ARCH)
+  execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
+                  OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
 
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
