@@ -102,6 +102,7 @@ check_function_exists(getresuid HAVE_GETRESUID)
 check_function_exists(getresgid HAVE_GETRESGID)
 check_function_exists(setresuid HAVE_SETRESUID)
 check_function_exists(setresgid HAVE_SETRESGID)
+check_function_exists(ptsname_r HAVE_PTSNAME_R)
 check_function_exists(timegm HAVE_TIMEGM)
 test_big_endian(WORDS_BIGENDIAN)
 

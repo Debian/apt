@@ -1086,7 +1086,7 @@ void pkgDPkgPM::StartPtyMagic()						/*{{{*/
       _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
    else
    {
-#ifdef HAVE_PTS_NAME_R
+#ifdef HAVE_PTSNAME_R
       char slave_name[64];	// 64 is used by bionic
       if (ptsname_r(d->master, slave_name, sizeof(slave_name)) != 0)
 #else
