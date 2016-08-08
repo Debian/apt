@@ -11,8 +11,6 @@
 #include <set>
 #include <string>
 
-#include <apti18n.h>
-
 class OpProgress;
 
 class VerIteratorWithCaching
