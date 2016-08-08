@@ -3,7 +3,7 @@
 
 # set minimum version
 project(apt)
-cmake_minimum_required(VERSION 3.3.0)
+cmake_minimum_required(VERSION 3.4.0)
 
 enable_testing()
 
