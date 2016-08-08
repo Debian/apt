@@ -113,11 +113,8 @@ endif()
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
+set(PACKAGE_VERSION "1.3~pre3+cmake2")
 
-if (NOT DEFINED PACKAGE_VERSION)
-  execute_process(COMMAND dpkg-parsechangelog -SVersion -l${PROJECT_SOURCE_DIR}/debian/changelog
-                  OUTPUT_VARIABLE PACKAGE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
 if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                   OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
