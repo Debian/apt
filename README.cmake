@@ -25,10 +25,3 @@ To build a subdirectory; for example, apt-pkg, use one of:
 
 Ninja automatically parallelizes, make needs an explicit -j switch. The travis
 system uses the make generator, the packaging as well.
-
-TODO
-----
-
-The following features have not been implemented yet:
-
- - Translated docbook guides

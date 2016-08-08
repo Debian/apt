@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.4.0)
 
 enable_testing()
 
-option(WITH_DOC "Build documentation." OFF)
+option(WITH_DOC "Build documentation." ON)
 option(USE_NLS "Localisation support." ON)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
@@ -142,3 +142,6 @@ add_subdirectory(ftparchive)
 add_subdirectory(methods)
 add_subdirectory(po)
 add_subdirectory(test)
+
+# Link update-po4a into the update-po target
+add_dependencies(update-po update-po4a)
