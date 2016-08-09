@@ -54,7 +54,7 @@ function(apt_add_translation_domain)
     if("${scripts}" STREQUAL "")
         set(sh_pot "/dev/null")
     else()
-        set(sh_pot ${PROJECT_BINARY_DIR}/${domain}.sh.pot)
+        set(sh_pot ${CMAKE_CURRENT_BINARY_DIR}/${domain}.sh.pot)
         # Create the template for this specific sub-domain
         add_custom_command (OUTPUT ${sh_pot}
             COMMAND xgettext ${xgettext_params} -L Shell
@@ -66,10 +66,10 @@ function(apt_add_translation_domain)
     endif()
 
 
-    add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.c.pot
+    add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
         COMMAND xgettext ${xgettext_params} -k_ -kN_
                          --keyword=P_:1,2
-                         -o ${PROJECT_BINARY_DIR}/${domain}.c.pot ${files}
+                         -o ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot ${files}
         DEPENDS ${abs_files}
         VERBATIM
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -79,27 +79,27 @@ function(apt_add_translation_domain)
     # build a ${domain.pot}-tmp as a byproduct. The msgfmt command than depend
     # on the byproduct while their target depends on the output, so that msgfmt
     # does not have to be rerun if nothing in the template changed.
-    add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
-        BYPRODUCTS ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
+    add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
+        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
         COMMAND msgcomm --more-than=0 --sort-by-file
                          ${sh_pot}
-                         ${PROJECT_BINARY_DIR}/${domain}.c.pot
-                         --output=${PROJECT_BINARY_DIR}/${domain}.pot
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
+                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         COMMAND msgcomm --more-than=0 --omit-header --sort-by-file
                          ${sh_pot}
-                         ${PROJECT_BINARY_DIR}/${domain}.c.pot
-                         --output=${PROJECT_BINARY_DIR}/${domain}.pot-tmp0
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
+                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
         COMMAND cmake -E copy_if_different
-                         ${PROJECT_BINARY_DIR}/${domain}.pot-tmp0
-                         ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
         DEPENDS ${sh_pot}
-                ${PROJECT_BINARY_DIR}/${domain}.c.pot
+                ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
     # We need a target to depend on otherwise, the msgmerge might not get called
     # with the make generator
-    add_custom_target(nls-${domain}-template DEPENDS ${PROJECT_BINARY_DIR}/${domain}.pot)
+    add_custom_target(nls-${domain}-template DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot)
 
     # Build .mo files
     file(GLOB translations "${PROJECT_SOURCE_DIR}/po/*.po")
@@ -109,13 +109,13 @@ function(apt_add_translation_domain)
         if ("${langcode}" IN_LIST NLS_EXCLUDE_LANGUAGES)
             continue()
         endif()
-        set(outdir ${PROJECT_BINARY_DIR}/locale/${langcode}/LC_MESSAGES)
+        set(outdir ${CMAKE_CURRENT_BINARY_DIR}/locale/${langcode}/LC_MESSAGES)
         file(MAKE_DIRECTORY ${outdir})
         # Command to merge and compile the messages. As explained in the custom
         # command for msgcomm, this depends on byproduct to avoid reruns
         add_custom_command(OUTPUT ${outdir}/${domain}.po
-            COMMAND msgmerge -qo ${outdir}/${domain}.po ${file} ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
-            DEPENDS ${file} ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
+            COMMAND msgmerge -qo ${outdir}/${domain}.po ${file} ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
+            DEPENDS ${file} ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
         )
         add_custom_command(OUTPUT ${outdir}/${domain}.mo
             COMMAND msgfmt --statistics -o ${outdir}/${domain}.mo  ${outdir}/${domain}.po
@@ -138,7 +138,7 @@ function(apt_add_update_po)
     cmake_parse_arguments(NLS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(output ${CMAKE_CURRENT_SOURCE_DIR}/${NLS_TEMPLATE}.pot)
     foreach(domain ${NLS_DOMAINS})
-        list(APPEND potfiles ${PROJECT_BINARY_DIR}/${domain}.pot)
+        list(APPEND potfiles ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot)
     endforeach()
 
     get_filename_component(master_name ${output} NAME_WE)
