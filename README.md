@@ -45,12 +45,21 @@ are encouraged to do as well.
 
 ### Coding
 
-APT uses its own autoconf based build system, see [README.make](http://anonscm.debian.org/gitweb/?p=apt/apt.git;a=blob;f=README.make)
-for the glory details, but to get started, just run:
+APT uses cmake. To start building, you need to run
 
-	$ make
+  cmake <path to source directory>
 
-from a fresh git checkout.
+from a build directory. For example, if you want to build in the source tree,
+run:
+
+  cmake .
+
+Then you can use make as you normally would (pass -j <count> to perform <count>
+jobs in parallel).
+
+You can also use the Ninja generator of cmake, to do that pass
+  -G Ninja
+to the cmake invocation, and then use ninja instead of make.
 
 The source code uses in most parts a relatively uncommon indent convention,
 namely 3 spaces with 8 space tab (see [doc/style.txt](http://anonscm.debian.org/gitweb/?p=apt/apt.git;a=blob;f=doc/style.txt) for more on this).
@@ -86,12 +95,8 @@ Testing
 
 ### Manual execution
 
-When you make changes and want to run them manually, make sure your
-`$LD_LIBRARY_PATH` points to the libraries you have built, e.g. via:
-
-	$ export LD_LIBRARY_PATH=$(pwd)/build/bin
-	$ ./build/bin/apt-get moo
-
+When you make changes and want to run them manually, you can just do so. CMake
+automatically inserts an rpath so the binaries find the correct libraries.
 
 ### Integration tests
 
