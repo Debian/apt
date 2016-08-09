@@ -92,7 +92,7 @@ if (NOT HAVE_STATVFS)
   if (NOT HAVE_VFS_H AND NOT HAVE_MOUNT_H)
     message(FATAL_ERROR "Can find neither statvfs() nor statfs()")
   endif()
-  configure_file(buildlib/statvfs.h.in ${PROJECT_BINARY_DIR}/include/statvfs.h @ONLY)
+  configure_file(CMake/statvfs.h.in ${PROJECT_BINARY_DIR}/include/statvfs.h @ONLY)
 endif()
 
 CHECK_STRUCT_HAS_MEMBER("struct statfs" f_type sys/vfs.h HAVE_STRUCT_STATFS_F_TYPE)
