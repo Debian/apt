@@ -4,7 +4,7 @@
 function(apt_add_translation_domain)
     set(options)
     set(oneValueArgs DOMAIN)
-    set(multiValueArgs TARGETS SCRIPTS)
+    set(multiValueArgs TARGETS SCRIPTS EXCLUDE_LANGUAGES)
     cmake_parse_arguments(NLS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     # Build the list of source files of the target
     set(files "")
@@ -106,6 +106,9 @@ function(apt_add_translation_domain)
     list(SORT translations)
     foreach(file ${translations})
         get_filename_component(langcode ${file} NAME_WE)
+        if ("${langcode}" IN_LIST NLS_EXCLUDE_LANGUAGES)
+            continue()
+        endif()
         set(outdir ${PROJECT_BINARY_DIR}/locale/${langcode}/LC_MESSAGES)
         file(MAKE_DIRECTORY ${outdir})
         # Command to merge and compile the messages. As explained in the custom
@@ -131,7 +134,7 @@ endfunction()
 function(apt_add_update_po)
     set(options)
     set(oneValueArgs TEMPLATE)
-    set(multiValueArgs DOMAINS)
+    set(multiValueArgs DOMAINS EXCLUDE_LANGUAGES)
     cmake_parse_arguments(NLS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(output ${CMAKE_CURRENT_SOURCE_DIR}/${NLS_TEMPLATE}.pot)
     foreach(domain ${NLS_DOMAINS})
@@ -151,6 +154,9 @@ function(apt_add_update_po)
     endif()
     foreach(translation ${translations})
             get_filename_component(langcode ${translation} NAME_WE)
+            if ("${langcode}" IN_LIST NLS_EXCLUDE_LANGUAGES)
+                continue()
+            endif()
             add_custom_target(update-po-${langcode}
                 COMMAND msgmerge -q --update --backup=none ${translation} ${output}
                 DEPENDS nls-${master_name}
@@ -160,14 +166,23 @@ function(apt_add_update_po)
     add_dependencies(update-po nls-${master_name})
 endfunction()
 
-function(apt_add_po_statistics)
+function(apt_add_po_statistics excluded)
     add_custom_target(statistics)
     file(GLOB translations "${PROJECT_SOURCE_DIR}/po/*.po")
     foreach(translation ${translations})
             get_filename_component(langcode ${translation} NAME_WE)
+            if ("${langcode}" IN_LIST excluded)
+                add_custom_command(
+                    TARGET statistics PRE_BUILD
+                    COMMAND printf "%-6s " "${langcode}:"
+                    COMMAND echo "ignored"
+                    VERBATIM
+                )
+                continue()
+            endif()
             add_custom_command(
                 TARGET statistics PRE_BUILD
-                COMMAND printf "%-7s" "${langcode}:"
+                COMMAND printf "%-6s " "${langcode}:"
                 COMMAND msgfmt --statistics -o /dev/null ${translation}
                 VERBATIM
             )

@@ -1,6 +1,11 @@
+set(languages_excluded
+    he  ## disabled by translator request #313283
+)
+
 apt_add_translation_domain(
     DOMAIN libapt-pkg${APT_PKG_MAJOR}
     TARGETS apt-pkg
+    EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
 apt_add_translation_domain(
@@ -10,6 +15,7 @@ apt_add_translation_domain(
             # Methods
             file copy store gpgv cdrom http https ftp rred rsh mirror
     SCRIPTS ../dselect/install ../dselect/update
+    EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
 apt_add_translation_domain(
@@ -20,11 +26,13 @@ apt_add_translation_domain(
             apt-dump-solver
             apt-internal-planner
             apt-ftparchive
+    EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
 apt_add_translation_domain(
     DOMAIN libapt-inst${APT_INST_MAJOR}
     TARGETS apt-inst
+    EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
 apt_add_update_po(
@@ -35,6 +43,8 @@ apt_add_update_po(
         libapt-inst${APT_INST_MAJOR}
         apt
         apt-utils
+    EXCLUDE_LANGUAGES
+        ${languages_excluded}
 )
 
-apt_add_po_statistics()
+apt_add_po_statistics("${languages_excluded}")
