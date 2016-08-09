@@ -36,3 +36,5 @@ apt_add_update_po(
         apt
         apt-utils
 )
+
+apt_add_po_statistics()

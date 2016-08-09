@@ -142,3 +142,17 @@ function(apt_add_update_po)
     endforeach()
     add_dependencies(update-po nls-${master_name})
 endfunction()
+
+function(apt_add_po_statistics)
+    add_custom_target(statistics)
+    file(GLOB translations "${PROJECT_SOURCE_DIR}/po/*.po")
+    foreach(translation ${translations})
+            get_filename_component(langcode ${translation} NAME_WE)
+            add_custom_command(
+                TARGET statistics PRE_BUILD
+                COMMAND printf "%-7s" "${langcode}:"
+                COMMAND msgfmt --statistics -o /dev/null ${translation}
+                VERBATIM
+            )
+    endforeach()
+endfunction()
