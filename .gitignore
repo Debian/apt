@@ -1,19 +1,92 @@
-*~
-# build artifacts
-/aclocal.m4
-/autom4te.cache/
-/build/
-/buildlib/config.guess
-/buildlib/config.sub
-/configure
+# Include directory
+include/
 
-# generated files in the process to build all
-# apt man pages and other documentation
-/doc/*/
+# Cmake files
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Testing/
+
+gtest-*
+
+# Compiled output
+*.o
+*.so*
+*.versionscript
+
+# Templates
+*.pot
+*.pot-*
+!/po/apt-all.pot
+
+# Vendor files
+
+**/vendor/sources.list
+**/LC_MESSAGES/
+
+**/ftparchive/apt-ftparchive
+**/cmdline/apt
+**/cmdline/apt-cache
+**/cmdline/apt-cdrom
+**/cmdline/apt-config
+**/cmdline/apt-extracttemplates
+**/cmdline/apt-get
+**/cmdline/apt-helper
+**/cmdline/apt-key
+**/cmdline/apt-mark
+**/cmdline/apt-sortpkgs
+**/cmdline/planners
+**/cmdline/solvers
+**/cmdline/apt
+
+**/methods/file
+**/methods/copy
+**/methods/store
+**/methods/gpgv
+**/methods/cdrom
+**/methods/http
+**/methods/https
+**/methods/mirror
+**/methods/ftp
+**/methods/rred
+**/methods/rsh
+**/methods/ssh
+**/methods/gzip
+**/methods/bzip2
+**/methods/xz
+**/methods/lzma
+
+**/test/interactive-helper/aptwebserver
+**/test/interactive-helper/extract-control
+**/test/interactive-helper/rpmver
+**/test/interactive-helper/testdeb
+**/test/interactive-helper/mthdcat
+**/test/interactive-helper/test_fileutl
+**/test/interactive-helper/test_udevcdrom
+**/test/libapt/libapt_test
+
+# Documentation
+Doxyfile
+doxygen/
+*.html/
+*.text.html
+*.text
+*.*stamp*
+*.[1-9]
+**/doc/*/*.xml
+**/doc/*/*.dbk
 !/doc/examples/
-!/doc/po/
-/doc/en/*
-!/doc/en/makefile
+
+# Backend files
+Makefile
+*.ninja
+.ninja*
+
+!CMakeLists.txt
 
 # package building artifacts
 /debian/*.log
@@ -28,14 +101,6 @@
 /debian/libapt-pkg-dev/
 /debian/libapt-pkg-doc/
 /debian/apt-transport-https/
-
-# generated from *.in files
-/cmdline/apt-key
-/doc/apt-vendor.ent
-/doc/examples/sources.list
-/vendor/current
-/vendor/*/sources.list
-/vendor/*/makefile.auto
 
 # generated for and by abicheck
 /abicheck/apt_build.xml
