@@ -75,15 +75,31 @@ function(apt_add_translation_domain)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
+    # We are building a ${domain}.pot with a header for launchpad, but we also
+    # build a ${domain.pot}-tmp as a byproduct. The msgfmt command than depend
+    # on the byproduct while their target depends on the output, so that msgfmt
+    # does not have to be rerun if nothing in the template changed.
     add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/${domain}.pot
+        BYPRODUCTS ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
         COMMAND msgcomm --more-than=0 --sort-by-file
                          ${sh_pot}
                          ${PROJECT_BINARY_DIR}/${domain}.c.pot
                          --output=${PROJECT_BINARY_DIR}/${domain}.pot
+        COMMAND msgcomm --more-than=0 --omit-header --sort-by-file
+                         ${sh_pot}
+                         ${PROJECT_BINARY_DIR}/${domain}.c.pot
+                         --output=${PROJECT_BINARY_DIR}/${domain}.pot-tmp0
+        COMMAND cmake -E copy_if_different
+                         ${PROJECT_BINARY_DIR}/${domain}.pot-tmp0
+                         ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
         DEPENDS ${sh_pot}
                 ${PROJECT_BINARY_DIR}/${domain}.c.pot
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
+
+    # We need a target to depend on otherwise, the msgmerge might not get called
+    # with the make generator
+    add_custom_target(nls-${domain}-template DEPENDS ${PROJECT_BINARY_DIR}/${domain}.pot)
 
     # Build .mo files
     file(GLOB translations "${PROJECT_SOURCE_DIR}/po/*.po")
@@ -92,10 +108,11 @@ function(apt_add_translation_domain)
         get_filename_component(langcode ${file} NAME_WE)
         set(outdir ${PROJECT_BINARY_DIR}/locale/${langcode}/LC_MESSAGES)
         file(MAKE_DIRECTORY ${outdir})
-        # Command to merge and compile the messages
+        # Command to merge and compile the messages. As explained in the custom
+        # command for msgcomm, this depends on byproduct to avoid reruns
         add_custom_command(OUTPUT ${outdir}/${domain}.po
-            COMMAND msgmerge -qo ${outdir}/${domain}.po ${file} ${PROJECT_BINARY_DIR}/${domain}.pot
-            DEPENDS ${file} ${PROJECT_BINARY_DIR}/${domain}.pot
+            COMMAND msgmerge -qo ${outdir}/${domain}.po ${file} ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
+            DEPENDS ${file} ${PROJECT_BINARY_DIR}/${domain}.pot-tmp
         )
         add_custom_command(OUTPUT ${outdir}/${domain}.mo
             COMMAND msgfmt --statistics -o ${outdir}/${domain}.mo  ${outdir}/${domain}.po
@@ -107,7 +124,7 @@ function(apt_add_translation_domain)
                 DESTINATION "${CMAKE_INSTALL_LOCALEDIR}/${langcode}/LC_MESSAGES")
     endforeach(file ${translations})
 
-    add_custom_target(nls-${domain} ALL DEPENDS ${mofiles})
+    add_custom_target(nls-${domain} ALL DEPENDS ${mofiles} nls-${domain}-template)
 endfunction()
 
 # Usage: apt_add_update_po(output domain [domain ...])
