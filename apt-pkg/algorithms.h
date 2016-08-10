@@ -52,9 +52,10 @@ using std::ostream;
 #endif
 
 
+class pkgSimulatePrivate;
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
-   void * const d;
+   pkgSimulatePrivate * const d;
    protected:
 
    class Policy : public pkgDepCache::Policy
@@ -81,9 +82,16 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
    virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;
 
+   // FIXME: trick to avoid ABI break for virtual reimplementation; fix on next ABI break
+public:
+   APT_HIDDEN bool Go2(APT::Progress::PackageManager * progress);
+
 private:
    APT_HIDDEN void ShortBreaks();
    APT_HIDDEN void Describe(PkgIterator iPkg,std::ostream &out,bool Current,bool Candidate);
+   APT_HIDDEN bool RealInstall(PkgIterator Pkg,std::string File);
+   APT_HIDDEN bool RealConfigure(PkgIterator Pkg);
+   APT_HIDDEN bool RealRemove(PkgIterator Pkg,bool Purge);
 
    public:
 

@@ -34,7 +34,7 @@ rm -f rootdir/var/log/dpkg.log rootdir/var/log/apt/term.log
 testsuccess aptget install -y fdleaks -qq < /dev/null
 
 checkfdleak() {
-	msgtest 'Check if fds were not' 'leaked'
+	msgtest 'Check if fds were not' "leaked: expect $1"
 	if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = "$1" ]; then
 		msgpass
 	else
@@ -72,12 +72,15 @@ checkpurge() {
 	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
 	testfileequal 'terminal.log' "$(cat terminal.output)"
 
-	testequal "startup packages purge
+	testequal "startup packages remove
 status installed $PKGNAME 1.0
 remove $PKGNAME 1.0 <none>
 status half-configured $PKGNAME 1.0
 status half-installed $PKGNAME 1.0
 status config-files $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+startup packages purge
+remove $PKGNAME 1.0 <none>
 purge $PKGNAME 1.0 <none>
 status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
@@ -86,6 +89,7 @@ status config-files $PKGNAME 1.0
 status config-files $PKGNAME 1.0
 status not-installed $PKGNAME <none>
 startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
+	testequalor2 "dpkg-query: no packages found matching ${PKGNAME}" "No packages found matching ${PKGNAME}." dpkg -l "$PKGNAME"
 }
 checkpurge
 

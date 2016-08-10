@@ -1,0 +1,49 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386' 'amd64' 'armel'
+configdpkgnoopchroot
+
+buildsimplenativepackage 'unrelated' 'amd64' '1' 'stable'
+buildsimplenativepackage 'crosser' 'i386,armel' '1' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'crosser' 'amd64' '2' 'unstable'
+setupaptarchive
+
+singleinstance() {
+	testsuccess apt install crosser:i386=1 unrelated:amd64 -y --planner $1
+	testdpkginstalled 'crosser:i386' 'unrelated'
+
+	testsuccess apt install crosser:amd64 -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0 --purge --planner $1
+	cp -a rootdir/tmp/testsuccess.output crosser.output
+	testfailure grep -- '--remove.*crosser.*' crosser.output
+	testfailure grep -- '--purge' crosser.output
+	testsuccess apt install crosser:amd64 unrelated:amd64- -y -o Dpkg::Use-Pty=0 --purge -o Debug::pkgDPkgProgressReporting=1 --planner $1
+	testdpkgnotinstalled 'crosser:i386' 'unrelated'
+	testdpkginstalled 'crosser:amd64'
+
+	testsuccess apt purge crosser:amd64 -y --planner $1
+	testdpkgnotinstalled 'crosser:amd64'
+}
+singleinstance 'internal'
+singleinstance 'apt'
+
+multiinstance() {
+	testsuccess apt install crosser:i386=1 crosser:armel=1 unrelated:amd64 -y --planner $1
+	testdpkginstalled 'crosser:i386' 'crosser:armel' 'unrelated'
+
+	testsuccess apt install crosser:amd64 -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0 --purge --planner $1
+	cp -a rootdir/tmp/testsuccess.output crosser.output
+	testsuccess grep -- '--remove.*crosser.*' crosser.output
+	testsuccess grep -- '--purge' crosser.output
+	testsuccess apt install crosser:amd64 unrelated:amd64- -y -o Dpkg::Use-Pty=0 --purge -o Debug::pkgDPkgProgressReporting=1 --planner $1
+	testdpkgnotinstalled 'crosser:i386' 'crosser:armel' 'unrelated'
+	testdpkginstalled 'crosser:amd64'
+
+	testsuccess apt purge crosser:amd64 -y --planner $1
+	testdpkgnotinstalled 'crosser:amd64'
+}
+multiinstance 'internal'

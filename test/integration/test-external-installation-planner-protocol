@@ -45,9 +45,7 @@ Planner: internal' head -n 6 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Remove: 6
 Unpack: 2
-Unpack: 4
-Configure: 2
-Configure: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
+Unpack: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
 
 rm -f "$EIPPLOG"
 testsuccess aptget install foo -s --reinstall
@@ -59,8 +57,7 @@ Architectures: amd64
 ReInstall: foo:amd64
 Planner: internal' head -n 5 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
-testsuccessequal 'Unpack: 4
-Configure: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
+testsuccessequal 'Unpack: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
 
 rm -f "$EIPPLOG"
 testsuccess aptget purge foo -s

@@ -25,22 +25,29 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/dpkgpm.h>
 
 #include <string.h>
 #include <string>
 #include <cstdlib>
 #include <iostream>
+#include <utility>
 
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
+class APT_HIDDEN pkgSimulatePrivate
+{
+public:
+   std::vector<pkgDPkgPM::Item> List;
+};
 // Simulate::Simulate - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The legacy translations here of input Pkg iterators is obsolete, 
    this is not necessary since the pkgCaches are fully shared now. */
 pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
-		            d(NULL), iPolicy(Cache),
+		            d(new pkgSimulatePrivate()), iPolicy(Cache),
 			    Sim(&Cache->GetCache(),&iPolicy),
 			    group(Sim)
 {
@@ -58,6 +65,7 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 pkgSimulate::~pkgSimulate()
 {
    delete[] Flags;
+   delete d;
 }
 									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
@@ -90,7 +98,14 @@ void pkgSimulate::Describe(PkgIterator Pkg,ostream &out,bool Current,bool Candid
 // Simulate::Install - Simulate unpacking of a package			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
+bool pkgSimulate::Install(PkgIterator iPkg,string File)
+{
+   if (iPkg.end() || File.empty())
+      return false;
+   d->List.emplace_back(pkgDPkgPM::Item::Install, iPkg, File);
+   return true;
+}
+bool pkgSimulate::RealInstall(PkgIterator iPkg,string /*File*/)
 {
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
@@ -137,6 +152,13 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    install the package.. For some investigations it may be necessary 
    however. */
 bool pkgSimulate::Configure(PkgIterator iPkg)
+{
+   if (iPkg.end())
+      return false;
+   d->List.emplace_back(pkgDPkgPM::Item::Configure, iPkg);
+   return true;
+}
+bool pkgSimulate::RealConfigure(PkgIterator iPkg)
 {
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
@@ -188,6 +210,13 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
 /* */
 bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 {
+   if (iPkg.end())
+      return false;
+   d->List.emplace_back(Purge ? pkgDPkgPM::Item::Purge : pkgDPkgPM::Item::Remove, iPkg);
+   return true;
+}
+bool pkgSimulate::RealRemove(PkgIterator iPkg,bool Purge)
+{
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
    if (Pkg.end() == true)
@@ -230,6 +259,38 @@ void pkgSimulate::ShortBreaks()
       }      
    }
    cout << ']' << endl;
+}
+									/*}}}*/
+bool pkgSimulate::Go2(APT::Progress::PackageManager *)			/*{{{*/
+{
+   if (pkgDPkgPM::ExpandPendingCalls(d->List, Cache) == false)
+      return false;
+   for (auto && I : d->List)
+      switch (I.Op)
+      {
+	 case pkgDPkgPM::Item::Install:
+	    if (RealInstall(I.Pkg, I.File) == false)
+	       return false;
+	    break;
+	 case pkgDPkgPM::Item::Configure:
+	    if (RealConfigure(I.Pkg) == false)
+	       return false;
+	    break;
+	 case pkgDPkgPM::Item::Remove:
+	    if (RealRemove(I.Pkg, false) == false)
+	       return false;
+	    break;
+	 case pkgDPkgPM::Item::Purge:
+	    if (RealRemove(I.Pkg, true) == false)
+	       return false;
+	    break;
+	 case pkgDPkgPM::Item::ConfigurePending:
+	 case pkgDPkgPM::Item::TriggersPending:
+	 case pkgDPkgPM::Item::RemovePending:
+	 case pkgDPkgPM::Item::PurgePending:
+	    return _error->Error("Internal error, simulation encountered unexpected pending item");
+      }
+   return true;
 }
 									/*}}}*/
 // ApplyStatus - Adjust for non-ok packages				/*{{{*/

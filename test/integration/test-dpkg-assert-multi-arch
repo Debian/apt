@@ -17,7 +17,7 @@ setupaptarchive
 testqualifier() {
 	msgtest 'Test with' $1 'for correct qualifier mode' $2
 	#aptget install $1 -qq -o Debug::pkgDPkgPM=1 || true
-	aptget install $1 -qq -o Debug::pkgDPkgPM=1 -o Dpkg::ExplicitLastConfigure=1 > testqualifier.output 2>&1 || true
+	aptget install $1 -qq -o Debug::pkgDPkgPM=1 -o Dpkg::ExplicitLastConfigure=1 -o PackageManager::Configure=all > testqualifier.output 2>&1 || true
 	GIVEN="$(grep -v -- '--unpack' testqualifier.output | sed -ne 's/^.*--[rpc][^ ]* \([^ ]*\).*$/\1/p')"
 	if [ "$GIVEN" = "$2" ]; then
 		msgpass

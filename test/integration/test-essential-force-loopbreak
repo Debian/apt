@@ -43,6 +43,9 @@ E: Internal Error, Could not early remove sysvinit:$(dpkg --print-architecture) 
 
 	# with enough force however …
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	testsuccess aptget install systemd-sysv -y -t "$1" -o APT::Force-LoopBreak=1 -o Debug::pkgDpkgPm=1
+	cp rootdir/tmp/testsuccess.output apt.output
+	testsuccess grep -- '--force-remove-essential --remove sysvinit' apt.output
 	testsuccess aptget install systemd-sysv -y -t "$1" -o APT::Force-LoopBreak=1
 	testdpkginstalled 'sysvinit' 'systemd-sysv'
 }

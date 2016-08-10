@@ -76,17 +76,19 @@ class pkgDPkgPM : public pkgPackageManager
    // progress reporting
    unsigned int PackagesDone;
    unsigned int PackagesTotal;
-  
+
+   public:
    struct Item
    {
-      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending} Op;
+      enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending,
+         RemovePending, PurgePending } Op;
       std::string File;
       PkgIterator Pkg;
       Item(Ops Op,PkgIterator Pkg,std::string File = "") : Op(Op),
             File(File), Pkg(Pkg) {};
       Item() {};
-      
    };
+   protected:
    std::vector<Item> List;
 
    // Helpers
@@ -125,7 +127,7 @@ class pkgDPkgPM : public pkgPackageManager
    virtual bool Remove(PkgIterator Pkg,bool Purge = false) APT_OVERRIDE;
 
    virtual bool Go(APT::Progress::PackageManager *progress) APT_OVERRIDE;
-   virtual bool Go(int StatusFd=-1) APT_OVERRIDE;
+   APT_DEPRECATED_MSG("Use overload with explicit progress manager") virtual bool Go(int StatusFd=-1) APT_OVERRIDE;
 
    virtual void Reset() APT_OVERRIDE;
    
@@ -133,6 +135,8 @@ class pkgDPkgPM : public pkgPackageManager
 
    pkgDPkgPM(pkgDepCache *Cache);
    virtual ~pkgDPkgPM();
+
+   APT_HIDDEN static bool ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache);
 };
 
 void SigINT(int sig);

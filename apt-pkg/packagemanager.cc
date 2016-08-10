@@ -315,8 +315,8 @@ bool pkgPackageManager::ConfigureAll()
    if (OList.OrderConfigure() == false)
       return false;
 
-   std::string const conf = _config->Find("PackageManager::Configure","all");
-   bool const ConfigurePkgs = (conf == "all");
+   std::string const conf = _config->Find("PackageManager::Configure", "smart");
+   bool const ConfigurePkgs = (ImmConfigureAll || conf == "all");
 
    // Perform the configuring
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); ++I)
@@ -600,7 +600,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 
    if (PkgLoop) return true;
 
-   static std::string const conf = _config->Find("PackageManager::Configure","all");
+   static std::string const conf = _config->Find("PackageManager::Configure", "smart");
    static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
 
    if (List->IsFlag(Pkg,pkgOrderList::Configured))
@@ -1148,7 +1148,12 @@ pkgPackageManager::DoInstallPostFork(int statusFd)
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
-   bool goResult = Go(progress);
+   bool goResult;
+   auto simulation = dynamic_cast<pkgSimulate*>(this);
+   if (simulation == nullptr)
+      goResult = Go(progress);
+   else
+      goResult = simulation->Go2(progress);
    if(goResult == false) 
       return Failed;
    
