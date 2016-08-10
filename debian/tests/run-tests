@@ -2,22 +2,24 @@
 
 set -e
 
-# we need the buildin webserver for the tests
-if [ ! -e environment.mak ]; then
-    make startup
+if [ ! -e build/CMakeCache.txt ]; then
+    mkdir build || true
+    ( cd build && cmake .. )
 fi
-make -C test/interactive-helper/
+
+make -C build/test/interactive-helper
 
 # run tests against the installed apt, use "env -i" to ensure
 # the host env does not pollute our environment
 env -i \
 APT_INTEGRATION_TESTS_SOURCE_DIR=$(pwd) \
-APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR=$(pwd)/build/bin \
+APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR=$(pwd)/build/test/interactive-helper \
 APT_INTEGRATION_TESTS_METHODS_DIR=/usr/lib/apt/methods \
 APT_INTEGRATION_TESTS_LIBEXEC_DIR=/usr/lib/apt/ \
 APT_INTEGRATION_TESTS_INTERNAL_SOLVER=/usr/lib/apt/solvers/apt \
 APT_INTEGRATION_TESTS_DUMP_SOLVER=/usr/lib/apt/solvers/dump \
 APT_INTEGRATION_TESTS_INTERNAL_PLANNER=/usr/lib/apt/planners/apt \
 APT_INTEGRATION_TESTS_BUILD_DIR=/usr/bin \
+APT_INTEGRATION_TESTS_FTPARCHIVE_BIN_DIR=/usr/bin \
 APT_INTEGRATION_TESTS_LIBRARY_PATH=/dev/null/does/not/exist \
 ./test/integration/run-tests -q

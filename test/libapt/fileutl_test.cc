@@ -216,7 +216,7 @@ TEST(FileUtlTest, Glob)
 {
    std::vector<std::string> files;
    // normal match
-   files = Glob("*akefile");
+   files = Glob("*MakeLists.txt");
    EXPECT_EQ(1, files.size());
 
    // not there

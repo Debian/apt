@@ -2,7 +2,47 @@
 # small helper to extract information form *.ent files
 
 BASEDIR="$(readlink -f "$(dirname $0)")"
-INFO="$(readlink -f "${BASEDIR}/current/apt-vendor.ent")"
+
+getcurrent() {
+	# search for an exact match to use the correct sources.list example
+	cd $BASEDIR
+	DISTROS="$(find -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2)"
+	for DISTRO in $DISTROS; do
+		if dpkg-vendor --is $DISTRO; then
+			echo $DISTRO
+			return 0
+		fi
+	done
+
+	# if we haven't found a specific, look for a deriving
+	# we do ubuntu and debian last as those are the biggest families
+	# and would therefore potentially 'shadow' smaller families
+	# (especially debian as it sorts quiet early)
+	for DISTRO in $DISTROS; do
+		if [ "$DISTRO" = 'debian' -o "$DISTRO" = 'ubuntu' ]; then continue; fi
+		if dpkg-vendor --derives-from $DISTRO; then
+			echo $DISTRO
+			return 0
+		fi
+	done
+
+	# Do the ubuntu/debian dance we talked about
+	if dpkg-vendor --derives-from ubuntu; then
+		echo $DISTRO
+		return 0
+	fi
+
+	echo debian
+	return 0
+}
+
+if [ "$1" = "--vendor" ]; then
+	CURRENT_VENDOR="$2"
+	shift 2
+else
+	CURRENT_VENDOR=$(getcurrent)
+fi
+INFO="$(readlink -f "${BASEDIR}/$CURRENT_VENDOR/apt-vendor.ent")"
 VERBATIM="${BASEDIR}/../doc/apt-verbatim.ent"
 
 if [ -z "$INFO" ] || [ ! -e "$INFO" ]; then
@@ -24,14 +64,17 @@ case "$1" in
 debian-stable-codename|debian-oldstable-codename|debian-testing-codename|ubuntu-codename)
 	getrawfield "$1" "$VERBATIM"
 	;;
-keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
-	exec $0 'vendor' "$@"
+sourceslist-list-format|keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
+	exec $0 --vendor $CURRENT_VENDOR 'vendor' "$@"
 	;;
 vendor)
 	getfield "$2"
 	;;
 verbatim)
 	getfield "$2" "$VERBATIM"
+	;;
+current)
+	echo $CURRENT_VENDOR
 	;;
 *)
 	echo >&2 "Unknown data field $1 requested"

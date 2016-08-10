@@ -180,7 +180,7 @@ aptconfig() { runapt apt-config "$@"; }
 aptcache() { runapt apt-cache "$@"; }
 aptcdrom() { runapt apt-cdrom "$@"; }
 aptget() { runapt apt-get "$@"; }
-aptftparchive() { runapt apt-ftparchive "$@"; }
+aptftparchive() { runapt "${APTFTPARCHIVEBINDIR}/apt-ftparchive" "$@"; }
 aptkey() { runapt apt-key "$@"; }
 aptmark() { runapt apt-mark "$@"; }
 aptsortpkgs() { runapt apt-sortpkgs "$@"; }
@@ -257,6 +257,24 @@ escape_shell() {
     echo "$@" | sed -e "s#'#'\"'\"'#g"
 }
 
+find_project_binary_dir() {
+	local TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
+	if [ -z "$PROJECT_BINARY_DIR" ]; then
+		PROJECT_BINARY_DIR=
+		for dir in ${TESTDIRECTORY}/../../ ${TESTDIRECTORY}/../../*; do
+			test -e "$dir/CMakeCache.txt"  || continue
+			if [ -z "$PROJECT_BINARY_DIR" ] ||
+			   [ "$dir/CMakeCache.txt" -nt "$PROJECT_BINARY_DIR/CMakeCache.txt" ]; then
+				PROJECT_BINARY_DIR="$dir"
+			fi
+		done
+		if [ -z "$PROJECT_BINARY_DIR" ]; then
+			echo "Cannot find build directory, you might want to set PROJECT_BINARY_DIR" >&2
+			exit 1
+		fi
+		export PROJECT_BINARY_DIR
+	fi
+}
 setupenvironment() {
 	# privilege dropping and testing doesn't work if /tmp isn't world-writeable (as e.g. with libpam-tmpdir)
 	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
@@ -281,16 +299,19 @@ setupenvironment() {
 	fi
 
 	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
+	# Find the newest build directory (sets PROJECT_BINARY_DIR)
+	find_project_binary_dir
         # allow overriding the default BUILDDIR location
 	SOURCEDIRECTORY="${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}"
-	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}"
-	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}"
-        METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}"
+	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${PROJECT_BINARY_DIR}/cmdline"}"
+	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}/../apt-pkg"}"
+        METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/../methods"}"
         APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}"
-        APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}"
-        APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}"
-	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}"
-	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/apt-internal-planner"}"
+        APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}/../test/interactive-helper"}"
+        APTFTPARCHIVEBINDIR="${APT_INTEGRATION_TESTS_FTPARCHIVE_BIN_DIR:-"${BUILDDIRECTORY}/../ftparchive"}"
+        APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/solvers/apt"}"
+	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/solvers/dump"}"
+	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/planners/apt"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 

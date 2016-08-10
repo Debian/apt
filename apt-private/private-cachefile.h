@@ -9,8 +9,6 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cacheset.h>
 
-#include <apti18n.h>
-
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
 class APT_PUBLIC CacheFile : public pkgCacheFile
 {

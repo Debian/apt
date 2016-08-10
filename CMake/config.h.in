@@ -1,0 +1,57 @@
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#cmakedefine WORDS_BIGENDIAN
+
+/* Define if we have the timegm() function */
+#cmakedefine HAVE_TIMEGM
+
+/* Define if we have the zlib library for gzip */
+#cmakedefine HAVE_ZLIB
+
+/* Define if we have the bz2 library for bzip2 */
+#cmakedefine HAVE_BZ2
+
+/* Define if we have the lzma library for lzma/xz */
+#cmakedefine HAVE_LZMA
+
+/* Define if we have the lz4 library for lz4 */
+#cmakedefine HAVE_LZ4
+
+/* These two are used by the statvfs shim for glibc2.0 and bsd */
+/* Define if we have sys/vfs.h */
+#cmakedefine HAVE_VFS_H
+#cmakedefine HAVE_STRUCT_STATFS_F_TYPE
+
+/* Define if we have sys/mount.h */
+#cmakedefine HAVE_MOUNT_H
+
+/* Define if we have enabled pthread support */
+#cmakedefine HAVE_PTHREAD
+
+/* Check for getresuid() function and similar ones */
+#cmakedefine HAVE_GETRESUID
+#cmakedefine HAVE_GETRESGID
+#cmakedefine HAVE_SETRESUID
+#cmakedefine HAVE_SETRESGID
+
+/* Check for ptsname_r() */
+#cmakedefine HAVE_PTSNAME_R
+
+/* Define the arch name string */
+#define COMMON_ARCH "${COMMON_ARCH}"
+
+/* The package name string */
+#define PACKAGE "${PACKAGE}"
+
+/* The version number string */
+#define PACKAGE_VERSION "${PACKAGE_VERSION}"
+
+/* The mail address to reach upstream */
+#define PACKAGE_MAIL "${PACKAGE_MAIL}"
+
+#define APT_8_CLEANER_HEADERS
+#define APT_9_CLEANER_HEADERS
+#define APT_10_CLEANER_HEADERS
+
+/* unrolling is faster combined with an optimizing compiler */
+#define SHA2_UNROLL_TRANSFORM

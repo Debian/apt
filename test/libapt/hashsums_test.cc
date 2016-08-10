@@ -119,7 +119,7 @@ static void getSummationString(char const * const type, std::string &sum)
    FileFd fd;
    ASSERT_TRUE(fd.Open(tempfile, FileFd::WriteOnly | FileFd::Empty, compress));
    ASSERT_TRUE(fd.IsOpen());
-   FileFd input(__FILE__, FileFd::ReadOnly);
+   FileFd input("/etc/os-release", FileFd::ReadOnly);
    ASSERT_TRUE(input.IsOpen());
    ASSERT_NE(0, input.FileSize());
    ASSERT_TRUE(CopyFile(input, fd));
@@ -161,7 +161,7 @@ TEST(HashSumsTest, FileBased)
    SHA512SumValue sha512(summation);
    EXPECT_EQ(sha512.Value(), summation);
 
-   FileFd fd(__FILE__, FileFd::ReadOnly);
+   FileFd fd("/etc/os-release", FileFd::ReadOnly);
    EXPECT_TRUE(fd.IsOpen());
    std::string FileSize;
    strprintf(FileSize, "%llu", fd.FileSize());
@@ -243,18 +243,18 @@ TEST(HashSumsTest, FileBased)
    fd.Close();
 
    HashString sha2file("SHA512", sha512.Value());
-   EXPECT_TRUE(sha2file.VerifyFile(__FILE__));
+   EXPECT_TRUE(sha2file.VerifyFile("/etc/os-release"));
    HashString sha2wrong("SHA512", "00000000000");
-   EXPECT_FALSE(sha2wrong.VerifyFile(__FILE__));
+   EXPECT_FALSE(sha2wrong.VerifyFile("/etc/os-release"));
    EXPECT_EQ(sha2file, sha2file);
    EXPECT_TRUE(sha2file == sha2file);
    EXPECT_NE(sha2file, sha2wrong);
    EXPECT_TRUE(sha2file != sha2wrong);
 
    HashString sha2big("SHA256", sha256.Value());
-   EXPECT_TRUE(sha2big.VerifyFile(__FILE__));
+   EXPECT_TRUE(sha2big.VerifyFile("/etc/os-release"));
    HashString sha2small("sha256:" + sha256.Value());
-   EXPECT_TRUE(sha2small.VerifyFile(__FILE__));
+   EXPECT_TRUE(sha2small.VerifyFile("/etc/os-release"));
    EXPECT_EQ(sha2big, sha2small);
    EXPECT_TRUE(sha2big == sha2small);
    EXPECT_FALSE(sha2big != sha2small);
@@ -283,7 +283,7 @@ TEST(HashSumsTest, FileBased)
    EXPECT_EQ(2, hashes.size());
    EXPECT_FALSE(hashes.push_back(sha2wrong));
    EXPECT_EQ(2, hashes.size());
-   EXPECT_TRUE(hashes.VerifyFile(__FILE__));
+   EXPECT_TRUE(hashes.VerifyFile("/etc/os-release"));
 
    EXPECT_EQ(similar, hashes);
    EXPECT_TRUE(similar == hashes);
