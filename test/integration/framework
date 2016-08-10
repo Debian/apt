@@ -257,6 +257,24 @@ escape_shell() {
     echo "$@" | sed -e "s#'#'\"'\"'#g"
 }
 
+find_project_binary_dir() {
+	local TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
+	if [ -z "$PROJECT_BINARY_DIR" ]; then
+		PROJECT_BINARY_DIR=
+		for dir in ${TESTDIRECTORY}/../../ ${TESTDIRECTORY}/../../*; do
+			test -e "$dir/CMakeCache.txt"  || continue
+			if [ -z "$PROJECT_BINARY_DIR" ] ||
+			   [ "$dir/CMakeCache.txt" -nt "$PROJECT_BINARY_DIR/CMakeCache.txt" ]; then
+				PROJECT_BINARY_DIR="$dir"
+			fi
+		done
+		if [ -z "$PROJECT_BINARY_DIR" ]; then
+			echo "Cannot find build directory, you might want to set PROJECT_BINARY_DIR" >&2
+			exit 1
+		fi
+		export PROJECT_BINARY_DIR
+	fi
+}
 setupenvironment() {
 	# privilege dropping and testing doesn't work if /tmp isn't world-writeable (as e.g. with libpam-tmpdir)
 	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
@@ -281,9 +299,11 @@ setupenvironment() {
 	fi
 
 	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
+	# Find the newest build directory (sets PROJECT_BINARY_DIR)
+	find_project_binary_dir
         # allow overriding the default BUILDDIR location
 	SOURCEDIRECTORY="${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}"
-	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/cmdline"}"
+	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${PROJECT_BINARY_DIR}/cmdline"}"
 	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}/../apt-pkg"}"
         METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/../methods"}"
         APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}"
