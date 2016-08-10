@@ -47,18 +47,18 @@ are encouraged to do as well.
 
 APT uses cmake. To start building, you need to run
 
-  cmake <path to source directory>
+	cmake <path to source directory>
 
 from a build directory. For example, if you want to build in the source tree,
 run:
 
-  cmake .
+	cmake .
 
 Then you can use make as you normally would (pass -j <count> to perform <count>
 jobs in parallel).
 
 You can also use the Ninja generator of cmake, to do that pass
-  -G Ninja
+	-G Ninja
 to the cmake invocation, and then use ninja instead of make.
 
 The source code uses in most parts a relatively uncommon indent convention,
