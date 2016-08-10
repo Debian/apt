@@ -86,6 +86,7 @@ class FileFd
       return Read(To,Size);
    }   
    bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
+   bool static Read(int const Fd, void *To, unsigned long long Size, unsigned long long * const Actual = 0);
    char* ReadLine(char *To, unsigned long long const Size);
    bool Flush();
    bool Write(const void *From,unsigned long long Size);

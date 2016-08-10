@@ -93,17 +93,38 @@ pkgAcquire::Worker::~Worker()
 bool pkgAcquire::Worker::Start()
 {
    // Get the method path
-   string Method = _config->FindDir("Dir::Bin::Methods") + Access;
+   constexpr char const * const methodsDir = "Dir::Bin::Methods";
+   std::string const confItem = std::string(methodsDir) + "::" + Access;
+   std::string Method;
+   if (_config->Exists(confItem))
+	 Method = _config->FindFile(confItem.c_str());
+   else
+	 Method = _config->FindDir(methodsDir) + Access;
    if (FileExists(Method) == false)
    {
+      if (flNotDir(Method) == "false")
+      {
+	 _error->Error(_("The method '%s' is explicitly disabled via configuration."), Access.c_str());
+	 if (Access == "http" || Access == "https")
+	    _error->Notice(_("If you meant to use Tor remember to use %s instead of %s."), ("tor+" + Access).c_str(), Access.c_str());
+	 return false;
+      }
       _error->Error(_("The method driver %s could not be found."),Method.c_str());
-      if (Access == "https")
-	 _error->Notice(_("Is the package %s installed?"), "apt-transport-https");
+      std::string const A(Access.cbegin(), std::find(Access.cbegin(), Access.cend(), '+'));
+      std::string pkg;
+      strprintf(pkg, "apt-transport-%s", A.c_str());
+      _error->Notice(_("Is the package %s installed?"), pkg.c_str());
       return false;
    }
+   std::string const Calling = _config->FindDir(methodsDir) + Access;
 
    if (Debug == true)
-      clog << "Starting method '" << Method << '\'' << endl;
+   {
+      std::clog << "Starting method '" << Calling << "'";
+      if (Calling != Method)
+	 std::clog << " ( via " << Method << " )";
+      std::clog << endl;
+   }
 
    // Create the pipes
    int Pipes[4] = {-1,-1,-1,-1};
@@ -128,11 +149,9 @@ bool pkgAcquire::Worker::Start()
       SetCloseExec(STDIN_FILENO,false);
       SetCloseExec(STDERR_FILENO,false);
 
-      const char *Args[2];
-      Args[0] = Method.c_str();
-      Args[1] = 0;
-      execv(Args[0],(char **)Args);
-      cerr << "Failed to exec method " << Args[0] << endl;
+      const char * const Args[] = { Calling.c_str(), nullptr };
+      execv(Method.c_str() ,const_cast<char **>(Args));
+      std::cerr << "Failed to exec method " << Calling << " ( via " << Method << ")" << endl;
       _exit(100);
    }
 
@@ -267,6 +286,16 @@ bool pkgAcquire::Worker::RunMessages()
 	    for (auto const &Owner: ItmOwners)
 	    {
 	       pkgAcquire::ItemDesc &desc = Owner->GetItemDesc();
+	       if (Owner->IsRedirectionLoop(NewURI))
+	       {
+		  std::string msg = Message;
+		  msg.append("\nFailReason: RedirectionLoop");
+		  Owner->Failed(msg, Config);
+		  if (Log != nullptr)
+		     Log->Fail(Owner->GetItemDesc());
+		  continue;
+	       }
+
 	       if (Log != nullptr)
 		  Log->Done(desc);
 

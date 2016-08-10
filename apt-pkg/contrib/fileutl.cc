@@ -2444,6 +2444,37 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 
    return FileFdError(_("read, still have %llu to read but none left"), Size);
 }
+bool FileFd::Read(int const Fd, void *To, unsigned long long Size, unsigned long long * const Actual)
+{
+   ssize_t Res = 1;
+   errno = 0;
+   if (Actual != nullptr)
+      *Actual = 0;
+   *static_cast<char *>(To) = '\0';
+   while (Res > 0 && Size > 0)
+   {
+      Res = read(Fd, To, Size);
+      if (Res < 0)
+      {
+	 if (errno == EINTR)
+	 {
+	    Res = 1;
+	    errno = 0;
+	    continue;
+	 }
+	 return _error->Errno("read", _("Read error"));
+      }
+      To = static_cast<char *>(To) + Res;
+      Size -= Res;
+      if (Actual != 0)
+	 *Actual += Res;
+   }
+   if (Size == 0)
+      return true;
+   if (Actual != nullptr)
+      return true;
+   return _error->Error(_("read, still have %llu to read but none left"), Size);
+}
 									/*}}}*/
 // FileFd::ReadLine - Read a complete line from the file		/*{{{*/
 // ---------------------------------------------------------------------

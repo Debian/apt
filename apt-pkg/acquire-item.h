@@ -304,6 +304,8 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     */
    virtual ~Item();
 
+   bool APT_HIDDEN IsRedirectionLoop(std::string const &NewURI);
+
    protected:
    /** \brief The acquire object with which this item is associated. */
    pkgAcquire * const Owner;
@@ -357,7 +359,8 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    virtual std::string GetFinalFilename() const;
 
    private:
-   void * const d;
+   class Private;
+   Private * const d;
 
    friend class pkgAcqMetaBase;
    friend class pkgAcqMetaClearSig;

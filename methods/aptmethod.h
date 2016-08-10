@@ -5,8 +5,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 
+#include <algorithm>
 #include <locale>
 #include <string>
+#include <vector>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -15,9 +17,15 @@
 
 #include <apti18n.h>
 
+static bool hasDoubleColon(std::string const &n)
+{
+   return n.find("::") != std::string::npos;
+}
+
 class aptMethod : public pkgAcqMethod
 {
-   char const * const Binary;
+protected:
+   std::string const Binary;
 
 public:
    virtual bool Configuration(std::string Message) APT_OVERRIDE
@@ -33,7 +41,7 @@ public:
       return true;
    }
 
-   bool CalculateHashes(FetchItem const * const Itm, FetchResult &Res) const
+   bool CalculateHashes(FetchItem const * const Itm, FetchResult &Res) const APT_NONNULL(2)
    {
       Hashes Hash(Itm->ExpectedHashes);
       FileFd Fd;
@@ -51,7 +59,62 @@ public:
       va_end(args);
    }
 
-   bool TransferModificationTimes(char const * const From, char const * const To, time_t &LastModified)
+   std::vector<std::string> methodNames;
+   void setPostfixForMethodNames(char const * const postfix) APT_NONNULL(2)
+   {
+      methodNames.erase(std::remove_if(methodNames.begin(), methodNames.end(), hasDoubleColon), methodNames.end());
+      decltype(methodNames) toAdd;
+      for (auto && name: methodNames)
+	 toAdd.emplace_back(name + "::" + postfix);
+      std::move(toAdd.begin(), toAdd.end(), std::back_inserter(methodNames));
+   }
+   bool DebugEnabled() const
+   {
+      if (methodNames.empty())
+	 return false;
+      auto const sni = std::find_if_not(methodNames.crbegin(), methodNames.crend(), hasDoubleColon);
+      if (unlikely(sni == methodNames.crend()))
+	 return false;
+      auto const ln = methodNames[methodNames.size() - 1];
+      // worst case: all three are the same
+      std::string confln, confsn, confpn;
+      strprintf(confln, "Debug::Acquire::%s", ln.c_str());
+      strprintf(confsn, "Debug::Acquire::%s", sni->c_str());
+      auto const pni = sni->substr(0, sni->find('+'));
+      strprintf(confpn, "Debug::Acquire::%s", pni.c_str());
+      return _config->FindB(confln,_config->FindB(confsn, _config->FindB(confpn, false)));
+   }
+   std::string ConfigFind(char const * const postfix, std::string const &defValue) const APT_NONNULL(2)
+   {
+      for (auto && name: methodNames)
+      {
+	 std::string conf;
+	 strprintf(conf, "Acquire::%s::%s", name.c_str(), postfix);
+	 auto const value = _config->Find(conf);
+	 if (value.empty() == false)
+	    return value;
+      }
+      return defValue;
+   }
+   std::string ConfigFind(std::string const &postfix, std::string const &defValue) const
+   {
+      return ConfigFind(postfix.c_str(), defValue);
+   }
+   bool ConfigFindB(char const * const postfix, bool const defValue) const APT_NONNULL(2)
+   {
+      return StringToBool(ConfigFind(postfix, defValue ? "yes" : "no"), defValue);
+   }
+   int ConfigFindI(char const * const postfix, int const defValue) const APT_NONNULL(2)
+   {
+      char *End;
+      std::string const value = ConfigFind(postfix, "");
+      auto const Res = strtol(value.c_str(), &End, 0);
+      if (value.c_str() == End)
+	 return defValue;
+      return Res;
+   }
+
+   bool TransferModificationTimes(char const * const From, char const * const To, time_t &LastModified) APT_NONNULL(2, 3)
    {
       if (strcmp(To, "/dev/null") == 0)
 	 return true;
@@ -74,8 +137,8 @@ public:
       return true;
    }
 
-   aptMethod(char const * const Binary, char const * const Ver, unsigned long const Flags) :
-      pkgAcqMethod(Ver, Flags), Binary(Binary)
+   aptMethod(std::string &&Binary, char const * const Ver, unsigned long const Flags) APT_NONNULL(3) :
+      pkgAcqMethod(Ver, Flags), Binary(Binary), methodNames({Binary})
    {
       try {
 	 std::locale::global(std::locale(""));

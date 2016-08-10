@@ -39,6 +39,7 @@ class HttpsServerState : public ServerState
 
    /** \brief Transfer the data from the socket */
    virtual bool RunData(FileFd * const /*File*/) APT_OVERRIDE { return false; }
+   virtual bool RunDataToDevNull() APT_OVERRIDE { return false; }
 
    virtual bool Open() APT_OVERRIDE { return false; }
    virtual bool IsOpen() APT_OVERRIDE { return false; }
@@ -64,7 +65,7 @@ class HttpsMethod : public ServerMethod
    static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
    static int progress_callback(void *clientp, double dltotal, double dlnow,
 				 double ultotal, double ulnow);
-   void SetupProxy();
+   bool SetupProxy();
    CURL *curl;
 
    // Used by ServerMethods unused by https
@@ -73,21 +74,12 @@ class HttpsMethod : public ServerMethod
 
    public:
 
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    using pkgAcqMethod::FetchResult;
    using pkgAcqMethod::FetchItem;
 
-   HttpsMethod() : ServerMethod("https","1.2",Pipeline | SendConfig)
-   {
-      curl_global_init(CURL_GLOBAL_SSL);
-      curl = curl_easy_init();
-   };
-
-   ~HttpsMethod()
-   {
-      curl_easy_cleanup(curl);
-   };
+   explicit HttpsMethod(std::string &&pProg);
+   virtual ~HttpsMethod();
 };
 
 #include <apt-pkg/strutl.h>

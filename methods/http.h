@@ -67,7 +67,7 @@ class CircleBuf
 
    // Read data in
    bool Read(int Fd);
-   bool Read(std::string Data);
+   bool Read(std::string const &Data);
 
    // Write data out
    bool Write(int Fd);
@@ -86,7 +86,7 @@ class CircleBuf
    // Dump everything
    void Stats();
 
-   explicit CircleBuf(unsigned long long Size);
+   CircleBuf(HttpMethod const * const Owner, unsigned long long Size);
    ~CircleBuf();
 };
 
@@ -106,6 +106,7 @@ struct HttpServerState: public ServerState
    virtual void Reset() APT_OVERRIDE { ServerState::Reset(); ServerFd = -1; };
 
    virtual bool RunData(FileFd * const File) APT_OVERRIDE;
+   virtual bool RunDataToDevNull() APT_OVERRIDE;
 
    virtual bool Open() APT_OVERRIDE;
    virtual bool IsOpen() APT_OVERRIDE;
@@ -125,10 +126,9 @@ class HttpMethod : public ServerMethod
    public:
    virtual void SendReq(FetchItem *Itm) APT_OVERRIDE;
 
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
-
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    virtual void RotateDNS() APT_OVERRIDE;
+   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res) APT_OVERRIDE;
 
    protected:
    std::string AutoDetectProxyCmd;
@@ -136,11 +136,7 @@ class HttpMethod : public ServerMethod
    public:
    friend struct HttpServerState;
 
-   HttpMethod() : ServerMethod("http", "1.2",Pipeline | SendConfig)
-   {
-      File = 0;
-      Server = 0;
-   };
+   explicit HttpMethod(std::string &&pProg);
 };
 
 #endif

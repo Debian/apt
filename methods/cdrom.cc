@@ -177,7 +177,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 
    URI Get = Itm->Uri;
    string File = Get.Path;
-   Debug = _config->FindB("Debug::Acquire::cdrom", false);
+   Debug = DebugEnabled();
 
    if (Debug)
       clog << "CDROMMethod::Fetch " << Itm->Uri << endl;
@@ -224,7 +224,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
       return true;
    }
 
-   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
+   bool const AutoDetect = ConfigFindB("AutoDetect", true);
    CDROM = _config->FindDir("Acquire::cdrom::mount");
    if (Debug)
       clog << "Looking for CDROM at " << CDROM << endl;

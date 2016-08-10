@@ -317,7 +317,7 @@ Debug::Acquire::Transaction "true";
 Debug::pkgAcquire::Worker "true";
 Debug::Acquire::http "true";
 Debug::pkgAcquire "true";
-Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
+Debug::Acquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
 
 testcase() {
 	testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1 "$@"

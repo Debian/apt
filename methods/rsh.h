@@ -58,7 +58,6 @@ class RSHConn
 
 class RSHMethod : public aptMethod
 {
-   std::string const Prog;
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
@@ -71,7 +70,7 @@ class RSHMethod : public aptMethod
 
    public:
 
-   explicit RSHMethod(std::string const &Prog);
+   explicit RSHMethod(std::string &&Prog);
 };
 
 #endif

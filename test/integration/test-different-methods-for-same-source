@@ -10,24 +10,26 @@ insertpackage 'stable' 'foo' 'all' '1'
 insertsource 'stable' 'foo' 'all' '1'
 setupaptarchive --no-update
 
-# install a slowed down file: otherwise its to fast to reproduce combining
-NEWMETHODS="$(readlink -f rootdir)/usr/lib/apt/methods"
-OLDMETHODS="$(readlink -f rootdir/usr/lib/apt/methods)"
-rm "$NEWMETHODS"
-mkdir "$NEWMETHODS"
-backupIFS="$IFS"
-IFS="$(printf "\n\b")"
-for METH in $(find "$OLDMETHODS" -maxdepth 1 ! -type d); do
-	ln -s "$OLDMETHODS/$(basename "$METH")" "$NEWMETHODS"
-done
-IFS="$backupIFS"
-ln -s "${OLDMETHODS}/http" "${NEWMETHODS}/http-ng"
-
 changetowebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
+
+echo 'Dir::Bin::Methods::http-ng "http";' > rootdir/etc/apt/apt.conf.d/99add-http-ng-method
 sed -i -e 's# http:# http-ng:#' $(find rootdir/etc/apt/sources.list.d -name '*-deb-src.list')
 
-testsuccess apt update
+testsuccess apt update -o Debug::Acquire::http-ng=1
 cp rootdir/tmp/testsuccess.output update.log
 # all requests are folded into the first Release file
 testsuccess grep ' http-ng://' update.log
 testfailure grep ' http://' update.log
+# see if method-specific debug was enabled
+testsuccess grep '^Answer for: http-ng:' update.log
+
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e "s#:${APTHTTPPORT}/#:${APTHTTPPORT}/redirectme#" rootdir/etc/apt/sources.list.d/*
+testsuccess apt update -o Debug::Acquire::http-ng=1
+cp rootdir/tmp/testsuccess.output update.log
+# all requests are folded into the first Release file
+testsuccess grep ' http-ng://' update.log
+testfailure grep '^[^L].* http://' update.log
+# see if method-specific debug was enabled
+testsuccess grep '^Answer for: http-ng:' update.log

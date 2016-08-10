@@ -25,10 +25,13 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <iostream>
-#include <sstream>
 #include <ctype.h>
 #include <stdlib.h>
+
+#include <array>
+#include <iostream>
+#include <sstream>
+
 
 #include "https.h"
 
@@ -60,6 +63,7 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
    if (line.empty() == true)
    {
+      me->https->Server->JunkSize = 0;
       if (me->https->Server->Result != 416 && me->https->Server->StartPos != 0)
 	 ;
       else if (me->https->Server->Result == 416)
@@ -99,11 +103,13 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
       // we expect valid data, so tell our caller we get the file now
       if (me->https->Server->Result >= 200 && me->https->Server->Result < 300)
       {
-	 if (me->https->Server->JunkSize == 0 && me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
+	 if (me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
 	    me->https->URIStart(*me->Res);
 	 if (me->https->Server->AddPartialFileToHashes(*(me->https->File)) == false)
 	    return 0;
       }
+      else
+	 me->https->Server->JunkSize = std::numeric_limits<decltype(me->https->Server->JunkSize)>::max();
    }
    else if (me->https->Server->HeaderLine(line) == false)
       return 0;
@@ -145,7 +151,7 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
 HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * Owner) : ServerState(Srv, Owner), Hash(NULL)
 {
-   TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
+   TimeOut = Owner->ConfigFindI("Timeout", TimeOut);
    Reset();
 }
 									/*}}}*/
@@ -162,7 +168,7 @@ APT_PURE Hashes * HttpsServerState::GetHashes()				/*{{{*/
 }
 									/*}}}*/
 
-void HttpsMethod::SetupProxy()						/*{{{*/
+bool HttpsMethod::SetupProxy()						/*{{{*/
 {
    URI ServerName = Queue->Uri;
 
@@ -176,38 +182,52 @@ void HttpsMethod::SetupProxy()						/*{{{*/
    curl_easy_setopt(curl, CURLOPT_PROXY, "");
 
    // Determine the proxy setting - try https first, fallback to http and use env at last
-   string UseProxy = _config->Find("Acquire::https::Proxy::" + ServerName.Host,
-				   _config->Find("Acquire::http::Proxy::" + ServerName.Host).c_str());
-
+   string UseProxy = ConfigFind("Proxy::" + ServerName.Host, "");
    if (UseProxy.empty() == true)
-      UseProxy = _config->Find("Acquire::https::Proxy", _config->Find("Acquire::http::Proxy").c_str());
-
-   // User want to use NO proxy, so nothing to setup
+      UseProxy = ConfigFind("Proxy", "");
+   // User wants to use NO proxy, so nothing to setup
    if (UseProxy == "DIRECT")
-      return;
+      return true;
 
-   // Parse no_proxy, a comma (,) separated list of domains we don't want to use    
+   // Parse no_proxy, a comma (,) separated list of domains we don't want to use
    // a proxy for so we stop right here if it is in the list
    if (getenv("no_proxy") != 0 && CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
-      return;
+      return true;
 
    if (UseProxy.empty() == true)
    {
-      const char* result = getenv("https_proxy");
+      const char* result = nullptr;
+      if (std::find(methodNames.begin(), methodNames.end(), "https") != methodNames.end())
+	 result = getenv("https_proxy");
       // FIXME: Fall back to http_proxy is to remain compatible with
       // existing setups and behaviour of apt.conf.  This should be
       // deprecated in the future (including apt.conf).  Most other
       // programs do not fall back to http proxy settings and neither
       // should Apt.
-      if (result == NULL)
-         result = getenv("http_proxy");
-      UseProxy = result == NULL ? "" : result;
+      if (result == nullptr && std::find(methodNames.begin(), methodNames.end(), "http") != methodNames.end())
+	 result = getenv("http_proxy");
+      UseProxy = result == nullptr ? "" : result;
    }
 
    // Determine what host and port to use based on the proxy settings
-   if (UseProxy.empty() == false) 
+   if (UseProxy.empty() == false)
    {
       Proxy = UseProxy;
+      AddProxyAuth(Proxy, ServerName);
+
+      if (Proxy.Access == "socks5h")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
+      else if (Proxy.Access == "socks5")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+      else if (Proxy.Access == "socks4a")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4A);
+      else if (Proxy.Access == "socks")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
+      else if (Proxy.Access == "http" || Proxy.Access == "https")
+	 curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      else
+	 return false;
+
       if (Proxy.Port != 1)
 	 curl_easy_setopt(curl, CURLOPT_PROXYPORT, Proxy.Port);
       curl_easy_setopt(curl, CURLOPT_PROXY, Proxy.Host.c_str());
@@ -217,6 +237,7 @@ void HttpsMethod::SetupProxy()						/*{{{*/
          curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, Proxy.Password.c_str());
       }
    }
+   return true;
 }									/*}}}*/
 // HttpsMethod::Fetch - Fetch an item					/*{{{*/
 // ---------------------------------------------------------------------
@@ -228,15 +249,23 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct curl_slist *headers=NULL;
    char curl_errorstr[CURL_ERROR_SIZE];
    URI Uri = Itm->Uri;
-   string remotehost = Uri.Host;
+   setPostfixForMethodNames(Uri.Host.c_str());
+   AllowRedirect = ConfigFindB("AllowRedirect", true);
+   Debug = DebugEnabled();
 
    // TODO:
    //       - http::Pipeline-Depth
    //       - error checking/reporting
    //       - more debug options? (CURLOPT_DEBUGFUNCTION?)
+   {
+      auto const plus = Binary.find('+');
+      if (plus != std::string::npos)
+	 Uri.Access = Binary.substr(plus + 1);
+   }
 
    curl_easy_reset(curl);
-   SetupProxy();
+   if (SetupProxy() == false)
+      return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 
@@ -251,115 +280,86 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // options
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
-   // only allow curl to handle https, not the other stuff it supports
-   curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
-   curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
+   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0);
 
-   // SSL parameters are set by default to the common (non mirror-specific) value
-   // if available (or a default one) and gets overload by mirror-specific ones.
+   if (std::find(methodNames.begin(), methodNames.end(), "https") != methodNames.end())
+   {
+      curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+      curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
 
-   // File containing the list of trusted CA.
-   string cainfo = _config->Find("Acquire::https::CaInfo","");
-   string knob = "Acquire::https::"+remotehost+"::CaInfo";
-   cainfo = _config->Find(knob.c_str(),cainfo.c_str());
-   if(cainfo.empty() == false)
-      curl_easy_setopt(curl, CURLOPT_CAINFO,cainfo.c_str());
-
-   // Check server certificate against previous CA list ...
-   bool peer_verify = _config->FindB("Acquire::https::Verify-Peer",true);
-   knob = "Acquire::https::" + remotehost + "::Verify-Peer";
-   peer_verify = _config->FindB(knob.c_str(), peer_verify);
-   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, peer_verify);
-
-   // ... and hostname against cert CN or subjectAltName
-   bool verify = _config->FindB("Acquire::https::Verify-Host",true);
-   knob = "Acquire::https::"+remotehost+"::Verify-Host";
-   verify = _config->FindB(knob.c_str(),verify);
-   int const default_verify = (verify == true) ? 2 : 0;
-   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, default_verify);
-
-   // Also enforce issuer of server certificate using its cert
-   string issuercert = _config->Find("Acquire::https::IssuerCert","");
-   knob = "Acquire::https::"+remotehost+"::IssuerCert";
-   issuercert = _config->Find(knob.c_str(),issuercert.c_str());
-   if(issuercert.empty() == false)
-      curl_easy_setopt(curl, CURLOPT_ISSUERCERT,issuercert.c_str());
-
-   // For client authentication, certificate file ...
-   string pem = _config->Find("Acquire::https::SslCert","");
-   knob = "Acquire::https::"+remotehost+"::SslCert";
-   pem = _config->Find(knob.c_str(),pem.c_str());
-   if(pem.empty() == false)
-      curl_easy_setopt(curl, CURLOPT_SSLCERT, pem.c_str());
-
-   // ... and associated key.
-   string key = _config->Find("Acquire::https::SslKey","");
-   knob = "Acquire::https::"+remotehost+"::SslKey";
-   key = _config->Find(knob.c_str(),key.c_str());
-   if(key.empty() == false)
-      curl_easy_setopt(curl, CURLOPT_SSLKEY, key.c_str());
-
-   // Allow forcing SSL version to SSLv3 or TLSv1 (SSLv2 is not
-   // supported by GnuTLS).
-   long final_version = CURL_SSLVERSION_DEFAULT;
-   string sslversion = _config->Find("Acquire::https::SslForceVersion","");
-   knob = "Acquire::https::"+remotehost+"::SslForceVersion";
-   sslversion = _config->Find(knob.c_str(),sslversion.c_str());
-   if(sslversion == "TLSv1")
-     final_version = CURL_SSLVERSION_TLSv1;
-   else if(sslversion == "SSLv3")
-     final_version = CURL_SSLVERSION_SSLv3;
-   curl_easy_setopt(curl, CURLOPT_SSLVERSION, final_version);
-
-   // CRL file
-   string crlfile = _config->Find("Acquire::https::CrlFile","");
-   knob = "Acquire::https::"+remotehost+"::CrlFile";
-   crlfile = _config->Find(knob.c_str(),crlfile.c_str());
-   if(crlfile.empty() == false)
-      curl_easy_setopt(curl, CURLOPT_CRLFILE, crlfile.c_str());
-
+      // File containing the list of trusted CA.
+      std::string const cainfo = ConfigFind("CaInfo", "");
+      if(cainfo.empty() == false)
+	 curl_easy_setopt(curl, CURLOPT_CAINFO, cainfo.c_str());
+      // Check server certificate against previous CA list ...
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, ConfigFindB("Verify-Peer", true) ? 1 : 0);
+      // ... and hostname against cert CN or subjectAltName
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, ConfigFindB("Verify-Host", true) ? 2 : 0);
+      // Also enforce issuer of server certificate using its cert
+      std::string const issuercert = ConfigFind("IssuerCert", "");
+      if(issuercert.empty() == false)
+	 curl_easy_setopt(curl, CURLOPT_ISSUERCERT, issuercert.c_str());
+      // For client authentication, certificate file ...
+      std::string const pem = ConfigFind("SslCert", "");
+      if(pem.empty() == false)
+	 curl_easy_setopt(curl, CURLOPT_SSLCERT, pem.c_str());
+      // ... and associated key.
+      std::string const key = ConfigFind("SslKey", "");
+      if(key.empty() == false)
+	 curl_easy_setopt(curl, CURLOPT_SSLKEY, key.c_str());
+      // Allow forcing SSL version to SSLv3 or TLSv1
+      long final_version = CURL_SSLVERSION_DEFAULT;
+      std::string const sslversion = ConfigFind("SslForceVersion", "");
+      if(sslversion == "TLSv1")
+	 final_version = CURL_SSLVERSION_TLSv1;
+      else if(sslversion == "TLSv1.0")
+	 final_version = CURL_SSLVERSION_TLSv1_0;
+      else if(sslversion == "TLSv1.1")
+	 final_version = CURL_SSLVERSION_TLSv1_1;
+      else if(sslversion == "TLSv1.2")
+	 final_version = CURL_SSLVERSION_TLSv1_2;
+      else if(sslversion == "SSLv3")
+	 final_version = CURL_SSLVERSION_SSLv3;
+      curl_easy_setopt(curl, CURLOPT_SSLVERSION, final_version);
+      // CRL file
+      std::string const crlfile = ConfigFind("CrlFile", "");
+      if(crlfile.empty() == false)
+	 curl_easy_setopt(curl, CURLOPT_CRLFILE, crlfile.c_str());
+   }
+   else
+   {
+      curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP);
+      curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
+   }
    // cache-control
-   if(_config->FindB("Acquire::https::No-Cache",
-	_config->FindB("Acquire::http::No-Cache",false)) == false)
+   if(ConfigFindB("No-Cache", false) == false)
    {
       // cache enabled
-      if (_config->FindB("Acquire::https::No-Store",
-		_config->FindB("Acquire::http::No-Store",false)) == true)
+      if (ConfigFindB("No-Store", false) == true)
 	 headers = curl_slist_append(headers,"Cache-Control: no-store");
-      stringstream ss;
-      ioprintf(ss, "Cache-Control: max-age=%u", _config->FindI("Acquire::https::Max-Age",
-		_config->FindI("Acquire::http::Max-Age",0)));
-      headers = curl_slist_append(headers, ss.str().c_str());
+      std::string ss;
+      strprintf(ss, "Cache-Control: max-age=%u", ConfigFindI("Max-Age", 0));
+      headers = curl_slist_append(headers, ss.c_str());
    } else {
       // cache disabled by user
       headers = curl_slist_append(headers, "Cache-Control: no-cache");
       headers = curl_slist_append(headers, "Pragma: no-cache");
    }
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
    // speed limit
-   int const dlLimit = _config->FindI("Acquire::https::Dl-Limit",
-		_config->FindI("Acquire::http::Dl-Limit",0))*1024;
+   int const dlLimit = ConfigFindI("Dl-Limit", 0) * 1024;
    if (dlLimit > 0)
       curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, dlLimit);
 
    // set header
-   curl_easy_setopt(curl, CURLOPT_USERAGENT,
-	_config->Find("Acquire::https::User-Agent",
-		_config->Find("Acquire::http::User-Agent",
-			"Debian APT-CURL/1.0 (" PACKAGE_VERSION ")").c_str()).c_str());
+   curl_easy_setopt(curl, CURLOPT_USERAGENT, ConfigFind("User-Agent", "Debian APT-CURL/1.0 (" PACKAGE_VERSION ")").c_str());
 
    // set timeout
-   int const timeout = _config->FindI("Acquire::https::Timeout",
-		_config->FindI("Acquire::http::Timeout",120));
+   int const timeout = ConfigFindI("Timeout", 120);
    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
    //set really low lowspeed timeout (see #497983)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, DL_MIN_SPEED);
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
-
-   // set redirect options and default to 10 redirects
-   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
-   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
 
    // debug
    if (Debug == true)
@@ -374,7 +374,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // see 657029, 657560 and co, so if we have no extension on the request
    // ask for text only. As a sidenote: If there is nothing to negotate servers
    // seem to be nice and ignore it.
-   if (_config->FindB("Acquire::https::SendAccept", _config->FindB("Acquire::http::SendAccept", true)) == true)
+   if (ConfigFindB("SendAccept", true))
    {
       size_t const filepos = Itm->Uri.find_last_of('/');
       string const file = Itm->Uri.substr(filepos + 1);
@@ -413,6 +413,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // met, CURLINFO_CONDITION_UNMET will be set to 1
    long curl_condition_unmet = 0;
    curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
+   if (curl_condition_unmet == 1)
+      Server->Result = 304;
 
    File->Close();
    curl_slist_free_all(headers);
@@ -445,83 +447,54 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
 
-   // server says file not modified
-   if (Server->Result == 304 || curl_condition_unmet == 1)
+   switch (DealWithHeaders(Res))
    {
-      RemoveFile("https", File->Name());
-      Res.IMSHit = true;
-      Res.LastModified = Itm->LastModified;
-      Res.Size = 0;
-      URIDone(Res);
-      return true;
+      case ServerMethod::IMS_HIT:
+	 URIDone(Res);
+	 break;
+
+      case ServerMethod::ERROR_WITH_CONTENT_PAGE:
+	 // unlink, no need keep 401/404 page content in partial/
+	 RemoveFile(Binary.c_str(), File->Name());
+      case ServerMethod::ERROR_UNRECOVERABLE:
+      case ServerMethod::ERROR_NOT_FROM_SERVER:
+	 return false;
+
+      case ServerMethod::TRY_AGAIN_OR_REDIRECT:
+	 Redirect(NextURI);
+	 break;
+
+      case ServerMethod::FILE_IS_OPEN:
+	 struct stat resultStat;
+	 if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
+	 {
+	    _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
+	    return false;
+	 }
+	 Res.Size = resultStat.st_size;
+
+	 // Timestamp
+	 curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
+	 if (Res.LastModified != -1)
+	 {
+	    struct timeval times[2];
+	    times[0].tv_sec = Res.LastModified;
+	    times[1].tv_sec = Res.LastModified;
+	    times[0].tv_usec = times[1].tv_usec = 0;
+	    utimes(File->Name().c_str(), times);
+	 }
+	 else
+	    Res.LastModified = resultStat.st_mtime;
+
+	 // take hashes
+	 Res.TakeHashes(*(Server->GetHashes()));
+
+	 // keep apt updated
+	 URIDone(Res);
+	 break;
    }
-   Res.IMSHit = false;
 
-   if (Server->Result != 200 && // OK
-	 Server->Result != 206 && // Partial
-	 Server->Result != 416) // invalid Range
-   {
-      char err[255];
-      snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
-      SetFailReason(err);
-      _error->Error("%i %s", Server->Result, Server->Code);
-      // unlink, no need keep 401/404 page content in partial/
-      RemoveFile("https", File->Name());
-      return false;
-   }
-
-   // invalid range-request
-   if (Server->Result == 416)
-   {
-      RemoveFile("https", File->Name());
-      delete File;
-      Redirect(Itm->Uri);
-      return true;
-   }
-
-   struct stat resultStat;
-   if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
-   {
-      _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
-      return false;
-   }
-   Res.Size = resultStat.st_size;
-
-   // Timestamp
-   curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
-   if (Res.LastModified != -1)
-   {
-      struct timeval times[2];
-      times[0].tv_sec = Res.LastModified;
-      times[1].tv_sec = Res.LastModified;
-      times[0].tv_usec = times[1].tv_usec = 0;
-      utimes(File->Name().c_str(), times);
-   }
-   else
-      Res.LastModified = resultStat.st_mtime;
-
-   // take hashes
-   Res.TakeHashes(*(Server->GetHashes()));
-
-   // keep apt updated
-   URIDone(Res);
-
-   // cleanup
    delete File;
-
-   return true;
-}
-									/*}}}*/
-// HttpsMethod::Configuration - Handle a configuration message		/*{{{*/
-bool HttpsMethod::Configuration(string Message)
-{
-   if (ServerMethod::Configuration(Message) == false)
-      return false;
-
-   AllowRedirect = _config->FindB("Acquire::https::AllowRedirect",
-	_config->FindB("Acquire::http::AllowRedirect", true));
-   Debug = _config->FindB("Debug::Acquire::https",false);
-
    return true;
 }
 									/*}}}*/
@@ -530,9 +503,35 @@ std::unique_ptr<ServerState> HttpsMethod::CreateServerState(URI const &uri)/*{{{
    return std::unique_ptr<ServerState>(new HttpsServerState(uri, this));
 }
 									/*}}}*/
-
-int main()
+HttpsMethod::HttpsMethod(std::string &&pProg) : ServerMethod(std::move(pProg),"1.2",Pipeline | SendConfig)/*{{{*/
 {
-   return HttpsMethod().Run();
+   auto addName = std::inserter(methodNames, methodNames.begin());
+   addName = "http";
+   auto const plus = Binary.find('+');
+   if (plus != std::string::npos)
+   {
+      addName = Binary.substr(plus + 1);
+      auto base = Binary.substr(0, plus);
+      if (base != "https")
+	 addName = base;
+   }
+   if (std::find(methodNames.begin(), methodNames.end(), "https") != methodNames.end())
+      curl_global_init(CURL_GLOBAL_SSL);
+   else
+      curl_global_init(CURL_GLOBAL_NOTHING);
+   curl = curl_easy_init();
 }
-
+									/*}}}*/
+HttpsMethod::~HttpsMethod()						/*{{{*/
+{
+   curl_easy_cleanup(curl);
+}
+									/*}}}*/
+int main(int, const char *argv[])					/*{{{*/
+{
+   std::string Binary = flNotDir(argv[0]);
+   if (Binary.find('+') == std::string::npos && Binary != "https")
+      Binary.append("+https");
+   return HttpsMethod(std::move(Binary)).Run();
+}
+									/*}}}*/

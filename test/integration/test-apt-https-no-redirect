@@ -11,7 +11,10 @@ insertpackage 'stable' 'apt' 'all' '1'
 setupaptarchive --no-update
 
 echo 'alright' > aptarchive/working
-changetohttpswebserver  -o "aptwebserver::redirect::replace::/redirectme/=http://localhost:${APTHTTPPORT}/"
+changetohttpswebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
+webserverconfig 'aptwebserver::redirect::replace::/redirectme2/' "https://localhost:${APTHTTPSPORT}/"
+echo 'Dir::Bin::Methods::https+http "https";' > rootdir/etc/apt/apt.conf.d/99add-https-http-method
 
 msgtest 'download of a file works via' 'http'
 testsuccess --nomsg downloadfile "http://localhost:${APTHTTPPORT}/working" httpfile
@@ -20,9 +23,23 @@ testfileequal httpfile 'alright'
 msgtest 'download of a file works via' 'https'
 testsuccess --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/working" httpsfile
 testfileequal httpsfile 'alright'
+rm -f httpfile httpsfile
+
+msgtest 'download of http file works via' 'https+http'
+testsuccess --nomsg downloadfile "http://localhost:${APTHTTPPORT}/working" httpfile
+testfileequal httpfile 'alright'
+
+msgtest 'download of https file works via' 'https+http'
+testsuccess --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/working" httpsfile
+testfileequal httpsfile 'alright'
+rm -f httpfile httpsfile
 
 msgtest 'download of a file does not work if' 'https redirected to http'
 testfailure --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/redirectme/working" redirectfile
 
 msgtest 'libcurl has forbidden access in last request to' 'http resource'
-testsuccess --nomsg grep -q -E -- 'Protocol "?http"? not supported or disabled in libcurl' rootdir/tmp/testfailure.output
+testsuccess --nomsg grep -q -E -- "Redirection from https to 'http://.*' is forbidden" rootdir/tmp/testfailure.output
+
+msgtest 'download of a file does work if' 'https+http redirected to https'
+testsuccess --nomsg downloadfile "https+http://localhost:${APTHTTPPORT}/redirectme2/working" redirectfile
+testfileequal redirectfile 'alright'

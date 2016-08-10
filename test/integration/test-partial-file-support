@@ -146,3 +146,6 @@ serverconfigs "http://localhost:${APTHTTPPORT}"
 changetohttpswebserver
 
 serverconfigs "https://localhost:${APTHTTPSPORT}"
+
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "https://localhost:${APTHTTPSPORT}/"
+serverconfigs "http://localhost:${APTHTTPPORT}/redirectme"

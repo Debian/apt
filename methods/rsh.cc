@@ -383,9 +383,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 									/*}}}*/
 
 // RSHMethod::RSHMethod - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-RSHMethod::RSHMethod(std::string const &pProg) : aptMethod(pProg.c_str(),"1.0",SendConfig), Prog(pProg)
+RSHMethod::RSHMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.0",SendConfig)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -399,14 +397,14 @@ bool RSHMethod::Configuration(std::string Message)
 {
    // enabling privilege dropping for this method requires configuration…
    // … which is otherwise lifted straight from root, so use it by default.
-   _config->Set(std::string("Binary::") + Prog + "::APT::Sandbox::User", "");
+   _config->Set(std::string("Binary::") + Binary + "::APT::Sandbox::User", "");
 
    if (aptMethod::Configuration(Message) == false)
       return false;
 
-   std::string const timeconf = std::string("Acquire::") + Prog + "::Timeout";
+   std::string const timeconf = std::string("Acquire::") + Binary + "::Timeout";
    TimeOut = _config->FindI(timeconf, TimeOut);
-   std::string const optsconf = std::string("Acquire::") + Prog + "::Options";
+   std::string const optsconf = std::string("Acquire::") + Binary + "::Options";
    RshOptions = _config->Tree(optsconf.c_str());
 
    return true;
@@ -445,7 +443,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false) {
       delete Server;
-      Server = new RSHConn(Prog, Get);
+      Server = new RSHConn(Binary, Get);
    }
 
    // Could not connect is a transient error..

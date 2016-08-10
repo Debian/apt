@@ -170,7 +170,7 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
 
       unsigned long long * DownloadSizePtr = &DownloadSize;
-      if (Result == 416)
+      if (Result == 416 || (Result >= 300 && Result < 400))
 	 DownloadSizePtr = &JunkSize;
 
       *DownloadSizePtr = strtoull(Val.c_str(), NULL, 10);
@@ -272,6 +272,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       RemoveFile("server", Queue->DestFile);
       Res.IMSHit = true;
       Res.LastModified = Queue->LastModified;
+      Res.Size = 0;
       return IMS_HIT;
    }
 
@@ -288,7 +289,8 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
            && Server->Result != 304    // Not Modified
            && Server->Result != 306))  // (Not part of HTTP/1.1, reserved)
    {
-      if (Server->Location.empty() == true);
+      if (Server->Location.empty() == true)
+	 ;
       else if (Server->Location[0] == '/' && Queue->Uri.empty() == false)
       {
 	 URI Uri = Queue->Uri;
@@ -297,19 +299,77 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 else
 	    NextURI.clear();
 	 NextURI.append(DeQuoteString(Server->Location));
+	 if (Queue->Uri == NextURI)
+	 {
+	    SetFailReason("RedirectionLoop");
+	    _error->Error("Redirection loop encountered");
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
 	 return TRY_AGAIN_OR_REDIRECT;
       }
       else
       {
 	 NextURI = DeQuoteString(Server->Location);
 	 URI tmpURI = NextURI;
+	 if (tmpURI.Access.find('+') != std::string::npos)
+	 {
+	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
 	 URI Uri = Queue->Uri;
+	 if (Binary.find('+') != std::string::npos)
+	 {
+	    auto base = Binary.substr(0, Binary.find('+'));
+	    if (base != tmpURI.Access)
+	    {
+	       tmpURI.Access = base + '+' + tmpURI.Access;
+	       if (tmpURI.Access == Binary)
+	       {
+		  std::string tmpAccess = Uri.Access;
+		  std::swap(tmpURI.Access, Uri.Access);
+		  NextURI = tmpURI;
+		  std::swap(tmpURI.Access, Uri.Access);
+	       }
+	       else
+		  NextURI = tmpURI;
+	    }
+	 }
+	 if (Queue->Uri == NextURI)
+	 {
+	    SetFailReason("RedirectionLoop");
+	    _error->Error("Redirection loop encountered");
+	    if (Server->HaveContent == true)
+	       return ERROR_WITH_CONTENT_PAGE;
+	    return ERROR_UNRECOVERABLE;
+	 }
+	 Uri.Access = Binary;
 	 // same protocol redirects are okay
 	 if (tmpURI.Access == Uri.Access)
 	    return TRY_AGAIN_OR_REDIRECT;
 	 // as well as http to https
-	 else if (Uri.Access == "http" && tmpURI.Access == "https")
+	 else if ((Uri.Access == "http" || Uri.Access == "https+http") && tmpURI.Access == "https")
 	    return TRY_AGAIN_OR_REDIRECT;
+	 else
+	 {
+	    auto const tmpplus = tmpURI.Access.find('+');
+	    if (tmpplus != std::string::npos && tmpURI.Access.substr(tmpplus + 1) == "https")
+	    {
+	       auto const uriplus = Uri.Access.find('+');
+	       if (uriplus == std::string::npos)
+	       {
+		  if (Uri.Access == tmpURI.Access.substr(0, tmpplus)) // foo -> foo+https
+		     return TRY_AGAIN_OR_REDIRECT;
+	       }
+	       else if (Uri.Access.substr(uriplus + 1) == "http" &&
+		     Uri.Access.substr(0, uriplus) == tmpURI.Access.substr(0, tmpplus)) // foo+http -> foo+https
+		  return TRY_AGAIN_OR_REDIRECT;
+	    }
+	 }
+	 _error->Error("Redirection from %s to '%s' is forbidden", Uri.Access.c_str(), NextURI.c_str());
       }
       /* else pass through for error message */
    }
@@ -337,11 +397,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	    // the file is completely downloaded, but was not moved
 	    if (Server->HaveContent == true)
 	    {
-	       // Send to error page to dev/null
-	       FileFd DevNull("/dev/null",FileFd::WriteExists);
-	       Server->RunData(&DevNull);
+	       // nuke the sent error page
+	       Server->RunDataToDevNull();
+	       Server->HaveContent = false;
 	    }
-	    Server->HaveContent = false;
 	    Server->StartPos = Server->TotalFileSize;
 	    Server->Result = 200;
 	 }
@@ -357,10 +416,13 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
-      std::string err;
-      strprintf(err, "HttpError%u", Server->Result);
-      SetFailReason(err);
-      _error->Error("%u %s", Server->Result, Server->Code);
+      if (_error->PendingError() == false)
+      {
+	 std::string err;
+	 strprintf(err, "HttpError%u", Server->Result);
+	 SetFailReason(err);
+	 _error->Error("%u %s", Server->Result, Server->Code);
+      }
       if (Server->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
@@ -369,27 +431,6 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
    // This is some sort of 2xx 'data follows' reply
    Res.LastModified = Server->Date;
    Res.Size = Server->TotalFileSize;
-   
-   // Open the file
-   delete File;
-   File = new FileFd(Queue->DestFile,FileFd::WriteAny);
-   if (_error->PendingError() == true)
-      return ERROR_NOT_FROM_SERVER;
-
-   FailFile = Queue->DestFile;
-   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
-   FailFd = File->Fd();
-   FailTime = Server->Date;
-
-   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
-   {
-      _error->Errno("read",_("Problem hashing file"));
-      return ERROR_NOT_FROM_SERVER;
-   }
-   if (Server->StartPos > 0)
-      Res.ResumePoint = Server->StartPos;
-
-   SetNonBlock(File->Fd(),true);
    return FILE_IS_OPEN;
 }
 									/*}}}*/
@@ -486,10 +527,6 @@ bool ServerMethod::Fetch(FetchItem *)
 // ServerMethod::Loop - Main loop					/*{{{*/
 int ServerMethod::Loop()
 {
-   typedef vector<string> StringVector;
-   typedef vector<string>::iterator StringVectorIterator;
-   map<string, StringVector> Redirected;
-
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    
@@ -511,7 +548,7 @@ int ServerMethod::Loop()
       if (Result != -1 && (Result != 0 || Queue == 0))
       {
 	 if(FailReason.empty() == false ||
-	    _config->FindB("Acquire::http::DependOnSTDIN", true) == true)
+	    ConfigFindB("DependOnSTDIN", true) == true)
 	    return 100;
 	 else
 	    return 0;
@@ -522,7 +559,13 @@ int ServerMethod::Loop()
       
       // Connect to the server
       if (Server == 0 || Server->Comp(Queue->Uri) == false)
+      {
 	 Server = CreateServerState(Queue->Uri);
+	 setPostfixForMethodNames(::URI(Queue->Uri).Host.c_str());
+	 AllowRedirect = ConfigFindB("AllowRedirect", true);
+	 PipelineDepth = ConfigFindI("Pipeline-Depth", 10);
+	 Debug = DebugEnabled();
+      }
 
       /* If the server has explicitly said this is the last connection
          then we pre-emptively shut down the pipeline and tear down 
@@ -712,54 +755,19 @@ int ServerMethod::Loop()
 	 case ERROR_WITH_CONTENT_PAGE:
 	 {
 	    Fail();
-	    
-	    // Send to content to dev/null
-	    File = new FileFd("/dev/null",FileFd::WriteExists);
-	    Server->RunData(File);
-	    delete File;
-	    File = 0;
+	    Server->RunDataToDevNull();
 	    break;
 	 }
-	 
-         // Try again with a new URL
-         case TRY_AGAIN_OR_REDIRECT:
-         {
-            // Clear rest of response if there is content
-            if (Server->HaveContent)
-            {
-               File = new FileFd("/dev/null",FileFd::WriteExists);
-               Server->RunData(File);
-               delete File;
-               File = 0;
-            }
 
-            /* Detect redirect loops.  No more redirects are allowed
-               after the same URI is seen twice in a queue item. */
-            StringVector &R = Redirected[Queue->DestFile];
-            bool StopRedirects = false;
-            if (R.empty() == true)
-               R.push_back(Queue->Uri);
-            else if (R[0] == "STOP" || R.size() > 10)
-               StopRedirects = true;
-            else
-            {
-               for (StringVectorIterator I = R.begin(); I != R.end(); ++I)
-                  if (Queue->Uri == *I)
-                  {
-                     R[0] = "STOP";
-                     break;
-                  }
- 
-               R.push_back(Queue->Uri);
-            }
- 
-            if (StopRedirects == false)
-               Redirect(NextURI);
-            else
-               Fail();
- 
-            break;
-         }
+	 // Try again with a new URL
+	 case TRY_AGAIN_OR_REDIRECT:
+	 {
+	    // Clear rest of response if there is content
+	    if (Server->HaveContent)
+	       Server->RunDataToDevNull();
+	    Redirect(NextURI);
+	    break;
+	 }
 
 	 default:
 	 Fail(_("Internal error"));
@@ -780,9 +788,35 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
    return MaxSizeInQueue;
 }
 									/*}}}*/
-ServerMethod::ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(Binary, Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
+ServerMethod::ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
+   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
+}
+									/*}}}*/
+bool ServerMethod::Configuration(std::string Message)			/*{{{*/
+{
+   if (aptMethod::Configuration(Message) == false)
+      return false;
+
+   _config->CndSet("Acquire::tor::Proxy",
+	 "socks5h://apt-transport-tor@localhost:9050");
+   return true;
+}
+									/*}}}*/
+bool ServerMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
+{
+   if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
+	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())
+   {
+      std::string pass = Server.Host;
+      pass.erase(std::remove_if(pass.begin(), pass.end(), [](char const c) { return std::isalnum(c) == 0; }), pass.end());
+      if (pass.length() > 255)
+	 Proxy.Password = pass.substr(0, 255);
+      else
+	 Proxy.Password = std::move(pass);
+   }
+   // FIXME: should we support auth.conf for proxies?
+   return true;
 }
 									/*}}}*/
