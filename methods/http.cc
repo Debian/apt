@@ -647,6 +647,13 @@ bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
    return true;
 }
 									/*}}}*/
+void HttpServerState::Reset(bool const Everything)			/*{{{*/
+{
+   ServerState::Reset(Everything);
+   if (Everything)
+      ServerFd = -1;
+}
+									/*}}}*/
 
 APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {

@@ -46,19 +46,8 @@ time_t ServerMethod::FailTime = 0;
 ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
                                                       const std::string &Uri)
 {
-   State = Header;
-   
+   Reset(false);
    Owner->Status(_("Waiting for headers"));
-
-   Major = 0; 
-   Minor = 0; 
-   Result = 0; 
-   TotalFileSize = 0;
-   JunkSize = 0;
-   StartPos = 0;
-   Encoding = Closes;
-   HaveContent = false;
-   time(&Date);
 
    do
    {
@@ -252,6 +241,18 @@ bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
 {
    File.Truncate(StartPos);
    return GetHashes()->AddFD(File, StartPos);
+}
+									/*}}}*/
+void ServerState::Reset(bool const Everything)				/*{{{*/
+{
+   Major = 0; Minor = 0; Result = 0; Code[0] = '\0';
+   TotalFileSize = 0; JunkSize = 0; StartPos = 0;
+   Encoding = Closes; time(&Date); HaveContent = false;
+   State = Header; MaximumSize = 0;
+   if (Everything)
+   {
+      Persistent = false; Pipeline = false; PipelineAllowed = true;
+   }
 }
 									/*}}}*/
 

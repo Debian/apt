@@ -399,7 +399,10 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   Server = CreateServerState(Itm->Uri);
+   if (Server == nullptr || Server->Comp(Itm->Uri) == false)
+      Server = CreateServerState(Itm->Uri);
+   else
+      Server->Reset(false);
    if (Server->InitHashes(Itm->ExpectedHashes) == false)
       return false;
 
