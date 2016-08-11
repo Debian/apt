@@ -227,6 +227,15 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }
 
+   if (stringcasecmp(Tag, "Accept-Ranges:") == 0)
+   {
+      std::string ranges = ',' + Val + ',';
+      ranges.erase(std::remove(ranges.begin(), ranges.end(), ' '), ranges.end());
+      if (ranges.find(",bytes,") == std::string::npos)
+	 RangesAllowed = false;
+      return true;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -252,6 +261,7 @@ void ServerState::Reset(bool const Everything)				/*{{{*/
    if (Everything)
    {
       Persistent = false; Pipeline = false; PipelineAllowed = true;
+      RangesAllowed = true;
    }
 }
 									/*}}}*/

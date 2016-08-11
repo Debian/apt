@@ -51,6 +51,7 @@ struct ServerState
    enum {Header, Data} State;
    bool Persistent;
    bool PipelineAllowed;
+   bool RangesAllowed;
    std::string Location;
 
    // This is a Persistent attribute of the server itself.

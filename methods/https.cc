@@ -382,8 +382,15 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	 headers = curl_slist_append(headers, "Accept: text/*");
    }
 
+   // go for it - if the file exists, append on it
+   File = new FileFd(Itm->DestFile, FileFd::WriteAny);
+   if (Server == nullptr || Server->Comp(Itm->Uri) == false)
+      Server = CreateServerState(Itm->Uri);
+   else
+      Server->Reset(false);
+
    // if we have the file send an if-range query with a range header
-   if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
+   if (Server->RangesAllowed && stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       std::string Buf;
       strprintf(Buf, "Range: bytes=%lli-", (long long) SBuf.st_size);
@@ -397,12 +404,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       curl_easy_setopt(curl, CURLOPT_TIMEVALUE, Itm->LastModified);
    }
 
-   // go for it - if the file exists, append on it
-   File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   if (Server == nullptr || Server->Comp(Itm->Uri) == false)
-      Server = CreateServerState(Itm->Uri);
-   else
-      Server->Reset(false);
    if (Server->InitHashes(Itm->ExpectedHashes) == false)
       return false;
 

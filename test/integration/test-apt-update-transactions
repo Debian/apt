@@ -82,7 +82,7 @@ testsetup 'file'
 changetowebserver
 webserverconfig 'aptwebserver::support::modified-since' 'false' "$1"
 webserverconfig 'aptwebserver::support::last-modified' 'false' "$1"  # curl is clever and sees hits here also
-webserverconfig 'aptwebserver::support::range' 'false' "$1"
+webserverconfig 'aptwebserver::response-header::Accept-Ranges' 'none' "$1"
 
 testsetup 'http'
 

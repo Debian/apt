@@ -96,6 +96,7 @@ followuprequest() {
 
 testrun() {
 	webserverconfig 'aptwebserver::support::range' 'true'
+	webserverconfig 'aptwebserver::response-header::Accept-Ranges' 'bytes'
 	local DOWN='./downloaded/testfile'
 
 	copysource $TESTFILE 0 $DOWN
@@ -125,7 +126,11 @@ testrun() {
 	testdownloadfile 'old data' "${1}/testfile" "$DOWN" '='
 	testwebserverlaststatuscode '200' "$DOWNLOADLOG"
 
-	webserverconfig 'aptwebserver::support::range' 'false'
+	if [ "${1%%:*}" = 'https' ] && expr match "$1" "^.*/redirectme$" >/dev/null; then
+		webserverconfig 'aptwebserver::response-header::Accept-Ranges' 'none'
+	else
+		webserverconfig 'aptwebserver::support::range' 'false'
+	fi
 
 	copysource $TESTFILE 20 $DOWN
 	testdownloadfile 'no server support' "${1}/testfile" "$DOWN" '='
@@ -148,4 +153,5 @@ changetohttpswebserver
 serverconfigs "https://localhost:${APTHTTPSPORT}"
 
 webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "https://localhost:${APTHTTPSPORT}/"
+serverconfigs "https://localhost:${APTHTTPSPORT}/redirectme"
 serverconfigs "http://localhost:${APTHTTPPORT}/redirectme"
