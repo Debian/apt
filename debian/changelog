@@ -1,3 +1,46 @@
+apt (1.3~rc1) unstable; urgency=medium
+
+  * Summary: CMake branch merged, socks5h (and tor) support, and fancy
+    installation ordering changes.
+
+  [ Julian Andres Klode ]
+  * Handle interrupt when running Pre-Install hooks (Closes: #832593)
+  * CMake: po: Add mirror method
+  * CMake: Translations: Add support for shell scripts
+  * debian: make autopkgtest run with CMake build dir
+  * CMake: Bump minimum required version to 3.4.0
+  * CMake: Check for ptsname_r() again (Closes: #833674)
+  * CMake: Rewrite existing Documentation support and add doxygen
+  * apt-private: Do not include apti18n.h in headers
+  * Get rid of the old buildsystem
+  * Fix some indentation issues in README.md
+
+  [ David Kalnischkies ]
+  * pass --force-remove-essential to dpkg only if needed
+  * use dpkg --unpack --recursive to avoid long cmdlines
+  * save and restore selection states before/after calling dpkg
+  * select remove/purge packages early on for dpkg
+  * call dpkg with --no-triggers by default (Closes: #626599)
+  * don't purge directly, but remove and do purge at the end
+  * ensure all configures are reported to hook scripts
+  * ensure all removes are reported to hook scripts
+  * support all socks-proxy known to curl in https method
+  * suggest transport-packages based on established namescheme
+  * fail on unsupported http/https proxy settings (Closes: #623443)
+  * detect redirection loops in acquire instead of workers
+  * use the same redirection handling for http and https
+  * implement generic config fallback for methods
+  * implement socks5h proxy support for http method (Closes: 744934)
+  * allow methods to be disabled and redirected via config
+  * allow user@host (aka: no password) in URI parsing
+  * try to avoid removal of crossgraded packages
+  * simulate all package manager actions explicitly
+  * disable explicit configuration of all packages at the end
+  * block direct connections to .onion domains (RFC7687)
+  * http: auto-configure for local Tor proxy if called as 'tor'
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 11 Aug 2016 14:10:22 +0200
+
 apt (1.3~pre3+cmake2) experimental; urgency=medium
 
   * Build-depend on pkg-config

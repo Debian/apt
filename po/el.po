@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -26,2306 +26,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "Hit:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "Φέρε:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr "Αγνόησε:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "Σφάλμα:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Μεταφορτώθηκαν %sB σε %s (%sB/s)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [Επεξεργασία]"
-
-#: apt-private/acqprogress.cc
-#, fuzzy, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"Αλλαγή Μέσου: Παρακαλώ εισάγετε το δίσκο με ετικέτα\n"
-" '%s'\n"
-"στη συσκευή '%s' και πιέστε  enter\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "Διόρθωση εξαρτήσεων..."
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " απέτυχε."
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "Αδύνατη η διόρθωση των εξαρτήσεων"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "Αδύνατη η ελαχιστοποίηση του συνόλου αναβαθμίσεων"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " Ετοιμο"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr ""
-"Ίσως να πρέπει να τρέξετε apt-get -f install για να διορθώσετε αυτά τα "
-"προβλήματα."
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Ανεπίλυτες εξαρτήσεις. Δοκιμάστε με το -f."
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "Το πακέτο %s είναι εικονικό και παρέχεται από τα:\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy
-msgid " [Installed]"
-msgstr " [Εγκατεστημένα]"
-
-#: apt-private/private-cacheset.cc
-msgid " [Not candidate version]"
-msgstr "[Μγ Υποψήφια Εκδόση]"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "Θα πρέπει επακριβώς να επιλέξετε ένα για εγκατάσταση."
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"Το πακέτο %s δεν είναι διαθέσιμο, αλλά υπάρχει αναφορά για αυτό από άλλο "
-"πακέτο.\n"
-"Αυτό σημαίνει ότι το πακέτο αυτό λείπει, είναι παλαιωμένο, ή είναι διαθέσιμο "
-"από άλλη πηγή\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "Πάραυτα το ακόλουθο πακέτο το αντικαθιστά:"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "Το πακέτο %s δεν έχει υποψήφια εγκατάσταση"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "Εικονικά πακέτα όπως το '%s' δεν μπορούν να αφαιρεθούν\n"
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
-"Το πακέτο %s δεν είναι εγκατεστημένο και δεν θα αφαιρεθεί. Εννοείτε '%s'?\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Το πακέτο %s δεν είναι εγκατεστημένο και δεν θα αφαιρεθεί\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Σημείωση, επιλέχθηκε το %s αντί του %s\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr ""
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Δε βρέθηκαν πακέτα"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Τα ακόλουθα πακέτα δεν εξακριβώθηκαν!"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr "Παράκαμψη προειδοποίησης ταυτοποίησης.\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "Μερικά πακέτα δεν εξαακριβώθηκαν"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "Εγκατάσταση των πακέτων χωρίς επαλήθευση;"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-download.cc
-#, fuzzy
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Αποτυχία ανάκτησης του %s   %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "Δεν μπόρεσα να προσδιορίσω τον ελεύθερο χώρο στο %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο  %s."
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Μερικά πακέτα είναι αδύνατον να εγκατασταθούν. Αυτό μπορεί να σημαίνει ότι\n"
-"δημιουργήσατε μια απίθανη κατάσταση ή αν χρησιμοποιείτε την ασταθή\n"
-"διανομή, ότι μερικά από τα πακέτα δεν έχουν ακόμα δημιουργηθεί ή έχουν\n"
-"μετακινηθεί από τα εισερχόμενα."
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Οι ακόλουθες πληροφορίες ίσως βοηθήσουν στην επίλυση του προβλήματος:"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Χαλασμένα πακέτα"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "Εσωτερικό σφάλμα, έγινε κλήση του Install Packages με σπασμένα πακέτα!"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr ""
-"Μερικά πακέτα πρέπει να αφαιρεθούν αλλά η Αφαίρεση είναι απενεργοποιημένη."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "Εσωτερικό Σφάλμα, η Ταξινόμηση δεν ολοκληρώθηκε"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr ""
-"Πολύ περίεργο! Τα μεγέθη δεν ταιριάζουν, στείλτε μήνυμα στο apt@packages."
-"debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB από αρχεία.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Χρειάζεται να μεταφορτωθούν %sB από αρχεία.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr ""
-"Μετά από αυτή τη λειτουργία, θα χρησιμοποιηθούν %sB χώρου από το δίσκο.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Μετά από αυτή τη λειτουργία, θα ελευθερωθούν %sB χώρου από το δίσκο.\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "Καθορίσατε συνηθισμένο, αλλά αυτή δεν είναι μια συνηθισμένη εργασία"
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Ναι, κανε ότι λέω!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"Πρόκειται να κάνετε κάτι πιθανόν πολύ επιζήμιο.\n"
-"Για να συνεχίσετε πληκτρολογήστε τη φράση '%s'\n"
-" ?] "
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "Εγκατάλειψη."
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "Θέλετε να συνεχίσετε;"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "Για μερικά αρχεία απέτυχε η μεταφόρτωση"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "Ολοκληρώθηκε η μεταφόρτωση μόνο"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Αδύνατη η μεταφόρτωση μερικών αρχείων, ίσως αν δοκιμάζατε με apt-get update "
-"ή το --fix-missing;"
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr ""
-"ο συνδυασμός --fix-missing με εναλλαγή μέσων δεν υποστηρίζεται για την ώρα"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "Αδύνατη η επίλυση των χαμένων πακέτων."
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "Εγκατάλειψη της εγκατάστασης."
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
-"Δεν επιτρέπεται οποιαδήποτε διαγραφή· αδυναμία εκκίνησης του AutoRemover"
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"Φαίνεται πως το AutoRemover κατέστρεψε κάτι ενώ δεν θα έπρεπε. Παρακαλείστε "
-"να υποβάλλετε αναφορά σφάλματος για το apt."
-
-#: apt-private/private-install.cc
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Εσωτερικό Σφάλμα, το AutoRemover δημιούργησε κάποιο πρόβλημα"
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "Το ακόλουθο πακέτο εγκαταστάθηκε αυτόματα και δεν χρειάζεται πλέον:"
-msgstr[1] ""
-"Τα ακόλουθα πακέτα εγκαταστάθηκαν αυτόματα και δεν χρειάζονται πλέον:"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] ""
-"%lu το ακόλουθο πακέτο εγκαταστάθηκε αυτόματα και δεν χρειάζεται πλέον:"
-msgstr[1] ""
-"%lu τα ακόλουθα πακέτα εγκαταστάθηκαν αυτόματα και δεν χρειάζονται πλέον:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "Χρησιμοποιήστε '%s' για να το διαγράψετε."
-msgstr[1] "Χρησιμοποιήστε '%s' για να τα διαγράψετε."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Aν τρέξετε 'apt-get -f install' ίσως να διορθώσετε αυτά τα προβλήματα:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Ανεπίλυτες εξαρτήσεις. Δοκιμάστε 'apt-get -f install' χωρίς να ορίσετε "
-"πακέτο (ή καθορίστε μια λύση)."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "Προτεινόμενα πακέτα:"
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "Συνιστώμενα πακέτα:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr ""
-"Παράκαμψη του %s, είναι εγκατεστημένο και η αναβάθμιση δεν έχει οριστεί.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr ""
-"Παράκαμψη του %s, είναι εγκατεστημένο και μόνο αναβαθμίσεις έχουν οριστεί.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
-"Η επανεγκατάσταση του %s δεν είναι εφικτή, δεν είναι δυνατή η μεταφόρτωσή "
-"του\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Επιλέχθηκε η έκδοση %s (%s) για το %s\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Επιλέχθηκε η έκδοση %s (%s) για το %s λόγω του %s\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Εγκατεστημένα]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Εγκατεστημένα]"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Εγκατεστημένα]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed]"
-msgstr " [Εγκατεστημένα]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "αλλά το %s είναι εγκατεστημένο"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "αλλά το %s πρόκειται να εγκατασταθεί"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "αλλά δεν είναι εγκαταστάσημο"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "αλλά είναι ένα εικονικό πακέτο"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "αλλά δεν είναι εγκατεστημένο"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "αλλά δεν πρόκειται να εγκατασταθεί"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr " η"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "Τα ακόλουθα πακέτα έχουν ανεπίλυτες εξαρτήσεις:"
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "Τα ακόλουθα ΝΕΑ πακέτα θα εγκατασταθούν:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "Τα ακόλουθα πακέτα θα ΑΦΑΙΡΕΘΟΥΝ:"
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "Τα ακόλουθα πακέτα θα μείνουν ως έχουν:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "Τα ακόλουθα πακέτα θα αναβαθμιστούν:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Τα ακόλουθα πακέτα θα ΥΠΟΒΑΘΜΙΣΤΟΥΝ:"
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr "Τα ακόλουθα κρατημένα πακέτα θα αλλαχθούν:"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (λόγω του %s)"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Τα ακόλουθα απαραίτητα πακέτα θα αφαιρεθούν\n"
-"Αυτό ΔΕΝ θα έπρεπε να συμβεί, εκτός αν ξέρετε τι ακριβώς κάνετε!"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu αναβαθμίστηκαν, %lu νέο εγκατεστημένα, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu επανεγκατεστημένα,"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu υποβαθμισμένα, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu θα αφαιρεθούν και %lu δεν αναβαθμίζονται.\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu μη πλήρως εγκατεστημένα ή αφαιρέθηκαν.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr "[Ν/ο]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr "[ν/Ο]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr ""
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr ""
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "σφάλμα μεταγλωτισμου - %s"
-
-#: apt-private/private-search.cc
-msgid "You must give at least one search pattern"
-msgstr "Πρέπει να δώσετε τουλάχιστον ένα μοτίβο αναζήτησης"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr ""
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Το αρχείο πακέτου %s δεν είναι ενημερωμένο."
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Αδυναμία εντοπισμού του πακέτου %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "Αρχεία Πακέτου:"
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr ""
-"Η cache δεν είναι ενημερωμένη, αδυναμία παραπομπής σε ένα αρχείο πακέτου"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "Καθηλωμένα Πακέτα:"
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  Εγκατεστημένα: "
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  Υποψήφιο: "
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(κανένα)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  Πίνακας Έκδοσης:"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Αδύνατη η εύρεση του πακέτου %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Αδύνατη η εύρεση του πακέτου %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Αδύνατη η εύρεση του πακέτου %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Επιλογή του %s ώς λίστας πηγαίων πακέτων αντί της %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr ""
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
-"κωδικάτου"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Αδυναμία εντοπισμού του κώδικά του πακέτου %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Παράκαμψη του ήδη μεταφορτωμένου αρχείου `%s`\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πηγαίου κώδικα.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Χρειάζεται να μεταφορτωθούν %sB πηγαίου κώδικα.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Μεταφόρτωση Κωδικα %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "Αποτυχία μεταφόρτωσης μερικών αρχειοθηκών."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Παράκαμψη της αποσυμπίεσης ήδη μεταφορτωμένου κώδικα στο %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Απέτυχε η εντολή αποσυμπίεσης %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Απέτυχε η εντολή χτισίματος %s.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Αδύνατη η εύρεση πληροφοριών χτισίματος για το %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "το %s δεν έχει εξαρτήσεις χτισίματος.\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για έλεγχο των εξαρτήσεων του"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
-
-#: apt-private/private-sources.cc
-#, fuzzy, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "Αποτυχία μετονομασίας του %s σε %s"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Το πακέτο %s με έκδοση %s έχει ανικανοποίητες εξαρτήσεις:\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "Η εντολή update δεν παίρνει ορίσματα"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
-msgstr "Η εντολή update δεν παίρνει ορίσματα"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "Συνολικά Ονόματα Πακέτων : "
-
-#: cmdline/apt-cache.cc
-msgid "Total package structures: "
-msgstr "Συνολο Δομών Πακέτου : "
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  Κανονικά Πακέτα: "
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr " Πλήρως Εικονικά Πακέτα: "
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr " Μονά Εικονικά Πακέτα: "
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr " Μικτά Εικονικά Πακέτα: "
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "Αγνοούμενα: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct descriptions: "
-msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "Σύνολο Εξαρτήσεων: "
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Desc/File relations: "
-msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "Σύνολο Αντιστοιχίσεων Παροχών: "
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "Σύνολο Κοινών Στοιχειοσειρών : "
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "Σύνολο χώρου ασφαλείας: "
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "Συνολικός Καταμετρημένος Χώρος: "
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "Εμφάνιση εγγραφών για πηγαίο πακέτο"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "Αναζήτηση στη λίστα πακέτων για αυτή τη κανονική παράσταση"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "Εμφάνιση των εξαρτήσεων ενός πακέτου"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "Εμφάνιση αντίστροφων εξαρτήσεων ενός πακέτου"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "Εμφάνιση μιας αναγνώσιμης εγγραφής για το πακέτο"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "Εμφάνιση λίστας με τα ονόματα όλων των πακέτων"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "Εμφάνιση προτεραιοτήτων πηγών"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr ""
-"Παρακαλώ δώστε ένα όνομα για αυτόν τον δίσκο, όπως 'Debian 5.0.3 Disk 1'"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Παρακαλώ εισάγετε το δίσκο στη συσκευή και πατήστε enter"
-
-#: cmdline/apt-cdrom.cc
-#, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "Αποτυχία σύνδεσης του %s σε %s"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Επαναλάβετε την διαδικασία για τα υπόλοιπα CD από το σετ σας."
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "Τα ορίσματα δεν είναι σε ζεύγη"
-
-#: cmdline/apt-config.cc
-#, fuzzy
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"Χρήση: apt-config [επιλογές] εντολή\n"
-"\n"
-"το apt-config είναι ένα απλό εργαλείο για την ανάγνωση του αρχείου ρυθμίσεων "
-"APT\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Αδύνατη η εύρεση του πακέτου %s"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr ""
-"Εσωτερικό Σφάλμα, η προσπάθεια επίλυσης του προβλήματος \"έσπασε\" κάποιο "
-"υλικό"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "Υποστηριζόμενοι Οδηγοί:"
-
-#: cmdline/apt-get.cc
-#, fuzzy
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"Χρήση: apt-get [παράμετροι] εντολή\n"
-"       apt-get [παράμετροι] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [παράμετροι] source pkg1 [pkg2 ...]\n"
-"\n"
-"η apt-get είναι μια απλή διασύνδεση για τη μεταφόρτωση και την\n"
-"εγκατάσταση πακέτων. Οι πιο συχνές εντολές είναι η update\n"
-"και η install.\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "Ανάκτηση νέων καταλόγων πακέτων"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "Διενέργεια αναβάθμισης"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "Εγκατάσταση νέων πακέτων (χωρίς την επέκταση .deb)"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "Αφαίρεση πακέτων"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr ""
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-#, fuzzy
-msgid "Remove automatically all unused packages"
-msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "Αναβάθμιση διανομής, δες το apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "Τήρηση των επιλογών του dselect"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "Ρύθμιση εξαρτήσεων χτισίματος για πακέτα πηγαίου κώδικα"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "Καθαρισμός των μεταφορτωμένων αρχείων"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "Καθαρισμός παλαιότερα μεταφορτωμένων αρχείων"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "Εξακρίβωση για τυχόν σπασμένες εξαρτήσεις"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "Μεταφόρτωση πακέτων πηγαίου κώδικα"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, fuzzy
-msgid "Must specify at least one pair url/filename"
-msgstr ""
-"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
-"κωδικάτου"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "αλλά δεν είναι εγκατεστημένο"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set on hold.\n"
-msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already not hold.\n"
-msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set on hold.\n"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "Αποτυχία ανοίγματος του %s"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Mark the given packages as automatically installed"
-msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Mark the given packages as manually installed"
-msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Print the list of automatically installed packages"
-msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Print the list of manually installed packages"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Ανάγνωση Λιστών Πακέτων"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Καθηλωμένα Πακέτα:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Χαλασμένα πακέτα"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Ανάγνωση περιγραφής της τρέχουσας κατάσταση"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "Αδύνατη η ανάγνωση της βάσης δεδομένων του cdrom %s"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Παρακαλώ χρησιμοποιείστε το apt-cdrom για να αναγνωριστεί αυτό το CD από το "
-"APT. Το apt-get update δε χρησιμεύει για να προσθέτει νέα CD"
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "Λάθος CD"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Αδυναμία απόσυναρμογής του CD-ROM στο %s, μπορεί να είναι σε χρήση."
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "Ο δίσκος δεν βρέθηκε."
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "Το αρχείο Δε Βρέθηκε"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Σύνδεση στο %s (%s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Αδύνατη η δημιουργία υποδοχής για το %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Αδύνατη η αρχικοποίηση της σύνδεσης στο %s:%s (%s)."
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Αδύνατη η σύνδεση στο %s:%s (%s), λήξη χρόνου σύνδεσης"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "Απέτυχε"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Αδύνατη η σύνδεση στο %s:%s (%s)."
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "Σύνδεση στο %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Αδύνατη η εύρεση του '%s'"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Προσωρινή αποτυχία στην εύρεση του '%s'"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "Κάτι παράξενο συνέβη κατά την εύρεση του '%s:%s' (%i)"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "Κάτι παράξενο συνέβη κατά την εύρεση του '%s:%s' (%i)"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "Αδύνατη η σύνδεση στο %s %s:"
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "Αποτυχία εύρεσης της κατάστασης"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "Μη έγκυρο URI, τα τοπικά URI δεν πρέπει να αρχίζουν με //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Σύνδεση στο σύστημα"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Αδύνατος ο καθορισμός του ονόματος του ομότιμου (peer)"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Αδύνατος ο καθορισμός του τοπικού ονόματος"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Ο διακομιστής αρνήθηκε την σύνδεση με μήνυμα: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Η εντολή USER απέτυχε, ο διακομιστής απάντησε: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Η εντολή PASS απέτυχε, ο διακομιστής απάντησε: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Ο διαμεσολαβητής έχει οριστεί αλλά χωρίς σενάριο εισόδου, το Acquire::ftp::"
-"ProxyLogin είναι άδειο"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Η εντολή '%s' στο σενάριο εισόδου απέτυχε, ο διακομιστής απάντησε: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Η εντολή TYPE απέτυχε, ο διακομιστής απάντησε: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Λήξη χρόνου σύνδεσης"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Ο διακομιστής έκλεισε την σύνδεση"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "Σφάλμα ανάγνωσης"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Το μήνυμα απάντησης υπερχείλισε την ενδιάμεση μνήμη."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Αλλοίωση του πρωτοκόλλου"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "Σφάλμα εγγραφής"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Αδύνατη η δημιουργία μιας υποδοχής (socket)"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Αδύνατη η σύνδεση υποδοχής δεδομένων, λήξη χρόνου σύνδεσης"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Αδύνατη η σύνδεση σε παθητική υποδοχή (socket)."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "Το getaddrinfo ήταν αδύνατο να δέσμευση υποδοχή παρακολούθησης"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Αδύνατη η πρόσδεση στην υποδοχή (socket)"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Αδύνατη η παρακολούθηση της υποδοχής (socket)"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Αδύνατος ο καθορισμός του ονόματος της υποδοχής (socket)"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Αδύνατη η αποστολή της εντολής PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Άγνωστη οικογένεια διευθύνσεων %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Το EPRT απέτυχε, ο διακομιστής απάντησε: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Λήξη χρόνου σύνδεσης στην υποδοχή δεδομένων"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Αδύνατη η αποδοχή συνδέσεων"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "Πρόβλημα κατά το hashing του αρχείου"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Αδυναμία λήψης του αρχείου, ο διακομιστής απάντησε '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Λήξη χρόνου υποδοχής δεδομένων"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Αποτυχία κατά τη μεταφορά δεδομένων, ο διακομιστής απάντησε '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Επερώτηση"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Αδύνατη η εκτέλεση"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "Βρέθηκε τουλάχιστον μια μη έγκυρη υπογραφή."
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
-"Εσωτερικό σφάλμα: Η υπογραφή είναι καλή, αλλά αδυναμία προσδιορισμού του "
-"αποτυπώματος?!"
-
-#: methods/gpgv.cc
-#, fuzzy
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-"Αδυναμία εκτέλεσης του '%s' για την επαλήθευση της υπογραφής (είναι "
-"εγκατεστημένο το gnupg;)"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "Άγνωστο σφάλμα κατά την εκτέλεση του apt-key"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "Οι παρακάτω υπογραφές ήταν μη έγκυρες:\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Οι παρακάτω υπογραφές δεν ήταν δυνατόν να επαληθευτούν επειδή δεν ήταν "
-"διαθέσιμο το δημόσιο κλειδί:\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "Σφάλμα στην εγγραφή στο αρχείο"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr ""
-"Σφάλμα στην ανάγνωση από το διακομιστή, το άλλο άκρο έκλεισε τη σύνδεση"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "Σφάλμα στην ανάγνωση από το διακομιστή"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "Σφάλμα στην εγγραφή στο αρχείο"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "Η επιλογή απέτυχε"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "Λήξη χρόνου σύνδεσης"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "Σφάλμα στην εγγραφή στο αρχείο εξόδου"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "Αδύνατη η ανάγνωση του %s"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Αδύνατη η αλλαγή σε %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Αποτυχία εύρεσης της κατάστασης του %s."
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "Αποτυχία ορισμού του χρόνου τροποποίησης"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Αποτυχία κατά τη δημιουργία διασωλήνωσης IPC στην υποδιεργασία"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Η σύνδεση έκλεισε πρόωρα"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "Αναμονή επικεφαλίδων"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "Ελαττωματική γραμμή επικεφαλίδας"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα απάντησης"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα Content-Length"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα Content-Range"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "Ο διακομιστής http δεν υποστηρίζει πλήρως το range"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "Άγνωστη μορφή ημερομηνίας"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "Ελαττωματικά δεδομένα επικεφαλίδας"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "Η σύνδεση απέτυχε"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "Εσωτερικό Σφάλμα"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "Κακή προκαθορισμένη ρύθμιση!"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-#, fuzzy
-msgid "Press [Enter] to continue."
-msgstr "Πιέστε enter για συνέχεια."
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "Επιθυμείτε τη διαγραφή ήδη μεταφορτωμένων αρχείων .deb;"
-
-#: dselect/install:102
-#, fuzzy
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "Προέκυψανσφάλματα κατά την αποσυμπίεση. Θα ρυθμίσω τα "
-
-#: dselect/install:103
-#, fuzzy
-msgid "will be configured. This may result in duplicate errors"
-msgstr "πακέτα που εγκαταστάθηκαν. Αυτό μπορεί να παράγει διπλά λάθη"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"ή σφάλματα που προκύπτουν από χαλασμένες εξαρτήσεις. Αυτό είναι εντάξει, "
-"μόνο τα λάθη"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"πριν από το μήνυμα αυτό έχει σημασία. Παρακαλώ διορθώστε τα και τρέξτε "
-"[I]nstall ξανά"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "Σύμπτυξη Διαθέσιμων Πληροφοριών"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Αναμονή του %s, αλλά δε βρισκόταν εκεί"
-
-#: cmdline/apt-extracttemplates.cc
-#, fuzzy
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
-"\n"
-"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
-"και πρότυπα από πακέτα debian\n"
-"\n"
-"Επιλογές:\n"
-"  -h   Το παρόν κείμενο βοήθειας\n"
-"  -t   Καθορισμός προσωρινού καταλόγου\n"
-"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
-"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Αδύνατη η εύρεση της κατάστασης του %s"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Αδύνατη η εγγραφή στο %s"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Δεν βρέθηκε η έκδοση του debconf. Είναι το debconf εγκατεστημένο;"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
-"\n"
-"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
-"και πρότυπα από πακέτα debian\n"
-"\n"
-"Επιλογές:\n"
-"  -h   Το παρόν κείμενο βοήθειας\n"
-"  -t   Καθορισμός προσωρινού καταλόγου\n"
-"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
-"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
-
-#: cmdline/apt-internal-solver.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
-"\n"
-"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
-"και πρότυπα από πακέτα debian\n"
-"\n"
-"Επιλογές:\n"
-"  -h   Το παρόν κείμενο βοήθειας\n"
-"  -t   Καθορισμός προσωρινού καταλόγου\n"
-"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
-"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "Άγνωστη εγγραφή πακέτου!"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "Ο κατάλογος επεκτάσεων του πακέτου είναι υπερβολικά μακρύς"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "Σφάλμα επεξεργασίας του καταλόγου %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "Ο κατάλογος επεκτάσεων των πηγών είναι υπερβολικά μακρύς"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr "Σφάλμα εγγραφής κεφαλίδων στο αρχείο περιεχομένων"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "Σφάλμα επεξεργασίας περιεχομένων του %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"Χρήση: apt-ftparchive [επιλογές] εντολή\n"
-"Εντολές: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"Το apt-ftparchive παράγει αρχεία περιεχομένων για τις αρχειοθήκες Debian\n"
-"Υποστηρίζει πολλές παραλλαγές παραγωγής, από απόλυτα αυτοματοποιημένες έως\n"
-"λειτουργικές αντικαταστάσεις για την dpkg-scanpackages και dpkg-scansources\n"
-"\n"
-"Το apt-ftparchive παράγει αρχεία Package από ένα σύνολο αρχείων .debs. Στο\n"
-"αρχείο Package περιέχονται όλα τα πεδία ελέγχου κάθε πακέτου καθώς και\n"
-"το μέγεθος τους και το MD5 hash. Υποστηρίζει την ύπαρξη αρχείου παράκαμψης\n"
-"για τη βεβιασμένη αλλαγή των πεδίων Priority (Προτεραιότητα) και Section\n"
-"(Τομέας).\n"
-"\n"
-"Με τον ίδιο τρόπο, το apt-ftparchive παράγει αρχεία πηγών (Sources) από μια\n"
-"ιεραρχία αρχείων .dsc. Η επιλογή --source-override μπορεί να χρησιμοποιηθεί\n"
-"για παράκαμψη των αρχείων πηγών src.\n"
-"\n"
-"Οι εντολές 'packages' και 'sources' θα πρέπει να εκτελούνται στον βασικό\n"
-"κατάλογο της ιεραρχίας.Το BinaryPath θα πρέπει να δείχνει στον αρχικό\n"
-"κατάλογο που θα ξεκινάει η αναδρομική αναζήτηση και το αρχείο παράκαμψης\n"
-"θα πρέπει να περιέχει τις επιλογές παράκαμψης. Το Pathprefix προστίθεται "
-"στα\n"
-"πεδία όνομάτων αρχείων, αν υπάρχει. Δείτε παράδειγμα χρήσης στην αρχειοθήκη\n"
-"πακέτων του Debian :\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Επιλογές:\n"
-"  -h    Αυτό το κείμενο βοηθείας\n"
-"  --md5 Έλεγχος παραγωγής MD5\n"
-"  -s=?  αρχείο παράκαμψης πηγών\n"
-"  -q    Χωρίς έξοδο\n"
-"  -d=?  Επιλογή προαιρετικής βάσης δεδομένων cache\n"
-"  --no-delink Αποσφαλμάτωση του delinking\n"
-"  --contents  Έλεγχος παραγωγής αρχείου περιεχομένων\n"
-"  -c=?  Χρήση αυτού του αρχείου ρυθμίσεων\n"
-"  -o=?  Ορισμός αυθαίρετης επιλογής ρύθμισης"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "Δεν ταιριαξε καμία επιλογή"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "Λείπουν μερικά αρχεία από την ομάδα πακέτων '%s'"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "Η βάση είναι κατεστραμμένη, το αρχείο μετονομάστηκε σε %s.old"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "Η βάση δεν είναι ενημερωμένη, γίνεται προσπάθεια να αναβαθμιστεί το %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"Το φορμά της βάσης δεν είναι έγκυρο. Εάν αναβαθμίσατε το apt σε νεότερη "
-"έκδοση, παρακαλώ αφαιρέστε και δημιουργήστε τη βάση εκ νέου."
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "Το άνοιγμά του αρχείου της βάσης %s: %s απέτυχε"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid "Failed to read .dsc"
-msgstr "Αποτυχία ανάγνωσης του %s"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "Η αρχειοθήκη δεν περιέχει πεδίο ελέγχου"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "Αδύνατη η πρόσβαση σε δείκτη"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realoc - Αδυναμία εκχώρησης μνήμης"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "Άγνωστος Αλγόριθμος Συμπίεσης '%s'"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "Η συμπιεσμένη έξοδος του %s χρειάζεται καθορισμό συμπίεσης"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "Αποτυχία αγκίστρωσης"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "Συμπίεση απογόνου"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "Εσωτερικό Σφάλμα, Αποτυχία δημιουργίας του %s"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "απέτυχε η Ε/Ε στην υποδιεργασία/αρχείο"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "Αποτυχία ανάγνωσης κατά τον υπολογισμό MD5"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Αποτυχία μετονομασίας του %s σε %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "Αδύνατο το άνοιγμα του %s"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Αποτυχία ανάγνωσης του αρχείου παράκαμψης %s"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #1"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #2"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Αδύνατη η ανάγνωση του καταλόγου  %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: Αδύνατη η εύρεση της κατάστασης του %s\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "E: Σφάλματα στο αρχείο"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Αδύνατη η εύρεση του %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "Αποτυχία ανεύρεσης"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "Αποτυχία ανοίγματος του %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr "Αποσύνδεση %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Αποτυχία ανάγνωσης του %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "    Αποτυχία σύνδεσης του %s με το %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " Αποσύνδεση ορίου του %sB hit.\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "Η αρχειοθήκη δεν περιέχει πεδίο πακέτων"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr "  %s δεν περιέχει εγγραφή παράκαμψης\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  %s συντηρητής είναι ο %s όχι ο %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s δεν έχει εγγραφή πηγαίας παράκαμψης\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s δεν έχει ούτε εγγραφή δυαδικής παράκαμψης\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2418,6 +118,17 @@ msgstr "Το πακέτο προσπαθεί να γράψει στον προο
 msgid "The diversion path is too long"
 msgstr "Η διαδρομή εκτροπής έχει υπερβολικό μήκος"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Αποτυχία εύρεσης της κατάστασης του %s."
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Αποτυχία μετονομασίας του %s σε %s"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2440,6 +151,15 @@ msgstr "Αντικατάσταση πακέτου χωρίς καμία έκδο
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Το αρχείο %s/%s αντικαθιστά αυτό στο πακέτο %s"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "Αδύνατη η ανάγνωση του %s"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2526,6 +246,11 @@ msgstr "Ο φάκελος %s έχει εκτραπεί"
 msgid "The repository '%s' provides only weak security information."
 msgstr "Ο φάκελος %s έχει εκτραπεί"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Αποτυχία ανάγνωσης του %s"
+
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "Ανόμοιο MD5Sum"
@@ -2552,6 +277,14 @@ msgstr "Μη έγκυρη λειτουργία %s"
 #, fuzzy
 msgid "Signature error"
 msgstr "Σφάλμα εγγραφής"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2632,6 +365,16 @@ msgstr "Changelog για %s (%s)"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "Ο οδηγός μεθόδου %s δεν μπορεί να εντοπιστεί."
 
@@ -2685,6 +428,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Ο τύπος αρχείου ευρετηρίου '%s' δεν υποστηρίζεται"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Αδύνατη η αλλαγή σε %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2731,6 +480,11 @@ msgstr ""
 msgid "The list of sources could not be read."
 msgstr "Αδύνατη η ανάγνωση της λίστας πηγών."
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "σφάλμα μεταγλωτισμου - %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2755,6 +509,11 @@ msgstr "Αδύνατη η εύρεση του πακέτου %s"
 #, fuzzy, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Αδυναμία εντοπισμού του πακέτου %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -3033,6 +792,12 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Αναμονή του %s, αλλά δε βρισκόταν εκεί"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3052,6 +817,14 @@ msgstr "Η υποδιεργασία %s επέστρεψε ένα κωδικός 
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Η υποδιεργασία %s εγκατέλειψε απρόσμενα"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "Σφάλμα ανάγνωσης"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "Σφάλμα εγγραφής"
 
 #: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
@@ -3103,6 +876,16 @@ msgstr "Πρόβλημα κατά τον συγχρονισμό του αρχε�
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Πρόβλημα κατά τον συγχρονισμό του αρχείου"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Αδύνατη η εύρεση της κατάστασης του %s"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Αδύνατη η εγγραφή στο %s"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -3600,20 +1383,16 @@ msgid "Suggests"
 msgstr "Προτείνει"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "Συστήνει"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "Ασύμβατο με"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "Αντικαθιστά"
+msgid "Recommends"
+msgstr "Συστήνει"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "Απαρχαιώνει"
+msgid "Replaces"
+msgstr "Αντικαθιστά"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3624,24 +1403,28 @@ msgid "Enhances"
 msgstr ""
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "απαιτούμενο"
+msgid "Obsoletes"
+msgstr "Απαρχαιώνει"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "σημαντικό"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "απαιτούμενο"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "καθιερωμένο"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "προαιρετικό"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "επιπλέον"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "προαιρετικό"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3759,6 +1542,11 @@ msgstr "Πρέπει να τοποθετήσετε μερικά URI 'πηγών'
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Αποτυχία ανάκτησης του %s   %s"
+
 #: apt-pkg/update.cc
 #, fuzzy
 msgid ""
@@ -3771,6 +1559,2233 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Υπολογισμός της αναβάθμισης"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "Hit:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "Φέρε:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr "Αγνόησε:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "Σφάλμα:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Μεταφορτώθηκαν %sB σε %s (%sB/s)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [Επεξεργασία]"
+
+#: apt-private/acqprogress.cc
+#, fuzzy, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"Αλλαγή Μέσου: Παρακαλώ εισάγετε το δίσκο με ετικέτα\n"
+" '%s'\n"
+"στη συσκευή '%s' και πιέστε  enter\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "Διόρθωση εξαρτήσεων..."
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " απέτυχε."
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "Αδύνατη η διόρθωση των εξαρτήσεων"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "Αδύνατη η ελαχιστοποίηση του συνόλου αναβαθμίσεων"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " Ετοιμο"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr ""
+"Ίσως να πρέπει να τρέξετε apt-get -f install για να διορθώσετε αυτά τα "
+"προβλήματα."
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "Ανεπίλυτες εξαρτήσεις. Δοκιμάστε με το -f."
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "Σημείωση, επιλέχτηκε το %s στη θέση του '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Το πακέτο %s είναι εικονικό και παρέχεται από τα:\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy
+msgid " [Installed]"
+msgstr " [Εγκατεστημένα]"
+
+#: apt-private/private-cacheset.cc
+msgid " [Not candidate version]"
+msgstr "[Μγ Υποψήφια Εκδόση]"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "Θα πρέπει επακριβώς να επιλέξετε ένα για εγκατάσταση."
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Το πακέτο %s δεν είναι διαθέσιμο, αλλά υπάρχει αναφορά για αυτό από άλλο "
+"πακέτο.\n"
+"Αυτό σημαίνει ότι το πακέτο αυτό λείπει, είναι παλαιωμένο, ή είναι διαθέσιμο "
+"από άλλη πηγή\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "Πάραυτα το ακόλουθο πακέτο το αντικαθιστά:"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "Το πακέτο %s δεν έχει υποψήφια εγκατάσταση"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr "Εικονικά πακέτα όπως το '%s' δεν μπορούν να αφαιρεθούν\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr ""
+"Το πακέτο %s δεν είναι εγκατεστημένο και δεν θα αφαιρεθεί. Εννοείτε '%s'?\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "Το πακέτο %s δεν είναι εγκατεστημένο και δεν θα αφαιρεθεί\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "Σημείωση, επιλέχθηκε το %s αντί του %s\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Δε βρέθηκαν πακέτα"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Τα ακόλουθα πακέτα δεν εξακριβώθηκαν!"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr "Παράκαμψη προειδοποίησης ταυτοποίησης.\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "Μερικά πακέτα δεν εξαακριβώθηκαν"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "Εγκατάσταση των πακέτων χωρίς επαλήθευση;"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-download.cc
+#, fuzzy
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Δεν μπόρεσα να προσδιορίσω τον ελεύθερο χώρο στο %s"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο  %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Μερικά πακέτα είναι αδύνατον να εγκατασταθούν. Αυτό μπορεί να σημαίνει ότι\n"
+"δημιουργήσατε μια απίθανη κατάσταση ή αν χρησιμοποιείτε την ασταθή\n"
+"διανομή, ότι μερικά από τα πακέτα δεν έχουν ακόμα δημιουργηθεί ή έχουν\n"
+"μετακινηθεί από τα εισερχόμενα."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Οι ακόλουθες πληροφορίες ίσως βοηθήσουν στην επίλυση του προβλήματος:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Χαλασμένα πακέτα"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "Εσωτερικό σφάλμα, έγινε κλήση του Install Packages με σπασμένα πακέτα!"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr ""
+"Μερικά πακέτα πρέπει να αφαιρεθούν αλλά η Αφαίρεση είναι απενεργοποιημένη."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "Υπάρχουν προβλήματα και δώσατε -y  χωρίς το --force-yes"
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "Εσωτερικό Σφάλμα, η Ταξινόμηση δεν ολοκληρώθηκε"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr ""
+"Πολύ περίεργο! Τα μεγέθη δεν ταιριάζουν, στείλτε μήνυμα στο apt@packages."
+"debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB από αρχεία.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Χρειάζεται να μεταφορτωθούν %sB από αρχεία.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr ""
+"Μετά από αυτή τη λειτουργία, θα χρησιμοποιηθούν %sB χώρου από το δίσκο.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "Μετά από αυτή τη λειτουργία, θα ελευθερωθούν %sB χώρου από το δίσκο.\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "Καθορίσατε συνηθισμένο, αλλά αυτή δεν είναι μια συνηθισμένη εργασία"
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Ναι, κανε ότι λέω!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Πρόκειται να κάνετε κάτι πιθανόν πολύ επιζήμιο.\n"
+"Για να συνεχίσετε πληκτρολογήστε τη φράση '%s'\n"
+" ?] "
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "Εγκατάλειψη."
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "Θέλετε να συνεχίσετε;"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "Για μερικά αρχεία απέτυχε η μεταφόρτωση"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "Ολοκληρώθηκε η μεταφόρτωση μόνο"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Αδύνατη η μεταφόρτωση μερικών αρχείων, ίσως αν δοκιμάζατε με apt-get update "
+"ή το --fix-missing;"
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr ""
+"ο συνδυασμός --fix-missing με εναλλαγή μέσων δεν υποστηρίζεται για την ώρα"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "Αδύνατη η επίλυση των χαμένων πακέτων."
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "Εγκατάλειψη της εγκατάστασης."
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr ""
+"Δεν επιτρέπεται οποιαδήποτε διαγραφή· αδυναμία εκκίνησης του AutoRemover"
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"Φαίνεται πως το AutoRemover κατέστρεψε κάτι ενώ δεν θα έπρεπε. Παρακαλείστε "
+"να υποβάλλετε αναφορά σφάλματος για το apt."
+
+#: apt-private/private-install.cc
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Εσωτερικό Σφάλμα, το AutoRemover δημιούργησε κάποιο πρόβλημα"
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "Το ακόλουθο πακέτο εγκαταστάθηκε αυτόματα και δεν χρειάζεται πλέον:"
+msgstr[1] ""
+"Τα ακόλουθα πακέτα εγκαταστάθηκαν αυτόματα και δεν χρειάζονται πλέον:"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] ""
+"%lu το ακόλουθο πακέτο εγκαταστάθηκε αυτόματα και δεν χρειάζεται πλέον:"
+msgstr[1] ""
+"%lu τα ακόλουθα πακέτα εγκαταστάθηκαν αυτόματα και δεν χρειάζονται πλέον:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "Χρησιμοποιήστε '%s' για να το διαγράψετε."
+msgstr[1] "Χρησιμοποιήστε '%s' για να τα διαγράψετε."
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "Aν τρέξετε 'apt-get -f install' ίσως να διορθώσετε αυτά τα προβλήματα:"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Ανεπίλυτες εξαρτήσεις. Δοκιμάστε 'apt-get -f install' χωρίς να ορίσετε "
+"πακέτο (ή καθορίστε μια λύση)."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "Προτεινόμενα πακέτα:"
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "Συνιστώμενα πακέτα:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr ""
+"Παράκαμψη του %s, είναι εγκατεστημένο και η αναβάθμιση δεν έχει οριστεί.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr ""
+"Παράκαμψη του %s, είναι εγκατεστημένο και μόνο αναβαθμίσεις έχουν οριστεί.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr ""
+"Η επανεγκατάσταση του %s δεν είναι εφικτή, δεν είναι δυνατή η μεταφόρτωσή "
+"του\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Επιλέχθηκε η έκδοση %s (%s) για το %s\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Επιλέχθηκε η έκδοση %s (%s) για το %s λόγω του %s\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Εγκατεστημένα]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Εγκατεστημένα]"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Εγκατεστημένα]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed]"
+msgstr " [Εγκατεστημένα]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "αλλά το %s είναι εγκατεστημένο"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "αλλά το %s πρόκειται να εγκατασταθεί"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "αλλά δεν είναι εγκαταστάσημο"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "αλλά είναι ένα εικονικό πακέτο"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "αλλά δεν πρόκειται να εγκατασταθεί"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "αλλά δεν είναι εγκατεστημένο"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr " η"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "Τα ακόλουθα πακέτα έχουν ανεπίλυτες εξαρτήσεις:"
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "Τα ακόλουθα ΝΕΑ πακέτα θα εγκατασταθούν:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "Τα ακόλουθα πακέτα θα ΑΦΑΙΡΕΘΟΥΝ:"
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "Τα ακόλουθα πακέτα θα μείνουν ως έχουν:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "Τα ακόλουθα πακέτα θα αναβαθμιστούν:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Τα ακόλουθα πακέτα θα ΥΠΟΒΑΘΜΙΣΤΟΥΝ:"
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr "Τα ακόλουθα κρατημένα πακέτα θα αλλαχθούν:"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (λόγω του %s)"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Τα ακόλουθα απαραίτητα πακέτα θα αφαιρεθούν\n"
+"Αυτό ΔΕΝ θα έπρεπε να συμβεί, εκτός αν ξέρετε τι ακριβώς κάνετε!"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu αναβαθμίστηκαν, %lu νέο εγκατεστημένα, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu επανεγκατεστημένα,"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu υποβαθμισμένα, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu θα αφαιρεθούν και %lu δεν αναβαθμίζονται.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu μη πλήρως εγκατεστημένα ή αφαιρέθηκαν.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr "[Ν/ο]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr "[ν/Ο]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr ""
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr ""
+
+#: apt-private/private-search.cc
+msgid "You must give at least one search pattern"
+msgstr "Πρέπει να δώσετε τουλάχιστον ένα μοτίβο αναζήτησης"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr ""
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "Το αρχείο πακέτου %s δεν είναι ενημερωμένο."
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Αρχεία Πακέτου:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr ""
+"Η cache δεν είναι ενημερωμένη, αδυναμία παραπομπής σε ένα αρχείο πακέτου"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Καθηλωμένα Πακέτα:"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Εγκατεστημένα: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Υποψήφιο: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(κανένα)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Πίνακας Έκδοσης:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Επιλογή του %s ώς λίστας πηγαίων πακέτων αντί της %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
+"κωδικάτου"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Αδυναμία εντοπισμού του κώδικά του πακέτου %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Παράκαμψη του ήδη μεταφορτωμένου αρχείου `%s`\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πηγαίου κώδικα.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Χρειάζεται να μεταφορτωθούν %sB πηγαίου κώδικα.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Μεταφόρτωση Κωδικα %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Αποτυχία μεταφόρτωσης μερικών αρχειοθηκών."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Παράκαμψη της αποσυμπίεσης ήδη μεταφορτωμένου κώδικα στο %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Απέτυχε η εντολή αποσυμπίεσης %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Απέτυχε η εντολή χτισίματος %s.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Αδύνατη η εύρεση πληροφοριών χτισίματος για το %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "το %s δεν έχει εξαρτήσεις χτισίματος.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για έλεγχο των εξαρτήσεων του"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
+
+#: apt-private/private-sources.cc
+#, fuzzy, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "Αποτυχία μετονομασίας του %s σε %s"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr ""
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Το πακέτο %s με έκδοση %s έχει ανικανοποίητες εξαρτήσεις:\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "Η εντολή update δεν παίρνει ορίσματα"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "apt-cache stats does not take any arguments"
+msgstr "Η εντολή update δεν παίρνει ορίσματα"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "Συνολικά Ονόματα Πακέτων : "
+
+#: cmdline/apt-cache.cc
+msgid "Total package structures: "
+msgstr "Συνολο Δομών Πακέτου : "
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  Κανονικά Πακέτα: "
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr " Πλήρως Εικονικά Πακέτα: "
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr " Μονά Εικονικά Πακέτα: "
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr " Μικτά Εικονικά Πακέτα: "
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "Αγνοούμενα: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct descriptions: "
+msgstr "Σύνολο Διαφορετικών Εκδόσεων: "
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "Σύνολο Εξαρτήσεων: "
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Desc/File relations: "
+msgstr "Σύνολο σχέσεων Εκδ/Αρχείων: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "Σύνολο Αντιστοιχίσεων Παροχών: "
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "Σύνολο Κοινών Στοιχειοσειρών : "
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "Σύνολο χώρου ασφαλείας: "
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "Συνολικός Καταμετρημένος Χώρος: "
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Εμφάνιση εγγραφών για πηγαίο πακέτο"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Αναζήτηση στη λίστα πακέτων για αυτή τη κανονική παράσταση"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Εμφάνιση των εξαρτήσεων ενός πακέτου"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Εμφάνιση αντίστροφων εξαρτήσεων ενός πακέτου"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Εμφάνιση μιας αναγνώσιμης εγγραφής για το πακέτο"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Εμφάνιση λίστας με τα ονόματα όλων των πακέτων"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Εμφάνιση προτεραιοτήτων πηγών"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr ""
+"Παρακαλώ δώστε ένα όνομα για αυτόν τον δίσκο, όπως 'Debian 5.0.3 Disk 1'"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "Παρακαλώ εισάγετε το δίσκο στη συσκευή και πατήστε enter"
+
+#: cmdline/apt-cdrom.cc
+#, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "Αποτυχία σύνδεσης του %s σε %s"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "Επαναλάβετε την διαδικασία για τα υπόλοιπα CD από το σετ σας."
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "Τα ορίσματα δεν είναι σε ζεύγη"
+
+#: cmdline/apt-config.cc
+#, fuzzy
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"Χρήση: apt-config [επιλογές] εντολή\n"
+"\n"
+"το apt-config είναι ένα απλό εργαλείο για την ανάγνωση του αρχείου ρυθμίσεων "
+"APT\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+#, fuzzy
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
+"\n"
+"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
+"και πρότυπα από πακέτα debian\n"
+"\n"
+"Επιλογές:\n"
+"  -h   Το παρόν κείμενο βοήθειας\n"
+"  -t   Καθορισμός προσωρινού καταλόγου\n"
+"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Δεν βρέθηκε η έκδοση του debconf. Είναι το debconf εγκατεστημένο;"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr ""
+"Εσωτερικό Σφάλμα, η προσπάθεια επίλυσης του προβλήματος \"έσπασε\" κάποιο "
+"υλικό"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "Υποστηριζόμενοι Οδηγοί:"
+
+#: cmdline/apt-get.cc
+#, fuzzy
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"Χρήση: apt-get [παράμετροι] εντολή\n"
+"       apt-get [παράμετροι] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [παράμετροι] source pkg1 [pkg2 ...]\n"
+"\n"
+"η apt-get είναι μια απλή διασύνδεση για τη μεταφόρτωση και την\n"
+"εγκατάσταση πακέτων. Οι πιο συχνές εντολές είναι η update\n"
+"και η install.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Ανάκτηση νέων καταλόγων πακέτων"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Διενέργεια αναβάθμισης"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Εγκατάσταση νέων πακέτων (χωρίς την επέκταση .deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Αφαίρεση πακέτων"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr ""
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+#, fuzzy
+msgid "Remove automatically all unused packages"
+msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Αναβάθμιση διανομής, δες το apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Τήρηση των επιλογών του dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Ρύθμιση εξαρτήσεων χτισίματος για πακέτα πηγαίου κώδικα"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Καθαρισμός των μεταφορτωμένων αρχείων"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Καθαρισμός παλαιότερα μεταφορτωμένων αρχείων"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Εξακρίβωση για τυχόν σπασμένες εξαρτήσεις"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Μεταφόρτωση πακέτων πηγαίου κώδικα"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, fuzzy
+msgid "Must specify at least one pair url/filename"
+msgstr ""
+"Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
+"κωδικάτου"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr ""
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
+"\n"
+"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
+"και πρότυπα από πακέτα debian\n"
+"\n"
+"Επιλογές:\n"
+"  -h   Το παρόν κείμενο βοήθειας\n"
+"  -t   Καθορισμός προσωρινού καταλόγου\n"
+"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
+
+#: cmdline/apt-internal-solver.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
+"\n"
+"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
+"και πρότυπα από πακέτα debian\n"
+"\n"
+"Επιλογές:\n"
+"  -h   Το παρόν κείμενο βοήθειας\n"
+"  -t   Καθορισμός προσωρινού καταλόγου\n"
+"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "αλλά δεν είναι εγκατεστημένο"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set on hold.\n"
+msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already not hold.\n"
+msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set on hold.\n"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "Αποτυχία ανοίγματος του %s"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr ""
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "Άγνωστη εγγραφή πακέτου!"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Ανάγνωση Λιστών Πακέτων"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Καθηλωμένα Πακέτα:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Χαλασμένα πακέτα"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Ανάγνωση περιγραφής της τρέχουσας κατάσταση"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "Κακή προκαθορισμένη ρύθμιση!"
+
+#: dselect/install dselect/update
+#, fuzzy
+msgid "Press [Enter] to continue."
+msgstr "Πιέστε enter για συνέχεια."
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "Επιθυμείτε τη διαγραφή ήδη μεταφορτωμένων αρχείων .deb;"
+
+#: dselect/install
+#, fuzzy
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "Προέκυψανσφάλματα κατά την αποσυμπίεση. Θα ρυθμίσω τα "
+
+#: dselect/install
+#, fuzzy
+msgid "will be configured. This may result in duplicate errors"
+msgstr "πακέτα που εγκαταστάθηκαν. Αυτό μπορεί να παράγει διπλά λάθη"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"ή σφάλματα που προκύπτουν από χαλασμένες εξαρτήσεις. Αυτό είναι εντάξει, "
+"μόνο τα λάθη"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"πριν από το μήνυμα αυτό έχει σημασία. Παρακαλώ διορθώστε τα και τρέξτε "
+"[I]nstall ξανά"
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "Σύμπτυξη Διαθέσιμων Πληροφοριών"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "Ο κατάλογος επεκτάσεων του πακέτου είναι υπερβολικά μακρύς"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "Σφάλμα επεξεργασίας του καταλόγου %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "Ο κατάλογος επεκτάσεων των πηγών είναι υπερβολικά μακρύς"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr "Σφάλμα εγγραφής κεφαλίδων στο αρχείο περιεχομένων"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "Σφάλμα επεξεργασίας περιεχομένων του %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"Χρήση: apt-ftparchive [επιλογές] εντολή\n"
+"Εντολές: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"Το apt-ftparchive παράγει αρχεία περιεχομένων για τις αρχειοθήκες Debian\n"
+"Υποστηρίζει πολλές παραλλαγές παραγωγής, από απόλυτα αυτοματοποιημένες έως\n"
+"λειτουργικές αντικαταστάσεις για την dpkg-scanpackages και dpkg-scansources\n"
+"\n"
+"Το apt-ftparchive παράγει αρχεία Package από ένα σύνολο αρχείων .debs. Στο\n"
+"αρχείο Package περιέχονται όλα τα πεδία ελέγχου κάθε πακέτου καθώς και\n"
+"το μέγεθος τους και το MD5 hash. Υποστηρίζει την ύπαρξη αρχείου παράκαμψης\n"
+"για τη βεβιασμένη αλλαγή των πεδίων Priority (Προτεραιότητα) και Section\n"
+"(Τομέας).\n"
+"\n"
+"Με τον ίδιο τρόπο, το apt-ftparchive παράγει αρχεία πηγών (Sources) από μια\n"
+"ιεραρχία αρχείων .dsc. Η επιλογή --source-override μπορεί να χρησιμοποιηθεί\n"
+"για παράκαμψη των αρχείων πηγών src.\n"
+"\n"
+"Οι εντολές 'packages' και 'sources' θα πρέπει να εκτελούνται στον βασικό\n"
+"κατάλογο της ιεραρχίας.Το BinaryPath θα πρέπει να δείχνει στον αρχικό\n"
+"κατάλογο που θα ξεκινάει η αναδρομική αναζήτηση και το αρχείο παράκαμψης\n"
+"θα πρέπει να περιέχει τις επιλογές παράκαμψης. Το Pathprefix προστίθεται "
+"στα\n"
+"πεδία όνομάτων αρχείων, αν υπάρχει. Δείτε παράδειγμα χρήσης στην αρχειοθήκη\n"
+"πακέτων του Debian :\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Επιλογές:\n"
+"  -h    Αυτό το κείμενο βοηθείας\n"
+"  --md5 Έλεγχος παραγωγής MD5\n"
+"  -s=?  αρχείο παράκαμψης πηγών\n"
+"  -q    Χωρίς έξοδο\n"
+"  -d=?  Επιλογή προαιρετικής βάσης δεδομένων cache\n"
+"  --no-delink Αποσφαλμάτωση του delinking\n"
+"  --contents  Έλεγχος παραγωγής αρχείου περιεχομένων\n"
+"  -c=?  Χρήση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=?  Ορισμός αυθαίρετης επιλογής ρύθμισης"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "Δεν ταιριαξε καμία επιλογή"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "Λείπουν μερικά αρχεία από την ομάδα πακέτων '%s'"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "Η βάση είναι κατεστραμμένη, το αρχείο μετονομάστηκε σε %s.old"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "Η βάση δεν είναι ενημερωμένη, γίνεται προσπάθεια να αναβαθμιστεί το %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Το φορμά της βάσης δεν είναι έγκυρο. Εάν αναβαθμίσατε το apt σε νεότερη "
+"έκδοση, παρακαλώ αφαιρέστε και δημιουργήστε τη βάση εκ νέου."
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "Το άνοιγμά του αρχείου της βάσης %s: %s απέτυχε"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid "Failed to read .dsc"
+msgstr "Αποτυχία ανάγνωσης του %s"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "Η αρχειοθήκη δεν περιέχει πεδίο ελέγχου"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "Αδύνατη η πρόσβαση σε δείκτη"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realoc - Αδυναμία εκχώρησης μνήμης"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "Άγνωστος Αλγόριθμος Συμπίεσης '%s'"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "Η συμπιεσμένη έξοδος του %s χρειάζεται καθορισμό συμπίεσης"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Αποτυχία κατά τη δημιουργία διασωλήνωσης IPC στην υποδιεργασία"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "Αποτυχία αγκίστρωσης"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "Συμπίεση απογόνου"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "Εσωτερικό Σφάλμα, Αποτυχία δημιουργίας του %s"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "απέτυχε η Ε/Ε στην υποδιεργασία/αρχείο"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "Αποτυχία ανάγνωσης κατά τον υπολογισμό MD5"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "Αδύνατο το άνοιγμα του %s"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Αποτυχία ανάγνωσης του αρχείου παράκαμψης %s"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #1"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #2"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "Κακογραμμένη παρακαμπτήρια %s γραμμή %lu #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Αδύνατη η ανάγνωση του καταλόγου  %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Αδύνατη η εύρεση της κατάστασης του %s\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "E: Σφάλματα στο αρχείο"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Αδύνατη η εύρεση του %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "Αποτυχία ανεύρεσης"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "Αποτυχία ανοίγματος του %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr "Αποσύνδεση %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "    Αποτυχία σύνδεσης του %s με το %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Αποσύνδεση ορίου του %sB hit.\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "Η αρχειοθήκη δεν περιέχει πεδίο πακέτων"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s δεν περιέχει εγγραφή παράκαμψης\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s συντηρητής είναι ο %s όχι ο %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s δεν έχει εγγραφή πηγαίας παράκαμψης\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s δεν έχει ούτε εγγραφή δυαδικής παράκαμψης\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Αδύνατη η ανάγνωση της βάσης δεδομένων του cdrom %s"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Παρακαλώ χρησιμοποιείστε το apt-cdrom για να αναγνωριστεί αυτό το CD από το "
+"APT. Το apt-get update δε χρησιμεύει για να προσθέτει νέα CD"
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "Λάθος CD"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Αδυναμία απόσυναρμογής του CD-ROM στο %s, μπορεί να είναι σε χρήση."
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "Ο δίσκος δεν βρέθηκε."
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "Το αρχείο Δε Βρέθηκε"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Σύνδεση στο %s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Αδύνατη η δημιουργία υποδοχής για το %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Αδύνατη η αρχικοποίηση της σύνδεσης στο %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Αδύνατη η σύνδεση στο %s:%s (%s), λήξη χρόνου σύνδεσης"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "Απέτυχε"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Αδύνατη η σύνδεση στο %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "Σύνδεση στο %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Αδύνατη η εύρεση του '%s'"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Προσωρινή αποτυχία στην εύρεση του '%s'"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Κάτι παράξενο συνέβη κατά την εύρεση του '%s:%s' (%i)"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "Κάτι παράξενο συνέβη κατά την εύρεση του '%s:%s' (%i)"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "Αδύνατη η σύνδεση στο %s %s:"
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "Αποτυχία εύρεσης της κατάστασης"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Μη έγκυρο URI, τα τοπικά URI δεν πρέπει να αρχίζουν με //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "Σύνδεση στο σύστημα"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "Αδύνατος ο καθορισμός του ονόματος του ομότιμου (peer)"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "Αδύνατος ο καθορισμός του τοπικού ονόματος"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "Ο διακομιστής αρνήθηκε την σύνδεση με μήνυμα: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Η εντολή USER απέτυχε, ο διακομιστής απάντησε: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Η εντολή PASS απέτυχε, ο διακομιστής απάντησε: %s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Ο διαμεσολαβητής έχει οριστεί αλλά χωρίς σενάριο εισόδου, το Acquire::ftp::"
+"ProxyLogin είναι άδειο"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Η εντολή '%s' στο σενάριο εισόδου απέτυχε, ο διακομιστής απάντησε: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Η εντολή TYPE απέτυχε, ο διακομιστής απάντησε: %s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "Λήξη χρόνου σύνδεσης"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "Ο διακομιστής έκλεισε την σύνδεση"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "Το μήνυμα απάντησης υπερχείλισε την ενδιάμεση μνήμη."
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "Αλλοίωση του πρωτοκόλλου"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "Αδύνατη η δημιουργία μιας υποδοχής (socket)"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr "Αδύνατη η σύνδεση υποδοχής δεδομένων, λήξη χρόνου σύνδεσης"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "Αδύνατη η σύνδεση σε παθητική υποδοχή (socket)."
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "Το getaddrinfo ήταν αδύνατο να δέσμευση υποδοχή παρακολούθησης"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "Αδύνατη η πρόσδεση στην υποδοχή (socket)"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "Αδύνατη η παρακολούθηση της υποδοχής (socket)"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "Αδύνατος ο καθορισμός του ονόματος της υποδοχής (socket)"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "Αδύνατη η αποστολή της εντολής PORT"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Άγνωστη οικογένεια διευθύνσεων %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Το EPRT απέτυχε, ο διακομιστής απάντησε: %s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Λήξη χρόνου σύνδεσης στην υποδοχή δεδομένων"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "Αδύνατη η αποδοχή συνδέσεων"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "Πρόβλημα κατά το hashing του αρχείου"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Αδυναμία λήψης του αρχείου, ο διακομιστής απάντησε '%s'"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Λήξη χρόνου υποδοχής δεδομένων"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Αποτυχία κατά τη μεταφορά δεδομένων, ο διακομιστής απάντησε '%s'"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "Επερώτηση"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "Αδύνατη η εκτέλεση"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "Βρέθηκε τουλάχιστον μια μη έγκυρη υπογραφή."
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+"Εσωτερικό σφάλμα: Η υπογραφή είναι καλή, αλλά αδυναμία προσδιορισμού του "
+"αποτυπώματος?!"
+
+#: methods/gpgv.cc
+#, fuzzy
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr ""
+"Αδυναμία εκτέλεσης του '%s' για την επαλήθευση της υπογραφής (είναι "
+"εγκατεστημένο το gnupg;)"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "Άγνωστο σφάλμα κατά την εκτέλεση του apt-key"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "Οι παρακάτω υπογραφές ήταν μη έγκυρες:\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Οι παρακάτω υπογραφές δεν ήταν δυνατόν να επαληθευτούν επειδή δεν ήταν "
+"διαθέσιμο το δημόσιο κλειδί:\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "Σφάλμα στην εγγραφή στο αρχείο"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr ""
+"Σφάλμα στην ανάγνωση από το διακομιστή, το άλλο άκρο έκλεισε τη σύνδεση"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "Σφάλμα στην ανάγνωση από το διακομιστή"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "Σφάλμα στην εγγραφή στο αρχείο"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "Η επιλογή απέτυχε"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "Λήξη χρόνου σύνδεσης"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "Σφάλμα στην εγγραφή στο αρχείο εξόδου"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Αποτυχία ορισμού του χρόνου τροποποίησης"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "Η σύνδεση έκλεισε πρόωρα"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "Αναμονή επικεφαλίδων"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "Ελαττωματική γραμμή επικεφαλίδας"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα απάντησης"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα Content-Length"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "Ο διακομιστής http έστειλε μια άκυρη επικεφαλίδα Content-Range"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "Ο διακομιστής http δεν υποστηρίζει πλήρως το range"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "Άγνωστη μορφή ημερομηνίας"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "Ελαττωματικά δεδομένα επικεφαλίδας"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "Η σύνδεση απέτυχε"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "Εσωτερικό Σφάλμα"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #~ msgid "(not found)"
 #~ msgstr "(δε βρέθηκαν)"

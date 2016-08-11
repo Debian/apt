@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -18,2334 +18,6 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "X-Launchpad-Export-Date: 2016-04-10 19:31+0000\n"
 "X-Generator: Lokalize 1.5\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "Találat:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "Letöltés:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr "Mellőz:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "Hiba:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Letöltve %sB %s alatt (%sB/s)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [Folyamatban]"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"Helyezze be a(z)\n"
-" „%s”\n"
-"címkéjű lemezt a(z) %s meghajtóba, és nyomja meg az Entert\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "Függőségek javítása..."
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " sikertelen."
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "Nem lehet javítani a függőségeket"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "Nem lehet minimalizálni a frissítendő csomagok mennyiségét"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " Kész"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Próbálja futtatni az „apt-get -f install” parancsot ezek javításához."
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Teljesítetlen függőségek. Próbálja a -f használatával."
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr "Rendezés"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Megjegyzés: „%s” kijelölése „%s” feladathoz\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Megjegyzés: „%s” kijelölése „%s” globhoz\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Megjegyzés: „%s” kijelölése „%s” regexhez\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "%s egy virtuális csomag, melyet az alábbi csomagok biztosítanak:\n"
-
-#: apt-private/private-cacheset.cc
-msgid " [Installed]"
-msgstr " [Telepítve]"
-
-#: apt-private/private-cacheset.cc
-msgid " [Not candidate version]"
-msgstr " [Nem jelölt verzió]"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "Egyet név szerint ki kell jelölni a telepítésre."
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"%s csomag nem elérhető, de egy másik hivatkozik rá.\n"
-"A kért csomag hiányzik, elavult vagy csak más forrásból érhető el\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "De az alábbi csomagok helyettesítik:"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "„%s” csomagnak nincs telepítésre jelölt verziója"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "A virtuális csomagokat, mint a(z) „%s” nem lehet eltávolítani\n"
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
-"A(z) „%s” csomag nincs telepítve, így nem lett törölve. Erre gondolt: „%s”?\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "A(z) „%s” csomag nincs telepítve, így nem lett törölve\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Megjegyzés: „%s” kijelölése „%s” helyett\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr "Legtöbbet használt parancsok:"
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr "Az elérhető parancsokkal kapcsolatban további információkért lásd: %s."
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-"A konfigurációs beállítások és a szintaxis az apt.conf(5) fájlban "
-"találhatók.\n"
-"A források beállításával kapcsolatos információkat a sources.list(5) "
-"tartalmazza.\n"
-"A csomag- és verzióválasztások az apt_preferences(5) használatával adhatók "
-"meg.\n"
-"A biztonsági adatok az apt-secure(8)-ban vannak.\n"
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr "Ez az APT a SzuperTehén Hatalmával rendelkezik."
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "Ez az APT segéd a Szuper Meep Hatalmával rendelkezik."
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Nem találhatók csomagok"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "FIGYELMEZTETÉS: Az alábbi csomagok nem hitelesíthetők!"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr "A hitelesítési figyelmeztetés felülbírálva.\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "Néhány csomag nem hitelesíthető"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "Valóban ellenőrzés nélkül telepíti a csomagokat?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr "a --force-yes elavult, használja a --allow kezdetű kapcsolók egyikét."
-
-#: apt-private/private-download.cc
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr ""
-"Hitelesítetlen csomagok vannak, és a -y kapcsolót használta\n"
-"a --allow-unauthenticated nélkül."
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Sikertelen letöltés: %s  %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "Nem határozható meg a szabad hely mennyisége itt: %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "Nincs elég szabad hely itt: %s."
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "Nem lehet zárolni a letöltési könyvtárat"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Néhány csomagot nem lehetett telepíteni. Ez azt jelentheti, hogy\n"
-"egy lehetetlen állapotot kért, vagy ha az unstable disztribúciót\n"
-"használja, akkor néhány igényelt csomag még nem készült el vagy ki\n"
-"lett mozdítva az Incoming-ból."
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Az alábbi információk segíthetnek megoldani a problémát:"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Törött csomagok"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "Belső hiba, az InstallPackages törött csomagokkal lett meghívva!"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr "Csomagokat kellene eltávolítani, de az eltávolítás nem engedélyezett."
-
-#: apt-private/private-install.cc
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr ""
-"Alapvető csomagok lettek eltávolítva, és a -y kapcsolót használta\n"
-"a --allow-remove-essential nélkül."
-
-#: apt-private/private-install.cc
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr ""
-"Vissza lettek fejlesztve csomagok, és a -y kapcsolót használta\n"
-"a --allow-downgrades nélkül."
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-"Visszatartott csomagok módosultak, és a -y kapcsolót használta\n"
-"a --allow-change-held-packages nélkül."
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "Belső hiba, a rendezés nem fejeződött be"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "A méretek nem egyeznek, írjon az apt@packages.debian.org címre"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Letöltendő adatmennyiség: %sB/%sB.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Letöltendő adatmennyiség: %sB.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "A művelet után %sB lemezterület kerül felhasználásra.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "A művelet után %sB lemezterület szabadul fel.\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "A „Trivial Only” meg van adva, de ez nem egy triviális művelet."
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Igen, tedd amit mondok!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"Ártalmasnak tűnő műveletet készül végrehajtani.\n"
-"A folytatáshoz írja be ezt a mondatot: „%s”\n"
-" ?] "
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "Megszakítva."
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "Folytatni akarja?"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "Néhány fájlt nem sikerült letölteni"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "A letöltés befejeződött a „csak letöltés” módban"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Nem lehet letölteni néhány archívumot. Próbálja futtatni az „apt-get update” "
-"parancsot, vagy használja a --fix-missing kapcsolót."
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "A --fix-missing és az adathordozó-csere jelenleg nem támogatott"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "Nem lehet javítani a hiányzó csomagokat."
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "Telepítés megszakítása."
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-"A következő csomag eltűnt a rendszerből, mivel\n"
-"az összes fájlt más csomagok fölülírták:"
-msgstr[1] ""
-"A következő csomagok eltűntek a rendszerből, mivel\n"
-"az összes fájlt más csomagok fölülírták:"
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr "Megjegyzés: ezt a dpkg automatikusan és szándékosan hajtja végre."
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "Nem kellene semmit törölni, az AutoRemover nem indítható"
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"Úgy tűnik, az AutoRemover hibát okozott, ez nem történhetne meg.\n"
-"Küldjön hibajelentést az apt csomaghoz."
-
-#: apt-private/private-install.cc
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Belső hiba, az AutoRemover sérült"
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] ""
-"A következő csomag automatikusan lett telepítve, és már nincs rá szükség:"
-msgstr[1] ""
-"A következő csomagok automatikusan lettek telepítve, és már nincs rájuk "
-"szükség:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "%lu csomag automatikusan lett telepítve, és már nincs rá szükség.\n"
-msgstr[1] ""
-"%lu csomag automatikusan lett telepítve, és már nincs rájuk szükség.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "Ezt az „%s” paranccsal törölheti."
-msgstr[1] "Ezeket az „%s” paranccsal törölheti."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Próbálja futtatni az „apt-get -f install” parancsot az alábbiak javításához:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Teljesítetlen függőségek. Próbálja kiadni az „apt-get -f install” parancsot "
-"csomagok nélkül (vagy telepítse a függőségeket is!)."
-
-#: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "A következő további csomagok lesznek telepítve:"
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "Javasolt csomagok:"
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "Ajánlott csomagok:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "%s kihagyása, ez már telepítve van, és a frissítés nincs beállítva.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "„%s” kihagyása, nincs telepítve, és csak frissítések lettek kérve.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "%s újratelepítése nem lehetséges, mert nem lehet letölteni.\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s már a legújabb verzió (%s).\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "%s kézi telepítésűre állítva.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "„%s” (%s) verzió lett kijelölve ehhez: „%s”\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "„%s” (%s) verzió lett kijelölve ehhez: „%s”, a(z) „%s” miatt\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr "Felsorolás"
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-"%i további verzió van. A megjelenítéséhez használja a „-a” kapcsolót"
-msgstr[1] ""
-"%i további verzió van. A megjelenítésükhöz használja a „-a” kapcsolót"
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-"NE FELEDJE: Ez csak szimuláció!\n"
-"      Az %s rendszergazdai jogokat igényel a tényleges végrehajtáshoz.\n"
-"      Ne feledje, hogy a zárolás is ki van kapcsolva,\n"
-"      így ne számítson a jelenlegi helyzet valósságára!\n"
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr "ismeretlen"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr "[telepítve, frissíthető erre: %s]"
-
-#: apt-private/private-output.cc
-msgid "[installed,local]"
-msgstr "[telepítve, helyi]"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr "[telepítve, auto-eltávolítható]"
-
-#: apt-private/private-output.cc
-msgid "[installed,automatic]"
-msgstr "[telepítve, automatikus]"
-
-#: apt-private/private-output.cc
-msgid "[installed]"
-msgstr "[telepítve]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr "[frissíthető erről: %s]"
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr "[megmaradt konfig]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "de %s van telepítve"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "de csak %s telepíthető"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "de az nem telepíthető"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "de az egy virtuális csomag"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "de az nincs telepítve"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "de az nincs telepítésre megjelölve"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr " vagy"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "Az alábbi csomagoknak teljesítetlen függőségei vannak:"
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "Az alábbi ÚJ csomagok lesznek telepítve:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "Az alábbi csomagok el lesznek TÁVOLÍTVA:"
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "Az alábbi csomagok vissza lesznek tartva:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "Az alábbi csomagok frissítve lesznek:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Az alábbi csomagok VISSZAFEJLESZTÉSRE kerülnek:"
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr "A következő visszatartott csomagok cseréje:"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (%s miatt)"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"FIGYELMEZTETÉS: Az alábbi alapvető csomagok el lesznek távolítva.\n"
-"NE tegye ezt, hacsak nem tudja pontosan, mit csinál!"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu frissített, %lu újonnan telepített, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu újratelepítendő, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu visszafejlesztendő, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu eltávolítandó és %lu nem frissített.\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu nincs teljesen telepítve/eltávolítva.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr "[I/n]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr "[i/N]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr "I"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr "N"
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Regex fordítási hiba - %s"
-
-#: apt-private/private-search.cc
-msgid "You must give at least one search pattern"
-msgstr "Legalább egy keresési mintát meg kell adnia"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr "Keresés a teljes szövegben"
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "%s csomagfájl nincs szinkronban."
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-"%i további rekord van. A megjelenítéséhez használja a „-a” kapcsolót"
-msgstr[1] ""
-"%i további rekord van. A megjelenítésükhöz használja a „-a” kapcsolót"
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr "nem valódi csomag (virtuális)"
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Ez a csomag nem található: %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "Csomagfájlok:"
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr ""
-"A gyorsítótár nincs szinkronban, nem lehet kereszthivatkozni a csomagfájlra"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "Rögzített csomagok:"
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr "%s -> %s, %d prioritással\n"
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  Telepítve: "
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  Jelölt: "
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(nincs)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  Verziótáblázat:"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Nem található csomag a(z) „%s” architektúrához"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Nem található „%s” csomag „%s” verzióval"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Nem található „%s” csomag „%s” kiadással"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "„%s” kiválasztása forráscsomagként „%s” helyett\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "A(z) „%2$s” csomag „%1$s” verziója nem érhető el"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Legalább egy csomagot meg kell adni, amelynek a forrását le kell tölteni"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Nem található forráscsomag ehhez: %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"MEGJEGYZÉS: a(z) „%s” csomagolása a(z) „%s” verziókövető rendszerben van "
-"karbantartva:\n"
-"%s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Használja a következő parancsot:\n"
-"%s\n"
-"a csomag legújabb (esetleg kiadatlan) frissítéseinek letöltéséhez.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "A már letöltött „%s” fájl kihagyása\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Letöltendő forrásadat-mennyiség: %sB/%sB.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Letöltendő forrásadat-mennyiség: %sB.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Forrás letöltése: %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "Nem sikerült néhány archívumot letölteni."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Egy már kibontott forrás kibontásának kihagyása itt: %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "„%s” kibontási parancs nem sikerült.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Ellenőrizze, hogy a „dpkg-dev” csomag telepítve van-e.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "„%s” elkészítési parancs nem sikerült.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Nem lehet %s fordítási függőségeinek információit letölteni"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "Nincs fordítási függősége a következőnek: %s.\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Legalább egy csomagot adjon meg, amelynek fordítási függőségeit ellenőrizni "
-"kell"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Nem érhetők el architektúrainformációk ehhez: %s. A beállításokkal "
-"kapcsolatban lásd az apt.conf(5) APT::Architectures részét."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-"Megjegyzés: %s könyvtár használata a fordítási függőségek lekéréséhez\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Megjegyzés: %s fájl használata a fordítási függőségek lekéréséhez\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "Nem sikerült az építési függőségeket feldolgozni"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "%s feldolgozása sikertelen. Újra szerkeszti? "
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr "A(z) „%s” fájl megváltozott, adja ki az „apt-get update” parancsot."
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "%s csomag %s verziójának teljesítetlen függősége van:\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "Az update parancsnak nincsenek argumentumai"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-"%i csomag frissíthető. A megjelenítéséhez futtassa az „apt list --"
-"upgradable” parancsot.\n"
-msgstr[1] ""
-"%i csomag frissíthető. A megjelenítésükhöz futtassa az „apt list --"
-"upgradable” parancsot.\n"
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr "Minden csomag naprakész."
-
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "Az apt-cache stats parancsnak nincsenek argumentumai"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "Csomagnevek összesen : "
-
-#: cmdline/apt-cache.cc
-msgid "Total package structures: "
-msgstr "Csomagstruktúrák összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  Normális csomagok: "
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr "  Teljesen virtuális csomagok: "
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr "  Egyedi virtuális csomagok: "
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr "  Vegyes virtuális csomagok: "
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "  Hiányzik: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "Különböző verziók összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct descriptions: "
-msgstr "Összes különböző leírás: "
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "Függőségek összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "Verzió/Fájl kapcsolatok összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Desc/File relations: "
-msgstr "Leírás/Fájl kapcsolatok összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "„Biztosítja” kapcsolatok összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "Minták összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "Slack terület összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "Nyilvántartott terület összesen: "
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr "Ez a parancs elavult. Használja helyette az „apt-mark showauto”-t."
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-"Használat: apt-cache [kapcsolók] parancs\n"
-"           apt-cache [kapcsolók] show csom1 [csom2 ...]\n"
-"\n"
-"Az apt-cache telepített és telepíthető csomagokról kérdezi le és jeleníti\n"
-"meg az elérhető információkat. Kizárólag a helyi gyorsítótárba az\n"
-"apt-get (vagy hasonló) update parancsával beszerzett adatokon dolgozik.\n"
-"A megjelenő információk így elavultak lehetnek, ha az utolsó frissítés\n"
-"túl régen volt, cserébe az apt-cache a beállított források elérhetőségétől\n"
-"függetlenül működik, például kapcsolat nélküli módban.\n"
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "Megjeleníti a forrásrekordokat"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "A csomaglistában keres reguláris kifejezéseket"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "Nyers függőségi információt mutat a csomagról"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "Fordított függőségi információkat jelenít meg a csomagról"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "Megjeleníti a csomag leírását"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "Kilistázza az összes csomag nevét"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "Megjeleníti a policy beállításokat"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Adja meg a lemez nevét, mint például „Debian 5.0.3 1. lemez”"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Helyezzen be egy lemezt a meghajtóba, és nyomja meg az Entert"
-
-#: cmdline/apt-cdrom.cc
-#, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "„%s” csatolása a(z) „%s” könyvtárba meghiúsult"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-"Nem ismerhető fel automatikusan, vagy nem található CD-ROM az "
-"alapértelmezett csatolási pont használatával.\n"
-"Megpróbálhatja a --cdrom kapcsolóval beállítani a CD-ROM csatolási pontját.\n"
-"A CD-ROM automatikus felismerésével és csatolási pontjával kapcsolatos "
-"információkért lásd a „man apt-cdrom” parancsot."
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Ismételje meg a folyamatot készlete többi CD-jével is."
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-"Használat: apt-cdrom [kapcsolók] parancs\n"
-"\n"
-"Az apt-cdrom használatával CD-ROM-ok, USB pendrive-ok és más cserélhető\n"
-"adathordozók vehetők fel csomagforrásként az APT-hoz. A csatolási pont és "
-"az\n"
-"eszközinformációk az apt.conf(5), udev(7) és fstab(5) használatával állnak "
-"elő.\n"
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "Az argumentumok nincsenek párban"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"Használat: apt-config [kapcsolók] parancs\n"
-"\n"
-"Az apt-config egy felület az APT eszközök által használt konfigurációs\n"
-"beállításokhoz, főleg hibakereséshez és parancsfájlokhoz tervezve.\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr "konfigurációs értékek lekérése parancsértelmező-kiértékelés útján"
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr "az aktív konfigurációs beállítás megjelenítése"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Az alábbi csomag nem található: %s"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "%s megjelölve automatikusan telepítettként.\n"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-"Ez a parancs elavult. Használja helyette az „apt-mark auto” és az „apt-mark "
-"auto” parancsokat."
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr "Belső hiba, a problémamegoldó hibát okozott"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "Támogatott modulok:"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"Használat: apt-get [kapcsolók] parancs\n"
-"           apt-get [kapcsolók] install|remove csom1 [csom2 ...]\n"
-"           apt-get [kapcsolók] source csom1 [csom2 ...]\n"
-"\n"
-"Az apt-get egy parancssori felület csomagok és információk letöltésére\n"
-"hitelesített forrásokból, valamint csomagok telepítésére,\n"
-"frissítésére és eltávolítására a függőségeikkel együtt.\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "Frissíti a csomaglistákat"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "Frissítés végrehajtása"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "Új csomagok telepítése (csomag a libc6 és nem a libc6.deb)"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "Csomagok eltávolítása"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr "Eltávolítja és teljesen törli a csomagokat"
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-msgid "Remove automatically all unused packages"
-msgstr "Automatikusan eltávolítja a nem használt csomagokat"
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "Disztribúciófrissítés, lásd apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "Követi a dselect kijelöléseit"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "Forráscsomagok építési függőségét konfigurálja"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "Törli a letöltött archívumfájlokat"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "Törli a régi letöltött archívumfájlokat"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "Ellenőrzi, hogy nincsenek-e törött függőségek"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "Forrásarchívumok letöltése"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr "Bináris csomag letöltése a jelenlegi mappába"
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr "Adott csomag változási naplójának letöltése és megjelenítése"
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr "Szükséges egy URL argumentum"
-
-#: cmdline/apt-helper.cc
-msgid "Must specify at least one pair url/filename"
-msgstr "Legalább egy pár URL-t/fájlnevet meg kell adni"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr "A letöltés meghiúsult"
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr "A GetSrvRec hívás meghiúsult ehhez: %s"
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-"Használat: apt-helper [kapcsolók] parancs\n"
-"       apt-helper [kapcsolók] cat-file fájl ...\n"
-"       apt-helper [kapcsolók] download-file uri célútvonal\n"
-"\n"
-"Az apt-helper különböző parancsokat csomagol össze parancsfájlok számára,\n"
-"hogy azok például ugyanazokat proxybeállításokat vagy beszerzési\n"
-"rendszert használhassák, mint az APT.\n"
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr "a megadott URI letöltése a célútvonalra"
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr "SRV rekord kikeresése (például: _http._tcp.ftp.debian.org)"
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr "fájlok összefűzése, automatikus kibontással"
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr "proxyfelismerés az apt-conf használatával"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "%s nem jelölhető meg, mivel nincs telepítve.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "%s már be van állítva kézi telepítésűre.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "%s már meg van jelölve automatikusan telepítettként.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s már be van állítva visszatartásra.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s eddig sem volt visszatartva.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "A dpkg futtatása sikertelen. Van root jogosultsága?"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s set on hold.\n"
-msgstr "%s beállítva visszatartásra.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "Visszatartás törölve ezen: %s.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr "%s kijelölve teljes törlésre.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr "%s kijelölve eltávolításra.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr "%s kijelölve telepítésre.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-"Használat: apt-mark [kapcsolók] {auto|manual} csom1 [csom2 ...]\n"
-"\n"
-"Az apt-mark egy egyszerű parancssori felület csomagok megjelölésére\n"
-"kézileg vagy automatikusan telepítettként. Használható a csomagok dpkg(1)\n"
-"kijelölési állapotainak manipulálására is, valamint adott kijelöléssel\n"
-"rendelkező vagy nem rendelkező összes csomag kiíratására is.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as automatically installed"
-msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as manually installed"
-msgstr "Az adott csomagok megjelölése kézzel telepítettként"
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr "Csomag megjelölése visszatartottként"
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr "Csomag visszatartottként megjelölésének törlése"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of automatically installed packages"
-msgstr "Automatikusan telepített csomagok listájának kiírása"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of manually installed packages"
-msgstr "Kézileg telepített csomagok listájának kiírása"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr "Visszatartott csomagok listájának megjelölése"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-"Használat: apt [kapcsolók] parancs\n"
-"\n"
-"Az apt egy parancssori csomagkezelő, amely parancsokat biztosít csomagok\n"
-"keresésére és kezelésére, illetve információk lekérésére.\n"
-"Ugyanazokat a funkciókat biztosítja, mint a specializált APT eszközök,\n"
-"például az apt-get és az apt-cache, de az interaktív használathoz\n"
-"megfelelőbb beállításokat tesz alapértelmezésben elérhetővé.\n"
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "csomagok kiírása csomagnevek alapján"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "keresés csomagleírásokban"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "csomagrészletek megjelenítése"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "csomagok telepítése"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "csomagok eltávolítása"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "elérhető csomagok listájának frissítése"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "a rendszer frissítése csomagok telepítésével/frissítésével"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-"a rendszer frissítése csomagok eltávolításával/telepítésével/frissítésével"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "a forrásinformációs fájl szerkesztése"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "%s CD-ROM adatbázis nem olvasható"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Használja az apt-cdrom parancsot a CD felismertetésére. Az apt-get update "
-"nem használható új CD-k hozzáadására."
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "Hibás CD"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr ""
-"Nem lehet leválasztani az itt lévő CD-ROM-ot: %s, még használatban lehet."
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "A lemez nem található."
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "A fájl nem található"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Csatlakozás: %s (%s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Foglalat létrehozása sikertelen ehhez: %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Kapcsolat létrehozása sikertelen ehhez: %s: %s (%s)."
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (%s)"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "Sikertelen"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Nem lehet kapcsolódni ehhez: %s: %s (%s)."
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "Kapcsolódás: %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Nem lehet feloldani a következőt: „%s”"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Átmeneti hiba „%s” feloldása közben"
-
-#: methods/connect.cc
-#, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "Rendszerhiba „%s:%s” feloldásakor"
-
-#: methods/connect.cc
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "Hiba történt „%s:%s” feloldásakor (%i - %s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "Nem lehet csatlakozni ehhez: %s:%s:"
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "Nem érhető el"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "Érvénytelen URI, helyi URI-k nem kezdődhetnek //-rel"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Bejelentkezés"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nem lehet a partner nevét megállapítani"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nem lehet a helyi nevet megállapítani"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "A kiszolgáló visszautasította a kapcsolatot: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Hibás USER, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Hibás PASS, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Meg lett adva proxy kiszolgáló, de nincs bejelentkezési parancsfájl és az "
-"Acquire::ftp::ProxyLogin üres."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"A bejelentkezési parancsfájl „%s” parancsa sikertelen, a kiszolgáló üzenete: "
-"%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Hibás TYPE, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Időtúllépés a kapcsolatban"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "A kiszolgáló lezárta a kapcsolatot"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "Olvasási hiba"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "A válasz túlcsordította a puffert."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protokollhiba"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "Írási hiba"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nem lehet létrehozni a foglalatot"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Nem lehet kapcsolódni az adatfoglalathoz, a kapcsolat túllépte az időkorlátot"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nem lehet kapcsolódni a passzív foglalathoz."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "A getaddrinfo nem talált figyelőfoglalatot"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nem lehet összekapcsolódni a foglalattal"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Nem lehet figyelni a foglalaton"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Nem lehet megállapítani a foglalat nevét"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Nem lehet PORT parancsot küldeni"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Ismeretlen címcsalád: %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Hibás EPRT, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Az adatfoglalathoz kapcsolódás túllépte az időkorlátot"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Nem lehet elfogadni a kapcsolatot"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "Probléma a fájl hash értékének meghatározásakor"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nem lehet letölteni a fájlt, a kiszolgáló üzenete: „%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Az adatfoglalat túllépte az időkorlátot"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Az adatátvitel sikertelen, a kiszolgáló üzenete: „%s”"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Lekérdezés"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nem lehet meghívni "
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"A digitálisan aláírt fájl nem érvényes, érkezett: „%s” (igényel a hálózat "
-"hitelesítést?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, fuzzy, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-"A digitálisan aláírt fájl nem érvényes, érkezett: „%s” (igényel a hálózat "
-"hitelesítést?)"
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "Legalább egy aláírás érvénytelen."
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "Belső hiba: Jó aláírás, de nem állapítható meg a kulcs ujjlenyomata."
-
-#: methods/gpgv.cc
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-"Nem indítható el a „apt-key” az aláírás ellenőrzéséhez (telepítve van a "
-"gnupg?)"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "Ismeretlen apt-key futtatási hiba"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr "%s kulcs aláírása gyenge kivonatoló algoritmust használ (%s)"
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "Az alábbi aláírások érvénytelenek voltak:\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Az alábbi aláírások nem ellenőrizhetők, mert a nyilvános kulcs nem érhető "
-"el:\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "Hiba a fájl írásakor"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr "Hiba a kiszolgálóról olvasáskor, a túloldal lezárta a kapcsolatot"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "Hiba a kiszolgálóról olvasáskor"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "Hiba a fájl írásakor"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "A kiválasztás sikertelen"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "Időtúllépés a kapcsolatban"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "Hiba a kimeneti fájl írásakor"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "%s nem olvasható"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Nem sikerült ide váltani: %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Nem található a(z) „%s” tükörfájl "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "A(z) „%s” tükörfájl nem olvasható"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Tükör: %s]"
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s elérése sikertelen"
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "A módosítási idő beállítása sikertelen"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Nem sikerült IPC-adatcsatornát létrehozni az alfolyamathoz"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "A kapcsolat idő előtt lezárult"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "Várakozás a fejlécekre"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "Rossz fejlécsor"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "A HTTP-kiszolgáló érvénytelen válaszfejlécet küldött"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "A HTTP-kiszolgáló érvénytelen Content-Length fejlécet küldött"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "A HTTP-kiszolgáló érvénytelen Content-Range fejlécet küldött"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "A HTTP-kiszolgáló tartománytámogatása sérült"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "Ismeretlen dátumformátum"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "Rossz fejlécadatok"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "Sikertelen kapcsolódás"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-"%s automatikusan letiltva, mert hibás válasz érkezett a kiszolgálótól/"
-"proxytól. (lásd: man 5 apt.conf)"
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "Belső hiba"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr "Az üres fájlok biztosan nem érvényes csomagok"
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "Hibás alapértelmezett beállítás!"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-msgid "Press [Enter] to continue."
-msgstr "A folytatáshoz nyomja meg az Entert."
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "Törli a korábban letöltött .deb fájlokat?"
-
-#: dselect/install:102
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "Hiba történt a kicsomagolás során. A telepített csomagok"
-
-#: dselect/install:103
-msgid "will be configured. This may result in duplicate errors"
-msgstr "beállításra kerülnek. Ez többszörös"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"vagy hiányzó függőségek miatti hibákat okozhat. Ez így van rendben, csak az "
-"ezen üzenet"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr "előtti hibák fontosak. Javítsa azokat, és futtassa az [I]nstallt újra"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "Elérhető információk egyesítése"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Nem található a(z) %s, a várakozás után sem"
-
-#: cmdline/apt-extracttemplates.cc
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"Használat: apt-extracttemplates fájl1 [fájl2 ...]\n"
-"\n"
-"Az apt-extracttemplates konfigurációs- és sabloninformációk debian-\n"
-"csomagokból való kinyerésére használható. Elsősorban a debconf(1)\n"
-"használja konfigurációs kérdések feltételéhez a csomagok telepítése előtt.\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Az mkstemp %s meghiúsult"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Nem lehet írni ebbe: %s"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Nem lehet megállapítani a debconf verziót. A debconf telepítve van?"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"Használat: apt-internal-solver\n"
-"\n"
-"Az apt-internal-solver felülettel az aktuális belső feloldó külső\n"
-"feloldóként használható az APT családhoz hibakeresési vagy hasonló céllal\n"
-
-#: cmdline/apt-internal-solver.cc
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"Használat: apt-internal-solver\n"
-"\n"
-"Az apt-internal-solver felülettel az aktuális belső feloldó külső\n"
-"feloldóként használható az APT családhoz hibakeresési vagy hasonló céllal\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "Ismeretlen csomagbejegyzés!"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-"Használat: apt-sortpkgs [kapcsolók] fájl1 [fájl2 ...]\n"
-"\n"
-"Az apt-sortpkgs csomaginformációs fájlok rendezésére szolgál.\n"
-"Alapesetben bináris csomagok információi alapján rendez, de a -s "
-"kapcsolóval\n"
-"át lehet váltani forrás csomagok szerinti sorrendre.\n"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "A csomagkiterjesztések listája túl hosszú"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "Hiba a(z) %s könyvtár feldolgozásakor"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "A forráskiterjesztések listája túl hosszú"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr "Hiba a tartalomfájl fejlécének írásakor"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "Hiba %s tartalmának feldolgozásakor"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"Használat: apt-ftparchive [kapcsolók] parancs\n"
-"Parancsok: packages binarypath [felülbírálófájl [útvonalelőtag]]\n"
-"           sources srcpath [felülbírálófájl [útvonalelőtag]]\n"
-"           contents útvonal\n"
-"           release útvonal\n"
-"           generate konfigfájl [csoportok]\n"
-"           clean konfigfájl\n"
-"\n"
-"Az apt-ftparchive indexfájlokat generál a Debian archívumokhoz. A generálás\n"
-"sok stílusát támogatja, a teljesen automatizálttól kezdve a\n"
-"dpkg-scanpackages és a dpkg-scansources funkcionális helyettesítéséig.\n"
-"\n"
-"Az apt-ftparchive Package fájlokat generál a .deb-ek fájából. A Package\n"
-"fájl minden vezérlő mezőt tartalmaz minden egyes csomagról úgy az MD5\n"
-"hasht mint a fájlméretet. Az override (felülbíráló) fájl támogatott a\n"
-"Prioritás és Szekció mezők értékének kényszerítésére.\n"
-"\n"
-"Hasonlóképpen az apt-ftparchive Sources fájlokat generál .dsc-k fájából.\n"
-"A --source-override opció használható forrás-felülbíráló fájlok megadására\n"
-"\n"
-"A „packages” és „sources” parancsokat a fa gyökeréből kell futtatni.\n"
-"A BinaryPath-nak a rekurzív keresés kiindulópontjára kell mutatnia, és\n"
-"a felülbírálófájlnak a felülbíráló jelzőket kell tartalmaznia. Az "
-"útvonalelőtag\n"
-"hozzáadódik a fájlnév mezőkhöz, ha meg van adva. Felhasználására egy példa "
-"a\n"
-"Debian archívumból:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Kapcsolók:\n"
-"  -h    Ez a súgó szöveg\n"
-"  --md5 MD5 generálás vezérlése\n"
-"  -s=?  Forrás-felülbíráló fájl\n"
-"  -q    Szűkszavú mód\n"
-"  -d=?  Opcionális gyorsítótár-adatbázis kiválasztása\n"
-"  --no-delink „delink” hibakereső mód bekapcsolása\n"
-"  --contents  Tartalom fájl generálásának ellenőrzése\n"
-"  -c=?  Ezt a konfigurációs fájlt olvassa be\n"
-"  -o=?  Beállít egy tetszőleges konfigurációs opciót"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "Nincs illeszkedő kiválasztás"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "Néhány fájl hiányzik a(z) „%s” csomagfájlcsoportból"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "A DB megsérült, a fájl átnevezve %s.old-ra"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "A DB régi, kísérlet a következő frissítésére: %s"
-
-#: ftparchive/cachedb.cc
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"Az adatbázis-formátum érvénytelen. Ha az apt egy korábbi verziójáról "
-"frissített, akkor távolítsa el, és hozza létre újra az adatbázist."
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "A(z) %s DB fájlt nem lehet megnyitni: %s"
-
-#: ftparchive/cachedb.cc
-msgid "Failed to read .dsc"
-msgstr "Nem sikerült olvasni a .dsc fájlt"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "Az archívumnak nincs vezérlő rekordja"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "Nem sikerült egy mutatóhoz jutni"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc - Nem sikerült memóriát lefoglalni"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "„%s” tömörítési algoritmus ismeretlen"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "%s tömörített kimenetnek egy tömörítő készletre van szüksége"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "Nem sikerült forkolni"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "Gyermekfolyamat tömörítése"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "Belső hiba, %s létrehozása sikertelen"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "IO az alfolyamathoz/fájlhoz nem sikerült"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "Olvasási hiba az MD5 kiszámításakor"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "„%s” átnevezése sikertelen erre: %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "%s megnyitása sikertelen"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "%s felülbírálás deformált a(z) %llu. sorában (%s)"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Nem lehet a(z) %s felülbírálófájlt olvasni"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "%s felülbírálás deformált a(z) %llu. sorában #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "%s felülbírálás deformált a(z) %llu. sorában #2"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "%s felülbírálás deformált a(z) %llu. sorában #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "F: nem lehet a(z) %s könyvtárat olvasni\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "F: %s nem érhető el\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "H: "
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "F: "
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "H: Hibás a fájl "
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Nem sikerült feloldani ezt: %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "Fabejárás nem sikerült"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "%s megnyitása sikertelen"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "readlink nem hajtható végre erre: %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** %s linkelése sikertelen ehhez: %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " a DeLink korlátja (%sB) elérve.\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "Az archívumnak nem volt csomag mezője"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr "  %s nem rendelkezik felülbíráló bejegyzéssel\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  %s karbantartója %s, nem %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s nem rendelkezik forrás-felülbíráló bejegyzéssel\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s nem rendelkezik bináris-felülbíráló bejegyzéssel sem\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2438,6 +110,17 @@ msgstr "A csomag megpróbál írni a(z) %s/%s eltérített célpontba"
 msgid "The diversion path is too long"
 msgstr "Az eltérített útvonal túl hosszú"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s elérése sikertelen"
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "„%s” átnevezése sikertelen erre: %s"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2460,6 +143,15 @@ msgstr "Csomagtalálat felülírása %s verziója nélkül"
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "A(z) %s/%s fájl felülírja a(z) %s csomagban levőt"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "%s nem olvasható"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2557,6 +249,11 @@ msgstr ""
 "A beállított „%s” fájl beszerzésének kihagyása, mert a(z) „%s” tároló csak "
 "gyenge biztonsági információkat biztosít hozzá"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "readlink nem hajtható végre erre: %s"
+
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "A Hash Sum nem megfelelő"
@@ -2581,6 +278,16 @@ msgstr "Érvénytelen fájlformátum"
 #: apt-pkg/acquire-item.cc
 msgid "Signature error"
 msgstr "Aláírási hiba"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"A digitálisan aláírt fájl nem érvényes, érkezett: „%s” (igényel a hálózat "
+"hitelesítést?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2670,6 +377,16 @@ msgstr "Nem érhető el változásnapló ehhez: %s=%s"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "A(z) %s metódusvezérlő nem található."
 
@@ -2725,6 +442,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "A(z) „%s” tisztítása nem támogatott"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Nem sikerült ide váltani: %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2770,6 +493,11 @@ msgstr "Próbálja futtatni az „apt-get update” parancsot ezen hibák javít
 msgid "The list of sources could not be read."
 msgstr "A források listája olvashatatlan."
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Regex fordítási hiba - %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2794,6 +522,11 @@ msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
 #, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "Nem található csomag a(z) „%s” glob kifejezéssel"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Ez a csomag nem található: %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -3085,6 +818,12 @@ msgstr ""
 "„%s” fájl figyelmen kívül hagyása a(z) „%s” könyvtárban, mert érvénytelen "
 "fájlkiterjesztése van"
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Nem található a(z) %s, a várakozás után sem"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3104,6 +843,14 @@ msgstr "%s alfolyamat hibakóddal tért vissza (%u)"
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s alfolyamat váratlanul kilépett"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "Olvasási hiba"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "Írási hiba"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3155,6 +902,16 @@ msgstr "Hiba a(z) %s fájl átnevezésekor erre: %s"
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Hiba a fájl szinkronizálásakor"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Az mkstemp %s meghiúsult"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Nem lehet írni ebbe: %s"
 
 # FIXME
 #: apt-pkg/contrib/mmap.cc
@@ -3683,20 +1440,16 @@ msgid "Suggests"
 msgstr "Javasolja"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "Ajánlja"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "Ütközik"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "Kicseréli"
+msgid "Recommends"
+msgstr "Ajánlja"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "Elavulttá teszi"
+msgid "Replaces"
+msgstr "Kicseréli"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3707,24 +1460,28 @@ msgid "Enhances"
 msgstr "Bővíti"
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "szükséges"
+msgid "Obsoletes"
+msgstr "Elavulttá teszi"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "fontos"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "szükséges"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "szabványos"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "opcionális"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "extra"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "opcionális"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3841,6 +1598,11 @@ msgstr "Néhány „source” URI-t el kell helyezni a sources.list fájlban"
 msgid "Cannot convert %s to integer: out of range"
 msgstr "%s nem alakítható egésszé: kívül esik a tartományon"
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Sikertelen letöltés: %s  %s"
+
 #: apt-pkg/update.cc
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -3852,6 +1614,2259 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Frissítés kiszámítása"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "Találat:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "Letöltés:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr "Mellőz:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "Hiba:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Letöltve %sB %s alatt (%sB/s)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [Folyamatban]"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"Helyezze be a(z)\n"
+" „%s”\n"
+"címkéjű lemezt a(z) %s meghajtóba, és nyomja meg az Entert\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "Függőségek javítása..."
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " sikertelen."
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "Nem lehet javítani a függőségeket"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "Nem lehet minimalizálni a frissítendő csomagok mennyiségét"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " Kész"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Próbálja futtatni az „apt-get -f install” parancsot ezek javításához."
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "Teljesítetlen függőségek. Próbálja a -f használatával."
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr "Rendezés"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "Megjegyzés: „%s” kijelölése „%s” feladathoz\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "Megjegyzés: „%s” kijelölése „%s” globhoz\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "Megjegyzés: „%s” kijelölése „%s” regexhez\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "%s egy virtuális csomag, melyet az alábbi csomagok biztosítanak:\n"
+
+#: apt-private/private-cacheset.cc
+msgid " [Installed]"
+msgstr " [Telepítve]"
+
+#: apt-private/private-cacheset.cc
+msgid " [Not candidate version]"
+msgstr " [Nem jelölt verzió]"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "Egyet név szerint ki kell jelölni a telepítésre."
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"%s csomag nem elérhető, de egy másik hivatkozik rá.\n"
+"A kért csomag hiányzik, elavult vagy csak más forrásból érhető el\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "De az alábbi csomagok helyettesítik:"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "„%s” csomagnak nincs telepítésre jelölt verziója"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr "A virtuális csomagokat, mint a(z) „%s” nem lehet eltávolítani\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr ""
+"A(z) „%s” csomag nincs telepítve, így nem lett törölve. Erre gondolt: „%s”?\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "A(z) „%s” csomag nincs telepítve, így nem lett törölve\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "Megjegyzés: „%s” kijelölése „%s” helyett\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr "Legtöbbet használt parancsok:"
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr "Az elérhető parancsokkal kapcsolatban további információkért lásd: %s."
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+"A konfigurációs beállítások és a szintaxis az apt.conf(5) fájlban "
+"találhatók.\n"
+"A források beállításával kapcsolatos információkat a sources.list(5) "
+"tartalmazza.\n"
+"A csomag- és verzióválasztások az apt_preferences(5) használatával adhatók "
+"meg.\n"
+"A biztonsági adatok az apt-secure(8)-ban vannak.\n"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Ez az APT a SzuperTehén Hatalmával rendelkezik."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "Ez az APT segéd a Szuper Meep Hatalmával rendelkezik."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Nem találhatók csomagok"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "FIGYELMEZTETÉS: Az alábbi csomagok nem hitelesíthetők!"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr "A hitelesítési figyelmeztetés felülbírálva.\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "Néhány csomag nem hitelesíthető"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "Valóban ellenőrzés nélkül telepíti a csomagokat?"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr "a --force-yes elavult, használja a --allow kezdetű kapcsolók egyikét."
+
+#: apt-private/private-download.cc
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr ""
+"Hitelesítetlen csomagok vannak, és a -y kapcsolót használta\n"
+"a --allow-unauthenticated nélkül."
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Nem határozható meg a szabad hely mennyisége itt: %s"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Nincs elég szabad hely itt: %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Nem lehet zárolni a letöltési könyvtárat"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Néhány csomagot nem lehetett telepíteni. Ez azt jelentheti, hogy\n"
+"egy lehetetlen állapotot kért, vagy ha az unstable disztribúciót\n"
+"használja, akkor néhány igényelt csomag még nem készült el vagy ki\n"
+"lett mozdítva az Incoming-ból."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Az alábbi információk segíthetnek megoldani a problémát:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Törött csomagok"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "Belső hiba, az InstallPackages törött csomagokkal lett meghívva!"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr "Csomagokat kellene eltávolítani, de az eltávolítás nem engedélyezett."
+
+#: apt-private/private-install.cc
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr ""
+"Alapvető csomagok lettek eltávolítva, és a -y kapcsolót használta\n"
+"a --allow-remove-essential nélkül."
+
+#: apt-private/private-install.cc
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr ""
+"Vissza lettek fejlesztve csomagok, és a -y kapcsolót használta\n"
+"a --allow-downgrades nélkül."
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+"Visszatartott csomagok módosultak, és a -y kapcsolót használta\n"
+"a --allow-change-held-packages nélkül."
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "Belső hiba, a rendezés nem fejeződött be"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr "A méretek nem egyeznek, írjon az apt@packages.debian.org címre"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Letöltendő adatmennyiség: %sB/%sB.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Letöltendő adatmennyiség: %sB.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "A művelet után %sB lemezterület kerül felhasználásra.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "A művelet után %sB lemezterület szabadul fel.\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "A „Trivial Only” meg van adva, de ez nem egy triviális művelet."
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Igen, tedd amit mondok!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Ártalmasnak tűnő műveletet készül végrehajtani.\n"
+"A folytatáshoz írja be ezt a mondatot: „%s”\n"
+" ?] "
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "Megszakítva."
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "Folytatni akarja?"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "Néhány fájlt nem sikerült letölteni"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "A letöltés befejeződött a „csak letöltés” módban"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Nem lehet letölteni néhány archívumot. Próbálja futtatni az „apt-get update” "
+"parancsot, vagy használja a --fix-missing kapcsolót."
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "A --fix-missing és az adathordozó-csere jelenleg nem támogatott"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "Nem lehet javítani a hiányzó csomagokat."
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "Telepítés megszakítása."
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+"A következő csomag eltűnt a rendszerből, mivel\n"
+"az összes fájlt más csomagok fölülírták:"
+msgstr[1] ""
+"A következő csomagok eltűntek a rendszerből, mivel\n"
+"az összes fájlt más csomagok fölülírták:"
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr "Megjegyzés: ezt a dpkg automatikusan és szándékosan hajtja végre."
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "Nem kellene semmit törölni, az AutoRemover nem indítható"
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"Úgy tűnik, az AutoRemover hibát okozott, ez nem történhetne meg.\n"
+"Küldjön hibajelentést az apt csomaghoz."
+
+#: apt-private/private-install.cc
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Belső hiba, az AutoRemover sérült"
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] ""
+"A következő csomag automatikusan lett telepítve, és már nincs rá szükség:"
+msgstr[1] ""
+"A következő csomagok automatikusan lettek telepítve, és már nincs rájuk "
+"szükség:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "%lu csomag automatikusan lett telepítve, és már nincs rá szükség.\n"
+msgstr[1] ""
+"%lu csomag automatikusan lett telepítve, és már nincs rájuk szükség.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "Ezt az „%s” paranccsal törölheti."
+msgstr[1] "Ezeket az „%s” paranccsal törölheti."
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr ""
+"Próbálja futtatni az „apt-get -f install” parancsot az alábbiak javításához:"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Teljesítetlen függőségek. Próbálja kiadni az „apt-get -f install” parancsot "
+"csomagok nélkül (vagy telepítse a függőségeket is!)."
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "A következő további csomagok lesznek telepítve:"
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "Javasolt csomagok:"
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "Ajánlott csomagok:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "%s kihagyása, ez már telepítve van, és a frissítés nincs beállítva.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "„%s” kihagyása, nincs telepítve, és csak frissítések lettek kérve.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "%s újratelepítése nem lehetséges, mert nem lehet letölteni.\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s már a legújabb verzió (%s).\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "%s kézi telepítésűre állítva.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "„%s” (%s) verzió lett kijelölve ehhez: „%s”\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "„%s” (%s) verzió lett kijelölve ehhez: „%s”, a(z) „%s” miatt\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr "Felsorolás"
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+"%i további verzió van. A megjelenítéséhez használja a „-a” kapcsolót"
+msgstr[1] ""
+"%i további verzió van. A megjelenítésükhöz használja a „-a” kapcsolót"
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+"NE FELEDJE: Ez csak szimuláció!\n"
+"      Az %s rendszergazdai jogokat igényel a tényleges végrehajtáshoz.\n"
+"      Ne feledje, hogy a zárolás is ki van kapcsolva,\n"
+"      így ne számítson a jelenlegi helyzet valósságára!\n"
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr "ismeretlen"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr "[telepítve, frissíthető erre: %s]"
+
+#: apt-private/private-output.cc
+msgid "[installed,local]"
+msgstr "[telepítve, helyi]"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr "[telepítve, auto-eltávolítható]"
+
+#: apt-private/private-output.cc
+msgid "[installed,automatic]"
+msgstr "[telepítve, automatikus]"
+
+#: apt-private/private-output.cc
+msgid "[installed]"
+msgstr "[telepítve]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr "[frissíthető erről: %s]"
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr "[megmaradt konfig]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "de %s van telepítve"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "de csak %s telepíthető"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "de az nem telepíthető"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "de az egy virtuális csomag"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "de az nincs telepítésre megjelölve"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "de az nincs telepítve"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr " vagy"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "Az alábbi csomagoknak teljesítetlen függőségei vannak:"
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "Az alábbi ÚJ csomagok lesznek telepítve:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "Az alábbi csomagok el lesznek TÁVOLÍTVA:"
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "Az alábbi csomagok vissza lesznek tartva:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "Az alábbi csomagok frissítve lesznek:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Az alábbi csomagok VISSZAFEJLESZTÉSRE kerülnek:"
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr "A következő visszatartott csomagok cseréje:"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (%s miatt)"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"FIGYELMEZTETÉS: Az alábbi alapvető csomagok el lesznek távolítva.\n"
+"NE tegye ezt, hacsak nem tudja pontosan, mit csinál!"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu frissített, %lu újonnan telepített, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu újratelepítendő, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu visszafejlesztendő, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu eltávolítandó és %lu nem frissített.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu nincs teljesen telepítve/eltávolítva.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr "[I/n]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr "[i/N]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr "I"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr "N"
+
+#: apt-private/private-search.cc
+msgid "You must give at least one search pattern"
+msgstr "Legalább egy keresési mintát meg kell adnia"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr "Keresés a teljes szövegben"
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "%s csomagfájl nincs szinkronban."
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+"%i további rekord van. A megjelenítéséhez használja a „-a” kapcsolót"
+msgstr[1] ""
+"%i további rekord van. A megjelenítésükhöz használja a „-a” kapcsolót"
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr "nem valódi csomag (virtuális)"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Csomagfájlok:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr ""
+"A gyorsítótár nincs szinkronban, nem lehet kereszthivatkozni a csomagfájlra"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Rögzített csomagok:"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr "%s -> %s, %d prioritással\n"
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Telepítve: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Jelölt: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(nincs)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Verziótáblázat:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Nem található csomag a(z) „%s” architektúrához"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Nem található „%s” csomag „%s” verzióval"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Nem található „%s” csomag „%s” kiadással"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "„%s” kiválasztása forráscsomagként „%s” helyett\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "A(z) „%2$s” csomag „%1$s” verziója nem érhető el"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"Legalább egy csomagot meg kell adni, amelynek a forrását le kell tölteni"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Nem található forráscsomag ehhez: %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"MEGJEGYZÉS: a(z) „%s” csomagolása a(z) „%s” verziókövető rendszerben van "
+"karbantartva:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Használja a következő parancsot:\n"
+"%s\n"
+"a csomag legújabb (esetleg kiadatlan) frissítéseinek letöltéséhez.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "A már letöltött „%s” fájl kihagyása\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Letöltendő forrásadat-mennyiség: %sB/%sB.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Letöltendő forrásadat-mennyiség: %sB.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Forrás letöltése: %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Nem sikerült néhány archívumot letölteni."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Egy már kibontott forrás kibontásának kihagyása itt: %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "„%s” kibontási parancs nem sikerült.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Ellenőrizze, hogy a „dpkg-dev” csomag telepítve van-e.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "„%s” elkészítési parancs nem sikerült.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Nem lehet %s fordítási függőségeinek információit letölteni"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "Nincs fordítási függősége a következőnek: %s.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Legalább egy csomagot adjon meg, amelynek fordítási függőségeit ellenőrizni "
+"kell"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Nem érhetők el architektúrainformációk ehhez: %s. A beállításokkal "
+"kapcsolatban lásd az apt.conf(5) APT::Architectures részét."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+"Megjegyzés: %s könyvtár használata a fordítási függőségek lekéréséhez\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Megjegyzés: %s fájl használata a fordítási függőségek lekéréséhez\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Nem sikerült az építési függőségeket feldolgozni"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "%s feldolgozása sikertelen. Újra szerkeszti? "
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr "A(z) „%s” fájl megváltozott, adja ki az „apt-get update” parancsot."
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "%s csomag %s verziójának teljesítetlen függősége van:\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "Az update parancsnak nincsenek argumentumai"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+"%i csomag frissíthető. A megjelenítéséhez futtassa az „apt list --"
+"upgradable” parancsot.\n"
+msgstr[1] ""
+"%i csomag frissíthető. A megjelenítésükhöz futtassa az „apt list --"
+"upgradable” parancsot.\n"
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr "Minden csomag naprakész."
+
+#: cmdline/apt-cache.cc
+msgid "apt-cache stats does not take any arguments"
+msgstr "Az apt-cache stats parancsnak nincsenek argumentumai"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "Csomagnevek összesen : "
+
+#: cmdline/apt-cache.cc
+msgid "Total package structures: "
+msgstr "Csomagstruktúrák összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  Normális csomagok: "
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr "  Teljesen virtuális csomagok: "
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr "  Egyedi virtuális csomagok: "
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr "  Vegyes virtuális csomagok: "
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "  Hiányzik: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "Különböző verziók összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct descriptions: "
+msgstr "Összes különböző leírás: "
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "Függőségek összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "Verzió/Fájl kapcsolatok összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Desc/File relations: "
+msgstr "Leírás/Fájl kapcsolatok összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "„Biztosítja” kapcsolatok összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "Minták összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "Slack terület összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "Nyilvántartott terület összesen: "
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr "Ez a parancs elavult. Használja helyette az „apt-mark showauto”-t."
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+"Használat: apt-cache [kapcsolók] parancs\n"
+"           apt-cache [kapcsolók] show csom1 [csom2 ...]\n"
+"\n"
+"Az apt-cache telepített és telepíthető csomagokról kérdezi le és jeleníti\n"
+"meg az elérhető információkat. Kizárólag a helyi gyorsítótárba az\n"
+"apt-get (vagy hasonló) update parancsával beszerzett adatokon dolgozik.\n"
+"A megjelenő információk így elavultak lehetnek, ha az utolsó frissítés\n"
+"túl régen volt, cserébe az apt-cache a beállított források elérhetőségétől\n"
+"függetlenül működik, például kapcsolat nélküli módban.\n"
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Megjeleníti a forrásrekordokat"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "A csomaglistában keres reguláris kifejezéseket"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Nyers függőségi információt mutat a csomagról"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Fordított függőségi információkat jelenít meg a csomagról"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Megjeleníti a csomag leírását"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Kilistázza az összes csomag nevét"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Megjeleníti a policy beállításokat"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr "Adja meg a lemez nevét, mint például „Debian 5.0.3 1. lemez”"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "Helyezzen be egy lemezt a meghajtóba, és nyomja meg az Entert"
+
+#: cmdline/apt-cdrom.cc
+#, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "„%s” csatolása a(z) „%s” könyvtárba meghiúsult"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+"Nem ismerhető fel automatikusan, vagy nem található CD-ROM az "
+"alapértelmezett csatolási pont használatával.\n"
+"Megpróbálhatja a --cdrom kapcsolóval beállítani a CD-ROM csatolási pontját.\n"
+"A CD-ROM automatikus felismerésével és csatolási pontjával kapcsolatos "
+"információkért lásd a „man apt-cdrom” parancsot."
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "Ismételje meg a folyamatot készlete többi CD-jével is."
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+"Használat: apt-cdrom [kapcsolók] parancs\n"
+"\n"
+"Az apt-cdrom használatával CD-ROM-ok, USB pendrive-ok és más cserélhető\n"
+"adathordozók vehetők fel csomagforrásként az APT-hoz. A csatolási pont és "
+"az\n"
+"eszközinformációk az apt.conf(5), udev(7) és fstab(5) használatával állnak "
+"elő.\n"
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "Az argumentumok nincsenek párban"
+
+#: cmdline/apt-config.cc
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"Használat: apt-config [kapcsolók] parancs\n"
+"\n"
+"Az apt-config egy felület az APT eszközök által használt konfigurációs\n"
+"beállításokhoz, főleg hibakereséshez és parancsfájlokhoz tervezve.\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr "konfigurációs értékek lekérése parancsértelmező-kiértékelés útján"
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr "az aktív konfigurációs beállítás megjelenítése"
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"Használat: apt-extracttemplates fájl1 [fájl2 ...]\n"
+"\n"
+"Az apt-extracttemplates konfigurációs- és sabloninformációk debian-\n"
+"csomagokból való kinyerésére használható. Elsősorban a debconf(1)\n"
+"használja konfigurációs kérdések feltételéhez a csomagok telepítése előtt.\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Nem lehet megállapítani a debconf verziót. A debconf telepítve van?"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Az alábbi csomag nem található: %s"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "%s megjelölve automatikusan telepítettként.\n"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+"Ez a parancs elavult. Használja helyette az „apt-mark auto” és az „apt-mark "
+"auto” parancsokat."
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr "Belső hiba, a problémamegoldó hibát okozott"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "Támogatott modulok:"
+
+#: cmdline/apt-get.cc
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"Használat: apt-get [kapcsolók] parancs\n"
+"           apt-get [kapcsolók] install|remove csom1 [csom2 ...]\n"
+"           apt-get [kapcsolók] source csom1 [csom2 ...]\n"
+"\n"
+"Az apt-get egy parancssori felület csomagok és információk letöltésére\n"
+"hitelesített forrásokból, valamint csomagok telepítésére,\n"
+"frissítésére és eltávolítására a függőségeikkel együtt.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Frissíti a csomaglistákat"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Frissítés végrehajtása"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Új csomagok telepítése (csomag a libc6 és nem a libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Csomagok eltávolítása"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Eltávolítja és teljesen törli a csomagokat"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Automatikusan eltávolítja a nem használt csomagokat"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Disztribúciófrissítés, lásd apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Követi a dselect kijelöléseit"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Forráscsomagok építési függőségét konfigurálja"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Törli a letöltött archívumfájlokat"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Törli a régi letöltött archívumfájlokat"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Ellenőrzi, hogy nincsenek-e törött függőségek"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Forrásarchívumok letöltése"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "Bináris csomag letöltése a jelenlegi mappába"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "Adott csomag változási naplójának letöltése és megjelenítése"
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr "Szükséges egy URL argumentum"
+
+#: cmdline/apt-helper.cc
+msgid "Must specify at least one pair url/filename"
+msgstr "Legalább egy pár URL-t/fájlnevet meg kell adni"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr "A letöltés meghiúsult"
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr "A GetSrvRec hívás meghiúsult ehhez: %s"
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+"Használat: apt-helper [kapcsolók] parancs\n"
+"       apt-helper [kapcsolók] cat-file fájl ...\n"
+"       apt-helper [kapcsolók] download-file uri célútvonal\n"
+"\n"
+"Az apt-helper különböző parancsokat csomagol össze parancsfájlok számára,\n"
+"hogy azok például ugyanazokat proxybeállításokat vagy beszerzési\n"
+"rendszert használhassák, mint az APT.\n"
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "a megadott URI letöltése a célútvonalra"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr "SRV rekord kikeresése (például: _http._tcp.ftp.debian.org)"
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr "fájlok összefűzése, automatikus kibontással"
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "proxyfelismerés az apt-conf használatával"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Használat: apt-internal-solver\n"
+"\n"
+"Az apt-internal-solver felülettel az aktuális belső feloldó külső\n"
+"feloldóként használható az APT családhoz hibakeresési vagy hasonló céllal\n"
+
+#: cmdline/apt-internal-solver.cc
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"Használat: apt-internal-solver\n"
+"\n"
+"Az apt-internal-solver felülettel az aktuális belső feloldó külső\n"
+"feloldóként használható az APT családhoz hibakeresési vagy hasonló céllal\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "%s nem jelölhető meg, mivel nincs telepítve.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "%s már be van állítva kézi telepítésűre.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "%s már meg van jelölve automatikusan telepítettként.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s már be van állítva visszatartásra.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s eddig sem volt visszatartva.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "A dpkg futtatása sikertelen. Van root jogosultsága?"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s set on hold.\n"
+msgstr "%s beállítva visszatartásra.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "Visszatartás törölve ezen: %s.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr "%s kijelölve teljes törlésre.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr "%s kijelölve eltávolításra.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr "%s kijelölve telepítésre.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+"Használat: apt-mark [kapcsolók] {auto|manual} csom1 [csom2 ...]\n"
+"\n"
+"Az apt-mark egy egyszerű parancssori felület csomagok megjelölésére\n"
+"kézileg vagy automatikusan telepítettként. Használható a csomagok dpkg(1)\n"
+"kijelölési állapotainak manipulálására is, valamint adott kijelöléssel\n"
+"rendelkező vagy nem rendelkező összes csomag kiíratására is.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Az adott csomagok megjelölése kézzel telepítettként"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "Csomag megjelölése visszatartottként"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "Csomag visszatartottként megjelölésének törlése"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "Automatikusan telepített csomagok listájának kiírása"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "Kézileg telepített csomagok listájának kiírása"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "Visszatartott csomagok listájának megjelölése"
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "Ismeretlen csomagbejegyzés!"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+"Használat: apt-sortpkgs [kapcsolók] fájl1 [fájl2 ...]\n"
+"\n"
+"Az apt-sortpkgs csomaginformációs fájlok rendezésére szolgál.\n"
+"Alapesetben bináris csomagok információi alapján rendez, de a -s "
+"kapcsolóval\n"
+"át lehet váltani forrás csomagok szerinti sorrendre.\n"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+"Használat: apt [kapcsolók] parancs\n"
+"\n"
+"Az apt egy parancssori csomagkezelő, amely parancsokat biztosít csomagok\n"
+"keresésére és kezelésére, illetve információk lekérésére.\n"
+"Ugyanazokat a funkciókat biztosítja, mint a specializált APT eszközök,\n"
+"például az apt-get és az apt-cache, de az interaktív használathoz\n"
+"megfelelőbb beállításokat tesz alapértelmezésben elérhetővé.\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "csomagok kiírása csomagnevek alapján"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "keresés csomagleírásokban"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "csomagrészletek megjelenítése"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "csomagok telepítése"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "csomagok eltávolítása"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "elérhető csomagok listájának frissítése"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "a rendszer frissítése csomagok telepítésével/frissítésével"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+"a rendszer frissítése csomagok eltávolításával/telepítésével/frissítésével"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "a forrásinformációs fájl szerkesztése"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "Hibás alapértelmezett beállítás!"
+
+#: dselect/install dselect/update
+msgid "Press [Enter] to continue."
+msgstr "A folytatáshoz nyomja meg az Entert."
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "Törli a korábban letöltött .deb fájlokat?"
+
+#: dselect/install
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "Hiba történt a kicsomagolás során. A telepített csomagok"
+
+#: dselect/install
+msgid "will be configured. This may result in duplicate errors"
+msgstr "beállításra kerülnek. Ez többszörös"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"vagy hiányzó függőségek miatti hibákat okozhat. Ez így van rendben, csak az "
+"ezen üzenet"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "előtti hibák fontosak. Javítsa azokat, és futtassa az [I]nstallt újra"
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "Elérhető információk egyesítése"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "A csomagkiterjesztések listája túl hosszú"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "Hiba a(z) %s könyvtár feldolgozásakor"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "A forráskiterjesztések listája túl hosszú"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr "Hiba a tartalomfájl fejlécének írásakor"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "Hiba %s tartalmának feldolgozásakor"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"Használat: apt-ftparchive [kapcsolók] parancs\n"
+"Parancsok: packages binarypath [felülbírálófájl [útvonalelőtag]]\n"
+"           sources srcpath [felülbírálófájl [útvonalelőtag]]\n"
+"           contents útvonal\n"
+"           release útvonal\n"
+"           generate konfigfájl [csoportok]\n"
+"           clean konfigfájl\n"
+"\n"
+"Az apt-ftparchive indexfájlokat generál a Debian archívumokhoz. A generálás\n"
+"sok stílusát támogatja, a teljesen automatizálttól kezdve a\n"
+"dpkg-scanpackages és a dpkg-scansources funkcionális helyettesítéséig.\n"
+"\n"
+"Az apt-ftparchive Package fájlokat generál a .deb-ek fájából. A Package\n"
+"fájl minden vezérlő mezőt tartalmaz minden egyes csomagról úgy az MD5\n"
+"hasht mint a fájlméretet. Az override (felülbíráló) fájl támogatott a\n"
+"Prioritás és Szekció mezők értékének kényszerítésére.\n"
+"\n"
+"Hasonlóképpen az apt-ftparchive Sources fájlokat generál .dsc-k fájából.\n"
+"A --source-override opció használható forrás-felülbíráló fájlok megadására\n"
+"\n"
+"A „packages” és „sources” parancsokat a fa gyökeréből kell futtatni.\n"
+"A BinaryPath-nak a rekurzív keresés kiindulópontjára kell mutatnia, és\n"
+"a felülbírálófájlnak a felülbíráló jelzőket kell tartalmaznia. Az "
+"útvonalelőtag\n"
+"hozzáadódik a fájlnév mezőkhöz, ha meg van adva. Felhasználására egy példa "
+"a\n"
+"Debian archívumból:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Kapcsolók:\n"
+"  -h    Ez a súgó szöveg\n"
+"  --md5 MD5 generálás vezérlése\n"
+"  -s=?  Forrás-felülbíráló fájl\n"
+"  -q    Szűkszavú mód\n"
+"  -d=?  Opcionális gyorsítótár-adatbázis kiválasztása\n"
+"  --no-delink „delink” hibakereső mód bekapcsolása\n"
+"  --contents  Tartalom fájl generálásának ellenőrzése\n"
+"  -c=?  Ezt a konfigurációs fájlt olvassa be\n"
+"  -o=?  Beállít egy tetszőleges konfigurációs opciót"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "Nincs illeszkedő kiválasztás"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "Néhány fájl hiányzik a(z) „%s” csomagfájlcsoportból"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "A DB megsérült, a fájl átnevezve %s.old-ra"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "A DB régi, kísérlet a következő frissítésére: %s"
+
+#: ftparchive/cachedb.cc
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Az adatbázis-formátum érvénytelen. Ha az apt egy korábbi verziójáról "
+"frissített, akkor távolítsa el, és hozza létre újra az adatbázist."
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "A(z) %s DB fájlt nem lehet megnyitni: %s"
+
+#: ftparchive/cachedb.cc
+msgid "Failed to read .dsc"
+msgstr "Nem sikerült olvasni a .dsc fájlt"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "Az archívumnak nincs vezérlő rekordja"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "Nem sikerült egy mutatóhoz jutni"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - Nem sikerült memóriát lefoglalni"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "„%s” tömörítési algoritmus ismeretlen"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "%s tömörített kimenetnek egy tömörítő készletre van szüksége"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Nem sikerült IPC-adatcsatornát létrehozni az alfolyamathoz"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "Nem sikerült forkolni"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "Gyermekfolyamat tömörítése"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "Belső hiba, %s létrehozása sikertelen"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "IO az alfolyamathoz/fájlhoz nem sikerült"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "Olvasási hiba az MD5 kiszámításakor"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "%s megnyitása sikertelen"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában (%s)"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Nem lehet a(z) %s felülbírálófájlt olvasni"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #2"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "F: nem lehet a(z) %s könyvtárat olvasni\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "F: %s nem érhető el\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "H: "
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "F: "
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "H: Hibás a fájl "
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Nem sikerült feloldani ezt: %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "Fabejárás nem sikerült"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "%s megnyitása sikertelen"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** %s linkelése sikertelen ehhez: %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " a DeLink korlátja (%sB) elérve.\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "Az archívumnak nem volt csomag mezője"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s nem rendelkezik felülbíráló bejegyzéssel\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s karbantartója %s, nem %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s nem rendelkezik forrás-felülbíráló bejegyzéssel\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s nem rendelkezik bináris-felülbíráló bejegyzéssel sem\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "%s CD-ROM adatbázis nem olvasható"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Használja az apt-cdrom parancsot a CD felismertetésére. Az apt-get update "
+"nem használható új CD-k hozzáadására."
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "Hibás CD"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr ""
+"Nem lehet leválasztani az itt lévő CD-ROM-ot: %s, még használatban lehet."
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "A lemez nem található."
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "A fájl nem található"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Csatlakozás: %s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Foglalat létrehozása sikertelen ehhez: %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Kapcsolat létrehozása sikertelen ehhez: %s: %s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (%s)"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "Sikertelen"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Nem lehet kapcsolódni ehhez: %s: %s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "Kapcsolódás: %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Nem lehet feloldani a következőt: „%s”"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Átmeneti hiba „%s” feloldása közben"
+
+#: methods/connect.cc
+#, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Rendszerhiba „%s:%s” feloldásakor"
+
+#: methods/connect.cc
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "Hiba történt „%s:%s” feloldásakor (%i - %s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "Nem lehet csatlakozni ehhez: %s:%s:"
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "Nem érhető el"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Érvénytelen URI, helyi URI-k nem kezdődhetnek //-rel"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "Bejelentkezés"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "Nem lehet a partner nevét megállapítani"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "Nem lehet a helyi nevet megállapítani"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "A kiszolgáló visszautasította a kapcsolatot: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Hibás USER, a kiszolgáló üzenete: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Hibás PASS, a kiszolgáló üzenete: %s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Meg lett adva proxy kiszolgáló, de nincs bejelentkezési parancsfájl és az "
+"Acquire::ftp::ProxyLogin üres."
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr ""
+"A bejelentkezési parancsfájl „%s” parancsa sikertelen, a kiszolgáló üzenete: "
+"%s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Hibás TYPE, a kiszolgáló üzenete: %s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "Időtúllépés a kapcsolatban"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "A kiszolgáló lezárta a kapcsolatot"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "A válasz túlcsordította a puffert."
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "Protokollhiba"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "Nem lehet létrehozni a foglalatot"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr ""
+"Nem lehet kapcsolódni az adatfoglalathoz, a kapcsolat túllépte az időkorlátot"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "Nem lehet kapcsolódni a passzív foglalathoz."
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "A getaddrinfo nem talált figyelőfoglalatot"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "Nem lehet összekapcsolódni a foglalattal"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "Nem lehet figyelni a foglalaton"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "Nem lehet megállapítani a foglalat nevét"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "Nem lehet PORT parancsot küldeni"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Ismeretlen címcsalád: %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Hibás EPRT, a kiszolgáló üzenete: %s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Az adatfoglalathoz kapcsolódás túllépte az időkorlátot"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "Nem lehet elfogadni a kapcsolatot"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "Probléma a fájl hash értékének meghatározásakor"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Nem lehet letölteni a fájlt, a kiszolgáló üzenete: „%s”"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Az adatfoglalat túllépte az időkorlátot"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Az adatátvitel sikertelen, a kiszolgáló üzenete: „%s”"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "Lekérdezés"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "Nem lehet meghívni "
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, fuzzy, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"A digitálisan aláírt fájl nem érvényes, érkezett: „%s” (igényel a hálózat "
+"hitelesítést?)"
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "Legalább egy aláírás érvénytelen."
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr "Belső hiba: Jó aláírás, de nem állapítható meg a kulcs ujjlenyomata."
+
+#: methods/gpgv.cc
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr ""
+"Nem indítható el a „apt-key” az aláírás ellenőrzéséhez (telepítve van a "
+"gnupg?)"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "Ismeretlen apt-key futtatási hiba"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr "%s kulcs aláírása gyenge kivonatoló algoritmust használ (%s)"
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "Az alábbi aláírások érvénytelenek voltak:\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Az alábbi aláírások nem ellenőrizhetők, mert a nyilvános kulcs nem érhető "
+"el:\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "Hiba a fájl írásakor"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr "Hiba a kiszolgálóról olvasáskor, a túloldal lezárta a kapcsolatot"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "Hiba a kiszolgálóról olvasáskor"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "Hiba a fájl írásakor"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "A kiválasztás sikertelen"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "Időtúllépés a kapcsolatban"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "Hiba a kimeneti fájl írásakor"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr "Nem található a(z) „%s” tükörfájl "
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "A(z) „%s” tükörfájl nem olvasható"
+
+#: methods/mirror.cc
+#, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr "[Tükör: %s]"
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "A módosítási idő beállítása sikertelen"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "A kapcsolat idő előtt lezárult"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "Várakozás a fejlécekre"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "Rossz fejlécsor"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "A HTTP-kiszolgáló érvénytelen válaszfejlécet küldött"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "A HTTP-kiszolgáló érvénytelen Content-Length fejlécet küldött"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "A HTTP-kiszolgáló érvénytelen Content-Range fejlécet küldött"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "A HTTP-kiszolgáló tartománytámogatása sérült"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "Ismeretlen dátumformátum"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "Rossz fejlécadatok"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "Sikertelen kapcsolódás"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+"%s automatikusan letiltva, mert hibás válasz érkezett a kiszolgálótól/"
+"proxytól. (lásd: man 5 apt.conf)"
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "Belső hiba"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 
 #~ msgid "(not found)"
 #~ msgstr "(nem található)"

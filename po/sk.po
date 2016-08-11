@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -19,2307 +19,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "Už existuje:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "Získava sa:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr ""
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "Chyba:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "%sB sa stiahlo za %s (%sB/s)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [Prebieha spracovanie]"
-
-#: apt-private/acqprogress.cc
-#, fuzzy, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"Výmena nosiča: Vložte disk s názvom\n"
-" „%s“\n"
-"do mechaniky „%s“ a stlačte Enter\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "Opravujú sa závislosti..."
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " zlyhalo."
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "Závislosti sa nedajú opraviť"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "Sada na aktualizáciu sa nedá minimalizovať"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " Hotovo"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“."
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nesplnené závislosti. Skúste použiť -f."
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Poznámka: vyberá sa „%s“ pre úlohu „%s“\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Poznámka: vyberá sa „%s“ pre regulárny výraz „%s“\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Poznámka: vyberá sa „%s“ pre regulárny výraz „%s“\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "Balík %s je virtuálny balík poskytovaný balíkmi:\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy
-msgid " [Installed]"
-msgstr " [Nainštalovaný]"
-
-#: apt-private/private-cacheset.cc
-msgid " [Not candidate version]"
-msgstr " [Nie je kandidátska verzia]"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "Mali by ste explicitne vybrať jeden na inštaláciu."
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"Balík %s nie je dostupný, ale odkazuje naň iný balík. Možno to znamená,\n"
-"že balík chýba, bol zrušený alebo je dostupný iba z iného zdroja\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "Avšak nahrádzajú ho nasledovné balíky:"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "Balík „%s“ nemá kandidáta na inštaláciu"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "Virtuálne balíky ako „%s“ nemožno odstrániť\n"
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
-"Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť. Mali ste na mysli "
-"„%s“?\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Poznámka: „%s“ sa vyberá namiesto „%s“\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr "Tento APT má schopnosti posvätnej kravy."
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr ""
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Neboli nájdené žiadne balíky"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "UPOZORNENIE: Pri nasledovných balíkoch sa nedá overiť vierohodnosť!"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr "Upozornenie o vierohodnosti bolo potlačené.\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "Nedala sa zistiť vierohodnosť niektorých balíkov"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "Nainštalovať tieto nekontrolované balíky?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-download.cc
-#, fuzzy
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr "Nastali problémy a -y bolo použité bez --force-yes"
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Zlyhalo stiahnutie %s  %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "Na %s sa nedá zistiť veľkosť voľného miesta"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "Na %s nemáte dostatok voľného miesta."
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "Adresár pre sťahovanie sa nedá zamknúť"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Niektoré balíky sa nedajú nainštalovať. To môže znamenať, že požadujete\n"
-"nemožnú situáciu, alebo ak používate nestabilnú distribúciu, že\n"
-"požadované balíky ešte neboli vytvorené alebo presunuté z fronty\n"
-"Novoprichádzajúcich (Incoming) balíkov."
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Nasledovné informácie vám možno pomôžu vyriešiť túto situáciu:"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Poškodené balíky"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "Vnútorná chyba, InstallPackages bolo volané s poškodenými balíkmi!"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr "Je potrebné odstránenie balíka, ale funkcia Odstrániť je vypnutá."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "Nastali problémy a -y bolo použité bez --force-yes"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Nastali problémy a -y bolo použité bez --force-yes"
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "Vnútorná chyba, Triedenie sa neukončilo"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr ""
-"Nezvyčajná udalosť... Veľkosti nesúhlasia, pošlite e-mail na apt@packages."
-"debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Je potrebné stiahnuť %sB/%sB archívov.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Je potrebné stiahnuť %sB archívov.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Po tejto operácii sa na disku použije ďalších %sB.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Po tejto operácii sa na disku uvoľní %sB.\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "Zadané „iba triviálne“, ale toto nie je triviálna operácia."
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Áno, urob to, čo vravím!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"Možno sa chystáte vykonať niečo škodlivé.\n"
-"Ak chcete pokračovať, opíšte frázu „%s“\n"
-" ?]"
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "Prerušené."
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "Chcete pokračovať?"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "Niektoré súbory sa nedajú stiahnuť"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "Sťahovanie ukončené v režime „iba stiahnuť“"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Niektoré archívy sa nedajú stiahnuť. Skúste spustiť apt-get update alebo --"
-"fix-missing"
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing a výmena nosiča nie sú momentálne podporované"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "Chýbajúce balíky sa nedajú opraviť."
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "Inštalácia sa prerušuje."
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-"Nasledovný balík zmizol z vášho systému, pretože\n"
-"všetky súbory boli prepísané inými balíkmi:"
-msgstr[1] ""
-"Nasledovné balíky zmizli z vášho systému, pretože\n"
-"všetky súbory boli prepísané inými balíkmi:"
-msgstr[2] ""
-"Nasledovné balíky zmizli z vášho systému, pretože\n"
-"všetky súbory boli prepísané inými balíkmi:"
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr "Pozn.: Toto robí dpkg automaticky a zámerne."
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "Nemajú sa odstraňovať veci, nespustí sa AutoRemover"
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"Hmm, zdá sa, že AutoRemover niečo zničil, čo sa naozaj nemalo stať.\n"
-"Prosím, pošlite hlásenie o chybe balíka apt."
-
-#: apt-private/private-install.cc
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Vnútorná chyba, AutoRemover niečo pokazil"
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] ""
-"Nasledovný balík bol nainštalovaný automaticky a už viac nie je potrebný:"
-msgstr[1] ""
-"Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
-msgstr[2] ""
-"Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] ""
-"%lu balík bol nainštalovaný automaticky a už viac nie je potrebný.\n"
-msgstr[1] ""
-"%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
-msgstr[2] ""
-"%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "Na jeho odstránenie použite „%s“."
-msgstr[1] "Na ich odstránenie použite „%s“."
-msgstr[2] "Na ich odstránenie použite „%s“."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Nesplnené závislosti. Skúste spustiť „apt-get -f install“ bez balíkov (alebo "
-"navrhnite riešenie)."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Nainštalujú sa nasledovné extra balíky:"
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "Navrhované balíky:"
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "Odporúčané balíky:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "Preskakuje sa %s, pretože je už nainštalovaný.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr ""
-"Preskakuje sa %s, nie je nainštalovaný a bola vy6iadan8 iba aktualizácia.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "Nie je možná reinštalácia %s, pretože sa nedá stiahnuť.\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s je už najnovšej verzie.\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "%s je označený ako manuálne nainštalovaný.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Vybraná verzia „%s“ (%s) pre „%s“\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Vybraná verzia „%s“ (%s) pre „%s“ kvôli „%s“\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-"POZN.: Toto je iba simulácia!\n"
-"      %s potrebuje na skutočné spustenie práva používateľa root.\n"
-"      Tiež pamätajte, že zamykanie je deaktivované, takže\n"
-"      sa nespoliehajte na to že to bude platiť v reálnej situácii!\n"
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Nainštalovaný]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Nainštalovaný]"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Nainštalovaný]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed]"
-msgstr " [Nainštalovaný]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "ale nainštalovaný je %s"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "ale inštalovať sa bude %s"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "ale sa nedá nainštalovať"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "ale je to virtuálny balík"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "ale nie je nainštalovaný"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "ale sa nebude inštalovať"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr " alebo"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "Nasledovné balíky majú nesplnené závislosti:"
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "Nainštalujú sa nasledovné NOVÉ balíky:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "Nasledovné balíky sa ODSTRÁNIA:"
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "Nasledovné balíky sa ponechajú v súčasnej verzii:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "Nasledovné balíky sa aktualizujú:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Nasledovné balíky sa DEGRADUJÚ:"
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr "Nasledovné pridržané balíky sa zmenia:"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (kvôli %s)"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"UPOZORNENIE: Nasledovné dôležité balíky sa odstránia.\n"
-"Ak presne neviete, čo robíte, tak to NEROBTE!"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu aktualizovaných, %lu nových nainštalovaných, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu reinštalovaných, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu degradovaných, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu na odstránenie a %lu neaktualizovaných.\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu iba čiastočne nainštalovaných alebo odstránených.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr ""
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr ""
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr ""
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr ""
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Chyba pri preklade regulárneho výrazu - %s"
-
-#: apt-private/private-search.cc
-msgid "You must give at least one search pattern"
-msgstr "Musíte zadať aspoň jeden vyhľadávací vzor"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr ""
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Súbor balíkov %s je neaktuálny."
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Nedá sa nájsť balík %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "Súbory balíka:"
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Vyrovnávacia pamäť je neaktuálna, nedá sa odvolať na súbor balíka"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "Pripevnené balíky:"
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  Nainštalovaná verzia: "
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  Kandidát: "
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(žiadna)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  Tabuľka verzií:"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Vyberá sa „%s“ ako zdrojový balík namiesto „%s“\n"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Ignorovať nedostupnú verziu „%s“ balíka „%s“"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Musíte zadať aspoň jeden balík, pre ktorý sa stiahnu zdrojové texty"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Nedá sa nájsť zdrojový balík pre %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"POZN.: tvorba balíka „%s“ sa spravuje v sytéme na riadenie revízií „%s“ na "
-"adrese:\n"
-"%s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Prosím, použite:\n"
-"%s\n"
-"ak chcete získať najnovšie (a pravdepodobne zatiaľ nevydané) aktualizácie "
-"balíka.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Preskakuje sa už stiahnutý súbor „%s“\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Je potrebné stiahnuť %sB/%sB zdrojových archívov.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Je potrebné stiahnuť %sB zdrojových archívov.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Stiahnuť zdroj %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "Zlyhalo stiahnutie niektorých archívov."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Preskakuje sa rozbalenie už rozbaleného zdroja v %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Príkaz na rozbalenie „%s“ zlyhal.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Príkaz na zostavenie „%s“ zlyhal.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Nedajú sa získať závislosti na zostavenie %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s nemá žiadne závislosti na zostavenie.\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Musíte zadať aspoň jeden balík, pre ktorý sa budú overovať závislosti na "
-"zostavenie"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"Informácie o architektúre nie sú dostupné pre %s. Informácie o nastavení "
-"nájdete v apt.conf(5) APT::Architectures"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Spracovanie závislostí na zostavenie zlyhalo"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "Spracovanie závislostí na zostavenie zlyhalo"
-
-#: apt-private/private-sources.cc
-#, fuzzy, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "Premenovanie %s na %s zlyhalo"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Balík %s verzie %s má nesplnené závislosti:\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "Príkaz update neprijíma žiadne argumenty"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
-msgstr "Príkaz update neprijíma žiadne argumenty"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "Celkom názvov balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "Total package structures: "
-msgstr "Celkom štruktúr balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  Normálnych balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr "  Čisto virtuálnych balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr "  Jednoduchých virtuálnych balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr "  Zmiešaných virtuálnych balíkov: "
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "  Chýbajúcich: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "Celkom rôznych verzií: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct descriptions: "
-msgstr "Celkom rôznych popisov: "
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "Celkom závislostí: "
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "Celkom vzťahov ver/súbor: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Desc/File relations: "
-msgstr "Celkom vzťahov popis/súbor: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "Celkom poskytnutých mapovaní: "
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "Celkom globovaných reťazcov: "
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "Celkom jalového miesta: "
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "Celkom priradeného miesta: "
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
-"Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark "
-"showauto“."
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "Zobrazí zdrojové záznamy"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "Prehľadá zoznam balíkov podľa regulárneho výrazu"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "Zobrazí základné údaje o závislostiach balíka"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "Zobrazí údaje o spätných závislostiach balíka"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "Zobrazí prehľadné informácie o balíku"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "Vypíše zoznam názvov všetkých balíkov v systéme"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "Zobrazí nastavenia zásad"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Prosím, zadajte názov tohto disku, napríklad „Debian 5.0.3 Disk 1“"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Vložte disk do mechaniky a stlačte Enter"
-
-#: cmdline/apt-cdrom.cc
-#, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "Pripojenie „%s“ na „%s“ zlyhalo"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Zopakujte tento postup pre všetky CD v sade diskov."
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "Argumenty nie sú vo dvojiciach"
-
-#: cmdline/apt-config.cc
-#, fuzzy
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"Použitie: apt-config [voľby] príkaz\n"
-"\n"
-"apt-config je jednoduchý nástroj na čítanie konfiguračného súboru APT\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Balík %s sa nedá nájsť"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "%s je označený ako automaticky nainštalovaný.\n"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-"Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark auto“ a "
-"„apt-mark manual“."
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr "Vnútorná chyba, „problem resolver“ niečo pokazil"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "Podporované moduly:"
-
-#: cmdline/apt-get.cc
-#, fuzzy
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"Použitie: apt-get [voľby] príkaz\n"
-"          apt-get [voľby] install|remove balík1 [balík2 ...]\n"
-"          apt-get [voľby] source balík1 [balík2 ...]\n"
-"\n"
-"apt-get je jednoduché rozhranie na príkazovom riadku na sťahovanie\n"
-"a inštaláciu balíkov. Najpoužívanejšími príkazmi sú update a install.\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "Získa nové zoznamy balíkov"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "Vykoná aktualizáciu"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "Nainštaluje nové balíky (balík je libc6, nie libc6.deb)"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "Odstráni balíky"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr "Odstráni a balíky a ich konfiguračné súbory"
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-msgid "Remove automatically all unused packages"
-msgstr "Automaticky odstráni všetky nepoužité balíky"
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "Aktualizácia distribúcie, pozri apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "Riadi sa podľa výberu v dselect"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "Nastaví závislosti kompilácie pre zdrojové balíky"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "Zmaže stiahnuté archívy"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "Zmaže staré stiahnuté archívy"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "Overí, či neexistujú poškodené závislosti"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "Stiahne zdrojové archívy"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, fuzzy
-msgid "Must specify at least one pair url/filename"
-msgstr "Musíte zadať aspoň jeden balík, pre ktorý sa stiahnu zdrojové texty"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "%s nemožno označiť, pretože nie je nainštalovaný.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "%s už bol označený ako manuálne nainštalovaný.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "%s už bol označený ako automaticky nainštalovaný.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s bol už nastavený na podržanie.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s bol už nastavený na nepodržanie.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr "Vykonanie dpkg zlyhalo. Ste root?"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s set on hold.\n"
-msgstr "%s je označený na podržanie.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "Zrušené podržanie %s.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-"Použitie: apt-mark [voľby] {auto|manual} balík1 [balík2 ...]\n"
-"\n"
-"apt-mark je jednoduché rozhranie príkazového riadka na označovanie\n"
-"balíkov ako manuálne alebo automaticky nainštalované.\n"
-"Tiež dokáže označenia vypisovať.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as automatically installed"
-msgstr "Označí uvedené balíky ako automaticky nainštalované"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as manually installed"
-msgstr "Označí uvedené balíky ako manuálne nainštalované"
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of automatically installed packages"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of manually installed packages"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Načítavajú sa zoznamy balíkov"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Pripevnené balíky:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Poškodené balíky"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "ale je to virtuálny balík"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Načítavajú sa stavové informácie"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "Nedá sa čítať databáza na CD-ROM %s"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Pre pridanie CD do APT použije apt-cdrom. apt-get update sa nedá využiť na "
-"pridávanie nových CD."
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "Chybné CD"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Nedá sa odpojiť CD-ROM v %s - možno sa ešte používa."
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "Disk sa nenašiel."
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "Súbor sa nenašiel"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Pripája sa k %s (%s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Nedá sa vytvoriť socket pre %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Nedá sa nadviazať spojenie na %s:%s (%s)."
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Nedá sa pripojiť k %s:%s (%s), uplynul čas spojenia"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "Chyba"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Nedá sa pripojiť k %s:%s (%s)."
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "Pripája sa k %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Nie je možné preložiť „%s“"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Dočasné zlyhanie pri preklade „%s“"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "Nedá sa pripojiť k %s:%s:"
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "Vyhodnotenie zlyhalo"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "Neplatné URI, lokálne URI nesmie začínať s //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Prihlasovanie"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nedá sa zistiť názov druhej strany"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nedá sa zistiť lokálny názov"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Server zamietol naše spojenie s chybou: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Zlyhalo zadanie používateľa, server odpovedal: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Zlyhalo zadanie hesla, server odpovedal: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Bol zadaný proxy server, ale nie prihlasovací skript. Acquire::ftp::"
-"ProxyLogin je prázdny."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Príkaz „%s“ prihlasovacieho skriptu zlyhal, server odpovedal: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Zlyhalo zadanie typu, server odpovedal: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Uplynul čas spojenia"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Server ukončil spojenie"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "Chyba pri čítaní"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Odpoveď preplnila zásobník."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Narušenie protokolu"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "Chyba pri zápise"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nedá sa vytvoriť socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Nedá sa pripojiť dátový socket, uplynul čas spojenia"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nedá sa pripojiť pasívny socket."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo nezískal počúvajúci socket"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nedá sa nadviazať socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Na sockete sa nedá počúvať"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Názov socketu sa nedá zistiť"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Príkaz PORT sa nedá odoslať"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Neznáma rodina adries %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Zlyhalo zadanie EPRT, server odpovedal: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Uplynulo spojenie dátového socketu"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Spojenie sa nedá prijať"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "Problém s hašovaním súboru"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Súbor sa nedá stiahnuť, server odpovedal „%s“"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Uplynula doba dátového socketu"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Prenos dát zlyhal, server odpovedal „%s“"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Dotaz"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nedá sa vyvolať "
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "Bola zistená aspoň jedna nesprávna signatúra."
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "Vnútorná chyba: Správna signatúra, ale sa nedá zistiť odtlačok kľúča?!"
-
-#: methods/gpgv.cc
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-"Nedá sa spustiť „apt-key“ kvôli overeniu podpisu (je nainštalované gnupg?)"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "Neznáma chyba pri spustení apt-key"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "Nasledovné signatúry sú neplatné:\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Nasledovné signatúry sa nedajú overiť, pretože nie je dostupný verejný "
-"kľúč:\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "Chyba zápisu do tohto súboru"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr "Chyba pri čítaní zo servera. Druhá strana ukončila spojenie"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "Chyba pri čítaní zo servera"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "Chyba zápisu do súboru"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "Výber zlyhal"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "Uplynul čas spojenia"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "Chyba zápisu do výstupného súboru"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "Nedá sa načítať %s"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Nedá sa prejsť do %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Na zrkadle nebol nájdený súbor „%s“"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Zrkadlo: %s]"
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "%s sa nedá vyhodnotiť"
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "Zlyhalo nastavenie času zmeny"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Zlyhalo vytvorenie IPC rúry k podprocesu"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Spojenie bolo predčasne ukončené"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "Čaká sa na hlavičky"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "Chybná hlavička"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "HTTP server poslal neplatnú hlavičku odpovede"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "HTTP server poslal neplatnú hlavičku Content-Length"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "HTTP server poslal neplatnú hlavičku Content-Range"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "Tento HTTP server má poškodenú podporu rozsahov"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "Neznámy formát dátumu"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "Zlé dátové záhlavie"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "Spojenie zlyhalo"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "Vnútorná chyba"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr "Prázdne súbory nemôžu byť platné archívy"
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "Chybné predvolené nastavenie!"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-#, fuzzy
-msgid "Press [Enter] to continue."
-msgstr "Stlačte Enter, ak chcete pokračovať."
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "Chcete odstrániť všetky doteraz stiahnuté .deb súbory?"
-
-#: dselect/install:102
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr ""
-"Pri rozbaľovaní došlo k nejakým chybám. Balíky, ktoré boli nainštalované"
-
-#: dselect/install:103
-msgid "will be configured. This may result in duplicate errors"
-msgstr "budú nakonfigurované. Môže to spôsobiť opakované chybové správy"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "o nesplnených závislostiach. Je to v poriadku, dôležité sú iba"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"chyby nad touto správou. Opravte ich a potom znovu spusťte [I]nštalovať"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "Zlučujú sa dostupné informácie"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Čakalo sa na %s, ale nebolo to tam"
-
-#: cmdline/apt-extracttemplates.cc
-#, fuzzy
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"Použitie: apt-extracttemplates súbor1 [súbor2 ...]\n"
-"\n"
-"apt-extracttemplates je nástroj na vyňatie konfiguračných skriptov\n"
-"a šablón z balíkov Debian\n"
-"\n"
-"Voľby:\n"
-"  -h   Tento pomocník.\n"
-"  -t   Nastaví dočasný adresár\n"
-"  -c=? Načíta tento konfiguračný súbor\n"
-"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Nedá sa vyhodnotiť %s"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Do %s sa nedá zapisovať"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Nedá sa určiť verzia programu debconf. Je debconf nainštalovaný?"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"Použitie: apt-internal-solver\n"
-"\n"
-"apt-internal-solver je rozhranie na použitie aktuálneho vnútorného\n"
-"riešiteľa ako vonkajší pre rodinu APT na ladenie a pod.\n"
-"\n"
-"Voľby:\n"
-"  -h   Tento pomocník.\n"
-"  -q   Výstup vhodný do záznamu - bez indikátora priebehu\n"
-"  -c=? Načíta tento konfiguračný súbor\n"
-"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-internal-solver.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"Použitie: apt-internal-solver\n"
-"\n"
-"apt-internal-solver je rozhranie na použitie aktuálneho vnútorného\n"
-"riešiteľa ako vonkajší pre rodinu APT na ladenie a pod.\n"
-"\n"
-"Voľby:\n"
-"  -h   Tento pomocník.\n"
-"  -q   Výstup vhodný do záznamu - bez indikátora priebehu\n"
-"  -c=? Načíta tento konfiguračný súbor\n"
-"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "Neznámy záznam o balíku!"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "Zoznam rozšírení balíka je príliš dlhý"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "Chyba pri spracovávaní adresára %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "Zoznam zdrojových rozšírení je príliš dlhý"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr "Chyba pri zapisovaní hlavičky do súboru"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "Chyba pri spracovávaní obsahu %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"Použitie: apt-ftparchive [voľby] príkaz\n"
-"Príkazy: packages binárna_cesta [súbor_override [prefix_cesty]]\n"
-"         sources zdrojová_cesta [súbor_override [prefix_cesty]]\n"
-"         contents cesta\n"
-"         release cesta\n"
-"         generate konfiguračný_súbor [skupiny]\n"
-"         clean konfiguračný_súbor\n"
-"\n"
-"apt-ftparchive generuje indexové súbory archívov Debianu. Podporuje\n"
-"niekoľko režimov vytvárania - od plne automatického až po funkčnú\n"
-"náhradu príkazov dpkg-scanpackages a dpkg-scansources.\n"
-"\n"
-"apt-ftparchive zo stromu .deb súborov vygeneruje súbory Packages. Súbor\n"
-"Packages okrem všetkých riadiacich polí každého balíka obsahuje tiež jeho\n"
-"veľkosť a MD5 súčet. Podporovaný je tiež súbor „override“, pomocou ktorého\n"
-"môžete vynútiť hodnoty polí Priority a Section.\n"
-"\n"
-"Podobne vie apt-ftparchive vygenerovať zo stromu súborov .dsc súbory\n"
-"Sources. Voľbou --source-override môžete určiť zdrojový súbor „override“.\n"
-"\n"
-"Príkazy „packages“ a „sources“ by sa mali spúšťať v koreni stromu.\n"
-"Binárna_cesta by mala ukazovať na začiatok rekurzívneho hľadania\n"
-"a súbor „override“ by mal obsahovať príznaky pre nahradenie. Ak je udaný\n"
-"prefix_cesty, pridá sa do polí „filename“.\n"
-"Skutočný príklad z archívu Debianu:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Voľby:\n"
-"  -h    Tento pomocník\n"
-"  --md5 Vygeneruje kontrolný súčet MD5\n"
-"  -s=?  Zdrojový súbor „override“\n"
-"  -q    Tichý režim\n"
-"  -d=?  Zvolí voliteľnú databázu pre vyrovnávaciu pamäť\n"
-"  --no-delink Povolí ladiaci režim\n"
-"  --contents  Vygeneruje súbor Contents\n"
-"  -c=?  Načíta tento konfiguračný súbor\n"
-"  -o=?  Nastaví ľubovoľnú voľbu"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "Nevyhovel žiaden výber"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "V súbore balíka skupiny „%s“ chýbajú niektoré súbory"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "DB je narušená, súbor je premenovaný na %s.old"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "DB je neaktuálna, prebieha pokus o aktualizáciu %s"
-
-#: ftparchive/cachedb.cc
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"Formát DB je neplatný. Ak ste aktualizovali staršiu verziu apt, musíte "
-"odstrániť a znovu vytvoriť databázu."
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "Nedá sa otvoriť DB súbor %s: %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid "Failed to read .dsc"
-msgstr "Nie je možné vykonať readlink %s"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "Archív nemá riadiaci záznam"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "Nedá sa získať kurzor"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc - Zlyhal pokus o pridelenie pamäti"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "Neznámy kompresný algoritmus „%s“"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "Komprimovaný výstup %s potrebuje kompresnú sadu"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "Volanie fork() zlyhalo"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "Komprimovať potomka"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "Vnútorná chyba, nepodarilo sa vytvoriť %s"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "V/V operácia s podprocesom/súborom zlyhala"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "Chyba čítania pri výpočte MD5"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Premenovanie %s na %s zlyhalo"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "Nedá sa otvoriť %s"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "Skomolený „override“ %s riadok %llu #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Nepodarilo sa prečítať „override“ súbor %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "Skomolený „override“ %s riadok %llu #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "Skomolený „override“ %s riadok %llu #2"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "Skomolený „override“ %s riadok %llu #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Adresár %s sa nedá čítať\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: %s sa nedá vyhodnotiť\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "E: Chyby sa týkajú súboru "
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Chyba pri preklade %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "Prechod stromom zlyhal"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "%s sa nedá otvoriť"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " Odlinkovanie %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Nie je možné vykonať readlink %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Nepodarilo sa zlinkovať %s s %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " Bol dosiahnutý odlinkovací limit %sB.\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "Archív neobsahuje pole „package“"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr " %s nemá žiadnu položku override\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  správcom %s je %s, nie %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr " %s nemá žiadnu položku „source override“\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr " %s nemá žiadnu položku „binary override“\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2412,6 +111,17 @@ msgstr "Balík sa pokúša zapisovať do diverzného cieľa %s/%s"
 msgid "The diversion path is too long"
 msgstr "Diverzná cesta je príliš dlhá"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "%s sa nedá vyhodnotiť"
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Premenovanie %s na %s zlyhalo"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2434,6 +144,15 @@ msgstr "Prepísať zodpovedajúci balík bez udania verzie pre %s"
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Súbor %s/%s prepisuje ten z balíka %s"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "Nedá sa načítať %s"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2520,6 +239,11 @@ msgstr "Adresár %s je divertovaný"
 msgid "The repository '%s' provides only weak security information."
 msgstr "Adresár %s je divertovaný"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Nie je možné vykonať readlink %s"
+
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "Nezhoda kontrolných haš súčtov"
@@ -2546,6 +270,14 @@ msgstr "Neplatná operácia %s"
 #, fuzzy
 msgid "Signature error"
 msgstr "Chyba pri zápise"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2630,6 +362,16 @@ msgstr "Záznam zmien %s (%s)"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "Nedá sa nájsť ovládač spôsobu %s."
 
@@ -2681,6 +423,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Indexový súbor typu „%s“ nie je podporovaný"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Nedá sa prejsť do %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2723,6 +471,11 @@ msgstr "Na opravu týchto problémov môžete skúsiť spustiť apt-get update"
 msgid "The list of sources could not be read."
 msgstr "Nedá sa načítať zoznam zdrojov."
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Chyba pri preklade regulárneho výrazu - %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2747,6 +500,11 @@ msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s
 #, fuzzy, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Nedá sa nájsť balík %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -3031,6 +789,12 @@ msgid ""
 msgstr ""
 "Ignoruje sa „%s“ v adresári „%s“, pretože má neplatnú príponu názvu súboru"
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Čakalo sa na %s, ale nebolo to tam"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3050,6 +814,14 @@ msgstr "Podproces %s vrátil chybový kód (%u)"
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Podproces %s neočakávane skončil"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "Chyba pri čítaní"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "Chyba pri zápise"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3101,6 +873,16 @@ msgstr "Problém pri synchronizovaní súboru %s na %s"
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Problém pri synchronizovaní súboru"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Nedá sa vyhodnotiť %s"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Do %s sa nedá zapisovať"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -3615,20 +1397,16 @@ msgid "Suggests"
 msgstr "Navrhuje"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "Odporúča"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "Koliduje s"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "Nahrádza"
+msgid "Recommends"
+msgstr "Odporúča"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "Zneplatňuje"
+msgid "Replaces"
+msgstr "Nahrádza"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3639,24 +1417,28 @@ msgid "Enhances"
 msgstr "Rozširuje"
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "požadovaný"
+msgid "Obsoletes"
+msgstr "Zneplatňuje"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "dôležitý"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "požadovaný"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "štandardný"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "voliteľný"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "extra"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "voliteľný"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3773,6 +1555,11 @@ msgstr "Do sources.list musíte zadať nejaký „source“ (zdrojový) URI"
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Zlyhalo stiahnutie %s  %s"
+
 #: apt-pkg/update.cc
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -3784,6 +1571,2234 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Prepočítava sa aktualizácia"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "Už existuje:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "Získava sa:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr ""
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "Chyba:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "%sB sa stiahlo za %s (%sB/s)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [Prebieha spracovanie]"
+
+#: apt-private/acqprogress.cc
+#, fuzzy, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"Výmena nosiča: Vložte disk s názvom\n"
+" „%s“\n"
+"do mechaniky „%s“ a stlačte Enter\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "Opravujú sa závislosti..."
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " zlyhalo."
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "Závislosti sa nedajú opraviť"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "Sada na aktualizáciu sa nedá minimalizovať"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " Hotovo"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“."
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "Nesplnené závislosti. Skúste použiť -f."
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "Poznámka: vyberá sa „%s“ pre úlohu „%s“\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "Poznámka: vyberá sa „%s“ pre regulárny výraz „%s“\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "Poznámka: vyberá sa „%s“ pre regulárny výraz „%s“\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Balík %s je virtuálny balík poskytovaný balíkmi:\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy
+msgid " [Installed]"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-cacheset.cc
+msgid " [Not candidate version]"
+msgstr " [Nie je kandidátska verzia]"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "Mali by ste explicitne vybrať jeden na inštaláciu."
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Balík %s nie je dostupný, ale odkazuje naň iný balík. Možno to znamená,\n"
+"že balík chýba, bol zrušený alebo je dostupný iba z iného zdroja\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "Avšak nahrádzajú ho nasledovné balíky:"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "Balík „%s“ nemá kandidáta na inštaláciu"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr "Virtuálne balíky ako „%s“ nemožno odstrániť\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr ""
+"Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť. Mali ste na mysli "
+"„%s“?\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "Poznámka: „%s“ sa vyberá namiesto „%s“\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Tento APT má schopnosti posvätnej kravy."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Neboli nájdené žiadne balíky"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "UPOZORNENIE: Pri nasledovných balíkoch sa nedá overiť vierohodnosť!"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr "Upozornenie o vierohodnosti bolo potlačené.\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "Nedala sa zistiť vierohodnosť niektorých balíkov"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "Nainštalovať tieto nekontrolované balíky?"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-download.cc
+#, fuzzy
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr "Nastali problémy a -y bolo použité bez --force-yes"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Na %s sa nedá zistiť veľkosť voľného miesta"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Na %s nemáte dostatok voľného miesta."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Adresár pre sťahovanie sa nedá zamknúť"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Niektoré balíky sa nedajú nainštalovať. To môže znamenať, že požadujete\n"
+"nemožnú situáciu, alebo ak používate nestabilnú distribúciu, že\n"
+"požadované balíky ešte neboli vytvorené alebo presunuté z fronty\n"
+"Novoprichádzajúcich (Incoming) balíkov."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Nasledovné informácie vám možno pomôžu vyriešiť túto situáciu:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Poškodené balíky"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "Vnútorná chyba, InstallPackages bolo volané s poškodenými balíkmi!"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr "Je potrebné odstránenie balíka, ale funkcia Odstrániť je vypnutá."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "Nastali problémy a -y bolo použité bez --force-yes"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "Nastali problémy a -y bolo použité bez --force-yes"
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "Vnútorná chyba, Triedenie sa neukončilo"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr ""
+"Nezvyčajná udalosť... Veľkosti nesúhlasia, pošlite e-mail na apt@packages."
+"debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Je potrebné stiahnuť %sB/%sB archívov.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Je potrebné stiahnuť %sB archívov.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "Po tejto operácii sa na disku použije ďalších %sB.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "Po tejto operácii sa na disku uvoľní %sB.\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "Zadané „iba triviálne“, ale toto nie je triviálna operácia."
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Áno, urob to, čo vravím!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Možno sa chystáte vykonať niečo škodlivé.\n"
+"Ak chcete pokračovať, opíšte frázu „%s“\n"
+" ?]"
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "Prerušené."
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "Chcete pokračovať?"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "Niektoré súbory sa nedajú stiahnuť"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "Sťahovanie ukončené v režime „iba stiahnuť“"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Niektoré archívy sa nedajú stiahnuť. Skúste spustiť apt-get update alebo --"
+"fix-missing"
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing a výmena nosiča nie sú momentálne podporované"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "Chýbajúce balíky sa nedajú opraviť."
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "Inštalácia sa prerušuje."
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+"Nasledovný balík zmizol z vášho systému, pretože\n"
+"všetky súbory boli prepísané inými balíkmi:"
+msgstr[1] ""
+"Nasledovné balíky zmizli z vášho systému, pretože\n"
+"všetky súbory boli prepísané inými balíkmi:"
+msgstr[2] ""
+"Nasledovné balíky zmizli z vášho systému, pretože\n"
+"všetky súbory boli prepísané inými balíkmi:"
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr "Pozn.: Toto robí dpkg automaticky a zámerne."
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "Nemajú sa odstraňovať veci, nespustí sa AutoRemover"
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"Hmm, zdá sa, že AutoRemover niečo zničil, čo sa naozaj nemalo stať.\n"
+"Prosím, pošlite hlásenie o chybe balíka apt."
+
+#: apt-private/private-install.cc
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Vnútorná chyba, AutoRemover niečo pokazil"
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] ""
+"Nasledovný balík bol nainštalovaný automaticky a už viac nie je potrebný:"
+msgstr[1] ""
+"Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
+msgstr[2] ""
+"Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] ""
+"%lu balík bol nainštalovaný automaticky a už viac nie je potrebný.\n"
+msgstr[1] ""
+"%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
+msgstr[2] ""
+"%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "Na jeho odstránenie použite „%s“."
+msgstr[1] "Na ich odstránenie použite „%s“."
+msgstr[2] "Na ich odstránenie použite „%s“."
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“:"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Nesplnené závislosti. Skúste spustiť „apt-get -f install“ bez balíkov (alebo "
+"navrhnite riešenie)."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Nainštalujú sa nasledovné extra balíky:"
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "Navrhované balíky:"
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "Odporúčané balíky:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "Preskakuje sa %s, pretože je už nainštalovaný.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr ""
+"Preskakuje sa %s, nie je nainštalovaný a bola vy6iadan8 iba aktualizácia.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Nie je možná reinštalácia %s, pretože sa nedá stiahnuť.\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s je už najnovšej verzie.\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "%s je označený ako manuálne nainštalovaný.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Vybraná verzia „%s“ (%s) pre „%s“\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Vybraná verzia „%s“ (%s) pre „%s“ kvôli „%s“\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+"POZN.: Toto je iba simulácia!\n"
+"      %s potrebuje na skutočné spustenie práva používateľa root.\n"
+"      Tiež pamätajte, že zamykanie je deaktivované, takže\n"
+"      sa nespoliehajte na to že to bude platiť v reálnej situácii!\n"
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed]"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "ale nainštalovaný je %s"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "ale inštalovať sa bude %s"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "ale sa nedá nainštalovať"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "ale je to virtuálny balík"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "ale sa nebude inštalovať"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "ale nie je nainštalovaný"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr " alebo"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "Nasledovné balíky majú nesplnené závislosti:"
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "Nainštalujú sa nasledovné NOVÉ balíky:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "Nasledovné balíky sa ODSTRÁNIA:"
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "Nasledovné balíky sa ponechajú v súčasnej verzii:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "Nasledovné balíky sa aktualizujú:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Nasledovné balíky sa DEGRADUJÚ:"
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr "Nasledovné pridržané balíky sa zmenia:"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (kvôli %s)"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"UPOZORNENIE: Nasledovné dôležité balíky sa odstránia.\n"
+"Ak presne neviete, čo robíte, tak to NEROBTE!"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu aktualizovaných, %lu nových nainštalovaných, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu reinštalovaných, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu degradovaných, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu na odstránenie a %lu neaktualizovaných.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu iba čiastočne nainštalovaných alebo odstránených.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr ""
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr ""
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr ""
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr ""
+
+#: apt-private/private-search.cc
+msgid "You must give at least one search pattern"
+msgstr "Musíte zadať aspoň jeden vyhľadávací vzor"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr ""
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "Súbor balíkov %s je neaktuálny."
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Súbory balíka:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Vyrovnávacia pamäť je neaktuálna, nedá sa odvolať na súbor balíka"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Pripevnené balíky:"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Nainštalovaná verzia: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidát: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(žiadna)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Tabuľka verzií:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Vyberá sa „%s“ ako zdrojový balík namiesto „%s“\n"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Ignorovať nedostupnú verziu „%s“ balíka „%s“"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Musíte zadať aspoň jeden balík, pre ktorý sa stiahnu zdrojové texty"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Nedá sa nájsť zdrojový balík pre %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"POZN.: tvorba balíka „%s“ sa spravuje v sytéme na riadenie revízií „%s“ na "
+"adrese:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Prosím, použite:\n"
+"%s\n"
+"ak chcete získať najnovšie (a pravdepodobne zatiaľ nevydané) aktualizácie "
+"balíka.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Preskakuje sa už stiahnutý súbor „%s“\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Je potrebné stiahnuť %sB/%sB zdrojových archívov.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Je potrebné stiahnuť %sB zdrojových archívov.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Stiahnuť zdroj %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Zlyhalo stiahnutie niektorých archívov."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Preskakuje sa rozbalenie už rozbaleného zdroja v %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Príkaz na rozbalenie „%s“ zlyhal.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Príkaz na zostavenie „%s“ zlyhal.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Nedajú sa získať závislosti na zostavenie %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s nemá žiadne závislosti na zostavenie.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Musíte zadať aspoň jeden balík, pre ktorý sa budú overovať závislosti na "
+"zostavenie"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"Informácie o architektúre nie sú dostupné pre %s. Informácie o nastavení "
+"nájdete v apt.conf(5) APT::Architectures"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Spracovanie závislostí na zostavenie zlyhalo"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Spracovanie závislostí na zostavenie zlyhalo"
+
+#: apt-private/private-sources.cc
+#, fuzzy, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "Premenovanie %s na %s zlyhalo"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr ""
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Balík %s verzie %s má nesplnené závislosti:\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "Príkaz update neprijíma žiadne argumenty"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "apt-cache stats does not take any arguments"
+msgstr "Príkaz update neprijíma žiadne argumenty"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "Celkom názvov balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "Total package structures: "
+msgstr "Celkom štruktúr balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  Normálnych balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr "  Čisto virtuálnych balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr "  Jednoduchých virtuálnych balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr "  Zmiešaných virtuálnych balíkov: "
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "  Chýbajúcich: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "Celkom rôznych verzií: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct descriptions: "
+msgstr "Celkom rôznych popisov: "
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "Celkom závislostí: "
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "Celkom vzťahov ver/súbor: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Desc/File relations: "
+msgstr "Celkom vzťahov popis/súbor: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "Celkom poskytnutých mapovaní: "
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "Celkom globovaných reťazcov: "
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "Celkom jalového miesta: "
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "Celkom priradeného miesta: "
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr ""
+"Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark "
+"showauto“."
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Zobrazí zdrojové záznamy"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Prehľadá zoznam balíkov podľa regulárneho výrazu"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Zobrazí základné údaje o závislostiach balíka"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Zobrazí údaje o spätných závislostiach balíka"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Zobrazí prehľadné informácie o balíku"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Vypíše zoznam názvov všetkých balíkov v systéme"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Zobrazí nastavenia zásad"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr "Prosím, zadajte názov tohto disku, napríklad „Debian 5.0.3 Disk 1“"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "Vložte disk do mechaniky a stlačte Enter"
+
+#: cmdline/apt-cdrom.cc
+#, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "Pripojenie „%s“ na „%s“ zlyhalo"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "Zopakujte tento postup pre všetky CD v sade diskov."
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "Argumenty nie sú vo dvojiciach"
+
+#: cmdline/apt-config.cc
+#, fuzzy
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"Použitie: apt-config [voľby] príkaz\n"
+"\n"
+"apt-config je jednoduchý nástroj na čítanie konfiguračného súboru APT\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+#, fuzzy
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"Použitie: apt-extracttemplates súbor1 [súbor2 ...]\n"
+"\n"
+"apt-extracttemplates je nástroj na vyňatie konfiguračných skriptov\n"
+"a šablón z balíkov Debian\n"
+"\n"
+"Voľby:\n"
+"  -h   Tento pomocník.\n"
+"  -t   Nastaví dočasný adresár\n"
+"  -c=? Načíta tento konfiguračný súbor\n"
+"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Nedá sa určiť verzia programu debconf. Je debconf nainštalovaný?"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Balík %s sa nedá nájsť"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "%s je označený ako automaticky nainštalovaný.\n"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+"Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark auto“ a "
+"„apt-mark manual“."
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr "Vnútorná chyba, „problem resolver“ niečo pokazil"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "Podporované moduly:"
+
+#: cmdline/apt-get.cc
+#, fuzzy
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"Použitie: apt-get [voľby] príkaz\n"
+"          apt-get [voľby] install|remove balík1 [balík2 ...]\n"
+"          apt-get [voľby] source balík1 [balík2 ...]\n"
+"\n"
+"apt-get je jednoduché rozhranie na príkazovom riadku na sťahovanie\n"
+"a inštaláciu balíkov. Najpoužívanejšími príkazmi sú update a install.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Získa nové zoznamy balíkov"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Vykoná aktualizáciu"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Nainštaluje nové balíky (balík je libc6, nie libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Odstráni balíky"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "Odstráni a balíky a ich konfiguračné súbory"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "Automaticky odstráni všetky nepoužité balíky"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Aktualizácia distribúcie, pozri apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Riadi sa podľa výberu v dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Nastaví závislosti kompilácie pre zdrojové balíky"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Zmaže stiahnuté archívy"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Zmaže staré stiahnuté archívy"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Overí, či neexistujú poškodené závislosti"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Stiahne zdrojové archívy"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, fuzzy
+msgid "Must specify at least one pair url/filename"
+msgstr "Musíte zadať aspoň jeden balík, pre ktorý sa stiahnu zdrojové texty"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr ""
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Použitie: apt-internal-solver\n"
+"\n"
+"apt-internal-solver je rozhranie na použitie aktuálneho vnútorného\n"
+"riešiteľa ako vonkajší pre rodinu APT na ladenie a pod.\n"
+"\n"
+"Voľby:\n"
+"  -h   Tento pomocník.\n"
+"  -q   Výstup vhodný do záznamu - bez indikátora priebehu\n"
+"  -c=? Načíta tento konfiguračný súbor\n"
+"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-internal-solver.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"Použitie: apt-internal-solver\n"
+"\n"
+"apt-internal-solver je rozhranie na použitie aktuálneho vnútorného\n"
+"riešiteľa ako vonkajší pre rodinu APT na ladenie a pod.\n"
+"\n"
+"Voľby:\n"
+"  -h   Tento pomocník.\n"
+"  -q   Výstup vhodný do záznamu - bez indikátora priebehu\n"
+"  -c=? Načíta tento konfiguračný súbor\n"
+"  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "%s nemožno označiť, pretože nie je nainštalovaný.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "%s už bol označený ako manuálne nainštalovaný.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "%s už bol označený ako automaticky nainštalovaný.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s bol už nastavený na podržanie.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s bol už nastavený na nepodržanie.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr "Vykonanie dpkg zlyhalo. Ste root?"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s set on hold.\n"
+msgstr "%s je označený na podržanie.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "Zrušené podržanie %s.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+"Použitie: apt-mark [voľby] {auto|manual} balík1 [balík2 ...]\n"
+"\n"
+"apt-mark je jednoduché rozhranie príkazového riadka na označovanie\n"
+"balíkov ako manuálne alebo automaticky nainštalované.\n"
+"Tiež dokáže označenia vypisovať.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "Označí uvedené balíky ako automaticky nainštalované"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "Označí uvedené balíky ako manuálne nainštalované"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr ""
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "Neznámy záznam o balíku!"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Načítavajú sa zoznamy balíkov"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Pripevnené balíky:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Poškodené balíky"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "ale je to virtuálny balík"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Načítavajú sa stavové informácie"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "Chybné predvolené nastavenie!"
+
+#: dselect/install dselect/update
+#, fuzzy
+msgid "Press [Enter] to continue."
+msgstr "Stlačte Enter, ak chcete pokračovať."
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "Chcete odstrániť všetky doteraz stiahnuté .deb súbory?"
+
+#: dselect/install
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr ""
+"Pri rozbaľovaní došlo k nejakým chybám. Balíky, ktoré boli nainštalované"
+
+#: dselect/install
+msgid "will be configured. This may result in duplicate errors"
+msgstr "budú nakonfigurované. Môže to spôsobiť opakované chybové správy"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "o nesplnených závislostiach. Je to v poriadku, dôležité sú iba"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"chyby nad touto správou. Opravte ich a potom znovu spusťte [I]nštalovať"
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "Zlučujú sa dostupné informácie"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "Zoznam rozšírení balíka je príliš dlhý"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "Chyba pri spracovávaní adresára %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "Zoznam zdrojových rozšírení je príliš dlhý"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr "Chyba pri zapisovaní hlavičky do súboru"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "Chyba pri spracovávaní obsahu %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"Použitie: apt-ftparchive [voľby] príkaz\n"
+"Príkazy: packages binárna_cesta [súbor_override [prefix_cesty]]\n"
+"         sources zdrojová_cesta [súbor_override [prefix_cesty]]\n"
+"         contents cesta\n"
+"         release cesta\n"
+"         generate konfiguračný_súbor [skupiny]\n"
+"         clean konfiguračný_súbor\n"
+"\n"
+"apt-ftparchive generuje indexové súbory archívov Debianu. Podporuje\n"
+"niekoľko režimov vytvárania - od plne automatického až po funkčnú\n"
+"náhradu príkazov dpkg-scanpackages a dpkg-scansources.\n"
+"\n"
+"apt-ftparchive zo stromu .deb súborov vygeneruje súbory Packages. Súbor\n"
+"Packages okrem všetkých riadiacich polí každého balíka obsahuje tiež jeho\n"
+"veľkosť a MD5 súčet. Podporovaný je tiež súbor „override“, pomocou ktorého\n"
+"môžete vynútiť hodnoty polí Priority a Section.\n"
+"\n"
+"Podobne vie apt-ftparchive vygenerovať zo stromu súborov .dsc súbory\n"
+"Sources. Voľbou --source-override môžete určiť zdrojový súbor „override“.\n"
+"\n"
+"Príkazy „packages“ a „sources“ by sa mali spúšťať v koreni stromu.\n"
+"Binárna_cesta by mala ukazovať na začiatok rekurzívneho hľadania\n"
+"a súbor „override“ by mal obsahovať príznaky pre nahradenie. Ak je udaný\n"
+"prefix_cesty, pridá sa do polí „filename“.\n"
+"Skutočný príklad z archívu Debianu:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Voľby:\n"
+"  -h    Tento pomocník\n"
+"  --md5 Vygeneruje kontrolný súčet MD5\n"
+"  -s=?  Zdrojový súbor „override“\n"
+"  -q    Tichý režim\n"
+"  -d=?  Zvolí voliteľnú databázu pre vyrovnávaciu pamäť\n"
+"  --no-delink Povolí ladiaci režim\n"
+"  --contents  Vygeneruje súbor Contents\n"
+"  -c=?  Načíta tento konfiguračný súbor\n"
+"  -o=?  Nastaví ľubovoľnú voľbu"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "Nevyhovel žiaden výber"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "V súbore balíka skupiny „%s“ chýbajú niektoré súbory"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "DB je narušená, súbor je premenovaný na %s.old"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "DB je neaktuálna, prebieha pokus o aktualizáciu %s"
+
+#: ftparchive/cachedb.cc
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Formát DB je neplatný. Ak ste aktualizovali staršiu verziu apt, musíte "
+"odstrániť a znovu vytvoriť databázu."
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "Nedá sa otvoriť DB súbor %s: %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid "Failed to read .dsc"
+msgstr "Nie je možné vykonať readlink %s"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "Archív nemá riadiaci záznam"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "Nedá sa získať kurzor"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - Zlyhal pokus o pridelenie pamäti"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "Neznámy kompresný algoritmus „%s“"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "Komprimovaný výstup %s potrebuje kompresnú sadu"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Zlyhalo vytvorenie IPC rúry k podprocesu"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "Volanie fork() zlyhalo"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "Komprimovať potomka"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "Vnútorná chyba, nepodarilo sa vytvoriť %s"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "V/V operácia s podprocesom/súborom zlyhala"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "Chyba čítania pri výpočte MD5"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "Nedá sa otvoriť %s"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "Skomolený „override“ %s riadok %llu #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Nepodarilo sa prečítať „override“ súbor %s"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "Skomolený „override“ %s riadok %llu #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "Skomolený „override“ %s riadok %llu #2"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "Skomolený „override“ %s riadok %llu #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Adresár %s sa nedá čítať\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: %s sa nedá vyhodnotiť\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "E: Chyby sa týkajú súboru "
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Chyba pri preklade %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "Prechod stromom zlyhal"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "%s sa nedá otvoriť"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " Odlinkovanie %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Nepodarilo sa zlinkovať %s s %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Bol dosiahnutý odlinkovací limit %sB.\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "Archív neobsahuje pole „package“"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr " %s nemá žiadnu položku override\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  správcom %s je %s, nie %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr " %s nemá žiadnu položku „source override“\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr " %s nemá žiadnu položku „binary override“\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Nedá sa čítať databáza na CD-ROM %s"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Pre pridanie CD do APT použije apt-cdrom. apt-get update sa nedá využiť na "
+"pridávanie nových CD."
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "Chybné CD"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Nedá sa odpojiť CD-ROM v %s - možno sa ešte používa."
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "Disk sa nenašiel."
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "Súbor sa nenašiel"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Pripája sa k %s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Nedá sa vytvoriť socket pre %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Nedá sa nadviazať spojenie na %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Nedá sa pripojiť k %s:%s (%s), uplynul čas spojenia"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "Chyba"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Nedá sa pripojiť k %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "Pripája sa k %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Nie je možné preložiť „%s“"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Dočasné zlyhanie pri preklade „%s“"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "Nedá sa pripojiť k %s:%s:"
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "Vyhodnotenie zlyhalo"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Neplatné URI, lokálne URI nesmie začínať s //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "Prihlasovanie"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "Nedá sa zistiť názov druhej strany"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "Nedá sa zistiť lokálny názov"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "Server zamietol naše spojenie s chybou: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Zlyhalo zadanie používateľa, server odpovedal: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Zlyhalo zadanie hesla, server odpovedal: %s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Bol zadaný proxy server, ale nie prihlasovací skript. Acquire::ftp::"
+"ProxyLogin je prázdny."
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Príkaz „%s“ prihlasovacieho skriptu zlyhal, server odpovedal: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Zlyhalo zadanie typu, server odpovedal: %s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "Uplynul čas spojenia"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "Server ukončil spojenie"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "Odpoveď preplnila zásobník."
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "Narušenie protokolu"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "Nedá sa vytvoriť socket"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr "Nedá sa pripojiť dátový socket, uplynul čas spojenia"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "Nedá sa pripojiť pasívny socket."
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "getaddrinfo nezískal počúvajúci socket"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "Nedá sa nadviazať socket"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "Na sockete sa nedá počúvať"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "Názov socketu sa nedá zistiť"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "Príkaz PORT sa nedá odoslať"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Neznáma rodina adries %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Zlyhalo zadanie EPRT, server odpovedal: %s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Uplynulo spojenie dátového socketu"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "Spojenie sa nedá prijať"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "Problém s hašovaním súboru"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Súbor sa nedá stiahnuť, server odpovedal „%s“"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Uplynula doba dátového socketu"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Prenos dát zlyhal, server odpovedal „%s“"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "Dotaz"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "Nedá sa vyvolať "
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "Bola zistená aspoň jedna nesprávna signatúra."
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr "Vnútorná chyba: Správna signatúra, ale sa nedá zistiť odtlačok kľúča?!"
+
+#: methods/gpgv.cc
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr ""
+"Nedá sa spustiť „apt-key“ kvôli overeniu podpisu (je nainštalované gnupg?)"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "Neznáma chyba pri spustení apt-key"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "Nasledovné signatúry sú neplatné:\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Nasledovné signatúry sa nedajú overiť, pretože nie je dostupný verejný "
+"kľúč:\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "Chyba zápisu do tohto súboru"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr "Chyba pri čítaní zo servera. Druhá strana ukončila spojenie"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "Chyba pri čítaní zo servera"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "Chyba zápisu do súboru"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "Výber zlyhal"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "Uplynul čas spojenia"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "Chyba zápisu do výstupného súboru"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr "Na zrkadle nebol nájdený súbor „%s“"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
+
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr "[Zrkadlo: %s]"
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Zlyhalo nastavenie času zmeny"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "Spojenie bolo predčasne ukončené"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "Čaká sa na hlavičky"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "Chybná hlavička"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "HTTP server poslal neplatnú hlavičku odpovede"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "HTTP server poslal neplatnú hlavičku Content-Length"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "HTTP server poslal neplatnú hlavičku Content-Range"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "Tento HTTP server má poškodenú podporu rozsahov"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "Neznámy formát dátumu"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "Zlé dátové záhlavie"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "Spojenie zlyhalo"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "Vnútorná chyba"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Prázdne súbory nemôžu byť platné archívy"
 
 #~ msgid "(not found)"
 #~ msgstr "(nenájdené)"

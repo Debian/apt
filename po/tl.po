@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -19,2289 +19,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "Tumama:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "Kunin:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr "DiPansin:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "Err:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Nakakuha ng %sB ng %s (%sB/s)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [May ginagawa]"
-
-#: apt-private/acqprogress.cc
-#, fuzzy, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"Pagpalit ng Media: Ikasa ang disk na may pangalang\n"
-" '%s'\n"
-"sa drive '%s' at pindutin ang enter\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "Inaayos ang mga dependensiya..."
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " ay bigo."
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "Hindi maayos ang mga dependensiya"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "Hindi mai-minimize ang upgrade set"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " Tapos"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Maaari ninyong patakbuhin ang 'apt-get -f install' upang ayusin ito."
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "May mga kulang na dependensiya. Subukan niyong gamitin ang -f."
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "Ang paketeng %s ay paketeng birtwal na bigay ng:\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy
-msgid " [Installed]"
-msgstr " [Nakaluklok]"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy
-msgid " [Not candidate version]"
-msgstr "Bersyong Kandidato"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "Dapat kayong mamili ng isa na iluluklok."
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"Hindi magamit ang %s, ngunit ito'y tinutukoy ng ibang pakete.\n"
-"Maaaring nawawala ang pakete, ito'y laos na, o ito'y makukuha lamang\n"
-"sa ibang pinagmulan.\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "Gayunpaman, ang sumusunod na mga pakete ay humahalili sa kanya:"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "Ang paketeng %s ay walang kandidatong maaaring instolahin"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Paunawa, pinili ang %s imbes na %s\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr "Ang APT na ito ay may Kapangyarihan Super Kalabaw."
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr ""
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Walang nahanap na mga pakete"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr ""
-"BABALA: Ang susunod na mga pakete ay hindi matiyak ang pagka-awtentiko!"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr ""
-"Ipina-walang-bisa ang babala tungkol sa pagka-awtentiko ng mga pakete.\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "May mga paketeng hindi matiyak ang pagka-awtentiko"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "Iluklok ang mga paketeng ito na walang beripikasyon?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-download.cc
-#, fuzzy
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr "May mga problema at -y ay ginamit na walang --force-yes"
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Bigo sa pagkuha ng %s  %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "Hindi matantsa ang libreng puwang sa %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "Kulang kayo ng libreng puwang sa %s."
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "Hindi maaldaba ang directory ng download"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"May mga paketeng hindi ma-instol. Maaring may hiniling kayong imposible\n"
-"o kung kayo'y gumagamit ng pamudmod na unstable ay may ilang mga paketeng\n"
-"kailangan na hindi pa nalikha o linipat mula sa Incoming."
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr ""
-"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Sirang mga pakete"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
-"Error na internal, tinawagan ang InstallPackages na may sirang mga pakete!"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr ""
-"May mga paketeng kailangang tanggalin ngunit naka-disable ang Tanggal/Remove."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "May mga problema at -y ay ginamit na walang --force-yes"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "May mga problema at -y ay ginamit na walang --force-yes"
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "Error na internal, hindi natapos ang pagsaayos na pagkasunud-sunod"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr ""
-"Nakapagtataka... Hindi magkatugma ang laki, mag-email sa apt@packages.debian."
-"org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Kailangang kumuha ng %sB/%sB ng arkibo.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr ""
-"Matapos magbuklat ay %sB na karagdagang puwang sa disk ang magagamit.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Matapos magbuklat ay %sB na puwang sa disk ang mapapalaya.\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "Tinakdang Trivial Only ngunit hindi ito operasyong trivial."
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Oo, gawin ang sinasabi ko!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"Kayo ay gagawa ng bagay na maaaring makasama sa inyong sistema.\n"
-"Upang magpatuloy, ibigay ang pariralang '%s'\n"
-" ?] "
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "Abort."
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "Nais niyo bang magpatuloy?"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "May mga talaksang hindi nakuha"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "Kumpleto ang pagkakuha ng mga talaksan sa modong pagkuha lamang"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Hindi nakuha ang ilang mga arkibo, maaaring patakbuhin ang apt-get update o "
-"subukang may --fix-missing?"
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing at pagpalit ng media ay kasalukuyang hindi suportado"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "Hindi maayos ang mga kulang na pakete."
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "Ina-abort ang pag-instol."
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Error na internal, may nasira ang problem resolver"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
-msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
-msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Maaaring patakbuhin niyo ang 'apt-get -f install' upang ayusin ang mga ito:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"May mga dependensiyang kulang. Subukan ang 'apt-get -f install' na walang "
-"mga pakete (o magtakda ng solusyon)."
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Ang mga sumusunod na extra na pakete ay luluklokin:"
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "Mga paketeng mungkahi:"
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "Mga paketeng rekomendado:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr ""
-"Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr ""
-"Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "Ang pagluklok muli ng %s ay hindi maaari, hindi ito makuha.\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s ay pinakabagong bersyon na.\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set to manually installed.\n"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr " [Nakaluklok]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,local]"
-msgstr " [Nakaluklok]"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr " [Nakaluklok]"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed]"
-msgstr " [Nakaluklok]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "ngunit ang %s ay nakaluklok"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "ngunit hindi ito maaaring iluklok"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "ngunit ito ay birtwal na pakete"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "ngunit ito ay hindi nakaluklok"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "ngunit ito ay hindi iluluklok"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr " o"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "Ang sumusunod na mga pakete ay may kulang na dependensiya:"
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "Ang sumusunod na mga pakete ay TATANGGALIN:"
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "Ang sumusunod na mga pakete ay hinayaang maiwanan:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "Ang susunod na mga pakete ay iu-upgrade:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Ang susunod na mga pakete ay ida-DOWNGRADE:"
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr "Ang susunod na mga hinawakang mga pakete ay babaguhin:"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (dahil sa %s)"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"BABALA: Ang susunod na mga paketeng esensyal ay tatanggalin.\n"
-"HINDI ito dapat gawin kung hindi niyo alam ng husto ang inyong ginagawa!"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu na nai-upgrade, %lu na bagong luklok, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "%lu iniluklok muli, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu nai-downgrade, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu na tatanggalin at %lu na hindi inupgrade\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu na hindi lubos na nailuklok o tinanggal.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr "[O/h]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr "[o/H]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr "O"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr "H"
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Error sa pag-compile ng regex - %s"
-
-#: apt-private/private-search.cc
-#, fuzzy
-msgid "You must give at least one search pattern"
-msgstr "Kailangan niyong magbigay ng isa lamang na pattern"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr ""
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Wala sa sync ang talaksan ng paketeng %s."
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "Talaksang Pakete:"
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Wala sa sync ang cache, hindi ma-x-ref ang talaksang pakete"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "Mga naka-Pin na Pakete:"
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  Nakaluklok: "
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  Kandidato: "
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(wala)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  Talaang Bersyon:"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr ""
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Hindi mahanap ang paketeng source para sa %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Linaktawan ang nakuha na na talaksan '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Kailangang kumuha ng %sB/%sB ng arkibong source.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Kailangang kumuha ng %sB ng arkibong source.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Kunin ang Source %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "Bigo sa pagkuha ng ilang mga arkibo."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Linaktawan ang pagbuklat ng nabuklat na na source sa %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Bigo ang utos ng pagbuklat '%s'.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Utos na build '%s' ay bigo.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Hindi makuha ang impormasyong build-dependency para sa %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "Walang build depends ang %s.\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "Kailangang magtakda ng kahit isang pakete na susuriin ang builddeps"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Bigo sa pagproseso ng build dependencies"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "Bigo sa pagproseso ng build dependencies"
-
-#: apt-private/private-sources.cc
-#, fuzzy, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Paketeng %s bersyon %s ay may kulang na dep:\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
-msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "Kabuuan ng mga Pakete : "
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "Total package structures: "
-msgstr "Kabuuan ng mga Pakete : "
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  Normal na Pakete: "
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr "  Purong Birtwual na Pakete: "
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr "  Nag-iisang Birtwal na Pakete: "
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr "  Halong Birtwal na Pakete: "
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "  Kulang/Nawawala: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "Kabuuan ng Natatanging mga Bersyon: "
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "Total distinct descriptions: "
-msgstr "Kabuuan ng Natatanging mga Bersyon: "
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "Kabuuan ng mga Dependensiya: "
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "Total Desc/File relations: "
-msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "Kabuuan ng Mapping ng Provides: "
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "Kabuuan ng Globbed String: "
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "Kabuuan ng Hindi Nagamit na puwang: "
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "Kabuuan ng puwang na napag-tuosan: "
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "Ipakita ang mga record ng source"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "Maghanap sa listahan ng mga pakete ng regex pattern"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "Ipakita ang impormasyon tungkol sa ganap na dependensiya ng pakete"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "Ipakita ang impormasyong kabaliktarang dependensiya ng pakete"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "Ipakita ang nababasang record ng pakete"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "Ipakita ang listahan ng pangalan ng lahat ng mga pakete"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "Ipakita ang pagkaayos ng mga policy"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Bigyan ng pangalan ang Disk na ito, tulad ng 'Debian 2.1r1 Disk 1'"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Paki-pasok ang isang Disk sa drive at pindutin ang enter"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Ulitin ang prosesong ito para sa lahat ng mga CD sa inyong set."
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "Mga argumento ay hindi naka-pares"
-
-#: cmdline/apt-config.cc
-#, fuzzy
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"Pag-gamit: apt-config [mga option] utos\n"
-"\n"
-"Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos ng "
-"APT\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Hindi mahanap ang paketeng %s"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr "Error na internal, may nasira ang problem resolver"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "Suportadong mga Module:"
-
-#: cmdline/apt-get.cc
-#, fuzzy
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"Pag-gamit: apt-get [mga option] utos\n"
-"           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
-"           apt-get [mga option] source pkt1 [pkt2 ...]\n"
-"\n"
-"Ang apt-get ay payak na command line interface para sa pagkuha at\n"
-"pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
-"at install.\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "Kunin ang bagong listahan ng mga pakete"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "Gumawa ng upgrade"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "Mag-instol ng bagong mga pakete (pkt ay libc6 hindi libc6.deb)"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "Mag-tanggal ng mga pakete"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr ""
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-msgid "Remove automatically all unused packages"
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "Mag-upgrade ng pamudmod, basahin ang apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "Sundan ang mga pinili sa dselect"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "Magsaayos ng build-dependencies para sa mga paketeng source"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "Burahin ang mga nakuhang mga talaksang naka-arkibo"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "Burahin ang mga lumang naka-arkibo na nakuhang mga talaksan"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "Tiyakin na walang mga sirang dependensiya"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "Kumuha ng arkibong source"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, fuzzy
-msgid "Must specify at least one pair url/filename"
-msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "ngunit ito ay hindi nakaluklok"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s ay pinakabagong bersyon na.\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s ay pinakabagong bersyon na.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set on hold.\n"
-msgstr "ngunit ang %s ay iluluklok"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "Bigo ang pagbukas ng %s"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as automatically installed"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as manually installed"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of automatically installed packages"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of manually installed packages"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "Binabasa ang Listahan ng mga Pakete"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "Mga naka-Pin na Pakete:"
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "Sirang mga pakete"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "ngunit ito ay birtwal na pakete"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "Pinagsasama ang magagamit na impormasyon"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "Hindi mabasa ang database ng cdrom %s"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Paki-gamit ang apt-cdrom upang makilala ng APT itong CD na ito. Hindi "
-"maaaring gamitin ang apt-get update upang magdagdag ng bagong mga CD"
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "Maling CD"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Hindi mai-unmount ang CD-ROM sa %s, maaaring ginagamit pa ito."
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "Hindi nahanap ang Disk."
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "Hindi Nahanap ang Talaksan"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Kumokonekta sa %s (%s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Hindi makalikha ng socket para sa %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Hindi maumpisahan ang koneksyon sa %s:%s (%s)."
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Hindi maka-konekta sa %s:%s (%s), nag-timeout ang koneksyon"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "Bigo"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Hindi maka-konekta sa %s:%s (%s)."
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "Kumokonekta sa %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Hindi maresolba ang '%s'"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Pansamantalang kabiguan sa pagresolba ng '%s'"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "Hindi maka-konekta sa %s %s:"
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "Bigo ang pag-stat"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "Di tanggap na URI, mga lokal na URI ay di dapat mag-umpisa ng //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Pumapasok"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Hindi malaman ang pangalan ng peer"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Hindi malaman ang pangalang lokal"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Inayawan ng server ang ating koneksyon at ang sabi ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Bigo ang USER/GUMAGAMIT, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Bigo ang PASS, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"May tinakdang katuwang na server ngunit walang login script, walang laman "
-"ang Acquire::ftp::ProxyLogin."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Bigo ang utos sa login script '%s', sabi ng server ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Bigo ang TYPE, sabi ng server ay: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Lumipas ang koneksyon"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Sinarhan ng server ang koneksyon"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "Error sa pagbasa"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "May sagot na bumubo sa buffer."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Sira ang protocol"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "Error sa pagsulat"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Hindi maka-likha ng socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Hindi maka-konekta sa socket ng datos, nag-time-out ang koneksyon"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Hindi maka-konekta sa socket na passive."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "di makakuha ang getaddrinfo ng socket na nakikinig"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Hindi maka-bind ng socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Hindi makarinig sa socket"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Hindi malaman ang pangalan ng socket"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Hindi makapagpadala ng utos na PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Di kilalang pamilya ng address %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Bigo ang EPRT, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Nag-timeout ang socket ng datos"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Hindi makatanggap ng koneksyon"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "Problema sa pag-hash ng talaksan"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Hindi makakuha ng talaksan, sabi ng server ay '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Nag-timeout ang socket ng datos"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Bigo ang paglipat ng datos, sabi ng server ay '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Tanong"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Hindi ma-invoke "
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "Hindi kukulang sa isang hindi tanggap na lagda ang na-enkwentro."
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
-"Error na internal: Tanggap na lagda, ngunit hindi malaman ang key "
-"fingerprint?!"
-
-#: methods/gpgv.cc
-#, fuzzy
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-"Hindi maitakbo ang '%s' upang maberipika ang lagda (nakaluklok ba ang gnupg?)"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "Hindi kilalang error sa pag-execute ng apt-key"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "Ang sumusunod na mga lagda ay imbalido:\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Ang sumusunod na mga lagda ay hindi maberipika dahil ang public key ay hindi "
-"available:\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "Error sa pagsusulat sa talaksan"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr "Error sa pagbasa mula sa server, sinarhan ng remote ang koneksyon"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "Error sa pagbasa mula sa server"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "Error sa pagsulat sa talaksan"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "Bigo ang pagpili"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "Nag-timeout ang koneksyon"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "Error sa pagsulat ng talaksang output"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "Hindi mabasa ang %s"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Di makalipat sa %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Hindi mabuksan ang talaksang %s"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Hindi mabuksan ang talaksang %s"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Bigo ang pag-stat ng %s"
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "Bigo ang pagtakda ng oras ng pagbago"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Bigo sa paglikha ng IPC pipe sa subprocess"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Nagsara ng maaga ang koneksyon"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "Naghihintay ng panimula"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "Maling linyang panimula"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "Nagpadala ang HTTP server ng di tanggap na reply header"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "Nagpadala ang HTTP server ng di tanggap na Content-Length header"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "Nagpadala ang HTTP server ng di tanggap na Content-Range header"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "Sira ang range support ng HTTP server na ito"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "Di kilalang anyo ng petsa"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "Maling datos sa panimula"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "Bigo ang koneksyon"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "Internal na error"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "Maling nakatakda na default!"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-#, fuzzy
-msgid "Press [Enter] to continue."
-msgstr "Pindutin ang enter upang magpatuloy."
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr ""
-
-#: dselect/install:102
-#, fuzzy
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "May mga error na naganap habang nagbubuklat. Isasaayos ko ang"
-
-#: dselect/install:103
-#, fuzzy
-msgid "will be configured. This may result in duplicate errors"
-msgstr "mga paketeng naluklok. Maaaring dumulot ito ng mga error na doble"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"o mga error na dulot ng kulang na dependensiya. Ito ay ayos lamang, yun lang"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"sa taas nitong kalatas ang importante. Paki-ayusin ang mga ito at patakbuhin "
-"muli ang [I]luklok/Instol."
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "Pinagsasama ang magagamit na impormasyon"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Naghintay, para sa %s ngunit wala nito doon"
-
-#: cmdline/apt-extracttemplates.cc
-#, fuzzy
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
-"\n"
-"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
-"sa pagkaayos at template mula sa mga paketeng debian\n"
-"\n"
-"Mga opsyon:\n"
-"  -h   Itong tulong na ito\n"
-"  -t   Itakda ang dir na pansamantala\n"
-"  -c=? Basahin ang talaksang pagkaayos na ito\n"
-"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Hindi ma-stat ang %s"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Hindi makapagsulat sa %s"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Hindi makuha ang bersyon ng debconf. Nakaluklok ba ang debconf?"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
-"\n"
-"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
-"sa pagkaayos at template mula sa mga paketeng debian\n"
-"\n"
-"Mga opsyon:\n"
-"  -h   Itong tulong na ito\n"
-"  -t   Itakda ang dir na pansamantala\n"
-"  -c=? Basahin ang talaksang pagkaayos na ito\n"
-"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-internal-solver.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
-"\n"
-"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
-"sa pagkaayos at template mula sa mga paketeng debian\n"
-"\n"
-"Mga opsyon:\n"
-"  -h   Itong tulong na ito\n"
-"  -t   Itakda ang dir na pansamantala\n"
-"  -c=? Basahin ang talaksang pagkaayos na ito\n"
-"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "Di kilalang record ng pakete!"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "Mahaba masyado ang talaan ng extensyon ng mga pakete"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "Error sa pagproseso ng directory %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "Mahaba masyado ang talaan ng extensyon ng pagkukunan (source)"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr "Error sa pagsulat ng panimula sa talaksang nilalaman (contents)"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "Error sa pagproseso ng Contents %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"Pag-gamit: apt-ftparchive [mga option] utos\n"
-"Mga utos: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [mga grupo]\n"
-"          clean config\n"
-"\n"
-"Ang apt-ftparchive ay gumagawa ng talaksang index para sa arkibong Debian.\n"
-"Suportado nito ang maraming estilo ng pagbuo mula sa awtomatikong buo\n"
-"at kapalit ng dpkg-scanpackages at dpkg-scansources\n"
-"\n"
-"Bumubuo ang apt-ftparchive ng mga talaksang Package mula sa puno ng mga\n"
-".deb. Ang talaksang Package ay naglalaman ng laman ng lahat ng control "
-"field\n"
-"mula sa bawat pakete pati na rin ang MD5 hash at laki ng talaksan. "
-"Suportado\n"
-"ang pag-gamit ng talaksang override upang pilitin ang halaga ng Priority at "
-"Section.\n"
-"\n"
-"Bumubuo din ang apt-ftparchive ng talaksang Sources mula sa puno ng mga\n"
-".dsc. Ang option na --source-override ay maaaring gamitin upang itakda\n"
-"ang talaksang override ng src\n"
-"\n"
-"Ang mga utos na 'packages' at 'sources' ay dapat patakbuhin sa ugat ng\n"
-"puno. Kailangan nakaturo ang BinaryPath sa ugat ng paghahanap na recursive\n"
-"at ang talaksang override ay dapat naglalaman ng mga flag na override. Ang\n"
-"pathprefix ay dinudugtong sa harap ng mga pangalan ng talaksan kung "
-"mayroon.\n"
-"Halimbawa ng pag-gamit mula sa arkibong Debian:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Mga option:\n"
-"  -h    Itong tulong na ito\n"
-"  --md5 Pagbuo ng MD5\n"
-"  -s=?  Talaksang override ng source\n"
-"  -q    Tahimik\n"
-"  -d=?  Piliin ang optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Pagbuo ng talaksang contents\n"
-"  -c=?  Basahin itong talaksang pagkaayos\n"
-"  -o=?  Itakda ang isang option na pagkaayos"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "Walang mga pinili na tugma"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "May mga talaksang kulang sa grupo ng talaksang pakete `%s'"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "Nasira ang DB, pinalitan ng pangalan ang talaksan sa %s.old"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "Luma ang DB, sinusubukang maupgrade ang %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"Hindi tanggap ang anyo ng DB. Kung kayo ay nagsariwa mula sa nakaraang "
-"bersiyon ng apt, tanggalin at likhain muli ang database."
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "Hindi mabuksan ang talaksang DB %s: %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid "Failed to read .dsc"
-msgstr "Bigo ang pagbasa ng link %s"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "Walang kontrol rekord ang arkibo"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "Hindi makakuha ng cursor"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc - Bigo ang pagreserba ng memory"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "Hindi kilalang algorithmong compression '%s'"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "Kailangan ng compression set ang compressed output %s"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "Bigo ang pag-fork"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "Anak para sa pag-Compress"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "Error na internal, bigo ang paglikha ng %s"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "Bigo ang IO sa subprocess/talaksan"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "Bigo ang pagbasa habang tinutuos ang MD5"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "Hindi mabuksan %s"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "Maling anyo ng override %s linya %lu #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Bigo ang pagbasa ng talaksang override %s"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "Maling anyo ng override %s linya %lu #1"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "Maling anyo ng override %s linya %lu #2"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "Maling anyo ng override %s linya %lu #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Hindi mabasa ang directory %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: Hindi ma-stat %s\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "E: Mga error ay tumutukoy sa talaksang "
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Bigo sa pag-resolba ng %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "Bigo ang paglakad sa puno"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "Bigo ang pagbukas ng %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Bigo ang pagbasa ng link %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Bigo ang pag-link ng %s sa %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " DeLink limit na %sB tinamaan.\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "Walang field ng pakete ang arkibo"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr "  %s ay walang override entry\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  Tagapangalaga ng %s ay %s hindi %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s ay walang override entry para sa pinagmulan\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s ay wala ring override entry na binary\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2394,6 +111,17 @@ msgstr "Ang pakete ay sumusubok na magsulat sa target na diversion %s/%s"
 msgid "The diversion path is too long"
 msgstr "Sobrang haba ng path na diversion"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Bigo ang pag-stat ng %s"
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2416,6 +144,15 @@ msgstr "Patungan ng paketeng nag-match na walang bersion para sa %s"
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Ang talaksang %s/%s ay pumapatong sa isang talaksan sa paketeng %s"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "Hindi mabasa ang %s"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2502,6 +239,11 @@ msgstr "Ang directory %s ay divertado"
 msgid "The repository '%s' provides only weak security information."
 msgstr "Ang directory %s ay divertado"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Bigo ang pagbasa ng link %s"
+
 #: apt-pkg/acquire-item.cc
 #, fuzzy
 msgid "Hash Sum mismatch"
@@ -2529,6 +271,14 @@ msgstr "Di tanggap na operasyon %s"
 #, fuzzy
 msgid "Signature error"
 msgstr "Error sa pagsulat"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2609,6 +359,16 @@ msgstr "Kumokonekta sa %s (%s)"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "Ang driver ng paraang %s ay hindi mahanap."
 
@@ -2661,6 +421,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Hindi suportado ang uri ng talaksang index na '%s'"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Di makalipat sa %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2709,6 +475,11 @@ msgstr ""
 msgid "The list of sources could not be read."
 msgstr "Hindi mabasa ang talaan ng pagkukunan (sources)."
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Error sa pag-compile ng regex - %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2732,6 +503,11 @@ msgstr "Hindi mahanap ang paketeng %s"
 #: apt-pkg/cacheset.cc
 #, fuzzy, c-format
 msgid "Couldn't find any package by glob '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
 msgstr "Hindi mahanap ang paketeng %s"
 
 #: apt-pkg/cacheset.cc
@@ -3012,6 +788,12 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Naghintay, para sa %s ngunit wala nito doon"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3031,6 +813,14 @@ msgstr "Naghudyat ang sub-process %s ng error code (%u)"
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Ang sub-process %s ay lumabas ng di inaasahan"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "Error sa pagbasa"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "Error sa pagsulat"
 
 #: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
@@ -3082,6 +872,16 @@ msgstr "Problema sa pag-sync ng talaksan"
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Problema sa pag-sync ng talaksan"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Hindi ma-stat ang %s"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Hindi makapagsulat sa %s"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -3582,20 +1382,16 @@ msgid "Suggests"
 msgstr "Mungkahi"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "Rekomendado"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "Tunggali"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "Pumapalit"
+msgid "Recommends"
+msgstr "Rekomendado"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "Linalaos"
+msgid "Replaces"
+msgstr "Pumapalit"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3606,24 +1402,28 @@ msgid "Enhances"
 msgstr ""
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "kailangan"
+msgid "Obsoletes"
+msgstr "Linalaos"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "importante"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "kailangan"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "standard"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "optional"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "extra"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "optional"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3738,6 +1538,11 @@ msgstr "Kailangan niyong maglagay ng 'source' URIs sa inyong sources.list"
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Bigo sa pagkuha ng %s  %s"
+
 #: apt-pkg/update.cc
 #, fuzzy
 msgid ""
@@ -3750,6 +1555,2216 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Sinusuri ang pag-upgrade"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "Tumama:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "Kunin:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr "DiPansin:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "Err:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Nakakuha ng %sB ng %s (%sB/s)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [May ginagawa]"
+
+#: apt-private/acqprogress.cc
+#, fuzzy, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"Pagpalit ng Media: Ikasa ang disk na may pangalang\n"
+" '%s'\n"
+"sa drive '%s' at pindutin ang enter\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "Inaayos ang mga dependensiya..."
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " ay bigo."
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "Hindi maayos ang mga dependensiya"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "Hindi mai-minimize ang upgrade set"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " Tapos"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Maaari ninyong patakbuhin ang 'apt-get -f install' upang ayusin ito."
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "May mga kulang na dependensiya. Subukan niyong gamitin ang -f."
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Ang paketeng %s ay paketeng birtwal na bigay ng:\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy
+msgid " [Installed]"
+msgstr " [Nakaluklok]"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy
+msgid " [Not candidate version]"
+msgstr "Bersyong Kandidato"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "Dapat kayong mamili ng isa na iluluklok."
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Hindi magamit ang %s, ngunit ito'y tinutukoy ng ibang pakete.\n"
+"Maaaring nawawala ang pakete, ito'y laos na, o ito'y makukuha lamang\n"
+"sa ibang pinagmulan.\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "Gayunpaman, ang sumusunod na mga pakete ay humahalili sa kanya:"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "Ang paketeng %s ay walang kandidatong maaaring instolahin"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr ""
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "Paunawa, pinili ang %s imbes na %s\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "Ang APT na ito ay may Kapangyarihan Super Kalabaw."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Walang nahanap na mga pakete"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr ""
+"BABALA: Ang susunod na mga pakete ay hindi matiyak ang pagka-awtentiko!"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr ""
+"Ipina-walang-bisa ang babala tungkol sa pagka-awtentiko ng mga pakete.\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "May mga paketeng hindi matiyak ang pagka-awtentiko"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "Iluklok ang mga paketeng ito na walang beripikasyon?"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-download.cc
+#, fuzzy
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr "May mga problema at -y ay ginamit na walang --force-yes"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Hindi matantsa ang libreng puwang sa %s"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Kulang kayo ng libreng puwang sa %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Hindi maaldaba ang directory ng download"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"May mga paketeng hindi ma-instol. Maaring may hiniling kayong imposible\n"
+"o kung kayo'y gumagamit ng pamudmod na unstable ay may ilang mga paketeng\n"
+"kailangan na hindi pa nalikha o linipat mula sa Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr ""
+"Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Sirang mga pakete"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr ""
+"Error na internal, tinawagan ang InstallPackages na may sirang mga pakete!"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr ""
+"May mga paketeng kailangang tanggalin ngunit naka-disable ang Tanggal/Remove."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "May mga problema at -y ay ginamit na walang --force-yes"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "May mga problema at -y ay ginamit na walang --force-yes"
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "Error na internal, hindi natapos ang pagsaayos na pagkasunud-sunod"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr ""
+"Nakapagtataka... Hindi magkatugma ang laki, mag-email sa apt@packages.debian."
+"org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Kailangang kumuha ng %sB/%sB ng arkibo.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr ""
+"Matapos magbuklat ay %sB na karagdagang puwang sa disk ang magagamit.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "Matapos magbuklat ay %sB na puwang sa disk ang mapapalaya.\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "Tinakdang Trivial Only ngunit hindi ito operasyong trivial."
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Oo, gawin ang sinasabi ko!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"Kayo ay gagawa ng bagay na maaaring makasama sa inyong sistema.\n"
+"Upang magpatuloy, ibigay ang pariralang '%s'\n"
+" ?] "
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "Abort."
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "Nais niyo bang magpatuloy?"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "May mga talaksang hindi nakuha"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "Kumpleto ang pagkakuha ng mga talaksan sa modong pagkuha lamang"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Hindi nakuha ang ilang mga arkibo, maaaring patakbuhin ang apt-get update o "
+"subukang may --fix-missing?"
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing at pagpalit ng media ay kasalukuyang hindi suportado"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "Hindi maayos ang mga kulang na pakete."
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "Ina-abort ang pag-instol."
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Error na internal, may nasira ang problem resolver"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr ""
+"Maaaring patakbuhin niyo ang 'apt-get -f install' upang ayusin ang mga ito:"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"May mga dependensiyang kulang. Subukan ang 'apt-get -f install' na walang "
+"mga pakete (o magtakda ng solusyon)."
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Ang mga sumusunod na extra na pakete ay luluklokin:"
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "Mga paketeng mungkahi:"
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "Mga paketeng rekomendado:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr ""
+"Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr ""
+"Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Ang pagluklok muli ng %s ay hindi maaari, hindi ito makuha.\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s ay pinakabagong bersyon na.\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set to manually installed.\n"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr " [Nakaluklok]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,local]"
+msgstr " [Nakaluklok]"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr " [Nakaluklok]"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed]"
+msgstr " [Nakaluklok]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "ngunit ang %s ay nakaluklok"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "ngunit hindi ito maaaring iluklok"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "ngunit ito ay birtwal na pakete"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "ngunit ito ay hindi iluluklok"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "ngunit ito ay hindi nakaluklok"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr " o"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "Ang sumusunod na mga pakete ay may kulang na dependensiya:"
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "Ang sumusunod na mga pakete ay TATANGGALIN:"
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "Ang sumusunod na mga pakete ay hinayaang maiwanan:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "Ang susunod na mga pakete ay iu-upgrade:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Ang susunod na mga pakete ay ida-DOWNGRADE:"
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr "Ang susunod na mga hinawakang mga pakete ay babaguhin:"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (dahil sa %s)"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"BABALA: Ang susunod na mga paketeng esensyal ay tatanggalin.\n"
+"HINDI ito dapat gawin kung hindi niyo alam ng husto ang inyong ginagawa!"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "%lu na nai-upgrade, %lu na bagong luklok, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "%lu iniluklok muli, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu nai-downgrade, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "%lu na tatanggalin at %lu na hindi inupgrade\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu na hindi lubos na nailuklok o tinanggal.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr "[O/h]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr "[o/H]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr "O"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr "H"
+
+#: apt-private/private-search.cc
+#, fuzzy
+msgid "You must give at least one search pattern"
+msgstr "Kailangan niyong magbigay ng isa lamang na pattern"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr ""
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "Wala sa sync ang talaksan ng paketeng %s."
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Talaksang Pakete:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Wala sa sync ang cache, hindi ma-x-ref ang talaksang pakete"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Mga naka-Pin na Pakete:"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Nakaluklok: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Kandidato: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(wala)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Talaang Bersyon:"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Hindi mahanap ang paketeng source para sa %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Linaktawan ang nakuha na na talaksan '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Kailangang kumuha ng %sB/%sB ng arkibong source.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Kailangang kumuha ng %sB ng arkibong source.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Kunin ang Source %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Bigo sa pagkuha ng ilang mga arkibo."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Linaktawan ang pagbuklat ng nabuklat na na source sa %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Bigo ang utos ng pagbuklat '%s'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Utos na build '%s' ay bigo.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Hindi makuha ang impormasyong build-dependency para sa %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "Walang build depends ang %s.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Kailangang magtakda ng kahit isang pakete na susuriin ang builddeps"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Bigo sa pagproseso ng build dependencies"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Bigo sa pagproseso ng build dependencies"
+
+#: apt-private/private-sources.cc
+#, fuzzy, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr ""
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Paketeng %s bersyon %s ay may kulang na dep:\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "apt-cache stats does not take any arguments"
+msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "Kabuuan ng mga Pakete : "
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "Total package structures: "
+msgstr "Kabuuan ng mga Pakete : "
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  Normal na Pakete: "
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr "  Purong Birtwual na Pakete: "
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr "  Nag-iisang Birtwal na Pakete: "
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr "  Halong Birtwal na Pakete: "
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "  Kulang/Nawawala: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "Kabuuan ng Natatanging mga Bersyon: "
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "Total distinct descriptions: "
+msgstr "Kabuuan ng Natatanging mga Bersyon: "
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "Kabuuan ng mga Dependensiya: "
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "Total Desc/File relations: "
+msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "Kabuuan ng Mapping ng Provides: "
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "Kabuuan ng Globbed String: "
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "Kabuuan ng Hindi Nagamit na puwang: "
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "Kabuuan ng puwang na napag-tuosan: "
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "Ipakita ang mga record ng source"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "Maghanap sa listahan ng mga pakete ng regex pattern"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "Ipakita ang impormasyon tungkol sa ganap na dependensiya ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "Ipakita ang impormasyong kabaliktarang dependensiya ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "Ipakita ang nababasang record ng pakete"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "Ipakita ang listahan ng pangalan ng lahat ng mga pakete"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "Ipakita ang pagkaayos ng mga policy"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr "Bigyan ng pangalan ang Disk na ito, tulad ng 'Debian 2.1r1 Disk 1'"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "Paki-pasok ang isang Disk sa drive at pindutin ang enter"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "Ulitin ang prosesong ito para sa lahat ng mga CD sa inyong set."
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "Mga argumento ay hindi naka-pares"
+
+#: cmdline/apt-config.cc
+#, fuzzy
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"Pag-gamit: apt-config [mga option] utos\n"
+"\n"
+"Ang apt-config ay simpleng kagamitan sa pagbasa ng talaksang pagkaayos ng "
+"APT\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+#, fuzzy
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
+"\n"
+"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
+"sa pagkaayos at template mula sa mga paketeng debian\n"
+"\n"
+"Mga opsyon:\n"
+"  -h   Itong tulong na ito\n"
+"  -t   Itakda ang dir na pansamantala\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Hindi makuha ang bersyon ng debconf. Nakaluklok ba ang debconf?"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Hindi mahanap ang paketeng %s"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr "Error na internal, may nasira ang problem resolver"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "Suportadong mga Module:"
+
+#: cmdline/apt-get.cc
+#, fuzzy
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"Pag-gamit: apt-get [mga option] utos\n"
+"           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
+"           apt-get [mga option] source pkt1 [pkt2 ...]\n"
+"\n"
+"Ang apt-get ay payak na command line interface para sa pagkuha at\n"
+"pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
+"at install.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "Kunin ang bagong listahan ng mga pakete"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "Gumawa ng upgrade"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "Mag-instol ng bagong mga pakete (pkt ay libc6 hindi libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "Mag-tanggal ng mga pakete"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr ""
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "Mag-upgrade ng pamudmod, basahin ang apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "Sundan ang mga pinili sa dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "Magsaayos ng build-dependencies para sa mga paketeng source"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "Burahin ang mga nakuhang mga talaksang naka-arkibo"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "Burahin ang mga lumang naka-arkibo na nakuhang mga talaksan"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "Tiyakin na walang mga sirang dependensiya"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "Kumuha ng arkibong source"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, fuzzy
+msgid "Must specify at least one pair url/filename"
+msgstr "Kailangang magtakda ng kahit isang pakete na kunan ng source"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr ""
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
+"\n"
+"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
+"sa pagkaayos at template mula sa mga paketeng debian\n"
+"\n"
+"Mga opsyon:\n"
+"  -h   Itong tulong na ito\n"
+"  -t   Itakda ang dir na pansamantala\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-internal-solver.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
+"\n"
+"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
+"sa pagkaayos at template mula sa mga paketeng debian\n"
+"\n"
+"Mga opsyon:\n"
+"  -h   Itong tulong na ito\n"
+"  -t   Itakda ang dir na pansamantala\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "ngunit ito ay hindi nakaluklok"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s ay pinakabagong bersyon na.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s ay pinakabagong bersyon na.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set on hold.\n"
+msgstr "ngunit ang %s ay iluluklok"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "Bigo ang pagbukas ng %s"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr ""
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "Di kilalang record ng pakete!"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "Binabasa ang Listahan ng mga Pakete"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "Mga naka-Pin na Pakete:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "Sirang mga pakete"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "ngunit ito ay birtwal na pakete"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "Pinagsasama ang magagamit na impormasyon"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "Maling nakatakda na default!"
+
+#: dselect/install dselect/update
+#, fuzzy
+msgid "Press [Enter] to continue."
+msgstr "Pindutin ang enter upang magpatuloy."
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr ""
+
+#: dselect/install
+#, fuzzy
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "May mga error na naganap habang nagbubuklat. Isasaayos ko ang"
+
+#: dselect/install
+#, fuzzy
+msgid "will be configured. This may result in duplicate errors"
+msgstr "mga paketeng naluklok. Maaaring dumulot ito ng mga error na doble"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"o mga error na dulot ng kulang na dependensiya. Ito ay ayos lamang, yun lang"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"sa taas nitong kalatas ang importante. Paki-ayusin ang mga ito at patakbuhin "
+"muli ang [I]luklok/Instol."
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "Pinagsasama ang magagamit na impormasyon"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "Mahaba masyado ang talaan ng extensyon ng mga pakete"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "Error sa pagproseso ng directory %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "Mahaba masyado ang talaan ng extensyon ng pagkukunan (source)"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr "Error sa pagsulat ng panimula sa talaksang nilalaman (contents)"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "Error sa pagproseso ng Contents %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"Pag-gamit: apt-ftparchive [mga option] utos\n"
+"Mga utos: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [mga grupo]\n"
+"          clean config\n"
+"\n"
+"Ang apt-ftparchive ay gumagawa ng talaksang index para sa arkibong Debian.\n"
+"Suportado nito ang maraming estilo ng pagbuo mula sa awtomatikong buo\n"
+"at kapalit ng dpkg-scanpackages at dpkg-scansources\n"
+"\n"
+"Bumubuo ang apt-ftparchive ng mga talaksang Package mula sa puno ng mga\n"
+".deb. Ang talaksang Package ay naglalaman ng laman ng lahat ng control "
+"field\n"
+"mula sa bawat pakete pati na rin ang MD5 hash at laki ng talaksan. "
+"Suportado\n"
+"ang pag-gamit ng talaksang override upang pilitin ang halaga ng Priority at "
+"Section.\n"
+"\n"
+"Bumubuo din ang apt-ftparchive ng talaksang Sources mula sa puno ng mga\n"
+".dsc. Ang option na --source-override ay maaaring gamitin upang itakda\n"
+"ang talaksang override ng src\n"
+"\n"
+"Ang mga utos na 'packages' at 'sources' ay dapat patakbuhin sa ugat ng\n"
+"puno. Kailangan nakaturo ang BinaryPath sa ugat ng paghahanap na recursive\n"
+"at ang talaksang override ay dapat naglalaman ng mga flag na override. Ang\n"
+"pathprefix ay dinudugtong sa harap ng mga pangalan ng talaksan kung "
+"mayroon.\n"
+"Halimbawa ng pag-gamit mula sa arkibong Debian:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Mga option:\n"
+"  -h    Itong tulong na ito\n"
+"  --md5 Pagbuo ng MD5\n"
+"  -s=?  Talaksang override ng source\n"
+"  -q    Tahimik\n"
+"  -d=?  Piliin ang optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Pagbuo ng talaksang contents\n"
+"  -c=?  Basahin itong talaksang pagkaayos\n"
+"  -o=?  Itakda ang isang option na pagkaayos"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "Walang mga pinili na tugma"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "May mga talaksang kulang sa grupo ng talaksang pakete `%s'"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "Nasira ang DB, pinalitan ng pangalan ang talaksan sa %s.old"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "Luma ang DB, sinusubukang maupgrade ang %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Hindi tanggap ang anyo ng DB. Kung kayo ay nagsariwa mula sa nakaraang "
+"bersiyon ng apt, tanggalin at likhain muli ang database."
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "Hindi mabuksan ang talaksang DB %s: %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid "Failed to read .dsc"
+msgstr "Bigo ang pagbasa ng link %s"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "Walang kontrol rekord ang arkibo"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "Hindi makakuha ng cursor"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - Bigo ang pagreserba ng memory"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "Hindi kilalang algorithmong compression '%s'"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "Kailangan ng compression set ang compressed output %s"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Bigo sa paglikha ng IPC pipe sa subprocess"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "Bigo ang pag-fork"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "Anak para sa pag-Compress"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "Error na internal, bigo ang paglikha ng %s"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "Bigo ang IO sa subprocess/talaksan"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "Bigo ang pagbasa habang tinutuos ang MD5"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "Hindi mabuksan %s"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "Maling anyo ng override %s linya %lu #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Bigo ang pagbasa ng talaksang override %s"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "Maling anyo ng override %s linya %lu #1"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "Maling anyo ng override %s linya %lu #2"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "Maling anyo ng override %s linya %lu #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Hindi mabasa ang directory %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Hindi ma-stat %s\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "E: Mga error ay tumutukoy sa talaksang "
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Bigo sa pag-resolba ng %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "Bigo ang paglakad sa puno"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "Bigo ang pagbukas ng %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Bigo ang pag-link ng %s sa %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " DeLink limit na %sB tinamaan.\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "Walang field ng pakete ang arkibo"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s ay walang override entry\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  Tagapangalaga ng %s ay %s hindi %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s ay walang override entry para sa pinagmulan\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s ay wala ring override entry na binary\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Hindi mabasa ang database ng cdrom %s"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Paki-gamit ang apt-cdrom upang makilala ng APT itong CD na ito. Hindi "
+"maaaring gamitin ang apt-get update upang magdagdag ng bagong mga CD"
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "Maling CD"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Hindi mai-unmount ang CD-ROM sa %s, maaaring ginagamit pa ito."
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "Hindi nahanap ang Disk."
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "Hindi Nahanap ang Talaksan"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Kumokonekta sa %s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Hindi makalikha ng socket para sa %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Hindi maumpisahan ang koneksyon sa %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Hindi maka-konekta sa %s:%s (%s), nag-timeout ang koneksyon"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "Bigo"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Hindi maka-konekta sa %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "Kumokonekta sa %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Hindi maresolba ang '%s'"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Pansamantalang kabiguan sa pagresolba ng '%s'"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "Hindi maka-konekta sa %s %s:"
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "Bigo ang pag-stat"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Di tanggap na URI, mga lokal na URI ay di dapat mag-umpisa ng //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "Pumapasok"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "Hindi malaman ang pangalan ng peer"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "Hindi malaman ang pangalang lokal"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "Inayawan ng server ang ating koneksyon at ang sabi ay: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Bigo ang USER/GUMAGAMIT, sabi ng server ay: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Bigo ang PASS, sabi ng server ay: %s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"May tinakdang katuwang na server ngunit walang login script, walang laman "
+"ang Acquire::ftp::ProxyLogin."
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "Bigo ang utos sa login script '%s', sabi ng server ay: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Bigo ang TYPE, sabi ng server ay: %s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "Lumipas ang koneksyon"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "Sinarhan ng server ang koneksyon"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "May sagot na bumubo sa buffer."
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "Sira ang protocol"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "Hindi maka-likha ng socket"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr "Hindi maka-konekta sa socket ng datos, nag-time-out ang koneksyon"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "Hindi maka-konekta sa socket na passive."
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "di makakuha ang getaddrinfo ng socket na nakikinig"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "Hindi maka-bind ng socket"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "Hindi makarinig sa socket"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "Hindi malaman ang pangalan ng socket"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "Hindi makapagpadala ng utos na PORT"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Di kilalang pamilya ng address %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Bigo ang EPRT, sabi ng server ay: %s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Nag-timeout ang socket ng datos"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "Hindi makatanggap ng koneksyon"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "Problema sa pag-hash ng talaksan"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Hindi makakuha ng talaksan, sabi ng server ay '%s'"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Nag-timeout ang socket ng datos"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Bigo ang paglipat ng datos, sabi ng server ay '%s'"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "Tanong"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "Hindi ma-invoke "
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "Hindi kukulang sa isang hindi tanggap na lagda ang na-enkwentro."
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+"Error na internal: Tanggap na lagda, ngunit hindi malaman ang key "
+"fingerprint?!"
+
+#: methods/gpgv.cc
+#, fuzzy
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr ""
+"Hindi maitakbo ang '%s' upang maberipika ang lagda (nakaluklok ba ang gnupg?)"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "Hindi kilalang error sa pag-execute ng apt-key"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "Ang sumusunod na mga lagda ay imbalido:\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Ang sumusunod na mga lagda ay hindi maberipika dahil ang public key ay hindi "
+"available:\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "Error sa pagsusulat sa talaksan"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr "Error sa pagbasa mula sa server, sinarhan ng remote ang koneksyon"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "Error sa pagbasa mula sa server"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "Error sa pagsulat sa talaksan"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "Bigo ang pagpili"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "Nag-timeout ang koneksyon"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "Error sa pagsulat ng talaksang output"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "Hindi mabuksan ang talaksang %s"
+
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Hindi mabuksan ang talaksang %s"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Bigo ang pagtakda ng oras ng pagbago"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "Nagsara ng maaga ang koneksyon"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "Naghihintay ng panimula"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "Maling linyang panimula"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "Nagpadala ang HTTP server ng di tanggap na reply header"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "Nagpadala ang HTTP server ng di tanggap na Content-Length header"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "Nagpadala ang HTTP server ng di tanggap na Content-Range header"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "Sira ang range support ng HTTP server na ito"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "Di kilalang anyo ng petsa"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "Maling datos sa panimula"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "Bigo ang koneksyon"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "Internal na error"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #~ msgid "(not found)"
 #~ msgstr "(hindi nahanap)"

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2016-05-19 20:50+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -23,2359 +23,6 @@ msgstr ""
 "X-Generator: Lokalize 1.5\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "Сущ:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "Пол:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr "Игн:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "Ошк:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Получено %sБ за %s (%sБ/c)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [Обработка]"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"Смена носителя: вставьте диск с меткой\n"
-" «%s»\n"
-"в устройство «%s» и нажмите [Enter]\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "Исправление зависимостей…"
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " не удалось."
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "Невозможно скорректировать зависимости"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "Невозможно минимизировать набор обновлений"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " Готово"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
-"f install»."
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr "Сортировка"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Заметьте, выбирается «%s» для задачи «%s»\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Заметьте, выбирается «%s» для glob «%s»\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Заметьте, выбирается «%s» для regex «%s»\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "Пакет %s — виртуальный, его функции предоставляются пакетами:\n"
-
-#: apt-private/private-cacheset.cc
-msgid " [Installed]"
-msgstr " [Установлен]"
-
-#: apt-private/private-cacheset.cc
-msgid " [Not candidate version]"
-msgstr " [Нет версии-кандидата]"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "Вы должны явно указать, какой именно вы хотите установить."
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"Пакет %s недоступен, но упомянут в списке зависимостей другого пакета.\n"
-"Это может означать, что пакет отсутствует, устарел, или доступен из "
-"источников, не упомянутых в sources.list\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "Однако следующие пакеты могут его заменить:"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "Для пакета «%s» не найден кандидат на установку"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "Виртуальные пакеты, подобные «%s», не могут быть удалены\n"
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
-"Пакет «%s» не установлен, поэтому не может быть удалён. Возможно имелся в "
-"виду «%s»?\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Пакет «%s» не установлен, поэтому не может быть удалён\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Заметьте, вместо «%2$s» выбирается «%1$s»\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr "Основные команды:"
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr "Дополнительную информацию о доступных командах смотрите в %s."
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-"Параметры настройки и синтаксис описаны в apt.conf(5).\n"
-"Информацию о том, как настроить источники, можно найти в sources.list(5).\n"
-"Выбор пакетов и версий описывается через apt_preferences(5).\n"
-"Информация о безопасности доступна в apt-secure(8).\n"
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr "В APT есть коровья СУПЕРСИЛА."
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr "В этой программе есть Super Meep Powers."
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "Не найдено ни одного пакета"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "ВНИМАНИЕ: Следующие пакеты невозможно аутентифицировать!"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr "Предупреждение об аутентификации не принято в внимание.\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "Некоторые пакеты невозможно аутентифицировать"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "Установить эти пакеты без проверки?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes устарел, вместо него используйте параметры, начинающиеся с --"
-"allow."
-
-#: apt-private/private-download.cc
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr ""
-"Обнаружены неудостоверенные пакеты и был указан параметр -y без --allow-"
-"unauthenticated."
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Не удалось получить %s  %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "Не удалось определить количество свободного места в %s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "Недостаточно свободного места в %s."
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "Невозможно заблокировать каталог, куда складываются скачиваемые файлы"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"Некоторые пакеты невозможно установить. Возможно, вы просите невозможного,\n"
-"или же используете нестабильную версию дистрибутива, где запрошенные вами\n"
-"пакеты ещё не созданы или были удалены из Incoming."
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "Следующая информация, возможно, поможет вам:"
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "Сломанные пакеты"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr ""
-"Внутренняя ошибка, InstallPackages была вызвана с неработоспособными "
-"пакетами!"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr "Пакеты необходимо удалить, но удаление запрещено."
-
-#: apt-private/private-install.cc
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr ""
-"Удалены пакеты первой необходимости и был указан параметр -y без --allow-"
-"remove-essential."
-
-#: apt-private/private-install.cc
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr ""
-"Пакеты заменены на старые версии и был указан параметр -y без --allow-"
-"downgrades."
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-"Были изменены зафиксированные пакеты и был указан параметр -y без --allow-"
-"change-held-packages."
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "Внутренняя ошибка, Ordering не завершилась"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Необходимо скачать %sB/%sB архивов.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "Необходимо скачать %sБ архивов.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr ""
-"После данной операции, объём занятого дискового пространства возрастёт на "
-"%sB.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr ""
-"После данной операции, объём занятого дискового пространства уменьшится на "
-"%sB.\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr ""
-"Запрошено выполнение только тривиальных операций, но это не тривиальная "
-"операция."
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Да, делать, как я скажу!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"То, что вы хотите сделать, может иметь нежелательные последствия.\n"
-"Чтобы продолжить, введите фразу: «%s»\n"
-" ?] "
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "Аварийное завершение."
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "Хотите продолжить?"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "Некоторые файлы скачать не удалось"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "Указан режим «только скачивание», и скачивание завершено"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Невозможно получить некоторые архивы, вероятно надо запустить apt-get update "
-"или попытаться повторить запуск с ключом --fix-missing"
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing и смена носителя в данный момент не поддерживаются"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "Невозможно исправить ситуацию с пропущенными пакетами."
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "Аварийное завершение установки."
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-"Следующий пакет исчез из системы, так как все их файлы\n"
-"теперь берутся из других пакетов:"
-msgstr[1] ""
-"Следующие пакеты исчез из системы, так как все их файлы\n"
-"теперь берутся из других пакетов:"
-msgstr[2] ""
-"Следующие пакеты исчез из системы, так как все их файлы\n"
-"теперь берутся из других пакетов:"
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr "Замечание: это сделано автоматически и специально программой dpkg."
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "Не предполагалось удалять stuff, невозможно запустить AutoRemover"
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"Хм, кажется, что AutoRemover был как-то удалён, чего не должно\n"
-"было случиться. Пожалуйста, отправьте сообщение об ошибке в пакете apt."
-
-#: apt-private/private-install.cc
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Внутренняя ошибка, AutoRemover всё поломал"
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "Следующий пакет устанавливался автоматически и больше не требуется:"
-msgstr[1] ""
-"Следующие пакеты устанавливались автоматически и больше не требуются:"
-msgstr[2] ""
-"Следующие пакеты устанавливались автоматически и больше не требуются:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "%lu пакет был установлен автоматически и больше не требуется.\n"
-msgstr[1] "%lu пакета было установлено автоматически и больше не требуется.\n"
-msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "Для его удаления используйте «%s»."
-msgstr[1] "Для их удаления используйте «%s»."
-msgstr[2] "Для их удаления используйте «%s»."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
-"f install»:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Неудовлетворённые зависимости. Попытайтесь выполнить «apt-get -f install», "
-"не указывая имени пакета, (или найдите другое решение)."
-
-#: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "Будут установлены следующие дополнительные пакеты:"
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "Предлагаемые пакеты:"
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "Рекомендуемые пакеты:"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "Пропускается %s — пакет уже установлен и нет команды upgrade.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr ""
-"Пропускается %s — пакет не установлен, а запрошено только обновление.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "Переустановка %s невозможна, он не скачивается.\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "Уже установлен пакет %s самой новой версии (%s).\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "%s установлен вручную.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Выбрана версия «%s» (%s) для «%s»\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Выбрана версия «%s» (%s) для «%s» из-за «%s»\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr "Вывод списка"
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] "Есть %i дополнительная версия. Используйте «-a» для просмотра"
-msgstr[1] "Есть %i дополнительные версии. Используйте «-a» для их просмотра"
-msgstr[2] "Есть %i дополнительных версий. Используйте «-a» для их просмотра"
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-"ЗАМЕЧАНИЕ: Производить только имитация работы!\n"
-"      Для реальной работы %s требуются права суперпользователя.\n"
-"      Учтите, что блокировка не используется,\n"
-"      поэтому нет полного соответствия с текущей реальной ситуацией!\n"
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr "неизвестно"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr "[установлен, может быть обновлён до: %s]"
-
-#: apt-private/private-output.cc
-msgid "[installed,local]"
-msgstr "[установлен, локальный]"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr "[установлен, удаляется автоматически]"
-
-#: apt-private/private-output.cc
-msgid "[installed,automatic]"
-msgstr "[установлен, автоматически]"
-
-#: apt-private/private-output.cc
-msgid "[installed]"
-msgstr "[установлен]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr "[может быть обновлён с: %s]"
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr "[остались файлы настроек]"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "но %s уже установлен"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "но %s будет установлен"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "но он не может быть установлен"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "но это виртуальный пакет"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "но он не установлен"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "но он не будет установлен"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr " или"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "Пакеты, имеющие неудовлетворённые зависимости:"
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "НОВЫЕ пакеты, которые будут установлены:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "Пакеты, которые будут УДАЛЕНЫ:"
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "Пакеты, которые будут оставлены в неизменном виде:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "Пакеты, которые будут обновлены:"
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "Пакеты, будут заменены на более СТАРЫЕ версии:"
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr ""
-"Пакеты, которые должны были бы остаться без изменений, но будут заменены:"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s (вследствие %s)"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"ВНИМАНИЕ: Эти существенно важные пакеты будут удалены.\n"
-"НЕ ДЕЛАЙТЕ этого, если вы НЕ представляете себе все возможные последствия!"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "обновлено %lu, установлено %lu новых пакетов, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "переустановлено %lu переустановлено, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "%lu пакетов заменены на старые версии, "
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "для удаления отмечено %lu пакетов, и %lu пакетов не обновлено.\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "не установлено до конца или удалено %lu пакетов.\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr "[Д/н]"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr "[д/Н]"
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr "Д"
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr "Н"
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "Ошибка компиляции регулярного выражения — %s"
-
-#: apt-private/private-search.cc
-msgid "You must give at least one search pattern"
-msgstr "Вы должны задать не менее одно шаблона поиска"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr "Полнотекстовый поиск"
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Список пакетов %s рассинхронизирован."
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] "Есть %i дополнительная запись. Используйте «-a» для просмотра"
-msgstr[1] "Есть %i дополнительные записи. Используйте «-a» для их просмотра"
-msgstr[2] "Есть %i дополнительных записей. Используйте «-a» для их просмотра"
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr "не реальный (виртуальный) пакет"
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "Не удалось найти пакет %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "Списки пакетов:"
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "Кэш рассинхронизирован, невозможно обнаружить ссылку на список пакетов"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "Зафиксированные пакеты:"
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr "%s -> %s с приоритетом %d\n"
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  Установлен: "
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  Кандидат: "
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(отсутствует)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  Таблица версий:"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "Не удалось найти пакет для архитектуры «%s»"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "Не удалось найти пакет «%s» версии «%s»"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "Не удалось найти пакет «%s» в выпуске «%s»"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Используется «%s» в качестве исходного пакета вместо «%s»\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr "Не удалось найти версию «%s» пакета «%s»"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Укажите как минимум один пакет, исходный код которого необходимо получить"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "Невозможно найти пакет с исходным кодом для %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"ВНИМАНИЕ: упаковка «%s» поддерживается в системе контроля версий «%s»:\n"
-"%s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"Используйте:\n"
-"%s\n"
-"для получения последних (возможно не выпущенных) обновлений пакета.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "Пропускаем уже скачанный файл «%s»\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Необходимо получить %sб/%sб архивов исходного кода.\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "Необходимо получить %sб архивов исходного кода.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "Получение исходного кода %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "Некоторые архивы не удалось получить."
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Пропускается распаковка уже распакованного исходного кода в %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "Команда распаковки «%s» завершилась неудачно.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "Команда сборки «%s» завершилась неудачно.\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "Невозможно получить информацию о зависимостях для сборки %s"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s не имеет зависимостей для сборки.\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Для проверки зависимостей для сборки необходимо указать как минимум один "
-"пакет"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-"У %s отсутствует информация об архитектуре. Для её настройки смотрите apt."
-"conf(5) APT::Architectures"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr "Заметим, используется каталог «%s» для получения зависимостей сборки\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Заметим, используется файл «%s» для получения зависимостей сборки\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "Обработка зависимостей для сборки завершилась неудачно"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "Не удалось разобрать «%s». Повторить редактирование? "
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr "Файл «%s» изменён, запустите «apt-get update»."
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Пакет %s версии %s имеет неудовлетворённую зависимость:\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "Команде update не нужны аргументы"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-"Может быть обновлён %i пакет. Запустите «apt list --upgradable» для показа.\n"
-msgstr[1] ""
-"Может быть обновлено %i пакета. Запустите «apt list --upgradable» для их "
-"показа.\n"
-msgstr[2] ""
-"Может быть обновлено %i пакетов. Запустите «apt list --upgradable» для их "
-"показа.\n"
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr "Все пакеты имеют последние версии."
-
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "Команде apt-cache stats не нужны аргументы"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "Всего имён пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "Total package structures: "
-msgstr "Всего структур пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  Обычных пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr "  Полностью виртуальных пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr "  Одиночных виртуальных пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr "  Смешанных виртуальных пакетов: "
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "  Отсутствует: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "Всего уникальных версий: "
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct descriptions: "
-msgstr "Всего уникальных описаний: "
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "Всего зависимостей: "
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "Всего отношений Версия/Файл: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Desc/File relations: "
-msgstr "Всего отношений Описание/Файл: "
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "Всего отношений Provides: "
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "Всего развёрнутых строк: "
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "Пустого места в кэше: "
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "Полное учтённое пространство: "
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr "Эта команда устарела. Используйте вместо неё «apt-mark showauto»."
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-"Использование: apt-cache [параметры] команда\n"
-"       apt-cache [параметры] show пакет1 [пакет2 …]\n"
-"\n"
-"apt-cache ищет и выдаёт доступную информацию об установленных\n"
-"и неустановленных пакетах. Она работает только с данными локального\n"
-"кэша, созданного командой «update» программы apt-get. В следствие\n"
-"этого отображаемая информация может устаревшей, если обновление\n"
-"долго не выполнялось, но зато apt-cache работает независимо от\n"
-"доступности настроенных источников (например, без сети).\n"
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "показать записи об источниках"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "найти пакеты, имя которых удовлетворяет регулярному выражению"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "показать необработанную информацию о зависимостях пакета"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "показать информацию об обратных зависимостях пакета"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "показать информацию о пакете в удобочитаемой форме"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "показать имена всех пакетов в системе"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "показать текущую политику выбора пакетов"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Задайте имя для этого диска, например «Debian 5.0.3 Disk 1»"
-
-#: cmdline/apt-cdrom.cc
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Вставьте диск в устройство и нажмите [Enter]"
-
-#: cmdline/apt-cdrom.cc
-#, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "Не удалось примонтировать «%s» к «%s»"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-"Не удалось автоматически обнаружить CD-ROM и в точке монтирования по "
-"умолчанию\n"
-"также ничего нет. Вы можете использовать параметр --cdrom, чтобы указать "
-"точку\n"
-"монтирования CD-ROM. Подробней о точке монтирования и автоматическом\n"
-"обнаружении CD-ROM смотрите в «man apt-cdrom»."
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Повторите этот процесс для всех имеющихся CD."
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-"Использование: apt-cdrom [параметры] команда\n"
-"\n"
-"apt-cdrom используется для добавления CDROM, накопителей USB и других\n"
-"сменных носителей в качестве источников пакетов APT. Точка монтирования и\n"
-"информация об устройстве берётся из apt.conf(5), udev(7) и fstab(5).\n"
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "Непарные аргументы"
-
-#: cmdline/apt-config.cc
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"Использование: apt-config [параметры] команда\n"
-"\n"
-"apt-config — интерфейс к параметрам настройки, используемым\n"
-"всеми инструментами APT, в основном, предназначен для отладки и\n"
-"использования в сценариях оболочки.\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr "получить значения настройки через вычисления оболочки"
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr "показать действующее значение настройки"
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "Не удалось найти пакет %s"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "%s выбран для автоматической установки.\n"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-"Эта команда устарела. Используйте вместо неё «apt-mark auto» и «apt-mark "
-"manual»."
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr "Внутренняя ошибка, решатель проблем всё поломал"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "Поддерживаемые модули:"
-
-#: cmdline/apt-get.cc
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"Использование: apt-get [параметры] команда\n"
-"               apt-get [параметры] install|remove пакет1 [пакет2…]\n"
-"               apt-get [параметры] source пакет1 [пакет2…]\n"
-"\n"
-"apt-get — интерфейс командной строки для получения пакетов,\n"
-"информации из доверенных источников, а также установки,\n"
-"обновления и удаления пакетов вместе с их зависимостями.\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "получить новые списки пакетов"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "выполнить обновление"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr ""
-"установить новые пакеты (на месте пакета указывается имя пакета (libc6, а не "
-"имя файла libc6.deb)"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "удалить пакеты"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr "удалить пакеты вместе с их файлами настройки"
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-msgid "Remove automatically all unused packages"
-msgstr "автоматически удалить все неиспользуемые пакеты"
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "обновить всю систему, подробнее в apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "руководствоваться выбором, сделанным в dselect"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "настроить всё необходимое для сборки пакета из исходного кода"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "удалить скачанные файлы архивов"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "удалить старые скачанные файлы архивов"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "проверить наличие нарушенных зависимостей"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "скачать архивы с исходным кодом"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr "скачать двоичный пакет в текущий каталог"
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr "скачать и показать файл изменений заданного пакета"
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr "В качестве аргумента требуется URL"
-
-#: cmdline/apt-helper.cc
-msgid "Must specify at least one pair url/filename"
-msgstr "Укажите, как минимум, одну пару url/имя файла"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr "Ошибка при скачивании"
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr "Ошибка GetSrvRec для %s"
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-"Использование: apt-helper [параметры] команда\n"
-"       apt-helper [параметры] cat-файл файл …\n"
-"       apt-helper [параметры] download-file uri target-path\n"
-"\n"
-"apt-helper — набор различных команд для сценариев оболочки,\n"
-"которые используются для обмена настройками между APT и системой.\n"
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr "скачать файл по заданному uri в target-path"
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr "найти запись типа SRV (например, _http._tcp.ftp.debian.org)"
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr "склеить файлы, с автоматическим разжатием"
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr "определять прокси с помощью apt.conf"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "%s не может быть помечен, так он не установлен.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "%s уже помечен как установленный вручную.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "%s уже помечен как установленный автоматически.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s уже помечен как зафиксированный.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s уже помечен как не зафиксированный.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr ""
-"Выполнение dpkg завершилось с ошибкой. У вас есть права суперпользователя?"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "%s set on hold.\n"
-msgstr "%s помечен как зафиксированный.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "Отмена фиксации для %s.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr "Выбран %s для вычистки.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr "Выбран %s для удаления.\n"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr "Выбран %s для установки.\n"
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2 …]\n"
-"\n"
-"apt-mark — простая программа с интерфейсом командной строки\n"
-"для пометки пакетов, что они установлены вручную или автоматически.\n"
-"Также может использоваться для изменения состояния выбора пакетов dpkg(1) и\n"
-"показывать списки пакетов с или без определённой метки.\n"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as automatically installed"
-msgstr "пометить указанные пакеты, как установленные автоматически"
-
-#: cmdline/apt-mark.cc
-msgid "Mark the given packages as manually installed"
-msgstr "пометить указанные пакеты, как установленные вручную"
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr "пометить пакет как зафиксированный"
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr "снять метку пакета, что он зафиксирован"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of automatically installed packages"
-msgstr "вывести список автоматически установленных пакетов"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of manually installed packages"
-msgstr "вывести список пакетов установленных вручную"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr "вывести список зафиксированных пакетов"
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-"Использование: apt [параметры] команда\n"
-"\n"
-"apt — менеджер пакетов с интерфейсом командной строки, предоставляет "
-"команды\n"
-"для поиска и управления, а также запросов информации о пакетах.\n"
-"Он выполняет те же задачи, что и специализированные инструменты APT,\n"
-"например apt-get и apt-cache, но содержит параметры, которые больше\n"
-"подходят для интерактивного использования по умолчанию.\n"
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr "показать список пакетов из указанных имён пакетов"
-
-#: cmdline/apt.cc
-msgid "search in package descriptions"
-msgstr "искать в описаниях пакетов"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr "показать дополнительные данные о пакете"
-
-#. package stuff
-#: cmdline/apt.cc
-msgid "install packages"
-msgstr "установить пакеты"
-
-#: cmdline/apt.cc
-msgid "remove packages"
-msgstr "удалить пакеты"
-
-#. system wide stuff
-#: cmdline/apt.cc
-msgid "update list of available packages"
-msgstr "обновить список доступных пакетов"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr "обновить систему, устанавливая/обновляя пакеты"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
-
-#. misc
-#: cmdline/apt.cc
-msgid "edit the source information file"
-msgstr "редактировать файл с источниками пакетов"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "Невозможно прочесть базу %s с CD"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"Пожалуйста, используйте apt-cdrom, чтобы APT смог распознать данный CD. apt-"
-"get update не используется для добавления нового CD"
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "Ошибочный CD"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Невозможно размонтировать CD-ROM в %s, возможно он ещё используется."
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "Диск не найден."
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "Файл не найден"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Соединение с %s (%s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Не удаётся создать сокет для %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Невозможно инициализировать соединение с %s:%s (%s)."
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Не удаётся соединиться с %s:%s (%s), connection timed out"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "Неудачно"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "Не удаётся соединиться с %s:%s (%s)."
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "Соединение с %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "Не удалось найти IP-адрес для «%s»"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "Временная ошибка при попытке получить IP-адрес «%s»"
-
-#: methods/connect.cc
-#, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "Системная ошибка при определении «%s:%s»"
-
-#: methods/connect.cc
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "Что-то странное произошло при определении «%s:%s» (%i - %s)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "Невозможно соединиться с %s: %s:"
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "Не удалось получить атрибуты"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "Неправильный URI, локальный URI не должен начинаться с //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Вход в систему"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Невозможно определить имя удалённого сервера"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Невозможно определить локальное имя"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Сервер разорвал соединение и сообщил: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Команда USER не выполнена, сервер сообщил: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Команда PASS не выполнена, сервер сообщил: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Proxy-сервер указан, однако нет сценария входа в систему, Acquire::ftp::"
-"ProxyLogin пуст."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"Команда «%s» сценария входа в систему завершилась неудачно, сервер сообщил: "
-"%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Команда TYPE не выполнена, сервер сообщил: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Допустимое время ожидания для соединения истекло"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Сервер прервал соединение"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "Ошибка чтения"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Ответ переполнил буфер."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Искажение протокола"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "Ошибка записи"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Не удалось создать сокет"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Не удалось присоединиться к сокету данных, время на установление соединения "
-"истекло"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Невозможно присоединить пассивный сокет"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "Вызов getaddrinfo не смог получить сокет"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Невозможно присоединиться к сокету"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Не удалось принимать соединения на сокете"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Не удалось определить имя сокета"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Невозможно послать команду PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Неизвестное семейство адресов %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Команда EPRT не выполнена, сервер сообщил: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Время установления соединения для сокета данных истекло"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Невозможно принять соединение"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "Проблема при хешировании файла"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Невозможно получить файл, сервер сообщил: «%s»"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Время ожидания соединения для сокета данных истекло"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Передача данных завершилась неудачно, сервер сообщил: «%s»"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Запрос"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Невозможно вызвать "
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
-"аутентификация?)"
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-"Подписанный файл некорректен, получено «%s» (возможно в сети требуется "
-"аутентификация?)"
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "Найдена как минимум одна неправильная подпись."
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr ""
-"Внутренняя ошибка: Правильная подпись, но не удалось определить отпечаток "
-"ключа?!"
-
-#: methods/gpgv.cc
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr ""
-"Не удалось выполнить «apt-key» для проверки подписи (gnupg установлена?)"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "Неизвестная ошибка при выполнении apt-key"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr "При подписи ключом %s используется нестойкий алгоритм свёртки (%s)"
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "Следующие подписи неверные:\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr ""
-"Следующие подписи не могут быть проверены, так как недоступен открытый "
-"ключ:\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "Ошибка записи в файл"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr "Ошибка чтения, удалённый сервер прервал соединение"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "Ошибка чтения с сервера"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "Ошибка записи в файл"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "Ошибка в select"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "Время ожидания для соединения истекло"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "Ошибка записи в выходной файл"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "Невозможно прочитать %s"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Невозможно сменить текущий каталог на %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Файл «%s» не найден на зеркале"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Невозможно прочитать файл на зеркале «%s»"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Не найден элемент в файл на зеркале «%s»"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Зеркало: %s]"
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "Не удалось получить атрибуты %s"
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "Не удалось установить время модификации"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "Не удалось создать IPC-канал для порождённого процесса"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Соединение закрыто преждевременно"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "Ожидание заголовков"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "Неверный заголовок"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "Http-сервер послал неверный заголовок"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "Http сервер послал неверный заголовок Content-Length"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "Http-сервер послал неверный заголовок Content-Range"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "Этот HTTP-сервер не поддерживает скачивание фрагментов файлов"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "Неизвестный формат данных"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "Неверный заголовок данных"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "Соединение разорвано"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-"Автоматическое отключение %s из-за некорректного ответа сервера/прокси (man "
-"5 apt.conf)."
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "Внутренняя ошибка"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr "Пустые файлы не могут быть допустимыми архивами"
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "Неправильное значение по умолчанию!"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-msgid "Press [Enter] to continue."
-msgstr "Для продолжения нажмите [Enter]."
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "Удалить все ранее скачанные .deb файлы?"
-
-#: dselect/install:102
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "Во время распаковки возникли ошибки. Пакеты, которые были установлены,"
-
-#: dselect/install:103
-msgid "will be configured. This may result in duplicate errors"
-msgstr "будут настроены. Это может привести к повторению ошибок"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr ""
-"или возникновению новых из-за неудовлетворённых зависимостей. Это нормально, "
-"важны"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr ""
-"только ошибки, указанные в этом сообщении. Исправьте их и выполните "
-"установку ещё раз"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "Слияние доступной информации"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "Ожидалось завершение процесса %s, но он не был запущен"
-
-#: cmdline/apt-extracttemplates.cc
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"Использование: apt-extracttemplates файл1 [файл2 …]\n"
-"\n"
-"apt-extracttemplates извлекает из пакетов Debian файлы config и template.\n"
-"В основном, она используется debconf(1) для предложения\n"
-"вопросов настройки перед установкой пакетов.\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to mkstemp %s"
-msgstr "Невозможно выполнить mkstemp %s"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "Невозможно записать в %s"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Невозможно определить версию debconf. Он установлен?"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"Использование: apt-internal-solver\n"
-"\n"
-"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
-"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
-
-#: cmdline/apt-internal-solver.cc
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"Использование: apt-internal-solver\n"
-"\n"
-"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
-"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "Запись о неизвестном пакете!"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-"Использование: apt-sortpkgs [параметры] файл1 [файл2 …]\n"
-"\n"
-"apt-sortpkgs — простой инструмент для сортировки информационных файлов\n"
-"пакетов. По умолчанию, он сортирует информацию о двоичных пакетах,\n"
-"но можно указать параметр -s, и будет выполняться сортировка пакетов\n"
-"с исходным кодом.\n"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "Список расширений, допустимых для пакетов, слишком длинен"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "Ошибка обработки каталога %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "Список расширений источников слишком длинен"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr ""
-"Ошибка записи заголовка в полный перечень содержимого пакетов (Contents)"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "ошибка обработки полного перечня содержимого пакетов (Contents) %s"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"Использование: apt-ftparchive [параметры] команда\n"
-"Команды:  packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive генерирует индексные файлы архивов Debian. Он поддерживает\n"
-"множество стилей генерации: от полностью автоматического до функциональной "
-"замены\n"
-"программ dpkg-scanpackages и dpkg-scansources\n"
-"\n"
-"apt-ftparchive генерирует файлы Package (списки пакетов) для дерева\n"
-"каталогов, содержащих файлы .deb. Файл Package включает в себя управляющие\n"
-"поля каждого пакета, а также хеш MD5 и размер файла. Значения управляющих\n"
-"полей «приоритет» (Priority) и «секция» (Section) могут быть изменены с\n"
-"помощью файла override.\n"
-"\n"
-"Кроме того, apt-ftparchive может генерировать файлы Sources из дерева\n"
-"каталогов, содержащих файлы .dsc. Для указания файла override в этом \n"
-"режиме можно использовать параметр --source-override.\n"
-"\n"
-"Команды «packages» и «sources» надо выполнять, находясь в корневом каталоге\n"
-"дерева, которое вы хотите обработать. BinaryPath должен указывать на место,\n"
-"с которого начинается рекурсивный обход, а файл переназначений (override)\n"
-"должен содержать записи о переназначениях управляющих полей. Если был "
-"указан\n"
-"Pathprefix, то его значение добавляется к управляющим полям, содержащим\n"
-"имена файлов. Пример использования для архива Debian:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Параметры:\n"
-"  -h    Этот текст\n"
-"  --md5 Управление генерацией MD5-хешей\n"
-"  -s=?  Указать файл переназначений (override) для источников\n"
-"  -q    Не выводить сообщения в процессе работы\n"
-"  -d=?  Указать кэширующую базу данных (не обязательно)\n"
-"  --no-delink Включить режим отладки процесса удаления файлов\n"
-"  --contents  Управление генерацией полного перечня содержимого пакетов\n"
-"              (файла Contents)\n"
-"  -c=?  Использовать указанный файл настройки\n"
-"  -o=?  Задать значение произвольному параметру настройки"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "Совпадений не обнаружено"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "В группе пакетов «%s» отсутствуют некоторые файлы"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "БД была повреждена, файл переименован в %s.old"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "DB устарела, попытка обновить %s"
-
-#: ftparchive/cachedb.cc
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"Некорректный формат базы данных (DB). Если вы обновляли версию apt, удалите "
-"и создайте базу данных заново."
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "Не удалось открыть DB файл %s: %s"
-
-#: ftparchive/cachedb.cc
-msgid "Failed to read .dsc"
-msgstr "Не удалось прочесть .dsc"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "В архиве нет поля control"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "Невозможно получить курсор"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc — не удалось выделить память"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "Неизвестный алгоритм сжатия «%s»"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr ""
-"Для получения сжатого вывода %s необходимо включить использования сжатия"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "Не удалось запустить порождённый процесс"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "Процесс-потомок, производящий сжатие"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "Внутренняя ошибка, не удалось создать %s"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "Ошибка ввода/вывода в подпроцесс/файл"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "Ошибка чтения во время вычисления MD5"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "Не удалось переименовать %s в %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "Не удалось открыть %s"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "Неправильная запись о переназначении (override) %s в строке %llu (%s)"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "Не удалось прочесть файл переназначений (override) %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "Неправильная запись о переназначении (override) %s в строке %llu #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "Неправильная запись о переназначении (override) %s в строке %llu #2"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "Неправильная запись о переназначении (override) %s в строке %llu #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "W: Не удалось прочитать каталог %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "W: Не удалось прочитать атрибуты %s\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "E: "
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "W: "
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "E: Ошибки относятся к файлу "
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "Не удалось проследовать по ссылке %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "Не удалось совершить обход дерева"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "Не удалось открыть %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr "DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "Не удалось прочесть ссылку %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** Не удалось создать ссылку %s на %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " Превышен лимит в %sB в DeLink.\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "В архиве нет поля package"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr "  Нет записи о переназначении (override) для %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  пакет %s сопровождает %s, а не %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  Нет записи source override для %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  Нет записи binary override для %s\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2468,6 +115,17 @@ msgstr "Пакет пытается писать в diversion %s/%s"
 msgid "The diversion path is too long"
 msgstr "Путь diversion слишком длинен"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "Не удалось получить атрибуты %s"
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "Не удалось переименовать %s в %s"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2490,6 +148,15 @@ msgstr "Файлы заменяются содержимым пакета %s б�
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Файл %s/%s переписывает файл в пакете %s"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "Невозможно прочитать %s"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2586,6 +253,11 @@ msgstr ""
 "Пропускается получение настроенного файла «s», так как репозиторий «%s»  "
 "предоставляет только нестойкое шифрование информации"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "Не удалось прочесть ссылку %s"
+
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "Хеш сумма не совпадает"
@@ -2610,6 +282,16 @@ msgstr "Неправильный формат файла"
 #: apt-pkg/acquire-item.cc
 msgid "Signature error"
 msgstr "Ошибка подписи"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+"Некорректный подписанный файл, получено «%s» (возможно в сети требуется "
+"аутентификация?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2698,6 +380,16 @@ msgstr "Changelog для %s=%s недоступен"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "Драйвер для метода %s не найден."
 
@@ -2752,6 +444,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Очистка «%s» не поддерживается"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Невозможно сменить текущий каталог на %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2795,6 +493,11 @@ msgstr "Вы можете запустить «apt-get update» для испр�
 msgid "The list of sources could not be read."
 msgstr "Не читается перечень источников."
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "Ошибка компиляции регулярного выражения — %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2819,6 +522,11 @@ msgstr "Не удалось найти пакет с помощью regex «%s»
 #, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "Не удалось найти пакет с помощью glob «%s»"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "Не удалось найти пакет %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -3115,6 +823,12 @@ msgstr ""
 "Файл «%s» в каталоге «%s» игнорируется, так как он не имеет неправильное "
 "расширение"
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "Ожидалось завершение процесса %s, но он не был запущен"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -3135,6 +849,14 @@ msgstr "Порождённый процесс %s вернул код ошибк�
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Порождённый процесс %s неожиданно завершился"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "Ошибка чтения"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "Ошибка записи"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3187,6 +909,16 @@ msgstr "Проблема при переименовании файла %s в %s
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "Проблема при синхронизации файла"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Невозможно выполнить mkstemp %s"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "Невозможно записать в %s"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -3712,20 +1444,16 @@ msgid "Suggests"
 msgstr "Предлагает"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "Рекомендует"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "Конфликтует"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "Заменяет"
+msgid "Recommends"
+msgstr "Рекомендует"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "Замещает"
+msgid "Replaces"
+msgstr "Заменяет"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3736,24 +1464,28 @@ msgid "Enhances"
 msgstr "Улучшает"
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "необходимый"
+msgid "Obsoletes"
+msgstr "Замещает"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "важный"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "необходимый"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "стандартный"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "необязательный"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "дополнительный"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "необязательный"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3876,6 +1608,11 @@ msgstr "Вы должны заполнить sources.list, поместив ту
 msgid "Cannot convert %s to integer: out of range"
 msgstr "Невозможно преобразовать %s в целое число: выход за пределы диапазона"
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Не удалось получить %s  %s"
+
 #: apt-pkg/update.cc
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -3887,6 +1624,2284 @@ msgstr ""
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "Расчёт обновлений"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "Сущ:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "Пол:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr "Игн:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "Ошк:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Получено %sБ за %s (%sБ/c)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [Обработка]"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"Смена носителя: вставьте диск с меткой\n"
+" «%s»\n"
+"в устройство «%s» и нажмите [Enter]\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "Исправление зависимостей…"
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " не удалось."
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "Невозможно скорректировать зависимости"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "Невозможно минимизировать набор обновлений"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " Готово"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr ""
+"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
+"f install»."
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr "Сортировка"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "Заметьте, выбирается «%s» для задачи «%s»\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "Заметьте, выбирается «%s» для glob «%s»\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "Заметьте, выбирается «%s» для regex «%s»\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "Пакет %s — виртуальный, его функции предоставляются пакетами:\n"
+
+#: apt-private/private-cacheset.cc
+msgid " [Installed]"
+msgstr " [Установлен]"
+
+#: apt-private/private-cacheset.cc
+msgid " [Not candidate version]"
+msgstr " [Нет версии-кандидата]"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "Вы должны явно указать, какой именно вы хотите установить."
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"Пакет %s недоступен, но упомянут в списке зависимостей другого пакета.\n"
+"Это может означать, что пакет отсутствует, устарел, или доступен из "
+"источников, не упомянутых в sources.list\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "Однако следующие пакеты могут его заменить:"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "Для пакета «%s» не найден кандидат на установку"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr "Виртуальные пакеты, подобные «%s», не могут быть удалены\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr ""
+"Пакет «%s» не установлен, поэтому не может быть удалён. Возможно имелся в "
+"виду «%s»?\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "Пакет «%s» не установлен, поэтому не может быть удалён\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "Заметьте, вместо «%2$s» выбирается «%1$s»\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr "Основные команды:"
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr "Дополнительную информацию о доступных командах смотрите в %s."
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+"Параметры настройки и синтаксис описаны в apt.conf(5).\n"
+"Информацию о том, как настроить источники, можно найти в sources.list(5).\n"
+"Выбор пакетов и версий описывается через apt_preferences(5).\n"
+"Информация о безопасности доступна в apt-secure(8).\n"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "В APT есть коровья СУПЕРСИЛА."
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr "В этой программе есть Super Meep Powers."
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "Не найдено ни одного пакета"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "ВНИМАНИЕ: Следующие пакеты невозможно аутентифицировать!"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr "Предупреждение об аутентификации не принято в внимание.\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "Некоторые пакеты невозможно аутентифицировать"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "Установить эти пакеты без проверки?"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes устарел, вместо него используйте параметры, начинающиеся с --"
+"allow."
+
+#: apt-private/private-download.cc
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr ""
+"Обнаружены неудостоверенные пакеты и был указан параметр -y без --allow-"
+"unauthenticated."
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "Не удалось определить количество свободного места в %s"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "Недостаточно свободного места в %s."
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "Невозможно заблокировать каталог, куда складываются скачиваемые файлы"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"Некоторые пакеты невозможно установить. Возможно, вы просите невозможного,\n"
+"или же используете нестабильную версию дистрибутива, где запрошенные вами\n"
+"пакеты ещё не созданы или были удалены из Incoming."
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "Следующая информация, возможно, поможет вам:"
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "Сломанные пакеты"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr ""
+"Внутренняя ошибка, InstallPackages была вызвана с неработоспособными "
+"пакетами!"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr "Пакеты необходимо удалить, но удаление запрещено."
+
+#: apt-private/private-install.cc
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr ""
+"Удалены пакеты первой необходимости и был указан параметр -y без --allow-"
+"remove-essential."
+
+#: apt-private/private-install.cc
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr ""
+"Пакеты заменены на старые версии и был указан параметр -y без --allow-"
+"downgrades."
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+"Были изменены зафиксированные пакеты и был указан параметр -y без --allow-"
+"change-held-packages."
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "Внутренняя ошибка, Ordering не завершилась"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "Необходимо скачать %sB/%sB архивов.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "Необходимо скачать %sБ архивов.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr ""
+"После данной операции, объём занятого дискового пространства возрастёт на "
+"%sB.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr ""
+"После данной операции, объём занятого дискового пространства уменьшится на "
+"%sB.\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr ""
+"Запрошено выполнение только тривиальных операций, но это не тривиальная "
+"операция."
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Да, делать, как я скажу!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"То, что вы хотите сделать, может иметь нежелательные последствия.\n"
+"Чтобы продолжить, введите фразу: «%s»\n"
+" ?] "
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "Аварийное завершение."
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "Хотите продолжить?"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "Некоторые файлы скачать не удалось"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "Указан режим «только скачивание», и скачивание завершено"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Невозможно получить некоторые архивы, вероятно надо запустить apt-get update "
+"или попытаться повторить запуск с ключом --fix-missing"
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "--fix-missing и смена носителя в данный момент не поддерживаются"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "Невозможно исправить ситуацию с пропущенными пакетами."
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "Аварийное завершение установки."
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+"Следующий пакет исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
+msgstr[1] ""
+"Следующие пакеты исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
+msgstr[2] ""
+"Следующие пакеты исчез из системы, так как все их файлы\n"
+"теперь берутся из других пакетов:"
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr "Замечание: это сделано автоматически и специально программой dpkg."
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "Не предполагалось удалять stuff, невозможно запустить AutoRemover"
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"Хм, кажется, что AutoRemover был как-то удалён, чего не должно\n"
+"было случиться. Пожалуйста, отправьте сообщение об ошибке в пакете apt."
+
+#: apt-private/private-install.cc
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "Внутренняя ошибка, AutoRemover всё поломал"
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "Следующий пакет устанавливался автоматически и больше не требуется:"
+msgstr[1] ""
+"Следующие пакеты устанавливались автоматически и больше не требуются:"
+msgstr[2] ""
+"Следующие пакеты устанавливались автоматически и больше не требуются:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "%lu пакет был установлен автоматически и больше не требуется.\n"
+msgstr[1] "%lu пакета было установлено автоматически и больше не требуется.\n"
+msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "Для его удаления используйте «%s»."
+msgstr[1] "Для их удаления используйте «%s»."
+msgstr[2] "Для их удаления используйте «%s»."
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr ""
+"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
+"f install»:"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"Неудовлетворённые зависимости. Попытайтесь выполнить «apt-get -f install», "
+"не указывая имени пакета, (или найдите другое решение)."
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "Будут установлены следующие дополнительные пакеты:"
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "Предлагаемые пакеты:"
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "Рекомендуемые пакеты:"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "Пропускается %s — пакет уже установлен и нет команды upgrade.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr ""
+"Пропускается %s — пакет не установлен, а запрошено только обновление.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Переустановка %s невозможна, он не скачивается.\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "Уже установлен пакет %s самой новой версии (%s).\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "%s установлен вручную.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Выбрана версия «%s» (%s) для «%s»\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Выбрана версия «%s» (%s) для «%s» из-за «%s»\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr "Вывод списка"
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] "Есть %i дополнительная версия. Используйте «-a» для просмотра"
+msgstr[1] "Есть %i дополнительные версии. Используйте «-a» для их просмотра"
+msgstr[2] "Есть %i дополнительных версий. Используйте «-a» для их просмотра"
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+"ЗАМЕЧАНИЕ: Производить только имитация работы!\n"
+"      Для реальной работы %s требуются права суперпользователя.\n"
+"      Учтите, что блокировка не используется,\n"
+"      поэтому нет полного соответствия с текущей реальной ситуацией!\n"
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr "неизвестно"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr "[установлен, может быть обновлён до: %s]"
+
+#: apt-private/private-output.cc
+msgid "[installed,local]"
+msgstr "[установлен, локальный]"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr "[установлен, удаляется автоматически]"
+
+#: apt-private/private-output.cc
+msgid "[installed,automatic]"
+msgstr "[установлен, автоматически]"
+
+#: apt-private/private-output.cc
+msgid "[installed]"
+msgstr "[установлен]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr "[может быть обновлён с: %s]"
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr "[остались файлы настроек]"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "но %s уже установлен"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "но %s будет установлен"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "но он не может быть установлен"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "но это виртуальный пакет"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "но он не будет установлен"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "но он не установлен"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr " или"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "Пакеты, имеющие неудовлетворённые зависимости:"
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "НОВЫЕ пакеты, которые будут установлены:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "Пакеты, которые будут УДАЛЕНЫ:"
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "Пакеты, которые будут оставлены в неизменном виде:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "Пакеты, которые будут обновлены:"
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "Пакеты, будут заменены на более СТАРЫЕ версии:"
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr ""
+"Пакеты, которые должны были бы остаться без изменений, но будут заменены:"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s (вследствие %s)"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"ВНИМАНИЕ: Эти существенно важные пакеты будут удалены.\n"
+"НЕ ДЕЛАЙТЕ этого, если вы НЕ представляете себе все возможные последствия!"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "обновлено %lu, установлено %lu новых пакетов, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "переустановлено %lu переустановлено, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "%lu пакетов заменены на старые версии, "
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "для удаления отмечено %lu пакетов, и %lu пакетов не обновлено.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "не установлено до конца или удалено %lu пакетов.\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr "[Д/н]"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr "[д/Н]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr "Д"
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr "Н"
+
+#: apt-private/private-search.cc
+msgid "You must give at least one search pattern"
+msgstr "Вы должны задать не менее одно шаблона поиска"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr "Полнотекстовый поиск"
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "Список пакетов %s рассинхронизирован."
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] "Есть %i дополнительная запись. Используйте «-a» для просмотра"
+msgstr[1] "Есть %i дополнительные записи. Используйте «-a» для их просмотра"
+msgstr[2] "Есть %i дополнительных записей. Используйте «-a» для их просмотра"
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr "не реальный (виртуальный) пакет"
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "Списки пакетов:"
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "Кэш рассинхронизирован, невозможно обнаружить ссылку на список пакетов"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "Зафиксированные пакеты:"
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr "%s -> %s с приоритетом %d\n"
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  Установлен: "
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  Кандидат: "
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(отсутствует)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  Таблица версий:"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Не удалось найти пакет для архитектуры «%s»"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Не удалось найти пакет «%s» версии «%s»"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Не удалось найти пакет «%s» в выпуске «%s»"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "Используется «%s» в качестве исходного пакета вместо «%s»\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr "Не удалось найти версию «%s» пакета «%s»"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr ""
+"Укажите как минимум один пакет, исходный код которого необходимо получить"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "Невозможно найти пакет с исходным кодом для %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"ВНИМАНИЕ: упаковка «%s» поддерживается в системе контроля версий «%s»:\n"
+"%s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"Используйте:\n"
+"%s\n"
+"для получения последних (возможно не выпущенных) обновлений пакета.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "Пропускаем уже скачанный файл «%s»\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "Необходимо получить %sб/%sб архивов исходного кода.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "Необходимо получить %sб архивов исходного кода.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "Получение исходного кода %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "Некоторые архивы не удалось получить."
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "Пропускается распаковка уже распакованного исходного кода в %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "Команда распаковки «%s» завершилась неудачно.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "Команда сборки «%s» завершилась неудачно.\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "Невозможно получить информацию о зависимостях для сборки %s"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s не имеет зависимостей для сборки.\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Для проверки зависимостей для сборки необходимо указать как минимум один "
+"пакет"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+"У %s отсутствует информация об архитектуре. Для её настройки смотрите apt."
+"conf(5) APT::Architectures"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr "Заметим, используется каталог «%s» для получения зависимостей сборки\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "Заметим, используется файл «%s» для получения зависимостей сборки\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "Обработка зависимостей для сборки завершилась неудачно"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "Не удалось разобрать «%s». Повторить редактирование? "
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr "Файл «%s» изменён, запустите «apt-get update»."
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "Пакет %s версии %s имеет неудовлетворённую зависимость:\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "Команде update не нужны аргументы"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+"Может быть обновлён %i пакет. Запустите «apt list --upgradable» для показа.\n"
+msgstr[1] ""
+"Может быть обновлено %i пакета. Запустите «apt list --upgradable» для их "
+"показа.\n"
+msgstr[2] ""
+"Может быть обновлено %i пакетов. Запустите «apt list --upgradable» для их "
+"показа.\n"
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr "Все пакеты имеют последние версии."
+
+#: cmdline/apt-cache.cc
+msgid "apt-cache stats does not take any arguments"
+msgstr "Команде apt-cache stats не нужны аргументы"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "Всего имён пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "Total package structures: "
+msgstr "Всего структур пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  Обычных пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr "  Полностью виртуальных пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr "  Одиночных виртуальных пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr "  Смешанных виртуальных пакетов: "
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "  Отсутствует: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "Всего уникальных версий: "
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct descriptions: "
+msgstr "Всего уникальных описаний: "
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "Всего зависимостей: "
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "Всего отношений Версия/Файл: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Desc/File relations: "
+msgstr "Всего отношений Описание/Файл: "
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "Всего отношений Provides: "
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "Всего развёрнутых строк: "
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "Пустого места в кэше: "
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "Полное учтённое пространство: "
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr "Эта команда устарела. Используйте вместо неё «apt-mark showauto»."
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+"Использование: apt-cache [параметры] команда\n"
+"       apt-cache [параметры] show пакет1 [пакет2 …]\n"
+"\n"
+"apt-cache ищет и выдаёт доступную информацию об установленных\n"
+"и неустановленных пакетах. Она работает только с данными локального\n"
+"кэша, созданного командой «update» программы apt-get. В следствие\n"
+"этого отображаемая информация может устаревшей, если обновление\n"
+"долго не выполнялось, но зато apt-cache работает независимо от\n"
+"доступности настроенных источников (например, без сети).\n"
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "показать записи об источниках"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "найти пакеты, имя которых удовлетворяет регулярному выражению"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "показать необработанную информацию о зависимостях пакета"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "показать информацию об обратных зависимостях пакета"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "показать информацию о пакете в удобочитаемой форме"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "показать имена всех пакетов в системе"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "показать текущую политику выбора пакетов"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr "Задайте имя для этого диска, например «Debian 5.0.3 Disk 1»"
+
+#: cmdline/apt-cdrom.cc
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "Вставьте диск в устройство и нажмите [Enter]"
+
+#: cmdline/apt-cdrom.cc
+#, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "Не удалось примонтировать «%s» к «%s»"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+"Не удалось автоматически обнаружить CD-ROM и в точке монтирования по "
+"умолчанию\n"
+"также ничего нет. Вы можете использовать параметр --cdrom, чтобы указать "
+"точку\n"
+"монтирования CD-ROM. Подробней о точке монтирования и автоматическом\n"
+"обнаружении CD-ROM смотрите в «man apt-cdrom»."
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "Повторите этот процесс для всех имеющихся CD."
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+"Использование: apt-cdrom [параметры] команда\n"
+"\n"
+"apt-cdrom используется для добавления CDROM, накопителей USB и других\n"
+"сменных носителей в качестве источников пакетов APT. Точка монтирования и\n"
+"информация об устройстве берётся из apt.conf(5), udev(7) и fstab(5).\n"
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "Непарные аргументы"
+
+#: cmdline/apt-config.cc
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"Использование: apt-config [параметры] команда\n"
+"\n"
+"apt-config — интерфейс к параметрам настройки, используемым\n"
+"всеми инструментами APT, в основном, предназначен для отладки и\n"
+"использования в сценариях оболочки.\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr "получить значения настройки через вычисления оболочки"
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr "показать действующее значение настройки"
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"Использование: apt-extracttemplates файл1 [файл2 …]\n"
+"\n"
+"apt-extracttemplates извлекает из пакетов Debian файлы config и template.\n"
+"В основном, она используется debconf(1) для предложения\n"
+"вопросов настройки перед установкой пакетов.\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "Невозможно определить версию debconf. Он установлен?"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "Не удалось найти пакет %s"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "%s выбран для автоматической установки.\n"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+"Эта команда устарела. Используйте вместо неё «apt-mark auto» и «apt-mark "
+"manual»."
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr "Внутренняя ошибка, решатель проблем всё поломал"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "Поддерживаемые модули:"
+
+#: cmdline/apt-get.cc
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"Использование: apt-get [параметры] команда\n"
+"               apt-get [параметры] install|remove пакет1 [пакет2…]\n"
+"               apt-get [параметры] source пакет1 [пакет2…]\n"
+"\n"
+"apt-get — интерфейс командной строки для получения пакетов,\n"
+"информации из доверенных источников, а также установки,\n"
+"обновления и удаления пакетов вместе с их зависимостями.\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "получить новые списки пакетов"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "выполнить обновление"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+"установить новые пакеты (на месте пакета указывается имя пакета (libc6, а не "
+"имя файла libc6.deb)"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "удалить пакеты"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "удалить пакеты вместе с их файлами настройки"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "автоматически удалить все неиспользуемые пакеты"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "обновить всю систему, подробнее в apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "руководствоваться выбором, сделанным в dselect"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "настроить всё необходимое для сборки пакета из исходного кода"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "удалить скачанные файлы архивов"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "удалить старые скачанные файлы архивов"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "проверить наличие нарушенных зависимостей"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "скачать архивы с исходным кодом"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr "скачать двоичный пакет в текущий каталог"
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr "скачать и показать файл изменений заданного пакета"
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr "В качестве аргумента требуется URL"
+
+#: cmdline/apt-helper.cc
+msgid "Must specify at least one pair url/filename"
+msgstr "Укажите, как минимум, одну пару url/имя файла"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr "Ошибка при скачивании"
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr "Ошибка GetSrvRec для %s"
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+"Использование: apt-helper [параметры] команда\n"
+"       apt-helper [параметры] cat-файл файл …\n"
+"       apt-helper [параметры] download-file uri target-path\n"
+"\n"
+"apt-helper — набор различных команд для сценариев оболочки,\n"
+"которые используются для обмена настройками между APT и системой.\n"
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr "скачать файл по заданному uri в target-path"
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr "найти запись типа SRV (например, _http._tcp.ftp.debian.org)"
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr "склеить файлы, с автоматическим разжатием"
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr "определять прокси с помощью apt.conf"
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"Использование: apt-internal-solver\n"
+"\n"
+"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
+"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
+
+#: cmdline/apt-internal-solver.cc
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"Использование: apt-internal-solver\n"
+"\n"
+"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
+"для отладки, подобен интерфейсу внешнего решателя семейства APT.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "%s не может быть помечен, так он не установлен.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "%s уже помечен как установленный вручную.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "%s уже помечен как установленный автоматически.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s уже помечен как зафиксированный.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s уже помечен как не зафиксированный.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+"Выполнение dpkg завершилось с ошибкой. У вас есть права суперпользователя?"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "%s set on hold.\n"
+msgstr "%s помечен как зафиксированный.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "Отмена фиксации для %s.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr "Выбран %s для вычистки.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr "Выбран %s для удаления.\n"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr "Выбран %s для установки.\n"
+
+#: cmdline/apt-mark.cc
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+"Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2 …]\n"
+"\n"
+"apt-mark — простая программа с интерфейсом командной строки\n"
+"для пометки пакетов, что они установлены вручную или автоматически.\n"
+"Также может использоваться для изменения состояния выбора пакетов dpkg(1) и\n"
+"показывать списки пакетов с или без определённой метки.\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as automatically installed"
+msgstr "пометить указанные пакеты, как установленные автоматически"
+
+#: cmdline/apt-mark.cc
+msgid "Mark the given packages as manually installed"
+msgstr "пометить указанные пакеты, как установленные вручную"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr "пометить пакет как зафиксированный"
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr "снять метку пакета, что он зафиксирован"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of automatically installed packages"
+msgstr "вывести список автоматически установленных пакетов"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of manually installed packages"
+msgstr "вывести список пакетов установленных вручную"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr "вывести список зафиксированных пакетов"
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "Запись о неизвестном пакете!"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+"Использование: apt-sortpkgs [параметры] файл1 [файл2 …]\n"
+"\n"
+"apt-sortpkgs — простой инструмент для сортировки информационных файлов\n"
+"пакетов. По умолчанию, он сортирует информацию о двоичных пакетах,\n"
+"но можно указать параметр -s, и будет выполняться сортировка пакетов\n"
+"с исходным кодом.\n"
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+"Использование: apt [параметры] команда\n"
+"\n"
+"apt — менеджер пакетов с интерфейсом командной строки, предоставляет "
+"команды\n"
+"для поиска и управления, а также запросов информации о пакетах.\n"
+"Он выполняет те же задачи, что и специализированные инструменты APT,\n"
+"например apt-get и apt-cache, но содержит параметры, которые больше\n"
+"подходят для интерактивного использования по умолчанию.\n"
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr "показать список пакетов из указанных имён пакетов"
+
+#: cmdline/apt.cc
+msgid "search in package descriptions"
+msgstr "искать в описаниях пакетов"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr "показать дополнительные данные о пакете"
+
+#. package stuff
+#: cmdline/apt.cc
+msgid "install packages"
+msgstr "установить пакеты"
+
+#: cmdline/apt.cc
+msgid "remove packages"
+msgstr "удалить пакеты"
+
+#. system wide stuff
+#: cmdline/apt.cc
+msgid "update list of available packages"
+msgstr "обновить список доступных пакетов"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr "обновить систему, устанавливая/обновляя пакеты"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
+
+#. misc
+#: cmdline/apt.cc
+msgid "edit the source information file"
+msgstr "редактировать файл с источниками пакетов"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "Неправильное значение по умолчанию!"
+
+#: dselect/install dselect/update
+msgid "Press [Enter] to continue."
+msgstr "Для продолжения нажмите [Enter]."
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "Удалить все ранее скачанные .deb файлы?"
+
+#: dselect/install
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "Во время распаковки возникли ошибки. Пакеты, которые были установлены,"
+
+#: dselect/install
+msgid "will be configured. This may result in duplicate errors"
+msgstr "будут настроены. Это может привести к повторению ошибок"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr ""
+"или возникновению новых из-за неудовлетворённых зависимостей. Это нормально, "
+"важны"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr ""
+"только ошибки, указанные в этом сообщении. Исправьте их и выполните "
+"установку ещё раз"
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "Слияние доступной информации"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "Список расширений, допустимых для пакетов, слишком длинен"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "Ошибка обработки каталога %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "Список расширений источников слишком длинен"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr ""
+"Ошибка записи заголовка в полный перечень содержимого пакетов (Contents)"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "ошибка обработки полного перечня содержимого пакетов (Contents) %s"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"Использование: apt-ftparchive [параметры] команда\n"
+"Команды:  packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive генерирует индексные файлы архивов Debian. Он поддерживает\n"
+"множество стилей генерации: от полностью автоматического до функциональной "
+"замены\n"
+"программ dpkg-scanpackages и dpkg-scansources\n"
+"\n"
+"apt-ftparchive генерирует файлы Package (списки пакетов) для дерева\n"
+"каталогов, содержащих файлы .deb. Файл Package включает в себя управляющие\n"
+"поля каждого пакета, а также хеш MD5 и размер файла. Значения управляющих\n"
+"полей «приоритет» (Priority) и «секция» (Section) могут быть изменены с\n"
+"помощью файла override.\n"
+"\n"
+"Кроме того, apt-ftparchive может генерировать файлы Sources из дерева\n"
+"каталогов, содержащих файлы .dsc. Для указания файла override в этом \n"
+"режиме можно использовать параметр --source-override.\n"
+"\n"
+"Команды «packages» и «sources» надо выполнять, находясь в корневом каталоге\n"
+"дерева, которое вы хотите обработать. BinaryPath должен указывать на место,\n"
+"с которого начинается рекурсивный обход, а файл переназначений (override)\n"
+"должен содержать записи о переназначениях управляющих полей. Если был "
+"указан\n"
+"Pathprefix, то его значение добавляется к управляющим полям, содержащим\n"
+"имена файлов. Пример использования для архива Debian:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Параметры:\n"
+"  -h    Этот текст\n"
+"  --md5 Управление генерацией MD5-хешей\n"
+"  -s=?  Указать файл переназначений (override) для источников\n"
+"  -q    Не выводить сообщения в процессе работы\n"
+"  -d=?  Указать кэширующую базу данных (не обязательно)\n"
+"  --no-delink Включить режим отладки процесса удаления файлов\n"
+"  --contents  Управление генерацией полного перечня содержимого пакетов\n"
+"              (файла Contents)\n"
+"  -c=?  Использовать указанный файл настройки\n"
+"  -o=?  Задать значение произвольному параметру настройки"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "Совпадений не обнаружено"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "В группе пакетов «%s» отсутствуют некоторые файлы"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "БД была повреждена, файл переименован в %s.old"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "DB устарела, попытка обновить %s"
+
+#: ftparchive/cachedb.cc
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"Некорректный формат базы данных (DB). Если вы обновляли версию apt, удалите "
+"и создайте базу данных заново."
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "Не удалось открыть DB файл %s: %s"
+
+#: ftparchive/cachedb.cc
+msgid "Failed to read .dsc"
+msgstr "Не удалось прочесть .dsc"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "В архиве нет поля control"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "Невозможно получить курсор"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc — не удалось выделить память"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "Неизвестный алгоритм сжатия «%s»"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr ""
+"Для получения сжатого вывода %s необходимо включить использования сжатия"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "Не удалось создать IPC-канал для порождённого процесса"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "Не удалось запустить порождённый процесс"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "Процесс-потомок, производящий сжатие"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "Внутренняя ошибка, не удалось создать %s"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "Ошибка ввода/вывода в подпроцесс/файл"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "Ошибка чтения во время вычисления MD5"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "Не удалось открыть %s"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu (%s)"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "Не удалось прочесть файл переназначений (override) %s"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #2"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "W: Не удалось прочитать каталог %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "W: Не удалось прочитать атрибуты %s\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "E: "
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "W: "
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "E: Ошибки относятся к файлу "
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "Не удалось проследовать по ссылке %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "Не удалось совершить обход дерева"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "Не удалось открыть %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr "DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** Не удалось создать ссылку %s на %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " Превышен лимит в %sB в DeLink.\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "В архиве нет поля package"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  Нет записи о переназначении (override) для %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  пакет %s сопровождает %s, а не %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  Нет записи source override для %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  Нет записи binary override для %s\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "Невозможно прочесть базу %s с CD"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"Пожалуйста, используйте apt-cdrom, чтобы APT смог распознать данный CD. apt-"
+"get update не используется для добавления нового CD"
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "Ошибочный CD"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "Невозможно размонтировать CD-ROM в %s, возможно он ещё используется."
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "Диск не найден."
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "Файл не найден"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Соединение с %s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "Не удаётся создать сокет для %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "Невозможно инициализировать соединение с %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Не удаётся соединиться с %s:%s (%s), connection timed out"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "Неудачно"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "Не удаётся соединиться с %s:%s (%s)."
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "Соединение с %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "Не удалось найти IP-адрес для «%s»"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "Временная ошибка при попытке получить IP-адрес «%s»"
+
+#: methods/connect.cc
+#, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Системная ошибка при определении «%s:%s»"
+
+#: methods/connect.cc
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "Что-то странное произошло при определении «%s:%s» (%i - %s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "Невозможно соединиться с %s: %s:"
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "Не удалось получить атрибуты"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "Неправильный URI, локальный URI не должен начинаться с //"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "Вход в систему"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "Невозможно определить имя удалённого сервера"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "Невозможно определить локальное имя"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "Сервер разорвал соединение и сообщил: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "Команда USER не выполнена, сервер сообщил: %s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "Команда PASS не выполнена, сервер сообщил: %s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"Proxy-сервер указан, однако нет сценария входа в систему, Acquire::ftp::"
+"ProxyLogin пуст."
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr ""
+"Команда «%s» сценария входа в систему завершилась неудачно, сервер сообщил: "
+"%s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "Команда TYPE не выполнена, сервер сообщил: %s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "Допустимое время ожидания для соединения истекло"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "Сервер прервал соединение"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "Ответ переполнил буфер."
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "Искажение протокола"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "Не удалось создать сокет"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr ""
+"Не удалось присоединиться к сокету данных, время на установление соединения "
+"истекло"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "Невозможно присоединить пассивный сокет"
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "Вызов getaddrinfo не смог получить сокет"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "Невозможно присоединиться к сокету"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "Не удалось принимать соединения на сокете"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "Не удалось определить имя сокета"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "Невозможно послать команду PORT"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "Неизвестное семейство адресов %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "Команда EPRT не выполнена, сервер сообщил: %s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Время установления соединения для сокета данных истекло"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "Невозможно принять соединение"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "Проблема при хешировании файла"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "Невозможно получить файл, сервер сообщил: «%s»"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Время ожидания соединения для сокета данных истекло"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "Передача данных завершилась неудачно, сервер сообщил: «%s»"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "Запрос"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "Невозможно вызвать "
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+"Подписанный файл некорректен, получено «%s» (возможно в сети требуется "
+"аутентификация?)"
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "Найдена как минимум одна неправильная подпись."
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr ""
+"Внутренняя ошибка: Правильная подпись, но не удалось определить отпечаток "
+"ключа?!"
+
+#: methods/gpgv.cc
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr ""
+"Не удалось выполнить «apt-key» для проверки подписи (gnupg установлена?)"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "Неизвестная ошибка при выполнении apt-key"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr "При подписи ключом %s используется нестойкий алгоритм свёртки (%s)"
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "Следующие подписи неверные:\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr ""
+"Следующие подписи не могут быть проверены, так как недоступен открытый "
+"ключ:\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "Ошибка записи в файл"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr "Ошибка чтения, удалённый сервер прервал соединение"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "Ошибка чтения с сервера"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "Ошибка записи в файл"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "Ошибка в select"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "Время ожидания для соединения истекло"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "Ошибка записи в выходной файл"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr "Файл «%s» не найден на зеркале"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "Невозможно прочитать файл на зеркале «%s»"
+
+#: methods/mirror.cc
+#, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Не найден элемент в файл на зеркале «%s»"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr "[Зеркало: %s]"
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "Не удалось установить время модификации"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "Соединение закрыто преждевременно"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "Ожидание заголовков"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "Неверный заголовок"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "Http-сервер послал неверный заголовок"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "Http сервер послал неверный заголовок Content-Length"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "Http-сервер послал неверный заголовок Content-Range"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "Этот HTTP-сервер не поддерживает скачивание фрагментов файлов"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "Неизвестный формат данных"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "Неверный заголовок данных"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "Соединение разорвано"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+"Автоматическое отключение %s из-за некорректного ответа сервера/прокси (man "
+"5 apt.conf)."
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "Внутренняя ошибка"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr "Пустые файлы не могут быть допустимыми архивами"
 
 #~ msgid "(not found)"
 #~ msgstr "(не найдено)"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-04 10:25+0200\n"
+"POT-Creation-Date: 2016-08-11 13:57+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -19,2256 +19,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Hit:%lu %s"
-msgstr "已有:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
-#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Get:%lu %s"
-msgstr "下載:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download, but the error is ignored (compare "Err:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Ign:%lu %s"
-msgstr "略過:%lu %s"
-
-#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
-#. which failed to download and the error is critical (compare "Ign:")
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Err:%lu %s"
-msgstr "錯誤:%lu %s"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "取得 %sB 用了 %s (%sB/s)\n"
-
-#: apt-private/acqprogress.cc
-msgid " [Working]"
-msgstr " [工作中]"
-
-#: apt-private/acqprogress.cc
-#, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press [Enter]\n"
-msgstr ""
-"更換媒體：請把以下名稱的光碟\n"
-" '%s'\n"
-"放入 '%s' 裝置，然後按 [Enter] 鍵\n"
-
-#: apt-private/private-cachefile.cc
-msgid "Correcting dependencies..."
-msgstr "正在修正相依關係..."
-
-#: apt-private/private-cachefile.cc
-msgid " failed."
-msgstr " 失敗。"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to correct dependencies"
-msgstr "無法修正相依關係"
-
-#: apt-private/private-cachefile.cc
-msgid "Unable to minimize the upgrade set"
-msgstr "無法將升級計劃最小化"
-
-#: apt-private/private-cachefile.cc
-msgid " Done"
-msgstr " 完成"
-
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "您也許得執行 'apt-get -f install' 以修正這些問題。"
-
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "未能滿足相依關係。試試 -f 選項。"
-
-#: apt-private/private-cacheset.cc apt-private/private-search.cc
-msgid "Sorting"
-msgstr ""
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "套件 %s 是虛擬套件，提供者為：\n"
-
-#: apt-private/private-cacheset.cc
-msgid " [Installed]"
-msgstr "【已安裝】"
-
-#: apt-private/private-cacheset.cc
-msgid " [Not candidate version]"
-msgstr "【非候選版本】"
-
-#: apt-private/private-cacheset.cc
-msgid "You should explicitly select one to install."
-msgstr "請您明確地選擇一個來進行安裝。"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"無法取得套件 %s，但它卻被其它的套件引用了。\n"
-"這意味著這個套件可能已經消失了、被廢棄了，或是只能由其他的來源取得\n"
-
-#: apt-private/private-cacheset.cc
-msgid "However the following packages replace it:"
-msgstr "然而，下列的套件取代了它："
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "套件 %s 沒有可安裝的候選版本"
-
-#: apt-private/private-cacheset.cc
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
-
-#. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
-
-#: apt-private/private-cacheset.cc apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Package '%s' is not installed, so not removed\n"
-msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
-
-#: apt-private/private-cacheset.cc
-#, fuzzy, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "注意，選擇了以 %s 替代 %s\n"
-
-#: apt-private/private-cmndline.cc
-msgid "Most used commands:"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-#, c-format
-msgid "See %s for more information about the available commands."
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid ""
-"Configuration options and syntax is detailed in apt.conf(5).\n"
-"Information about how to configure sources can be found in sources.list(5).\n"
-"Package and version choices can be expressed via apt_preferences(5).\n"
-"Security details are available in apt-secure(8).\n"
-msgstr ""
-
-#: apt-private/private-cmndline.cc
-msgid "This APT has Super Cow Powers."
-msgstr "該 APT 有著超級牛力。"
-
-#: apt-private/private-cmndline.cc
-msgid "This APT helper has Super Meep Powers."
-msgstr ""
-
-#: apt-private/private-depends.cc apt-private/private-show.cc
-#: cmdline/apt-mark.cc
-msgid "No packages found"
-msgstr "未找到套件"
-
-#: apt-private/private-download.cc
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "【警告】：無法驗證下列套件！"
-
-#: apt-private/private-download.cc
-msgid "Authentication warning overridden.\n"
-msgstr "忽略了驗證警告。\n"
-
-#: apt-private/private-download.cc
-msgid "Some packages could not be authenticated"
-msgstr "有部份套件無法驗證"
-
-#: apt-private/private-download.cc
-msgid "Install these packages without verification?"
-msgstr "是否不經驗證就安裝這些套件？"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-
-#: apt-private/private-download.cc
-#, fuzzy
-msgid ""
-"There were unauthenticated packages and -y was used without --allow-"
-"unauthenticated"
-msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
-
-#: apt-private/private-download.cc apt-pkg/update.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "無法取得 %s，%s"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "無法確認 %s 的未使用空間"
-
-#: apt-private/private-download.cc
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "在 %s 裡沒有足夠的的未使用空間。"
-
-#: apt-private/private-download.cc
-msgid "Unable to lock the download directory"
-msgstr "無法鎖定下載目錄"
-
-#: apt-private/private-install.cc
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"有些套件無法安裝。這可能意謂著您的要求難以解決，或是若您使用的是\n"
-"unstable 發行版，可能有些必要的套件尚未建立，或是被移出 Incoming 了。"
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << std::endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << std::endl;
-#. }
-#.
-#: apt-private/private-install.cc
-msgid "The following information may help to resolve the situation:"
-msgstr "以下的資訊或許有助於解決當前的情況："
-
-#: apt-private/private-install.cc
-msgid "Broken packages"
-msgstr "損毀的套件"
-
-#: apt-private/private-install.cc
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "內部錯誤，在損毀的套件上執行 InstallPackages！"
-
-#: apt-private/private-install.cc
-msgid "Packages need to be removed but remove is disabled."
-msgstr "有套件需要被移除，但卻被禁止移除。"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"Essential packages were removed and -y was used without --allow-remove-"
-"essential."
-msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
-
-#: apt-private/private-install.cc
-msgid ""
-"Held packages were changed and -y was used without --allow-change-held-"
-"packages."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "Internal error, Ordering didn't finish"
-msgstr "內部錯誤，排序未能完成"
-
-#: apt-private/private-install.cc
-msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "怪哉... 檔案大小不符，請發信給 apt@packages.debian.org"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "需要下載 %sB/%sB 的套件檔。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "需要下載 %sB 的套件檔。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
-
-#: apt-private/private-install.cc
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 trivial 操作。"
-
-#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-#. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc
-msgid "Yes, do as I say!"
-msgstr "Yes, do as I say!"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"您所進行的操作可能會帶來危險。\n"
-"請輸入 '%s' 這個句子以繼續進行\n"
-" ?] "
-
-#: apt-private/private-install.cc
-msgid "Abort."
-msgstr "放棄執行。"
-
-#: apt-private/private-install.cc
-msgid "Do you want to continue?"
-msgstr "是否繼續進行 [Y/n]？"
-
-#: apt-private/private-install.cc
-msgid "Some files failed to download"
-msgstr "有部份檔案無法下載"
-
-#: apt-private/private-install.cc apt-private/private-source.cc
-msgid "Download complete and in download only mode"
-msgstr "下載完成，且這是『僅下載』模式"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"有部份套件檔無法取得，試著執行 apt-get update 或者試著加上 --fix-missing 選"
-"項？"
-
-#: apt-private/private-install.cc
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "目前尚未支援 --fix-missing 和媒體抽換"
-
-#: apt-private/private-install.cc
-msgid "Unable to correct missing packages."
-msgstr "無法修正欠缺的套件。"
-
-#: apt-private/private-install.cc
-msgid "Aborting install."
-msgstr "放棄安裝。"
-
-#: apt-private/private-install.cc
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr ""
-
-#: apt-private/private-install.cc
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "我們沒有計劃要刪除任何東西，無法啟動 AutoRemover"
-
-#: apt-private/private-install.cc
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr ""
-"嗯，看起來 AutoRemover 弄壞了什麼東西，而這是不該發生的。\n"
-"請針對 apt 發佈錯誤回報。"
-
-#: apt-private/private-install.cc
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "內部錯誤，AutoRemover 處理失敗"
-
-#: apt-private/private-install.cc
-#, fuzzy
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
-msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
-msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "使用 '%s' 來將其移除。"
-msgstr[1] "使用 '%s' 來將其移除。"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
-"決方案）。"
-
-#: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "下列的額外套件將被安裝："
-
-#: apt-private/private-install.cc
-msgid "Suggested packages:"
-msgstr "建議套件："
-
-#: apt-private/private-install.cc
-msgid "Recommended packages:"
-msgstr "推薦套件："
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "無法重新安裝 %s，因為它無法下載。\n"
-
-#. TRANSLATORS: First string is package name, second is version
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "%s is already the newest version (%s).\n"
-msgstr "%s 已經是最新版本了。\n"
-
-#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
-
-#: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
-
-#: apt-private/private-list.cc
-msgid "Listing"
-msgstr ""
-
-#: apt-private/private-list.cc
-#, c-format
-msgid "There is %i additional version. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#. TRANSLATORS: placeholder is a binary name like apt or apt-get
-#: apt-private/private-main.cc
-#, c-format
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      %s needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!\n"
-msgstr ""
-
-#: apt-private/private-output.cc apt-private/private-show.cc
-msgid "unknown"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy, c-format
-msgid "[installed,upgradable to: %s]"
-msgstr "【已安裝】"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,local]"
-msgstr "【已安裝】"
-
-#: apt-private/private-output.cc
-msgid "[installed,auto-removable]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed,automatic]"
-msgstr "【已安裝】"
-
-#: apt-private/private-output.cc
-#, fuzzy
-msgid "[installed]"
-msgstr "【已安裝】"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "[upgradable from: %s]"
-msgstr ""
-
-#: apt-private/private-output.cc
-msgid "[residual-config]"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is installed"
-msgstr "但 %s 卻已安裝"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "but %s is to be installed"
-msgstr "但 %s 卻將被安裝"
-
-#: apt-private/private-output.cc
-msgid "but it is not installable"
-msgstr "但它卻無法安裝"
-
-#: apt-private/private-output.cc
-msgid "but it is a virtual package"
-msgstr "但它是虛擬套件"
-
-#: apt-private/private-output.cc
-msgid "but it is not installed"
-msgstr "但它卻尚未安裝"
-
-#: apt-private/private-output.cc
-msgid "but it is not going to be installed"
-msgstr "但它卻將不會被安裝"
-
-#: apt-private/private-output.cc
-msgid " or"
-msgstr "或"
-
-#: apt-private/private-output.cc
-msgid "The following packages have unmet dependencies:"
-msgstr "下列的套件有未滿足的相依關係："
-
-#: apt-private/private-output.cc
-msgid "The following NEW packages will be installed:"
-msgstr "下列【新】套件將會被安裝："
-
-#: apt-private/private-output.cc
-msgid "The following packages will be REMOVED:"
-msgstr "下列套件將會被【移除】："
-
-#: apt-private/private-output.cc
-msgid "The following packages have been kept back:"
-msgstr "下列套件將會維持其原有版本："
-
-#: apt-private/private-output.cc
-msgid "The following packages will be upgraded:"
-msgstr "下列套件將會被升級："
-
-#: apt-private/private-output.cc
-msgid "The following packages will be DOWNGRADED:"
-msgstr "下列套件將會被【降級】："
-
-#: apt-private/private-output.cc
-msgid "The following held packages will be changed:"
-msgstr "下列被保留 (hold) 的套件將會被更改："
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%s (due to %s)"
-msgstr "%s（因為 %s"
-
-#: apt-private/private-output.cc
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"【警告】：下列的基本套件都將被移除。\n"
-"除非您很清楚您在做什麼，否則請勿輕易嘗試！"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "升級 %lu 個，新安裝 %lu 個，"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "重新安裝 %lu 個，"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu downgraded, "
-msgstr "降級 %lu 個，"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "移除 %lu 個，有 %lu 個未被升級。\n"
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "%lu 個沒有完整得安裝或移除。\n"
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
-#. e.g. "Do you want to continue? [Y/n] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[Y/n]"
-msgstr ""
-
-#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
-#. e.g. "Should this file be removed? [y/N] "
-#. The user has to answer with an input matching the
-#. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc
-msgid "[y/N]"
-msgstr ""
-
-#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc
-msgid "Y"
-msgstr ""
-
-#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
-msgid "N"
-msgstr ""
-
-#: apt-private/private-output.cc apt-pkg/cachefilter.cc
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "編譯正規表示式時發生錯誤 - %s"
-
-#: apt-private/private-search.cc
-#, fuzzy
-msgid "You must give at least one search pattern"
-msgstr "您必須明確得給定一個樣式"
-
-#: apt-private/private-search.cc
-msgid "Full Text Search"
-msgstr ""
-
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "套件檔 %s 未同步。"
-
-#: apt-private/private-show.cc
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-show.cc
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-show.cc apt-pkg/cacheset.cc
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "找不到套件 %s"
-
-#: apt-private/private-show.cc
-msgid "Package files:"
-msgstr "套件檔："
-
-#: apt-private/private-show.cc
-msgid "Cache is out of sync, can't x-ref a package file"
-msgstr "快取資料未同步，無法 x-ref 套件檔"
-
-#. Show any packages have explicit pins
-#: apt-private/private-show.cc
-msgid "Pinned packages:"
-msgstr "鎖定的套件："
-
-#. Print the package name and the version we are forcing to
-#: apt-private/private-show.cc
-#, c-format
-msgid "%s -> %s with priority %d\n"
-msgstr ""
-
-#: apt-private/private-show.cc
-msgid "  Installed: "
-msgstr "  已安裝："
-
-#: apt-private/private-show.cc
-msgid "  Candidate: "
-msgstr "  候選："
-
-#: apt-private/private-show.cc
-msgid "(none)"
-msgstr "(無)"
-
-#. Show the priority tables
-#: apt-private/private-show.cc
-msgid "  Version table:"
-msgstr "  版本列表："
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package for architecture '%s'"
-msgstr "無法找到套件 %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with version '%s'"
-msgstr "無法找到套件 %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Can not find a package '%s' with release '%s'"
-msgstr "無法找到套件 %s"
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "無法取得來源套件列表 %s 的狀態"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Can not find version '%s' of package '%s'"
-msgstr ""
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to fetch source for"
-msgstr "在取得原始碼時必須至少指定一個套件"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "無法找到 %s 的原始碼套件"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"Please use:\n"
-"%s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "略過已下載的檔案 '%s'\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "需要下載 %sB/%sB 的原始套件檔。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-source.cc
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "需要下載 %sB 的原始套件檔。\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "取得原始碼 %s\n"
-
-#: apt-private/private-source.cc
-msgid "Failed to fetch some archives."
-msgstr "無法取得某些套件檔。"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "不解開，因原始碼已解開至 %s\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "解開指令 '%s' 失敗。\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "編譯指令 '%s' 失敗。\n"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "無法取得 %s 的編譯相依關係資訊"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr "%s 沒有編譯相依關係。\n"
-
-#: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "在檢查編譯相依關係時必須至少指定一個套件"
-
-#: apt-private/private-source.cc
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, c-format
-msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
-
-#: apt-private/private-source.cc
-#, fuzzy, c-format
-msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "無法處理編譯相依關係"
-
-#: apt-private/private-source.cc
-msgid "Failed to process build dependencies"
-msgstr "無法處理編譯相依關係"
-
-#: apt-private/private-sources.cc
-#, fuzzy, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "無法將 %s 更名為 %s"
-
-#: apt-private/private-sources.cc
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
-
-#: apt-private/private-unmet.cc
-#, c-format
-msgid "Package %s version %s has an unmet dep:\n"
-msgstr "套件 %s 版本 %s 未能滿足相依性：\n"
-
-#: apt-private/private-update.cc
-msgid "The update command takes no arguments"
-msgstr "update 指令不需任何參數"
-
-#: apt-private/private-update.cc
-#, c-format
-msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
-msgid_plural ""
-"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: apt-private/private-update.cc
-msgid "All packages are up to date."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
-msgstr "update 指令不需任何參數"
-
-#: cmdline/apt-cache.cc
-msgid "Total package names: "
-msgstr "套件名稱合計："
-
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "Total package structures: "
-msgstr "套件名稱合計："
-
-#: cmdline/apt-cache.cc
-msgid "  Normal packages: "
-msgstr "  一般套件："
-
-#: cmdline/apt-cache.cc
-msgid "  Pure virtual packages: "
-msgstr "  完全虛擬套件："
-
-#: cmdline/apt-cache.cc
-msgid "  Single virtual packages: "
-msgstr "  單一虛擬套件："
-
-#: cmdline/apt-cache.cc
-msgid "  Mixed virtual packages: "
-msgstr "  混合虛擬套件："
-
-#: cmdline/apt-cache.cc
-msgid "  Missing: "
-msgstr "  找不到："
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct versions: "
-msgstr "個別版本合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total distinct descriptions: "
-msgstr "個別版本類別合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total dependencies: "
-msgstr "相依關係合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total ver/file relations: "
-msgstr "版本/檔案關聯合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total Desc/File relations: "
-msgstr "類別/檔案關聯合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total Provides mappings: "
-msgstr "提供者對應合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total globbed strings: "
-msgstr "所有字串合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total slack space: "
-msgstr "間暇空間合計："
-
-#: cmdline/apt-cache.cc
-msgid "Total space accounted for: "
-msgstr "統計後的空間合計："
-
-#: cmdline/apt-cache.cc
-msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid ""
-"Usage: apt-cache [options] command\n"
-"       apt-cache [options] show pkg1 [pkg2 ...]\n"
-"\n"
-"apt-cache queries and displays available information about installed\n"
-"and installable packages. It works exclusively on the data acquired\n"
-"into the local cache via the 'update' command of e.g. apt-get. The\n"
-"displayed information may therefore be outdated if the last update was\n"
-"too long ago, but in exchange apt-cache works independently of the\n"
-"availability of the configured sources (e.g. offline).\n"
-msgstr ""
-
-#: cmdline/apt-cache.cc
-msgid "Show source records"
-msgstr "顯示原始碼報告"
-
-#: cmdline/apt-cache.cc
-msgid "Search the package list for a regex pattern"
-msgstr "根據正規表示式搜索套件列表"
-
-#: cmdline/apt-cache.cc
-msgid "Show raw dependency information for a package"
-msgstr "顯示該套件的原始相依關係的資訊"
-
-#: cmdline/apt-cache.cc
-msgid "Show reverse dependency information for a package"
-msgstr "顯示所有相依於該套件的套件名稱"
-
-#: cmdline/apt-cache.cc
-msgid "Show a readable record for the package"
-msgstr "顯示該套件的易於閱讀的報告"
-
-#: cmdline/apt-cache.cc
-msgid "List the names of all packages in the system"
-msgstr "列出系統中所有套件"
-
-#: cmdline/apt-cache.cc
-msgid "Show policy settings"
-msgstr "顯示套件的可安裝版本資訊"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "請替這張光碟取個名字，像是 'Debian 2.1r1 Disk 1'"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy
-msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "請把光碟放入光碟機，然後按下 [Enter] 鍵"
-
-#: cmdline/apt-cdrom.cc
-#, fuzzy, c-format
-msgid "Failed to mount '%s' to '%s'"
-msgstr "無法將 %s 更名為 %s"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"No CD-ROM could be auto-detected or found using the default mount point.\n"
-"You may try the --cdrom option to set the CD-ROM mount point.\n"
-"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
-"mount point."
-msgstr ""
-
-#: cmdline/apt-cdrom.cc
-msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "請對您的光碟組中的其它光碟重複相同的操作。"
-
-#: cmdline/apt-cdrom.cc
-msgid ""
-"Usage: apt-cdrom [options] command\n"
-"\n"
-"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
-"media types as package sources to APT. The mount point and device\n"
-"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "Arguments not in pairs"
-msgstr "參數並未成對"
-
-#: cmdline/apt-config.cc
-#, fuzzy
-msgid ""
-"Usage: apt-config [options] command\n"
-"\n"
-"apt-config is an interface to the configuration settings used by\n"
-"all APT tools, mainly intended for debugging and shell scripting.\n"
-msgstr ""
-"用法：apt-config [選項] 指令\n"
-"\n"
-"apt-config 是一個用於讀取 APT 設定檔的簡單工具\n"
-
-#: cmdline/apt-config.cc
-msgid "get configuration values via shell evaluation"
-msgstr ""
-
-#: cmdline/apt-config.cc
-msgid "show the active configuration setting"
-msgstr ""
-
-#: cmdline/apt-get.cc
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "無法找到套件 %s"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-get.cc cmdline/apt-mark.cc
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Internal error, problem resolver broke stuff"
-msgstr "內部錯誤，問題排除器造成了損壞"
-
-#: cmdline/apt-get.cc
-msgid "Supported modules:"
-msgstr "已支援模組："
-
-#: cmdline/apt-get.cc
-#, fuzzy
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a command line interface for retrieval of packages\n"
-"and information about them from authenticated sources and\n"
-"for installation, upgrade and removal of packages together\n"
-"with their dependencies.\n"
-msgstr ""
-"用法：apt-get [選項] 指令\n"
-"      apt-get [選項] install|remove 套件1 [套件2 ...]\n"
-"      apt-get [選項] source 套件1 [套件2 ...]\n"
-"\n"
-"apt-get 是一個用來下載和安裝套件的簡易命令列界面。\n"
-"最常用指令是 update 和 install。\n"
-
-#: cmdline/apt-get.cc
-msgid "Retrieve new lists of packages"
-msgstr "取得新的套件列表"
-
-#: cmdline/apt-get.cc
-msgid "Perform an upgrade"
-msgstr "進行升級"
-
-#: cmdline/apt-get.cc
-msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "安裝新套件（套件名稱是 libc6 而不是 libc6.deb）"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages"
-msgstr "移除套件"
-
-#: cmdline/apt-get.cc
-msgid "Remove packages and config files"
-msgstr "移除並清除套件"
-
-#: cmdline/apt-get.cc cmdline/apt.cc
-msgid "Remove automatically all unused packages"
-msgstr "自動移除所有不再使用的套件"
-
-#: cmdline/apt-get.cc
-msgid "Distribution upgrade, see apt-get(8)"
-msgstr "發行版本升級，請參閱 apt-get(8)"
-
-#: cmdline/apt-get.cc
-msgid "Follow dselect selections"
-msgstr "採用 dselect 的選項升級"
-
-#: cmdline/apt-get.cc
-msgid "Configure build-dependencies for source packages"
-msgstr "為原始碼套件配置編譯相依關係"
-
-#: cmdline/apt-get.cc
-msgid "Erase downloaded archive files"
-msgstr "刪除已下載的套件檔"
-
-#: cmdline/apt-get.cc
-msgid "Erase old downloaded archive files"
-msgstr "刪除已下載但已有新版本的套件檔"
-
-#: cmdline/apt-get.cc
-msgid "Verify that there are no broken dependencies"
-msgstr "檢查相依關係是否有問題"
-
-#: cmdline/apt-get.cc
-msgid "Download source archives"
-msgstr "下載套件原始碼"
-
-#: cmdline/apt-get.cc
-msgid "Download the binary package into the current directory"
-msgstr ""
-
-#: cmdline/apt-get.cc
-msgid "Download and display the changelog for the given package"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "Need one URL as argument"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, fuzzy
-msgid "Must specify at least one pair url/filename"
-msgstr "在取得原始碼時必須至少指定一個套件"
-
-#: cmdline/apt-helper.cc
-msgid "Download Failed"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-#, c-format
-msgid "GetSrvRec failed for %s"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid ""
-"Usage: apt-helper [options] command\n"
-"       apt-helper [options] cat-file file ...\n"
-"       apt-helper [options] download-file uri target-path\n"
-"\n"
-"apt-helper bundles a variety of commands for shell scripts to use\n"
-"e.g. the same proxy configuration or acquire system as APT would.\n"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "download the given uri to the target-path"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "concatenate files, with automatic decompression"
-msgstr ""
-
-#: cmdline/apt-helper.cc
-msgid "detect proxy using apt.conf"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "但它卻尚未安裝"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s 已經是最新版本了。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s 已經是最新版本了。\n"
-
-#: cmdline/apt-mark.cc
-msgid "Executing dpkg failed. Are you root?"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "%s set on hold.\n"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "無法開啟 %s"
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for purge.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for removal.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, c-format
-msgid "Selected %s for installation.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manually or automatically installed. It can also be used to\n"
-"manipulate the dpkg(1) selection states of packages, and to list\n"
-"all packages with or without a certain marking.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Mark the given packages as automatically installed"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Mark the given packages as manually installed"
-msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
-
-#: cmdline/apt-mark.cc
-msgid "Mark a package as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-msgid "Unset a package set as held back"
-msgstr ""
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Print the list of automatically installed packages"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-#, fuzzy
-msgid "Print the list of manually installed packages"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt-mark.cc
-msgid "Print the list of package on hold"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"apt is a commandline package manager and provides commands for\n"
-"searching and managing as well as querying information about packages.\n"
-"It provides the same functionality as the specialized APT tools,\n"
-"like apt-get and apt-cache, but enables options more suitable for\n"
-"interactive use by default.\n"
-msgstr ""
-
-#. query
-#: cmdline/apt.cc
-msgid "list packages based on package names"
-msgstr ""
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "search in package descriptions"
-msgstr "正在讀取套件清單"
-
-#: cmdline/apt.cc
-msgid "show package details"
-msgstr ""
-
-#. package stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "install packages"
-msgstr "鎖定的套件："
-
-#: cmdline/apt.cc
-#, fuzzy
-msgid "remove packages"
-msgstr "損毀的套件"
-
-#. system wide stuff
-#: cmdline/apt.cc
-#, fuzzy
-msgid "update list of available packages"
-msgstr "%s 被設定為手動安裝。\n"
-
-#: cmdline/apt.cc
-msgid "upgrade the system by installing/upgrading packages"
-msgstr ""
-
-#: cmdline/apt.cc
-msgid "upgrade the system by removing/installing/upgrading packages"
-msgstr ""
-
-#. misc
-#: cmdline/apt.cc
-#, fuzzy
-msgid "edit the source information file"
-msgstr "正在讀取狀態資料"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "無法讀取光碟片資料庫 %s"
-
-#: methods/cdrom.cc
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"請用 apt-cdrom 來讓 APT 能辨識這張光碟。apt-get update 是不能用來新增光碟的"
-
-#: methods/cdrom.cc
-msgid "Wrong CD-ROM"
-msgstr "不正確的光碟"
-
-#: methods/cdrom.cc
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "無法卸載 %s 裡的光碟片，或許它仍在使用中。"
-
-#: methods/cdrom.cc
-msgid "Disk not found."
-msgstr "找不到磁碟。"
-
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
-msgid "File not found"
-msgstr "找不到檔案"
-
-#: methods/connect.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "正和 %s (%s) 連線"
-
-#: methods/connect.cc
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "無法建立 socket 指向 %s (f=%u t=%u p=%u)"
-
-#: methods/connect.cc
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "無法初始和 %s:%s (%s) 的連線。"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "無法和 %s:%s (%s) 連線，連線逾時"
-
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
-msgid "Failed"
-msgstr "失敗"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "無法和 %s:%s (%s) 連線。"
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
-#, c-format
-msgid "Connecting to %s"
-msgstr "正連線至 %s"
-
-#: methods/connect.cc
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "無法解析 '%s'"
-
-#: methods/connect.cc
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "暫時無法解析 '%s'"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "System error resolving '%s:%s'"
-msgstr "在解析 '%s:%s' (%i) 時出了怪事"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "在解析 '%s:%s' (%i) 時出了怪事"
-
-#: methods/connect.cc
-#, fuzzy, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "無法連線至 %s %s："
-
-#: methods/copy.cc
-msgid "Failed to stat"
-msgstr "無法取得狀態"
-
-#: methods/file.cc
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "不正確的 URI，本機 URI 不應以 // 開頭"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "登入中"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "無法解析對方主機名稱"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "無法解析本機名稱"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "伺服器不接受連線，並回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"指定了代理伺服器，但沒有指定登入 script，Acquire::ftp::ProxyLogin 是空的。"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "登入 script 指令 '%s' 失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "連線逾時"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "伺服器已關閉連線"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Read error"
-msgstr "讀取錯誤"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "回應超過緩衝區長度。"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "協定失敗"
-
-#: methods/ftp.cc methods/rsh.cc apt-pkg/contrib/fileutl.cc
-msgid "Write error"
-msgstr "寫入錯誤"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "無法建立 Socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "無法和 data socket 連線，連線逾時"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "無法和 passive socket 連線。"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo 無法取得監聽 socket"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "無法 bind 至 socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "無法監聽 socket"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "無法解析 socket 名稱"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "無法送出 PORT 指令"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "未知的地址家族 %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Data socket 連線逾時"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "無法接受連線"
-
-#: methods/ftp.cc methods/rsh.cc methods/server.cc
-msgid "Problem hashing file"
-msgstr "有問題的雜湊檔"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "無法取得檔案，伺服器回應 '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Data socket 連線逾時"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "資料傳輸失敗，伺服器回應 '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "查詢"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "無法 invoke "
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"Clearsigned file isn't valid, got '%s' (does the network require "
-"authentication?)"
-msgstr ""
-
-#. TRANSLATORS: %s is a single techy word like 'NODATA'
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Signed file isn't valid, got '%s' (does the network require authentication?)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "At least one invalid signature was encountered."
-msgstr "至少發現一個無效的簽章。"
-
-#: methods/gpgv.cc
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "內部錯誤：簽章無誤，但卻無法辨識密鑰的指紋碼？！"
-
-#: methods/gpgv.cc
-#, fuzzy
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
-msgstr "無法執行 '%s' 來驗證簽章（gnupg 是否安裝了？）"
-
-#: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
-msgstr "在執行 apt-key 時發生未知的錯誤"
-
-#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-#: methods/gpgv.cc
-#, c-format
-msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
-
-#: methods/gpgv.cc
-msgid "The following signatures were invalid:\n"
-msgstr "以下簽名無效：\n"
-
-#: methods/gpgv.cc
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr "由於無法取得它們的公鑰，以下簽章無法進行驗證：\n"
-
-#: methods/http.cc
-msgid "Error writing to the file"
-msgstr "在寫入該檔時發生錯誤"
-
-#: methods/http.cc
-msgid "Error reading from server. Remote end closed connection"
-msgstr "在讀取伺服器時發生錯誤，遠端主機已關閉連線"
-
-#: methods/http.cc
-msgid "Error reading from server"
-msgstr "在讀取伺服器時發生錯誤"
-
-#: methods/http.cc
-msgid "Error writing to file"
-msgstr "在寫入檔案時發生錯誤"
-
-#: methods/http.cc
-msgid "Select failed"
-msgstr "選擇失敗"
-
-#: methods/http.cc
-msgid "Connection timed out"
-msgstr "連線逾時"
-
-#: methods/http.cc
-msgid "Error writing to output file"
-msgstr "在寫入輸出檔時發生錯誤"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/init.cc
-#: apt-pkg/policy.cc apt-pkg/sourcelist.cc
-#, c-format
-msgid "Unable to read %s"
-msgstr "無法讀取 %s"
-
-#: methods/mirror.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "無法切換至 %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "無法開啟檔案 %s"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "無法開啟檔案 %s"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
-#: methods/rred.cc ftparchive/cachedb.cc apt-inst/extract.cc
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to stat %s"
-msgstr "無法取得 %s 的狀態"
-
-#: methods/rred.cc
-msgid "Failed to set modification time"
-msgstr "無法設定修改時間"
-
-#: methods/rsh.cc ftparchive/multicompress.cc
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "無法和子程序建立 IPC 管線"
-
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "連線突然終止"
-
-#: methods/server.cc
-msgid "Waiting for headers"
-msgstr "等待標頭"
-
-#: methods/server.cc
-msgid "Bad header line"
-msgstr "標頭行錯誤"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid reply header"
-msgstr "HTTP 伺服器傳送了一個無效的回覆標頭"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "HTTP 伺服器傳送了一個無效的 Content-Length 標頭"
-
-#: methods/server.cc
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "HTTP 伺服器傳送了一個無效的 Content-Range 標頭"
-
-#: methods/server.cc
-msgid "This HTTP server has broken range support"
-msgstr "這個 HTTP 伺服器的範圍支援有問題"
-
-#: methods/server.cc
-msgid "Unknown date format"
-msgstr "未知的資料格式"
-
-#: methods/server.cc
-msgid "Bad header data"
-msgstr "錯誤的標頭資料"
-
-#: methods/server.cc
-msgid "Connection failed"
-msgstr "連線失敗"
-
-#: methods/server.cc
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-
-#: methods/server.cc
-msgid "Internal error"
-msgstr "內部錯誤"
-
-#: methods/store.cc
-msgid "Empty files can't be valid archives"
-msgstr ""
-
-#: dselect/install:33
-msgid "Bad default setting!"
-msgstr "錯誤的預設設定！"
-
-#: dselect/install:52 dselect/install:84 dselect/install:88 dselect/install:95
-#: dselect/install:106 dselect/update:45
-#, fuzzy
-msgid "Press [Enter] to continue."
-msgstr "請按 [Enter] 鍵以繼續進行。"
-
-#: dselect/install:92
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "您想移除所有先前下載的 .deb 檔嗎？"
-
-#: dselect/install:102
-#, fuzzy
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "在解開套件時發生錯誤。我要準備設定"
-
-#: dselect/install:103
-#, fuzzy
-msgid "will be configured. This may result in duplicate errors"
-msgstr "套件已安裝過。這會造成重複錯誤"
-
-#: dselect/install:104
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "或是因為沒有相依關係而造成錯誤。那麼這個錯誤是無關緊要的"
-
-#: dselect/install:105
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr "以上的訊息相當重要。請修正它們並重新執行安裝[I]"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "整合現有的資料"
-
-#: cmdline/apt-dump-solver.cc
-msgid ""
-"Usage: apt-dump-solver\n"
-"\n"
-"apt-dump-solver is an interface to store an EDSP scenario in\n"
-"a file and optionally forwards it to another solver.\n"
-msgstr ""
-
-#: cmdline/apt-dump-solver.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "等待 %s 但是它並不存在"
-
-#: cmdline/apt-extracttemplates.cc
-#, fuzzy
-msgid ""
-"Usage: apt-extracttemplates file1 [file2 ...]\n"
-"\n"
-"apt-extracttemplates is used to extract config and template files\n"
-"from debian packages. It is used mainly by debconf(1) to prompt for\n"
-"configuration questions before installation of packages.\n"
-msgstr ""
-"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
-"\n"
-"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
-"的工具\n"
-"\n"
-"選項\n"
-"  -h   本幫助訊息。\n"
-"  -t   指定暫存目錄\n"
-"  -c=? 讀取指定的設定檔\n"
-"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "無法取得 %s 的狀態"
-
-#: cmdline/apt-extracttemplates.cc apt-pkg/contrib/fileutl.cc
-#, c-format
-msgid "Unable to write to %s"
-msgstr "無法寫入 %s"
-
-#: cmdline/apt-extracttemplates.cc
-msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "無法取得 debconf 版本。是否有安裝 debconf？"
-
-#: cmdline/apt-internal-planner.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-planner\n"
-"\n"
-"apt-internal-planner is an interface to use the current internal\n"
-"installation planner for the APT family like an external one,\n"
-"for debugging or the like.\n"
-msgstr ""
-"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
-"\n"
-"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
-"的工具\n"
-"\n"
-"選項\n"
-"  -h   本幫助訊息。\n"
-"  -t   指定暫存目錄\n"
-"  -c=? 讀取指定的設定檔\n"
-"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
-
-#: cmdline/apt-internal-solver.cc
-#, fuzzy
-msgid ""
-"Usage: apt-internal-solver\n"
-"\n"
-"apt-internal-solver is an interface to use the current internal\n"
-"resolver for the APT family like an external one, for debugging or\n"
-"the like.\n"
-msgstr ""
-"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
-"\n"
-"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
-"的工具\n"
-"\n"
-"選項\n"
-"  -h   本幫助訊息。\n"
-"  -t   指定暫存目錄\n"
-"  -c=? 讀取指定的設定檔\n"
-"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
-
-#: cmdline/apt-sortpkgs.cc
-msgid "Unknown package record!"
-msgstr "未知的套件記錄！"
-
-#: cmdline/apt-sortpkgs.cc
-msgid ""
-"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-"\n"
-"apt-sortpkgs is a simple tool to sort package information files.\n"
-"By default it sorts by binary package information, but the -s option\n"
-"can be used to switch to source package ordering instead.\n"
-msgstr ""
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Package extension list is too long"
-msgstr "套件延伸列表過長"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing directory %s"
-msgstr "處理目錄 %s 時發生錯誤"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Source extension list is too long"
-msgstr "原始碼的延伸列表太長"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "Error writing header to contents file"
-msgstr "寫入標頭資訊到內容檔時發生錯誤"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Error processing contents %s"
-msgstr "處理內容 %s 時發生錯誤"
-
-#: ftparchive/apt-ftparchive.cc
-msgid ""
-"Usage: apt-ftparchive [options] command\n"
-"Commands: packages binarypath [overridefile [pathprefix]]\n"
-"          sources srcpath [overridefile [pathprefix]]\n"
-"          contents path\n"
-"          release path\n"
-"          generate config [groups]\n"
-"          clean config\n"
-"\n"
-"apt-ftparchive generates index files for Debian archives. It supports\n"
-"many styles of generation from fully automated to functional replacements\n"
-"for dpkg-scanpackages and dpkg-scansources\n"
-"\n"
-"apt-ftparchive generates Package files from a tree of .debs. The\n"
-"Package file contains the contents of all the control fields from\n"
-"each package as well as the MD5 hash and filesize. An override file\n"
-"is supported to force the value of Priority and Section.\n"
-"\n"
-"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
-"The --source-override option can be used to specify a src override file\n"
-"\n"
-"The 'packages' and 'sources' command should be run in the root of the\n"
-"tree. BinaryPath should point to the base of the recursive search and \n"
-"override file should contain the override flags. Pathprefix is\n"
-"appended to the filename fields if present. Example usage from the \n"
-"Debian archive:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"Options:\n"
-"  -h    This help text\n"
-"  --md5 Control MD5 generation\n"
-"  -s=?  Source override file\n"
-"  -q    Quiet\n"
-"  -d=?  Select the optional caching database\n"
-"  --no-delink Enable delinking debug mode\n"
-"  --contents  Control contents file generation\n"
-"  -c=?  Read this configuration file\n"
-"  -o=?  Set an arbitrary configuration option"
-msgstr ""
-"用法：apt-ftparchive [選項] 指令\n"
-"指令：packages 二進制檔搜索路徑 [重新定義檔 [路徑前綴]]\n"
-"      sources 原始碼搜索路徑 [重新定義檔 [路徑前綴]]\n"
-"      contents 搜索路徑\n"
-"      release 搜索路徑\n"
-"      generate 設定檔 [群組]\n"
-"      clean 設定檔\n"
-"\n"
-"apt-ftparchive 可用來替 Debian 套件庫建立索引檔。它支援了從全\n"
-"自動化到足以替代 dpkg-scanpackages 及 dpkg-scansources 所提供\n"
-"的所有功能等等各式各樣建立索引的方式。apt-ftparchive 會根據 .deb 檔案樹建立 "
-"Package 檔。Package 檔\n"
-"裡不僅包含了每個套件的 control 資料的內容，還包含了 MD5 檢驗\n"
-"碼和檔案大小。它還支援了重新定義檔，可用來強制指定優先等級及\n"
-"其所屬的類別。\n"
-"\n"
-"而同樣的，apt-ftparchive 也能根據 .dsc 檔案樹生成 Source 檔。\n"
-"可用 --source-override 選項來指定一個 src 重新定義檔。\n"
-"\n"
-"應當在檔案樹的根目錄下執行 'packages' 和 'source' 指令。\n"
-"二進制檔的搜索路徑必須指向遞迴搜索的底層，且在重新定義檔裡必\n"
-"須包含 override 旗標。若指定了路徑前綴時，則會被附加到檔案名\n"
-"稱這個欄位裡。以 Debian 套件庫為例:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
-"               dists/potato/main/binary-i386/Packages\n"
-"\n"
-"選項：\n"
-"  -h    本幫助說明\n"
-"  --md5 控制如何產生 MD5 檢驗碼\n"
-"  -s=?  原始碼的重新定義檔\n"
-"  -q    安靜模式\n"
-"  -d=?  指定搭配的快取資料庫\n"
-"  --no-delink 啟用 DeLinking 模式\n"
-"  --contents  產生控制內容檔\n"
-"  -c=?  讀取指定的設定檔\n"
-"  -o=?  指定任意的設定選項"
-
-#: ftparchive/apt-ftparchive.cc
-msgid "No selections matched"
-msgstr "找不到符合的選項"
-
-#: ftparchive/apt-ftparchive.cc
-#, c-format
-msgid "Some files are missing in the package file group `%s'"
-msgstr "套件檔案組 `%s' 少了部份檔案"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB was corrupted, file renamed to %s.old"
-msgstr "DB 已損毀，檔案被更名為 %s.old"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "DB is old, attempting to upgrade %s"
-msgstr "DB 過舊，嘗試升級 %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid ""
-"DB format is invalid. If you upgraded from an older version of apt, please "
-"remove and re-create the database."
-msgstr ""
-"資料庫格式不正確。如果您是由舊版的 apt 升級上來的，請移除並重新建立資料庫。"
-
-#: ftparchive/cachedb.cc
-#, c-format
-msgid "Unable to open DB file %s: %s"
-msgstr "無法開啟 DB 檔 %s: %s"
-
-#: ftparchive/cachedb.cc
-#, fuzzy
-msgid "Failed to read .dsc"
-msgstr "無法讀取連結 %s"
-
-#: ftparchive/cachedb.cc
-msgid "Archive has no control record"
-msgstr "套件檔沒有 control 記錄"
-
-#: ftparchive/cachedb.cc
-msgid "Unable to get a cursor"
-msgstr "無法取得遊標"
-
-#: ftparchive/contents.cc
-msgid "realloc - Failed to allocate memory"
-msgstr "realloc - 無法配置記憶體"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Unknown compression algorithm '%s'"
-msgstr "未知的壓縮演算法 '%s'"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Compressed output %s needs a compression set"
-msgstr "要壓縮輸出 %s 需搭配壓縮動作"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to fork"
-msgstr "fork 時失敗"
-
-#: ftparchive/multicompress.cc
-msgid "Compress child"
-msgstr "壓縮子程序"
-
-#: ftparchive/multicompress.cc
-#, c-format
-msgid "Internal error, failed to create %s"
-msgstr "內部錯誤，無法建立 %s"
-
-#: ftparchive/multicompress.cc
-msgid "IO to subprocess/file failed"
-msgstr "和子程序/檔案 IO 失敗"
-
-#: ftparchive/multicompress.cc
-msgid "Failed to read while computing MD5"
-msgstr "在計算 MD5 時無法讀取到資料"
-
-#: ftparchive/multicompress.cc apt-inst/extract.cc
-#, c-format
-msgid "Failed to rename %s to %s"
-msgstr "無法將 %s 更名為 %s"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Unable to open %s"
-msgstr "無法開啟 %s"
-
-#. skip spaces
-#. find end of word
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu (%s)"
-msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
-
-#: ftparchive/override.cc
-#, c-format
-msgid "Failed to read the override file %s"
-msgstr "無法讀取重新定義檔 %s"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #1"
-msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #2"
-msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #2"
-
-#: ftparchive/override.cc
-#, fuzzy, c-format
-msgid "Malformed override %s line %llu #3"
-msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #3"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to read directory %s\n"
-msgstr "警告：無法讀取目錄 %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "W: Unable to stat %s\n"
-msgstr "警告：無法取得 %s 狀態\n"
-
-#: ftparchive/writer.cc
-msgid "E: "
-msgstr "錯誤："
-
-#: ftparchive/writer.cc
-msgid "W: "
-msgstr "警告："
-
-#: ftparchive/writer.cc
-msgid "E: Errors apply to file "
-msgstr "錯誤：套用到檔案時發生錯誤"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to resolve %s"
-msgstr "無法解析 %s"
-
-#: ftparchive/writer.cc
-msgid "Tree walking failed"
-msgstr "無法走訪目錄樹"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "Failed to open %s"
-msgstr "無法開啟 %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink %s [%s]\n"
-msgstr " DeLink %s [%s]\n"
-
-#: ftparchive/writer.cc apt-pkg/acquire-item.cc
-#, c-format
-msgid "Failed to readlink %s"
-msgstr "無法讀取連結 %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "*** Failed to link %s to %s"
-msgstr "*** 無法將 %s 連結到 %s"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid " DeLink limit of %sB hit.\n"
-msgstr " 達到了 DeLink 的上限 %sB。\n"
-
-#: ftparchive/writer.cc
-msgid "Archive had no package field"
-msgstr "套件檔裡沒有套件資訊"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no override entry\n"
-msgstr "  %s 沒有重新定義項目\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s maintainer is %s not %s\n"
-msgstr "  %s 的維護者是 %s，而非 %s\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no source override entry\n"
-msgstr "  %s 沒有原始碼重新定義項目\n"
-
-#: ftparchive/writer.cc
-#, c-format
-msgid "  %s has no binary override entry either\n"
-msgstr "  %s 也沒有二元碼重新定義項目\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -2361,6 +111,17 @@ msgstr "此套件試圖寫至抽換後的目標 %s/%s"
 msgid "The diversion path is too long"
 msgstr "要進行抽換的路徑過長"
 
+#: apt-inst/extract.cc apt-pkg/acquire-item.cc ftparchive/cachedb.cc
+#: methods/rred.cc
+#, c-format
+msgid "Failed to stat %s"
+msgstr "無法取得 %s 的狀態"
+
+#: apt-inst/extract.cc ftparchive/multicompress.cc
+#, c-format
+msgid "Failed to rename %s to %s"
+msgstr "無法將 %s 更名為 %s"
+
 #: apt-inst/extract.cc
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
@@ -2383,6 +144,15 @@ msgstr "以無版本的 %s 覆寫原始套件"
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "檔案 %s/%s 覆寫了套件 %s 中的相同檔案"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#, c-format
+msgid "Unable to read %s"
+msgstr "無法讀取 %s"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -2469,6 +239,11 @@ msgstr "路徑 %s 已被抽換"
 msgid "The repository '%s' provides only weak security information."
 msgstr "路徑 %s 已被抽換"
 
+#: apt-pkg/acquire-item.cc ftparchive/writer.cc
+#, c-format
+msgid "Failed to readlink %s"
+msgstr "無法讀取連結 %s"
+
 #: apt-pkg/acquire-item.cc
 msgid "Hash Sum mismatch"
 msgstr "Hash Sum 不符"
@@ -2495,6 +270,14 @@ msgstr "無效的操作 %s"
 #, fuzzy
 msgid "Signature error"
 msgstr "寫入錯誤"
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: apt-pkg/acquire-item.cc methods/gpgv.cc
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2573,6 +356,16 @@ msgstr "正和 %s (%s) 連線"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
+msgid "The method '%s' is explicitly disabled via configuration."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc methods/connect.cc
+#, c-format
+msgid "If you meant to use Tor remember to use %s instead of %s."
+msgstr ""
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
 msgid "The method driver %s could not be found."
 msgstr "找不到安裝方式的驅動程式 %s。"
 
@@ -2624,6 +417,12 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "不被支援的索引檔類型 '%s'"
 
+#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
+#: methods/mirror.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "無法切換至 %s"
+
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc
@@ -2666,6 +465,11 @@ msgstr "您也許得執行 apt-get update 以修正這些問題"
 msgid "The list of sources could not be read."
 msgstr "無法讀取來源列表。"
 
+#: apt-pkg/cachefilter.cc apt-private/private-output.cc
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "編譯正規表示式時發生錯誤 - %s"
+
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Release '%s' for '%s' was not found"
@@ -2690,6 +494,11 @@ msgstr "無法找到套件 %s"
 #, fuzzy, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "無法找到套件 %s"
+
+#: apt-pkg/cacheset.cc apt-private/private-show.cc
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "找不到套件 %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -2960,6 +769,12 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
+#: apt-pkg/contrib/fileutl.cc apt-pkg/contrib/gpgv.cc apt-pkg/deb/debsystem.cc
+#: cmdline/apt-dump-solver.cc
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "等待 %s 但是它並不存在"
+
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
@@ -2979,6 +794,14 @@ msgstr "子程序 %s 傳回錯誤碼 (%u)"
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子程序 %s 不預期得結束"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Read error"
+msgstr "讀取錯誤"
+
+#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+msgid "Write error"
+msgstr "寫入錯誤"
 
 #: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
@@ -3030,6 +853,16 @@ msgstr "在同步檔案時發生問題"
 #: apt-pkg/contrib/fileutl.cc
 msgid "Problem syncing the file"
 msgstr "在同步檔案時發生問題"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "無法取得 %s 的狀態"
+
+#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#, c-format
+msgid "Unable to write to %s"
+msgstr "無法寫入 %s"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -3526,20 +1359,16 @@ msgid "Suggests"
 msgstr "建議"
 
 #: apt-pkg/pkgcache.cc
-msgid "Recommends"
-msgstr "推薦"
-
-#: apt-pkg/pkgcache.cc
 msgid "Conflicts"
 msgstr "衝突"
 
 #: apt-pkg/pkgcache.cc
-msgid "Replaces"
-msgstr "取代"
+msgid "Recommends"
+msgstr "推薦"
 
 #: apt-pkg/pkgcache.cc
-msgid "Obsoletes"
-msgstr "廢棄"
+msgid "Replaces"
+msgstr "取代"
 
 #: apt-pkg/pkgcache.cc
 msgid "Breaks"
@@ -3550,24 +1379,28 @@ msgid "Enhances"
 msgstr ""
 
 #: apt-pkg/pkgcache.cc
-msgid "required"
-msgstr "必要"
+msgid "Obsoletes"
+msgstr "廢棄"
 
 #: apt-pkg/pkgcache.cc
 msgid "important"
 msgstr "重要"
 
 #: apt-pkg/pkgcache.cc
+msgid "required"
+msgstr "必要"
+
+#: apt-pkg/pkgcache.cc
 msgid "standard"
 msgstr "標準"
 
 #: apt-pkg/pkgcache.cc
-msgid "optional"
-msgstr "次要"
-
-#: apt-pkg/pkgcache.cc
 msgid "extra"
 msgstr "額外"
+
+#: apt-pkg/pkgcache.cc
+msgid "optional"
+msgstr "次要"
 
 #: apt-pkg/pkgcachegen.cc
 msgid "Cache has an incompatible versioning system"
@@ -3680,6 +1513,11 @@ msgstr "在 sources.list 中必須包含一些 'source' URI"
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
 
+#: apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "無法取得 %s，%s"
+
 #: apt-pkg/update.cc
 #, fuzzy
 msgid ""
@@ -3690,6 +1528,2183 @@ msgstr "有一些索引檔不能下載，它們可能被略過了，或是替而
 #: apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
 msgstr "籌備升級中"
+
+#. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Hit:%lu %s"
+msgstr "已有:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
+#. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Get:%lu %s"
+msgstr "下載:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download, but the error is ignored (compare "Err:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Ign:%lu %s"
+msgstr "略過:%lu %s"
+
+#. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
+#. which failed to download and the error is critical (compare "Ign:")
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Err:%lu %s"
+msgstr "錯誤:%lu %s"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "取得 %sB 用了 %s (%sB/s)\n"
+
+#: apt-private/acqprogress.cc
+msgid " [Working]"
+msgstr " [工作中]"
+
+#: apt-private/acqprogress.cc
+#, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press [Enter]\n"
+msgstr ""
+"更換媒體：請把以下名稱的光碟\n"
+" '%s'\n"
+"放入 '%s' 裝置，然後按 [Enter] 鍵\n"
+
+#: apt-private/private-cachefile.cc
+msgid "Correcting dependencies..."
+msgstr "正在修正相依關係..."
+
+#: apt-private/private-cachefile.cc
+msgid " failed."
+msgstr " 失敗。"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to correct dependencies"
+msgstr "無法修正相依關係"
+
+#: apt-private/private-cachefile.cc
+msgid "Unable to minimize the upgrade set"
+msgstr "無法將升級計劃最小化"
+
+#: apt-private/private-cachefile.cc
+msgid " Done"
+msgstr " 完成"
+
+#: apt-private/private-cachefile.cc
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "您也許得執行 'apt-get -f install' 以修正這些問題。"
+
+#: apt-private/private-cachefile.cc
+msgid "Unmet dependencies. Try using -f."
+msgstr "未能滿足相依關係。試試 -f 選項。"
+
+#: apt-private/private-cacheset.cc apt-private/private-search.cc
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for glob '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "注意，根據正規表示式 '%2$s' 而選擇了 %1$s\n"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "套件 %s 是虛擬套件，提供者為：\n"
+
+#: apt-private/private-cacheset.cc
+msgid " [Installed]"
+msgstr "【已安裝】"
+
+#: apt-private/private-cacheset.cc
+msgid " [Not candidate version]"
+msgstr "【非候選版本】"
+
+#: apt-private/private-cacheset.cc
+msgid "You should explicitly select one to install."
+msgstr "請您明確地選擇一個來進行安裝。"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"無法取得套件 %s，但它卻被其它的套件引用了。\n"
+"這意味著這個套件可能已經消失了、被廢棄了，或是只能由其他的來源取得\n"
+
+#: apt-private/private-cacheset.cc
+msgid "However the following packages replace it:"
+msgstr "然而，下列的套件取代了它："
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "套件 %s 沒有可安裝的候選版本"
+
+#: apt-private/private-cacheset.cc
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr ""
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
+
+#: apt-private/private-cacheset.cc apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "套件 %s 並沒有被安裝，所以也不會被移除\n"
+
+#: apt-private/private-cacheset.cc
+#, fuzzy, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "注意，選擇了以 %s 替代 %s\n"
+
+#: apt-private/private-cmndline.cc
+msgid "Most used commands:"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+#, c-format
+msgid "See %s for more information about the available commands."
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid ""
+"Configuration options and syntax is detailed in apt.conf(5).\n"
+"Information about how to configure sources can be found in sources.list(5).\n"
+"Package and version choices can be expressed via apt_preferences(5).\n"
+"Security details are available in apt-secure(8).\n"
+msgstr ""
+
+#: apt-private/private-cmndline.cc
+msgid "This APT has Super Cow Powers."
+msgstr "該 APT 有著超級牛力。"
+
+#: apt-private/private-cmndline.cc
+msgid "This APT helper has Super Meep Powers."
+msgstr ""
+
+#: apt-private/private-depends.cc apt-private/private-show.cc
+#: cmdline/apt-mark.cc
+msgid "No packages found"
+msgstr "未找到套件"
+
+#: apt-private/private-download.cc
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "【警告】：無法驗證下列套件！"
+
+#: apt-private/private-download.cc
+msgid "Authentication warning overridden.\n"
+msgstr "忽略了驗證警告。\n"
+
+#: apt-private/private-download.cc
+msgid "Some packages could not be authenticated"
+msgstr "有部份套件無法驗證"
+
+#: apt-private/private-download.cc
+msgid "Install these packages without verification?"
+msgstr "是否不經驗證就安裝這些套件？"
+
+#: apt-private/private-download.cc apt-private/private-install.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
+#: apt-private/private-download.cc
+#, fuzzy
+msgid ""
+"There were unauthenticated packages and -y was used without --allow-"
+"unauthenticated"
+msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "無法確認 %s 的未使用空間"
+
+#: apt-private/private-download.cc
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "在 %s 裡沒有足夠的的未使用空間。"
+
+#: apt-private/private-download.cc
+msgid "Unable to lock the download directory"
+msgstr "無法鎖定下載目錄"
+
+#: apt-private/private-install.cc
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"有些套件無法安裝。這可能意謂著您的要求難以解決，或是若您使用的是\n"
+"unstable 發行版，可能有些必要的套件尚未建立，或是被移出 Incoming 了。"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << std::endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << std::endl;
+#. }
+#.
+#: apt-private/private-install.cc
+msgid "The following information may help to resolve the situation:"
+msgstr "以下的資訊或許有助於解決當前的情況："
+
+#: apt-private/private-install.cc
+msgid "Broken packages"
+msgstr "損毀的套件"
+
+#: apt-private/private-install.cc
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "內部錯誤，在損毀的套件上執行 InstallPackages！"
+
+#: apt-private/private-install.cc
+msgid "Packages need to be removed but remove is disabled."
+msgstr "有套件需要被移除，但卻被禁止移除。"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"Essential packages were removed and -y was used without --allow-remove-"
+"essential."
+msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "Packages were downgraded and -y was used without --allow-downgrades."
+msgstr "發生了問題，且 -y 並沒有和 --force-yes 搭配使用"
+
+#: apt-private/private-install.cc
+msgid ""
+"Held packages were changed and -y was used without --allow-change-held-"
+"packages."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Internal error, Ordering didn't finish"
+msgstr "內部錯誤，排序未能完成"
+
+#: apt-private/private-install.cc
+msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
+msgstr "怪哉... 檔案大小不符，請發信給 apt@packages.debian.org"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "需要下載 %sB/%sB 的套件檔。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "需要下載 %sB 的套件檔。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
+
+#: apt-private/private-install.cc
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 trivial 操作。"
+
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: apt-private/private-install.cc
+msgid "Yes, do as I say!"
+msgstr "Yes, do as I say!"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"您所進行的操作可能會帶來危險。\n"
+"請輸入 '%s' 這個句子以繼續進行\n"
+" ?] "
+
+#: apt-private/private-install.cc
+msgid "Abort."
+msgstr "放棄執行。"
+
+#: apt-private/private-install.cc
+msgid "Do you want to continue?"
+msgstr "是否繼續進行 [Y/n]？"
+
+#: apt-private/private-install.cc
+msgid "Some files failed to download"
+msgstr "有部份檔案無法下載"
+
+#: apt-private/private-install.cc apt-private/private-source.cc
+msgid "Download complete and in download only mode"
+msgstr "下載完成，且這是『僅下載』模式"
+
+#: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"有部份套件檔無法取得，試著執行 apt-get update 或者試著加上 --fix-missing 選"
+"項？"
+
+#: apt-private/private-install.cc
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "目前尚未支援 --fix-missing 和媒體抽換"
+
+#: apt-private/private-install.cc
+msgid "Unable to correct missing packages."
+msgstr "無法修正欠缺的套件。"
+
+#: apt-private/private-install.cc
+msgid "Aborting install."
+msgstr "放棄安裝。"
+
+#: apt-private/private-install.cc
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-install.cc
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "我們沒有計劃要刪除任何東西，無法啟動 AutoRemover"
+
+#: apt-private/private-install.cc
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr ""
+"嗯，看起來 AutoRemover 弄壞了什麼東西，而這是不該發生的。\n"
+"請針對 apt 發佈錯誤回報。"
+
+#: apt-private/private-install.cc
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "內部錯誤，AutoRemover 處理失敗"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
+msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
+msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "使用 '%s' 來將其移除。"
+msgstr[1] "使用 '%s' 來將其移除。"
+
+#: apt-private/private-install.cc
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
+
+#: apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
+"決方案）。"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "下列的額外套件將被安裝："
+
+#: apt-private/private-install.cc
+msgid "Suggested packages:"
+msgstr "建議套件："
+
+#: apt-private/private-install.cc
+msgid "Recommended packages:"
+msgstr "推薦套件："
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "忽略 %s，它已被安裝且沒有計劃要進行升級。\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "無法重新安裝 %s，因為它無法下載。\n"
+
+#. TRANSLATORS: First string is package name, second is version
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "%s is already the newest version (%s).\n"
+msgstr "%s 已經是最新版本了。\n"
+
+#: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "選定的版本為 %3$s 的 %1$s (%2$s)\n"
+
+#: apt-private/private-list.cc
+msgid "Listing"
+msgstr ""
+
+#: apt-private/private-list.cc
+#, c-format
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#. TRANSLATORS: placeholder is a binary name like apt or apt-get
+#: apt-private/private-main.cc
+#, c-format
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      %s needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!\n"
+msgstr ""
+
+#: apt-private/private-output.cc apt-private/private-show.cc
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "[installed,upgradable to: %s]"
+msgstr "【已安裝】"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,local]"
+msgstr "【已安裝】"
+
+#: apt-private/private-output.cc
+msgid "[installed,auto-removable]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed,automatic]"
+msgstr "【已安裝】"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "[installed]"
+msgstr "【已安裝】"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "[upgradable from: %s]"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "[residual-config]"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is installed"
+msgstr "但 %s 卻已安裝"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "but %s is to be installed"
+msgstr "但 %s 卻將被安裝"
+
+#: apt-private/private-output.cc
+msgid "but it is not installable"
+msgstr "但它卻無法安裝"
+
+#: apt-private/private-output.cc
+msgid "but it is a virtual package"
+msgstr "但它是虛擬套件"
+
+#: apt-private/private-output.cc
+msgid "but it is not going to be installed"
+msgstr "但它卻將不會被安裝"
+
+#: apt-private/private-output.cc
+msgid "but it is not installed"
+msgstr "但它卻尚未安裝"
+
+#: apt-private/private-output.cc
+msgid " or"
+msgstr "或"
+
+#: apt-private/private-output.cc
+msgid "The following packages have unmet dependencies:"
+msgstr "下列的套件有未滿足的相依關係："
+
+#: apt-private/private-output.cc
+msgid "The following NEW packages will be installed:"
+msgstr "下列【新】套件將會被安裝："
+
+#: apt-private/private-output.cc
+msgid "The following packages will be REMOVED:"
+msgstr "下列套件將會被【移除】："
+
+#: apt-private/private-output.cc
+msgid "The following packages have been kept back:"
+msgstr "下列套件將會維持其原有版本："
+
+#: apt-private/private-output.cc
+msgid "The following packages will be upgraded:"
+msgstr "下列套件將會被升級："
+
+#: apt-private/private-output.cc
+msgid "The following packages will be DOWNGRADED:"
+msgstr "下列套件將會被【降級】："
+
+#: apt-private/private-output.cc
+msgid "The following held packages will be changed:"
+msgstr "下列被保留 (hold) 的套件將會被更改："
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%s (due to %s)"
+msgstr "%s（因為 %s"
+
+#: apt-private/private-output.cc
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"【警告】：下列的基本套件都將被移除。\n"
+"除非您很清楚您在做什麼，否則請勿輕易嘗試！"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "升級 %lu 個，新安裝 %lu 個，"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "重新安裝 %lu 個，"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu downgraded, "
+msgstr "降級 %lu 個，"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "移除 %lu 個，有 %lu 個未被升級。\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "%lu 個沒有完整得安裝或移除。\n"
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[Y/n]"
+msgstr ""
+
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: apt-private/private-output.cc
+msgid "[y/N]"
+msgstr ""
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: apt-private/private-output.cc
+msgid "Y"
+msgstr ""
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: apt-private/private-output.cc
+msgid "N"
+msgstr ""
+
+#: apt-private/private-search.cc
+#, fuzzy
+msgid "You must give at least one search pattern"
+msgstr "您必須明確得給定一個樣式"
+
+#: apt-private/private-search.cc
+msgid "Full Text Search"
+msgstr ""
+
+#: apt-private/private-show.cc cmdline/apt-cache.cc
+#, c-format
+msgid "Package file %s is out of sync."
+msgstr "套件檔 %s 未同步。"
+
+#: apt-private/private-show.cc
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc
+msgid "not a real package (virtual)"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "Package files:"
+msgstr "套件檔："
+
+#: apt-private/private-show.cc
+msgid "Cache is out of sync, can't x-ref a package file"
+msgstr "快取資料未同步，無法 x-ref 套件檔"
+
+#. Show any packages have explicit pins
+#: apt-private/private-show.cc
+msgid "Pinned packages:"
+msgstr "鎖定的套件："
+
+#. Print the package name and the version we are forcing to
+#: apt-private/private-show.cc
+#, c-format
+msgid "%s -> %s with priority %d\n"
+msgstr ""
+
+#: apt-private/private-show.cc
+msgid "  Installed: "
+msgstr "  已安裝："
+
+#: apt-private/private-show.cc
+msgid "  Candidate: "
+msgstr "  候選："
+
+#: apt-private/private-show.cc
+msgid "(none)"
+msgstr "(無)"
+
+#. Show the priority tables
+#: apt-private/private-show.cc
+msgid "  Version table:"
+msgstr "  版本列表："
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "無法找到套件 %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "無法找到套件 %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "無法找到套件 %s"
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "無法取得來源套件列表 %s 的狀態"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Can not find version '%s' of package '%s'"
+msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to fetch source for"
+msgstr "在取得原始碼時必須至少指定一個套件"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "無法找到 %s 的原始碼套件"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"Please use:\n"
+"%s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "略過已下載的檔案 '%s'\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "需要下載 %sB/%sB 的原始套件檔。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-source.cc
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "需要下載 %sB 的原始套件檔。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "取得原始碼 %s\n"
+
+#: apt-private/private-source.cc
+msgid "Failed to fetch some archives."
+msgstr "無法取得某些套件檔。"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "不解開，因原始碼已解開至 %s\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "解開指令 '%s' 失敗。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "編譯指令 '%s' 失敗。\n"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "無法取得 %s 的編譯相依關係資訊"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr "%s 沒有編譯相依關係。\n"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "在檢查編譯相依關係時必須至少指定一個套件"
+
+#: apt-private/private-source.cc
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, c-format
+msgid "Note, using directory '%s' to get the build dependencies\n"
+msgstr ""
+
+#: apt-private/private-source.cc
+#, fuzzy, c-format
+msgid "Note, using file '%s' to get the build dependencies\n"
+msgstr "無法處理編譯相依關係"
+
+#: apt-private/private-source.cc
+msgid "Failed to process build dependencies"
+msgstr "無法處理編譯相依關係"
+
+#: apt-private/private-sources.cc
+#, fuzzy, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "無法將 %s 更名為 %s"
+
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
+msgstr ""
+
+#: apt-private/private-unmet.cc
+#, c-format
+msgid "Package %s version %s has an unmet dep:\n"
+msgstr "套件 %s 版本 %s 未能滿足相依性：\n"
+
+#: apt-private/private-update.cc
+msgid "The update command takes no arguments"
+msgstr "update 指令不需任何參數"
+
+#: apt-private/private-update.cc
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-update.cc
+msgid "All packages are up to date."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "apt-cache stats does not take any arguments"
+msgstr "update 指令不需任何參數"
+
+#: cmdline/apt-cache.cc
+msgid "Total package names: "
+msgstr "套件名稱合計："
+
+#: cmdline/apt-cache.cc
+#, fuzzy
+msgid "Total package structures: "
+msgstr "套件名稱合計："
+
+#: cmdline/apt-cache.cc
+msgid "  Normal packages: "
+msgstr "  一般套件："
+
+#: cmdline/apt-cache.cc
+msgid "  Pure virtual packages: "
+msgstr "  完全虛擬套件："
+
+#: cmdline/apt-cache.cc
+msgid "  Single virtual packages: "
+msgstr "  單一虛擬套件："
+
+#: cmdline/apt-cache.cc
+msgid "  Mixed virtual packages: "
+msgstr "  混合虛擬套件："
+
+#: cmdline/apt-cache.cc
+msgid "  Missing: "
+msgstr "  找不到："
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct versions: "
+msgstr "個別版本合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total distinct descriptions: "
+msgstr "個別版本類別合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total dependencies: "
+msgstr "相依關係合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total ver/file relations: "
+msgstr "版本/檔案關聯合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total Desc/File relations: "
+msgstr "類別/檔案關聯合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total Provides mappings: "
+msgstr "提供者對應合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total globbed strings: "
+msgstr "所有字串合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total slack space: "
+msgstr "間暇空間合計："
+
+#: cmdline/apt-cache.cc
+msgid "Total space accounted for: "
+msgstr "統計後的空間合計："
+
+#: cmdline/apt-cache.cc
+msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid ""
+"Usage: apt-cache [options] command\n"
+"       apt-cache [options] show pkg1 [pkg2 ...]\n"
+"\n"
+"apt-cache queries and displays available information about installed\n"
+"and installable packages. It works exclusively on the data acquired\n"
+"into the local cache via the 'update' command of e.g. apt-get. The\n"
+"displayed information may therefore be outdated if the last update was\n"
+"too long ago, but in exchange apt-cache works independently of the\n"
+"availability of the configured sources (e.g. offline).\n"
+msgstr ""
+
+#: cmdline/apt-cache.cc
+msgid "Show source records"
+msgstr "顯示原始碼報告"
+
+#: cmdline/apt-cache.cc
+msgid "Search the package list for a regex pattern"
+msgstr "根據正規表示式搜索套件列表"
+
+#: cmdline/apt-cache.cc
+msgid "Show raw dependency information for a package"
+msgstr "顯示該套件的原始相依關係的資訊"
+
+#: cmdline/apt-cache.cc
+msgid "Show reverse dependency information for a package"
+msgstr "顯示所有相依於該套件的套件名稱"
+
+#: cmdline/apt-cache.cc
+msgid "Show a readable record for the package"
+msgstr "顯示該套件的易於閱讀的報告"
+
+#: cmdline/apt-cache.cc
+msgid "List the names of all packages in the system"
+msgstr "列出系統中所有套件"
+
+#: cmdline/apt-cache.cc
+msgid "Show policy settings"
+msgstr "顯示套件的可安裝版本資訊"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
+msgstr "請替這張光碟取個名字，像是 'Debian 2.1r1 Disk 1'"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy
+msgid "Please insert a Disc in the drive and press [Enter]"
+msgstr "請把光碟放入光碟機，然後按下 [Enter] 鍵"
+
+#: cmdline/apt-cdrom.cc
+#, fuzzy, c-format
+msgid "Failed to mount '%s' to '%s'"
+msgstr "無法將 %s 更名為 %s"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point.\n"
+"See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
+"mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc
+msgid "Repeat this process for the rest of the CDs in your set."
+msgstr "請對您的光碟組中的其它光碟重複相同的操作。"
+
+#: cmdline/apt-cdrom.cc
+msgid ""
+"Usage: apt-cdrom [options] command\n"
+"\n"
+"apt-cdrom is used to add CDROM's, USB flashdrives and other removable\n"
+"media types as package sources to APT. The mount point and device\n"
+"information is taken from apt.conf(5), udev(7) and fstab(5).\n"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "Arguments not in pairs"
+msgstr "參數並未成對"
+
+#: cmdline/apt-config.cc
+#, fuzzy
+msgid ""
+"Usage: apt-config [options] command\n"
+"\n"
+"apt-config is an interface to the configuration settings used by\n"
+"all APT tools, mainly intended for debugging and shell scripting.\n"
+msgstr ""
+"用法：apt-config [選項] 指令\n"
+"\n"
+"apt-config 是一個用於讀取 APT 設定檔的簡單工具\n"
+
+#: cmdline/apt-config.cc
+msgid "get configuration values via shell evaluation"
+msgstr ""
+
+#: cmdline/apt-config.cc
+msgid "show the active configuration setting"
+msgstr ""
+
+#: cmdline/apt-dump-solver.cc
+msgid ""
+"Usage: apt-dump-solver\n"
+"\n"
+"apt-dump-solver is an interface to store an EDSP scenario in\n"
+"a file and optionally forwards it to another solver.\n"
+msgstr ""
+
+#: cmdline/apt-extracttemplates.cc
+#, fuzzy
+msgid ""
+"Usage: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates is used to extract config and template files\n"
+"from debian packages. It is used mainly by debconf(1) to prompt for\n"
+"configuration questions before installation of packages.\n"
+msgstr ""
+"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
+"\n"
+"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
+"的工具\n"
+"\n"
+"選項\n"
+"  -h   本幫助訊息。\n"
+"  -t   指定暫存目錄\n"
+"  -c=? 讀取指定的設定檔\n"
+"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
+
+#: cmdline/apt-extracttemplates.cc
+msgid "Cannot get debconf version. Is debconf installed?"
+msgstr "無法取得 debconf 版本。是否有安裝 debconf？"
+
+#: cmdline/apt-get.cc
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "無法找到套件 %s"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-get.cc cmdline/apt-mark.cc
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Internal error, problem resolver broke stuff"
+msgstr "內部錯誤，問題排除器造成了損壞"
+
+#: cmdline/apt-get.cc
+msgid "Supported modules:"
+msgstr "已支援模組："
+
+#: cmdline/apt-get.cc
+#, fuzzy
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a command line interface for retrieval of packages\n"
+"and information about them from authenticated sources and\n"
+"for installation, upgrade and removal of packages together\n"
+"with their dependencies.\n"
+msgstr ""
+"用法：apt-get [選項] 指令\n"
+"      apt-get [選項] install|remove 套件1 [套件2 ...]\n"
+"      apt-get [選項] source 套件1 [套件2 ...]\n"
+"\n"
+"apt-get 是一個用來下載和安裝套件的簡易命令列界面。\n"
+"最常用指令是 update 和 install。\n"
+
+#: cmdline/apt-get.cc
+msgid "Retrieve new lists of packages"
+msgstr "取得新的套件列表"
+
+#: cmdline/apt-get.cc
+msgid "Perform an upgrade"
+msgstr "進行升級"
+
+#: cmdline/apt-get.cc
+msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgstr "安裝新套件（套件名稱是 libc6 而不是 libc6.deb）"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages"
+msgstr "移除套件"
+
+#: cmdline/apt-get.cc
+msgid "Remove packages and config files"
+msgstr "移除並清除套件"
+
+#: cmdline/apt-get.cc cmdline/apt.cc
+msgid "Remove automatically all unused packages"
+msgstr "自動移除所有不再使用的套件"
+
+#: cmdline/apt-get.cc
+msgid "Distribution upgrade, see apt-get(8)"
+msgstr "發行版本升級，請參閱 apt-get(8)"
+
+#: cmdline/apt-get.cc
+msgid "Follow dselect selections"
+msgstr "採用 dselect 的選項升級"
+
+#: cmdline/apt-get.cc
+msgid "Configure build-dependencies for source packages"
+msgstr "為原始碼套件配置編譯相依關係"
+
+#: cmdline/apt-get.cc
+msgid "Erase downloaded archive files"
+msgstr "刪除已下載的套件檔"
+
+#: cmdline/apt-get.cc
+msgid "Erase old downloaded archive files"
+msgstr "刪除已下載但已有新版本的套件檔"
+
+#: cmdline/apt-get.cc
+msgid "Verify that there are no broken dependencies"
+msgstr "檢查相依關係是否有問題"
+
+#: cmdline/apt-get.cc
+msgid "Download source archives"
+msgstr "下載套件原始碼"
+
+#: cmdline/apt-get.cc
+msgid "Download the binary package into the current directory"
+msgstr ""
+
+#: cmdline/apt-get.cc
+msgid "Download and display the changelog for the given package"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "Need one URL as argument"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, fuzzy
+msgid "Must specify at least one pair url/filename"
+msgstr "在取得原始碼時必須至少指定一個套件"
+
+#: cmdline/apt-helper.cc
+msgid "Download Failed"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+#, c-format
+msgid "GetSrvRec failed for %s"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] cat-file file ...\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper bundles a variety of commands for shell scripts to use\n"
+"e.g. the same proxy configuration or acquire system as APT would.\n"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "download the given uri to the target-path"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "concatenate files, with automatic decompression"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "detect proxy using apt.conf"
+msgstr ""
+
+#: cmdline/apt-internal-planner.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-planner\n"
+"\n"
+"apt-internal-planner is an interface to use the current internal\n"
+"installation planner for the APT family like an external one,\n"
+"for debugging or the like.\n"
+msgstr ""
+"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
+"\n"
+"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
+"的工具\n"
+"\n"
+"選項\n"
+"  -h   本幫助訊息。\n"
+"  -t   指定暫存目錄\n"
+"  -c=? 讀取指定的設定檔\n"
+"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
+
+#: cmdline/apt-internal-solver.cc
+#, fuzzy
+msgid ""
+"Usage: apt-internal-solver\n"
+"\n"
+"apt-internal-solver is an interface to use the current internal\n"
+"resolver for the APT family like an external one, for debugging or\n"
+"the like.\n"
+msgstr ""
+"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
+"\n"
+"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
+"的工具\n"
+"\n"
+"選項\n"
+"  -h   本幫助訊息。\n"
+"  -t   指定暫存目錄\n"
+"  -c=? 讀取指定的設定檔\n"
+"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "但它卻尚未安裝"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s 已經是最新版本了。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s 已經是最新版本了。\n"
+
+#: cmdline/apt-mark.cc
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s set on hold.\n"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "無法開啟 %s"
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for purge.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for removal.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, c-format
+msgid "Selected %s for installation.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manually or automatically installed. It can also be used to\n"
+"manipulate the dpkg(1) selection states of packages, and to list\n"
+"all packages with or without a certain marking.\n"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as automatically installed"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark the given packages as manually installed"
+msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
+
+#: cmdline/apt-mark.cc
+msgid "Mark a package as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+msgid "Unset a package set as held back"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of automatically installed packages"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Print the list of manually installed packages"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt-mark.cc
+msgid "Print the list of package on hold"
+msgstr ""
+
+#: cmdline/apt-sortpkgs.cc
+msgid "Unknown package record!"
+msgstr "未知的套件記錄！"
+
+#: cmdline/apt-sortpkgs.cc
+msgid ""
+"Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
+"\n"
+"apt-sortpkgs is a simple tool to sort package information files.\n"
+"By default it sorts by binary package information, but the -s option\n"
+"can be used to switch to source package ordering instead.\n"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"apt is a commandline package manager and provides commands for\n"
+"searching and managing as well as querying information about packages.\n"
+"It provides the same functionality as the specialized APT tools,\n"
+"like apt-get and apt-cache, but enables options more suitable for\n"
+"interactive use by default.\n"
+msgstr ""
+
+#. query
+#: cmdline/apt.cc
+msgid "list packages based on package names"
+msgstr ""
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "search in package descriptions"
+msgstr "正在讀取套件清單"
+
+#: cmdline/apt.cc
+msgid "show package details"
+msgstr ""
+
+#. package stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "install packages"
+msgstr "鎖定的套件："
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "remove packages"
+msgstr "損毀的套件"
+
+#. system wide stuff
+#: cmdline/apt.cc
+#, fuzzy
+msgid "update list of available packages"
+msgstr "%s 被設定為手動安裝。\n"
+
+#: cmdline/apt.cc
+msgid "upgrade the system by installing/upgrading packages"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "upgrade the system by removing/installing/upgrading packages"
+msgstr ""
+
+#. misc
+#: cmdline/apt.cc
+#, fuzzy
+msgid "edit the source information file"
+msgstr "正在讀取狀態資料"
+
+#: dselect/install
+msgid "Bad default setting!"
+msgstr "錯誤的預設設定！"
+
+#: dselect/install dselect/update
+#, fuzzy
+msgid "Press [Enter] to continue."
+msgstr "請按 [Enter] 鍵以繼續進行。"
+
+#: dselect/install
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "您想移除所有先前下載的 .deb 檔嗎？"
+
+#: dselect/install
+#, fuzzy
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "在解開套件時發生錯誤。我要準備設定"
+
+#: dselect/install
+#, fuzzy
+msgid "will be configured. This may result in duplicate errors"
+msgstr "套件已安裝過。這會造成重複錯誤"
+
+#: dselect/install
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "或是因為沒有相依關係而造成錯誤。那麼這個錯誤是無關緊要的"
+
+#: dselect/install
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "以上的訊息相當重要。請修正它們並重新執行安裝[I]"
+
+#: dselect/update
+msgid "Merging available information"
+msgstr "整合現有的資料"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Package extension list is too long"
+msgstr "套件延伸列表過長"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing directory %s"
+msgstr "處理目錄 %s 時發生錯誤"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Source extension list is too long"
+msgstr "原始碼的延伸列表太長"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "Error writing header to contents file"
+msgstr "寫入標頭資訊到內容檔時發生錯誤"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Error processing contents %s"
+msgstr "處理內容 %s 時發生錯誤"
+
+#: ftparchive/apt-ftparchive.cc
+msgid ""
+"Usage: apt-ftparchive [options] command\n"
+"Commands: packages binarypath [overridefile [pathprefix]]\n"
+"          sources srcpath [overridefile [pathprefix]]\n"
+"          contents path\n"
+"          release path\n"
+"          generate config [groups]\n"
+"          clean config\n"
+"\n"
+"apt-ftparchive generates index files for Debian archives. It supports\n"
+"many styles of generation from fully automated to functional replacements\n"
+"for dpkg-scanpackages and dpkg-scansources\n"
+"\n"
+"apt-ftparchive generates Package files from a tree of .debs. The\n"
+"Package file contains the contents of all the control fields from\n"
+"each package as well as the MD5 hash and filesize. An override file\n"
+"is supported to force the value of Priority and Section.\n"
+"\n"
+"Similarly apt-ftparchive generates Sources files from a tree of .dscs.\n"
+"The --source-override option can be used to specify a src override file\n"
+"\n"
+"The 'packages' and 'sources' command should be run in the root of the\n"
+"tree. BinaryPath should point to the base of the recursive search and \n"
+"override file should contain the override flags. Pathprefix is\n"
+"appended to the filename fields if present. Example usage from the \n"
+"Debian archive:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"Options:\n"
+"  -h    This help text\n"
+"  --md5 Control MD5 generation\n"
+"  -s=?  Source override file\n"
+"  -q    Quiet\n"
+"  -d=?  Select the optional caching database\n"
+"  --no-delink Enable delinking debug mode\n"
+"  --contents  Control contents file generation\n"
+"  -c=?  Read this configuration file\n"
+"  -o=?  Set an arbitrary configuration option"
+msgstr ""
+"用法：apt-ftparchive [選項] 指令\n"
+"指令：packages 二進制檔搜索路徑 [重新定義檔 [路徑前綴]]\n"
+"      sources 原始碼搜索路徑 [重新定義檔 [路徑前綴]]\n"
+"      contents 搜索路徑\n"
+"      release 搜索路徑\n"
+"      generate 設定檔 [群組]\n"
+"      clean 設定檔\n"
+"\n"
+"apt-ftparchive 可用來替 Debian 套件庫建立索引檔。它支援了從全\n"
+"自動化到足以替代 dpkg-scanpackages 及 dpkg-scansources 所提供\n"
+"的所有功能等等各式各樣建立索引的方式。apt-ftparchive 會根據 .deb 檔案樹建立 "
+"Package 檔。Package 檔\n"
+"裡不僅包含了每個套件的 control 資料的內容，還包含了 MD5 檢驗\n"
+"碼和檔案大小。它還支援了重新定義檔，可用來強制指定優先等級及\n"
+"其所屬的類別。\n"
+"\n"
+"而同樣的，apt-ftparchive 也能根據 .dsc 檔案樹生成 Source 檔。\n"
+"可用 --source-override 選項來指定一個 src 重新定義檔。\n"
+"\n"
+"應當在檔案樹的根目錄下執行 'packages' 和 'source' 指令。\n"
+"二進制檔的搜索路徑必須指向遞迴搜索的底層，且在重新定義檔裡必\n"
+"須包含 override 旗標。若指定了路徑前綴時，則會被附加到檔案名\n"
+"稱這個欄位裡。以 Debian 套件庫為例:\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"               dists/potato/main/binary-i386/Packages\n"
+"\n"
+"選項：\n"
+"  -h    本幫助說明\n"
+"  --md5 控制如何產生 MD5 檢驗碼\n"
+"  -s=?  原始碼的重新定義檔\n"
+"  -q    安靜模式\n"
+"  -d=?  指定搭配的快取資料庫\n"
+"  --no-delink 啟用 DeLinking 模式\n"
+"  --contents  產生控制內容檔\n"
+"  -c=?  讀取指定的設定檔\n"
+"  -o=?  指定任意的設定選項"
+
+#: ftparchive/apt-ftparchive.cc
+msgid "No selections matched"
+msgstr "找不到符合的選項"
+
+#: ftparchive/apt-ftparchive.cc
+#, c-format
+msgid "Some files are missing in the package file group `%s'"
+msgstr "套件檔案組 `%s' 少了部份檔案"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB was corrupted, file renamed to %s.old"
+msgstr "DB 已損毀，檔案被更名為 %s.old"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "DB is old, attempting to upgrade %s"
+msgstr "DB 過舊，嘗試升級 %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid ""
+"DB format is invalid. If you upgraded from an older version of apt, please "
+"remove and re-create the database."
+msgstr ""
+"資料庫格式不正確。如果您是由舊版的 apt 升級上來的，請移除並重新建立資料庫。"
+
+#: ftparchive/cachedb.cc
+#, c-format
+msgid "Unable to open DB file %s: %s"
+msgstr "無法開啟 DB 檔 %s: %s"
+
+#: ftparchive/cachedb.cc
+#, fuzzy
+msgid "Failed to read .dsc"
+msgstr "無法讀取連結 %s"
+
+#: ftparchive/cachedb.cc
+msgid "Archive has no control record"
+msgstr "套件檔沒有 control 記錄"
+
+#: ftparchive/cachedb.cc
+msgid "Unable to get a cursor"
+msgstr "無法取得遊標"
+
+#: ftparchive/contents.cc
+msgid "realloc - Failed to allocate memory"
+msgstr "realloc - 無法配置記憶體"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Unknown compression algorithm '%s'"
+msgstr "未知的壓縮演算法 '%s'"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Compressed output %s needs a compression set"
+msgstr "要壓縮輸出 %s 需搭配壓縮動作"
+
+#: ftparchive/multicompress.cc methods/rsh.cc
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "無法和子程序建立 IPC 管線"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to fork"
+msgstr "fork 時失敗"
+
+#: ftparchive/multicompress.cc
+msgid "Compress child"
+msgstr "壓縮子程序"
+
+#: ftparchive/multicompress.cc
+#, c-format
+msgid "Internal error, failed to create %s"
+msgstr "內部錯誤，無法建立 %s"
+
+#: ftparchive/multicompress.cc
+msgid "IO to subprocess/file failed"
+msgstr "和子程序/檔案 IO 失敗"
+
+#: ftparchive/multicompress.cc
+msgid "Failed to read while computing MD5"
+msgstr "在計算 MD5 時無法讀取到資料"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Unable to open %s"
+msgstr "無法開啟 %s"
+
+#. skip spaces
+#. find end of word
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu (%s)"
+msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
+
+#: ftparchive/override.cc
+#, c-format
+msgid "Failed to read the override file %s"
+msgstr "無法讀取重新定義檔 %s"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #1"
+msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #2"
+msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #2"
+
+#: ftparchive/override.cc
+#, fuzzy, c-format
+msgid "Malformed override %s line %llu #3"
+msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #3"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to read directory %s\n"
+msgstr "警告：無法讀取目錄 %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "W: Unable to stat %s\n"
+msgstr "警告：無法取得 %s 狀態\n"
+
+#: ftparchive/writer.cc
+msgid "E: "
+msgstr "錯誤："
+
+#: ftparchive/writer.cc
+msgid "W: "
+msgstr "警告："
+
+#: ftparchive/writer.cc
+msgid "E: Errors apply to file "
+msgstr "錯誤：套用到檔案時發生錯誤"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to resolve %s"
+msgstr "無法解析 %s"
+
+#: ftparchive/writer.cc
+msgid "Tree walking failed"
+msgstr "無法走訪目錄樹"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "Failed to open %s"
+msgstr "無法開啟 %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink %s [%s]\n"
+msgstr " DeLink %s [%s]\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "*** Failed to link %s to %s"
+msgstr "*** 無法將 %s 連結到 %s"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid " DeLink limit of %sB hit.\n"
+msgstr " 達到了 DeLink 的上限 %sB。\n"
+
+#: ftparchive/writer.cc
+msgid "Archive had no package field"
+msgstr "套件檔裡沒有套件資訊"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no override entry\n"
+msgstr "  %s 沒有重新定義項目\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s maintainer is %s not %s\n"
+msgstr "  %s 的維護者是 %s，而非 %s\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no source override entry\n"
+msgstr "  %s 沒有原始碼重新定義項目\n"
+
+#: ftparchive/writer.cc
+#, c-format
+msgid "  %s has no binary override entry either\n"
+msgstr "  %s 也沒有二元碼重新定義項目\n"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "無法讀取光碟片資料庫 %s"
+
+#: methods/cdrom.cc
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"請用 apt-cdrom 來讓 APT 能辨識這張光碟。apt-get update 是不能用來新增光碟的"
+
+#: methods/cdrom.cc
+msgid "Wrong CD-ROM"
+msgstr "不正確的光碟"
+
+#: methods/cdrom.cc
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "無法卸載 %s 裡的光碟片，或許它仍在使用中。"
+
+#: methods/cdrom.cc
+msgid "Disk not found."
+msgstr "找不到磁碟。"
+
+#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+msgid "File not found"
+msgstr "找不到檔案"
+
+#. TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
+#: methods/connect.cc
+#, c-format
+msgid "Direct connection to %s domains is blocked by default."
+msgstr ""
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "正和 %s (%s) 連線"
+
+#: methods/connect.cc
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "無法建立 socket 指向 %s (f=%u t=%u p=%u)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "無法初始和 %s:%s (%s) 的連線。"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "無法和 %s:%s (%s) 連線，連線逾時"
+
+#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+msgid "Failed"
+msgstr "失敗"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "無法和 %s:%s (%s) 連線。"
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc methods/rsh.cc
+#, c-format
+msgid "Connecting to %s"
+msgstr "正連線至 %s"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "無法解析 '%s'"
+
+#: methods/connect.cc
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "暫時無法解析 '%s'"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "在解析 '%s:%s' (%i) 時出了怪事"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "在解析 '%s:%s' (%i) 時出了怪事"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "無法連線至 %s %s："
+
+#: methods/copy.cc
+msgid "Failed to stat"
+msgstr "無法取得狀態"
+
+#: methods/file.cc
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "不正確的 URI，本機 URI 不應以 // 開頭"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc
+msgid "Logging in"
+msgstr "登入中"
+
+#: methods/ftp.cc
+msgid "Unable to determine the peer name"
+msgstr "無法解析對方主機名稱"
+
+#: methods/ftp.cc
+msgid "Unable to determine the local name"
+msgstr "無法解析本機名稱"
+
+#: methods/ftp.cc
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "伺服器不接受連線，並回應：%s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "USER 指令失敗，伺服器回應：%s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "PASS 指令失敗，伺服器回應：%s"
+
+#: methods/ftp.cc
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"指定了代理伺服器，但沒有指定登入 script，Acquire::ftp::ProxyLogin 是空的。"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "登入 script 指令 '%s' 失敗，伺服器回應：%s"
+
+#: methods/ftp.cc
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "TYPE 指令失敗，伺服器回應：%s"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Connection timeout"
+msgstr "連線逾時"
+
+#: methods/ftp.cc
+msgid "Server closed the connection"
+msgstr "伺服器已關閉連線"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "A response overflowed the buffer."
+msgstr "回應超過緩衝區長度。"
+
+#: methods/ftp.cc
+msgid "Protocol corruption"
+msgstr "協定失敗"
+
+#: methods/ftp.cc
+msgid "Could not create a socket"
+msgstr "無法建立 Socket"
+
+#: methods/ftp.cc
+msgid "Could not connect data socket, connection timed out"
+msgstr "無法和 data socket 連線，連線逾時"
+
+#: methods/ftp.cc
+msgid "Could not connect passive socket."
+msgstr "無法和 passive socket 連線。"
+
+#: methods/ftp.cc
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "getaddrinfo 無法取得監聽 socket"
+
+#: methods/ftp.cc
+msgid "Could not bind a socket"
+msgstr "無法 bind 至 socket"
+
+#: methods/ftp.cc
+msgid "Could not listen on the socket"
+msgstr "無法監聽 socket"
+
+#: methods/ftp.cc
+msgid "Could not determine the socket's name"
+msgstr "無法解析 socket 名稱"
+
+#: methods/ftp.cc
+msgid "Unable to send PORT command"
+msgstr "無法送出 PORT 指令"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "未知的地址家族 %u (AF_*)"
+
+#: methods/ftp.cc
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "EPRT 指令失敗，伺服器回應：%s"
+
+#: methods/ftp.cc
+msgid "Data socket connect timed out"
+msgstr "Data socket 連線逾時"
+
+#: methods/ftp.cc
+msgid "Unable to accept connection"
+msgstr "無法接受連線"
+
+#: methods/ftp.cc methods/http.cc methods/rsh.cc
+msgid "Problem hashing file"
+msgstr "有問題的雜湊檔"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "無法取得檔案，伺服器回應 '%s'"
+
+#: methods/ftp.cc methods/rsh.cc
+msgid "Data socket timed out"
+msgstr "Data socket 連線逾時"
+
+#: methods/ftp.cc
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "資料傳輸失敗，伺服器回應 '%s'"
+
+#. Get the files information
+#: methods/ftp.cc
+msgid "Query"
+msgstr "查詢"
+
+#: methods/ftp.cc
+msgid "Unable to invoke "
+msgstr "無法 invoke "
+
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc
+#, c-format
+msgid ""
+"Signed file isn't valid, got '%s' (does the network require authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "At least one invalid signature was encountered."
+msgstr "至少發現一個無效的簽章。"
+
+#: methods/gpgv.cc
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr "內部錯誤：簽章無誤，但卻無法辨識密鑰的指紋碼？！"
+
+#: methods/gpgv.cc
+#, fuzzy
+msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgstr "無法執行 '%s' 來驗證簽章（gnupg 是否安裝了？）"
+
+#: methods/gpgv.cc
+msgid "Unknown error executing apt-key"
+msgstr "在執行 apt-key 時發生未知的錯誤"
+
+#. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+#: methods/gpgv.cc
+#, c-format
+msgid "Signature by key %s uses weak digest algorithm (%s)"
+msgstr ""
+
+#: methods/gpgv.cc
+msgid "The following signatures were invalid:\n"
+msgstr "以下簽名無效：\n"
+
+#: methods/gpgv.cc
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr "由於無法取得它們的公鑰，以下簽章無法進行驗證：\n"
+
+#: methods/http.cc
+msgid "Error writing to the file"
+msgstr "在寫入該檔時發生錯誤"
+
+#: methods/http.cc
+msgid "Error reading from server. Remote end closed connection"
+msgstr "在讀取伺服器時發生錯誤，遠端主機已關閉連線"
+
+#: methods/http.cc
+msgid "Error reading from server"
+msgstr "在讀取伺服器時發生錯誤"
+
+#: methods/http.cc
+msgid "Error writing to file"
+msgstr "在寫入檔案時發生錯誤"
+
+#: methods/http.cc
+msgid "Select failed"
+msgstr "選擇失敗"
+
+#: methods/http.cc
+msgid "Connection timed out"
+msgstr "連線逾時"
+
+#: methods/http.cc
+msgid "Error writing to output file"
+msgstr "在寫入輸出檔時發生錯誤"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr ""
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "無法開啟檔案 %s"
+
+#: methods/mirror.cc
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "無法開啟檔案 %s"
+
+#: methods/mirror.cc
+#, c-format
+msgid "[Mirror: %s]"
+msgstr ""
+
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "無法設定修改時間"
+
+#: methods/rsh.cc
+msgid "Connection closed prematurely"
+msgstr "連線突然終止"
+
+#: methods/server.cc
+msgid "Waiting for headers"
+msgstr "等待標頭"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "標頭行錯誤"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid reply header"
+msgstr "HTTP 伺服器傳送了一個無效的回覆標頭"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "HTTP 伺服器傳送了一個無效的 Content-Length 標頭"
+
+#: methods/server.cc
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "HTTP 伺服器傳送了一個無效的 Content-Range 標頭"
+
+#: methods/server.cc
+msgid "This HTTP server has broken range support"
+msgstr "這個 HTTP 伺服器的範圍支援有問題"
+
+#: methods/server.cc
+msgid "Unknown date format"
+msgstr "未知的資料格式"
+
+#: methods/server.cc
+msgid "Bad header data"
+msgstr "錯誤的標頭資料"
+
+#: methods/server.cc
+msgid "Connection failed"
+msgstr "連線失敗"
+
+#: methods/server.cc
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+
+#: methods/server.cc
+msgid "Internal error"
+msgstr "內部錯誤"
+
+#: methods/store.cc
+msgid "Empty files can't be valid archives"
+msgstr ""
 
 #~ msgid "(not found)"
 #~ msgstr "(未找到)"
