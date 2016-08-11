@@ -56,7 +56,10 @@ add_custom_target(apt-doxygen ALL
 )
 
 install(DIRECTORY  ${PROJECT_BINARY_DIR}/doc/doxygen/html
-        DESTINATION ${CMAKE_INSTALL_DOCDIR}/../libapt-pkg-doc)
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}/../libapt-pkg-doc
+        PATTERN "*.map" EXCLUDE
+        PATTERN "*.md5" EXCLUDE
+)
 
 endif()
 
