@@ -332,8 +332,8 @@ setupenvironment() {
 	echo "Dir::Bin::Planners \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planners\";" >> ../aptconfig.conf
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
-        if [ -e "${BUILDDIRECTORY}/../../debian/apt.conf.autoremove" ]; then
-	    ln -s "${BUILDDIRECTORY}/../../debian/apt.conf.autoremove" etc/apt/apt.conf.d/01autoremove
+        if [ -z "${APT_INTEGRATION_TESTS_SOURCE_DIR}" ]; then
+	    ln -s "${SOURCEDIRECTORY}/debian/apt.conf.autoremove" etc/apt/apt.conf.d/01autoremove
         else
 	    ln -s /etc/apt/apt.conf.d/01autoremove etc/apt/apt.conf.d/01autoremove
         fi
