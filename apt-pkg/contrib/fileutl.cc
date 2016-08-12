@@ -1882,11 +1882,12 @@ public:
 	 return filefd->FileFdError("ReadWrite mode is not supported for file %s", filefd->FileName.c_str());
 
       bool const Comp = (Mode & FileFd::WriteOnly) == FileFd::WriteOnly;
-      if (Comp == false)
+      if (Comp == false && filefd->iFd != -1)
       {
 	 // Handle 'decompression' of empty files
 	 struct stat Buf;
-	 fstat(filefd->iFd, &Buf);
+	 if (fstat(filefd->iFd, &Buf) != 0)
+	    return filefd->FileFdErrno("fstat", "Could not stat fd %d for file %s", filefd->iFd, filefd->FileName.c_str());
 	 if (Buf.st_size == 0 && S_ISFIFO(Buf.st_mode) == false)
 	    return true;
 
