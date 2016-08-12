@@ -11,6 +11,7 @@ echo 'found' > aptarchive/working
 changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=/' \
 	-o 'aptwebserver::httpcode::200=200' -o 'aptwebserver::httpcode::404=404' \
 	-o 'aptwebserver::httpcode::301=301'
+webserverconfig 'aptwebserver::empty-response-header::' 'foobar'
 
 testdownload() {
 	rm -f downfile
