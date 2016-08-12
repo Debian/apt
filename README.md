@@ -115,8 +115,10 @@ itself as well as in conjunction with dpkg and other tools while working with pa
 
 ### Unit tests
 
-These tests are gtest-dev based, reside in `./test/libapt` and can be run with `make test`.
-They are executed at package build-time, but not by `make`.
+These tests are gtest-dev based, executed by ctest, reside in `./test/libapt`
+and can be run with `make test`. They are executed at package build-time, but
+not by `make`. CTest by default does not show the output of tests, even if they
+failed, so to see more details you can also run them with `ctest --verbose`.
 
 Debugging
 ---------

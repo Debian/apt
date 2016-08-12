@@ -8,6 +8,8 @@ export DEB_BUILD_MAINT_OPTIONS := hardening=+all
 # do not fail as we are just experimenting with symbol files for now
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
+export CTEST_OUTPUT_ON_FAILURE=1
+
 %:
 	dh $@ --with systemd --parallel --buildsystem=cmake
 
