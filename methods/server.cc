@@ -220,8 +220,16 @@ bool ServerState::HeaderLine(string Line)
    if (stringcasecmp(Tag,"Connection:") == 0)
    {
       if (stringcasecmp(Val,"close") == 0)
+      {
 	 Persistent = false;
-      if (stringcasecmp(Val,"keep-alive") == 0)
+	 Pipeline = false;
+	 /* Some servers send error pages (as they are dynamically generated)
+	    for simplicity via a connection close instead of e.g. chunked,
+	    so assuming an always closing server only if we get a file + close */
+	 if (Result >= 200 && Result < 300)
+	    PipelineAllowed = false;
+      }
+      else if (stringcasecmp(Val,"keep-alive") == 0)
 	 Persistent = true;
       return true;
    }
