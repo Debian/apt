@@ -163,7 +163,7 @@ bool RemoveFile(char const * const Function, std::string const &FileName);
 int GetLock(std::string File,bool Errors = true);
 bool FileExists(std::string File);
 bool RealFileExists(std::string File);
-bool DirectoryExists(std::string const &Path) APT_CONST;
+bool DirectoryExists(std::string const &Path);
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
 bool Rename(std::string From, std::string To);
