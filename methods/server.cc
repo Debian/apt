@@ -102,25 +102,7 @@ bool ServerState::HeaderLine(string Line)
    if (Line.empty() == true)
       return true;
 
-   string::size_type Pos = Line.find(' ');
-   if (Pos == string::npos || Pos+1 > Line.length())
-   {
-      // Blah, some servers use "connection:closes", evil.
-      Pos = Line.find(':');
-      if (Pos == string::npos || Pos + 2 > Line.length())
-	 return _error->Error(_("Bad header line"));
-      Pos++;
-   }
-
-   // Parse off any trailing spaces between the : and the next word.
-   string::size_type Pos2 = Pos;
-   while (Pos2 < Line.length() && isspace_ascii(Line[Pos2]) != 0)
-      Pos2++;
-
-   string Tag = string(Line,0,Pos);
-   string Val = string(Line,Pos2);
-
-   if (stringcasecmp(Tag.c_str(),Tag.c_str()+4,"HTTP") == 0)
+   if (Line.size() > 4 && stringcasecmp(Line.data(), Line.data()+4, "HTTP") == 0)
    {
       // Evil servers return no version
       if (Line[4] == '/')
@@ -163,6 +145,21 @@ bool ServerState::HeaderLine(string Line)
 
       return true;
    }
+
+   // Blah, some servers use "connection:closes", evil.
+   // and some even send empty header fields…
+   string::size_type Pos = Line.find(':');
+   if (Pos == string::npos)
+      return _error->Error(_("Bad header line"));
+   ++Pos;
+
+   // Parse off any trailing spaces between the : and the next word.
+   string::size_type Pos2 = Pos;
+   while (Pos2 < Line.length() && isspace_ascii(Line[Pos2]) != 0)
+      Pos2++;
+
+   string const Tag(Line,0,Pos);
+   string const Val(Line,Pos2);
 
    if (stringcasecmp(Tag,"Content-Length:") == 0)
    {

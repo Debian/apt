@@ -122,6 +122,9 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    _config->Set("APTWebserver::Last-Status-Code", httpcode);
 
    std::stringstream buffer;
+   auto const empties = _config->FindVector("aptwebserver::empty-response-header");
+   for (auto && e: empties)
+      buffer << e << ":" << std::endl;
    _config->Dump(buffer, "aptwebserver::response-header", "%t: %v%n", false);
    std::vector<std::string> addheaders = VectorizeString(buffer.str(), '\n');
    for (std::vector<std::string>::const_iterator h = addheaders.begin(); h != addheaders.end(); ++h)
