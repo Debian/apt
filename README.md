@@ -35,7 +35,7 @@ Our bugtracker as well as a general overview can be found at the [Debian Tracker
 Contributing
 ------------
 APT is maintained in git, the official repository being located at
-`git://anonscm.debian.org/apt/apt.git` ([webgit](http://anonscm.debian.org/gitweb/?p=apt/apt.git)),
+`git://anonscm.debian.org/apt/apt.git` ([webgit](https://anonscm.debian.org/git/apt/apt.git)),
 but also available at other locations like [GitHub](https://github.com/Debian/apt).
 
 The default branch is `master`, other branches targeted at different
@@ -62,7 +62,7 @@ You can also use the Ninja generator of cmake, to do that pass
 to the cmake invocation, and then use ninja instead of make.
 
 The source code uses in most parts a relatively uncommon indent convention,
-namely 3 spaces with 8 space tab (see [doc/style.txt](http://anonscm.debian.org/gitweb/?p=apt/apt.git;a=blob;f=doc/style.txt) for more on this).
+namely 3 spaces with 8 space tab (see [doc/style.txt](https://anonscm.debian.org/git/apt/apt.git/tree/doc/style.txt) for more on this).
 Adhering to it avoids unnecessary code-churn destroying history (aka: `git blame`)
 and you are therefore encouraged to write patches in this style.
 Your editor can surely help you with this, for vim the settings would be
