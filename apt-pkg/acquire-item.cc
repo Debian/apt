@@ -991,6 +991,9 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
 									/*}}}*/
 bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
 {
+   // store can fail due to permission errors and the item will "loop" then
+   if (APT::String::Startswith(NewURI, "store:"))
+      return false;
    if (d->PastRedirections.empty())
    {
       d->PastRedirections.push_back(NewURI);

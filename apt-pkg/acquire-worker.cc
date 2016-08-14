@@ -686,6 +686,25 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
       return true;
    }
 
+   if (Item->Owner->IsRedirectionLoop(Item->URI))
+   {
+      std::string const Message = "400 URI Failure"
+	 "\nURI: " + Item->URI +
+	 "\nFilename: " + Item->Owner->DestFile +
+	 "\nFailReason: RedirectionLoop";
+
+      auto const ItmOwners = Item->Owners;
+      for (auto &O: ItmOwners)
+      {
+	 O->Status = pkgAcquire::Item::StatError;
+	 O->Failed(Message, Config);
+	 if (Log != nullptr)
+	    Log->Fail(O->GetItemDesc());
+      }
+      // "queued" successfully, the item just instantly failed
+      return true;
+   }
+
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
    Message += "URI: " + Item->URI;
