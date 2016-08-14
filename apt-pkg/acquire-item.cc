@@ -410,7 +410,7 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       return false;
    }
    // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
-   if (TransactionManager->BaseURI.empty() == false &&
+   if (TransactionManager->BaseURI.empty() == false && UsedMirror.empty() &&
 	 URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
    {
       // this ensures we rewrite only once and only the first step
@@ -1226,9 +1226,15 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    if (I->UsedMirror.empty() == false && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
    {
       if (APT::String::Endswith(I->Desc.URI, "InRelease"))
+      {
 	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("InRelease"));
+	 TransactionManager->UsedMirror = I->UsedMirror;
+      }
       else if (APT::String::Endswith(I->Desc.URI, "Release"))
+      {
 	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("Release"));
+	 TransactionManager->UsedMirror = I->UsedMirror;
+      }
    }
 
    std::string const FileName = LookupTag(Message,"Filename");
@@ -2934,6 +2940,20 @@ string pkgAcqIndex::Custom600Headers() const
 void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
    pkgAcqBaseIndex::Failed(Message,Cnf);
+
+   if (UsedMirror.empty() == false && UsedMirror != "DIRECT" &&
+	 LookupTag(Message, "FailReason") == "HttpError404")
+   {
+      UsedMirror = "DIRECT";
+      if (Desc.URI.find("/by-hash/") != std::string::npos)
+	 CompressionExtensions = "by-hash " + CompressionExtensions;
+      else
+	 CompressionExtensions = CurrentCompressionExtension + ' ' + CompressionExtensions;
+      Desc.Description = Target.Description;
+      Init(Target.URI, Desc.Description, Desc.ShortDesc);
+      Status = StatIdle;
+      return;
+   }
 
    // authorisation matches will not be fixed by other compression types
    if (Status != StatAuthError)
