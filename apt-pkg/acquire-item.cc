@@ -2879,6 +2879,8 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 	 Desc.URI = URI + '.' + CurrentCompressionExtension;
 	 DestFile = DestFile + '.' + CurrentCompressionExtension;
       }
+      else
+	 Desc.URI = URI;
 
       HashStringList const Hashes = GetExpectedHashes();
       HashString const * const TargetHash = Hashes.find(NULL);
