@@ -24,14 +24,7 @@ echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
 # test against the "real" webserver
 testsuccess aptkey --fakeroot net-update
-testequalor2 'Checking for new archive signing keys now
-gpg: key F68C85A3: public key "Test Automatic Archive Signing Key <ftpmaster@example.com>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1  (RSA: 1)' 'Checking for new archive signing keys now
-gpg: key F68C85A3: public key "Test Automatic Archive Signing Key <ftpmaster@example.com>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1' cat rootdir/tmp/testsuccess.output
-
+testfailure grep 'not added' rootdir/tmp/testsuccess.output
 testaptkeys 'oldarchive' 'newarchive'
 
 # now try a different one

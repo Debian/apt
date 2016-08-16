@@ -158,8 +158,9 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get install -qy --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' -e 's#<.*>##g' | tr -d ',')
-	apt-get install -qy --no-install-recommends $(sed -n 's#^Depends: .*@, \(.*\)$#\1#p' debian/tests/control | tr -d ',')
+	apt-get install -qy --no-install-recommends dctrl-tools
+	apt-get install -qy --no-install-recommends $(grep-dctrl -S -s Build-Depends,Build-Depends-Indep,Build-Depends-Arch apt ./debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\|-Arch\)\?: ##'     -e 's#<.*>##g' | tr -s '\n,' ' ')
+	apt-get install -qy --no-install-recommends $(grep-dctrl -F Tests -s Depends run-tests ./debian/tests/control | tr -s '\n,' ' ' | cut -d'@' -f 4- | sed -e 's#gnupg1#gnupg2#' -e 's#gpgv1#gpgv2#')
 elif [ "$1" = 'coverage' ]; then
 	DIR="${2:-./coverage}"
 	git clean -dfX # remove ignored build artefacts for a clean start

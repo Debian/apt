@@ -41,7 +41,9 @@ APT::Key::RemovedKeys \"${KEYDIR}/rexexpired.pub\";" > "${ROOTDIR}/etc/apt/apt.c
 	msgtest 'Check that paths in finger output are not' 'double-slashed'
 	testfailure --nomsg grep '//' "${ROOTDIR}/tmp/testsuccess.output"
 
-	testsuccessequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
+	testequalor2 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
+gpg: Total number processed: 1
+gpg:              unchanged: 1' 'gpg: key 5A90D141DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1' aptkey --fakeroot update
 
@@ -185,8 +187,9 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	msgtest 'Test verify a file' 'with no sig'
 	testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/testcase-multikey.pub" verify "${SIGNATURE}" "${SIGNATURE}2"
 
-	for GPGV in '' 'gpgv' 'gpgv2'; do
+	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
+		if [ -n "$GPGV" ] && ! command dpkg -l gnupg1 2>&1 | grep -q '^ii'; then continue; fi
 
 		msgtest 'Test verify a file' 'with all keys'
 		testsuccess --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}"
@@ -229,8 +232,9 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		adv --batch --yes -u 'Marvin' -u 'Joe' --armor --detach-sign --sign --output "${SIGNATURE}.gpg" "${SIGNATURE}"
 	testsuccess test -s "${SIGNATURE}.gpg" -a -s "${SIGNATURE}"
 
-	for GPGV in '' 'gpgv' 'gpgv2'; do
+	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
+		if [ -n "$GPGV" ] && ! command dpkg -l gnupg1 2>&1 | grep -q '^ii'; then continue; fi
 
 		msgtest 'Test verify a doublesigned file' 'with all keys'
 		testsuccess --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}"
@@ -265,11 +269,25 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 }
 
 setupgpgcommand() {
-	echo "APT::Key::GPGCommand \"$1\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgcmd"
-	msgmsg 'Force tests to be run with' "$1"
+	local GPGEXE;
+	if command dpkg -l gnupg1 2>&1 | grep -q '^ii'; then
+		if [ "$1" = '1' ]; then
+			GPGEXE='gpg1'
+		else
+			GPGEXE='gpg'
+		fi
+	else
+		if [ "$1" = '1' ]; then
+			GPGEXE='gpg'
+		else
+			GPGEXE='gpg2'
+		fi
+	fi
+	msgmsg 'Force tests to be run with' "$GPGEXE"
+	echo "APT::Key::GPGCommand \"$GPGEXE\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgcmd"
 	testsuccess aptkey --readonly adv --version
 	cp "${ROOTDIR}/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/aptkey.version"
-	testsuccess grep "^gpg (GnuPG) $2\." "${TMPWORKINGDIRECTORY}/aptkey.version"
+	testsuccess grep "^gpg (GnuPG) $1\." "${TMPWORKINGDIRECTORY}/aptkey.version"
 }
 
 # run with default (whatever this is) in current CWD with relative paths
@@ -285,7 +303,7 @@ cd inaccessible
 chmod 600 ../inaccessible
 testfilestats "${TMPWORKINGDIRECTORY}/inaccessible" '%a' '=' '600'
 
-setupgpgcommand 'gpg' '1'
+setupgpgcommand '1'
 testrun
-setupgpgcommand 'gpg2' '2'
+setupgpgcommand '2'
 testrun

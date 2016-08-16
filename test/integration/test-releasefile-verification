@@ -237,7 +237,7 @@ runtest() {
 	updatewithwarnings '^W: .* NO_PUBKEY'
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
 
-	local MARVIN="$(aptkey --keyring $MARVIN finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+	local MARVIN="$(aptkey --keyring $MARVIN finger --with-colons | grep '^fpr' | cut -d':' -f 10)"
 	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
@@ -261,7 +261,7 @@ runtest() {
 " aptcache show apt
 	installaptold
 
-	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
+	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger --with-colons | grep '^fpr' | cut -d':' -f 10)"
 	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
@@ -271,7 +271,6 @@ runtest() {
 " aptcache show apt
 	installaptold
 
-	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger | grep 'Key fingerprint' | cut -d'=' -f 2 | tr -d ' ')"
 	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=${SIXPACK},${MARVIN}\] #\1 [signed-by=${MARVIN},${SIXPACK}] #" rootdir/etc/apt/sources.list.d/*

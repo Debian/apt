@@ -1856,49 +1856,24 @@ testwebserverlaststatuscode() {
 	msggroup
 }
 
-createlistofkeys() {
-	local OUTPUT="$1"
-	shift
+mapkeynametokeyid() {
 	while [ -n "$1" ]; do
-		# gpg 2.1.something starts printing [SC] at some point
-		if grep -q ' rsa2048/' "$OUTPUT" && grep -qF '[SC]' "$OUTPUT"; then
-			case "$1" in
-				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18 [SC]';;
-				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [SC] [expired: 2013-07-13]';;
-				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16 [SC]';;
-				oldarchive) echo 'pub   rsa1024/F68C85A3 2013-12-19 [SC]';;
-				newarchive) echo 'pub   rsa2048/DBAC8DAE 2010-08-18 [SC]';;
-				*) echo 'UNKNOWN KEY';;
-			esac
-		# gpg 2.1 has a slightly different output format
-		elif grep -q ' rsa2048/' "$OUTPUT"; then
-			case "$1" in
-				*Joe*|*Sixpack*) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
-				*Rex*|*Expired*) echo 'pub   rsa2048/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
-				*Marvin*|*Paranoid*) echo 'pub   rsa2048/528144E2 2011-01-16';;
-				oldarchive) echo 'pub   rsa1024/F68C85A3 2013-12-19';;
-				newarchive) echo 'pub   rsa2048/DBAC8DAE 2010-08-18';;
-				*) echo 'UNKNOWN KEY';;
-			esac
-		else
-			case "$1" in
-				*Joe*|*Sixpack*) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
-				*Rex*|*Expired*) echo 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]';;
-				*Marvin*|*Paranoid*) echo 'pub   2048R/528144E2 2011-01-16';;
-				oldarchive) echo 'pub   1024R/F68C85A3 2013-12-19';;
-				newarchive) echo 'pub   2048R/DBAC8DAE 2010-08-18';;
-				*) echo 'UNKNOWN KEY';;
-			esac
-		fi
+		case "$1" in
+			*Joe*|*Sixpack*|newarchive) echo '5A90D141DBAC8DAE';;
+			*Rex*|*Expired*) echo '4BC0A39C27CE74F9';;
+			*Marvin*|*Paranoid*) echo 'E8525D47528144E2';;
+			oldarchive) echo 'FDD2DB85F68C85A3';;
+			*) echo 'UNKNOWN KEY';;
+		esac
 		shift
 	done
 }
 testaptkeys() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/aptkeylist.output"
-	if ! aptkey list | grep '^pub' > "$OUTPUT"; then
+	if ! aptkey list --with-colon | grep '^pub' | cut -d':' -f 5 > "$OUTPUT"; then
 		echo -n > "$OUTPUT"
 	fi
-	testfileequal "$OUTPUT" "$(createlistofkeys "$OUTPUT" "$@")"
+	testfileequal "$OUTPUT" "$(mapkeynametokeyid "$@")"
 }
 
 pause() {
