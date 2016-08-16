@@ -32,7 +32,7 @@ testdpkginstalled 'aptkeyuser-depends'
 testfailure grep '^Warning: This will BREAK' apt.output
 testsuccess grep '^Warning: apt-key' apt.output
 
-testsuccess apt install ./incoming/aptkeyuser-nodepends_*.changes -y
+testsuccess apt install --with-source ./incoming/aptkeyuser-nodepends_*.changes aptkeyuser-nodepends -y
 cp rootdir/tmp/testsuccess.output apt.output
 testdpkginstalled 'aptkeyuser-nodepends'
 testsuccess grep '^Warning: This will BREAK' apt.output

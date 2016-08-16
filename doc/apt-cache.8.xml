@@ -350,6 +350,21 @@ Reverse Provides:
       Configuration Item: <literal>APT::Cache::Installed</literal>.</para></listitem>
       </varlistentry>
 
+      <varlistentry><term><option>--with-source</option> <option>&synopsis-param-filename;</option></term>
+      <listitem><para>
+      Adds the given file as a source for metadata. Can be repeated to add multiple files.
+      Supported are currently <literal>*.deb</literal>, <literal>*.dsc</literal>,
+      <literal>*.changes</literal>, <literal>Sources</literal> and
+      <literal>Packages</literal> files as well as source package directories.
+      Files are matched based on their name only, not their content!</para>
+      <para><literal>Sources</literal> and <literal>Packages</literal> can be compressed in any
+      format apt supports as long as they have the correct extension. If you need to store
+      multiple of these files in one directory you can prefix a name of your choice with the
+      last character being an underscore ("<literal>_</literal>"). Example: my.example_Packages.xz</para>
+      <para>Note that these sources are treated as trusted (see &apt-secure;).
+      Configuration Item: <literal>APT::Sources::With</literal>.</para></listitem>
+      </varlistentry>
+
      &apt-commonoptions;
      
    </variablelist>

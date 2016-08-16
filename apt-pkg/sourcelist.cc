@@ -328,6 +328,9 @@ bool pkgSourceList::ReadMainList()
       // Only warn if there is no sources.list file.
       _error->WarningE("RealFileExists", _("Unable to read %s"), Main.c_str());
 
+   for (auto && file: _config->FindVector("APT::Sources::With"))
+      Res &= AddVolatileFile(file, nullptr);
+
    return Res;
 }
 									/*}}}*/
@@ -544,6 +547,22 @@ void pkgSourceList::AddVolatileFile(pkgIndexFile * const File)		/*{{{*/
       VolatileFiles.push_back(File);
 }
 									/*}}}*/
+static bool fileNameMatches(std::string const &filename, std::string const &idxtype)/*{{{*/
+{
+   for (auto && type: APT::Configuration::getCompressionTypes())
+   {
+      if (type == "uncompressed")
+      {
+	 if (filename == idxtype || APT::String::Endswith(filename, '_' + idxtype))
+	    return true;
+      }
+      else if (filename == idxtype + '.' + type ||
+	    APT::String::Endswith(filename, '_' + idxtype + '.' + type))
+	 return true;
+   }
+   return false;
+}
+									/*}}}*/
 bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::string> * const VolatileCmdL)/*{{{*/
 {
    // Note: FileExists matches directories and links, too!
@@ -574,7 +593,20 @@ bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::st
       return true;
    }
    else
-      return false;
+   {
+      auto const filename = flNotDir(File);
+      auto const Target = IndexTarget(File, filename, File, "file:" + File, false, true, {
+	 { "FILENAME", File },
+	 { "REPO_URI", "file:" + flAbsPath(flNotFile(File)) + '/' },
+	 { "COMPONENT", "volatile-packages-file" },
+      });
+      if (fileNameMatches(filename, "Packages"))
+	 AddVolatileFile(new debPackagesIndex(Target, true));
+      else if (fileNameMatches(filename, "Sources"))
+	 AddVolatileFile(new debSourcesIndex(Target, true));
+      else
+	 return false;
+   }
 
    if (VolatileCmdL != nullptr)
       VolatileCmdL->push_back(File);
