@@ -451,7 +451,11 @@ std::string pkgAcquire::Item::GetFinalFilename() const
 }
 std::string pkgAcqDiffIndex::GetFinalFilename() const
 {
-   return GetFinalFileNameFromURI(GetDiffIndexURI(Target));
+   std::string const FinalFile = GetFinalFileNameFromURI(GetDiffIndexURI(Target));
+   // we don't want recompress, so lets keep whatever we got
+   if (CurrentCompressionExtension == "uncompressed")
+      return FinalFile;
+   return FinalFile + "." + CurrentCompressionExtension;
 }
 std::string pkgAcqIndex::GetFinalFilename() const
 {
@@ -488,7 +492,10 @@ std::string pkgAcqIndex::GetMetaKey() const
 }
 std::string pkgAcqDiffIndex::GetMetaKey() const
 {
-   return GetDiffIndexFileName(Target.MetaKey);
+   auto const metakey = GetDiffIndexFileName(Target.MetaKey);
+   if (CurrentCompressionExtension == "uncompressed")
+      return metakey;
+   return metakey + "." + CurrentCompressionExtension;
 }
 									/*}}}*/
 //pkgAcqTransactionItem::TransactionState and specialisations for child classes	/*{{{*/
@@ -1971,44 +1978,33 @@ pkgAcqBaseIndex::~pkgAcqBaseIndex() {}
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
                                  pkgAcqMetaClearSig * const TransactionManager,
                                  IndexTarget const &Target)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), diffs(NULL)
+   : pkgAcqIndex(Owner, TransactionManager, Target, true), d(NULL), diffs(NULL)
 {
    // FIXME: Magic number as an upper bound on pdiffs we will reasonably acquire
    ExpectedAdditionalItems = 40;
-
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Desc.Owner = this;
-   Desc.Description = GetDiffIndexFileName(Target.Description);
-   Desc.ShortDesc = Target.ShortDesc;
-   Desc.URI = GetDiffIndexURI(Target);
-
-   DestFile = GetPartialFileNameFromURI(Desc.URI);
+   CompressionExtensions.clear();
+   {
+      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+      if (types.empty() == false)
+      {
+	 std::ostringstream os;
+	 std::copy_if(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "), [&](std::string const type) {
+	       if (type == "uncompressed")
+	          return true;
+	       return TransactionManager->MetaIndexParser->Exists(GetDiffIndexFileName(Target.MetaKey) + '.' + type);
+	 });
+	 os << *types.rbegin();
+	 CompressionExtensions = os.str();
+      }
+   }
+   if (Target.Option(IndexTarget::COMPRESSIONTYPES).find("by-hash") != std::string::npos)
+      CompressionExtensions = "by-hash " + CompressionExtensions;
+   Init(GetDiffIndexURI(Target), GetDiffIndexFileName(Target.Description), Target.ShortDesc);
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
-
-   QueueURI(Desc);
-}
-									/*}}}*/
-// AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
-// ---------------------------------------------------------------------
-/* The only header we use is the last-modified header. */
-string pkgAcqDiffIndex::Custom600Headers() const
-{
-   if (TransactionManager->LastMetaIndexParser != NULL)
-      return "\nIndex-File: true";
-
-   string const Final = GetFinalFilename();
-
-   if(Debug)
-      std::clog << "Custom600Header-IMS: " << Final << std::endl;
-
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true";
-   
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime, false);
 }
 									/*}}}*/
 void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
@@ -2039,7 +2035,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       std::clog << "pkgAcqDiffIndex::ParseIndexDiff() " << IndexDiffFile
 	 << std::endl;
 
-   FileFd Fd(IndexDiffFile,FileFd::ReadOnly);
+   FileFd Fd(IndexDiffFile, FileFd::ReadOnly, FileFd::Extension);
    pkgTagFile TF(&Fd);
    if (Fd.IsOpen() == false || Fd.Failed())
       return false;
@@ -2411,7 +2407,9 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 									/*}}}*/
 void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
-   pkgAcqBaseIndex::Failed(Message,Cnf);
+   if (CommonFailed(GetDiffIndexURI(Target), GetDiffIndexFileName(Target.Description), Message, Cnf))
+      return;
+
    Status = StatDone;
    ExpectedAdditionalItems = 0;
 
@@ -2829,10 +2827,12 @@ pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs() {}
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
                          pkgAcqMetaClearSig * const TransactionManager,
-                         IndexTarget const &Target)
+                         IndexTarget const &Target, bool const Derived)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL), Stage(STAGE_DOWNLOAD),
    CompressionExtensions(Target.Option(IndexTarget::COMPRESSIONTYPES))
 {
+   if (Derived)
+      return;
    Init(Target.URI, Target.Description, Target.ShortDesc);
 
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -2938,7 +2938,8 @@ string pkgAcqIndex::Custom600Headers() const
 }
 									/*}}}*/
 // AcqIndex::Failed - getting the indexfile failed			/*{{{*/
-void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
+bool pkgAcqIndex::CommonFailed(std::string const &TargetURI, std::string const TargetDesc,
+      std::string const &Message, pkgAcquire::MethodConfig const * const Cnf)
 {
    pkgAcqBaseIndex::Failed(Message,Cnf);
 
@@ -2950,10 +2951,9 @@ void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * 
 	 CompressionExtensions = "by-hash " + CompressionExtensions;
       else
 	 CompressionExtensions = CurrentCompressionExtension + ' ' + CompressionExtensions;
-      Desc.Description = Target.Description;
-      Init(Target.URI, Desc.Description, Desc.ShortDesc);
+      Init(TargetURI, TargetDesc, Desc.ShortDesc);
       Status = StatIdle;
-      return;
+      return true;
    }
 
    // authorisation matches will not be fixed by other compression types
@@ -2961,11 +2961,17 @@ void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * 
    {
       if (CompressionExtensions.empty() == false)
       {
-	 Init(Target.URI, Desc.Description, Desc.ShortDesc);
+	 Init(TargetURI, Desc.Description, Desc.ShortDesc);
 	 Status = StatIdle;
-	 return;
+	 return true;
       }
    }
+   return false;
+}
+void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
+{
+   if (CommonFailed(Target.URI, Target.Description, Message, Cnf))
+      return;
 
    if(Target.IsOptional && GetExpectedHashes().empty() && Stage == STAGE_DOWNLOAD)
       Status = StatDone;

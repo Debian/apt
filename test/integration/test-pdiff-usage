@@ -35,6 +35,7 @@ wasmergeused() {
 	fi
 
 	testsuccess apt update "$@"
+	#apt update "$@" 2>&1 | tee rootdir/tmp/testsuccess.output
 
 	msgtest 'No intermediate patch files' 'still exist'
 	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
@@ -112,6 +113,34 @@ SHA256-Download:
 	signreleasefiles
 	find aptarchive -name 'Packages*' -type f -delete
 	wasmergeused "$@"
+	testnopackage oldstuff
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt newstuff
+
+	msgmsg "Testcase: apply with compressed Index and one patch: $*"
+	cp "${PKGFILE}-new" aptarchive/Packages
+	compressfile 'aptarchive/Packages'
+	cat "$PATCHINDEX" | gzip > "${PATCHINDEX}.gz"
+	generatereleasefiles '+1hour'
+	signreleasefiles
+	find aptarchive -name 'Packages*' -type f -delete
+	rm "$PATCHINDEX"
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	wasmergeused "$@"
+	testnopackage oldstuff
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt newstuff
+
+	msgmsg "Testcase: apply with by-hash compressed Index and one patch: $*"
+	local NORMAL="$(readlink -f "./aptarchive/Packages.diff")"
+	local BYHASH="${NORMAL}/by-hash/SHA256"
+	mkdir -p "${BYHASH}"
+	find "${NORMAL}/" -maxdepth 1 -name "Index*" -exec mv '{}' "$BYHASH" \;
+	ln -s "${BYHASH}/Index.gz" "${BYHASH}/$(sha256sum "${BYHASH}/Index.gz" | cut -f1 -d' ')"
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	wasmergeused "$@" -o Acquire::By-Hash=force
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff
