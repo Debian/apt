@@ -216,7 +216,7 @@ gdb() {
 	if [ "${CMD##*/}" = "$CMD" ]; then
 		CMD="${BUILDDIRECTORY}/${CMD}"
 	fi
-	runapt command gdb --quiet -ex run "$CMD" --args "$CMD" "$@"
+	runapt command gdb --quiet -ex "directory '$SOURCEDIRECTORY'" -ex run "$CMD" --args "$CMD" "$@"
 }
 lastmodification() {
 	date -u -d "@$(stat -c '%Y' "${TMPWORKINGDIRECTORY}/$1")" -R
