@@ -423,18 +423,18 @@ bool pkgSourceList::ParseFileOldStyle(std::string const &File)
 /* Returns: the number of stanzas parsed*/
 bool pkgSourceList::ParseFileDeb822(string const &File)
 {
-   unsigned int i = 1;
-
    // see if we can read the file
    FileFd Fd(File, FileFd::ReadOnly);
    pkgTagFile Sources(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    if (Fd.IsOpen() == false || Fd.Failed())
-      return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
+      return _error->Error(_("Malformed stanza %u in source list %s (type)"),0,File.c_str());
 
    // read step by step
    pkgTagSection Tags;
+   unsigned int i = 0;
    while (Sources.Step(Tags) == true)
    {
+      ++i;
       if(Tags.Exists("Types") == false)
 	 return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
 
@@ -452,8 +452,6 @@ bool pkgSourceList::ParseFileDeb822(string const &File)
 
          if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
             return false;
-
-         ++i;
       }
    }
    return true;
