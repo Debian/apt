@@ -29,5 +29,6 @@ testfailure apt update
 unset http_proxy
 testsuccess grep 'Unsupported proxy configured' rootdir/tmp/testfailure.output
 
-
-
+echo 'Acquire::http::Proxy "foo://example.org";
+Acquire::https::Proxy "DIRECT";' > rootdir/etc/apt/apt.conf.d/proxy.conf
+testsuccess apt update
