@@ -116,6 +116,14 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
 	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
 
+	msgtest 'Test key removal with' 'spaced fingerprint'
+	cleanplate
+	cp -a "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess --nomsg aptkey --fakeroot del '34A8 E9D1 8DB3 20F3 67E8 EAA0 5A90 D141 DBAC 8DAE'
+	testempty aptkey list
+	testfailure test -e "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
+	testsuccess cmp "${KEYDIR}/joesixpack.pub" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg~"
+
 	msgtest 'Test key removal with' 'single key in softlink'
 	cleanplate
 	ln -s "$(readlink -f "${KEYDIR}/joesixpack.pub")" "${ROOTDIR}/etc/apt/trusted.gpg.d/joesixpack.gpg"
