@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-11 14:09+0200\n"
+"POT-Creation-Date: 2016-08-17 23:47+0200\n"
 "PO-Revision-Date: 2016-03-23 09:39+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -1973,6 +1973,14 @@ msgstr ""
 "reporting を見てください。設定項目: <literal>Dpkg::Progress</literal>、 "
 "<literal>Dpkg::Progress-Fancy</literal>"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Adds the given file as a source for metadata. Can be repeated to add "
+"multiple files.  See <option>--with-source</option> description in &apt-"
+"cache; for further details."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
 #: apt_preferences.5.xml
@@ -2584,6 +2592,39 @@ msgstr ""
 "<literal>depends</literal> や <literal>rdepends</literal> の出力を、現在イン"
 "ストールされているパッケージに限定します。設定項目: <literal>APT::Cache::"
 "Installed</literal>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-cache.8.xml
+msgid ""
+"Adds the given file as a source for metadata. Can be repeated to add "
+"multiple files.  Supported are currently <literal>*.deb</literal>, "
+"<literal>*.dsc</literal>, <literal>*.changes</literal>, <literal>Sources</"
+"literal> and <literal>Packages</literal> files as well as source package "
+"directories.  Files are matched based on their name only, not their content!"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-cache.8.xml
+msgid ""
+"<literal>Sources</literal> and <literal>Packages</literal> can be compressed "
+"in any format apt supports as long as they have the correct extension. If "
+"you need to store multiple of these files in one directory you can prefix a "
+"name of your choice with the last character being an underscore "
+"(\"<literal>_</literal>\"). Example: my.example_Packages.xz"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-cache.8.xml
+#, fuzzy
+#| msgid ""
+#| "Use source index field ordering.  Configuration Item: <literal>APT::"
+#| "SortPkgs::Source</literal>."
+msgid ""
+"Note that these sources are treated as trusted (see &apt-secure;).  "
+"Configuration Item: <literal>APT::Sources::With</literal>."
+msgstr ""
+"ソースインデックスフィールド順に並べ替えに使用します。設定項目: "
+"<literal>APT::SortPkgs::Source</literal>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-cache.8.xml
