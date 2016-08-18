@@ -200,8 +200,8 @@ remove_key_from_keyring() {
 	local FINGERPRINTS="${GPGHOMEDIR}/keyringfile.keylst"
 	get_fingerprints_of_keyring "$KEYRINGFILE" > "$FINGERPRINTS"
 
-        # strip leading 0x, if present:
-        KEY="${KEY#0x}"
+	# strip leading 0x, if present:
+	KEY="$(echo "${KEY#0x}" | tr -d ' ')"
 
 	# check if the key is in this keyring
 	if ! grep -iq "^[0-9A-F]*${KEY}$" "$FINGERPRINTS"; then
@@ -530,9 +530,11 @@ EOF
 	GPG_EXE="gpg"
     elif command_available 'gpg2'; then
 	GPG_EXE="gpg2"
+    elif command_available 'gpg1'; then
+	GPG_EXE="gpg1"
     else
-	echo >&2 "Error: gnupg or gnupg2 do not seem to be installed,"
-	echo >&2 "Error: but apt-key requires gnupg or gnupg2 for this operation."
+	echo >&2 "Error: gnupg, gnupg2 and gnupg1 do not seem to be installed,"
+	echo >&2 "Error: but apt-key requires gnupg, gnupg2 or gnupg1 for this operation."
 	echo >&2
 	exit 255
     fi
@@ -639,8 +641,9 @@ case "$command" in
 	if [ -n "$GPGV" ] && command_available "$GPGV"; then true;
 	elif command_available 'gpgv'; then GPGV='gpgv';
 	elif command_available 'gpgv2'; then GPGV='gpgv2';
+	elif command_available 'gpgv1'; then GPGV='gpgv1';
 	else
-	   echo >&2 'ERROR: gpgv or gpgv2 required for verification'
+	   echo >&2 'ERROR: gpgv, gpgv2 or gpgv1 required for verification'
 	   exit 29
 	fi
 	# for a forced keyid we need gpg --export, so full wrapping required

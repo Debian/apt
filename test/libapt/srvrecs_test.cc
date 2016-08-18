@@ -53,11 +53,18 @@ TEST(SrvRecTest,Randomness)
    EXPECT_EQ(testLength*2, base2.size());
 
    std::vector<SrvRec> first_pull;
+   auto const startingClock = clock();
    for (unsigned int i = 0; i < testLength; ++i)
       first_pull.push_back(PopFromSrvRecs(base1));
    EXPECT_TRUE(base1.empty());
    EXPECT_FALSE(first_pull.empty());
    EXPECT_EQ(testLength, first_pull.size());
+
+   // busy-wait for a cpu-clock change as we use it as "random" value
+   if (startingClock != -1)
+      for (int i = 0; i < 100000; ++i)
+	 if (startingClock != clock())
+	    break;
 
    std::vector<SrvRec> second_pull;
    for (unsigned int i = 0; i < testLength; ++i)
@@ -69,7 +76,8 @@ TEST(SrvRecTest,Randomness)
    EXPECT_EQ(first_pull.size(), second_pull.size());
    EXPECT_TRUE(std::all_of(first_pull.begin(), first_pull.end(), [](SrvRec const &R) { return R.priority == 20; }));
    EXPECT_TRUE(std::all_of(second_pull.begin(), second_pull.end(), [](SrvRec const &R) { return R.priority == 20; }));
-   EXPECT_FALSE(std::equal(first_pull.begin(), first_pull.end(), second_pull.begin()));
+   if (startingClock != -1 && startingClock != clock())
+      EXPECT_FALSE(std::equal(first_pull.begin(), first_pull.end(), second_pull.begin()));
 
    EXPECT_TRUE(std::all_of(base2.begin(), base2.end(), [](SrvRec const &R) { return R.priority == 30; }));
 }

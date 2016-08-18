@@ -86,10 +86,10 @@ public:
    }
    std::string ConfigFind(char const * const postfix, std::string const &defValue) const APT_NONNULL(2)
    {
-      for (auto && name: methodNames)
+      for (auto name = methodNames.rbegin(); name != methodNames.rend(); ++name)
       {
 	 std::string conf;
-	 strprintf(conf, "Acquire::%s::%s", name.c_str(), postfix);
+	 strprintf(conf, "Acquire::%s::%s", name->c_str(), postfix);
 	 auto const value = _config->Find(conf);
 	 if (value.empty() == false)
 	    return value;

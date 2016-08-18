@@ -464,6 +464,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       }
 	       else
 	       {
+		  auto SavedDesc = Owner->GetItemDesc();
 		  if (isDoomedItem(Owner) == false)
 		  {
 		     if (Message.find("\nFailReason:") == std::string::npos)
@@ -476,7 +477,7 @@ bool pkgAcquire::Worker::RunMessages()
 		     Owner->Failed(Message,Config);
 		  }
 		  if (Log != nullptr)
-		     Log->Fail(Owner->GetItemDesc());
+		     Log->Fail(SavedDesc);
 	       }
 	    }
 	    ItemDone();
@@ -524,11 +525,11 @@ bool pkgAcquire::Worker::RunMessages()
 		  Owner->Status = pkgAcquire::Item::StatAuthError;
 	       else if (errTransient)
 		  Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-
+	       auto SavedDesc = Owner->GetItemDesc();
 	       if (isDoomedItem(Owner) == false)
 		  Owner->Failed(Message,Config);
 	       if (Log != nullptr)
-		  Log->Fail(Owner->GetItemDesc());
+		  Log->Fail(SavedDesc);
 	    }
 	    ItemDone();
 
@@ -677,6 +678,25 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
       for (auto &O: ItmOwners)
       {
 	 O->Status = pkgAcquire::Item::StatAuthError;
+	 O->Failed(Message, Config);
+	 if (Log != nullptr)
+	    Log->Fail(O->GetItemDesc());
+      }
+      // "queued" successfully, the item just instantly failed
+      return true;
+   }
+
+   if (Item->Owner->IsRedirectionLoop(Item->URI))
+   {
+      std::string const Message = "400 URI Failure"
+	 "\nURI: " + Item->URI +
+	 "\nFilename: " + Item->Owner->DestFile +
+	 "\nFailReason: RedirectionLoop";
+
+      auto const ItmOwners = Item->Owners;
+      for (auto &O: ItmOwners)
+      {
+	 O->Status = pkgAcquire::Item::StatError;
 	 O->Failed(Message, Config);
 	 if (Log != nullptr)
 	    Log->Fail(O->GetItemDesc());

@@ -151,7 +151,13 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(ALLOW_WEAK);
       APT_CASE(ALLOW_DOWNGRADE_TO_INSECURE);
 #undef APT_CASE
-      case FILENAME: return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
+      case FILENAME:
+      {
+	 auto const M = Options.find("FILENAME");
+	 if (M == Options.end())
+	    return _config->FindDir("Dir::State::lists") + URItoFileName(URI);
+	 return M->second;
+      }
       case EXISTING_FILENAME:
 	 std::string const filename = Option(FILENAME);
 	 std::vector<std::string> const types = VectorizeString(Option(COMPRESSIONTYPES), ' ');

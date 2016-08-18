@@ -122,6 +122,9 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    _config->Set("APTWebserver::Last-Status-Code", httpcode);
 
    std::stringstream buffer;
+   auto const empties = _config->FindVector("aptwebserver::empty-response-header");
+   for (auto && e: empties)
+      buffer << e << ":" << std::endl;
    _config->Dump(buffer, "aptwebserver::response-header", "%t: %v%n", false);
    std::vector<std::string> addheaders = VectorizeString(buffer.str(), '\n');
    for (std::vector<std::string>::const_iterator h = addheaders.begin(); h != addheaders.end(); ++h)
@@ -714,6 +717,15 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       condition.clear();
 	    if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
 	    {
+	       std::string ranges = ',' + _config->Find("aptwebserver::response-header::Accept-Ranges") + ',';
+	       ranges.erase(std::remove(ranges.begin(), ranges.end(), ' '), ranges.end());
+	       if (ranges.find(",bytes,") == std::string::npos)
+	       {
+		  // we handle it as an error here because we are a test server - a real one should just ignore it
+		  sendError(client, 400, *m, sendContent, "Client does range requests we don't support", headers);
+		  continue;
+	       }
+
 	       time_t cache;
 	       std::string ifrange;
 	       if (_config->FindB("aptwebserver::support::if-range", true) == true)

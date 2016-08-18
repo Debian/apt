@@ -64,6 +64,23 @@ Remv foo:i386 [1.0]
 Inst foo (1.0 local-deb [amd64])
 Conf foo (1.0 local-deb [amd64])" aptget install ./incoming/foo_1.0_amd64.deb -s
 
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install --with-source ./incoming/foo_1.0_amd64.deb -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  foo:i386
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv foo:i386 [1.0]
+Inst foo (1.0 local-deb [amd64])
+Conf foo (1.0 local-deb [amd64])' aptget install --with-source ./incoming/foo_1.0_amd64.deb foo -s
+
 # Check that installing the local deb works if it is not the candidate
 echo "Package: foo
 Pin: version 1.0
@@ -133,3 +150,21 @@ fi
 sed -i -e '/^Depends: foo/ d' rootdir/var/lib/dpkg/status
 testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.deb
 testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
+testsuccess apt purge -y pkg-as-it-should-be
+
+echo "Package: pkg-as-it-should-be
+Architecture: all
+Version: 0
+Installed-Size: 2903
+Filename: incoming/pkg-as-it-should-be_0_all.deb
+Size: $(stat -c %s incoming/pkg-as-it-should-be_0_all.deb)
+SHA256: $(sha256sum incoming/pkg-as-it-should-be_0_all.deb | cut -d' ' -f 1)
+" > Packages
+testdpkgnotinstalled 'pkg-as-it-should-be'
+testnopackage pkg-as-it-should-be
+testsuccess apt install --with-source ./Packages pkg-as-it-should-be -s
+testsuccess apt install --with-source ./Packages pkg-as-it-should-be --print-uris
+testsuccess apt show --with-source ./Packages pkg-as-it-should-be
+testequal 'Package: pkg-as-it-should-be' head -n1 rootdir/tmp/testsuccess.output
+testsuccess apt install -y --with-source ./Packages pkg-as-it-should-be
+testdpkginstalled 'pkg-as-it-should-be'

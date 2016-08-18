@@ -611,6 +611,79 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
    virtual ~pkgAcqBaseIndex();
 };
 									/*}}}*/
+/** \brief An acquire item that is responsible for fetching an index	{{{
+ *  file (e.g., Packages or Sources).
+ *
+ *  \sa pkgAcqDiffIndex, pkgAcqIndexDiffs, pkgAcqIndexTrans
+ *
+ *  \todo Why does pkgAcqIndex have protected members?
+ */
+class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
+{
+   void * const d;
+
+   protected:
+
+   /** \brief The stages the method goes through
+    *
+    *  The method first downloads the indexfile, then its decompressed (or
+    *  copied) and verified
+    */
+   enum AllStages {
+      STAGE_DOWNLOAD,
+      STAGE_DECOMPRESS_AND_VERIFY,
+   };
+   AllStages Stage;
+
+   /** \brief Handle what needs to be done when the download is done */
+   void StageDownloadDone(std::string const &Message);
+
+   /** \brief Handle what needs to be done when the decompression/copy is
+    *         done
+    */
+   void StageDecompressDone();
+
+   /** \brief If \b set, this partially downloaded file will be
+    *  removed when the download completes.
+    */
+   std::string EraseFileName;
+
+   /** \brief The compression-related file extensions that are being
+    *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
+    */
+   std::string CompressionExtensions;
+
+   /** \brief The actual compression extension currently used */
+   std::string CurrentCompressionExtension;
+
+   /** \brief Do the changes needed to fetch via AptByHash (if needed) */
+   void InitByHashIfNeeded();
+
+   /** \brief Get the full pathname of the final file for the current URI */
+   virtual std::string GetFinalFilename() const APT_OVERRIDE;
+
+   virtual bool TransactionState(TransactionStates const state) APT_OVERRIDE;
+
+   public:
+   // Specialized action members
+   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual void Done(std::string const &Message, HashStringList const &Hashes,
+		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
+   virtual std::string GetMetaKey() const APT_OVERRIDE;
+
+   pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
+               IndexTarget const &Target, bool const Derived = false) APT_NONNULL(2, 3);
+   virtual ~pkgAcqIndex();
+
+   protected:
+   APT_HIDDEN void Init(std::string const &URI, std::string const &URIDesc,
+             std::string const &ShortDesc);
+   APT_HIDDEN bool CommonFailed(std::string const &TargetURI, std::string const TargetDesc,
+             std::string const &Message, pkgAcquire::MethodConfig const * const Cnf);
+};
+									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -620,7 +693,7 @@ class APT_HIDDEN pkgAcqBaseIndex : public pkgAcqTransactionItem
  *
  *  \sa pkgAcqIndexDiffs, pkgAcqIndex
  */
-class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
 {
    void * const d;
    std::vector<pkgAcqIndexMergeDiffs*> * diffs;
@@ -646,7 +719,6 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqBaseIndex
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "Index";};
-   virtual std::string Custom600Headers() const APT_OVERRIDE;
    virtual std::string GetMetaKey() const APT_OVERRIDE;
 
    /** \brief Parse the Index file for a set of Packages diffs.
@@ -885,77 +957,6 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
                     IndexTarget const &Target,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>()) APT_NONNULL(2, 3);
    virtual ~pkgAcqIndexDiffs();
-};
-									/*}}}*/
-/** \brief An acquire item that is responsible for fetching an index	{{{
- *  file (e.g., Packages or Sources).
- *
- *  \sa pkgAcqDiffIndex, pkgAcqIndexDiffs, pkgAcqIndexTrans
- *
- *  \todo Why does pkgAcqIndex have protected members?
- */
-class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
-{
-   void * const d;
-
-   protected:
-
-   /** \brief The stages the method goes through
-    *
-    *  The method first downloads the indexfile, then its decompressed (or
-    *  copied) and verified
-    */
-   enum AllStages {
-      STAGE_DOWNLOAD,
-      STAGE_DECOMPRESS_AND_VERIFY,
-   };
-   AllStages Stage;
-
-   /** \brief Handle what needs to be done when the download is done */
-   void StageDownloadDone(std::string const &Message);
-
-   /** \brief Handle what needs to be done when the decompression/copy is
-    *         done 
-    */
-   void StageDecompressDone();
-
-   /** \brief If \b set, this partially downloaded file will be
-    *  removed when the download completes.
-    */
-   std::string EraseFileName;
-
-   /** \brief The compression-related file extensions that are being
-    *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
-    */
-   std::string CompressionExtensions;
-
-   /** \brief The actual compression extension currently used */
-   std::string CurrentCompressionExtension;
-
-   /** \brief Do the changes needed to fetch via AptByHash (if needed) */
-   void InitByHashIfNeeded();
-
-   /** \brief Get the full pathname of the final file for the current URI */
-   virtual std::string GetFinalFilename() const APT_OVERRIDE;
-
-   virtual bool TransactionState(TransactionStates const state) APT_OVERRIDE;
-
-   public:
-   // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
-   virtual void Done(std::string const &Message, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
-   virtual std::string Custom600Headers() const APT_OVERRIDE;
-   virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
-   virtual std::string GetMetaKey() const APT_OVERRIDE;
-
-   pkgAcqIndex(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-               IndexTarget const &Target) APT_NONNULL(2, 3);
-   virtual ~pkgAcqIndex();
-
-   private:
-   APT_HIDDEN void Init(std::string const &URI, std::string const &URIDesc,
-             std::string const &ShortDesc);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a package file.	{{{

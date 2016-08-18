@@ -103,7 +103,7 @@ struct HttpServerState: public ServerState
    virtual bool WriteResponse(std::string const &Data) APT_OVERRIDE;
 
    public:
-   virtual void Reset() APT_OVERRIDE { ServerState::Reset(); ServerFd = -1; };
+   virtual void Reset(bool const Everything = true) APT_OVERRIDE;
 
    virtual bool RunData(FileFd * const File) APT_OVERRIDE;
    virtual bool RunDataToDevNull() APT_OVERRIDE;

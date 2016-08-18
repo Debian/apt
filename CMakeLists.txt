@@ -113,7 +113,7 @@ endif()
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
-set(PACKAGE_VERSION "1.3~rc1ubuntu1")
+set(PACKAGE_VERSION "1.3~rc2")
 
 if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
@@ -133,6 +133,7 @@ add_subdirectory(apt-pkg)
 add_subdirectory(apt-private)
 add_subdirectory(apt-inst)
 add_subdirectory(cmdline)
+add_subdirectory(completions)
 add_subdirectory(doc)
 add_subdirectory(dselect)
 add_subdirectory(ftparchive)

@@ -34,26 +34,28 @@ TEST(StringViewTest,EmptyString)
 
 TEST(StringViewTest,FooString)
 {
-   constexpr APT::StringView defString("foo", 3);
+   constexpr APT::StringView defString("fooGARBAGE", 3);
    static_assert( 3 == defString.length(), "def right size");
-   EXPECT_EQ(defString.to_string(), defString.data());
+   EXPECT_EQ(0, defString.to_string().compare(0, defString.length(), defString.data(), 3));
 
    APT::StringView strString{std::string{"foo"}};
    EXPECT_EQ(3, strString.length());
-   EXPECT_EQ(strString.to_string(), strString.data());
+   EXPECT_EQ(0, strString.to_string().compare(0, strString.length(), strString.data(), 3));
 
-   constexpr char const * const charp = "foo";
+   constexpr char const * const charp = "fooGARBAGE";
    constexpr APT::StringView charpString{charp, 3};
-   EXPECT_EQ( 3, charpString.length());
-   EXPECT_EQ(charpString.to_string(), charpString.data());
+   EXPECT_EQ(3, charpString.length());
+   EXPECT_EQ(0, charpString.to_string().compare(0, charpString.length(), charpString.data(), 3));
 
-   APT::StringView charp2String{charp};
+   char * charp2 = strdup("foo");
+   APT::StringView charp2String{charp2};
    EXPECT_EQ(3, charp2String.length());
-   EXPECT_EQ(charp2String.to_string(), charp2String.data());
+   EXPECT_EQ(0, charp2String.to_string().compare(0, charp2String.length(), charp2String.data(), 3));
+   free(charp2);
 
    const APT::StringView charaString{"foo"};
    EXPECT_EQ(3, charaString.length());
-   EXPECT_EQ(charaString.to_string(), charaString.data());
+   EXPECT_EQ(0, charaString.to_string().compare(0, charaString.length(), charaString.data(), 3));
 
    EXPECT_TRUE(APT::StringView("foo") == "foo");
    EXPECT_FALSE(APT::StringView("foo") != "foo");

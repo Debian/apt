@@ -185,7 +185,7 @@ SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs)
 	 [&I](SrvRec const &J) { return I->priority != J.priority; });
 
    // clock seems random enough.
-   I += clock() % std::distance(I, J);
+   I += std::max(static_cast<clock_t>(0), clock()) % std::distance(I, J);
    SrvRec const selected = std::move(*I);
    Recs.erase(I);
 

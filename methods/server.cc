@@ -46,19 +46,8 @@ time_t ServerMethod::FailTime = 0;
 ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
                                                       const std::string &Uri)
 {
-   State = Header;
-   
+   Reset(false);
    Owner->Status(_("Waiting for headers"));
-
-   Major = 0; 
-   Minor = 0; 
-   Result = 0; 
-   TotalFileSize = 0;
-   JunkSize = 0;
-   StartPos = 0;
-   Encoding = Closes;
-   HaveContent = false;
-   time(&Date);
 
    do
    {
@@ -101,25 +90,7 @@ bool ServerState::HeaderLine(string Line)
    if (Line.empty() == true)
       return true;
 
-   string::size_type Pos = Line.find(' ');
-   if (Pos == string::npos || Pos+1 > Line.length())
-   {
-      // Blah, some servers use "connection:closes", evil.
-      Pos = Line.find(':');
-      if (Pos == string::npos || Pos + 2 > Line.length())
-	 return _error->Error(_("Bad header line"));
-      Pos++;
-   }
-
-   // Parse off any trailing spaces between the : and the next word.
-   string::size_type Pos2 = Pos;
-   while (Pos2 < Line.length() && isspace_ascii(Line[Pos2]) != 0)
-      Pos2++;
-
-   string Tag = string(Line,0,Pos);
-   string Val = string(Line,Pos2);
-
-   if (stringcasecmp(Tag.c_str(),Tag.c_str()+4,"HTTP") == 0)
+   if (Line.size() > 4 && stringcasecmp(Line.data(), Line.data()+4, "HTTP") == 0)
    {
       // Evil servers return no version
       if (Line[4] == '/')
@@ -162,6 +133,21 @@ bool ServerState::HeaderLine(string Line)
 
       return true;
    }
+
+   // Blah, some servers use "connection:closes", evil.
+   // and some even send empty header fields…
+   string::size_type Pos = Line.find(':');
+   if (Pos == string::npos)
+      return _error->Error(_("Bad header line"));
+   ++Pos;
+
+   // Parse off any trailing spaces between the : and the next word.
+   string::size_type Pos2 = Pos;
+   while (Pos2 < Line.length() && isspace_ascii(Line[Pos2]) != 0)
+      Pos2++;
+
+   string const Tag(Line,0,Pos);
+   string const Val(Line,Pos2);
 
    if (stringcasecmp(Tag,"Content-Length:") == 0)
    {
@@ -222,8 +208,16 @@ bool ServerState::HeaderLine(string Line)
    if (stringcasecmp(Tag,"Connection:") == 0)
    {
       if (stringcasecmp(Val,"close") == 0)
+      {
 	 Persistent = false;
-      if (stringcasecmp(Val,"keep-alive") == 0)
+	 Pipeline = false;
+	 /* Some servers send error pages (as they are dynamically generated)
+	    for simplicity via a connection close instead of e.g. chunked,
+	    so assuming an always closing server only if we get a file + close */
+	 if (Result >= 200 && Result < 300)
+	    PipelineAllowed = false;
+      }
+      else if (stringcasecmp(Val,"keep-alive") == 0)
 	 Persistent = true;
       return true;
    }
@@ -241,6 +235,15 @@ bool ServerState::HeaderLine(string Line)
       return true;
    }
 
+   if (stringcasecmp(Tag, "Accept-Ranges:") == 0)
+   {
+      std::string ranges = ',' + Val + ',';
+      ranges.erase(std::remove(ranges.begin(), ranges.end(), ' '), ranges.end());
+      if (ranges.find(",bytes,") == std::string::npos)
+	 RangesAllowed = false;
+      return true;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -255,6 +258,19 @@ bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
 {
    File.Truncate(StartPos);
    return GetHashes()->AddFD(File, StartPos);
+}
+									/*}}}*/
+void ServerState::Reset(bool const Everything)				/*{{{*/
+{
+   Major = 0; Minor = 0; Result = 0; Code[0] = '\0';
+   TotalFileSize = 0; JunkSize = 0; StartPos = 0;
+   Encoding = Closes; time(&Date); HaveContent = false;
+   State = Header; MaximumSize = 0;
+   if (Everything)
+   {
+      Persistent = false; Pipeline = false; PipelineAllowed = true;
+      RangesAllowed = true;
+   }
 }
 									/*}}}*/
 

@@ -1,3 +1,32 @@
+apt (1.3~rc2) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * debian/NEWS: Get rid of 1.3~pre3+cmake1 entry.
+    Thanks to Axel Beckert for reporting
+  * CMake: Use COPYONLY instead of @ONLY
+  * fileutl: empty file support: Avoid fstat() on -1 fd and check result
+  * Change anonscm.d.o links to /git/apt/apt.git and https
+
+  [ David Kalnischkies ]
+  * don't perform int<float in progress bar drawing
+  * ensure a good clock() value for usage and tests
+  * drop incorrect const attribute from DirectoryExists (LP: 1473674)
+  * http(s): allow empty values for header fields (Closes: 834048)
+  * don't sent Range requests if we know its not accepted
+  * don't try pipelining if server closes connections (Closes: #832113)
+  * log with the failed item description, not with next try
+  * retry without same redirection mirror on 404 errors
+  * support getting only-uncompressed files via by-hash
+  * support compression and by-hash for .diff/Index files (Closes: #824926)
+  * default to Dir=/ in dpkg/status file finding magic
+  * add the gpg-classic variant to the gpgv/gnupg or-group
+  * allow spaces in fingerprints for 'apt-key del'
+  * add --with-source option and Packages/Sources support
+  * don't count each Type as an individual deb822-sources stanza
+  * methods: read config in most to least specific order (Closes: 834642)
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 17 Aug 2016 23:31:07 +0200
+
 apt (1.3~rc1ubuntu2) yakkety; urgency=medium
 
   * Don't build with -O3. See LP: #1473674.
