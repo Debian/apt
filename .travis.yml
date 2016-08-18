@@ -9,9 +9,9 @@ before_install:
    sudo sh -c '/bin/echo -e "Package: *\nPin: release n=xenial\nPin-Priority: 1" > /etc/apt/preferences.d/xenial'
  - sudo apt-get update -qq
 install:
- - sudo ./prepare-release travis-ci
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
  - sudo apt-get -qq -y -t xenial install cmake
+ - sudo ./prepare-release travis-ci
 before_script:
  - ( mkdir build && cd build && cmake .. )
  - make -C build -j4

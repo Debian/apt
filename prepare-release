@@ -26,6 +26,26 @@ librarysymbolsfromfile() {
 	done | sort -u
 }
 
+test_deb_control() {
+	echo "Package: apt-test-depends"
+	echo "Version: 1.0"
+	echo "Architecture: all"
+	printf "Depends:"
+	(
+	for i in Build-Depends Build-Depends-Indep Build-Depends-Arch; do
+		grep-dctrl -ns $i -S apt ./debian/control && echo ,
+	done
+		grep-dctrl -ns Depends -F Tests run-tests ./debian/tests/control
+	) | tr '\n' ' '\
+	  | sed -r -e 's#<[^,<>()@]*>##g' \
+	           -e 's#@[^,<>()@]*@##g' \
+	           -e 's#dpkg-dev \([^)]*\)#dpkg-dev#g' \
+	           -e 's#debhelper \([^)]*\)#debhelper#g' \
+	           -e 's#@##g' \
+	           -e 's#,(\s+,)+#, #g' \
+	           -e 's#\s+# #g'
+}
+
 if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
 		local LIBRARY="$1"
@@ -158,9 +178,11 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get install -qy --no-install-recommends dctrl-tools
-	apt-get install -qy --no-install-recommends $(grep-dctrl -S -s Build-Depends,Build-Depends-Indep,Build-Depends-Arch apt ./debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\|-Arch\)\?: ##'     -e 's#<.*>##g' | tr -s '\n,' ' ')
-	apt-get install -qy --no-install-recommends $(grep-dctrl -F Tests -s Depends run-tests ./debian/tests/control | tr -s '\n,' ' ' | cut -d'@' -f 4- | sed -e 's#gnupg1#gnupg2#' -e 's#gpgv1#gpgv2#')
+	apt-get install -qy --no-install-recommends dctrl-tools equivs gdebi-core
+
+	test_deb_control > test-control
+	equivs-build test-control
+	gdebi -n apt-test-depends_1.0_all.deb
 elif [ "$1" = 'coverage' ]; then
 	DIR="${2:-./coverage}"
 	git clean -dfX # remove ignored build artefacts for a clean start
