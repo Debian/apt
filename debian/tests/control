@@ -1,5 +1,8 @@
 Tests: run-tests
 Restrictions: allow-stderr
 Depends: @, @builddeps@, fakeroot, wget, stunnel4, lsof, db-util,
-         gnupg, gnupg1, gpgv, gpgv1,
+         gnupg (>= 2) | gnupg2,
+         gnupg1 | gnupg (<< 2),
+         gpgv (>= 2) | gpgv2,
+         gpgv1 | gpgv (<< 2),
          libfile-fcntllock-perl, python3-apt
