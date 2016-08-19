@@ -11,7 +11,7 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 export CTEST_OUTPUT_ON_FAILURE=1
 
 %:
-	dh $@ --with systemd --parallel --buildsystem=cmake
+	dh $@
 
 override_dh_install-indep:
 	dh_movefiles
