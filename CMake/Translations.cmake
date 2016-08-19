@@ -149,7 +149,7 @@ function(apt_add_update_po)
                 continue()
             endif()
             add_custom_target(update-po-${langcode}
-                COMMAND msgmerge -q --update --backup=none ${translation} ${output}
+                COMMAND msgmerge -q --previous --update --backup=none ${translation} ${output}
                 DEPENDS nls-${master_name}
             )
             add_dependencies(update-po update-po-${langcode})
