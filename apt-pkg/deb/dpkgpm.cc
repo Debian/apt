@@ -414,7 +414,9 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    Opts = Opts->Child;
 
    sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
-   
+   sighandler_t old_sigint = signal(SIGINT, SIG_IGN);
+   sighandler_t old_sigquit = signal(SIGQUIT, SIG_IGN);
+
    unsigned int Count = 1;
    for (; Opts != 0; Opts = Opts->Next, Count++)
    {
@@ -512,7 +514,9 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
          break;
       }
    }
+   signal(SIGINT, old_sigint);
    signal(SIGPIPE, old_sigpipe);
+   signal(SIGQUIT, old_sigquit);
 
    return result;
 }
