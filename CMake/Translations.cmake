@@ -72,14 +72,14 @@ function(apt_add_translation_domain)
     # of .mo files.
     add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
-        COMMAND msgcomm --more-than=0 --sort-by-file
-                         ${sh_pot}
-                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
-                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         COMMAND msgcomm --more-than=0 --omit-header --sort-by-file --add-location=file
                          ${sh_pot}
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
                          --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
+        COMMAND msgcomm --more-than=0 --sort-by-file
+                         ${sh_pot}
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
+                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         COMMAND cmake -E copy_if_different
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
