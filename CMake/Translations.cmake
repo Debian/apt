@@ -67,13 +67,16 @@ function(apt_add_translation_domain)
     # build a ${domain.pot}-tmp as a byproduct. The msgfmt command than depend
     # on the byproduct while their target depends on the output, so that msgfmt
     # does not have to be rerun if nothing in the template changed.
+    #
+    # Make sure the .pot-tmp has no line numbers, to avoid useless rebuilding
+    # of .mo files.
     add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
         COMMAND msgcomm --more-than=0 --sort-by-file
                          ${sh_pot}
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
                          --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
-        COMMAND msgcomm --more-than=0 --omit-header --sort-by-file
+        COMMAND msgcomm --more-than=0 --omit-header --sort-by-file --add-location=file
                          ${sh_pot}
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
                          --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
