@@ -143,3 +143,16 @@ add_subdirectory(test)
 
 # Link update-po4a into the update-po target
 add_dependencies(update-po update-po4a)
+
+# Create our directories.
+install_empty_directories(
+  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/apt.conf.d
+  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/preferences.d
+  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/sources.list.d
+  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/trusted.gpg.d
+  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/cache/apt/archives/partial
+  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/lists/partial
+  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/mirrors/partial
+  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/periodic
+  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/apt
+)

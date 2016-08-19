@@ -86,3 +86,16 @@ function(path_join out path1 path2)
         set(${out} "${path1}/${path2}" PARENT_SCOPE)
     endif()
 endfunction()
+
+# install_empty_directories(path ...)
+#
+# Creates empty directories in the install destination dir. Paths may be
+# absolute or relative; in the latter case, the value of CMAKE_INSTALL_PREFIX
+# is prepended.
+function(install_empty_directories)
+    foreach(path ${ARGN})
+        path_join(full_path "${CMAKE_INSTALL_PREFIX}" "${path}")
+        INSTALL(CODE "MESSAGE(STATUS \"Creating directory: \$ENV{DESTDIR}${full_path}\")"
+                CODE "FILE(MAKE_DIRECTORY \$ENV{DESTDIR}${full_path})")
+    endforeach()
+endfunction()
