@@ -178,7 +178,7 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get install -qy --no-install-recommends dctrl-tools equivs gdebi-core
+	apt-get install -qy --no-install-recommends dctrl-tools equivs gdebi-core moreutils
 
 	test_deb_control > test-control
 	equivs-build test-control

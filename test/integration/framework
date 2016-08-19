@@ -5,6 +5,8 @@ EXIT_CODE=0
 while [ -n "$1" ]; do
 	if [ "$1" = "-q" ]; then
 		export MSGLEVEL=2
+	elif [ "$1" = "-qq" ]; then
+		export MSGLEVEL=1
 	elif [ "$1" = "-v" ]; then
 		export MSGLEVEL=4
 	elif [ "$1" = '--color=no' ]; then
@@ -141,6 +143,9 @@ fi
 if [ $MSGLEVEL -le 4 ]; then
 	msgdebug() { true; }
 	msgndebug() { true; }
+fi
+if [ $MSGLEVEL -le 1 ]; then
+	msgpass() { true; }
 fi
 msgdone() {
 	if [ "$1" = "debug" -a $MSGLEVEL -le 4 ] ||
