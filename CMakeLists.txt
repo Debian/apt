@@ -27,6 +27,12 @@ include(GNUInstallDirs)
 include(TestBigEndian)
 find_package(Threads)
 find_package(PkgConfig)
+find_package(LFS REQUIRED)
+
+# Add large file support
+add_compile_options(${LFS_COMPILE_OPTIONS})
+add_definitions(${LFS_DEFINITIONS})
+link_libraries(${LFS_LIBRARIES})
 
 # Set compiler flags
 set(CMAKE_CXX_STANDARD 11)
