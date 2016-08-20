@@ -11,6 +11,7 @@ function(apt_add_translation_domain)
     set(abs_files "")
     set(scripts "")
     set(abs_scripts "")
+    set(mofiles)
     set(targets ${NLS_TARGETS})
     set(domain ${NLS_DOMAIN})
     set(xgettext_params

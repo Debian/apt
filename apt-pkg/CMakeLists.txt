@@ -26,7 +26,7 @@ add_dependencies(apt-pkg apt-pkg-versionscript)
 # Link the library and set the SONAME
 target_include_directories(apt-pkg
                            PRIVATE ${ZLIB_INCLUDE_DIRS}
-                                   ${BZIP2_INCLUDE_DIRS}
+                                   ${BZIP2_INCLUDE_DIR}
                                    ${LZMA_INCLUDE_DIRS}
                                    ${LZ4_INCLUDE_DIRS})
 target_link_libraries(apt-pkg

@@ -75,7 +75,7 @@ function(po4a_one stamp_out out full_document language deps)
         OUTPUT ${stamp}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${language}
         COMMAND po4a --previous --no-backups
-                     --package-name='${PROJECT}-doc'
+                     --package-name='${PROJECT_NAME}-doc'
                      --package-version='${PACKAGE_VERSION}'
                      --msgid-bugs-address='${PACKAGE_MAIL}'
                      --translate-only ${dest}.${ext}
@@ -124,6 +124,7 @@ function(xsltproc_one)
         set(manpage_output "${CMAKE_CURRENT_BINARY_DIR}/${document}.${section}")
         endif()
         set(manpage_stylesheet "${CMAKE_CURRENT_SOURCE_DIR}/manpage-style.xsl")
+        set(manpage_params)
 
         install(FILES ${manpage_output}
                 DESTINATION ${CMAKE_INSTALL_MANDIR}/${language}/man${section}
@@ -221,6 +222,7 @@ endfunction()
 function(add_docbook target)
     set(generated "")
     set(options HTML TEXT MANPAGE ALL)
+    set(oneValueArgs)
     set(multiValueArgs INSTALL DOCUMENTS LINGUAS DEPENDS)
     cmake_parse_arguments(DOC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
