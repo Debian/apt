@@ -24,6 +24,34 @@
 # SOFTWARE.
 
 
+find_path(DOCBOOK_XSL manpages/docbook.xsl
+         # Debian
+         /usr/share/xml/docbook/stylesheet/docbook-xsl
+         /usr/share/xml/docbook/stylesheet/nwalsh
+         # OpenSUSE
+         /usr/share/xml/docbook/stylesheet/nwalsh/current
+         # Arch
+          /usr/share/xml/docbook/xsl-stylesheets
+         # Fedora
+         /usr/share/sgml/docbook/xsl-stylesheets
+         # Fink
+         ${CMAKE_INSTALL_PREFIX}/share/xml/xsl/docbook-xsl
+         # FreeBSD
+         ${CMAKE_INSTALL_PREFIX}/share/xsl/docbook/
+         NO_DEFAULT_PATH)
+
+if(NOT DOCBOOK_XSL)
+    message(FATAL_ERROR "Could not find docbook xsl")
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docbook-text-style.xsl.cmake.in
+                ${CMAKE_CURRENT_BINARY_DIR}/docbook-text-style.xsl)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docbook-html-style.xsl.cmake.in
+                ${CMAKE_CURRENT_BINARY_DIR}/docbook-html-style.xsl)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/manpage-style.xsl.cmake.in
+                ${CMAKE_CURRENT_BINARY_DIR}/manpage-style.xsl)
+
+
 # Split up a string of the form DOCUMENT[.DOCUMENT][.LANGUAGE][.SECTION].EXTENSION
 #
 # There might be up to two parts in the document name. The language must be
@@ -123,7 +151,7 @@ function(xsltproc_one)
         else()
         set(manpage_output "${CMAKE_CURRENT_BINARY_DIR}/${document}.${section}")
         endif()
-        set(manpage_stylesheet "${CMAKE_CURRENT_SOURCE_DIR}/manpage-style.xsl")
+        set(manpage_stylesheet "${CMAKE_CURRENT_BINARY_DIR}/manpage-style.xsl")
         set(manpage_params)
 
         install(FILES ${manpage_output}
@@ -137,7 +165,7 @@ function(xsltproc_one)
         set(html_output "${CMAKE_CURRENT_BINARY_DIR}/${document}.html")
         endif()
         set(html_params --stringparam base.dir ${html_output})
-        set(html_stylesheet "${CMAKE_CURRENT_SOURCE_DIR}/docbook-html-style.xsl")
+        set(html_stylesheet "${CMAKE_CURRENT_BINARY_DIR}/docbook-html-style.xsl")
         install(DIRECTORY ${html_output}
                 DESTINATION ${DOC_INSTALL}
                 OPTIONAL)
@@ -150,7 +178,7 @@ function(xsltproc_one)
         set(text_output "${CMAKE_CURRENT_BINARY_DIR}/${document}.text")
         endif()
         set(text_params --stringparam base.dir ${text_output})
-        set(text_stylesheet "${CMAKE_CURRENT_SOURCE_DIR}/docbook-text-style.xsl")
+        set(text_stylesheet "${CMAKE_CURRENT_BINARY_DIR}/docbook-text-style.xsl")
 
         file(RELATIVE_PATH text_output_relative ${CMAKE_CURRENT_BINARY_DIR} ${text_output})
 
