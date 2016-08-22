@@ -118,6 +118,18 @@ if (CMAKE_USE_PTHREADS_INIT)
   set(HAVE_PTHREAD 1)
 endif()
 
+CHECK_INCLUDE_FILES(machine/endian.h HAVE_MACHINE_ENDIAN_H)
+CHECK_INCLUDE_FILES(sys/endian.h HAVE_SYS_ENDIAN_H)
+CHECK_INCLUDE_FILES(endian.h HAVE_ENDIAN_H)
+if (NOT HAVE_ENDIAN_H)
+  if (HAVE_MACHINE_ENDIAN_H OR HAVE_SYS_ENDIAN_H)
+    configure_file(CMake/endian.h.in ${PROJECT_BINARY_DIR}/include/endian.h)
+  else()
+    message(FATAL_ERROR "Cannot find endian.h")
+  endif()
+endif()
+
+
 include(CheckTypeSize)
 set(CMAKE_EXTRA_INCLUDE_FILES "signal.h")
 check_type_size("sig_t" SIG_T LANGUAGE "CXX")
