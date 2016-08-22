@@ -1535,9 +1535,13 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 if (I.Op == Item::Remove || I.Op == Item::Purge)
 	    toBeRemoved[I.Pkg->ID] = false;
 
-      if (std::find(toBeRemoved.begin(), toBeRemoved.end(), true) != toBeRemoved.end())
+      bool const RemovePending = std::find(toBeRemoved.begin(), toBeRemoved.end(), true) != toBeRemoved.end();
+      bool const PurgePending = approvedStates.Purge().empty() == false;
+      if (RemovePending != false || PurgePending != false)
+	 List.emplace_back(Item::ConfigurePending, pkgCache::PkgIterator());
+      if (RemovePending)
 	 List.emplace_back(Item::RemovePending, pkgCache::PkgIterator());
-      if (approvedStates.Purge().empty() == false)
+      if (PurgePending)
 	 List.emplace_back(Item::PurgePending, pkgCache::PkgIterator());
 
       // support subpressing of triggers processing for special
@@ -1606,7 +1610,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       unsigned long const Op = I->Op;
 
       if (NoTriggers == true && I->Op != Item::TriggersPending &&
-	  I->Op != Item::ConfigurePending)
+	  (I->Op != Item::ConfigurePending || std::next(I) != List.end()))
       {
 	 ADDARGC("--no-triggers");
       }

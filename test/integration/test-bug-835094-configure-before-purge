@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'kernel' 'amd64' '1' 'unstable' 'Depends: initramfs-tools | linux-initramfs-tool'
+
+#buildsimplenativepackage 'initramfs-tools' 'amd64' '1.0.16' 'unstable' 'Provides: linux-initramfs-tool'
+setupsimplenativepackage 'initramfs-tools' 'amd64' '1' 'unstable' 'Provides: linux-initramfs-tool'
+BUILDDIR='incoming/initramfs-tools-1'
+mkdir -p "${BUILDDIR}/debian/initramfs-tools/etc"
+echo 'foo2=bar2;' > "${BUILDDIR}/init.conf"
+echo 'init.conf	/etc/init.conf' >> "${BUILDDIR}/debian/install"
+buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+rm -rf "$BUILDDIR"
+
+buildsimplenativepackage 'dracut' 'amd64' '1' 'unstable' 'Provides: linux-initramfs-tool
+Conflicts: initramfs-tools'
+
+setupaptarchive
+
+testdpkgnotinstalled 'kernel' 'initramfs-tools' 'dracut'
+testsuccess apt install kernel -y
+testdpkginstalled 'kernel' 'initramfs-tools'
+testsuccess test -s rootdir/etc/init.conf
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  initramfs-tools*
+The following NEW packages will be installed:
+  dracut
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Purg initramfs-tools [1] [kernel:amd64 ]
+Inst dracut (1 unstable [amd64])
+Conf dracut (1 unstable [amd64])' apt install --purge dracut -s
+testsuccess apt install --purge dracut -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0
+testsuccess apt install --purge dracut -y
+testdpkginstalled 'kernel' 'dracut'
+testdpkgnotinstalled 'initramfs-tools'
+testsuccess test ! -s rootdir/etc/init.conf
