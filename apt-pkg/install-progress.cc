@@ -77,6 +77,18 @@ void PackageManagerProgressFd::WriteToStatusFd(std::string s)
    FileFd::Write(OutStatusFd, s.c_str(), s.size());   
 }
 
+static std::string GetProgressFdString(char const * const status,
+      char const * const pkg, unsigned long long Done,
+      unsigned long long Total, char const * const msg)
+{
+   float const progress{Done / static_cast<float>(Total) * 100};
+   std::ostringstream str;
+   str.imbue(std::locale("C.UTF-8"));
+   str.precision(4);
+   str << status << ':' << pkg << ':' << std::fixed << progress << ':' << msg << '\n';
+   return str.str();
+}
+
 void PackageManagerProgressFd::StartDpkg()
 {
    if(OutStatusFd <= 0)
@@ -87,10 +99,7 @@ void PackageManagerProgressFd::StartDpkg()
    fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
 
    // send status information that we are about to fork dpkg
-   std::string status;
-   strprintf(status, "pmstatus:dpkg-exec:%.4f:%s\n",
-	 (StepsDone/float(StepsTotal)*100.0), _("Running dpkg"));
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressFdString("pmstatus", "dpkg-exec", StepsDone, StepsTotal, _("Running dpkg")));
 }
 
 APT_CONST void PackageManagerProgressFd::Stop()
@@ -102,10 +111,8 @@ void PackageManagerProgressFd::Error(std::string PackageName,
                                      unsigned int TotalSteps,
                                      std::string ErrorMessage)
 {
-   std::string status;
-   strprintf(status, "pmerror:%s:%.4f:%s\n", PackageName.c_str(),
-	 (StepsDone/float(TotalSteps)*100.0), ErrorMessage.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressFdString("pmerror", PackageName.c_str(),
+	    StepsDone, TotalSteps, ErrorMessage.c_str()));
 }
 
 void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
@@ -113,10 +120,8 @@ void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
                                               unsigned int TotalSteps,
                                               std::string ConfMessage)
 {
-   std::string status;
-   strprintf(status, "pmconffile:%s:%.4f:%s\n", PackageName.c_str(),
-	 (StepsDone/float(TotalSteps)*100.0), ConfMessage.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressFdString("pmconffile", PackageName.c_str(),
+	    StepsDone, TotalSteps, ConfMessage.c_str()));
 }
 
 
@@ -128,11 +133,8 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
    StepsDone = xStepsDone;
    StepsTotal = xTotalSteps;
 
-   // build the status str
-   std::string status;
-   strprintf(status, "pmstatus:%s:%.4f:%s\n", StringSplit(PackageName, ":")[0].c_str(),
-	 (StepsDone/float(StepsTotal)*100.0), pkg_action.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressFdString("pmstatus", StringSplit(PackageName, ":")[0].c_str(),
+	    StepsDone, StepsTotal, pkg_action.c_str()));
 
    if(_config->FindB("Debug::APT::Progress::PackageManagerFd", false) == true)
       std::cerr << "progress: " << PackageName << " " << xStepsDone
@@ -156,17 +158,29 @@ void PackageManagerProgressDeb822Fd::WriteToStatusFd(std::string s)
    FileFd::Write(OutStatusFd, s.c_str(), s.size());   
 }
 
+static std::string GetProgressDeb822String(char const * const status,
+      char const * const pkg, unsigned long long Done,
+      unsigned long long Total, char const * const msg)
+{
+   float const progress{Done / static_cast<float>(Total) * 100};
+   std::ostringstream str;
+   str.imbue(std::locale("C.UTF-8"));
+   str.precision(4);
+   str << "Status: " << status << '\n';
+   if (pkg != nullptr)
+      str << "Package: " << pkg << '\n';
+   str << "Percent: " << std::fixed << progress << '\n'
+      << "Message: " << msg << "\n\n";
+   return str.str();
+}
+
 void PackageManagerProgressDeb822Fd::StartDpkg()
 {
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure
    fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
 
-   // send status information that we are about to fork dpkg
-   std::string status;
-   strprintf(status, "Status: %s\nPercent: %.4f\nMessage: %s\n\n", "progress",
-	 (StepsDone/float(StepsTotal)*100.0), _("Running dpkg"));
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressDeb822String("progress", nullptr, StepsDone, StepsTotal, _("Running dpkg")));
 }
 
 APT_CONST void PackageManagerProgressDeb822Fd::Stop()
@@ -178,10 +192,7 @@ void PackageManagerProgressDeb822Fd::Error(std::string PackageName,
                                      unsigned int TotalSteps,
                                      std::string ErrorMessage)
 {
-   std::string status;
-   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "Error",
-	 PackageName.c_str(), (StepsDone/float(TotalSteps)*100.0), ErrorMessage.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressDeb822String("Error", PackageName.c_str(), StepsDone, TotalSteps, ErrorMessage.c_str()));
 }
 
 void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
@@ -189,10 +200,7 @@ void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
                                               unsigned int TotalSteps,
                                               std::string ConfMessage)
 {
-   std::string status;
-   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "ConfFile",
-	 PackageName.c_str(), (StepsDone/float(TotalSteps)*100.0), ConfMessage.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressDeb822String("ConfFile", PackageName.c_str(), StepsDone, TotalSteps, ConfMessage.c_str()));
 }
 
 
@@ -204,10 +212,7 @@ bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
    StepsDone = xStepsDone;
    StepsTotal = xTotalSteps;
 
-   std::string status;
-   strprintf(status, "Status: %s\nPackage: %s\nPercent: %.4f\nMessage: %s\n\n", "progress",
-	 PackageName.c_str(), (StepsDone/float(StepsTotal)*100.0), message.c_str());
-   WriteToStatusFd(std::move(status));
+   WriteToStatusFd(GetProgressDeb822String("progress", PackageName.c_str(), StepsDone, StepsTotal, message.c_str()));
    return true;
 }
 
