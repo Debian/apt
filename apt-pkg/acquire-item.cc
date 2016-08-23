@@ -1836,7 +1836,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    HashStringList ServerHashes;
    unsigned long long ServerSize = 0;
 
-   auto const &posix = std::locale("C.UTF-8");
+   auto const &posix = std::locale::classic();
    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
    {
       std::string tagname = *type;

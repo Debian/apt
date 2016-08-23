@@ -83,7 +83,7 @@ static std::string GetProgressFdString(char const * const status,
 {
    float const progress{Done / static_cast<float>(Total) * 100};
    std::ostringstream str;
-   str.imbue(std::locale("C.UTF-8"));
+   str.imbue(std::locale::classic());
    str.precision(4);
    str << status << ':' << pkg << ':' << std::fixed << progress << ':' << msg << '\n';
    return str.str();
@@ -164,7 +164,7 @@ static std::string GetProgressDeb822String(char const * const status,
 {
    float const progress{Done / static_cast<float>(Total) * 100};
    std::ostringstream str;
-   str.imbue(std::locale("C.UTF-8"));
+   str.imbue(std::locale::classic());
    str.precision(4);
    str << "Status: " << status << '\n';
    if (pkg != nullptr)
