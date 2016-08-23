@@ -1258,8 +1258,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
 
       // build the status str
-      std::string dlstatus;
-      strprintf(dlstatus, "dlstatus:%ld:%.4f:%s\n", i, Percent, msg);
+      std::ostringstream str;
+      str.imbue(std::locale("C.UTF-8"));
+      str.precision(4);
+      str << "dlstatus" << ':' << std::fixed << i << ':' << Percent << ':' << msg << '\n';
+      auto const dlstatus = str.str();
       FileFd::Write(fd, dlstatus.data(), dlstatus.size());
    }
 
