@@ -21,6 +21,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <array>
 #include <algorithm>
 #include <iomanip>
 #include <locale>
