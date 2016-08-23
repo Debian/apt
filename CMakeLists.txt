@@ -25,7 +25,6 @@ include(CheckStructHasMember)
 include(GNUInstallDirs)
 include(TestBigEndian)
 find_package(Threads)
-find_package(PkgConfig)
 find_package(LFS REQUIRED)
 
 # Add large file support
@@ -78,12 +77,13 @@ if (BZIP2_FOUND)
   set(HAVE_BZ2 1)
 endif()
 
-pkg_check_modules(LZMA liblzma)
+find_package(LZMA)
 if (LZMA_FOUND)
   set(HAVE_LZMA 1)
 endif()
 
-pkg_check_modules(LZ4 liblz4)
+
+find_package(LZ4)
 if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
