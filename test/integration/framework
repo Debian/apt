@@ -1296,7 +1296,12 @@ changetowebserver() {
 }
 
 changetohttpswebserver() {
-	if ! command -v stunnel4 >/dev/null 2>&1; then
+	local stunnel4
+	if command -v stunnel4 >/dev/null 2>&1; then
+		stunnel4=stunnel4
+	elif command -v stunnel >/dev/null 2>&1; then
+		stunnel4=stunnel
+	else
 		msgdie 'You need to install stunnel4 for https testcases'
 	fi
 	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
@@ -1310,14 +1315,14 @@ output = /dev/null
 accept = 0
 connect = $APTHTTPPORT
 " > "${TMPWORKINGDIRECTORY}/stunnel.conf"
-	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+	$stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
         waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
 	local PID="$(cat "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid")"
         if [ -z "$PID" ]; then
-		msgdie 'Could not fork stunnel4 successfully'
+		msgdie 'Could not fork $stunnel4 successfully'
 	fi
 	addtrap 'prefix' "kill ${PID};"
-	APTHTTPSPORT="$(lsof -i -n | awk "/^stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
+	APTHTTPSPORT="$(lsof -i -n | awk "/^$stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
 	webserverconfig 'aptwebserver::port::https' "$APTHTTPSPORT" "https://localhost:${APTHTTPSPORT}"
 	rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
 }
