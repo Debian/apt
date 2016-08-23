@@ -89,14 +89,15 @@ if (LZ4_FOUND)
 endif()
 
 # Mount()ing and stat()ing and friends
+check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
+check_include_files(sys/params.h HAVE_PARAMS_H)
+check_symbol_exists(statfs sys/mount.h HAVE_MOUNT_H)
+if (NOT HAVE_VFS_H AND NOT HAVE_MOUNT_H)
+  message(FATAL_ERROR "Can find neither statvfs() nor statfs()")
+endif()
 
 check_function_exists(statvfs HAVE_STATVFS)
 if (NOT HAVE_STATVFS)
-  check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
-  check_symbol_exists(statfs sys/mount.h HAVE_MOUNT_H)
-  if (NOT HAVE_VFS_H AND NOT HAVE_MOUNT_H)
-    message(FATAL_ERROR "Can find neither statvfs() nor statfs()")
-  endif()
   configure_file(CMake/statvfs.h.in ${PROJECT_BINARY_DIR}/include/statvfs.h COPYONLY)
 endif()
 
