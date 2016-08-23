@@ -89,7 +89,11 @@ if [ -n "$APT_TEST_JOBS" ]; then
 	if [ "$MSGCOLOR" != 'NO' ]; then
 		export MSGCOLOR='ALWAYS'
 	fi
-	exec parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
+	parallel=parallel
+	if command -v moreutils-parallel >/dev/null 2>&1; then
+		parallel=moreutils-parallel
+	fi
+	exec $parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
 fi
 TOTAL="$(echo "$TESTLIST" | wc -l)"
 for testcase in $TESTLIST; do
