@@ -701,13 +701,25 @@ Package: $NAME"
 	echo '3.0 (native)' > "${BUILDDIR}/debian/source/format"
 }
 
+make_tiny_rules() {
+	local OUT="$1"
+	if command -v gmake >/dev/null 2>&1; then
+		[ -e ${TMPWORKINGDIRECTORY}/bin/make ] || ln -s $(command -v gmake) ${TMPWORKINGDIRECTORY}/bin/make
+		echo "#!${TMPWORKINGDIRECTORY}/bin/make -f" > "$OUT"
+	else
+		echo '#!/usr/bin/make -f' > "$OUT"
+	fi
+	echo '%:' >> "$OUT"
+	echo '	dh $@' >> "$OUT"
+}
+
 setupsimplenativepackage() {
 	_setupsimplenativepackage "$@"
 	local NAME="$1"
 	local VERSION="$3"
 	local BUILDDIR="${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}"
 	test -e "${BUILDDIR}/debian/compat" || echo '7' > "${BUILDDIR}/debian/compat"
-	test -e  "${BUILDDIR}/debian/rules" || cp /usr/share/doc/debhelper/examples/rules.tiny "${BUILDDIR}/debian/rules"
+	test -e  "${BUILDDIR}/debian/rules" || make_tiny_rules "${BUILDDIR}/debian/rules"
 }
 
 buildsimplenativepackage() {
