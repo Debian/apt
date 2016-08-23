@@ -143,6 +143,14 @@ if (NOT HAVE_SIGHANDLER_T)
   endif()
 endif()
 
+# Handle resolving
+check_function_exists(res_init HAVE_LIBC_RESOLV)
+if(HAVE_LIBC_RESOLV)
+    set(RESOLV_LIBRARIES)
+else()
+    set(RESOLV_LIBRARIES -lresolv)
+endif()
+
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
