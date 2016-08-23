@@ -1259,7 +1259,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       // build the status str
       std::ostringstream str;
-      str.imbue(std::locale("C.UTF-8"));
+      str.imbue(std::locale::classic());
       str.precision(4);
       str << "dlstatus" << ':' << std::fixed << i << ':' << Percent << ':' << msg << '\n';
       auto const dlstatus = str.str();
