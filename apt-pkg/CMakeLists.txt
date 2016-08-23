@@ -30,7 +30,7 @@ target_include_directories(apt-pkg
                                    ${LZMA_INCLUDE_DIRS}
                                    ${LZ4_INCLUDE_DIRS})
 target_link_libraries(apt-pkg
-                      PRIVATE -lutil -ldl -lresolv
+                      PRIVATE -lutil ${CMAKE_DL_LIBS} -lresolv
                              ${CMAKE_THREAD_LIBS_INIT}
                              ${ZLIB_LIBRARIES}
                              ${BZIP2_LIBRARIES}
