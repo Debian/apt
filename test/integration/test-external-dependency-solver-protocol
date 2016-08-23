@@ -152,7 +152,7 @@ testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
 configarchitecture 'armel'
 testfailure aptget install --solver apt awesomecoolstuff:i386 -s
 msgtest 'An invalid EDSP file generates a' 'hard error'
-if echo "Request: This is a test\nFoo: bar\n\n" | aptinternalsolver > solver.result 2>&1; then
+if printf "%b\n" "Request: This is a test\nFoo: bar\n\n" | aptinternalsolver > solver.result 2>&1; then
 	cat solver.result
 	msgfail
 else

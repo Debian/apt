@@ -689,7 +689,7 @@ Standards-Version: 3.9.3"
 		if [ "$SECTION" != '<none>' ]; then
 			echo "Section: $SECTION"
 		fi
-		local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
+		local BUILDDEPS="$(printf "%b\n" "$DEPENDENCIES" | grep '^Build-')"
 		test -z "$BUILDDEPS" || echo "$BUILDDEPS"
 		echo "
 Package: $NAME"
@@ -699,9 +699,9 @@ Package: $NAME"
 		else
 			echo "Architecture: any"
 		fi
-		local DEPS="$(echo "$DEPENDENCIES" | grep -v '^Build-')"
+		local DEPS="$(printf "%b\n" "$DEPENDENCIES" | grep -v '^Build-')"
 		test -z "$DEPS" || echo "$DEPS"
-		echo "Description: $DESCRIPTION"
+		printf "%b\n" "Description: $DESCRIPTION"
 	} > "${BUILDDIR}/debian/control"
 
 	echo '3.0 (native)' > "${BUILDDIR}/debian/source/format"
@@ -911,7 +911,7 @@ Maintainer: Joe Sixpack <joe@example.org>"
 					test "$arch" = 'none' || echo "Architecture: $arch"
 					echo "Version: $VERSION
 Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb"
-					test -z "$DEPENDENCIES" || echo "$DEPENDENCIES"
+					test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES"
 					echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)"
 					echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)"
 					echo
@@ -946,7 +946,7 @@ Binary: $BINARY
 Version: $VERSION
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
-		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
+		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
 		echo "Files:
  $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
  $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
@@ -980,8 +980,8 @@ Installed-Size: 42
 Maintainer: Joe Sixpack <joe@example.org>
 Version: $VERSION" >> "$FILE"
 		test "$arch" = 'none' || echo "Architecture: $arch" >> "$FILE"
-		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
-		echo "Description: $DESCRIPTION" >> "$FILE"
+		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
+		printf "%b\n" "Description: $DESCRIPTION" >> "$FILE"
 		echo >> "$FILE"
 		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
 			echo -n > "${INFO}/${NAME}:${arch}.list"
