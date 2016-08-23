@@ -111,6 +111,9 @@ check_function_exists(ptsname_r HAVE_PTSNAME_R)
 check_function_exists(timegm HAVE_TIMEGM)
 test_big_endian(WORDS_BIGENDIAN)
 
+# FreeBSD
+add_definitions(-D_WITH_GETLINE=1)
+
 if (CMAKE_USE_PTHREADS_INIT)
   set(HAVE_PTHREAD 1)
 endif()
