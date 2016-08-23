@@ -24,7 +24,7 @@ testsuccessequal "ARCH='amd64'" aptconfig shell ARCH APT::Architecture
 ROOTDIR="$(readlink -f rootdir)"
 testsuccessequal "CONFIG='apt.conf'" aptconfig shell CONFIG Dir::Etc::main
 testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/apt.conf'" aptconfig shell CONFIG Dir::Etc::main/f
-testsuccessequal "CONFIG='etc/apt/'" aptconfig shell CONFIG Dir::Etc
+testsuccessequal "CONFIG='etc/apt'" aptconfig shell CONFIG Dir::Etc
 testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/ # old style
 testsuccessequal "CONFIG='${ROOTDIR}/etc/apt/'" aptconfig shell CONFIG Dir::Etc/d
 

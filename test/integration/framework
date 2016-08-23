@@ -352,6 +352,11 @@ setupenvironment() {
 	ln -s "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
+	echo "Dir::Etc \"etc\";" >> aptconfig.conf
+	echo "Dir::State \"var/lib/apt\";" >> aptconfig.conf
+	echo "Dir::Cache \"var/cache/apt\";" >> aptconfig.conf
+	echo "Dir::Etc \"etc/apt\";" >> aptconfig.conf
+	echo "Dir::Log \"var/log/apt\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# either store apt-key were we can access it, even if we run it as a different user

@@ -145,7 +145,7 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
 	     << FailCode << std::endl;
 #endif
    string const report = _config->Find("Methods::Mirror::ProblemReporting",
-				 "/usr/lib/apt/apt-report-mirror-failure");
+				 LIBEXEC_DIR "/apt-report-mirror-failure");
    if(!FileExists(report))
       return;
 

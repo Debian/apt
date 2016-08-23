@@ -171,6 +171,15 @@ if (NOT DEFINED COMMON_ARCH)
                   OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
+# Set various directories
+set(STATE_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt" CACHE PATH "Your /var/lib/apt")
+set(CACHE_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/cache/apt" CACHE PATH "Your /var/cache/apt")
+set(LOG_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/apt" CACHE PATH "Your /var/log/apt")
+set(CONF_DIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt" CACHE PATH "Your /etc/apt")
+set(LIBEXEC_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/apt" CACHE PATH "Your /usr/libexec/apt")
+set(BIN_DIR "${CMAKE_INSTALL_FULL_BINDIR}")
+
+
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
 configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
@@ -197,13 +206,13 @@ endif()
 
 # Create our directories.
 install_empty_directories(
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/apt.conf.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/preferences.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/sources.list.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/trusted.gpg.d
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/cache/apt/archives/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/lists/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/mirrors/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/periodic
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/apt
+  ${CONF_DIR}/apt.conf.d
+  ${CONF_DIR}/preferences.d
+  ${CONF_DIR}/sources.list.d
+  ${CONF_DIR}/trusted.gpg.d
+  ${CACHE_DIR}/archives/partial
+  ${STATE_DIR}/lists/partial
+  ${STATE_DIR}/mirrors/partial
+  ${STATE_DIR}/periodic
+  ${LOG_DIR}
 )
