@@ -38,7 +38,7 @@ namespace Progress {
     */
     virtual void StartDpkg() {};
 
-    virtual pid_t fork() {return fork(); };
+    virtual pid_t fork() {return ::fork(); };
 
     virtual void Pulse() {};
     virtual long GetPulseInterval() {
