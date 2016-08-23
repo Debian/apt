@@ -306,7 +306,7 @@ merge_all_trusted_keyrings_into_pubring() {
     # does the same as:
     # foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
     # but without using gpg, just cat and find
-    local PUBRING="$(readlink -f "${GPGHOMEDIR}/pubring.gpg")"
+    local PUBRING="$(readlink -f "${GPGHOMEDIR}")/pubring.gpg"
     # if a --keyring was given, just use this one
     if [ -n "$FORCED_KEYRING" ]; then
 	if [ -s "$FORCED_KEYRING" ]; then
