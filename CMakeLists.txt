@@ -19,7 +19,6 @@ endif()
 
 # Include stuff
 include(Misc)
-include(Translations)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckStructHasMember)
@@ -144,11 +143,14 @@ add_subdirectory(doc)
 add_subdirectory(dselect)
 add_subdirectory(ftparchive)
 add_subdirectory(methods)
-add_subdirectory(po)
 add_subdirectory(test)
+
+if (USE_NLS)
+add_subdirectory(po)
 
 # Link update-po4a into the update-po target
 add_dependencies(update-po update-po4a)
+endif()
 
 # Create our directories.
 install_empty_directories(
