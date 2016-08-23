@@ -4,6 +4,9 @@
 # set minimum version
 project(apt)
 cmake_minimum_required(VERSION 3.4.0)
+# Generic header locations
+include_directories(${PROJECT_BINARY_DIR}/include)
+
 
 enable_testing()
 
@@ -26,6 +29,12 @@ include(GNUInstallDirs)
 include(TestBigEndian)
 find_package(Threads)
 find_package(LFS REQUIRED)
+
+if(USE_NLS)
+  find_package(Intl REQUIRED)
+  link_libraries(${Intl_LIBRARIES})
+  include_directories(${Intl_INCLUDE_DIRS})
+endif()
 
 # Add large file support
 add_compile_options(${LFS_COMPILE_OPTIONS})
@@ -165,9 +174,6 @@ endif()
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
 configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
-
-# Generic header locations
-include_directories(${PROJECT_BINARY_DIR}/include)
 
 # Add our subdirectories
 add_subdirectory(vendor)
