@@ -8,6 +8,11 @@ setupenvironment
 configarchitecture 'amd64' 'i386'
 configdpkgnoopchroot
 
+if [ ! -e /proc/self/fd ]; then
+	msgskip "needs /proc/self/fd"
+    exit 0
+fi
+
 setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
 BUILDDIR="incoming/fdleaks-1.0"
 for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
