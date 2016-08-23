@@ -589,7 +589,11 @@ int execvp(const char *file, char *const argv[]) {
 	return func_execvp(newfile, argv);
 }
 EOF
-	testempty --nomsg gcc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+	if cc -ldl 2>&1 | grep -q dl; then
+		testempty --nomsg cc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c
+	else
+		testempty --nomsg cc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+	fi
 }
 configcompression() {
 	if [ "$1" = 'ALL' ]; then
