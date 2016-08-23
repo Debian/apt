@@ -407,11 +407,13 @@ EOF
 	cp "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
 exec fakeroot '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" \\
 	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" <<EOF
 exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" \\
 	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
