@@ -451,11 +451,8 @@ EOF
 
 	# create some files in /tmp and look at user/group to get what this means
 	TEST_DEFAULT_USER="$(id -un)"
-	if [ "$(uname)" = 'GNU/kFreeBSD' ]; then
-		TEST_DEFAULT_GROUP='root'
-	else
-		TEST_DEFAULT_GROUP="$(id -gn)"
-	fi
+	touch "${TMPWORKINGDIRECTORY}/test-file"
+	TEST_DEFAULT_GROUP=$(stat --format '%G'  "${TMPWORKINGDIRECTORY}/test-file")
 
 	# cleanup the environment a bit
 	# prefer our apt binaries over the system apt binaries
