@@ -113,7 +113,7 @@ bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
       Member = AR.FindMember(std::string(Name).append(c->Extension).c_str());
       if (Member == NULL)
 	 continue;
-      Compressor = c->Binary;
+      Compressor = c->Name;
       break;
    }
 
