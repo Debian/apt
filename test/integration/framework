@@ -1989,7 +1989,7 @@ testaptautotestnodpkgwarning() {
 		if expr match "$2" '^-dy\?' >/dev/null 2>&1; then return; fi # download-only mode
 		shift
 	done
-	testfailure grep '^dpkg: warning:.*ignor.*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"
+	testfailure grep '^dpkg: warning:.*\(ignor\|unknown\).*' "${TMPWORKINGDIRECTORY}/rootdir/tmp-before/${TESTCALL}.output"
 }
 
 aptautotest_aptget_install() { testaptautotestnodpkgwarning "$@"; }

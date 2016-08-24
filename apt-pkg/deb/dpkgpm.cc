@@ -1339,10 +1339,16 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       std::distance(List.cbegin(), List.cend());
    ExpandPendingCalls(List, Cache);
 
-   auto const StripAlreadyDoneFromPending = [&](APT::VersionVector & Pending) {
+   /* if dpkg told us that it has already done everything to the package we wanted it to do,
+      we shouldn't ask it for "more" later. That can e.g. happen if packages without conffiles
+      are purged as they will have pass through the purge states on remove already */
+   auto const StripAlreadyDoneFrom = [&](APT::VersionVector & Pending) {
       Pending.erase(std::remove_if(Pending.begin(), Pending.end(), [&](pkgCache::VerIterator const &Ver) {
 	    auto const PN = Ver.ParentPkg().FullName();
-	    return PackageOps[PN].size() <= PackageOpsDone[PN];
+	    auto const POD = PackageOpsDone.find(PN);
+	    if (POD == PackageOpsDone.end())
+	       return false;
+	    return PackageOps[PN].size() <= POD->second;
 	 }), Pending.end());
    };
 
@@ -1701,7 +1707,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       else if (I->Op == Item::RemovePending)
       {
 	 ++I;
-	 StripAlreadyDoneFromPending(approvedStates.Remove());
+	 StripAlreadyDoneFrom(approvedStates.Remove());
 	 if (approvedStates.Remove().empty())
 	    continue;
       }
@@ -1710,7 +1716,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 ++I;
 	 // explicit removes of packages without conffiles passthrough the purge states instantly, too.
 	 // Setting these non-installed packages up for purging generates 'unknown pkg' warnings from dpkg
-	 StripAlreadyDoneFromPending(approvedStates.Purge());
+	 StripAlreadyDoneFrom(approvedStates.Purge());
 	 if (approvedStates.Purge().empty())
 	    continue;
 	 std::remove_reference<decltype(approvedStates.Remove())>::type approvedRemoves;
@@ -1962,8 +1968,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (d->dpkg_error.empty() == false)
    {
       // no point in reseting packages we already completed removal for
-      StripAlreadyDoneFromPending(approvedStates.Remove());
-      StripAlreadyDoneFromPending(approvedStates.Purge());
+      StripAlreadyDoneFrom(approvedStates.Remove());
+      StripAlreadyDoneFrom(approvedStates.Purge());
       APT::StateChanges undo;
       auto && undoRem = approvedStates.Remove();
       std::move(undoRem.begin(), undoRem.end(), std::back_inserter(undo.Install()));
@@ -1973,6 +1979,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       if (undo.Save(false) == false)
 	 _error->Error("Couldn't revert dpkg selection for approved remove/purge after an error was encountered!");
    }
+
+   StripAlreadyDoneFrom(currentStates.Remove());
+   StripAlreadyDoneFrom(currentStates.Purge());
    if (currentStates.Save(false) == false)
       _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
 
