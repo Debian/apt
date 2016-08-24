@@ -3279,9 +3279,8 @@ bool pkgAcqArchive::QueueNext()
 
       // Create the item
       Local = false;
-      QueueURI(Desc);
-
       ++Vf;
+      QueueURI(Desc);
       return true;
    }
    return false;

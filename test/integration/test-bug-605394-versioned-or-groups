@@ -24,3 +24,7 @@ if aptget dist-upgrade --trivial-only -o Debug::pkgProblemResolver=1 -o Debug::p
 else
 	msgpass
 fi
+
+# the Packages file includes only MD5
+testfailure aptget dist-upgrade -y
+testsuccess grep 'Insufficient information available to perform this download securely' rootdir/tmp/testfailure.output

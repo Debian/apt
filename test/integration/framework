@@ -875,6 +875,7 @@ Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb"
 					test -z "$DEPENDENCIES" || echo "$DEPENDENCIES"
 					echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)"
 					echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)"
+					echo "SHA256: 0000000000000000000000000000000000000000000000000000000000000000"
 					echo
 				} >> "${PPATH}/Packages"
 			done

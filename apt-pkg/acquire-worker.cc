@@ -661,55 +661,15 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    if (OutFd == -1)
       return false;
 
-   HashStringList const hsl = Item->GetExpectedHashes();
-
    if (isDoomedItem(Item->Owner))
       return true;
-
-   if (hsl.usable() == false && Item->Owner->HashesRequired() &&
-	 _config->Exists("Acquire::ForceHash") == false)
-   {
-      std::string const Message = "400 URI Failure"
-	 "\nURI: " + Item->URI +
-	 "\nFilename: " + Item->Owner->DestFile +
-	 "\nFailReason: WeakHashSums";
-
-      auto const ItmOwners = Item->Owners;
-      for (auto &O: ItmOwners)
-      {
-	 O->Status = pkgAcquire::Item::StatAuthError;
-	 O->Failed(Message, Config);
-	 if (Log != nullptr)
-	    Log->Fail(O->GetItemDesc());
-      }
-      // "queued" successfully, the item just instantly failed
-      return true;
-   }
-
-   if (Item->Owner->IsRedirectionLoop(Item->URI))
-   {
-      std::string const Message = "400 URI Failure"
-	 "\nURI: " + Item->URI +
-	 "\nFilename: " + Item->Owner->DestFile +
-	 "\nFailReason: RedirectionLoop";
-
-      auto const ItmOwners = Item->Owners;
-      for (auto &O: ItmOwners)
-      {
-	 O->Status = pkgAcquire::Item::StatError;
-	 O->Failed(Message, Config);
-	 if (Log != nullptr)
-	    Log->Fail(O->GetItemDesc());
-      }
-      // "queued" successfully, the item just instantly failed
-      return true;
-   }
 
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
 
+   HashStringList const hsl = Item->GetExpectedHashes();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
 

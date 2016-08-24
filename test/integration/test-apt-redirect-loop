@@ -7,9 +7,6 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture "i386"
 
-insertpackage 'stable' 'apt' 'all' '1'
-setupaptarchive --no-update
-
 echo 'alright' > aptarchive/working
 changetohttpswebserver
 webserverconfig 'aptwebserver::redirect::replace::/redirectme3/' '/redirectme/'
