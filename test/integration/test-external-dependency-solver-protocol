@@ -26,7 +26,7 @@ insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
 setupaptarchive
 
 testsuccess aptget install --solver apt coolstuff -s
-testempty find -name 'edsp.last.*'
+testempty find . -name 'edsp.last.*'
 echo 'Dir::Log::Solver "edsp.last.xz";' > rootdir/etc/apt/apt.conf.d/log-edsp.conf
 
 testfailure aptget install --solver dump coolstuff -s
