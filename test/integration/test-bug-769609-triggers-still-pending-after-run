@@ -8,7 +8,7 @@ setupenvironment
 configarchitecture 'amd64'
 
 msgtest 'Check if installed dpkg supports' 'noawait trigger'
-if dpkg-checkbuilddeps -d 'dpkg (>= 1.16.1)' /dev/null; then
+if dpkg --compare-versions "$(dpkg_version)" 'ge' '1.16.1'; then
 	msgpass
 else
 	msgskip 'dpkg version too old'

@@ -29,7 +29,7 @@ buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 rm -rf "$BUILDDIR"
 
 PKGNAME='fdleaks:all'
-if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null >/dev/null 2>&1; then
+if dpkg --compare-versions "$(dpkg_version)" 'lt' '1.16.2'; then
 	PKGNAME='fdleaks'
 fi
 

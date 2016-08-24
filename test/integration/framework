@@ -195,6 +195,9 @@ aptinternalplanner() { runapt "${APTINTERNALPLANNER}" "$@"; }
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
+dpkg_version() {
+	command perl -MDpkg -E 'say $Dpkg::PROGVERSION'
+}
 dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" "$@"
 }
