@@ -269,7 +269,7 @@ void pkgAcquire::Remove(Worker *Work)
    it is constructed which creates a queue (based on the current queue
    mode) and puts the item in that queue. If the system is running then
    the queue might be started. */
-static bool DoesAcquireResultInInstantFailure(pkgAcquire::Item * const Item,
+static bool CheckForBadItemAndFailIt(pkgAcquire::Item * const Item,
       pkgAcquire::MethodConfig const * const Config, pkgAcquireStatus * const Log)
 {
    auto SavedDesc = Item->GetItemDesc();
@@ -317,7 +317,7 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
       in logging before we actually have started, which would
       be easier to implement but would confuse users/implementations
       so we check the items skipped here in #Startup */
-   if (Running && DoesAcquireResultInInstantFailure(Item.Owner, Config, Log))
+   if (Running && CheckForBadItemAndFailIt(Item.Owner, Config, Log))
       return;
 
    // Find the queue structure
@@ -962,11 +962,11 @@ bool pkgAcquire::Queue::Startup()
       // now-running twin of the pkgAcquire::Enqueue call
       for (QItem *I = Items; I != 0; )
       {
-	 bool pointless = false;
+	 auto const INext = I->Next;
 	 for (auto &&O: I->Owners)
-	    if (DoesAcquireResultInInstantFailure(O, Cnf, Owner->Log))
-	       pointless = true;
-	 I = pointless ? Items : I->Next;
+	    CheckForBadItemAndFailIt(O, Cnf, Owner->Log);
+	 // if an item failed, it will be auto-dequeued invalidation our I here
+	 I = INext;
       }
 
       Workers = new Worker(this,Cnf,Owner->Log);
