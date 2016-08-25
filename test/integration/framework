@@ -314,7 +314,7 @@ setupenvironment() {
 		# relax permissions so that running as root with user switching works
 		umask 022
 		chmod 711 "$TMPWORKINGDIRECTORY"
-		chown _apt:root "${TMPWORKINGDIRECTORY}/downloaded"
+		chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/downloaded"
 	fi
 
 	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
@@ -442,7 +442,7 @@ EOF
 
 	cp "${TESTDIRECTORY}/apt.pem" "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	if [ "$(id -u)" = '0' ]; then
-		chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
+		chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	fi
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
@@ -1960,7 +1960,7 @@ mkdir() {
 		command mkdir -m 700 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
 		touch "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/lock"
 		if [ "$(id -u)" = '0' ]; then
-			chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+			chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
 		fi
 	else
 		command mkdir "$@"
