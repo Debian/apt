@@ -466,8 +466,23 @@ if [ -z "$command" ]; then
 fi
 shift
 
+find_gpgv_status_fd() {
+   while [ -n "$1" ]; do
+	if [ "$1" = '--status-fd' ]; then
+		shift
+		echo "$1"
+		break
+	fi
+	shift
+   done
+}
+GPGSTATUSFD="$(find_gpgv_status_fd "$@")"
+
 warn() {
     echo >&2 'W:' "$@"
+    if [ -n "$GPGSTATUSFD" ]; then
+	echo >&${GPGSTATUSFD} '[APTKEY:] WARNING' "$@"
+    fi
 }
 
 create_gpg_home() {

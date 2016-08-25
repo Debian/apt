@@ -109,6 +109,19 @@ runtest() {
 " aptcache show apt
 	installaptold
 
+	if [ "$(id -u)" != '0' ]; then
+		msgmsg 'Cold archive signed by' 'Joe Sixpack + unreadable key'
+		rm -rf rootdir/var/lib/apt/lists
+		echo 'foobar' > rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg
+		chmod 000 rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg
+		updatewithwarnings '^W: .* is not readable by user'
+		chmod 644 rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg
+		rm -f rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg
+		testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+		installaptold
+	fi
+
 	msgmsg 'Good warm archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Joe Sixpack'
