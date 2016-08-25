@@ -170,6 +170,12 @@ if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                   OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
+if (NOT DEFINED ROOT_GROUP)
+  execute_process(COMMAND id -gn root
+                  OUTPUT_VARIABLE ROOT_GROUP OUTPUT_STRIP_TRAILING_WHITESPACE)
+  message(STATUS "Found root group: ${ROOT_GROUP}")
+endif()
+set(ROOT_GROUP "${ROOT_GROUP}" CACHE STRING "Group of root (e.g.: wheel or root)")
 
 # Set various directories
 set(STATE_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt" CACHE PATH "Your /var/lib/apt")

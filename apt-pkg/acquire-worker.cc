@@ -732,7 +732,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    {
       std::string const SandboxUser = _config->Find("APT::Sandbox::User");
       ChangeOwnerAndPermissionOfFile("Item::QueueURI", Item->Owner->DestFile.c_str(),
-                                     SandboxUser.c_str(), "root", 0600);
+                                     SandboxUser.c_str(), ROOT_GROUP, 0600);
    }
 
    if (Debug == true)
@@ -828,7 +828,7 @@ void pkgAcquire::Worker::PrepareFiles(char const * const caller, pkgAcquire::Que
 {
    if (RealFileExists(Itm->Owner->DestFile))
    {
-      ChangeOwnerAndPermissionOfFile(caller, Itm->Owner->DestFile.c_str(), "root", "root", 0644);
+      ChangeOwnerAndPermissionOfFile(caller, Itm->Owner->DestFile.c_str(), "root", ROOT_GROUP, 0644);
       std::string const filename = Itm->Owner->DestFile;
       for (pkgAcquire::Queue::QItem::owner_iterator O = Itm->Owners.begin(); O != Itm->Owners.end(); ++O)
       {

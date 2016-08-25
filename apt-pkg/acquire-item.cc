@@ -3440,7 +3440,7 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
    TemporaryDirectory = tmpname;
 
    ChangeOwnerAndPermissionOfFile("Item::QueueURI", TemporaryDirectory.c_str(),
-	 SandboxUser.c_str(), "root", 0700);
+	 SandboxUser.c_str(), ROOT_GROUP, 0700);
 
    DestFile = flCombine(TemporaryDirectory, DestFileName);
    if (DestDir.empty() == false)
