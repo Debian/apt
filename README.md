@@ -57,6 +57,15 @@ run:
 Then you can use make as you normally would (pass -j <count> to perform <count>
 jobs in parallel).
 
+CMake has also a Curses interface. To use it, instead of running `cmake`, run
+`ccmake`. This should open a window with text "**EMPTY CACHE**". Press `c`. This should
+do some operations, and pop out a window with settings afterwards. If error messages appear, press `e` until all close. By pressing
+`t`, the advanced mode can be opened, with more settings. After you fill the
+fields as you wish, press `c` again. This will configure the package again.
+If it errors, repair what it tells you to. After proper configuration,
+in menu bar in the bottom, an option should appear, saying `g` - generate.
+Press `g`. Now your easily customized configuration is done.
+
 You can also use the Ninja generator of cmake, to do that pass
 	-G Ninja
 to the cmake invocation, and then use ninja instead of make.
