@@ -82,6 +82,21 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testsuccess --nomsg aptkey --fakeroot del d141dbac8dae
 	testempty aptkey list
 
+	if [ "$(id -u)" != '0' ]; then
+		msgtest 'Test key removal with' 'unreadable key'
+		cleanplate
+		cp -a "keys/joesixpack.pub" "rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg"
+		echo 'foobar' > "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+		chmod 000 "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+		aptkey --fakeroot del d141dbac8dae
+		testwarning --nomsg aptkey --fakeroot del d141dbac8dae
+		testwarning aptkey list
+		chmod 644 "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+		rm -f "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+		grep -v '^W: ' "rootdir/tmp/testwarning.output" > "rootdir/aptkeylist.output" || true
+		testempty cat "rootdir/aptkeylist.output"
+	fi
+
 	msgtest 'Test key removal with' 'single key in real file'
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
@@ -188,6 +203,17 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 		msgtest 'Test verify a file' 'with all keys'
 		testsuccess --nomsg aptkey --quiet --readonly verify signature.gpg signature
+
+		if [ "$(id -u)" != '0' ]; then
+			msgtest 'Test verify a file' 'with unreadable key'
+			echo 'foobar' > "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+			chmod 000 "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+			aptkey --quiet --readonly verify "signature.gpg" "signature"
+			testwarning --nomsg aptkey --quiet --readonly verify "signature.gpg" "signature"
+			testwarning aptkey list
+			chmod 644 "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+			rm -f "rootdir/etc/apt/trusted.gpg.d/unreadablekey.gpg"
+		fi
 
 		msgtest 'Test verify a file' 'with good keyring'
 		testsuccess --nomsg aptkey --quiet --readonly --keyring keys/testcase-multikey.pub verify signature.gpg signature

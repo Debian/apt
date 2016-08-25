@@ -224,6 +224,17 @@ remove_key_from_keyring() {
     done
 }
 
+accessible_file_exists() {
+   if ! test -s "$1"; then
+      return 1
+   fi
+   if test -r "$1"; then
+      return 0
+   fi
+   warn "The key(s) in the keyring $1 are ignored as the file is not readable by user '$USER' executing apt-key."
+   return 1
+}
+
 foreach_keyring_do() {
    local ACTION="$1"
    shift
@@ -232,7 +243,7 @@ foreach_keyring_do() {
 	$ACTION "$FORCED_KEYRING" "$@"
    else
 	# otherwise all known keyrings are up for inspection
-	if [ -s "$TRUSTEDFILE" ]; then
+	if accessible_file_exists "$TRUSTEDFILE"; then
 	    $ACTION "$TRUSTEDFILE" "$@"
 	fi
 	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
@@ -241,7 +252,7 @@ foreach_keyring_do() {
 	    TRUSTEDPARTS="$(readlink -f "$TRUSTEDPARTS")"
 	    local TRUSTEDPARTSLIST="$(cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -name '*.gpg')"
 	    for trusted in $(echo "$TRUSTEDPARTSLIST" | sort); do
-		if [ -s "$trusted" ]; then
+		if accessible_file_exists "$trusted"; then
 		    $ACTION "$trusted" "$@"
 		fi
 	    done
@@ -294,35 +305,18 @@ import_keyring_into_keyring() {
     fi
 }
 
+catfile() {
+   cat "$1" >> "$2"
+}
+
 merge_all_trusted_keyrings_into_pubring() {
     # does the same as:
     # foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
     # but without using gpg, just cat and find
     local PUBRING="$(readlink -f "${GPGHOMEDIR}/pubring.gpg")"
-    # if a --keyring was given, just use this one
-    if [ -n "$FORCED_KEYRING" ]; then
-	if [ -s "$FORCED_KEYRING" ]; then
-	    cp --dereference "$FORCED_KEYRING" "$PUBRING"
-	fi
-    else
-	# otherwise all known keyrings are merged
-	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
-	if [ -d "$TRUSTEDPARTS" ]; then
-	    rm -f "$PUBRING"
-	    if [ -s "$TRUSTEDFILE" ]; then
-		cat "$TRUSTEDFILE" > "$PUBRING"
-	    fi
-	    TRUSTEDPARTS="$(readlink -f "$TRUSTEDPARTS")"
-	    (cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -name '*.gpg' -exec cat {} + >> "$PUBRING";)
-	elif [ -s "$TRUSTEDFILE" ]; then
-	    cp --dereference "$TRUSTEDFILE" "$PUBRING"
-	fi
-    fi
-
-    if [ ! -s "$PUBRING" ]; then
-	touch "$PUBRING"
-    fi
+    rm -f "$PUBRING"
+    touch "$PUBRING"
+    foreach_keyring_do 'catfile' "$PUBRING"
 }
 
 import_keys_from_keyring() {
@@ -471,6 +465,10 @@ if [ -z "$command" ]; then
     exit 1
 fi
 shift
+
+warn() {
+    echo >&2 'W:' "$@"
+}
 
 create_gpg_home() {
     # gpg needs (in different versions more or less) files to function correctly,
