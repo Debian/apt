@@ -3245,7 +3245,8 @@ std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
       pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
       if (Pkg->CurrentVer != 0 && Pkg.CurrentVer() == Ver)
       {
-	 std::string const basename = std::string("/usr/share/doc/") + Pkg.Name() + "/changelog";
+	 std::string const root = _config->FindDir("Dir");
+	 std::string const basename = root + std::string("usr/share/doc/") + Pkg.Name() + "/changelog";
 	 std::string const debianname = basename + ".Debian";
 	 if (FileExists(debianname))
 	    return "copy://" + debianname;
