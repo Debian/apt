@@ -39,6 +39,7 @@ using std::vector;
 #define GNUPGEXPSIG "[GNUPG:] EXPSIG"
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
+#define APTKEYWARNING "[APTKEY:] WARNING"
 
 struct Digest {
    enum class State {
@@ -238,6 +239,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
          ValidSigners.push_back(sig);
       }
+      else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
+         Warning("%s", buffer + sizeof(APTKEYWARNING));
    }
    fclose(pipein);
    free(buffer);
