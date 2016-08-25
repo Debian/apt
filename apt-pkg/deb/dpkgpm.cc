@@ -1681,7 +1681,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    {
 	       if (I->File[0] != '/')
 		  return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
-	       auto const file = flNotDir(I->File);
+	       auto file = flNotDir(I->File);
+	       if (flExtension(file) != "deb")
+		  file.append(".deb");
 	       std::string linkpath;
 	       if (dpkg_recursive_install_numbered)
 		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_to_free, p, n, file.c_str());
