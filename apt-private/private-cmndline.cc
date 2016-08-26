@@ -174,6 +174,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg('V',"verbose-versions","APT::Get::Show-Versions",0);
+      addArg(0, "autoremove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
