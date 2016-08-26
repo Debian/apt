@@ -80,7 +80,7 @@ void pkgAcquire::Initialize()
    if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
    {
       struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-      struct group const * const gr = getgrnam("root");
+      struct group const * const gr = getgrnam(ROOT_GROUP);
       if (pw != NULL && gr != NULL)
       {
 	 std::string const AuthConf = _config->FindFile("Dir::Etc::netrc");
@@ -106,7 +106,7 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
    if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
    {
       struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-      struct group const * const gr = getgrnam("root");
+      struct group const * const gr = getgrnam(ROOT_GROUP);
       if (pw != NULL && gr != NULL)
       {
          // chown the partial dir
@@ -1312,7 +1312,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       // build the status str
       std::ostringstream str;
-      str.imbue(std::locale("C.UTF-8"));
+      str.imbue(std::locale::classic());
       str.precision(4);
       str << "dlstatus" << ':' << std::fixed << i << ':' << Percent << ':' << msg << '\n';
       auto const dlstatus = str.str();

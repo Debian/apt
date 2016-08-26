@@ -31,7 +31,6 @@ if [ "${MSGCOLOR:-YES}" = 'YES' ]; then
 	fi
 fi
 
-
 if [ "$MSGCOLOR" != 'NO' ]; then
 	CERROR="\033[1;31m" # red
 	CWARNING="\033[1;33m" # yellow
@@ -196,6 +195,9 @@ aptinternalplanner() { runapt "${APTINTERNALPLANNER}" "$@"; }
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
+dpkg_version() {
+	command perl -MDpkg -E 'say $Dpkg::PROGVERSION'
+}
 dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" "$@"
 }
@@ -276,8 +278,13 @@ find_project_binary_dir() {
 	fi
 }
 setupenvironment() {
+	# Next check needs a gnu stat, let's figure that out early.
+	stat=stat
+	if command -v gnustat >/dev/null 2>&1; then
+		stat=gnustat
+	fi
 	# privilege dropping and testing doesn't work if /tmp isn't world-writeable (as e.g. with libpam-tmpdir)
-	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$(stat --format '%a' "$TMPDIR")" != '1777' ]; then
+	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$($stat --format '%a' "$TMPDIR")" != '1777' ]; then
 		unset TMPDIR
 	fi
 	TMPWORKINGDIRECTORY="$(mktemp -d)"
@@ -290,12 +297,24 @@ setupenvironment() {
 	fi
 	msgninfo "Preparing environment for ${0##*/} in ${TMPWORKINGDIRECTORY}…"
 
+	# Setup coreutils on BSD systems
+	mkdir "${TMPWORKINGDIRECTORY}/bin"
+	for prefix in gnu g; do
+			for command in stat touch sed cp tr sha1sum sha256sum md5sum sha512sum grep date wc chmod head readlink tar expr base64; do
+					if command -v $prefix$command 2>/dev/null >/dev/null; then
+							[ -e "${TMPWORKINGDIRECTORY}/bin/$command" ] || ln -sf $(command -v $prefix$command)  "${TMPWORKINGDIRECTORY}/bin/$command"
+					fi
+			done
+	done
+	export PATH="${TMPWORKINGDIRECTORY}/bin/:$PATH"
+
+
 	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
 	if [ "$(id -u)" = '0' ]; then
 		# relax permissions so that running as root with user switching works
 		umask 022
 		chmod 711 "$TMPWORKINGDIRECTORY"
-		chown _apt:root "${TMPWORKINGDIRECTORY}/downloaded"
+		chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/downloaded"
 	fi
 
 	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
@@ -352,6 +371,11 @@ setupenvironment() {
 	ln -s "${TMPWORKINGDIRECTORY}/keys/joesixpack.pub" rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
+	echo "Dir::Etc \"etc\";" >> aptconfig.conf
+	echo "Dir::State \"var/lib/apt\";" >> aptconfig.conf
+	echo "Dir::Cache \"var/cache/apt\";" >> aptconfig.conf
+	echo "Dir::Etc \"etc/apt\";" >> aptconfig.conf
+	echo "Dir::Log \"var/log/apt\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# either store apt-key were we can access it, even if we run it as a different user
@@ -386,11 +410,13 @@ EOF
 	cp "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
 exec fakeroot '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" \\
 	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" <<EOF
 exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+	--admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" \\
 	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
 EOF
@@ -416,7 +442,7 @@ EOF
 
 	cp "${TESTDIRECTORY}/apt.pem" "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	if [ "$(id -u)" = '0' ]; then
-		chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
+		chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem"
 	fi
 	echo "Acquire::https::CaInfo \"${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
@@ -428,16 +454,13 @@ EOF
 
 	# create some files in /tmp and look at user/group to get what this means
 	TEST_DEFAULT_USER="$(id -un)"
-	if [ "$(uname)" = 'GNU/kFreeBSD' ]; then
-		TEST_DEFAULT_GROUP='root'
-	else
-		TEST_DEFAULT_GROUP="$(id -gn)"
-	fi
+	touch "${TMPWORKINGDIRECTORY}/test-file"
+	TEST_DEFAULT_GROUP=$(stat --format '%G'  "${TMPWORKINGDIRECTORY}/test-file")
 
 	# cleanup the environment a bit
 	# prefer our apt binaries over the system apt binaries
 	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
-	export LC_ALL=C.UTF-8
+	export LC_ALL=C
 	unset LANGUAGE APT_CONFIG
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
 	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
@@ -500,7 +523,15 @@ configdpkg() {
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
-	if command dpkg --assert-multi-arch >/dev/null 2>&1 ; then
+	# if multi-arch make sure dpkg can detect itself as capable of it
+	if getarchitectures | grep -E -q '[^ ]+ [^ ]+'; then
+		if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
+			# dpkg doesn't really check the version as long as it is fully installed,
+			# but just to be sure we choose one above the required version
+			insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
+		fi
+	fi
+	if dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		local DPKGARCH="$(dpkg --print-architecture)"
 		# this ensures that even if multi-arch isn't active in the view
@@ -515,14 +546,6 @@ configdpkg() {
 				fi
 			fi
 		done
-		# if multi-arch make sure dpkg can detect itself as capable of it
-		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
-			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
-				# dpkg doesn't really check the version as long as it is fully installed,
-				# but just to be sure we choose one above the required version
-				insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
-			fi
-		fi
 	fi
 }
 
@@ -568,7 +591,11 @@ int execvp(const char *file, char *const argv[]) {
 	return func_execvp(newfile, argv);
 }
 EOF
-	testempty --nomsg gcc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+	if cc -ldl 2>&1 | grep -q dl; then
+		testempty --nomsg cc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c
+	else
+		testempty --nomsg cc -Wall -Wextra -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+	fi
 }
 configcompression() {
 	if [ "$1" = 'ALL' ]; then
@@ -626,10 +653,10 @@ _setupsimplenativepackage() {
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
 	local DEPENDENCIES="$5"
-	local DESCRIPTION="${6:-"an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
+	local DESCRIPTION="${6:-an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
  If you find such a package installed on your system,
  something went horribly wrong! They are autogenerated
- und used only by testcases and serve no other purpose…"}"
+ und used only by testcases and serve no other purpose…}"
 
 	local SECTION="${7:-others}"
 	local PRIORITY="${8:-optional}"
@@ -662,7 +689,7 @@ Standards-Version: 3.9.3"
 		if [ "$SECTION" != '<none>' ]; then
 			echo "Section: $SECTION"
 		fi
-		local BUILDDEPS="$(echo "$DEPENDENCIES" | grep '^Build-')"
+		local BUILDDEPS="$(printf "%b\n" "$DEPENDENCIES" | grep '^Build-')"
 		test -z "$BUILDDEPS" || echo "$BUILDDEPS"
 		echo "
 Package: $NAME"
@@ -672,12 +699,24 @@ Package: $NAME"
 		else
 			echo "Architecture: any"
 		fi
-		local DEPS="$(echo "$DEPENDENCIES" | grep -v '^Build-')"
+		local DEPS="$(printf "%b\n" "$DEPENDENCIES" | grep -v '^Build-')"
 		test -z "$DEPS" || echo "$DEPS"
-		echo "Description: $DESCRIPTION"
+		printf "%b\n" "Description: $DESCRIPTION"
 	} > "${BUILDDIR}/debian/control"
 
 	echo '3.0 (native)' > "${BUILDDIR}/debian/source/format"
+}
+
+make_tiny_rules() {
+	local OUT="$1"
+	if command -v gmake >/dev/null 2>&1; then
+		[ -e ${TMPWORKINGDIRECTORY}/bin/make ] || ln -s $(command -v gmake) ${TMPWORKINGDIRECTORY}/bin/make
+		echo "#!${TMPWORKINGDIRECTORY}/bin/make -f" > "$OUT"
+	else
+		echo '#!/usr/bin/make -f' > "$OUT"
+	fi
+	echo '%:' >> "$OUT"
+	echo '	dh $@' >> "$OUT"
 }
 
 setupsimplenativepackage() {
@@ -686,7 +725,7 @@ setupsimplenativepackage() {
 	local VERSION="$3"
 	local BUILDDIR="${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}"
 	test -e "${BUILDDIR}/debian/compat" || echo '7' > "${BUILDDIR}/debian/compat"
-	test -e  "${BUILDDIR}/debian/rules" || cp /usr/share/doc/debhelper/examples/rules.tiny "${BUILDDIR}/debian/rules"
+	test -e  "${BUILDDIR}/debian/rules" || make_tiny_rules "${BUILDDIR}/debian/rules"
 }
 
 buildsimplenativepackage() {
@@ -844,10 +883,10 @@ insertpackage() {
 	local VERSION="$4"
 	local DEPENDENCIES="$5"
 	local PRIORITY="${6:-optional}"
-	local DESCRIPTION="${7:-"an autogenerated dummy ${NAME}=${VERSION}/${RELEASES}
+	local DESCRIPTION="${7:-an autogenerated dummy ${NAME}=${VERSION}/${RELEASES}
  If you find such a package installed on your system,
  something went horribly wrong! They are autogenerated
- und used only by testcases and serve no other purpose…"}"
+ und used only by testcases and serve no other purpose…}"
 	local ARCHS=""
 	for RELEASE in $(printf '%s' "$RELEASES" | tr ',' '\n'); do
 		if [ "$RELEASE" = 'installed' ]; then
@@ -872,7 +911,7 @@ Maintainer: Joe Sixpack <joe@example.org>"
 					test "$arch" = 'none' || echo "Architecture: $arch"
 					echo "Version: $VERSION
 Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb"
-					test -z "$DEPENDENCIES" || echo "$DEPENDENCIES"
+					test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES"
 					echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)"
 					echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)"
 					echo "SHA256: 0000000000000000000000000000000000000000000000000000000000000000"
@@ -908,7 +947,7 @@ Binary: $BINARY
 Version: $VERSION
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: $ARCH" >> $FILE
-		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
+		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
 		echo "Files:
  $(echo -n "$DSCFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$DSCFILE" | wc -c) "$DSCFILE"
  $(echo -n "$TARFILE" | md5sum | cut -d' ' -f 1) $(echo -n "$TARFILE" | wc -c) "$TARFILE"
@@ -926,10 +965,10 @@ insertinstalledpackage() {
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
 	local STATUS="${6:-install ok installed}"
-	local DESCRIPTION="${7:-"an autogenerated dummy ${NAME}=${VERSION}/installed
+	local DESCRIPTION="${7:-an autogenerated dummy ${NAME}=${VERSION}/installed
  If you find such a package installed on your system,
  something went horribly wrong! They are autogenerated
- und used only by testcases and serve no other purpose…"}"
+ und used only by testcases and serve no other purpose…}"
 
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
@@ -942,8 +981,8 @@ Installed-Size: 42
 Maintainer: Joe Sixpack <joe@example.org>
 Version: $VERSION" >> "$FILE"
 		test "$arch" = 'none' || echo "Architecture: $arch" >> "$FILE"
-		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> "$FILE"
-		echo "Description: $DESCRIPTION" >> "$FILE"
+		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
+		printf "%b\n" "Description: $DESCRIPTION" >> "$FILE"
 		echo >> "$FILE"
 		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
 			echo -n > "${INFO}/${NAME}:${arch}.list"
@@ -1276,7 +1315,12 @@ changetowebserver() {
 }
 
 changetohttpswebserver() {
-	if ! command -v stunnel4 >/dev/null 2>&1; then
+	local stunnel4
+	if command -v stunnel4 >/dev/null 2>&1; then
+		stunnel4=stunnel4
+	elif command -v stunnel >/dev/null 2>&1; then
+		stunnel4=stunnel
+	else
 		msgdie 'You need to install stunnel4 for https testcases'
 	fi
 	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
@@ -1290,14 +1334,14 @@ output = /dev/null
 accept = 0
 connect = $APTHTTPPORT
 " > "${TMPWORKINGDIRECTORY}/stunnel.conf"
-	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+	$stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
         waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
 	local PID="$(cat "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid")"
         if [ -z "$PID" ]; then
-		msgdie 'Could not fork stunnel4 successfully'
+		msgdie 'Could not fork $stunnel4 successfully'
 	fi
 	addtrap 'prefix' "kill ${PID};"
-	APTHTTPSPORT="$(lsof -i -n | awk "/^stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
+	APTHTTPSPORT="$(lsof -i -n | awk "/^$stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
 	webserverconfig 'aptwebserver::port::https' "$APTHTTPSPORT" "https://localhost:${APTHTTPSPORT}"
 	rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
 }
@@ -1917,7 +1961,7 @@ mkdir() {
 		command mkdir -m 700 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
 		touch "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/lock"
 		if [ "$(id -u)" = '0' ]; then
-			chown _apt:root "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+			chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
 		fi
 	else
 		command mkdir "$@"

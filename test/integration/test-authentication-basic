@@ -30,7 +30,7 @@ testauthsuccess() {
 	# lets see if got/retains acceptable permissions
 	if [ -n "$AUTHCONF" ]; then
 		if [ "$(id -u)" = '0' ]; then
-			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "_apt:root:600"
+			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "_apt:$(id -gn):600"
 		else
 			testfilestats "$AUTHCONF" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:600"
 		fi

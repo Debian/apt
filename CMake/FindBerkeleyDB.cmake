@@ -33,14 +33,25 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# We need NO_DEFAULT_PATH here, otherwise CMake helpfully picks up the wrong
+# db.h on BSD systems instead of the Berkeley DB one.
 find_path(BERKELEY_DB_INCLUDE_DIRS db.h
-  /usr/include/db5
+  ${CMAKE_INSTALL_FULL_INCLUDEDIR}/db5
   /usr/local/include/db5
-  /usr/include/db4
+  /usr/include/db5
+
+  ${CMAKE_INSTALL_FULL_INCLUDEDIR}/db4
   /usr/local/include/db4
+  /usr/include/db4
+
+  ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+  /usr/local/include
+  /usr/include
+
+  NO_DEFAULT_PATH
 )
 
-find_library(BERKELEY_DB_LIBRARIES NAMES db )
+find_library(BERKELEY_DB_LIBRARIES NAMES db db-5)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Berkeley "Could not find Berkeley DB >= 4.1" BERKELEY_DB_INCLUDE_DIRS BERKELEY_DB_LIBRARIES)

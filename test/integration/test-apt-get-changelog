@@ -122,13 +122,13 @@ testsuccess apt install dpkg -y
 # at this moment, we still have the Releasefile claim to be origin:ubuntu
 echo 'Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu "false";' >> rootdir/etc/apt/apt.conf.d/nooriginchangelogs
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris
-testsuccessequal "'gzip:///usr/share/doc/dpkg/changelog.Debian.gz' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+testsuccessequal "'copy://${TMPWORKINGDIRECTORY}/rootdir/usr/share/doc/dpkg/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=true
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/d/dpkg/dpkg_42/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu=true
-testsuccessequal "'gzip:///usr/share/doc/dpkg/changelog.Debian.gz' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Debian=true
+testsuccessequal "'copy://${TMPWORKINGDIRECTORY}/rootdir/usr/share/doc/dpkg/changelog' dpkg.changelog" apt changelog dpkg --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Debian=true
 
 testsuccess apt changelog dpkg -d
 testfilestats 'dpkg.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 head -n 3 dpkg.changelog > dpkg.change
-testfileequal 'dpkg.change' "$(apthelper cat-file '/usr/share/doc/dpkg/changelog.Debian.gz' | head -n 3)"
+testfileequal 'dpkg.change' "$(apthelper cat-file 'rootdir/usr/share/doc/dpkg/changelog' | head -n 3)"
 rm -f dpkg.change dpkg.changelog

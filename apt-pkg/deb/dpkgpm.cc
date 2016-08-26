@@ -61,6 +61,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
+extern char **environ;
+
 using namespace std;
 
 APT_PURE static string AptHistoryRequestingUser()			/*{{{*/

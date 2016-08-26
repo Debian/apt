@@ -21,6 +21,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <array>
 #include <algorithm>
 #include <iomanip>
 #include <locale>
@@ -758,7 +759,7 @@ string TimeRFC1123(time_t Date, bool const NumericTimezone)
    if (gmtime_r(&Date, &Conv) == NULL)
       return "";
 
-   auto const posix = std::locale("C.UTF-8");
+   auto const posix = std::locale::classic();
    std::ostringstream datestr;
    datestr.imbue(posix);
    APT::StringView const fmt("%a, %d %b %Y %H:%M:%S");
@@ -945,7 +946,7 @@ bool RFC1123StrToTime(const char* const str,time_t &time)
    signed int year = 0; // yes, Y23K problem – we gonna worry then…
    std::string weekday, month, datespec, timespec, zone;
    std::istringstream ss(str);
-   auto const &posix = std::locale("C.UTF-8");
+   auto const &posix = std::locale::classic();
    ss.imbue(posix);
    ss >> weekday;
    // we only superficially check weekday, mostly to avoid accepting localized

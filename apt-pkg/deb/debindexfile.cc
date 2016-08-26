@@ -30,6 +30,7 @@
 #include <sstream>
 
 #include <sys/stat.h>
+#include <unistd.h>
 									/*}}}*/
 
 // Sources Index							/*{{{*/

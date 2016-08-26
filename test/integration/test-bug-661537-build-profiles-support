@@ -76,7 +76,7 @@ Building dependency tree...
 }
 
 msgtest 'Check if version of installed dpkg is high enough for' 'build profiles support'
-if dpkg --compare-versions "$(command dpkg-query --showformat='${Version}' --show dpkg)" 'ge' '1.17.14'; then
+if dpkg --compare-versions "$(dpkg_version)" 'ge' '1.17.14'; then
 	msgpass
 	testwithdpkg() {
 		msgtest "Test with" "dpkg-checkbuilddeps -d '$1' -P '$2'"

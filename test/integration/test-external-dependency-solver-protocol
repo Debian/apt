@@ -26,7 +26,7 @@ insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
 setupaptarchive
 
 testsuccess aptget install --solver apt coolstuff -s
-testempty find -name 'edsp.last.*'
+testempty find . -name 'edsp.last.*'
 echo 'Dir::Log::Solver "edsp.last.xz";' > rootdir/etc/apt/apt.conf.d/log-edsp.conf
 
 testfailure aptget install --solver dump coolstuff -s
@@ -152,7 +152,7 @@ testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
 configarchitecture 'armel'
 testfailure aptget install --solver apt awesomecoolstuff:i386 -s
 msgtest 'An invalid EDSP file generates a' 'hard error'
-if echo "Request: This is a test\nFoo: bar\n\n" | aptinternalsolver > solver.result 2>&1; then
+if printf "%b\n" "Request: This is a test\nFoo: bar\n\n" | aptinternalsolver > solver.result 2>&1; then
 	cat solver.result
 	msgfail
 else

@@ -8,7 +8,7 @@ setupenvironment
 configarchitecture 'amd64'
 
 msgtest 'Check if installed dpkg supports' 'noawait trigger'
-if dpkg-checkbuilddeps -d 'dpkg (>= 1.16.1)' /dev/null; then
+if dpkg --compare-versions "$(dpkg_version)" 'ge' '1.16.1'; then
 	msgpass
 else
 	msgskip 'dpkg version too old'
@@ -23,7 +23,7 @@ buildtriggerpackages() {
 	cat >"${BUILDDIR}/debian/postinst" <<EOF
 #!/bin/sh
 if [ "\$1" = 'triggered' ]; then
-	ls -l /proc/self/fd/
+	echo "TRIGGER IS RUNNING"
 fi
 EOF
 	echo "$TYPE /usr/share/doc" > "${BUILDDIR}/debian/triggers"
@@ -49,26 +49,26 @@ runtests() {
 	testsuccess aptget install trigdepends-$TYPE -y --reinstall
 	cp rootdir/tmp/testsuccess.output terminal.output
 	testsuccess grep '^REWRITE ' terminal.output
-	testsuccess grep ' root root ' terminal.output
+	testsuccess grep 'TRIGGER IS RUNNING' terminal.output
 	testdpkginstalled triggerable-$TYPE trigdepends-$TYPE
 
 	testsuccess aptget install trigstuff -y
 	cp rootdir/tmp/testsuccess.output terminal.output
 	testsuccess grep '^REWRITE ' terminal.output
-	testsuccess grep ' root root ' terminal.output
+	testsuccess grep 'TRIGGER IS RUNNING' terminal.output
 	testdpkginstalled triggerable-$TYPE trigdepends-$TYPE trigstuff
 
 	testsuccess aptget purge trigstuff -y
 	cp rootdir/tmp/testsuccess.output terminal.output
 	testsuccess grep '^REWRITE ' terminal.output
-	testsuccess grep ' root root ' terminal.output
+	testsuccess grep 'TRIGGER IS RUNNING' terminal.output
 	testdpkginstalled triggerable-$TYPE trigdepends-$TYPE
 	testdpkgnotinstalled trigstuff
 
 	testsuccess aptget purge trigdepends-$TYPE -y
 	cp rootdir/tmp/testsuccess.output terminal.output
 	testfailure grep '^REWRITE ' terminal.output
-	testfailure grep ' root root ' terminal.output
+	testfailure grep 'TRIGGER IS RUNNING' terminal.output
 	testdpkgnotinstalled triggerable-$TYPE trigdepends-$TYPE
 }
 #runtests 'interest'

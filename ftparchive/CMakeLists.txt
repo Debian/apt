@@ -1,3 +1,4 @@
+include_directories(${BERKELEY_DB_INCLUDE_DIRS})
 # Create the executable tasks
 file(GLOB_RECURSE source "*.cc")
 add_executable(apt-ftparchive ${source})

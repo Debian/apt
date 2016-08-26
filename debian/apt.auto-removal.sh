@@ -25,7 +25,7 @@ debverlist="$(echo "$list" | cut -d' ' -f 2 | sort --unique --reverse --version-
 if [ -n "$1" ]; then
 	installed_version="$(echo "$list" | awk "\$1 == \"$1\" { print \$2;exit; }")"
 fi
-unamer="$(uname -r)"
+unamer="$(uname -r | tr '[A-Z]' '[a-z]')"
 if [ -n "$unamer" ]; then
 	running_version="$(echo "$list" | awk "\$1 == \"$unamer\" { print \$2;exit; }")"
 fi
