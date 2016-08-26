@@ -28,14 +28,19 @@ target_include_directories(apt-pkg
                            PRIVATE ${ZLIB_INCLUDE_DIRS}
                                    ${BZIP2_INCLUDE_DIR}
                                    ${LZMA_INCLUDE_DIRS}
-                                   ${LZ4_INCLUDE_DIRS})
+                                   ${LZ4_INCLUDE_DIRS}
+                                   ${ICONV_DIRECTORIES}
+)
+
 target_link_libraries(apt-pkg
                       PRIVATE -lutil ${CMAKE_DL_LIBS} ${RESOLV_LIBRARIES}
                              ${CMAKE_THREAD_LIBS_INIT}
                              ${ZLIB_LIBRARIES}
                              ${BZIP2_LIBRARIES}
                              ${LZMA_LIBRARIES}
-                             ${LZ4_LIBRARIES})
+                             ${LZ4_LIBRARIES}
+                             ${ICONV_LIBRARIES}
+)
 set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})
 add_version_script(apt-pkg)

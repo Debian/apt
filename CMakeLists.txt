@@ -29,6 +29,7 @@ include(GNUInstallDirs)
 include(TestBigEndian)
 find_package(Threads)
 find_package(LFS REQUIRED)
+find_package(Iconv REQUIRED)
 
 if(USE_NLS)
   find_package(Intl REQUIRED)
