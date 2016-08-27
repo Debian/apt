@@ -25,7 +25,14 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <fcntl.h>
+#ifdef HAVE_VFS_H
 #include <sys/vfs.h>
+#else
+#ifdef HAVE_PARAMS_H
+#include <sys/params.h>
+#endif
+#include <sys/mount.h>
+#endif
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <errno.h>

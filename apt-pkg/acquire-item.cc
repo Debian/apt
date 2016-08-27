@@ -145,7 +145,7 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
 	     << FailCode << std::endl;
 #endif
    string const report = _config->Find("Methods::Mirror::ProblemReporting",
-				 "/usr/lib/apt/apt-report-mirror-failure");
+				 LIBEXEC_DIR "/apt-report-mirror-failure");
    if(!FileExists(report))
       return;
 
@@ -2047,7 +2047,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    HashStringList ServerHashes;
    unsigned long long ServerSize = 0;
 
-   auto const &posix = std::locale("C.UTF-8");
+   auto const &posix = std::locale::classic();
    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
    {
       std::string tagname = *type;
@@ -3439,7 +3439,7 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
    TemporaryDirectory = tmpname;
 
    ChangeOwnerAndPermissionOfFile("Item::QueueURI", TemporaryDirectory.c_str(),
-	 SandboxUser.c_str(), "root", 0700);
+	 SandboxUser.c_str(), ROOT_GROUP, 0700);
 
    DestFile = flCombine(TemporaryDirectory, DestFileName);
    if (DestDir.empty() == false)
@@ -3487,7 +3487,8 @@ std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
       pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
       if (Pkg->CurrentVer != 0 && Pkg.CurrentVer() == Ver)
       {
-	 std::string const basename = std::string("/usr/share/doc/") + Pkg.Name() + "/changelog";
+	 std::string const root = _config->FindDir("Dir");
+	 std::string const basename = root + std::string("usr/share/doc/") + Pkg.Name() + "/changelog";
 	 std::string const debianname = basename + ".Debian";
 	 if (FileExists(debianname))
 	    return "copy://" + debianname;

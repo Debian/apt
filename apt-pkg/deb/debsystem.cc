@@ -188,7 +188,7 @@ static std::string getDpkgStatusLocation(Configuration const &Cnf) {
    Configuration PathCnf;
    PathCnf.Set("Dir", Cnf.Find("Dir", "/"));
    PathCnf.Set("Dir::State::status", "status");
-   auto const cnfstatedir = Cnf.Find("Dir::State", "var/lib/apt/");
+   auto const cnfstatedir = Cnf.Find("Dir::State", STATE_DIR + 1);
    // if the state dir ends in apt, replace it with dpkg -
    // for the default this gives us the same as the fallback below.
    // This can't be a ../dpkg as that would play bad with symlinks
@@ -211,7 +211,7 @@ bool debSystem::Initialize(Configuration &Cnf)
    Cnf.CndSet("Dir::State::extended_states", "extended_states");
    if (Cnf.Exists("Dir::State::status") == false)
       Cnf.Set("Dir::State::status", getDpkgStatusLocation(Cnf));
-   Cnf.CndSet("Dir::Bin::dpkg","/usr/bin/dpkg");
+   Cnf.CndSet("Dir::Bin::dpkg",BIN_DIR"/dpkg");
 
    if (d->StatusFile) {
      delete d->StatusFile;
@@ -239,9 +239,9 @@ APT_PURE bool debSystem::ArchiveSupported(const char *Type)
 signed debSystem::Score(Configuration const &Cnf)
 {
    signed Score = 0;
-   if (FileExists(Cnf.FindFile("Dir::State::status","/var/lib/dpkg/status")) == true)
+   if (FileExists(Cnf.FindFile("Dir::State::status",getDpkgStatusLocation(Cnf).c_str())) == true)
        Score += 10;
-   if (FileExists(Cnf.Find("Dir::Bin::dpkg","/usr/bin/dpkg")) == true)
+   if (FileExists(Cnf.Find("Dir::Bin::dpkg",BIN_DIR"/dpkg")) == true)
       Score += 10;
    if (FileExists("/etc/debian_version") == true)
       Score += 10;

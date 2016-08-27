@@ -207,7 +207,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	 FinalF += URItoFileName(S);
 	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
 	    return _error->Errno("rename","Failed to rename");
-	 ChangeOwnerAndPermissionOfFile("CopyPackages", FinalF.c_str(), "root", "root", 0644);
+	 ChangeOwnerAndPermissionOfFile("CopyPackages", FinalF.c_str(), "root", ROOT_GROUP, 0644);
       }
 
       /* Mangle the source to be in the proper notation with
@@ -531,7 +531,7 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
       Rel.Open(prefix + file,FileFd::ReadOnly);
       if (CopyFile(Rel,Target) == false || Target.Close() == false)
 	 return _error->Error("Copying of '%s' for '%s' from '%s' failed", file.c_str(), CDName.c_str(), prefix.c_str());
-      ChangeOwnerAndPermissionOfFile("CopyPackages", TargetF.c_str(), "root", "root", 0644);
+      ChangeOwnerAndPermissionOfFile("CopyPackages", TargetF.c_str(), "root", ROOT_GROUP, 0644);
 
       return true;
 }
@@ -738,7 +738,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 	 FinalF += URItoFileName(S);
 	 if (rename(TargetF.c_str(),FinalF.c_str()) != 0)
 	    return _error->Errno("rename","Failed to rename");
-	 ChangeOwnerAndPermissionOfFile("CopyTranslations", FinalF.c_str(), "root", "root", 0644);
+	 ChangeOwnerAndPermissionOfFile("CopyTranslations", FinalF.c_str(), "root", ROOT_GROUP, 0644);
       }
 
       CurrentSize += FileSize;

@@ -4,6 +4,9 @@
 # set minimum version
 project(apt)
 cmake_minimum_required(VERSION 3.4.0)
+# Generic header locations
+include_directories(${PROJECT_BINARY_DIR}/include)
+
 
 enable_testing()
 
@@ -25,8 +28,14 @@ include(CheckStructHasMember)
 include(GNUInstallDirs)
 include(TestBigEndian)
 find_package(Threads)
-find_package(PkgConfig)
 find_package(LFS REQUIRED)
+find_package(Iconv REQUIRED)
+
+if(USE_NLS)
+  find_package(Intl REQUIRED)
+  link_libraries(${Intl_LIBRARIES})
+  include_directories(${Intl_INCLUDE_DIRS})
+endif()
 
 # Add large file support
 add_compile_options(${LFS_COMPILE_OPTIONS})
@@ -78,25 +87,27 @@ if (BZIP2_FOUND)
   set(HAVE_BZ2 1)
 endif()
 
-pkg_check_modules(LZMA liblzma)
+find_package(LZMA)
 if (LZMA_FOUND)
   set(HAVE_LZMA 1)
 endif()
 
-pkg_check_modules(LZ4 liblz4)
+
+find_package(LZ4)
 if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
 
 # Mount()ing and stat()ing and friends
+check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
+check_include_files(sys/params.h HAVE_PARAMS_H)
+check_symbol_exists(statfs sys/mount.h HAVE_MOUNT_H)
+if (NOT HAVE_VFS_H AND NOT HAVE_MOUNT_H)
+  message(FATAL_ERROR "Can find neither statvfs() nor statfs()")
+endif()
 
 check_function_exists(statvfs HAVE_STATVFS)
 if (NOT HAVE_STATVFS)
-  check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
-  check_symbol_exists(statfs sys/mount.h HAVE_MOUNT_H)
-  if (NOT HAVE_VFS_H AND NOT HAVE_MOUNT_H)
-    message(FATAL_ERROR "Can find neither statvfs() nor statfs()")
-  endif()
   configure_file(CMake/statvfs.h.in ${PROJECT_BINARY_DIR}/include/statvfs.h COPYONLY)
 endif()
 
@@ -111,8 +122,44 @@ check_function_exists(ptsname_r HAVE_PTSNAME_R)
 check_function_exists(timegm HAVE_TIMEGM)
 test_big_endian(WORDS_BIGENDIAN)
 
+# FreeBSD
+add_definitions(-D_WITH_GETLINE=1)
+
 if (CMAKE_USE_PTHREADS_INIT)
   set(HAVE_PTHREAD 1)
+endif()
+
+CHECK_INCLUDE_FILES(machine/endian.h HAVE_MACHINE_ENDIAN_H)
+CHECK_INCLUDE_FILES(sys/endian.h HAVE_SYS_ENDIAN_H)
+CHECK_INCLUDE_FILES(endian.h HAVE_ENDIAN_H)
+if (NOT HAVE_ENDIAN_H)
+  if (HAVE_MACHINE_ENDIAN_H OR HAVE_SYS_ENDIAN_H)
+    configure_file(CMake/endian.h.in ${PROJECT_BINARY_DIR}/include/endian.h)
+  else()
+    message(FATAL_ERROR "Cannot find endian.h")
+  endif()
+endif()
+
+
+include(CheckTypeSize)
+set(CMAKE_EXTRA_INCLUDE_FILES "signal.h")
+check_type_size("sig_t" SIG_T LANGUAGE "CXX")
+check_type_size("sighandler_t" SIGHANDLER_T LANGUAGE "CXX")
+set(CMAKE_EXTRA_INCLUDE_FILES)
+if (NOT HAVE_SIGHANDLER_T)
+  if (HAVE_SIG_T)
+    add_definitions(-Dsighandler_t=sig_t)
+  else()
+    message(FATAL_ERROR "Platform defines neither sig_t nor sighandler_t")
+  endif()
+endif()
+
+# Handle resolving
+check_function_exists(res_init HAVE_LIBC_RESOLV)
+if(HAVE_LIBC_RESOLV)
+    set(RESOLV_LIBRARIES)
+else()
+    set(RESOLV_LIBRARIES -lresolv)
 endif()
 
 # Configure some variables like package, version and architecture.
@@ -124,13 +171,25 @@ if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                   OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
+if (NOT DEFINED ROOT_GROUP)
+  execute_process(COMMAND id -gn root
+                  OUTPUT_VARIABLE ROOT_GROUP OUTPUT_STRIP_TRAILING_WHITESPACE)
+  message(STATUS "Found root group: ${ROOT_GROUP}")
+endif()
+set(ROOT_GROUP "${ROOT_GROUP}" CACHE STRING "Group of root (e.g.: wheel or root)")
+
+# Set various directories
+set(STATE_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt" CACHE PATH "Your /var/lib/apt")
+set(CACHE_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/cache/apt" CACHE PATH "Your /var/cache/apt")
+set(LOG_DIR "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/apt" CACHE PATH "Your /var/log/apt")
+set(CONF_DIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt" CACHE PATH "Your /etc/apt")
+set(LIBEXEC_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/apt" CACHE PATH "Your /usr/libexec/apt")
+set(BIN_DIR "${CMAKE_INSTALL_FULL_BINDIR}")
+
 
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
 configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
-
-# Generic header locations
-include_directories(${PROJECT_BINARY_DIR}/include)
 
 # Add our subdirectories
 add_subdirectory(vendor)
@@ -154,13 +213,13 @@ endif()
 
 # Create our directories.
 install_empty_directories(
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/apt.conf.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/preferences.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/sources.list.d
-  ${CMAKE_INSTALL_FULL_SYSCONFDIR}/apt/trusted.gpg.d
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/cache/apt/archives/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/lists/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/mirrors/partial
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/lib/apt/periodic
-  ${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/apt
+  ${CONF_DIR}/apt.conf.d
+  ${CONF_DIR}/preferences.d
+  ${CONF_DIR}/sources.list.d
+  ${CONF_DIR}/trusted.gpg.d
+  ${CACHE_DIR}/archives/partial
+  ${STATE_DIR}/lists/partial
+  ${STATE_DIR}/mirrors/partial
+  ${STATE_DIR}/periodic
+  ${LOG_DIR}
 )
