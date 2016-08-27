@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 
+#include <clocale>
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
@@ -1021,9 +1022,11 @@ bool RFC1123StrToTime(const char* const str,time_t &time)
    }
 
    std::string const datetime = datespec + ' ' + timespec;
+   char *old_locale = std::setlocale (LC_TIME, "C");
    struct tm Tm;
    if (strptime(datetime.c_str(), "%Y-%m-%d %H:%M:%S", &Tm) == nullptr)
       return false;
+   std::setlocale (LC_TIME, old_locale);
    time = timegm(&Tm);
    return true;
 }
@@ -1034,10 +1037,11 @@ bool RFC1123StrToTime(const char* const str,time_t &time)
 bool FTPMDTMStrToTime(const char* const str,time_t &time)
 {
    struct tm Tm;
+   char *old_locale = std::setlocale  (LC_TIME, "C");
    // MDTM includes no whitespaces but recommend and ignored by strptime
    if (strptime(str, "%Y %m %d %H %M %S", &Tm) == NULL)
       return false;
-
+   std::setlocale (LC_TIME, old_locale);
    time = timegm(&Tm);
    return true;
 }
