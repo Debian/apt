@@ -46,6 +46,7 @@
 #include <ctime>
 #include <sstream>
 #include <numeric>
+#include <random>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1340,6 +1341,23 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
    if (hasReleaseFile && verify == false)
       hasHashes = std::any_of(IndexTargets.begin(), IndexTargets.end(),
 	    [&](IndexTarget const &Target) { return TransactionManager->MetaIndexParser->Exists(Target.MetaKey); });
+   if (_config->FindB("Acquire::IndexTargets::Randomized", true) && likely(IndexTargets.empty() == false))
+   {
+      /* For fallback handling and to have some reasonable progress information
+	 we can't randomize everything, but at least the order in the same type
+	 can be as we shouldn't be telling the mirrors (and everyone else watching)
+	 which is native/foreign arch, specific order of preference of translations, … */
+      auto range_start = IndexTargets.begin();
+      std::random_device rd;
+      std::default_random_engine g(rd());
+      do {
+	 auto const type = range_start->Option(IndexTarget::CREATED_BY);
+	 auto const range_end = std::find_if_not(range_start, IndexTargets.end(),
+	       [&type](IndexTarget const &T) { return type == T.Option(IndexTarget::CREATED_BY); });
+	 std::shuffle(range_start, range_end, g);
+	 range_start = range_end;
+      } while (range_start != IndexTargets.end());
+   }
    for (auto&& Target: IndexTargets)
    {
       // if we have seen a target which is created-by a target this one here is declared a
