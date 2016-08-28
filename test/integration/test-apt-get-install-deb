@@ -108,8 +108,12 @@ createpkg 'leading-newline' '
 createpkg 'trailing-newline' '' '
 '
 
+echo 'Package: /pkg-/
+Pin: release a=experimental
+Pin-Priority: 501' > rootdir/etc/apt/preferences.d/pinit
+
 testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
-testsuccess aptget install ./incoming/pkg-leading-newline_0_all.deb
+testsuccess aptget install "$(readlink -f ./incoming/pkg-leading-newline_0_all.deb)"
 testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
 
 testempty apt clean

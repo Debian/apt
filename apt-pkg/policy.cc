@@ -278,14 +278,13 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       Name.erase(found);
    }
 
-   // Allow pinning by wildcards
-   // TODO: Maybe we should always prefer specific pins over non-
-   // specific ones.
-   if (Name[0] == '/' || Name.find_first_of("*[?") != string::npos)
+   // Allow pinning by wildcards - beware of package names looking like wildcards!
+   // TODO: Maybe we should always prefer specific pins over non-specific ones.
+   if ((Name[0] == '/' && Name[Name.length() - 1] == '/') || Name.find_first_of("*[?") != string::npos)
    {
       pkgVersionMatch match(Data, Type);
       for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
-	 if (match.ExpressionMatches(Name, G.Name()))
+	 if (Name != G.Name() && match.ExpressionMatches(Name, G.Name()))
 	 {
 	    if (Arch.empty() == false)
 	       CreatePin(Type, string(G.Name()).append(":").append(Arch), Data, Priority);
