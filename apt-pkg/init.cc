@@ -70,7 +70,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
    Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.CndSet("Dir::Bin::methods", LIBEXEC_DIR "/methods");
-   Cnf.CndSet("Dir::Bin::solvers::",LIBEXEC_DIR  "/apt/solvers");
+   Cnf.CndSet("Dir::Bin::solvers::",LIBEXEC_DIR  "/solvers");
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State
