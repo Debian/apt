@@ -813,7 +813,7 @@ buildpackage() {
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	testsuccess --nomsg dpkg-buildpackage -uc -us -a$ARCH
+	testsuccess --nomsg dpkg-buildpackage -uc -us -a$ARCH -d
 	cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$BUILDLOG"
 	local PKGS="$(grep '^dpkg-deb: building package' "$BUILDLOG" | cut -d'/' -f 2 | sed -e "s#'\.##")"
 	local SRCS="$(grep '^dpkg-source: info: building' "$BUILDLOG" | grep -o '[a-z0-9._+~-]*$')"
