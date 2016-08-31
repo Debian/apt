@@ -336,7 +336,7 @@ class Patch {
    FileChanges filechanges;
    MemBlock add_text;
 
-   static bool retry_fwrite(char *b, size_t l, FileFd &f, Hashes * const start_hash, Hashes * const end_hash = nullptr)
+   static bool retry_fwrite(char *b, size_t l, FileFd &f, Hashes * const start_hash, Hashes * const end_hash = nullptr) APT_NONNULL(1)
    {
       if (f.Write(b, l) == false)
 	 return false;
@@ -386,8 +386,8 @@ class Patch {
       }
    }
 
-   static void dump_mem(FileFd &o, char *p, size_t s, Hashes *hash) {
-      retry_fwrite(p, s, o, hash);
+   static void dump_mem(FileFd &o, char *p, size_t s, Hashes *hash) APT_NONNULL(2) {
+      retry_fwrite(p, s, o, nullptr, hash);
    }
 
    public:
@@ -539,7 +539,8 @@ class Patch {
       for (ch = filechanges.begin(); ch != filechanges.end(); ++ch) {
 	 dump_lines(out, in, ch->offset, start_hash, end_hash);
 	 skip_lines(in, ch->del_cnt, start_hash);
-	 dump_mem(out, ch->add, ch->add_len, end_hash);
+	 if (ch->add_len != 0)
+	    dump_mem(out, ch->add, ch->add_len, end_hash);
       }
       dump_rest(out, in, start_hash, end_hash);
       out.Flush();

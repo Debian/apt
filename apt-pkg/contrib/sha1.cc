@@ -243,6 +243,8 @@ bool SHA1Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done)
       return false;
+   if (len == 0)
+      return true;
 
    uint32_t *state = (uint32_t *)State;
    uint32_t *count = (uint32_t *)Count;

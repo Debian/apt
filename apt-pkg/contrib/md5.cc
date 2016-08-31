@@ -187,6 +187,8 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done == true)
       return false;
+   if (len == 0)
+      return true;
 
    uint32_t *buf = (uint32_t *)Buf;
    uint32_t *bytes = (uint32_t *)Bytes;
