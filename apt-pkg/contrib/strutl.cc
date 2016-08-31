@@ -1090,10 +1090,11 @@ bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len)
    tar files */
 bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
 {
-   unsigned long long Num;
+   unsigned long long Num = 0;
    bool rc;
 
    rc = Base256ToNum(Str, Num, Len);
+   // rudimentary check for overflow (Res = ulong, Num = ulonglong)
    Res = Num;
    if (Res != Num)
       return false;
