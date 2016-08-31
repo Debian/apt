@@ -20,7 +20,7 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget upgrade -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget dist-upgrade -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget install apt -qq --print-uris
-testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget download apt -qq --print-uris
+testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 SHA256:0000000000000000000000000000000000000000000000000000000000000000" aptget download apt -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 SHA256:7776436a6d741497f1cd958014e1a05b352224231428152aae39da3c17fd2fd4
 'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 SHA256:f57f565eabe3fde0ec6e6e0bcc8db1d86fe2b4d6344a380a23520ddbb7728e99" aptget source apt -qq --print-uris
 testsuccessequal "'http://metadata.ftp-master.debian.org/changelogs/main/a/apt/apt_2_changelog' apt.changelog" aptget changelog apt -qq --print-uris

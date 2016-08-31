@@ -11,6 +11,7 @@ function(apt_add_translation_domain)
     set(abs_files "")
     set(scripts "")
     set(abs_scripts "")
+    set(mofiles)
     set(targets ${NLS_TARGETS})
     set(domain ${NLS_DOMAIN})
     set(xgettext_params
@@ -67,16 +68,19 @@ function(apt_add_translation_domain)
     # build a ${domain.pot}-tmp as a byproduct. The msgfmt command than depend
     # on the byproduct while their target depends on the output, so that msgfmt
     # does not have to be rerun if nothing in the template changed.
+    #
+    # Make sure the .pot-tmp has no line numbers, to avoid useless rebuilding
+    # of .mo files.
     add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
         BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
+        COMMAND msgcomm --more-than=0 --omit-header --sort-by-file --add-location=file
+                         ${sh_pot}
+                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
+                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
         COMMAND msgcomm --more-than=0 --sort-by-file
                          ${sh_pot}
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
                          --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot
-        COMMAND msgcomm --more-than=0 --omit-header --sort-by-file
-                         ${sh_pot}
-                         ${CMAKE_CURRENT_BINARY_DIR}/${domain}.c.pot
-                         --output=${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
         COMMAND cmake -E copy_if_different
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp0
                          ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
@@ -146,7 +150,7 @@ function(apt_add_update_po)
                 continue()
             endif()
             add_custom_target(update-po-${langcode}
-                COMMAND msgmerge -q --update --backup=none ${translation} ${output}
+                COMMAND msgmerge -q --previous --update --backup=none ${translation} ${output}
                 DEPENDS nls-${master_name}
             )
             add_dependencies(update-po update-po-${langcode})

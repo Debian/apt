@@ -6,7 +6,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'amd64'
 
-CURRENTKERNEL="linux-image-$(uname -r)"
+CURRENTKERNEL="linux-image-$(uname -r | tr '[A-Z]' '[a-z]')"
 insertinstalledpackage "$CURRENTKERNEL" 'amd64' '5-1'
 # debug packages do not need our protection
 insertinstalledpackage "${CURRENTKERNEL}-dbg" 'amd64' '5-1'
@@ -49,7 +49,7 @@ testprotected() {
 	testsuccess --nomsg grep '^\^linux-image-100\\\.0\\\.0-1-generic\$$' protected.list
 
 	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
-	testsuccess --nomsg grep "^\\^linux-image-$(uname -r | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list
+	testsuccess --nomsg grep "^\\^linux-image-$(uname -r | tr '[A-Z]' '[a-z]' | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list
 
 	msgtest 'Check kernel autoremoval protection list does not include' 'metapackages'
 	testfailure --nomsg grep -e '^\^linux-image-amd64\$$' -e '^\^linux-image-686-pae\$$' -e ':i386' protected.list

@@ -8,6 +8,11 @@ setupenvironment
 configarchitecture 'amd64' 'i386'
 configdpkgnoopchroot
 
+if [ ! -e /proc/self/fd ]; then
+	msgskip "needs /proc/self/fd"
+    exit 0
+fi
+
 setupsimplenativepackage "fdleaks" 'all' '1.0' 'unstable'
 BUILDDIR="incoming/fdleaks-1.0"
 for script in 'preinst' 'postinst' 'prerm' 'postrm'; do
@@ -24,7 +29,7 @@ buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
 rm -rf "$BUILDDIR"
 
 PKGNAME='fdleaks:all'
-if ! dpkg-checkbuilddeps -d 'dpkg (>= 1.16.2)' /dev/null >/dev/null 2>&1; then
+if dpkg --compare-versions "$(dpkg_version)" 'lt' '1.16.2'; then
 	PKGNAME='fdleaks'
 fi
 

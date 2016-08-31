@@ -1,0 +1,15 @@
+language: none
+
+build:
+  pre_ci_boot:
+    image_name: ubuntu
+    image_tag: xenial
+    pull: true
+  ci:
+    - apt-get install -qq build-essential
+    - ./prepare-release travis-ci
+    - mkdir build
+    - ( cd build && cmake .. )
+    - make -C build -j 4
+    - CTEST_OUTPUT_ON_FAILURE=1 make -C build test
+    - ./test/integration/run-tests -q

@@ -21,6 +21,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 
+#include <array>
+
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/

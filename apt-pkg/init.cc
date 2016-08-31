@@ -47,19 +47,19 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir","/");
    
    // State
-   Cnf.CndSet("Dir::State","var/lib/apt/");
+   Cnf.CndSet("Dir::State", STATE_DIR + 1);
    Cnf.CndSet("Dir::State::lists","lists/");
    Cnf.CndSet("Dir::State::cdroms","cdroms.list");
    Cnf.CndSet("Dir::State::mirrors","mirrors/");
 
    // Cache
-   Cnf.CndSet("Dir::Cache","var/cache/apt/");
+   Cnf.CndSet("Dir::Cache", CACHE_DIR + 1);
    Cnf.CndSet("Dir::Cache::archives","archives/");
    Cnf.CndSet("Dir::Cache::srcpkgcache","srcpkgcache.bin");
    Cnf.CndSet("Dir::Cache::pkgcache","pkgcache.bin");
 
    // Configuration
-   Cnf.CndSet("Dir::Etc","etc/apt/");
+   Cnf.CndSet("Dir::Etc", CONF_DIR + 1);
    Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");
@@ -69,12 +69,13 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::preferencesparts","preferences.d");
    Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
    Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
-   Cnf.CndSet("Dir::Bin::methods","/usr/lib/apt/methods");
-   Cnf.CndSet("Dir::Bin::solvers::","/usr/lib/apt/solvers");
+   Cnf.CndSet("Dir::Bin::methods", LIBEXEC_DIR "/methods");
+   Cnf.CndSet("Dir::Bin::solvers::",LIBEXEC_DIR  "/solvers");
+   Cnf.CndSet("Dir::Bin::planners::",LIBEXEC_DIR  "/planners");
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State
-   Cnf.CndSet("Dir::Log","var/log/apt");
+   Cnf.CndSet("Dir::Log", LOG_DIR + 1);
    Cnf.CndSet("Dir::Log::Terminal","term.log");
    Cnf.CndSet("Dir::Log::History","history.log");
    Cnf.CndSet("Dir::Log::Planner","eipp.log.xz");

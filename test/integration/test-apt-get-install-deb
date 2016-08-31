@@ -125,8 +125,12 @@ createpkg 'leading-newline' '
 createpkg 'trailing-newline' '' '
 '
 
+echo 'Package: /pkg-/
+Pin: release a=experimental
+Pin-Priority: 501' > rootdir/etc/apt/preferences.d/pinit
+
 testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
-testsuccess aptget install ./incoming/pkg-leading-newline_0_all.deb
+testsuccess aptget install "$(readlink -f ./incoming/pkg-leading-newline_0_all.deb)"
 testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
 
 testempty apt clean
@@ -167,4 +171,30 @@ testsuccess apt install --with-source ./Packages pkg-as-it-should-be --print-uri
 testsuccess apt show --with-source ./Packages pkg-as-it-should-be
 testequal 'Package: pkg-as-it-should-be' head -n1 rootdir/tmp/testsuccess.output
 testsuccess apt install -y --with-source ./Packages pkg-as-it-should-be
+testdpkginstalled 'pkg-as-it-should-be'
+rm -f ./Packages
+
+echo 'dpkg::install::recursive "true";
+dpkg::install::recursive::force "true";
+dpkg::install::recursive::minimum "0";' > rootdir/etc/apt/apt.conf.d/lowerminimum.conf
+mv ./incoming/pkg-as-it-should-be_0_all.deb ./incoming/pkg-as-it-should-be_0_all.ddeb
+testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0_all.ddeb --reinstall
+testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
+testsuccess apt purge -y pkg-as-it-should-be
+testdpkgnotinstalled 'pkg-as-it-should-be'
+
+mv ./incoming/pkg-as-it-should-be_0_all.ddeb ./incoming/pkg-as-it-should-be_0_all.foobar
+echo "Package: pkg-as-it-should-be
+Architecture: all
+Version: 0
+Installed-Size: 2903
+Filename: incoming/pkg-as-it-should-be_0_all.foobar
+Size: $(stat -c %s incoming/pkg-as-it-should-be_0_all.foobar)
+SHA256: $(sha256sum incoming/pkg-as-it-should-be_0_all.foobar | cut -d' ' -f 1)
+" | gzip > Packages.gz
+testsuccess apt install --with-source ./Packages.gz pkg-as-it-should-be -s
+testsuccess apt install --with-source ./Packages.gz pkg-as-it-should-be --print-uris
+testsuccess apt show --with-source ./Packages.gz pkg-as-it-should-be
+testequal 'Package: pkg-as-it-should-be' head -n1 rootdir/tmp/testsuccess.output
+testsuccess apt install -y --with-source ./Packages.gz pkg-as-it-should-be
 testdpkginstalled 'pkg-as-it-should-be'

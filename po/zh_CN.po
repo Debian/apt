@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-24 10:13+0200\n"
-"PO-Revision-Date: 2016-06-27 08:00+0000\n"
+"POT-Creation-Date: 2016-08-30 22:20+0200\n"
+"PO-Revision-Date: 2016-08-20 13:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -361,12 +361,12 @@ msgstr "%s=%s 的 Changelog 不可用"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "方法‘%s’已经被显式设置为禁用。"
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
-msgstr ""
+msgstr "如果您需要使用Tor，请确认使用%s而不是%s。"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -1223,43 +1223,39 @@ msgstr "无法写入临时状态文件 %s"
 
 #: apt-pkg/edsp.cc
 msgid "Send scenario to solver"
-msgstr "向solver发送情景"
+msgstr "向依赖解决器发送情景"
 
 #: apt-pkg/edsp.cc
 msgid "Send request to solver"
-msgstr "向solver发送请求"
+msgstr "向依赖解决器发送请求"
 
 #: apt-pkg/edsp.cc
 msgid "Prepare for receiving solution"
-msgstr "准备接收解决方案"
+msgstr "准备接收依赖解决方案"
 
 #: apt-pkg/edsp.cc
 msgid "External solver failed without a proper error message"
-msgstr "外部solver出错，错误信息不恰当"
+msgstr "外部依赖解决器出错，错误信息不恰当"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
-msgstr "执行外部solver"
+msgstr "执行外部依赖解决器"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "执行外部solver"
+msgstr "执行外部安装顺序规划器"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "向solver发送请求"
+msgstr "向安装顺序规划器发送请求"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "向solver发送情景"
+msgstr "向安装顺序规划器发送情景"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "外部solver出错，错误信息不恰当"
+msgstr "外部安装顺序规划器出错，错误信息不恰当"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -2805,7 +2801,6 @@ msgid "detect proxy using apt.conf"
 msgstr "用 apt.conf 检测代理设置"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2813,10 +2808,10 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"用法： apt-internal-solver\n"
+"用法： apt-internal-planner\n"
 "\n"
-"apt-internal-solver 可以像外部解析器那样使用当前的APT家族内部解析器，\n"
-"以便调试等用途。\n"
+"apt-internal-planner 是一个可以像外部规划器那样使用当前的APT家族内部\n"
+"安装顺序规划器的接口，以便调试等用途。\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -2828,8 +2823,8 @@ msgid ""
 msgstr ""
 "用法： apt-internal-solver\n"
 "\n"
-"apt-internal-solver 可以像外部解析器那样使用当前的APT家族内部解析器，\n"
-"以便调试等用途。\n"
+"apt-internal-solver 是一个可以像外部解析器那样使用当前的APT家族内部\n"
+"依赖解析器的接口，以便调试等用途。\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3359,7 +3354,7 @@ msgstr "无法找到文件"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "通向 %s 域名的直接连接被设为默认阻止。"
 
 #: methods/connect.cc methods/http.cc
 #, c-format

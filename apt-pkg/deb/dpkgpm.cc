@@ -61,6 +61,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
+extern char **environ;
+
 using namespace std;
 
 APT_PURE static string AptHistoryRequestingUser()			/*{{{*/
@@ -417,7 +419,6 @@ bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
 bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 {
    bool result = true;
-   static bool interrupted = false;
 
    Configuration::Item const *Opts = _config->Tree(Cnf);
    if (Opts == 0 || Opts->Child == 0)
@@ -425,9 +426,8 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    Opts = Opts->Child;
 
    sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
-   sighandler_t old_sigint = signal(SIGINT, [](int signum){
-	 interrupted = true;
-   });
+   sighandler_t old_sigint = signal(SIGINT, SIG_IGN);
+   sighandler_t old_sigquit = signal(SIGQUIT, SIG_IGN);
 
    unsigned int Count = 1;
    for (; Opts != 0; Opts = Opts->Next, Count++)
@@ -528,9 +528,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    }
    signal(SIGINT, old_sigint);
    signal(SIGPIPE, old_sigpipe);
-
-   if (interrupted)
-      result = _error->Error("Interrupted");
+   signal(SIGQUIT, old_sigquit);
 
    return result;
 }
@@ -1343,10 +1341,16 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       std::distance(List.cbegin(), List.cend());
    ExpandPendingCalls(List, Cache);
 
-   auto const StripAlreadyDoneFromPending = [&](APT::VersionVector & Pending) {
+   /* if dpkg told us that it has already done everything to the package we wanted it to do,
+      we shouldn't ask it for "more" later. That can e.g. happen if packages without conffiles
+      are purged as they will have pass through the purge states on remove already */
+   auto const StripAlreadyDoneFrom = [&](APT::VersionVector & Pending) {
       Pending.erase(std::remove_if(Pending.begin(), Pending.end(), [&](pkgCache::VerIterator const &Ver) {
 	    auto const PN = Ver.ParentPkg().FullName();
-	    return PackageOps[PN].size() <= PackageOpsDone[PN];
+	    auto const POD = PackageOpsDone.find(PN);
+	    if (POD == PackageOpsDone.end())
+	       return false;
+	    return PackageOps[PN].size() <= POD->second;
 	 }), Pending.end());
    };
 
@@ -1679,7 +1683,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    {
 	       if (I->File[0] != '/')
 		  return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
-	       auto const file = flNotDir(I->File);
+	       auto file = flNotDir(I->File);
+	       if (flExtension(file) != "deb")
+		  file.append(".deb");
 	       std::string linkpath;
 	       if (dpkg_recursive_install_numbered)
 		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_to_free, p, n, file.c_str());
@@ -1705,7 +1711,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       else if (I->Op == Item::RemovePending)
       {
 	 ++I;
-	 StripAlreadyDoneFromPending(approvedStates.Remove());
+	 StripAlreadyDoneFrom(approvedStates.Remove());
 	 if (approvedStates.Remove().empty())
 	    continue;
       }
@@ -1714,7 +1720,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 ++I;
 	 // explicit removes of packages without conffiles passthrough the purge states instantly, too.
 	 // Setting these non-installed packages up for purging generates 'unknown pkg' warnings from dpkg
-	 StripAlreadyDoneFromPending(approvedStates.Purge());
+	 StripAlreadyDoneFrom(approvedStates.Purge());
 	 if (approvedStates.Purge().empty())
 	    continue;
 	 std::remove_reference<decltype(approvedStates.Remove())>::type approvedRemoves;
@@ -1966,8 +1972,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (d->dpkg_error.empty() == false)
    {
       // no point in reseting packages we already completed removal for
-      StripAlreadyDoneFromPending(approvedStates.Remove());
-      StripAlreadyDoneFromPending(approvedStates.Purge());
+      StripAlreadyDoneFrom(approvedStates.Remove());
+      StripAlreadyDoneFrom(approvedStates.Purge());
       APT::StateChanges undo;
       auto && undoRem = approvedStates.Remove();
       std::move(undoRem.begin(), undoRem.end(), std::back_inserter(undo.Install()));
@@ -1977,6 +1983,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       if (undo.Save(false) == false)
 	 _error->Error("Couldn't revert dpkg selection for approved remove/purge after an error was encountered!");
    }
+
+   StripAlreadyDoneFrom(currentStates.Remove());
+   StripAlreadyDoneFrom(currentStates.Purge());
    if (currentStates.Save(false) == false)
       _error->Error("Couldn't restore dpkg selection states which were present before this interaction!");
 

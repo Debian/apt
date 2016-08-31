@@ -32,7 +32,7 @@ if [ -n \"${2}\" ]; then
 	FD=\$APT_HOOK_INFO_FD
 	if [ "\$FD" != \"${2}\" ]; then echo \"ERROR: Information is not on requested FD: \$FD != ${2}\" >> ${hook}-v${1}.list; fi
 fi
-while read </proc/\$\$/fd/\$FD line; do
+while read </dev/fd/\$FD line; do
 	if echo \"\$line\" | grep -Fq '**'; then
 		echo \"\$line\"
 	fi

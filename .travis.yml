@@ -17,8 +17,7 @@ before_script:
  - make -C build -j4
 script:
  - CTEST_OUTPUT_ON_FAILURE=1 make -C build test
- - ./test/integration/run-tests -q
+ - chronic make -C build install DESTDIR=$PWD/rootdir
+ - ./test/integration/run-tests -qq
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
- - sudo ./test/integration/run-tests -q
- - make -C build install DESTDIR=$PWD/rootdir
- - find rootdir -print0 | xargs -0 ls -ld
+ - sudo ./test/integration/run-tests -qq

@@ -5,6 +5,8 @@ TESTTORUN=''
 while [ -n "$1" ]; do
 	if [ "$1" = "-q" ]; then
 		export MSGLEVEL=2
+	elif [ "$1" = "-qq" ]; then
+		export MSGLEVEL=1
 	elif [ "$1" = "-v" ]; then
 		export MSGLEVEL=4
 	elif [ "$1" = '--color=no' ]; then
@@ -50,7 +52,9 @@ if [ -n "$TESTTORUN" ]; then
 	CURRENTTRAP="rm -f \"$OUTPUT\"; $CURRENTTRAP"
 	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	{
-		if [ "$MSGLEVEL" -le 2 ]; then
+		if [ "$MSGLEVEL" -le 1 ]; then
+			printf "${TESTTORUN##*/}"
+		elif [ "$MSGLEVEL" -le 2 ]; then
 			printf "${CTEST}Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}: "
 		else
 			printf "${CTEST}Run Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
@@ -58,12 +62,20 @@ if [ -n "$TESTTORUN" ]; then
 		if ! "$TESTTORUN"; then
 			FAIL='yes'
 			if [ "$MSGLEVEL" -le 2 ]; then
+				printf >&2 "\n${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}\n"
+			elif [ "$MSGLEVEL" -le 2 ]; then
 				printf >&2 "\n${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}"
 			else
 				echo >&2 "${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}"
 			fi
+		else
+			if [ "$MSGLEVEL" -le 1 ]; then
+				printf " "
+			fi
 		fi
-		if [ "$MSGLEVEL" -le 2 ]; then
+		if [ "$MSGLEVEL" -le 1 ]; then
+			:
+		elif [ "$MSGLEVEL" -le 2 ]; then
 			echo
 		fi
 	} >"$OUTPUT" 2>&1
@@ -89,11 +101,20 @@ if [ -n "$APT_TEST_JOBS" ]; then
 	if [ "$MSGCOLOR" != 'NO' ]; then
 		export MSGCOLOR='ALWAYS'
 	fi
-	exec parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
+	parallel=parallel
+	if command -v moreutils-parallel >/dev/null 2>&1; then
+		parallel=moreutils-parallel
+	fi
+	exec $parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
 fi
 TOTAL="$(echo "$TESTLIST" | wc -l)"
+if [ "$MSGLEVEL" -le 1 ]; then
+	printf "${CTEST}Running testcases${CRESET}: "
+fi
 for testcase in $TESTLIST; do
-	if [ "$MSGLEVEL" -le 2 ]; then
+	if [ "$MSGLEVEL" -le 1 ]; then
+		printf "${testcase##*/}"
+	elif [ "$MSGLEVEL" -le 2 ]; then
 		printf "($(($ALL+1))/${TOTAL}) ${CTEST}Testcase ${CHIGH}${testcase##*/}${CRESET}: "
 	else
 		printf "${CTEST}Run Testcase ($(($ALL+1))/${TOTAL}) ${CHIGH}${testcase##*/}${CRESET}\n"
@@ -101,16 +122,23 @@ for testcase in $TESTLIST; do
 	if ! ${testcase}; then
 		FAIL=$((FAIL+1))
 		FAILED_TESTS="$FAILED_TESTS ${testcase##*/}"
-		if [ "$MSGLEVEL" -le 2 ]; then
+		if [ "$MSGLEVEL" -le 1 ]; then
+			printf >&2 "\n${CHIGH}Running ${testcase##*/} -> FAILED${CRESET}\n"
+		elif [ "$MSGLEVEL" -le 2 ]; then
 			printf >&2 "\n${CHIGH}Running ${testcase##*/} -> FAILED${CRESET}"
 		else
 			echo >&2 "${CHIGH}Running ${testcase##*/} -> FAILED${CRESET}"
 		fi
 	else
 		PASS=$((PASS+1))
+		if [ "$MSGLEVEL" -le 1 ]; then
+			printf " "
+		fi
 	fi
 	ALL=$((ALL+1))
-	if [ "$MSGLEVEL" -le 2 ]; then
+	if [ "$MSGLEVEL" -le 1 ]; then
+		:
+	elif [ "$MSGLEVEL" -le 2 ]; then
 		echo
 	fi
 done

@@ -568,7 +568,8 @@ bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::st
       return false;
 
    std::string const ext = flExtension(File);
-   if (ext == "deb")
+   // udeb is not included as installing it is usually a mistake rather than intended
+   if (ext == "deb" || ext == "ddeb")
       AddVolatileFile(new debDebPkgFileIndex(File));
    else if (ext == "dsc")
       AddVolatileFile(new debDscFileIndex(File));

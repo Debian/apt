@@ -25,6 +25,12 @@
 /* Define if we have sys/mount.h */
 #cmakedefine HAVE_MOUNT_H
 
+/* Define if we have sys/endian.h */
+#cmakedefine HAVE_SYS_ENDIAN_H
+
+/* Define if we have machine/endian.h */
+#cmakedefine HAVE_MACHINE_ENDIAN_H
+
 /* Define if we have enabled pthread support */
 #cmakedefine HAVE_PTHREAD
 
@@ -48,6 +54,18 @@
 
 /* The mail address to reach upstream */
 #define PACKAGE_MAIL "${PACKAGE_MAIL}"
+
+/* Various directories */
+#cmakedefine CMAKE_INSTALL_FULL_BINDIR "${CMAKE_INSTALL_FULL_BINDIR}"
+#cmakedefine STATE_DIR "${STATE_DIR}"
+#cmakedefine CACHE_DIR "${CACHE_DIR}"
+#cmakedefine LOG_DIR "${LOG_DIR}"
+#cmakedefine CONF_DIR "${CONF_DIR}"
+#cmakedefine LIBEXEC_DIR "${LIBEXEC_DIR}"
+#cmakedefine BIN_DIR "${BIN_DIR}"
+
+/* Group of the root user */
+#cmakedefine ROOT_GROUP "${ROOT_GROUP}"
 
 #define APT_8_CLEANER_HEADERS
 #define APT_9_CLEANER_HEADERS

@@ -78,3 +78,9 @@ testsuccessequal "Ign:1 http://0.0.0.0:${APTHTTPPORT}/storage unstable InRelease
   404  Not Found
 Hit:2 http://0.0.0.0:${APTHTTPPORT} unstable Release
 Reading package lists..." aptget update
+
+rm -rf rootdir/var/lib/apt/lists
+find aptarchive -name 'Release.gpg' -delete
+find aptarchive -name 'Release' -delete
+testwarning aptget update
+testsuccess grep 'does not have a Release file' rootdir/tmp/testwarning.output
