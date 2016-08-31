@@ -300,7 +300,7 @@ static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
    std::vector<std::pair<char*, size_t>> good_parts;
    while (current <= d->End)
    {
-      size_t const restLength = (d->End - current) + 1;
+      size_t const restLength = (d->End - current);
       if (d->isCommentedLine == false)
       {
 	 current = static_cast<char*>(memchr(current, '#', restLength));
@@ -335,7 +335,7 @@ static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
 	 }
 	 ++current;
 	 // is the next line a comment, too?
-	 if (current > d->End || *current != '#')
+	 if (current >= d->End || *current != '#')
 	 {
 	    d->chunks.emplace_back(false, (current - bad_start));
 	    good_start = current;
