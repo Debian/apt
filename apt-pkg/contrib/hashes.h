@@ -195,11 +195,11 @@ class Hashes
 
    static const int UntilEOF = 0;
 
-   bool Add(const unsigned char * const Data, unsigned long long const Size);
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes);
-   inline bool Add(const char * const Data)
+   bool Add(const unsigned char * const Data, unsigned long long const Size) APT_NONNULL(2);
+   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes) APT_NONNULL(2);
+   inline bool Add(const char * const Data) APT_NONNULL(2)
    {return Add((unsigned char const * const)Data,strlen(Data));};
-   inline bool Add(const unsigned char * const Beg,const unsigned char * const End)
+   inline bool Add(const unsigned char * const Beg,const unsigned char * const End) APT_NONNULL(2,3)
    {return Add(Beg,End-Beg);};
 
    enum SupportedHashes { MD5SUM = (1 << 0), SHA1SUM = (1 << 1), SHA256SUM = (1 << 2),

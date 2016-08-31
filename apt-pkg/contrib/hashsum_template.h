@@ -122,18 +122,18 @@ class HashSumValue
 class SummationImplementation
 {
    public:
-   virtual bool Add(const unsigned char *inbuf, unsigned long long inlen) = 0;
-   inline bool Add(const char *inbuf, unsigned long long const inlen)
+   virtual bool Add(const unsigned char *inbuf, unsigned long long inlen) APT_NONNULL(2) = 0;
+   inline bool Add(const char *inbuf, unsigned long long const inlen) APT_NONNULL(2)
    { return Add((const unsigned char *)inbuf, inlen); }
 
-   inline bool Add(const unsigned char *Data)
+   inline bool Add(const unsigned char *Data) APT_NONNULL(2)
    { return Add(Data, strlen((const char *)Data)); }
-   inline bool Add(const char *Data)
+   inline bool Add(const char *Data) APT_NONNULL(2)
    { return Add((const unsigned char *)Data, strlen(Data)); }
 
-   inline bool Add(const unsigned char *Beg, const unsigned char *End)
+   inline bool Add(const unsigned char *Beg, const unsigned char *End) APT_NONNULL(2,3)
    { return Add(Beg, End - Beg); }
-   inline bool Add(const char *Beg, const char *End)
+   inline bool Add(const char *Beg, const char *End) APT_NONNULL(2,3)
    { return Add((const unsigned char *)Beg, End - Beg); }
 
    bool AddFD(int Fd, unsigned long long Size = 0);

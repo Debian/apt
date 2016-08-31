@@ -48,7 +48,7 @@ class MD5Summation : public SummationImplementation
 
    public:
 
-   bool Add(const unsigned char *inbuf, unsigned long long inlen) APT_OVERRIDE;
+   bool Add(const unsigned char *inbuf, unsigned long long inlen) APT_OVERRIDE APT_NONNULL(2);
    using SummationImplementation::Add;
 
    MD5SumValue Result();

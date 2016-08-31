@@ -312,6 +312,8 @@ public:
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/
 bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size)
 {
+   if (Size == 0)
+      return true;
    bool Res = true;
 APT_IGNORE_DEPRECATED_PUSH
    if ((d->CalcHashes & MD5SUM) == MD5SUM)
