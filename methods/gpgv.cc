@@ -258,16 +258,32 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 if (std::find(ValidSigners.begin(), ValidSigners.end(), k) == ValidSigners.end())
 	    continue;
 	 // we look for GOODSIG here as well as an expired sig is a valid sig as well (but not a good one)
+	 std::string const goodfingerprint = "GOODSIG " + k;
 	 std::string const goodlongkeyid = "GOODSIG " + k.substr(24, 16);
-	 foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodlongkeyid) != GoodSigners.end();
+	 foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodfingerprint) != GoodSigners.end();
 	 if (Debug == true)
-	    std::clog << "Key " << k << " is valid sig, is " << goodlongkeyid << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
+	    std::clog << "Key " << k << " is valid sig, is " << goodfingerprint << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
+	 std::string goodsig;
+	 if (foundGood == false)
+	 {
+	    foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodlongkeyid) != GoodSigners.end();
+	    if (Debug == true)
+	       std::clog << "Key " << k << " is valid sig, is " << goodlongkeyid << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
+	    goodsig = goodlongkeyid;
+	 }
+	 else
+	    goodsig = goodfingerprint;
 	 if (foundGood == false)
 	    continue;
 	 std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
 	 GoodSigners.clear();
-	 GoodSigners.push_back(goodlongkeyid);
-	 NoPubKeySigners.erase(std::remove(NoPubKeySigners.begin(), NoPubKeySigners.end(), goodlongkeyid), NoPubKeySigners.end());
+	 GoodSigners.push_back(goodsig);
+	 NoPubKeySigners.erase(
+	    std::remove(NoPubKeySigners.begin(),
+	       std::remove(NoPubKeySigners.begin(), NoPubKeySigners.end(), goodfingerprint),
+	       goodlongkeyid),
+	    NoPubKeySigners.end()
+	 );
 	 break;
       }
       if (foundGood == false)
