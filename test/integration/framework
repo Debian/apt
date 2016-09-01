@@ -538,7 +538,7 @@ configdpkg() {
 			insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
 		fi
 	fi
-	if dpkg --assert-multi-arch >/dev/null 2>&1 ; then
+	if command dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		local DPKGARCH="$(dpkg --print-architecture)"
 		# this ensures that even if multi-arch isn't active in the view
