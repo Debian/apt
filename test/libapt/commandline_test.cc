@@ -17,10 +17,6 @@ class CLT: public CommandLine {
       }
 };
 
-bool ShowHelp(CommandLine &) {return false;}
-std::vector<aptDispatchWithHelp> GetCommands() {return {};}
-
-
 TEST(CommandLineTest,SaveInConfig)
 {
 #define APT_EXPECT_CMD(x, ...) { const char * const argv[] = { __VA_ARGS__ }; EXPECT_EQ(x, CLT::AsString(argv, sizeof(argv)/sizeof(argv[0]))); }
@@ -166,7 +162,7 @@ TEST(CommandLineTest, BoolParsing)
 
 }
 
-bool DoVoid(CommandLine &) { return false; }
+static bool DoVoid(CommandLine &) { return false; }
 
 TEST(CommandLineTest,GetCommand)
 {

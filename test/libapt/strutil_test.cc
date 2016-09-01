@@ -168,7 +168,7 @@ TEST(StrUtilTest,Base64Encode)
    EXPECT_EQ("Lg==", Base64Encode("."));
    EXPECT_EQ("", Base64Encode(""));
 }
-void ReadMessagesTestWithNewLine(char const * const nl, char const * const ab)
+static void ReadMessagesTestWithNewLine(char const * const nl, char const * const ab)
 {
    SCOPED_TRACE(SubstVar(SubstVar(nl, "\n", "n"), "\r", "r") + " # " + ab);
    FileFd fd;
