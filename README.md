@@ -98,15 +98,27 @@ Testing
 When you make changes and want to run them manually, you can just do so. CMake
 automatically inserts an rpath so the binaries find the correct libraries.
 
+Note that you have to invoke CMake with the right install prefix set (e.g.
+`-DCMAKE_INSTALL_PREFIX=/usr`) to have your build find and use the right files
+by default or alternatively set the locations at runtime via an `APT_CONFIG`
+configuration file.
+
 ### Integration tests
 
-There is a extensive integration testsuite available which can be run via:
+There is an extensive integration testsuite available which can be run via:
 
 	$ ./test/integration/run-tests
 
-While these tests are not executed at package build-time as they require additional
-dependencies, the repository contains the configuration needed to run them on [Travis CI](https://travis-ci.org/)
-as well as via autopkgtests e.g. on [Debian Continuous Integration](http://ci.debian.net/?q=apt#package/apt).
+Each test can also be run individually as well. The tests are very noisy by
+default, especially so while running all of them it might be beneficial to
+enabling quiet (`-q`) or very quiet (`-qq`) mode. The tests can also be run in
+parallel via `-j X` where `X` is the number of jobs to run.
+
+While these tests are not executed at package build-time as they require
+additional dependencies, the repository contains the configuration needed to
+run them on [Travis CI](https://travis-ci.org/) and
+[Shippable](https://shippable.com/) as well as via autopkgtests e.g. on
+[Debian Continuous Integration](https://ci.debian.net/packages/a/apt/).
 
 A testcase here is a shellscript embedded in a framework creating an environment in which
 apt tools can be used naturally without root-rights to test every aspect of its behavior
@@ -129,7 +141,7 @@ in certain areas. The following describes some common scenarios and generally
 useful options, but is in no way exhaustive.
 
 Note that you should *NEVER* use these settings as root to avoid accidents.
-Similation mode (`-s`) is usually sufficient to help you run apt as a non-root user.
+Simulation mode (`-s`) is usually sufficient to help you run apt as a non-root user.
 
 ### Using different state files
 
