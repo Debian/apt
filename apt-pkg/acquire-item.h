@@ -305,6 +305,8 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    virtual ~Item();
 
    bool APT_HIDDEN IsRedirectionLoop(std::string const &NewURI);
+   /** \brief The priority of the item, used for queuing */
+   int APT_HIDDEN Priority();
 
    protected:
    /** \brief The acquire object with which this item is associated. */

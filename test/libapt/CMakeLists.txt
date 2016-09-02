@@ -1,22 +1,33 @@
-include(ExternalProject)
-
 set(GTEST_ROOT "/usr/src/gtest" CACHE FILEPATH "Path to GTest CMake project")
 
-message(STATUS "Found GTest at ${GTEST_ROOT}")
+find_package(GTest)
+set(GTEST_DEPENDENCIES)
 
-if (EXISTS ${GTEST_ROOT})
+if(NOT GTEST_FOUND AND EXISTS ${GTEST_ROOT})
+   include(ExternalProject)
+   ExternalProject_Add(gtest PREFIX ./gtest
+                             SOURCE_DIR ${GTEST_ROOT}
+                             INSTALL_COMMAND true)
 
-ExternalProject_Add(gtest PREFIX ./gtest
-                          SOURCE_DIR ${GTEST_ROOT}
-                          INSTALL_COMMAND true)
+   link_directories(${CMAKE_CURRENT_BINARY_DIR}/gtest/src/gtest-build)
 
-link_directories(${CMAKE_CURRENT_BINARY_DIR}/gtest/src/gtest-build)
-FILE(GLOB files gtest_runner.cc *-helpers.cc *_test.cc)
-add_executable(libapt_test ${files})
-target_link_libraries(libapt_test -lgtest ${CMAKE_THREAD_LIBS_INIT} apt-private apt-inst)
-add_dependencies(libapt_test gtest)
-add_test(NAME AptTests
-         COMMAND libapt_test
-         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+   set(GTEST_LIBRARIES "-lgtest")
+   set(GTEST_DEPENDENCIES "gtest")
+   set(GTEST_FOUND TRUE)
+   find_path(GTEST_INCLUDE_DIRS NAMES gtest/gtest.h)
 
+   message(STATUS "Found GTest at ${GTEST_ROOT}, headers at ${GTEST_INCLUDE_DIRS}")
+endif()
+
+if(GTEST_FOUND)
+   file(GLOB files gtest_runner.cc *-helpers.cc *_test.cc)
+   add_executable(libapt_test ${files})
+   target_include_directories(libapt_test PRIVATE ${GTEST_INCLUDE_DIRS})
+   target_link_libraries(libapt_test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} apt-private apt-inst)
+   if (GTEST_DEPENDENCIES)
+      add_dependencies(libapt_test ${GTEST_DEPENDENCIES})
+   endif()
+   add_test(NAME AptTests
+            COMMAND libapt_test
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()

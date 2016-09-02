@@ -1,0 +1,77 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386'
+
+cat > faked-apt-key <<EOF
+#!/bin/sh
+set -e
+echo "FFOO"
+find_gpgv_status_fd() {
+	while [ -n "\$1" ]; do
+		if [ "\$1" = '--status-fd' ]; then
+			shift
+			echo "\$1"
+			break
+		fi
+		shift
+	done
+}
+GPGSTATUSFD="\$(find_gpgv_status_fd "\$@")"
+cat >&\${GPGSTATUSFD} gpgv.output
+cat gpgv.output
+EOF
+chmod +x faked-apt-key
+
+testgpgv() {
+	echo "$3" > gpgv.output
+	msgtest "$1" "$2"
+	gpgvmethod >method.output 2>&1 || true
+	testsuccess --nomsg grep "$2" method.output
+}
+
+testrun() {
+	testgpgv 'Good signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE,' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
+	testgpgv 'Good signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE,' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
+
+	testgpgv 'No Pubkey with long keyid' 'NoPubKey: NO_PUBKEY E8525D47528144E2,' '[GNUPG:] ERRSIG E8525D47528144E2 1 11 00 1472744666 9
+[GNUPG:] NO_PUBKEY E8525D47528144E2'
+	testgpgv 'No Pubkey with fingerprint' 'NoPubKey: NO_PUBKEY DE66AECA9151AFA1877EC31DE8525D47528144E2,' '[GNUPG:] ERRSIG DE66AECA9151AFA1877EC31DE8525D47528144E2 1 11 00 1472744666 9
+[GNUPG:] NO_PUBKEY DE66AECA9151AFA1877EC31DE8525D47528144E2'
+
+	testgpgv 'Expired key with long keyid' 'Worthless: EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>,' '[GNUPG:] EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>
+[GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742629 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
+	testgpgv 'Expired key with fingerprint' 'Worthless: EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>,' '[GNUPG:] EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>
+[GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742629 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
+}
+
+gpgvmethod() {
+	echo '601 Configuration
+Config-Item: Debug::Acquire::gpgv=1
+Config-Item: Dir::Bin::apt-key=./faked-apt-key
+
+600 URI Acquire
+URI: file:///dev/null
+Filename: /dev/zero
+' | runapt "${METHODSDIR}/gpgv"
+}
+testrun
+
+gpgvmethod() {
+	echo '601 Configuration
+Config-Item: Debug::Acquire::gpgv=1
+Config-Item: Dir::Bin::apt-key=./faked-apt-key
+
+600 URI Acquire
+URI: file:///dev/null
+Filename: /dev/zero
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+' | runapt "${METHODSDIR}/gpgv"
+}
+testrun

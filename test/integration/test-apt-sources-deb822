@@ -98,10 +98,10 @@ echo "$BASE" > $SOURCES
 echo "" >> $SOURCES
 echo "$BASE" | sed  s/stable/unstable/  >> $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
-'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris
@@ -110,10 +110,10 @@ testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' 
 msgcleantest 'Test deb822 with' 'two Suite entries'
 echo "$BASE"  | sed -e "s/stable/stable unstable/" > $SOURCES
 testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
-'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_unstable_main_binary-all_Packages 0 
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris

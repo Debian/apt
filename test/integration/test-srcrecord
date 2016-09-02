@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'native'
+
+cat > aptarchive/Sources <<EOF
+Package: space-before-comma
+Binary: space-before-comma1 , space-before-comma2
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+
+Package: broken-field
+Binary:, broken-field2
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+
+Package: broken-field-b
+Binary: , broken-field-b2
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+EOF
+
+setupaptarchive --no-update
+
+testsuccess aptget update
+testsuccess aptcache showsrc space-before-comma1
+testsuccess aptcache showsrc broken-field2
+testsuccess aptcache showsrc broken-field-b2

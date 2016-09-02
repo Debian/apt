@@ -34,3 +34,6 @@ override_dh_auto_configure-arch: flags=-DWITH_DOC=OFF
 override_dh_auto_configure-indep: flags=-DWITH_DOC=ON
 override_dh_auto_configure-arch override_dh_auto_configure-indep:
 	dh_auto_configure -- $(flags)
+
+override_dh_auto_build:
+	dh_auto_build -- -O

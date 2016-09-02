@@ -24,7 +24,7 @@ std::string overrideValue = "1";
    std::cerr << "«" << std::endl;;
 */
 
-void setupTestcaseStart(FileFd &fd, pkgTagSection &section, std::string &content)
+static void setupTestcaseStart(FileFd &fd, pkgTagSection &section, std::string &content)
 {
    createTemporaryFile("writesection", fd, NULL, NULL);
    content = "Package: " + packageValue + "\n"

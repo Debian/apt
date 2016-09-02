@@ -464,6 +464,8 @@ class pkgAcquire::Queue
 
       /** @return the custom headers to use for this item */
       std::string Custom600Headers() const;
+      /** @return the maximum priority of this item */
+      int APT_HIDDEN GetPriority() const;
    };
 
    /** \brief The name of this queue. */
