@@ -29,7 +29,7 @@ target_include_directories(apt-pkg
                                    ${BZIP2_INCLUDE_DIR}
                                    ${LZMA_INCLUDE_DIRS}
                                    ${LZ4_INCLUDE_DIRS}
-                                   ${ICONV_DIRECTORIES}
+                                   ${ICONV_INCLUDE_DIRS}
 )
 
 target_link_libraries(apt-pkg
