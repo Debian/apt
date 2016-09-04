@@ -63,6 +63,8 @@ void RotateDNS()
 									/*}}}*/
 static bool ConnectionAllowed(char const * const Service, std::string const &Host)/*{{{*/
 {
+   if (unlikely(Host.empty())) // the only legal empty host (RFC2782 '.' target) is detected by caller
+      return false;
    if (APT::String::Endswith(Host, ".onion") && _config->FindB("Acquire::BlockDotOnion", true))
    {
       // TRANSLATOR: %s is e.g. Tor's ".onion" which would likely fail or leak info (RFC7686)
@@ -298,7 +300,13 @@ bool Connect(std::string Host,int Port,const char *Service,
    {
       SrvRecords.clear();
       if (_config->FindB("Acquire::EnableSrvRecords", true) == true)
+      {
          GetSrvRecords(Host, DefPort, SrvRecords);
+	 // RFC2782 defines that a lonely '.' target is an abort reason
+	 if (SrvRecords.size() == 1 && SrvRecords[0].target.empty())
+	    return _error->Error("SRV records for %s indicate that "
+		  "%s service is not available at this domain", Host.c_str(), Service);
+      }
    }
 
    size_t stackSize = 0;
