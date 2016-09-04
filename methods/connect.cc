@@ -278,7 +278,13 @@ bool Connect(std::string Host,int Port,const char *Service,
    {
       SrvRecords.clear();
       if (_config->FindB("Acquire::EnableSrvRecords", true) == true)
+      {
          GetSrvRecords(Host, DefPort, SrvRecords);
+	 // RFC2782 defines that a lonely '.' target is an abort reason
+	 if (SrvRecords.size() == 1 && SrvRecords[0].target.empty())
+	    return _error->Error("SRV records for %s indicate that "
+		  "%s service is not available at this domain", Host.c_str(), Service);
+      }
    }
 
    size_t stackSize = 0;
