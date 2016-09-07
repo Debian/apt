@@ -43,7 +43,7 @@ Remove: bar:amd64
 Install: libfoo:amd64 foo:amd64
 Planner: internal' head -n 6 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
-testsuccessequal 'Remove: 6
+testsuccessequal 'Remove: 7
 Unpack: 2
 Unpack: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
 

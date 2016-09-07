@@ -534,13 +534,11 @@ configdpkg() {
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
-	# if multi-arch make sure dpkg can detect itself as capable of it
-	if getarchitectures | grep -E -q '[^ ]+ [^ ]+'; then
-		if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
-			# dpkg doesn't really check the version as long as it is fully installed,
-			# but just to be sure we choose one above the required version
-			insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
-		fi
+	# make sure dpkg can detect itself as capable of it
+	if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
+		# dpkg doesn't really check the version as long as it is fully installed,
+		# but just to be sure we choose one above the required version
+		insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
 	fi
 	if dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"

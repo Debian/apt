@@ -18,5 +18,6 @@ export TMPDIR=/does-not-exists
 testsuccess aptget update -o Debug::Acquire::gpg=1
 unset TMPDIR
 
-testsuccessequal 'coolstuff' aptcache pkgnames
+testsuccessequal 'coolstuff
+dpkg' aptcache pkgnames
 testsuccess ls rootdir/var/lib/apt/lists/*InRelease
