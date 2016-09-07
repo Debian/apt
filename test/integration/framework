@@ -525,6 +525,10 @@ configdpkg() {
 		local STATUSFILE="status-${BASENAME#*-}"
 		if [ -f "${TESTDIRECTORY}/${STATUSFILE}" ]; then
 			cp "${TESTDIRECTORY}/${STATUSFILE}" rootdir/var/lib/dpkg/status
+			# Add an empty line to the end if there is none
+			if tail -1 rootdir/var/lib/dpkg/status | grep -q .; then
+				echo >> rootdir/var/lib/dpkg/status
+			fi
 		else
 			echo -n > rootdir/var/lib/dpkg/status
 		fi
