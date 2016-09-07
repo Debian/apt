@@ -262,3 +262,24 @@ EOF
 chmod +x rootdir/usr/lib/apt/solvers/installall
 testfailure apt full-upgrade -s --solver installall
 testsuccess grep "is already installed!" rootdir/tmp/testfailure.output
+
+testsolverfailuremsg() {
+	local SOLVER="rootdir/usr/lib/apt/solvers/$1"
+	echo "$2" > "$SOLVER"
+	chmod +x "$SOLVER"
+	testfailuremsg "$3" apt full-upgrade -s --solver $1
+}
+
+testsolverfailuremsg 'exit0withmsg' "#!/bin/sh
+echo 'Error: instant-exit
+Message: This solver exits instantly'
+exit 0" 'E: External solver failed with: This solver exits instantly'
+
+testsolverfailuremsg 'exit1withoutmsg' "#!/bin/sh
+exit 1" 'E: Sub-process exit1withoutmsg returned an error code (1)'
+
+testsolverfailuremsg 'exit1withmsg' "#!/bin/sh
+echo 'Error: instant-exit
+Message: This solver exits instantly'
+exit 1" 'E: External solver failed with: This solver exits instantly
+E: Sub-process exit1withmsg returned an error code (1)'

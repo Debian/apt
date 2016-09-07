@@ -70,3 +70,24 @@ Remove: foo:amd64
 Planner: internal' head -n 5 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Remove: 4' grep -e '^Unpack:' -e '^Install:' -e '^Configure:' -e '^Remove:' planner.log
+
+testplannerfailuremsg() {
+	local PLANNER="rootdir/usr/lib/apt/planners/$1"
+	echo "$2" > "$PLANNER"
+	chmod +x "$PLANNER"
+	testfailuremsg "$3" apt install foo -s --planner $1
+}
+
+testplannerfailuremsg 'exit0withmsg' "#!/bin/sh
+echo 'Error: instant-exit
+Message: This planner exits instantly'
+exit 0" 'E: External planner failed with: This planner exits instantly'
+
+testplannerfailuremsg 'exit1withoutmsg' "#!/bin/sh
+exit 1" 'E: Sub-process exit1withoutmsg returned an error code (1)'
+
+testplannerfailuremsg 'exit1withmsg' "#!/bin/sh
+echo 'Error: instant-exit
+Message: This planner exits instantly'
+exit 1" 'E: External planner failed with: This planner exits instantly
+E: Sub-process exit1withmsg returned an error code (1)'

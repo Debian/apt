@@ -648,13 +648,19 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			}
 			continue;
 		} else if (section.Exists("Error") == true) {
+			if (_error->PendingError()) {
+				if (Progress != nullptr)
+					Progress->Done();
+				Progress = nullptr;
+				_error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
+			}
 			std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 			if (msg.empty() == true) {
 				msg = _("External solver failed without a proper error message");
 				_error->Error("%s", msg.c_str());
 			} else
 				_error->Error("External solver failed with: %s", msg.substr(0,msg.find('\n')).c_str());
-			if (Progress != NULL)
+			if (Progress != nullptr)
 				Progress->Done();
 			std::cerr << "The solver encountered an error of type: " << section.FindS("Error") << std::endl;
 			std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
@@ -1051,8 +1057,9 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 		Okay &= EDSP::WriteRequest(Cache, output, flags, nullptr);
 		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
 	}
+	_error->PushToStack();
 	int solver_in, solver_out;
-	pid_t const solver_pid = EDSP::ExecuteSolver(solver, &solver_in, &solver_out, true);
+	pid_t const solver_pid = ExecuteSolver(solver, &solver_in, &solver_out, true);
 	if (solver_pid == 0)
 		return false;
 
@@ -1071,11 +1078,11 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 
 	if (Okay && Progress != NULL)
 		Progress->OverallProgress(25, 100, 75, _("Execute external solver"));
-	if (Okay && EDSP::ReadResponse(solver_out, Cache, Progress) == false)
-		return false;
-
-	bool const waited = ExecWait(solver_pid, solver);
-	return Okay && waited;
+	bool const ret = EDSP::ReadResponse(solver_out, Cache, Progress);
+	_error->MergeWithStack();
+	if (ExecWait(solver_pid, solver))
+		return ret;
+	return false;
 }
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 bool const upgrade, bool const distUpgrade,
@@ -1108,7 +1115,7 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
       Okay &= EIPP::WriteRequest(PM->Cache, output, flags, nullptr);
       return Okay && EIPP::WriteScenario(PM->Cache, output, nullptr);
    }
-
+   _error->PushToStack();
    int solver_in, solver_out;
    pid_t const solver_pid = ExecuteExternal("planner", solver, "Dir::Bin::Planners", &solver_in, &solver_out);
    if (solver_pid == 0)
@@ -1139,12 +1146,11 @@ bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,
 	    PM->Remove(Pkg, true);
       }
    }
-
-   if (EIPP::ReadResponse(solver_out, PM, Progress) == false)
-      return false;
-
-   bool const waited = ExecWait(solver_pid, solver);
-   return Okay && waited;
+   bool const ret = EIPP::ReadResponse(solver_out, PM, Progress);
+   _error->MergeWithStack();
+   if (ExecWait(solver_pid, solver))
+      return ret;
+   return false;
 }
 									/*}}}*/
 bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
@@ -1341,13 +1347,19 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
 	 }
 	 continue;
       } else if (section.Exists("Error") == true) {
+	 if (_error->PendingError()) {
+	    if (Progress != nullptr)
+	       Progress->Done();
+	    Progress = nullptr;
+	    _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
+	 }
 	 std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 	 if (msg.empty() == true) {
 	    msg = _("External planner failed without a proper error message");
 	    _error->Error("%s", msg.c_str());
 	 } else
 	    _error->Error("External planner failed with: %s", msg.substr(0,msg.find('\n')).c_str());
-	 if (Progress != NULL)
+	 if (Progress != nullptr)
 	    Progress->Done();
 	 std::cerr << "The planner encountered an error of type: " << section.FindS("Error") << std::endl;
 	 std::cerr << "The following information might help you to understand what is wrong:" << std::endl;

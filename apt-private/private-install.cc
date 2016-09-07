@@ -48,6 +48,10 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
    if (Cache->BrokenCount() == 0)
       return true;
 
+   // FIXME: if an external solver showed an error, we shouldn't show one here
+   if (_error->PendingError() && _config->Find("APT::Solver") == "dump")
+      return false;
+
    c1out <<
       _("Some packages could not be installed. This may mean that you have\n"
 	    "requested an impossible situation or if you are using the unstable\n"
