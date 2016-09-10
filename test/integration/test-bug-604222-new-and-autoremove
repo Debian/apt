@@ -5,9 +5,22 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 configarchitecture "i386"
+
+insertpackage 'stable' 'dummy-archive' 'i386' '0.invalid.0' 'Depends: libavcodec52, libvtk5-dev | libopenal-dev'
+insertpackage 'stable' 'libavcodec52' 'i386' '4:0.5.2-6' 'Conflicts: libvtk5-dev'
+insertpackage 'stable' 'libopenal-dev' 'i386' '1:1.12.854-2'
+insertpackage 'stable' 'libvtk5-dev' 'i386' '5.4.2-8' 'Depends: libvtk5.4 (= 5.4.2-8)'
+insertpackage 'stable' 'libvtk5.4' 'i386' '5.4.2-8' 'Depends: libavcodec52 (>= 4:0.5.1-1)'
+
+insertpackage 'stable' 'gwenview' 'i386' '4:16.08.0-1' 'Depends: libkf5kipi-bin, libkf5kipi-data'
+insertpackage 'stable' 'libkf5kipi-bin' 'i386' '4:16.08.0-1'
+insertpackage 'stable' 'libkf5kipi-data' 'i386' '4:16.08.0-1' 'Breaks: libkipi-data'
+insertpackage 'stable' 'libkipi-data' 'i386' '4:15.08.0-1' '' 'important'
+
 setupaptarchive
 
-touch rootdir/var/lib/apt/extended_states
+cp -a rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status.backup
+insertinstalledpackage 'libvtk5.4' 'i386' '5.4.2-7'
 testsuccess aptmark markauto 'libvtk5.4'
 testmarkedauto 'libvtk5.4'
 
@@ -25,8 +38,8 @@ Use '$AUTOREMOVE' to remove it.
 The following NEW packages will be installed:
   libavcodec52
 0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Inst libavcodec52 (4:0.5.2-6 localhost [i386])
-Conf libavcodec52 (4:0.5.2-6 localhost [i386])" aptget install libavcodec52 -s
+Inst libavcodec52 (4:0.5.2-6 stable [i386])
+Conf libavcodec52 (4:0.5.2-6 stable [i386])" aptget install libavcodec52 -s
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -36,8 +49,8 @@ Use '$AUTOREMOVE' to remove it.
 The following NEW packages will be installed:
   libavcodec52
 0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Inst libavcodec52 (4:0.5.2-6 localhost [i386])
-Conf libavcodec52 (4:0.5.2-6 localhost [i386])" aptget install libavcodec52 -s -o APT::Get::HideAutoRemove=small
+Inst libavcodec52 (4:0.5.2-6 stable [i386])
+Conf libavcodec52 (4:0.5.2-6 stable [i386])" aptget install libavcodec52 -s -o APT::Get::HideAutoRemove=small
 
 testfailureequal "Reading package lists...
 Building dependency tree...
@@ -52,8 +65,7 @@ The following NEW packages will be installed:
 The following packages will be upgraded:
   libvtk5.4
 1 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
-Need to get 0 B/19.4 MB of archives.
-After this operation, 17.3 MB of additional disk space will be used.
+After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only
 testequal "Reading package lists...
 Building dependency tree...
@@ -67,12 +79,11 @@ The following NEW packages will be installed:
 The following packages will be upgraded:
   libvtk5.4
 1 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
-Need to get 0 B/19.4 MB of archives.
-After this operation, 17.3 MB of additional disk space will be used.
+After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only -o APT::Get::HideAutoRemove=small
 
-echo -n > rootdir/var/lib/dpkg/status
-rm rootdir/var/lib/apt/extended_states
+cp rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/apt/extended_states
 
 CONFLICTING='Reading package lists...
 Building dependency tree...
@@ -88,10 +99,23 @@ The following additional packages will be installed:
 The following NEW packages will be installed:
   dummy-archive libavcodec52 libopenal-dev
 0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
-Need to get 0 B/6304 kB of archives.
-After this operation, 17.3 MB of additional disk space will be used.
+After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation.'
 
 testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=0
 testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=1
 testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=small
+
+insertinstalledpackage 'my-metapackage' 'i386' '1' 'Depends: gwenview'
+insertinstalledpackage 'gwenview' 'i386' '4:15.08.0-1' 'Depends: libkipi-data
+Recommends: foobar' # trigger policy brokenness to avoid optimisation
+insertinstalledpackage 'libkipi-data' 'i386' '4:15.08.0-1' '' 'important'
+testsuccess aptmark markauto 'gwenview'
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages have been kept back:
+  gwenview
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded." apt dist-upgrade -s
