@@ -428,11 +428,11 @@ bool DoAutomaticRemove(CacheFile &Cache)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
 	    if(Debug)
-	       std::cout << "We could delete %s" <<  Pkg.FullName(true).c_str() << std::endl;
+	       std::cout << "We could delete " <<  APT::PrettyPkg(Cache, Pkg) << std::endl;
 
 	 if (doAutoRemove)
 	 {
-	    if(Pkg.CurrentVer() != 0 && 
+	    if(Pkg.CurrentVer() != 0 &&
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
 	       Cache->MarkDelete(Pkg, purgePkgs, 0, false);
 	    else
@@ -477,11 +477,25 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		  if (R.IsNegative() == true ||
 		      Cache->IsImportantDep(R) == false)
 		     continue;
-		 pkgCache::PkgIterator N = R.ParentPkg();
-		 if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
+		 auto const RV = R.ParentVer();
+		 if (unlikely(RV.end() == true))
+		    continue;
+		 auto const RP = RV.ParentPkg();
+		 // check if that dependency comes from an interesting version
+		 if (RP.CurrentVer() == RV)
+		 {
+		    if ((*Cache)[RP].Keep() == false)
+		       continue;
+		 }
+		 else if (Cache[RP].CandidateVerIter(Cache) == RV)
+		 {
+		    if ((*Cache)[RP].NewInstall() == false && (*Cache)[RP].Upgrade() == false)
+		       continue;
+		 }
+		 else // ignore dependency from a non-candidate version
 		    continue;
 		 if (Debug == true)
-		    std::clog << "Save " << APT::PrettyPkg(Cache, Pkg) << " as another installed garbage package depends on it" << std::endl;
+		    std::clog << "Save " << APT::PrettyPkg(Cache, Pkg) << " as another installed package depends on it: " << APT::PrettyPkg(Cache, RP) << std::endl;
 		 Cache->MarkInstall(Pkg, false, 0, false);
 		 if (hideAutoRemove == false)
 		    ++autoRemoveCount;
@@ -497,6 +511,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       } while (Changed == true);
    }
+   // trigger marking now so that the package list below is correct
+   group.release();
 
    // Now see if we had destroyed anything (if we had done anything)
    if (Cache->BrokenCount() != 0)
