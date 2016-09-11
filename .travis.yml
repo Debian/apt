@@ -1,4 +1,5 @@
 language: cpp
+cache: ccache
 sudo: required
 dist: trusty
 before_install:
@@ -10,14 +11,14 @@ before_install:
  - sudo apt-get update -qq
 install:
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - sudo apt-get -qq -y -t xenial install cmake
+ - sudo apt-get -qq -y -t xenial install cmake ninja-build
  - sudo ./prepare-release travis-ci
 before_script:
- - ( mkdir build && cd build && cmake .. )
- - make -C build -j4
+ - ( mkdir build && cd build && cmake -G Ninja .. )
+ - ninja -C build
 script:
- - CTEST_OUTPUT_ON_FAILURE=1 make -C build test
- - chronic make -C build install DESTDIR=$PWD/rootdir
+ - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
+ - DESTDIR=$PWD/rootdir chronic ninja -C build install
  - ./test/integration/run-tests -qq
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
  - sudo ./test/integration/run-tests -qq
