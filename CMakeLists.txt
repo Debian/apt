@@ -15,6 +15,11 @@ option(USE_NLS "Localisation support." ON)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 
+# Add coverage target
+set(CMAKE_CXX_FLAGS_COVERAGE "-g -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS_COVERAGE "-lgcov")
+set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "-lgcov")
+
 # Work around bug in GNUInstallDirs
 if (EXISTS "/etc/debian_version")
   set(CMAKE_INSTALL_LIBEXECDIR "lib")
