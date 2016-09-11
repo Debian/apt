@@ -14,11 +14,17 @@ install:
  - sudo apt-get -qq -y -t xenial install cmake ninja-build
  - sudo ./prepare-release travis-ci
 before_script:
- - ( mkdir build && cd build && cmake -G Ninja .. )
+ - ( mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja .. )
  - ninja -C build
 script:
  - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
  - DESTDIR=$PWD/rootdir chronic ninja -C build install
  - ./test/integration/run-tests -qq
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
+ - sudo chmod  go+x /home/travis
+ - sudo chmod -R go+rwX /home/travis/build
  - sudo ./test/integration/run-tests -qq
+after_success:
+ - cd build
+ - gcov -r $(find -name '*.gcno')
+ - bash <(curl -s https://codecov.io/bash)
