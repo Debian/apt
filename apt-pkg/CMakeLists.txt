@@ -49,3 +49,7 @@ add_version_script(apt-pkg)
 install(TARGETS apt-pkg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/apt-pkg)
 flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+  target_link_libraries(apt-pkg PUBLIC noprofile)
+endif()
