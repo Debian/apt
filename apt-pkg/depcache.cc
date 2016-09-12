@@ -182,7 +182,7 @@ bool pkgDepCache::readStateFile(OpProgress * const Prog)		/*{{{*/
    FileFd state_file;
    string const state = _config->FindFile("Dir::State::extended_states");
    if(RealFileExists(state)) {
-      state_file.Open(state, FileFd::ReadOnly);
+      state_file.Open(state, FileFd::ReadOnly, FileFd::Extension);
       off_t const file_size = state_file.Size();
       if(Prog != NULL)
 	 Prog->OverallProgress(0, file_size, 1,
@@ -244,16 +244,16 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
    // if it does not exist, create a empty one
    if(!RealFileExists(state))
    {
-      StateFile.Open(state, FileFd::WriteAtomic);
+      StateFile.Open(state, FileFd::WriteAtomic, FileFd::Extension);
       StateFile.Close();
    }
 
    // open it
-   if(!StateFile.Open(state, FileFd::ReadOnly))
+   if (!StateFile.Open(state, FileFd::ReadOnly, FileFd::Extension))
       return _error->Error(_("Failed to open StateFile %s"),
 			   state.c_str());
 
-   FileFd OutFile(state, FileFd::ReadWrite | FileFd::Atomic);
+   FileFd OutFile(state, FileFd::ReadWrite | FileFd::Atomic, FileFd::Extension);
    if (OutFile.IsOpen() == false || OutFile.Failed() == true)
       return _error->Error(_("Failed to write temporary StateFile %s"), state.c_str());
 
