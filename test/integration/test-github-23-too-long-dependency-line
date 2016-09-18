@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture "amd64"
+setupaptarchive
+
+
+testsuccessequal "network-manager-strongswan:
+  Installed: 1.3.1-14
+  Candidate: 1.3.1-14
+  Version table:
+ *** 1.3.1-14 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive  Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy network-manager-strongswan
