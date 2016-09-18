@@ -344,14 +344,14 @@ unsigned short debListParser::VersionHash()
    {
       const char *Start;
       const char *End;
-      if (Section.Find(I,Start,End) == false || End - Start >= (signed)sizeof(S))
+      if (Section.Find(I,Start,End) == false)
 	 continue;
       
       /* Strip out any spaces from the text, this undoes dpkgs reformatting
          of certain fields. dpkg also has the rather interesting notion of
          reformatting depends operators < -> <= */
       char *J = S;
-      for (; Start != End; ++Start)
+      for (; Start != End && (J - S) < sizeof(S); ++Start)
       {
 	 if (isspace_ascii(*Start) != 0)
 	    continue;
