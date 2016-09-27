@@ -353,7 +353,6 @@ unsigned short debListParser::VersionHash()
       pkgTagSection::Key::Breaks,
       pkgTagSection::Key::Replaces};
    unsigned long Result = INIT_FCS;
-   char S[1024];
    for (auto I : Sections)
    {
       const char *Start;
@@ -363,23 +362,16 @@ unsigned short debListParser::VersionHash()
       
       /* Strip out any spaces from the text, this undoes dpkgs reformatting
          of certain fields. dpkg also has the rather interesting notion of
-         reformatting depends operators < -> <= */
-      char *J = S;
-      for (; Start != End && (J - S) < sizeof(S); ++Start)
+         reformatting depends operators < -> <=, so we drop all = from the
+	 string to make that not matter. */
+      for (; Start != End; ++Start)
       {
-	 if (isspace_ascii(*Start) != 0)
+	 if (isspace_ascii(*Start) != 0 || *Start == '=')
 	    continue;
-	 *J++ = tolower_ascii_unsafe(*Start);
-
-	 /* Normalize <= to < and >= to >. This is the wrong way around, but
-	  * more efficient that the right way. And since we're only hashing
-	  * it does not matter which way we normalize. */
-	 if ((*Start == '<' || *Start == '>') && Start[1] == '=') {
-	    Start++;
-	 }
+	 Result = AddCRC16Byte(Result, tolower_ascii_unsafe(*Start));
       }
 
-      Result = AddCRC16(Result,S,J - S);
+
    }
    
    return Result;

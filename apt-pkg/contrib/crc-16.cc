@@ -64,6 +64,10 @@ static unsigned short const crc16_table[256] =
 
 /* Recompute the FCS with one more character appended. */
 #define CalcFCS(fcs, c) (((fcs) >> 8) ^ crc16_table[((fcs) ^ (c)) & 0xff])
+unsigned short AddCRC16Byte(unsigned short fcs, unsigned char byte)
+{
+   return CalcFCS(fcs, byte);
+}
 unsigned short AddCRC16(unsigned short fcs, void const *Buf,
 			unsigned long long len)
 {
