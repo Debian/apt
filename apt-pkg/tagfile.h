@@ -54,6 +54,17 @@ class pkgTagSection
 
    pkgTagSectionPrivate * const d;
 
+   APT_HIDDEN bool FindInternal(unsigned int Pos,const char *&Start, const char *&End) const;
+#if defined(APT_PKG_EXPOSE_STRING_VIEW)
+   APT_HIDDEN APT::StringView FindInternal(unsigned int Pos) const;
+   APT_HIDDEN APT::StringView FindRawInternal(unsigned int Pos) const;
+#endif
+   APT_HIDDEN signed int FindIInternal(unsigned int Pos,signed long Default = 0) const;
+   APT_HIDDEN bool FindBInternal(unsigned int Pos, bool Default = false) const;
+   APT_HIDDEN unsigned long long FindULLInternal(unsigned int Pos, unsigned long long const &Default = 0) const;
+   APT_HIDDEN bool FindFlagInternal(unsigned int Pos,uint8_t &Flags, uint8_t const Flag) const;
+   APT_HIDDEN bool FindFlagInternal(unsigned int Pos,unsigned long &Flags, unsigned long Flag) const;
+
    protected:
    const char *Stop;
 
