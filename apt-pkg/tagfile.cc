@@ -14,6 +14,7 @@
 #include<config.h>
 
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -512,7 +513,8 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 
    pkgTagSectionPrivate::TagData lastTagData(0);
    lastTagData.EndTag = 0;
-   unsigned long lastTagHash = 0;
+   Key lastTagKey = Key::Unknown;
+   unsigned int lastTagHash = 0;
    while (Stop < End)
    {
       TrimRecord(true,End);
@@ -528,11 +530,15 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 // store the last found tag
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (BetaIndexes[lastTagHash] != 0)
-	       lastTagData.NextInBucket = BetaIndexes[lastTagHash];
-	    APT_IGNORE_DEPRECATED_PUSH
-	    BetaIndexes[lastTagHash] = TagCount;
-	    APT_IGNORE_DEPRECATED_POP
+	    if (lastTagKey != Key::Unknown) {
+	       AlphaIndexes[static_cast<size_t>(lastTagKey)] = TagCount;
+	    } else {
+	       if (BetaIndexes[lastTagHash] != 0)
+		  lastTagData.NextInBucket = BetaIndexes[lastTagHash];
+	       APT_IGNORE_DEPRECATED_PUSH
+	       BetaIndexes[lastTagHash] = TagCount;
+	       APT_IGNORE_DEPRECATED_POP
+	    }
 	    d->Tags.push_back(lastTagData);
 	 }
 
@@ -549,7 +555,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    ;
 	 ++EndTag;
 	 lastTagData.EndTag = EndTag - Section;
-	 lastTagHash = BetaHash(Stop, EndTag - Stop);
+	 lastTagKey = pkgTagHash(Stop, EndTag - Stop);
+	 if (lastTagKey == Key::Unknown)
+	    lastTagHash = BetaHash(Stop, EndTag - Stop);
 	 // find the beginning of the value
 	 Stop = Colon + 1;
 	 for (; Stop < End && isspace_ascii(*Stop) != 0; ++Stop)
@@ -574,9 +582,13 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       {
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (BetaIndexes[lastTagHash] != 0)
-	       lastTagData.NextInBucket = BetaIndexes[lastTagHash];
-	    APT_IGNORE_DEPRECATED(BetaIndexes[lastTagHash] = TagCount;)
+	    if (lastTagKey != Key::Unknown) {
+	       AlphaIndexes[static_cast<size_t>(lastTagKey)] = TagCount;
+	    } else {
+	       if (BetaIndexes[lastTagHash] != 0)
+		  lastTagData.NextInBucket = BetaIndexes[lastTagHash];
+	       APT_IGNORE_DEPRECATED(BetaIndexes[lastTagHash] = TagCount;)
+	    }
 	    d->Tags.push_back(lastTagData);
 	 }
 
@@ -620,10 +632,20 @@ bool pkgTagSection::Exists(StringView Tag) const
 // TagSection::Find - Locate a tag					/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the section for a tag that matches the given string. */
+bool pkgTagSection::Find(Key key,unsigned int &Pos) const
+{
+   auto Bucket = AlphaIndexes[static_cast<size_t>(key)];
+   Pos = Bucket - 1;
+   return Bucket != 0;
+}
 bool pkgTagSection::Find(StringView TagView,unsigned int &Pos) const
 {
    const char * const Tag = TagView.data();
    size_t const Length = TagView.length();
+   auto key = pkgTagHash(Tag, Length);
+   if (key != Key::Unknown)
+      return Find(key, Pos);
+
    unsigned int Bucket = BetaIndexes[BetaHash(Tag, Length)];
    if (Bucket == 0)
       return false;
@@ -664,6 +686,12 @@ bool pkgTagSection::Find(StringView Tag,const char *&Start,
    unsigned int Pos;
    return Find(Tag, Pos) && FindInternal(Pos, Start, End);
 }
+bool pkgTagSection::Find(Key key,const char *&Start,
+		         const char *&End) const
+{
+   unsigned int Pos;
+   return Find(key, Pos) && FindInternal(Pos, Start, End);
+}
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
 StringView pkgTagSection::Find(StringView Tag) const
@@ -671,6 +699,14 @@ StringView pkgTagSection::Find(StringView Tag) const
    const char *Start;
    const char *End;
    if (Find(Tag,Start,End) == false)
+      return StringView();
+   return StringView(Start, End - Start);
+}
+StringView pkgTagSection::Find(Key key) const
+{
+   const char *Start;
+   const char *End;
+   if (Find(key,Start,End) == false)
       return StringView();
    return StringView(Start, End - Start);
 }
@@ -692,6 +728,11 @@ StringView pkgTagSection::FindRaw(StringView Tag) const
 {
    unsigned int Pos;
    return Find(Tag, Pos) ? FindRawInternal(Pos) : "";
+}
+StringView pkgTagSection::FindRaw(Key key) const
+{
+   unsigned int Pos;
+   return Find(key, Pos) ? FindRawInternal(Pos) : "";
 }
 									/*}}}*/
 // TagSection::FindI - Find an integer					/*{{{*/
@@ -723,6 +764,12 @@ signed int pkgTagSection::FindIInternal(unsigned int Pos,signed long Default) co
       return Default;
    return Result;
 }
+signed int pkgTagSection::FindI(Key key,signed long Default) const
+{
+   unsigned int Pos;
+
+   return Find(key, Pos) ? FindIInternal(Pos) : Default;
+}
 signed int pkgTagSection::FindI(StringView Tag,signed long Default) const
 {
    unsigned int Pos;
@@ -753,6 +800,12 @@ unsigned long long pkgTagSection::FindULLInternal(unsigned int Pos, unsigned lon
       return Default;
    return Result;
 }
+unsigned long long pkgTagSection::FindULL(Key key, unsigned long long const &Default) const
+{
+   unsigned int Pos;
+
+   return Find(key, Pos) ? FindULLInternal(Pos, Default) : Default;
+}
 unsigned long long pkgTagSection::FindULL(StringView Tag, unsigned long long const &Default) const
 {
    unsigned int Pos;
@@ -769,6 +822,11 @@ bool pkgTagSection::FindBInternal(unsigned int Pos, bool Default) const
    if (FindInternal(Pos, Start, Stop) == false)
       return Default;
    return StringToBool(string(Start, Stop));
+}
+bool pkgTagSection::FindB(Key key, bool Default) const
+{
+   unsigned int Pos;
+   return Find(key, Pos) ? FindBInternal(Pos, Default): Default;
 }
 bool pkgTagSection::FindB(StringView Tag, bool Default) const
 {
@@ -787,6 +845,14 @@ bool pkgTagSection::FindFlagInternal(unsigned int Pos, uint8_t &Flags,
    if (FindInternal(Pos,Start,Stop) == false)
       return true;
    return FindFlag(Flags, Flag, Start, Stop);
+}
+bool pkgTagSection::FindFlag(Key key, uint8_t &Flags,
+			     uint8_t const Flag) const
+{
+   unsigned int Pos;
+   if (Find(key,Pos) == false)
+      return true;
+   return FindFlagInternal(Pos, Flags, Flag);
 }
 bool pkgTagSection::FindFlag(StringView Tag, uint8_t &Flags,
 			     uint8_t const Flag) const
@@ -823,6 +889,12 @@ bool pkgTagSection::FindFlagInternal(unsigned int Pos,unsigned long &Flags,
    if (FindInternal(Pos,Start,Stop) == false)
       return true;
    return FindFlag(Flags, Flag, Start, Stop);
+}
+bool pkgTagSection::FindFlag(Key key,unsigned long &Flags,
+			     unsigned long Flag) const
+{
+   unsigned int Pos;
+   return Find(key, Pos) ? FindFlagInternal(Pos, Flags, Flag) : true;
 }
 bool pkgTagSection::FindFlag(StringView Tag,unsigned long &Flags,
 			     unsigned long Flag) const

@@ -89,7 +89,19 @@ class pkgTagSection
    std::string FindS(const char *Tag) const;
    std::string FindRawS(const char *Tag) const;
 
+   // Functions for lookup with a perfect hash function
+   enum class Key;
+   APT_HIDDEN bool Find(Key key,const char *&Start, const char *&End) const;
+   APT_HIDDEN bool Find(Key key,unsigned int &Pos) const;
+   APT_HIDDEN signed int FindI(Key key,signed long Default = 0) const;
+   APT_HIDDEN bool FindB(Key key, bool Default = false) const;
+   APT_HIDDEN unsigned long long FindULL(Key key, unsigned long long const &Default = 0) const;
+   APT_HIDDEN bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
+   APT_HIDDEN bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
+   APT_HIDDEN bool Exists(Key key) const;
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN APT::StringView Find(Key key) const;
+   APT_HIDDEN APT::StringView FindRaw(Key key) const;
    APT_HIDDEN bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
    APT_HIDDEN bool Find(APT::StringView Tag,unsigned int &Pos) const;
    APT_HIDDEN APT::StringView Find(APT::StringView Tag) const;

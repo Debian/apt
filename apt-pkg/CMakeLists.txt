@@ -3,6 +3,19 @@ include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 
 add_definitions("-DAPT_PKG_EXPOSE_STRING_VIEW")
 
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/apt-pkg/)
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/triehash/triehash.pl
+                        --ignore-case
+                         --header ${PROJECT_BINARY_DIR}/include/apt-pkg/tagfile-keys.h
+                         --code ${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc
+                         --enum-class
+                         --enum-name pkgTagSection::Key
+                         --function-name pkgTagHash
+                         --include "<apt-pkg/tagfile.h>"
+                         ${CMAKE_CURRENT_SOURCE_DIR}/tagfile-keys.list)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "tagfile-keys.list")
+
+
 # Set the version of the library
 execute_process(COMMAND awk -v ORS=. "/^\#define APT_PKG_M/ {print \$3}"
                 COMMAND sed "s/\\.\$//"
@@ -17,7 +30,7 @@ message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt
 
 # Definition of the C++ files used to build the library
-file(GLOB_RECURSE library "*.cc")
+file(GLOB_RECURSE library "*.cc"  "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc")
 file(GLOB_RECURSE headers "*.h")
 
 # Create a library using the C++ files
