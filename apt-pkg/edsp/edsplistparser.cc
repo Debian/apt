@@ -20,6 +20,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/string_view.h>
 
 #include <array>
 
@@ -53,9 +54,9 @@ std::vector<std::string> edspLikeListParser::AvailableDescriptionLanguages()
 {
    return {};
 }
-MD5SumValue edspLikeListParser::Description_md5()
+APT::StringView edspLikeListParser::Description_md5()
 {
-   return MD5SumValue("");
+   return APT::StringView();
 }
 									/*}}}*/
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/

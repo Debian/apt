@@ -41,7 +41,9 @@ class pkgCacheListParser;
 
 class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 {
-   APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   APT_HIDDEN map_stringitem_t WriteStringInMap(APT::StringView String) { return WriteStringInMap(String.data(), String.size()); };
+#endif
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
    APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
@@ -117,13 +119,13 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    map_pointer_t NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
 			    map_pointer_t const ParentPkg, unsigned short const Hash,
 			    map_pointer_t const Next);
+   map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, APT::StringView md5sum,map_stringitem_t const idxmd5str);
 #endif
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   map_pointer_t const Version, uint8_t const Op,
 		   uint8_t const Type, map_pointer_t* &OldDepLast);
-   map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_stringitem_t const idxmd5str);
    bool NewProvides(pkgCache::VerIterator &Ver, pkgCache::PkgIterator &Pkg,
 		    map_stringitem_t const ProvidesVersion, uint8_t const Flags);
 
@@ -171,8 +173,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 			   pkgCache::VerIterator &V);
    APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
    APT_HIDDEN bool AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver,
-	 std::string const &lang, MD5SumValue const &CurMd5, map_stringitem_t &md5idx);
+	 std::string const &lang, APT::StringView CurMd5, map_stringitem_t &md5idx);
+#endif
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -192,9 +196,9 @@ class APT_HIDDEN pkgCacheListParser
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, APT::StringView S) {return Owner->StoreString(type, S);};
+   inline map_stringitem_t WriteString(APT::StringView S) {return Owner->WriteStringInMap(S.data(), S.size());};
 #endif
 
-   inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
    bool NewDepends(pkgCache::VerIterator &Ver,APT::StringView Package, APT::StringView Arch,
@@ -217,7 +221,9 @@ class APT_HIDDEN pkgCacheListParser
 #endif
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
-   virtual MD5SumValue Description_md5() = 0;
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   virtual APT::StringView Description_md5() = 0;
+#endif
    virtual unsigned short VersionHash() = 0;
    /** compare currently parsed version with given version
     *

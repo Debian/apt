@@ -45,8 +45,8 @@ template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
-static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
-			    MD5SumValue const &CurMd5, std::string const &CurLang);
+static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
+			    APT::StringView CurMd5, std::string const &CurLang);
 
 using std::string;
 using APT::StringView;
@@ -340,14 +340,14 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 			   Pkg.Name(), "UsePackage", 1);
 
    // Find the right version to write the description
-   MD5SumValue CurMd5 = List.Description_md5();
+   StringView CurMd5 = List.Description_md5();
    std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       pkgCache::DescIterator VerDesc = Ver.DescriptionList();
 
       // a version can only have one md5 describing it
-      if (VerDesc.end() == true || MD5SumValue(VerDesc.md5()) != CurMd5)
+      if (VerDesc.end() == true || Cache.ViewString(VerDesc->md5sum) != CurMd5)
 	 continue;
 
       map_stringitem_t md5idx = VerDesc->md5sum;
@@ -355,7 +355,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       {
 	 // don't add a new description if we have one for the given
 	 // md5 && language
-	 if (IsDuplicateDescription(VerDesc, CurMd5, *CurLang) == true)
+	 if (IsDuplicateDescription(Cache, VerDesc, CurMd5, *CurLang) == true)
 	    continue;
 
 	 AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx);
@@ -489,7 +489,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    }
 
    /* Record the Description(s) based on their master md5sum */
-   MD5SumValue CurMd5 = List.Description_md5();
+   StringView CurMd5 = List.Description_md5();
 
    /* Before we add a new description we first search in the group for
       a version with a description of the same MD5 - if so we reuse this
@@ -500,7 +500,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       for (pkgCache::VerIterator V = P.VersionList();
 	   V.end() == false; ++V)
       {
-	 if (V->DescriptionList == 0 || MD5SumValue(V.DescriptionList().md5()) != CurMd5)
+	 if (V->DescriptionList == 0 || Cache.ViewString(V.DescriptionList()->md5sum) != CurMd5)
 	    continue;
 	 Ver->DescriptionList = V->DescriptionList;
       }
@@ -515,7 +515,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    return true;
 }
 									/*}}}*/
-bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, MD5SumValue const &CurMd5, map_stringitem_t &md5idx) /*{{{*/
+bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, APT::StringView CurMd5, map_stringitem_t &md5idx) /*{{{*/
 {
    pkgCache::DescIterator Desc;
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
@@ -935,7 +935,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 /* This puts a description structure in the linked list */
 map_pointer_t pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 					    const string &Lang,
-					    const MD5SumValue &md5sum,
+					    APT::StringView md5sum,
 					    map_stringitem_t const idxmd5str)
 {
    // Get a structure
@@ -955,7 +955,7 @@ map_pointer_t pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
       Desc->md5sum = idxmd5str;
    else
    {
-      map_stringitem_t const idxmd5sum = WriteStringInMap(md5sum.Value());
+      map_stringitem_t const idxmd5sum = WriteStringInMap(md5sum);
       if (unlikely(idxmd5sum == 0))
 	 return 0;
       Desc->md5sum = idxmd5sum;
@@ -1839,11 +1839,11 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 }
 									/*}}}*/
 // IsDuplicateDescription						/*{{{*/
-static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
-			    MD5SumValue const &CurMd5, std::string const &CurLang)
+static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
+			    APT::StringView CurMd5, std::string const &CurLang)
 {
    // Descriptions in the same link-list have all the same md5
-   if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
+   if (Desc.end() == true || Cache.ViewString(Desc->md5sum) != CurMd5)
       return false;
    for (; Desc.end() == false; ++Desc)
       if (Desc.LanguageCode() == CurLang)

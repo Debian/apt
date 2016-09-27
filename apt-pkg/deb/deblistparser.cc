@@ -276,31 +276,27 @@ std::vector<std::string> debListParser::AvailableDescriptionLanguages()
    description. If no Description-md5 is found in the section it will be
    calculated.
  */
-MD5SumValue debListParser::Description_md5()
+APT::StringView debListParser::Description_md5()
 {
    StringView const value = Section.Find(pkgTagSection::Key::Description_md5);
-   if (value.empty() == true)
+   if (unlikely(value.empty() == true))
    {
       StringView const desc = Section.Find(pkgTagSection::Key::Description);
       if (desc == "\n")
-	 return MD5SumValue();
+	 return StringView();
 
       MD5Summation md5;
       md5.Add(desc.data(), desc.size());
       md5.Add("\n");
-      return md5.Result();
+      MD5Buffer = md5.Result();
+      return StringView(MD5Buffer);
    }
    else if (likely(value.size() == 32))
    {
-      MD5SumValue sumvalue;
-      if (sumvalue.Set(value))
-	 return sumvalue;
-
-      _error->Error("Malformed Description-md5 line; includes invalid character '%.*s'", (int)value.length(), value.data());
-      return MD5SumValue();
+      return value;
    }
    _error->Error("Malformed Description-md5 line; doesn't have the required length (32 != %d) '%.*s'", (int)value.size(), (int)value.length(), value.data());
-   return MD5SumValue();
+   return StringView();
 }
                                                                         /*}}}*/
 // ListParser::UsePackage - Update a package structure			/*{{{*/

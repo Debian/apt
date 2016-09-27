@@ -45,6 +45,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    private:
    std::vector<std::string> forceEssential;
    std::vector<std::string> forceImportant;
+   std::string MD5Buffer;
 
    protected:
    pkgTagFile Tags;
@@ -74,7 +75,9 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 #endif
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
-   virtual MD5SumValue Description_md5() APT_OVERRIDE;
+#ifdef APT_PKG_EXPOSE_STRING_VIEW
+   virtual APT::StringView Description_md5() APT_OVERRIDE;
+#endif
    virtual unsigned short VersionHash() APT_OVERRIDE;
    virtual bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver) APT_OVERRIDE;
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
