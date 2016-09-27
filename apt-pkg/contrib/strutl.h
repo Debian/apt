@@ -141,6 +141,11 @@ bool CheckDomainList(const std::string &Host, const std::string &List);
 #define isspace_ascii  isspace_ascii_inline
 
 APT_CONST APT_HOT
+static inline int tolower_ascii_unsafe(int const c)
+{
+   return c | 0x20;
+}
+APT_CONST APT_HOT
 static inline int tolower_ascii_inline(int const c)
 {
    return (c >= 'A' && c <= 'Z') ? c + 32 : c;

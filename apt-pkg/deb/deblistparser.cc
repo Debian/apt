@@ -369,7 +369,7 @@ unsigned short debListParser::VersionHash()
       {
 	 if (isspace_ascii(*Start) != 0)
 	    continue;
-	 *J++ = tolower_ascii(*Start);
+	 *J++ = tolower_ascii_unsafe(*Start);
 
 	 /* Normalize <= to < and >= to >. This is the wrong way around, but
 	  * more efficient that the right way. And since we're only hashing
