@@ -98,7 +98,7 @@ public:
 };
 									/*}}}*/
 
-static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
+static unsigned long BetaHash(const char *Text, size_t Length)		/*{{{*/
 {
    /* This very simple hash function for the last 8 letters gives
       very good performance on the debian package files */
@@ -110,7 +110,7 @@ static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
    unsigned long Res = 0;
    for (size_t i = 0; i < Length; ++i)
       Res = ((unsigned long)(Text[i]) & 0xDF) ^ (Res << 1);
-   return Res & 0xFF;
+   return Res & 0x7F;
 }
 									/*}}}*/
 
@@ -474,6 +474,7 @@ pkgTagSection::pkgTagSection()
    : Section(0), d(new pkgTagSectionPrivate()), Stop(0)
 {
    memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+   memset(&BetaIndexes, 0, sizeof(BetaIndexes));
 }
 APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
@@ -499,6 +500,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       if (d->Tags.empty() == false)
       {
 	 memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+	 memset(&BetaIndexes, 0, sizeof(BetaIndexes));
 	 d->Tags.clear();
       }
       d->Tags.reserve(0x100);
@@ -526,10 +528,10 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 // store the last found tag
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (AlphaIndexes[lastTagHash] != 0)
-	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
+	    if (BetaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = BetaIndexes[lastTagHash];
 	    APT_IGNORE_DEPRECATED_PUSH
-	    AlphaIndexes[lastTagHash] = TagCount;
+	    BetaIndexes[lastTagHash] = TagCount;
 	    APT_IGNORE_DEPRECATED_POP
 	    d->Tags.push_back(lastTagData);
 	 }
@@ -547,7 +549,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    ;
 	 ++EndTag;
 	 lastTagData.EndTag = EndTag - Section;
-	 lastTagHash = AlphaHash(Stop, EndTag - Stop);
+	 lastTagHash = BetaHash(Stop, EndTag - Stop);
 	 // find the beginning of the value
 	 Stop = Colon + 1;
 	 for (; Stop < End && isspace_ascii(*Stop) != 0; ++Stop)
@@ -572,9 +574,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       {
 	 if (lastTagData.EndTag != 0)
 	 {
-	    if (AlphaIndexes[lastTagHash] != 0)
-	       lastTagData.NextInBucket = AlphaIndexes[lastTagHash];
-	    APT_IGNORE_DEPRECATED(AlphaIndexes[lastTagHash] = TagCount;)
+	    if (BetaIndexes[lastTagHash] != 0)
+	       lastTagData.NextInBucket = BetaIndexes[lastTagHash];
+	    APT_IGNORE_DEPRECATED(BetaIndexes[lastTagHash] = TagCount;)
 	    d->Tags.push_back(lastTagData);
 	 }
 
@@ -622,7 +624,7 @@ bool pkgTagSection::Find(StringView TagView,unsigned int &Pos) const
 {
    const char * const Tag = TagView.data();
    size_t const Length = TagView.length();
-   unsigned int Bucket = AlphaIndexes[AlphaHash(Tag, Length)];
+   unsigned int Bucket = BetaIndexes[BetaHash(Tag, Length)];
    if (Bucket == 0)
       return false;
 

@@ -49,7 +49,8 @@ class pkgTagFilePrivate;
 class pkgTagSection
 {
    const char *Section;
-   unsigned int AlphaIndexes[0x100];
+   unsigned int AlphaIndexes[128];
+   unsigned int BetaIndexes[128];
 
    pkgTagSectionPrivate * const d;
 
