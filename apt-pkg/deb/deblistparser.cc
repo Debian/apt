@@ -254,18 +254,17 @@ std::vector<std::string> debListParser::AvailableDescriptionLanguages()
    std::vector<std::string> const understood = APT::Configuration::getLanguages();
    std::vector<std::string> avail;
    static constexpr int prefixLen = 12;
-   static constexpr int avgLanguageLen = 5;
-   std::string tagname;
-
-   tagname.reserve(prefixLen + avgLanguageLen);
-   tagname.assign("Description-");
+   char buf[32] = "Description-";
    if (Section.Exists("Description") == true)
       avail.push_back("");
    for (std::vector<std::string>::const_iterator lang = understood.begin(); lang != understood.end(); ++lang)
    {
-      tagname.resize(prefixLen);
-      tagname.append(*lang);
-      if (Section.Exists(tagname) == true)
+      if (unlikely(lang->size() > sizeof(buf) - prefixLen)) {
+	 _error->Warning("Ignoring translated description %s", lang->c_str());
+	 continue;
+      }
+      memcpy(buf + prefixLen, lang->c_str(), lang->size());
+      if (Section.Exists(StringView(buf, prefixLen + lang->size())) == true)
 	 avail.push_back(*lang);
    }
    return avail;
