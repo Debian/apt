@@ -568,7 +568,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
    unsigned long const Hash = Cache.Hash(Name);
    map_pointer_t *insertAt = &Cache.HeaderP->GrpHashTableP()[Hash];
 
-   while (*insertAt != 0 && Name.compare(Cache.ViewString((Cache.GrpP + *insertAt)->Name)) > 0)
+   while (*insertAt != 0 && StringViewCompareFast(Name, Cache.ViewString((Cache.GrpP + *insertAt)->Name)) > 0)
       insertAt = &(Cache.GrpP + *insertAt)->Next;
    Grp->Next = *insertAt;
    *insertAt = Group;
@@ -616,7 +616,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
       // Insert it into the hash table
       map_id_t const Hash = Cache.Hash(Name);
       map_pointer_t *insertAt = &Cache.HeaderP->PkgHashTableP()[Hash];
-      while (*insertAt != 0 && Name.compare(Cache.StrP + (Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name) > 0)
+      while (*insertAt != 0 && StringViewCompareFast(Name, Cache.ViewString((Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name)) > 0)
 	 insertAt = &(Cache.PkgP + *insertAt)->NextPackage;
       Pkg->NextPackage = *insertAt;
       *insertAt = Package;

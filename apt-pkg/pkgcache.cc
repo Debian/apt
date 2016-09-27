@@ -309,7 +309,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTableP()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		int const cmp = Name.compare(ViewString(Grp->Name));
+		int const cmp = StringViewCompareFast(Name, ViewString(Grp->Name));
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
 		else if (cmp < 0)
