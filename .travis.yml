@@ -24,7 +24,7 @@ script:
  - sudo chmod  go+x /home/travis
  - sudo chmod -R go+rwX /home/travis/build
  - sudo ./test/integration/run-tests -qq
-after_success:
+after_script:
  - cd build
  - gcov -r $(find -name '*.gcno')
  - bash <(curl -s https://codecov.io/bash)
