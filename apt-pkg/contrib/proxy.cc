@@ -48,7 +48,7 @@ bool AutoDetectProxy(URI &URL)
    Args.push_back(nullptr);
    FileFd PipeFd;
    pid_t Child;
-   if(Popen(&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
+   if(Popen(&Args[0], PipeFd, Child, FileFd::ReadOnly, false) == false)
       return _error->Error("ProxyAutoDetect command '%s' failed!", AutoDetectProxyCmd.c_str());
    char buf[512];
    bool const goodread = PipeFd.ReadLine(buf, sizeof(buf)) != nullptr;

@@ -248,8 +248,11 @@ std::vector<std::string> Glob(std::string const &pattern, int flags=0);
  * \param Child a reference to the integer that stores the child pid
  *        Note that you must call ExecWait() or similar to cleanup
  * \param Mode is either FileFd::ReadOnly or FileFd::WriteOnly
+ * \param CaptureStderr True if we should capture stderr in addition to stdout.
+ *                      (default: True).
  * \return true on success, false on failure with _error set
  */
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr);
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
 
 

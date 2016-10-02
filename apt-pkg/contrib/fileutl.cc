@@ -2861,6 +2861,11 @@ bool Rename(std::string From, std::string To)				/*{{{*/
 									/*}}}*/
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
 {
+   return Popen(Args, Fd, Child, Mode, true);
+}
+									/*}}}*/
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr)/*{{{*/
+{
    int fd;
    if (Mode != FileFd::ReadOnly && Mode != FileFd::WriteOnly)
       return _error->Error("Popen supports ReadOnly (x)or WriteOnly mode only");
@@ -2891,7 +2896,8 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/
       if(Mode == FileFd::ReadOnly)
       {
          dup2(fd, 1);
-         dup2(fd, 2);
+	 if (CaptureStderr == true)
+	    dup2(fd, 2);
       } else if(Mode == FileFd::WriteOnly)
          dup2(fd, 0);
 
