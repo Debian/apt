@@ -170,7 +170,7 @@ endif()
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
-set(PACKAGE_VERSION "1.3")
+set(PACKAGE_VERSION "1.3.1")
 
 if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
