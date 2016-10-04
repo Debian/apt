@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2016-08-30 22:20+0200\n"
-"PO-Revision-Date: 2016-07-21 18:43+0300\n"
+"PO-Revision-Date: 2016-09-24 03:24+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
 "Language: tr\n"
@@ -149,8 +149,9 @@ msgstr "%s/%s dosyası %s paketindeki aynı adlı dosyanın üzerine yazmak isti
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc
+#: apt-pkg/deb/dpkgpm.cc apt-pkg/init.cc apt-pkg/policy.cc
+#: apt-pkg/sourcelist.cc methods/mirror.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s okunamadı"
@@ -379,12 +380,12 @@ msgstr "%s=%s için değişim günlüğü mevcut değil"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "'%s' yöntemi yapılandırma üzerinden devre dışı bırakılmış."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
-msgstr ""
+msgstr "Tor kullanmak istiyorsanız %2$s yerine %1$s kullanmaya dikkat edin."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -1296,24 +1297,20 @@ msgid "Execute external solver"
 msgstr "Harici çözücüyü çalıştır"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "Harici çözücüyü çalıştır"
+msgstr "Harici planlamacıyı çalıştır"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "Çözücüye istek gönder"
+msgstr "Planlamacıya istek gönder"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "Çözücüye senaryo gönder"
+msgstr "Planlamacıya senaryo gönder"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "Harici çözücü düzgün bir hata iletisi göstermeden başarısız oldu"
+msgstr "Harici planlamacı düzgün bir hata iletisi göstermeden başarısız oldu"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -2926,7 +2923,6 @@ msgid "detect proxy using apt.conf"
 msgstr "apt.conf kullanarak vekil sunucuyu algıla"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2934,10 +2930,10 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"Kullanım: apt-internal-solver\n"
+"Kullanım: apt-internal-planner\n"
 "\n"
-"apt-internal-solver APT ailesinin dâhilî çözücüsünü hata ayıklama\n"
-"gibi sebeplerle harici çözücü gibi kullanmaya yarayan bir arayüzdür.\n"
+"apt-internal-planner APT ailesinin dâhilî planlamacısını hata ayıklama\n"
+"gibi sebeplerle harici planlamacı gibi kullanmaya yarayan bir arayüzdür.\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3493,7 +3489,7 @@ msgstr "Dosya bulunamadı"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "%s alan adına doğrudan bağlantılar öntanımlı olarak engellenmiştir."
 
 #: methods/connect.cc methods/http.cc
 #, c-format
