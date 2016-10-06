@@ -1,0 +1,46 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'all' '1' 'stable'
+
+export APT_DONT_SIGN=''
+setupaptarchive --no-update
+
+changetowebserver
+
+testsuccess aptget update
+testdpkgnotinstalled 'foo'
+testsuccess apt install foo -y
+testdpkginstalled 'foo'
+testsuccess apt purge foo -y
+testdpkgnotinstalled 'foo'
+
+msgmsg 'Untrusted to trusted hit' 'InRelease'
+rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
+mv rootdir/etc/apt/trusted.gpg.d rootdir/etc/apt/trusted.gpg.d-bak
+testwarning aptget update
+testfailure apt install foo -y
+testdpkgnotinstalled 'foo'
+mv rootdir/etc/apt/trusted.gpg.d-bak rootdir/etc/apt/trusted.gpg.d
+testsuccess aptget update
+testsuccess apt install foo -y
+testdpkginstalled 'foo'
+testsuccess apt purge foo -y
+testdpkgnotinstalled 'foo'
+
+msgmsg 'Untrusted to trusted hit' 'Release.gpg'
+find aptarchive -name 'InRelease' -delete
+rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
+mv rootdir/etc/apt/trusted.gpg.d rootdir/etc/apt/trusted.gpg.d-bak
+testwarning aptget update
+testfailure apt install foo -y
+testdpkgnotinstalled 'foo'
+mv rootdir/etc/apt/trusted.gpg.d-bak rootdir/etc/apt/trusted.gpg.d
+testsuccess aptget update
+testsuccess apt install foo -y
+testdpkginstalled 'foo'
