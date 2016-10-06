@@ -1925,10 +1925,16 @@ void pkgAcqMetaSig::Done(string const &Message, HashStringList const &Hashes,
    }
    else if(MetaIndex->CheckAuthDone(Message) == true)
    {
-      if (TransactionManager->IMSHit == false)
+      auto const Releasegpg = GetFinalFilename();
+      auto const Release = MetaIndex->GetFinalFilename();
+      // if this is an IMS-Hit on Release ensure we also have the the Release.gpg file stored
+      // (previously an unknown pubkey) – but only if the Release file exists locally (unlikely
+      // event of InRelease removed from the mirror causing fallback but still an IMS-Hit)
+      if (TransactionManager->IMSHit == false ||
+	    (FileExists(Releasegpg) == false && FileExists(Release) == true))
       {
-	 TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
-	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, MetaIndex->GetFinalFilename());
+	 TransactionManager->TransactionStageCopy(this, DestFile, Releasegpg);
+	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, Release);
       }
    }
    else if (MetaIndex->Status != StatAuthError)
