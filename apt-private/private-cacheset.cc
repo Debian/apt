@@ -280,11 +280,11 @@ pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindCandidateVer(pkgCacheFile 
    }
    return pkgCache::VerIterator(Cache, 0);
 }
-pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
+pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindNewestVer(APT::VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
 {
    if (Pkg->ProvidesList != 0)
    {
-      APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::NEWEST);
+      APT::VersionSet const verset = tryVirtualPackage(vci, Cache, Pkg, CacheSetHelper::NEWEST);
       if (verset.empty() == false)
 	 return *(verset.begin());
       if (ShowError == true)
@@ -310,7 +310,12 @@ pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindNewestVer(pkgCacheFile &Ca
    }
    return pkgCache::VerIterator(Cache, 0);
 }
-APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
+inline APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
+      CacheSetHelper::VerSelector const select)
+{
+   tryVirtualPackage(NULL, Cache, Pkg, select);
+}
+APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(APT::VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
       CacheSetHelper::VerSelector const select)
 {
    /* This is a pure virtual package and there is a single available
@@ -353,6 +358,8 @@ APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkg
    if (found_one == true) {
       ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
 	    Prov.FullName(true).c_str(), Pkg.FullName(true).c_str());
+      if (vci)
+         vci->insert(Prov.VersionList());
       return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
    }
    return APT::VersionSet();

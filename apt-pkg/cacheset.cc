@@ -758,7 +758,7 @@ APT_IGNORE_DEPRECATED_PUSH
 	case ALL: canNotFindAllVer(vci, Cache, Pkg); break;
 	case INSTCAND: canNotFindInstCandVer(vci, Cache, Pkg); break;
 	case CANDINST: canNotFindCandInstVer(vci, Cache, Pkg); break;
-	case NEWEST: canNotFindNewestVer(Cache, Pkg); break;
+	case NEWEST: canNotFindNewestVer(vci, Cache, Pkg); break;
 	case CANDIDATE: canNotFindCandidateVer(Cache, Pkg); break;
 	case INSTALLED: canNotFindInstalledVer(Cache, Pkg); break;
 APT_IGNORE_DEPRECATED_POP
@@ -793,7 +793,7 @@ void CacheSetHelper::canNotFindCandInstVer(VersionContainerInterface * const /*v
 pkgCache::VerIterator CacheSetHelper::canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
 	switch (select) {
 APT_IGNORE_DEPRECATED_PUSH
-	case NEWEST: return canNotFindNewestVer(Cache, Pkg);
+	case NEWEST: return canNotFindNewestVer(NULL, Cache, Pkg);
 	case CANDIDATE: return canNotFindCandidateVer(Cache, Pkg);
 	case INSTALLED: return canNotFindInstalledVer(Cache, Pkg);
 APT_IGNORE_DEPRECATED_POP
@@ -809,7 +809,7 @@ APT_IGNORE_DEPRECATED_POP
 	return pkgCache::VerIterator(Cache, 0);
 }
 // canNotFindNewestVer							/*{{{*/
-pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(pkgCacheFile &Cache,
+pkgCache::VerIterator CacheSetHelper::canNotFindNewestVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Insert(ErrorType, _("Can't select newest version from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());

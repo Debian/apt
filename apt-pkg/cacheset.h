@@ -167,7 +167,7 @@ public:									/*{{{*/
 	// the difference between canNotFind and canNotGet is that the later is more low-level
 	// and called from other places: In this case looking into the code is the only real answer…
 	virtual pkgCache::VerIterator canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
-	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
+	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindNewestVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
 	APT_DEPRECATED_MSG("override .canNotGetVersion and select via switch") virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
@@ -216,7 +216,7 @@ protected:
 	container_iterator _iter;
 public:
 	explicit Container_iterator_base(container_iterator i) : _iter(i) {}
-	inline container_value operator*(void) const { return static_cast<iterator_type const*>(this)->getType(); };
+	inline container_value operator*(void) const { return static_cast<iterator_type const*>(this)->getType(); }
 	operator container_iterator(void) const { return _iter; }
 	inline iterator_type& operator++() { ++_iter; return static_cast<iterator_type&>(*this); }
 	inline iterator_type operator++(int) { iterator_type tmp(*this); operator++(); return tmp; }
