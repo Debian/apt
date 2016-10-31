@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-06-22 14:55+0200\n"
+"POT-Creation-Date: 2016-10-31 15:29+0100\n"
 "PO-Revision-Date: 2016-08-20 13:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1520,13 +1520,9 @@ msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "不能连接到 %s：%s："
 
-#: methods/copy.cc methods/store.cc
+#: methods/copy.cc
 msgid "Failed to stat"
 msgstr "无法读取状态"
-
-#: methods/copy.cc methods/rred.cc methods/store.cc
-msgid "Failed to set modification time"
-msgstr "无法设置文件的修改日期"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
@@ -1792,6 +1788,10 @@ msgstr "[镜像：%s]"
 msgid "Failed to stat %s"
 msgstr "无法获得 %s 的状态"
 
+#: methods/rred.cc
+msgid "Failed to set modification time"
+msgstr "无法设置文件的修改日期"
+
 #: methods/rsh.cc ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "无法为子进程创建 IPC 管道"
@@ -1805,12 +1805,12 @@ msgid "Waiting for headers"
 msgstr "正在等待报头"
 
 #: methods/server.cc
-msgid "Bad header line"
-msgstr "错误的报头行"
-
-#: methods/server.cc
 msgid "The HTTP server sent an invalid reply header"
 msgstr "该 HTTP 服务器发送了一个无效的应答报头"
+
+#: methods/server.cc
+msgid "Bad header line"
+msgstr "错误的报头行"
 
 #: methods/server.cc
 msgid "The HTTP server sent an invalid Content-Length header"
