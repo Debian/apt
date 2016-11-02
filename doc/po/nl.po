@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.1.10-nl\n"
+"Project-Id-Version: apt-doc 1.3~rc4-nl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-10-04 19:44+0200\n"
-"PO-Revision-Date: 2016-02-01 16:17+0100\n"
+"POT-Creation-Date: 2016-11-02 09:29+0100\n"
+"PO-Revision-Date: 2016-09-16 17:33+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -1442,18 +1442,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Displays by default a deb822 formatted listing of information about all "
-#| "data files (aka index targets) <command>apt-get update</command> would "
-#| "download. Supports a <option>--format</option> option to modify the "
-#| "output format as well as accepts lines of the default output to filter "
-#| "the records by. The command is mainly used as an interface for external "
-#| "tools working with APT to get information as well as filenames for "
-#| "downloaded files so they can use them as well instead of downloading them "
-#| "again on their own. Detailed documentation is omitted here and can "
-#| "instead be found in the source tree in <literal><filename>doc/acquire-"
-#| "additional-files.txt</filename></literal>."
 msgid ""
 "Displays by default a deb822 formatted listing of information about all data "
 "files (aka index targets) <command>apt-get update</command> would download. "
@@ -1475,8 +1463,8 @@ msgstr ""
 "namen van opgehaalde bestanden, zodat ook dat gereedschap er gebruik van kan "
 "maken in plaats van ze ook zelf weer op te halen. Meer gedetailleerde "
 "documentatie wordt hier niet gegeven, maar is daarentegen wel te vinden in "
-"de broncodeboom in het bestand <literal><filename>doc/acquire-additional-"
-"files.txt</filename></literal>."
+"het bestand &apt-acquire-additional-files; dat te vinden is in het pakket "
+"<package>apt-doc</package>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-config.8.xml apt-extracttemplates.1.xml
@@ -1663,17 +1651,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Show upgraded packages; print out a list of all packages that are to be "
-#| "upgraded.  Configuration Item: <literal>APT::Get::Show-Upgraded</literal>."
 msgid ""
 "Do not show a list of all packages that are to be upgraded.  Configuration "
 "Item: <literal>APT::Get::Show-Upgraded</literal>."
 msgstr ""
-"Toon opgewaardeerde pakketten; geef een lijst weer van alle pakketten die "
-"opgewaardeerd zullen worden. Configuratie-item: <literal>APT::Get::Show-"
-"Upgraded</literal>."
+"Geef geen lijst weer van alle pakketten die opgewaardeerd zullen worden. "
+"Configuratie-item: <literal>APT::Get::Show-Upgraded</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2039,12 +2022,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Forbid the update command to acquire unverifiable data from configured "
-#| "sources. Apt will fail at the update command for repositories without "
-#| "valid cryptographically signatures.  Configuration Item: "
-#| "<literal>Acquire::AllowInsecureRepositories</literal>."
 msgid ""
 "Forbid the update command to acquire unverifiable data from configured "
 "sources. APT will fail at the update command for repositories without valid "
@@ -2053,9 +2030,10 @@ msgid ""
 "AllowInsecureRepositories</literal>."
 msgstr ""
 "Sta het commando update niet toe om niet-verifieerbare gegevens op te halen "
-"uit geconfigureerde pakketbronnen. Het commando update van apt zal mislukken "
-"bij pakketbronnen zonder geldige cryptografische ondertekening. Configuratie-"
-"item: <literal>Acquire::AllowInsecureRepositories</literal>."
+"uit geconfigureerde pakketbronnen. Het commando update van APT zal mislukken "
+"bij pakketbronnen zonder geldige cryptografische ondertekening. Zie ook &apt-"
+"secure; voor meer informatie over het concept en de implicaties. "
+"Configuratie-item: <literal>Acquire::AllowInsecureRepositories</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2079,6 +2057,9 @@ msgid ""
 "multiple files.  See <option>--with-source</option> description in &apt-"
 "cache; for further details."
 msgstr ""
+"Voegt het opgegeven bestand toe als een metadatabron. Kan herhaald worden om "
+"meerdere bestanden toe te voegen. Zie voor verdere details de beschrijving "
+"van de optie <option>--with-source</option> in &apt-cache;."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
@@ -2740,6 +2721,12 @@ msgid ""
 "literal> and <literal>Packages</literal> files as well as source package "
 "directories.  Files are matched based on their name only, not their content!"
 msgstr ""
+"Voegt het opgegeven bestand toe als een bron voor metadata. Kan herhaald "
+"worden om meerdere bestanden toe te voegen. Momenteel worden de bestanden "
+"<literal>*.deb</literal>, <literal>*.dsc</literal>, <literal>*.changes</"
+"literal>, <literal>Sources</literal> en <literal>Packages</literal> "
+"ondersteund evenals mappen van broncodepakketten. Overeenstemmende bestanden "
+"worden enkel op basis van hun naam gevonden, niet op basis van hun inhoud!"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2750,19 +2737,21 @@ msgid ""
 "name of your choice with the last character being an underscore "
 "(\"<literal>_</literal>\"). Example: my.example_Packages.xz"
 msgstr ""
+"Bestanden <literal>Sources</literal> en <literal>Packages</literal> mogen "
+"gecomprimeerd worden in elk formaat dat door apt ondersteund wordt, zolang "
+"ze de correcte extensie hebben. Indien u in één map meerdere van deze "
+"bestanden moet opslaan, kunt u aan de naam een voorvoegsel naar keuze "
+"toevoegen met als laatste letter een liggend streepje (\"<literal>_</literal>"
+"\"). Bijvoorbeeld: mijn.voorbeeld_Packages.xz"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "Use source index field ordering.  Configuration Item: <literal>APT::"
-#| "SortPkgs::Source</literal>."
 msgid ""
 "Note that these sources are treated as trusted (see &apt-secure;).  "
 "Configuration Item: <literal>APT::Sources::With</literal>."
 msgstr ""
-"Veldordening gebruiken bij een broncode-index. Configuratie-item: "
-"<literal>APT::SortPkgs::Source</literal>."
+"Merk op dat deze bronnen beschouwd worden als te vertrouwen (zie &apt-"
+"secure;).  Configuratie-item: <literal>APT::Sources::With</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-cache.8.xml
@@ -2806,6 +2795,15 @@ msgid ""
 "whenever the underlying commands change. <command>apt-key</command> will try "
 "to detect such usage and generates warnings on stderr in these cases."
 msgstr ""
+"Merk op dat als het gebruik van het commando <command>apt-key</command> "
+"gewenst is, dan ook de installatie van de GNU Privacy Guard suite (verpakt "
+"in het pakket <package>gnupg</package>) vereist is. Enkel omwille daarvan al "
+"wordt het gebruik ervan in programma's (zeker in scripts voor "
+"pakketonderhoud) sterk afgeraden. Daarenboven wordt de indeling van de "
+"uitvoer van alle commando's onvoorspelbaar en kan die wijzigen telkens "
+"wanneer de achterliggende commando's wijzigen. <command>apt-key</command> "
+"zal een dergelijk gebruik trachten te detecteren en geeft in dergelijke "
+"gevallen waarschuwingen op de standaard foutuitvoer."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2845,6 +2843,10 @@ msgid ""
 "name (same rules for filename apply as for &apt-conf; files) and "
 "\"<literal>gpg</literal>\" as file extension."
 msgstr ""
+"In plaats van dit commando te gebruiken, kunt u rechtstreeks in de map "
+"<filename>/etc/apt/trusted.gpg.d/</filename> een sleutelbos plaatsen met een "
+"descriptieve naam (voor de bestandsnaam gelden dezelfde regels als bij &apt-"
+"conf;-bestanden) en \"<literal>gpg</literal>\" als bestandsextensie."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2863,10 +2865,8 @@ msgstr "Alle betrouwbare sleutels op de standaarduitvoer weergeven."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "List trusted keys."
 msgid "List trusted keys with fingerprints."
-msgstr "Betrouwbare sleutels weergeven."
+msgstr "Som betrouwbare sleutels op met hun vingerafdruk."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2886,7 +2886,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml
 msgid "(deprecated)"
-msgstr ""
+msgstr "(verouderd)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2911,6 +2911,12 @@ msgid ""
 "<package>gnupg</package> and it is easier to manage keys by simply adding "
 "and removing files for maintainers and users alike."
 msgstr ""
+"Merk op dat een distributie dit commando niet langer hoeft en ook niet zou "
+"mogen gebruiken. In plaats daarvan moeten rechtstreeks sleutelbosbestanden "
+"meegeleverd worden in de map <filename>/etc/apt/trusted.gpg</filename>. Dit "
+"voorkomt dat het pakket <package>gnupg</package> een vereiste is, en zowel "
+"voor pakketonderhouders als voor gebruikers is het makkelijker om sleutels "
+"te beheren door eenvoudigweg bestanden toe te voegen of te verwijderen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -3158,12 +3164,6 @@ msgstr "Ondersteuning in APT voor de authenticatie van archieven"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "Starting with version 0.6, <command>APT</command> contains code that does "
-#| "signature checking of the Release file for all repositories. This ensures "
-#| "that data like packages in the archive can't be modified by people who "
-#| "have no access to the Release file signing key."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
@@ -3176,17 +3176,12 @@ msgstr ""
 "pakketbronnen de ondertekening controleert van het bestand Release. Dit "
 "geeft de garantie dat gegevens, zoals pakketten, uit het archief niet "
 "gewijzigd kunnen worden door mensen die geen toegang hebben tot de sleutel "
-"waarmee het bestand Release ondertekend wordt."
+"waarmee het bestand Release ondertekend wordt. Met ingang van versie 1.1 "
+"vereist <command>APT</command> dat pakketbronnen recente authenticatie-"
+"informatie verstrekken om die pakketbron ongehinderd te kunnen gebruiken."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "If an archive has an unsigned Release file or no Release file at all "
-#| "current APT versions will raise a warning in <command>update</command> "
-#| "operations and front-ends like <command>apt-get</command> will require "
-#| "explicit confirmation if an installation request includes a package from "
-#| "such an unauthenticated archive."
 msgid ""
 "If an archive has an unsigned Release file or no Release file at all current "
 "APT versions will refuse to download data from them by default in "
@@ -3195,11 +3190,12 @@ msgid ""
 "request includes a package from such an unauthenticated archive."
 msgstr ""
 "Indien een archief een niet-ondertekend Release-bestand of helemaal geen "
-"Release-bestand heeft, zullen alle hedendaagse versies van APT een "
-"waarschuwing geven bij <command>update</command>-operaties en frontends, "
-"zoals <command>apt-get</command>, zullen om een expliciete bevestiging "
-"vragen als bij een installatieverzoek een pakket uit een dergelijk niet-"
-"geauthenticeerd archief betrokken is."
+"Release-bestand heeft, zullen alle hedendaagse versies van APT bij "
+"<command>update</command>-operaties standaard weigeren om er gegevens van op "
+"te halen. En zelfs als ze tot ophalen verplicht worden, zullen frontends, "
+"zoals &apt-get;, om een expliciete bevestiging vragen als bij een "
+"installatieverzoek een pakket uit een dergelijk niet-geauthenticeerd archief "
+"betrokken is."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3212,6 +3208,15 @@ msgid ""
 "AllowInsecureRepositories</option> to <literal>false</literal> or <option>--"
 "no-allow-insecure-repositories</option> on the command line."
 msgstr ""
+"Bij wijze van tijdelijke uitzondering geeft &apt-get; (niet &apt;!) enkel "
+"waarschuwingen als het niet-geauthenticeerde archieven tegenkomt om zo deze "
+"wijziging die de compatibiliteit aantast, enigszins langer uit te stellen. "
+"Deze uitzondering zal uit toekomstige uitgaven verwijderd worden en u kunt "
+"nu reeds kiezen om geen gebruik te maken van dit uitstel door de "
+"configuratie-optie <option>Binary::apt-get::Acquire::"
+"AllowInsecureRepositories</option> op <literal>false</literal> in te stellen "
+"of door aan de commandoregel de optie <option>--no-allow-insecure-"
+"repositories</option> te gebruiken."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3226,6 +3231,16 @@ msgid ""
 "disable even the warnings, but be sure to understand the implications as "
 "detailed in &sources-list;."
 msgstr ""
+"U kunt alle APT-clients verplichten om enkel waarschuwingen te geven door de "
+"configuratie-optie <option>Acquire::AllowInsecureRepositories</option> op "
+"<literal>true</literal> in te stellen. U kunt ook individuele pakketbronnen "
+"toelaten om onveilig te zijn via de optie <literal>allow-insecure=yes</"
+"literal> in &sources-list;. Merk op dat onveilige pakketbronnen ten "
+"stelligste afgeraden worden en dat alle opties die apt verplichten om deze "
+"te blijven ondersteunen, uiteindelijk verwijderd zullen worden. Gebruikers "
+"beschikken ook over de optie <option>Trusted</option>, waardoor zelfs de "
+"waarschuwingen onderdrukt worden, maar u moet zeker zijn dat u de "
+"implicaties ervan begrijpt die uitgelegd worden in &sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3238,6 +3253,14 @@ msgid ""
 "<literal>true</literal> or for Individual repositories with the &sources-"
 "list; option <literal>allow-downgrade-to-insecure=yes</literal>."
 msgstr ""
+"Een pakketbron die zijn eerdere authenticatie-status zou kwijt spelen zal in "
+"geval van een <command>update</command>-operatie bij alle APT-clients een "
+"foutmelding opleveren, ongeacht het feit of een optie het gebruik van "
+"onveilige pakketbronnen toestaat of verbiedt. Een dergelijke fout kan "
+"voorkomen worden door bijkomend de optie <option>Acquire::"
+"AllowDowngradeToInsecureRepositories</option> op <literal>true</literal> in "
+"te stellen of voor individuele pakketbronnen door de optie <literal>allow-"
+"downgrade-to-insecure=yes</literal> te gebruiken in &sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4217,6 +4240,16 @@ msgid ""
 "pass to the command <command>rev</command> without additional commandline "
 "parameters for compression and uncompression:"
 msgstr ""
+"Dit bereik definieert welke compressieformaten ondersteund worden, hoe "
+"compressie en decompressie uitgevoerd kunnen worden indien de ondersteuning "
+"voor dit formaat niet rechtstreeks ingebouwd is in apt en het definieert een "
+"kostwaarde die aangeeft hoe duur het is om iets in dit formaat te "
+"comprimeren. De volgende configuratiestanza laat bij wijze van voorbeeld apt "
+"toe om bestanden met de goedkope bestandsextensie <literal>.reversed</"
+"literal> zowel te downloaden en te decomprimeren als aan te maken en op te "
+"slaan, waarbij apt voor het comprimeren en decomprimeren het commando "
+"<command>rev</command> zal gebruiken zonder bijkomende "
+"commandoregelparameters:"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><informalexample><programlisting>
 #: apt.conf.5.xml
@@ -4231,6 +4264,14 @@ msgid ""
 "\tCost \"10\";\n"
 "};\n"
 msgstr ""
+"APT::Compressor::rev {\n"
+"\tName \"rev\";\n"
+"\tExtension \".reversed\";\n"
+"\tBinary \"rev\";\n"
+"\tCompressArg {};\n"
+"\tUncompressArg {};\n"
+"\tCost \"10\";\n"
+"};\n"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4748,17 +4789,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to "
-#| "specify an external command to discover the http proxy to use. Apt "
-#| "expects the command to output the proxy on stdout in the style "
-#| "<literal>http://proxy:port/</literal>. This will override the generic "
-#| "<literal>Acquire::http::Proxy</literal> but not any specific host proxy "
-#| "configuration set via <literal>Acquire::http::Proxy::$HOST</literal>.  "
-#| "See the &squid-deb-proxy-client; package for an example implementation "
-#| "that uses avahi. This option takes precedence over the legacy option name "
-#| "<literal>ProxyAutoDetect</literal>."
 msgid ""
 "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to specify "
 "an external command to discover the http proxy to use. The first and only "
@@ -4774,14 +4804,19 @@ msgid ""
 "the legacy option name <literal>ProxyAutoDetect</literal>."
 msgstr ""
 "<literal>Acquire::http::Proxy-Auto-Detect</literal> kan gebruikt worden om "
-"een extern commando op te geven om de te gebruiken http-proxy te vinden. Apt "
-"verwacht dat het programma de proxy op de standaarduitvoer weergeeft volgens "
-"het schema <literal>http://proxy:port/</literal>. Dit zal het algemene "
-"<literal>Acquire::http::Proxy</literal> overschrijven, maar geen enkele "
-"specifieke computerproxy-configuratie die via  <literal>Acquire::http::"
-"Proxy::$HOST</literal> ingesteld werd. Raadpleeg het pakket &squid-deb-proxy-"
-"client; voor een voorbeeldtoepassing waarin avahi gebruikt wordt. Deze optie "
-"heeft voorrang op de verouderde optienaam <literal>ProxyAutoDetect</literal>."
+"een extern commando op te geven om de te gebruiken http-proxy te vinden. De "
+"eerste en enige parameter is een URI die aangeeft met welke computer contact "
+"gemaakt moet worden om computerspecifieke configuratie te kunnen gebruiken. "
+"APT verwacht dat het commando de proxy op de standaarduitvoer op één enkele "
+"regel weergeeft volgens het schema <literal>http://proxy:port/</literal> of "
+"anders het woord <literal>DIRECT</literal> in het geval geen proxy gebruikt "
+"moet worden. Geen uitvoer geeft aan dat de generieke proxy-instellingen "
+"gebruikt moeten worden. Merk op dat geen autodetectie gebruikt zal worden "
+"voor een computer indien reeds een computerspecifieke proxyconfiguratie "
+"ingesteld werd via <literal>Acquire::http::Proxy::<replaceable>HOST</"
+"replaceable></literal>. Raadpleeg het pakket &squid-deb-proxy-client; voor "
+"een voorbeeldtoepassing waarin avahi gebruikt wordt. Deze optie heeft "
+"voorrang op de verouderde optienaam <literal>ProxyAutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4973,15 +5008,6 @@ msgstr "Acquire::CompressionTypes::<replaceable>FileExtension</replaceable> \"<r
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "List of compression types which are understood by the acquire methods.  "
-#| "Files like <filename>Packages</filename> can be available in various "
-#| "compression formats.  By default the acquire methods can decompress "
-#| "<command>bzip2</command>, <command>lzma</command> and <command>gzip</"
-#| "command> compressed files; with this setting more formats can be added on "
-#| "the fly or the used method can be changed. The syntax for this is: "
-#| "<placeholder type=\"synopsis\" id=\"0\"/>"
 msgid ""
 "List of compression types which are understood by the acquire methods.  "
 "Files like <filename>Packages</filename> can be available in various "
@@ -4994,11 +5020,12 @@ msgstr ""
 "Lijst van compressietypes die door de methodes voor het ophalen van "
 "pakketten begrepen worden. Bestanden zoals <filename>Packages</filename> "
 "kunnen in verschillende compressieformaten beschikbaar zijn. Standaard "
-"kunnen de ophaalmethodes gecomprimeerde bestanden uitpakken van de "
-"types<command>bzip2</command>, <command>lzma</command> en <command>gzip</"
-"command>. Met deze instelling kunnen direct andere formaten toegevoegd "
-"worden of kan de gebruikte methode gewijzigd worden. De syntaxis hiervoor "
-"is: <placeholder type=\"synopsis\" id=\"0\"/>"
+"kunnen de ophaalmethodes veel gebruikelijke formaten zoals <command>xz</"
+"command> en <command>gzip</command> decomprimeren en opnieuw comprimeren. "
+"Met dit bereik kunnen de ondersteunde formaten doorzocht worden, kunnen er "
+"wijzigingen in aangebracht worden en kan ondersteuning voor nog andere "
+"formaten toegevoegd worden (zie ook <option>APT::Compressor</option>). De "
+"syntaxis hiervoor is: <placeholder type=\"synopsis\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml
@@ -5008,28 +5035,12 @@ msgstr "Acquire::CompressionTypes::Order:: \"gz\";"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml
-#, fuzzy, no-wrap
-#| msgid "Acquire::CompressionTypes::Order { \"lzma\"; \"gz\"; };"
+#, no-wrap
 msgid "Acquire::CompressionTypes::Order { \"xz\"; \"gz\"; };"
-msgstr "Acquire::CompressionTypes::Order { \"lzma\"; \"gz\"; };"
+msgstr "Acquire::CompressionTypes::Order { \"xz\"; \"gz\"; };"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Also, the <literal>Order</literal> subgroup can be used to define in "
-#| "which order the acquire system will try to download the compressed files. "
-#| "The acquire system will try the first and proceed with the next "
-#| "compression type in this list on error, so to prefer one over the other "
-#| "type simply add the preferred type first - default types not already "
-#| "added will be implicitly appended to the end of the list, so e.g. "
-#| "<placeholder type=\"synopsis\" id=\"0\"/> can be used to prefer "
-#| "<command>gzip</command> compressed files over <command>bzip2</command> "
-#| "and <command>lzma</command>.  If <command>lzma</command> should be "
-#| "preferred over <command>gzip</command> and <command>bzip2</command> the "
-#| "configure setting should look like this: <placeholder type=\"synopsis\" "
-#| "id=\"1\"/> It is not needed to add <literal>bz2</literal> to the list "
-#| "explicitly as it will be added automatically."
 msgid ""
 "Also, the <literal>Order</literal> subgroup can be used to define in which "
 "order the acquire system will try to download the compressed files. The "
@@ -5052,10 +5063,9 @@ msgstr ""
 "de lijst plaatsen. Nog niet vermelde standaardtypes zullen impliciet aan het "
 "einde van de lijst toegevoegd worden. Zo kan bijvoorbeeld <placeholder type="
 "\"synopsis\" id=\"0\"/> gebruikt worden om met <command>gzip</command> "
-"gecomprimeerde bestanden te verkiezen boven die welke met <command>bzip2</"
-"command> en <command>lzma</command> gecomprimeerd werden. Indien "
-"<command>lzma</command> moet verkozen worden boven <command>gzip</command> "
-"en <command>bzip2</command>, moet de configuratie-instelling er als volgt "
+"gecomprimeerde bestanden te verkiezen boven alle andere formaten. Indien "
+"<command>xz</command> moet verkozen worden boven <command>gzip</command> en "
+"<command>bzip2</command>, moet de configuratie-instelling er als volgt "
 "uitzien: <placeholder type=\"synopsis\" id=\"1\"/>. Het is onnodig om "
 "<literal>bz2</literal> expliciet aan de lijst toe te voegen, aangezien het "
 "er automatisch aan toegevoegd zal worden."
@@ -5068,18 +5078,6 @@ msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Note that the <literal>Dir::Bin::<replaceable>Methodname</replaceable></"
-#| "literal> will be checked at run time. If this option has been set, the "
-#| "method will only be used if this file exists; e.g. for the "
-#| "<literal>bzip2</literal> method (the inbuilt) setting is: <placeholder "
-#| "type=\"literallayout\" id=\"0\"/> Note also that list entries specified "
-#| "on the command line will be added at the end of the list specified in the "
-#| "configuration files, but before the default entries. To prefer a type in "
-#| "this case over the ones specified in the configuration files you can set "
-#| "the option direct - not in list style.  This will not override the "
-#| "defined list; it will only prefix the list with this type."
 msgid ""
 "Note that the <literal>Dir::Bin::<replaceable>Methodname</replaceable></"
 "literal> will be checked at run time. If this option has been set and "
@@ -5095,16 +5093,17 @@ msgid ""
 msgstr ""
 "Merk op dat op het ogenblik van uitvoering gekeken zal worden naar "
 "<literal>Dir::Bin::<replaceable>Naam-van-de-Methode</replaceable></literal>. "
-"Indien deze optie ingesteld werd, zal de methode enkel gebruikt worden "
-"indien dat bestand bestaat. Voor de methode <literal>bzip2</literal> is "
-"bijvoorbeeld de (ingebouwde) instelling: <placeholder type=\"literallayout\" "
-"id=\"0\"/>. Merk ook op dat de lijstitems die aan de commandoregel opgegeven "
-"worden, toegevoegd zullen worden achteraan de lijst die in de "
-"configuratiebestanden vermeld wordt, maar voorafgaand aan de standaarditems. "
-"Om in dit geval een type boven die uit de configuratiebestanden te "
-"verkiezen, kunt u de optie rechtstreeks instellen - niet in de lijstopmaak. "
-"Dit zal de gedefinieerde lijst niet overschrijven. Het zal de lijst enkel "
-"laten beginnen met dat type."
+"Indien deze optie ingesteld werd en ondersteuning voor dit formaat niet "
+"rechtstreeks ingebouwd is in apt, zal de methode enkel gebruikt worden "
+"indien dat bestand bestaat. Voor de methode <literal>bzip2</literal> "
+"bijvoorbeeld, is de (ingebouwde) instelling: <placeholder type="
+"\"literallayout\" id=\"0\"/>. Merk ook op dat de lijstitems die aan de "
+"commandoregel opgegeven worden, toegevoegd zullen worden achteraan de lijst "
+"die in de configuratiebestanden vermeld wordt, maar voorafgaand aan de "
+"standaarditems. Om in dit geval een type boven die uit de "
+"configuratiebestanden te verkiezen, kunt u de optie rechtstreeks instellen - "
+"niet in de lijstopmaak. Dit zal de gedefinieerde lijst niet opheffen. Het "
+"zal de lijst enkel laten beginnen met dat type."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5252,6 +5251,10 @@ msgid ""
 "literal>\".  Concept, implications as well as alternatives are detailed in "
 "&apt-secure;."
 msgstr ""
+"Aan update-operaties de toestemming geven om data-bestanden op te halen van "
+"pakketbronnen zonder afdoende beveiligingsinformatie. De standaardwaarde is "
+"\"<literal>false</literal>\". Concept, implicaties en alternatieven worden "
+"uiteengezet in &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5261,18 +5264,14 @@ msgid ""
 "strong enough.  The default value is \"<literal>false</literal>\".  Concept, "
 "implications as well as alternatives are detailed in &apt-secure;."
 msgstr ""
+"Aan update-operaties de toestemming geven om data-bestanden op te halen van "
+"pakketbronnen die beveiligingsinformatie leveren, maar waarvan de "
+"cryptografie niet langer als voldoende krachtig beschouwd wordt. De "
+"standaardwaarde is \"<literal>false</literal>\". Concept, implicaties en "
+"alternatieven worden uiteengezet in &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Allow that a repository that was previously gpg signed to become unsigned "
-#| "durign a update operation. When there is no valid signature of a "
-#| "previously trusted repository apt will refuse the update. This option can "
-#| "be used to override this protection. You almost certainly never want to "
-#| "enable this. The default is false.  Note that apt will still consider "
-#| "packages from this source untrusted and warn about them if you try to "
-#| "install them."
 msgid ""
 "Allow that a repository that was previously gpg signed to become unsigned "
 "during an update operation. When there is no valid signature for a "
@@ -5285,10 +5284,9 @@ msgstr ""
 "een update-bewerking niet langer ondertekend is. Als een pakketbron die "
 "vroeger betrouwbaar was, geen geldige ondertekening meer heeft, zal apt de "
 "update-bewerking weigeren uit te voeren. Deze optie kan gebruikt worden om "
-"die beveiliging te omzeilen. Bijna zeker zult u deze optie nooit willen "
-"activeren. Standaard is ze gedeactiveerd (false). Merk op dat apt pakketten "
-"van deze pakketbron als onbetrouwbaar zal blijven beschouwen en in dat "
-"verband een waarschuwing zal geven als u ze probeert te installeren."
+"die beveiliging op te heffen. Bijna zeker zult u deze optie nooit willen "
+"activeren. Standaard is ze ingesteld op <literal>false</literal>. Concept, "
+"implicaties en alternatieven worden uiteengezet in &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml
@@ -5792,14 +5790,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "If this option is set APT will call <command>dpkg --configure --pending</"
-#| "command> to let &dpkg; handle all required configurations and triggers. "
-#| "This option is activated automatically per default if the previous option "
-#| "is not set to <literal>all</literal>, but deactivating it could be useful "
-#| "if you want to run APT multiple times in a row - e.g. in an installer. In "
-#| "these sceneries you could deactivate this option in all but the last run."
 msgid ""
 "If this option is set APT will call <command>dpkg --configure --pending</"
 "command> to let &dpkg; handle all required configurations and triggers. This "
@@ -5809,12 +5799,11 @@ msgid ""
 msgstr ""
 "Indien deze optie ingesteld staat zal APT <command>dpkg --configure --"
 "pending</command> aanroepen om &dpkg; alle nodige configuraties en triggers "
-"te laten afhandelen. Standaard wordt deze optie automatisch aangezet in het "
-"geval de vorige optie niet op <literal>all</literal> ingesteld werd. Maar "
-"deze optie uitzetten kan nuttig zijn indien u APT meerdere keren op rij "
-"wenst uit te voeren - bijvoorbeeld in een installatieprogramma. In een "
-"dergelijk scenario kunt u deze optie uitschakelen voor alle keren dat APT "
-"uitgevoerd wordt, behalve voor de laatste keer."
+"te laten afhandelen. Standaard staat deze optie automatisch aan. Maar ze "
+"uitzetten kan nuttig zijn indien u APT meerdere keren op rij wenst uit te "
+"voeren - bijvoorbeeld in een installatieprogramma. In een dergelijk scenario "
+"kunt u deze optie uitschakelen voor alle keren dat APT uitgevoerd wordt, "
+"behalve voor de laatste keer."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
@@ -8050,14 +8039,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Targets</option> (<option>target</option>) is a multivalue option "
-#| "defining which download targets apt will try to acquire from this source. "
-#| "If not specified, the default set is defined by the <option>Acquire::"
-#| "IndexTargets</option> configuration scope.  Additionally, specific "
-#| "targets can be enabled or disabled by using the identifier as field name "
-#| "instead of using this multivalue option."
 msgid ""
 "<option>Targets</option> (<option>target</option>) is a multivalue option "
 "defining which download targets apt will try to acquire from this source. If "
@@ -8068,12 +8049,14 @@ msgid ""
 "an option with a boolean value instead of using this multivalue option."
 msgstr ""
 "<option>Targets</option> (<option>target</option>) is een multi-waarde optie "
-"waarmee opgegeven wordt welke downloaddoelen apt uit deze pakketbron zal "
-"trachten te ophalen. Indien deze optie niet gespecificeerd werd, wordt de "
+"waarmee opgegeven wordt welke downloadtargets apt uit deze pakketbron zal "
+"trachten op te halen. Indien deze optie niet gespecificeerd werd, wordt de "
 "standaardset gedefinieerd door het configuratiebereik <option>Acquire::"
-"IndexTargets</option>. Daarenboven kunnen specifieke doelen geactiveerd of "
-"gedeactiveerd worden door hun naam als veldnaam te gebruiken in plaats van "
-"deze multi-waarde optie te gebruiken."
+"IndexTargets</option> (targets worden aan de hand van hun naam gepreciseerd "
+"in het veld <literal>Created-By</literal>). Daarenboven kunnen specifieke "
+"targets geactiveerd of gedeactiveerd worden door het veld "
+"<literal>Identifier</literal> als een optie met een booleaanse waarde te "
+"gebruiken in plaats van op deze multi-waarde optie beroep te doen."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8155,6 +8138,13 @@ msgid ""
 "set to <literal>yes</literal> they circumvent parts of &apt-secure; and "
 "should therefore not be used lightly!"
 msgstr ""
+"<option>Allow-Insecure</option> (<option>allow-insecure</option>), "
+"<option>Allow-Weak</option> (<option>allow-weak</option>) en <option>Allow-"
+"Downgrade-To-Insecure</option> (<option>allow-downgrade-to-insecure</"
+"option>) zijn booleaanse waarden die allemaal standaard de waarde "
+"<literal>no</literal> hebben. Indien ze op <literal>yes</literal> ingesteld "
+"worden, omzeilen ze delen van &apt-secure; en daarom zouden ze niet "
+"lichtzinnig gebruikt moeten worden!"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8188,18 +8178,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
-#| "absolute path to a keyring file (has to be accessible and readable for "
-#| "the <literal>_apt</literal> user, so ensure everyone has read-permissions "
-#| "on the file) or a fingerprint of a key either in the <filename>trusted."
-#| "gpg</filename> keyring or in one of the keyrings in the <filename>trusted."
-#| "gpg.d/</filename> directory (see <command>apt-key fingerprint</command>). "
-#| "If the option is set, only the key(s) in this keyring or only the key "
-#| "with this fingerprint is used for the &apt-secure; verification of this "
-#| "repository. Otherwise all keys in the trusted keyrings are considered "
-#| "valid signers for this repository."
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
 "absolute path to a keyring file (has to be accessible and readable for the "
@@ -8215,14 +8193,16 @@ msgid ""
 msgstr ""
 "<option>Signed-By</option> (<option>signed-by</option>) is ofwel een "
 "absoluut pad naar een sleutelbosbestand (moet toegankelijk zijn voor en te "
-"lezen door de gebruiker <literal>_apt</literal>; zorg er dus voor dat "
-"iedereen leesrechten heeft voor het bestand), ofwel een vingerafdruk van een "
-"sleutel uit de sleutelbos <filename>trusted.gpg</filename> of uit een van de "
+"lezen door gebruiker <literal>_apt</literal>; zorg er dus voor dat iedereen "
+"leesrechten heeft voor het bestand), ofwel een of meer vingerafdrukken van "
+"sleutels uit de sleutelbos <filename>trusted.gpg</filename> of uit de "
 "sleutelbossen in de map <filename>trusted.gpg.d/</filename> (zie "
 "<command>apt-key fingerprint</command>). Indien de optie ingesteld werd, "
-"worden enkel de sleutel(s) uit die sleutelbos of enkel de sleutel met deze "
-"vingerafdruk gebruikt voor de verificatie door &apt-secure; van die "
-"pakketbron. Anders worden alle sleutels uit de betrouwbare sleutelbossen als "
+"worden enkel de sleutel(s) uit die sleutelbos of enkel de sleutels met deze "
+"vingerafdrukken gebruikt voor de verificatie van die pakketbron door &apt-"
+"secure;. Heeft standaard de waarde van de optie met dezelfde naam indien die "
+"ingesteld staat in het vooraf opgehaalde bestand <filename>Release</"
+"filename>. Anders worden alle sleutels uit de betrouwbare sleutelbossen als "
 "geldige ondertekenaars van deze pakketbron aanzien."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
@@ -8711,10 +8691,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgid "&apt-get;, &apt-conf;, &apt-acquire-additional-files;"
-msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
+msgstr "&apt-get;, &apt-conf;, &apt-acquire-additional-files;"
 
 #. type: Content of: <refentry><refmeta><manvolnum>
 #: apt-extracttemplates.1.xml apt-sortpkgs.1.xml apt-ftparchive.1.xml
@@ -8948,19 +8926,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
-#, fuzzy
-#| msgid ""
-#| "The <literal>release</literal> command generates a Release file from a "
-#| "directory tree. It recursively searches the given directory for "
-#| "uncompressed <filename>Packages</filename> and <filename>Sources</"
-#| "filename> files and ones compressed with <command>gzip</command>, "
-#| "<command>bzip2</command> or <command>lzma</command> as well as "
-#| "<filename>Release</filename> and <filename>md5sum.txt</filename> files by "
-#| "default (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). "
-#| "Additional filename patterns can be added by listing them in "
-#| "<literal>APT::FTPArchive::Release::Patterns</literal>.  It then writes to "
-#| "stdout a <filename>Release</filename> file containing (by default) an "
-#| "MD5, SHA1, SHA256 and SHA512 digest for each file."
 msgid ""
 "The <literal>release</literal> command generates a Release file from a "
 "directory tree. It recursively searches the given directory for uncompressed "
@@ -8976,30 +8941,20 @@ msgid ""
 msgstr ""
 "Het commando <literal>release</literal> maakt voor een mappenboom een "
 "Release-bestand aan. Het begint bij de opgegeven map en zoekt daar en in de "
-"onderliggende mappen standaard naar niet-gecomprimeerde <filename>Packages</"
-"filename>- en <filename>Sources</filename>-bestanden en naar dergelijke "
-"bestanden die gecomprimeerd werden met <command>gzip</command>, "
-"<command>bzip2</command> of <command>lzma</command>, alsook naar "
-"<filename>Release</filename>- en <filename>md5sum.txt</filename>-bestanden. "
-"(<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Bijkomende "
-"bestandsnaampatronen kunnen toegevoegd worden door ze op te sommen "
-"in<literal>APT::FTPArchive::Release::Patterns</literal>. Het commando "
+"onderliggende mappen standaard naar niet-gecomprimeerde en gecomprimeerde "
+"<filename>Packages</filename>-, <filename>Sources</filename>, "
+"<filename>Contents</filename>, <filename>Components</filename> en "
+"<filename>icons</filename>-bestanden, alsook naar <filename>Release</"
+"filename>-, <filename>Index</filename>- en <filename>md5sum.txt</filename>-"
+"bestanden. (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). "
+"Bijkomende bestandsnaampatronen kunnen toegevoegd worden door ze op te "
+"sommen in<literal>APT::FTPArchive::Release::Patterns</literal>. Het commando "
 "schrijft vervolgens naar de standaarduitvoer een<filename>Release</filename>-"
-"bestand weg dat (standaard) voor elk bestand een MD5-, SHA1-, SHA256 en "
-"SHA512-controlesom bevat."
+"bestand dat (standaard) voor elk bestand een MD5-, SHA1-, SHA256 en SHA512-"
+"verzameling bevat."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
-#, fuzzy
-#| msgid ""
-#| "Values for the additional metadata fields in the Release file are taken "
-#| "from the corresponding variables under <literal>APT::FTPArchive::Release</"
-#| "literal>, e.g. <literal>APT::FTPArchive::Release::Origin</literal>.  The "
-#| "supported fields are: <literal>Origin</literal>, <literal>Label</"
-#| "literal>, <literal>Suite</literal>, <literal>Version</literal>, "
-#| "<literal>Codename</literal>, <literal>Date</literal>, <literal>Valid-"
-#| "Until</literal>, <literal>Architectures</literal>, <literal>Components</"
-#| "literal>, <literal>Description</literal>."
 msgid ""
 "Values for the additional metadata fields in the Release file are taken from "
 "the corresponding variables under <literal>APT::FTPArchive::Release</"
@@ -9016,8 +8971,9 @@ msgstr ""
 "Release::Origin</literal>. De ondersteunde velden zijn: <literal>Origin</"
 "literal>, <literal>Label</literal>, <literal>Suite</literal>, "
 "<literal>Version</literal>, <literal>Codename</literal>, <literal>Date</"
-"literal>, <literal>Valid-Until</literal>, <literal>Architectures</literal>, "
-"<literal>Components</literal>, <literal>Description</literal>."
+"literal>, <literal>Valid-Until</literal>, <literal>Signed-By</literal>, "
+"<literal>Architectures</literal>, <literal>Components</literal> en "
+"<literal>Description</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -9141,12 +9097,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
-#, fuzzy
-#| msgid ""
-#| "Sets the default compression schemes to use for the package index files. "
-#| "It is a string that contains a space separated list of at least one of: "
-#| "'.' (no compression), 'gzip' and 'bzip2'. The default for all compression "
-#| "schemes is '. gzip'."
 msgid ""
 "Sets the default compression schemes to use for the package index files. It "
 "is a string that contains a space separated list of at least one of the "
@@ -9155,9 +9105,9 @@ msgid ""
 msgstr ""
 "Stelt het standaard compressieschema in dat voor de pakketindexbestanden "
 "gebruikt wordt. Het is een tekenreeks die bestaat uit een door spaties "
-"gescheiden lijst van minstens een van de volgende keuzemogelijkheden: "
-"'.' (geen compressie), 'gzip' en 'bzip2'. Voor alle compressieschema's is de "
-"standaardinstelling '. gzip'."
+"gescheiden lijst van minstens een van de compressieprogramma's die via het "
+"configuratiebereik <option>APT::Compressor</option> geconfigureerd zijn. "
+"Voor alle compressieschema's is de standaardinstelling '. gzip'."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
