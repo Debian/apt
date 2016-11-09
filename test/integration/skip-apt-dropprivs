@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+aptdropprivs() { runapt "${APTTESTHELPERSBINDIR}/aptdropprivs" "$@"; }
+
+testsuccess aptdropprivs -- /bin/true
+testsuccess aptdropprivs --user "$USER" -- /bin/true
+testsuccess aptdropprivs --user 'nobody' -- /bin/true
+testsuccess aptdropprivs --user '_apt' -- /bin/true
+
+IDBIN='/usr/bin/id'
+testsuccessequal "$("$IDBIN")" aptdropprivs --user "$USER" -- "$IDBIN"
+
+SUDOBIN='/usr/bin/sudo'
+testequal "sudo: effective uid is not 0, is /usr/bin/sudo on a file system with the 'nosuid' option set or an NFS file system without root privileges?" aptdropprivs --user 'nobody' -- "$SUDOBIN" "$IDBIN"
+
+if [ "$(id -u)" = '0' ]; then
+	testsuccessequal '_apt' aptdropprivs --user '_apt' -- "$IDBIN" '-un'
+	testsuccess aptdropprivs --user '_apt' -- '/bin/sh' '-c' 'export'
+	cp rootdir/tmp/testsuccess.output apt.env
+	testsuccessequal "export HOME='/nonexistent'" grep '^export HOME' apt.env
+	testsuccessequal "export USER='_apt'
+export USERNAME='_apt'" grep '^export USER' apt.env
+	testsuccessequal "export LOGNAME='_apt'" grep '^export LOGNAME' apt.env
+	testsuccessequal "export SHELL='/bin/sh'" grep '^export SHELL=' apt.env
+fi
