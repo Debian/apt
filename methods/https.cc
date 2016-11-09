@@ -43,8 +43,9 @@ struct APT_HIDDEN CURLUserPointer {
    HttpsMethod * const https;
    HttpsMethod::FetchResult * const Res;
    HttpsMethod::FetchItem const * const Itm;
+   RequestState * const Req;
    CURLUserPointer(HttpsMethod * const https, HttpsMethod::FetchResult * const Res,
-	 HttpsMethod::FetchItem const * const Itm) : https(https), Res(Res), Itm(Itm) {}
+	 HttpsMethod::FetchItem const * const Itm, RequestState * const Req) : https(https), Res(Res), Itm(Itm), Req(Req) {}
 };
 
 size_t
@@ -63,55 +64,58 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 
    if (line.empty() == true)
    {
-      me->https->Server->JunkSize = 0;
-      if (me->https->Server->Result != 416 && me->https->Server->StartPos != 0)
+      if (me->Req->File.Open(me->Itm->DestFile, FileFd::WriteAny) == false)
+	 return ERROR_NOT_FROM_SERVER;
+
+      me->Req->JunkSize = 0;
+      if (me->Req->Result != 416 && me->Req->StartPos != 0)
 	 ;
-      else if (me->https->Server->Result == 416)
+      else if (me->Req->Result == 416)
       {
 	 bool partialHit = false;
 	 if (me->Itm->ExpectedHashes.usable() == true)
 	 {
 	    Hashes resultHashes(me->Itm->ExpectedHashes);
 	    FileFd file(me->Itm->DestFile, FileFd::ReadOnly);
-	    me->https->Server->TotalFileSize = file.FileSize();
-	    me->https->Server->Date = file.ModificationTime();
+	    me->Req->TotalFileSize = file.FileSize();
+	    me->Req->Date = file.ModificationTime();
 	    resultHashes.AddFD(file);
 	    HashStringList const hashList = resultHashes.GetHashStringList();
 	    partialHit = (me->Itm->ExpectedHashes == hashList);
 	 }
-	 else if (me->https->Server->Result == 416 && me->https->Server->TotalFileSize == me->https->File->FileSize())
+	 else if (me->Req->Result == 416 && me->Req->TotalFileSize == me->Req->File.FileSize())
 	    partialHit = true;
 
 	 if (partialHit == true)
 	 {
-	    me->https->Server->Result = 200;
-	    me->https->Server->StartPos = me->https->Server->TotalFileSize;
+	    me->Req->Result = 200;
+	    me->Req->StartPos = me->Req->TotalFileSize;
 	    // the actual size is not important for https as curl will deal with it
 	    // by itself and e.g. doesn't bother us with transport-encoding…
-	    me->https->Server->JunkSize = std::numeric_limits<unsigned long long>::max();
+	    me->Req->JunkSize = std::numeric_limits<unsigned long long>::max();
 	 }
 	 else
-	    me->https->Server->StartPos = 0;
+	    me->Req->StartPos = 0;
       }
       else
-	 me->https->Server->StartPos = 0;
+	 me->Req->StartPos = 0;
 
-      me->Res->LastModified = me->https->Server->Date;
-      me->Res->Size = me->https->Server->TotalFileSize;
-      me->Res->ResumePoint = me->https->Server->StartPos;
+      me->Res->LastModified = me->Req->Date;
+      me->Res->Size = me->Req->TotalFileSize;
+      me->Res->ResumePoint = me->Req->StartPos;
 
       // we expect valid data, so tell our caller we get the file now
-      if (me->https->Server->Result >= 200 && me->https->Server->Result < 300)
+      if (me->Req->Result >= 200 && me->Req->Result < 300)
       {
 	 if (me->Res->Size != 0 && me->Res->Size > me->Res->ResumePoint)
 	    me->https->URIStart(*me->Res);
-	 if (me->https->Server->AddPartialFileToHashes(*(me->https->File)) == false)
+	 if (me->Req->AddPartialFileToHashes(me->Req->File) == false)
 	    return 0;
       }
       else
-	 me->https->Server->JunkSize = std::numeric_limits<decltype(me->https->Server->JunkSize)>::max();
+	 me->Req->JunkSize = std::numeric_limits<decltype(me->Req->JunkSize)>::max();
    }
-   else if (me->https->Server->HeaderLine(line) == false)
+   else if (me->Req->HeaderLine(line) == false)
       return 0;
 
    return size*nmemb;
@@ -120,29 +124,29 @@ HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 size_t 
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
-   HttpsMethod *me = static_cast<HttpsMethod *>(userp);
+   CURLUserPointer *me = static_cast<CURLUserPointer *>(userp);
    size_t buffer_size = size * nmemb;
    // we don't need to count the junk here, just drop anything we get as
    // we don't always know how long it would be, e.g. in chunked encoding.
-   if (me->Server->JunkSize != 0)
+   if (me->Req->JunkSize != 0)
       return buffer_size;
 
-   if(me->File->Write(buffer, buffer_size) != true)
+   if(me->Req->File.Write(buffer, buffer_size) != true)
       return 0;
 
-   if(me->Queue->MaximumSize > 0)
+   if(me->https->Queue->MaximumSize > 0)
    {
-      unsigned long long const TotalWritten = me->File->Tell();
-      if (TotalWritten > me->Queue->MaximumSize)
+      unsigned long long const TotalWritten = me->Req->File.Tell();
+      if (TotalWritten > me->https->Queue->MaximumSize)
       {
-	 me->SetFailReason("MaximumSizeExceeded");
+	 me->https->SetFailReason("MaximumSizeExceeded");
 	 _error->Error("Writing more data than expected (%llu > %llu)",
-	       TotalWritten, me->Queue->MaximumSize);
+	       TotalWritten, me->https->Queue->MaximumSize);
 	 return 0;
       }
    }
 
-   if (me->Server->GetHashes()->Add((unsigned char const * const)buffer, buffer_size) == false)
+   if (me->https->Server->GetHashes()->Add((unsigned char const * const)buffer, buffer_size) == false)
       return 0;
 
    return buffer_size;
@@ -268,15 +272,18 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   if (Server == nullptr || Server->Comp(Itm->Uri) == false)
+      Server = CreateServerState(Itm->Uri);
 
    FetchResult Res;
-   CURLUserPointer userp(this, &Res, Itm);
+   RequestState Req(this, Server.get());
+   CURLUserPointer userp(this, &Res, Itm, &Req);
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
    curl_easy_setopt(curl, CURLOPT_WRITEHEADER, &userp);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-   curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+   curl_easy_setopt(curl, CURLOPT_WRITEDATA, &userp);
    // options
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
@@ -387,13 +394,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	 headers = curl_slist_append(headers, "Accept: text/*");
    }
 
-   // go for it - if the file exists, append on it
-   File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   if (Server == nullptr || Server->Comp(Itm->Uri) == false)
-      Server = CreateServerState(Itm->Uri);
-   else
-      Server->Reset(false);
-
    // if we have the file send an if-range query with a range header
    if (Server->RangesAllowed && stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
@@ -423,9 +423,9 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    long curl_condition_unmet = 0;
    curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
    if (curl_condition_unmet == 1)
-      Server->Result = 304;
+      Req.Result = 304;
 
-   File->Close();
+   Req.File.Close();
    curl_slist_free_all(headers);
 
    // cleanup
@@ -456,7 +456,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       return false;
    }
 
-   switch (DealWithHeaders(Res))
+   switch (DealWithHeaders(Res, Req))
    {
       case ServerMethod::IMS_HIT:
 	 URIDone(Res);
@@ -464,7 +464,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
       case ServerMethod::ERROR_WITH_CONTENT_PAGE:
 	 // unlink, no need keep 401/404 page content in partial/
-	 RemoveFile(Binary.c_str(), File->Name());
+	 RemoveFile(Binary.c_str(), Req.File.Name());
       case ServerMethod::ERROR_UNRECOVERABLE:
       case ServerMethod::ERROR_NOT_FROM_SERVER:
 	 return false;
@@ -475,9 +475,9 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
       case ServerMethod::FILE_IS_OPEN:
 	 struct stat resultStat;
-	 if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
+	 if (unlikely(stat(Req.File.Name().c_str(), &resultStat) != 0))
 	 {
-	    _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
+	    _error->Errno("stat", "Unable to access file %s", Req.File.Name().c_str());
 	    return false;
 	 }
 	 Res.Size = resultStat.st_size;
@@ -490,7 +490,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	    times[0].tv_sec = Res.LastModified;
 	    times[1].tv_sec = Res.LastModified;
 	    times[0].tv_usec = times[1].tv_usec = 0;
-	    utimes(File->Name().c_str(), times);
+	    utimes(Req.File.Name().c_str(), times);
 	 }
 	 else
 	    Res.LastModified = resultStat.st_mtime;
@@ -502,8 +502,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 	 URIDone(Res);
 	 break;
    }
-
-   delete File;
    return true;
 }
 									/*}}}*/

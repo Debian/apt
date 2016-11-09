@@ -555,12 +555,12 @@ bool HttpServerState::Close()
 }
 									/*}}}*/
 // HttpServerState::RunData - Transfer the data from the socket		/*{{{*/
-bool HttpServerState::RunData(FileFd * const File)
+bool HttpServerState::RunData(RequestState &Req)
 {
-   State = Data;
+   Req.State = RequestState::Data;
    
    // Chunked transfer encoding is fun..
-   if (Encoding == Chunked)
+   if (Req.Encoding == RequestState::Chunked)
    {
       while (1)
       {
@@ -573,7 +573,7 @@ bool HttpServerState::RunData(FileFd * const File)
 	    if (In.WriteTillEl(Data,true) == true)
 	       break;
 	 }
-	 while ((Last = Go(false, File)) == true);
+	 while ((Last = Go(false, Req)) == true);
 
 	 if (Last == false)
 	    return false;
@@ -591,7 +591,7 @@ bool HttpServerState::RunData(FileFd * const File)
 	       if (In.WriteTillEl(Data,true) == true && Data.length() <= 2)
 		  break;
 	    }
-	    while ((Last = Go(false, File)) == true);
+	    while ((Last = Go(false, Req)) == true);
 	    if (Last == false)
 	       return false;
 	    return !_error->PendingError();
@@ -599,7 +599,7 @@ bool HttpServerState::RunData(FileFd * const File)
 	 
 	 // Transfer the block
 	 In.Limit(Len);
-	 while (Go(true, File) == true)
+	 while (Go(true, Req) == true)
 	    if (In.IsLimit() == true)
 	       break;
 	 
@@ -615,7 +615,7 @@ bool HttpServerState::RunData(FileFd * const File)
 	    if (In.WriteTillEl(Data,true) == true)
 	       break;
 	 }
-	 while ((Last = Go(false, File)) == true);
+	 while ((Last = Go(false, Req)) == true);
 	 if (Last == false)
 	    return false;
       }
@@ -624,10 +624,10 @@ bool HttpServerState::RunData(FileFd * const File)
    {
       /* Closes encoding is used when the server did not specify a size, the
          loss of the connection means we are done */
-      if (JunkSize != 0)
-	 In.Limit(JunkSize);
-      else if (DownloadSize != 0)
-	 In.Limit(DownloadSize);
+      if (Req.JunkSize != 0)
+	 In.Limit(Req.JunkSize);
+      else if (Req.DownloadSize != 0)
+	 In.Limit(Req.DownloadSize);
       else if (Persistent == false)
 	 In.Limit(-1);
       
@@ -640,19 +640,19 @@ bool HttpServerState::RunData(FileFd * const File)
 	 In.Limit(-1);
 	 return !_error->PendingError();
       }
-      while (Go(true, File) == true);
+      while (Go(true, Req) == true);
    }
 
-   return Owner->Flush() && !_error->PendingError();
+   return Flush(&Req.File) && !_error->PendingError();
 }
 									/*}}}*/
-bool HttpServerState::RunDataToDevNull()				/*{{{*/
+bool HttpServerState::RunDataToDevNull(RequestState &Req)		/*{{{*/
 {
    // no need to clean up if we discard the connection anyhow
    if (Persistent == false)
       return true;
-   FileFd DevNull("/dev/null", FileFd::WriteOnly);
-   return RunData(&DevNull);
+   Req.File.Open("/dev/null", FileFd::WriteOnly);
+   return RunData(Req);
 }
 									/*}}}*/
 bool HttpServerState::ReadHeaderLines(std::string &Data)		/*{{{*/
@@ -660,9 +660,9 @@ bool HttpServerState::ReadHeaderLines(std::string &Data)		/*{{{*/
    return In.WriteTillEl(Data);
 }
 									/*}}}*/
-bool HttpServerState::LoadNextResponse(bool const ToFile, FileFd * const File)/*{{{*/
+bool HttpServerState::LoadNextResponse(bool const ToFile, RequestState &Req)/*{{{*/
 {
-   return Go(ToFile, File);
+   return Go(ToFile, Req);
 }
 									/*}}}*/
 bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
@@ -682,11 +682,10 @@ bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
    return true;
 }
 									/*}}}*/
-void HttpServerState::Reset(bool const Everything)			/*{{{*/
+void HttpServerState::Reset()						/*{{{*/
 {
-   ServerState::Reset(Everything);
-   if (Everything)
-      ServerFd = -1;
+   ServerState::Reset();
+   ServerFd = -1;
 }
 									/*}}}*/
 
@@ -696,22 +695,22 @@ APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 }
 									/*}}}*/
 // HttpServerState::Die - The server has closed the connection.		/*{{{*/
-bool HttpServerState::Die(FileFd * const File)
+bool HttpServerState::Die(RequestState &Req)
 {
    unsigned int LErrno = errno;
 
    // Dump the buffer to the file
-   if (State == ServerState::Data)
+   if (Req.State == RequestState::Data)
    {
-      if (File == nullptr)
+      if (Req.File.IsOpen() == false)
 	 return true;
       // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
       // can't be set
-      if (File->Name() != "/dev/null")
-	 SetNonBlock(File->Fd(),false);
+      if (Req.File.Name() != "/dev/null")
+	 SetNonBlock(Req.File.Fd(),false);
       while (In.WriteSpace() == true)
       {
-	 if (In.Write(File->Fd()) == false)
+	 if (In.Write(Req.File.Fd()) == false)
 	    return _error->Errno("write",_("Error writing to the file"));
 
 	 // Done
@@ -721,7 +720,7 @@ bool HttpServerState::Die(FileFd * const File)
    }
 
    // See if this is because the server finished the data stream
-   if (In.IsLimit() == false && State != HttpServerState::Header &&
+   if (In.IsLimit() == false && Req.State != RequestState::Header &&
        Persistent == true)
    {
       Close();
@@ -752,7 +751,7 @@ bool HttpServerState::Die(FileFd * const File)
    into the file */
 bool HttpServerState::Flush(FileFd * const File)
 {
-   if (File != NULL)
+   if (File != nullptr)
    {
       // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
       // can't be set
@@ -779,7 +778,7 @@ bool HttpServerState::Flush(FileFd * const File)
 // ---------------------------------------------------------------------
 /* This runs the select loop over the server FDs, Output file FDs and
    stdin. */
-bool HttpServerState::Go(bool ToFile, FileFd * const File)
+bool HttpServerState::Go(bool ToFile, RequestState &Req)
 {
    // Server has closed the connection
    if (ServerFd == -1 && (In.WriteSpace() == false || 
@@ -800,8 +799,8 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
    
    // Add the file
    int FileFD = -1;
-   if (File != NULL)
-      FileFD = File->Fd();
+   if (Req.File.IsOpen())
+      FileFD = Req.File.Fd();
    
    if (In.WriteSpace() == true && ToFile == true && FileFD != -1)
       FD_SET(FileFD,&wfds);
@@ -830,7 +829,7 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
    if (Res == 0)
    {
       _error->Error(_("Connection timed out"));
-      return Die(File);
+      return Die(Req);
    }
    
    // Handle server IO
@@ -838,14 +837,14 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
    {
       errno = 0;
       if (In.Read(ServerFd) == false)
-	 return Die(File);
+	 return Die(Req);
    }
 	 
    if (ServerFd != -1 && FD_ISSET(ServerFd,&wfds))
    {
       errno = 0;
       if (Out.Write(ServerFd) == false)
-	 return Die(File);
+	 return Die(Req);
    }
 
    // Send data to the file
@@ -855,11 +854,11 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
 	 return _error->Errno("write",_("Error writing to output file"));
    }
 
-   if (MaximumSize > 0 && File && File->Tell() > MaximumSize)
+   if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
    {
       Owner->SetFailReason("MaximumSizeExceeded");
       return _error->Error("Writing more data than expected (%llu > %llu)",
-                           File->Tell(), MaximumSize);
+                           Req.File.Tell(), Req.MaximumSize);
    }
 
    // Handle commands from APT
@@ -978,32 +977,28 @@ void HttpMethod::RotateDNS()						/*{{{*/
    ::RotateDNS();
 }
 									/*}}}*/
-ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res)/*{{{*/
+ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)/*{{{*/
 {
-   auto ret = ServerMethod::DealWithHeaders(Res);
+   auto ret = ServerMethod::DealWithHeaders(Res, Req);
    if (ret != ServerMethod::FILE_IS_OPEN)
       return ret;
-
-   // Open the file
-   delete File;
-   File = new FileFd(Queue->DestFile,FileFd::WriteAny);
-   if (_error->PendingError() == true)
+   if (Req.File.Open(Queue->DestFile, FileFd::WriteAny) == false)
       return ERROR_NOT_FROM_SERVER;
 
    FailFile = Queue->DestFile;
    FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
-   FailFd = File->Fd();
-   FailTime = Server->Date;
+   FailFd = Req.File.Fd();
+   FailTime = Req.Date;
 
-   if (Server->InitHashes(Queue->ExpectedHashes) == false || Server->AddPartialFileToHashes(*File) == false)
+   if (Server->InitHashes(Queue->ExpectedHashes) == false || Req.AddPartialFileToHashes(Req.File) == false)
    {
       _error->Errno("read",_("Problem hashing file"));
       return ERROR_NOT_FROM_SERVER;
    }
-   if (Server->StartPos > 0)
-      Res.ResumePoint = Server->StartPos;
+   if (Req.StartPos > 0)
+      Res.ResumePoint = Req.StartPos;
 
-   SetNonBlock(File->Fd(),true);
+   SetNonBlock(Req.File.Fd(),true);
    return FILE_IS_OPEN;
 }
 									/*}}}*/
@@ -1015,7 +1010,5 @@ HttpMethod::HttpMethod(std::string &&pProg) : ServerMethod(pProg.c_str(), "1.2",
    auto const plus = Binary.find('+');
    if (plus != std::string::npos)
       addName = Binary.substr(0, plus);
-   File = 0;
-   Server = 0;
 }
 									/*}}}*/

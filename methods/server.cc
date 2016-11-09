@@ -43,12 +43,10 @@ time_t ServerMethod::FailTime = 0;
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
    parse error occurred */
-ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
+ServerState::RunHeadersResult ServerState::RunHeaders(RequestState &Req,
                                                       const std::string &Uri)
 {
-   Reset(false);
    Owner->Status(_("Waiting for headers"));
-
    do
    {
       string Data;
@@ -57,35 +55,32 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
 
       if (Owner->Debug == true)
 	 clog << "Answer for: " << Uri << endl << Data;
-      
+
       for (string::const_iterator I = Data.begin(); I < Data.end(); ++I)
       {
 	 string::const_iterator J = I;
 	 for (; J != Data.end() && *J != '\n' && *J != '\r'; ++J);
-	 if (HeaderLine(string(I,J)) == false)
+	 if (Req.HeaderLine(string(I,J)) == false)
 	    return RUN_HEADERS_PARSE_ERROR;
 	 I = J;
       }
 
       // 100 Continue is a Nop...
-      if (Result == 100)
+      if (Req.Result == 100)
 	 continue;
       
       // Tidy up the connection persistence state.
-      if (Encoding == Closes && HaveContent == true)
+      if (Req.Encoding == RequestState::Closes && Req.HaveContent == true)
 	 Persistent = false;
       
       return RUN_HEADERS_OK;
    }
-   while (LoadNextResponse(false, File) == true);
+   while (LoadNextResponse(false, Req) == true);
    
    return RUN_HEADERS_IO_ERROR;
 }
 									/*}}}*/
-// ServerState::HeaderLine - Process a header line			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool ServerState::HeaderLine(string Line)
+bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 {
    if (Line.empty() == true)
       return true;
@@ -116,18 +111,18 @@ bool ServerState::HeaderLine(string Line)
       /* Check the HTTP response header to get the default persistence
          state. */
       if (Major < 1)
-	 Persistent = false;
+	 Server->Persistent = false;
       else
       {
 	 if (Major == 1 && Minor == 0)
 	 {
-	    Persistent = false;
+	    Server->Persistent = false;
 	 }
 	 else
 	 {
-	    Persistent = true;
-	    if (PipelineAllowed)
-	       Pipeline = true;
+	    Server->Persistent = true;
+	    if (Server->PipelineAllowed)
+	       Server->Pipeline = true;
 	 }
       }
 
@@ -209,16 +204,16 @@ bool ServerState::HeaderLine(string Line)
    {
       if (stringcasecmp(Val,"close") == 0)
       {
-	 Persistent = false;
-	 Pipeline = false;
+	 Server->Persistent = false;
+	 Server->Pipeline = false;
 	 /* Some servers send error pages (as they are dynamically generated)
 	    for simplicity via a connection close instead of e.g. chunked,
 	    so assuming an always closing server only if we get a file + close */
 	 if (Result >= 200 && Result < 300)
-	    PipelineAllowed = false;
+	    Server->PipelineAllowed = false;
       }
       else if (stringcasecmp(Val,"keep-alive") == 0)
-	 Persistent = true;
+	 Server->Persistent = true;
       return true;
    }
 
@@ -240,7 +235,7 @@ bool ServerState::HeaderLine(string Line)
       std::string ranges = ',' + Val + ',';
       ranges.erase(std::remove(ranges.begin(), ranges.end(), ' '), ranges.end());
       if (ranges.find(",bytes,") == std::string::npos)
-	 RangesAllowed = false;
+	 Server->RangesAllowed = false;
       return true;
    }
 
@@ -249,28 +244,23 @@ bool ServerState::HeaderLine(string Line)
 									/*}}}*/
 // ServerState::ServerState - Constructor				/*{{{*/
 ServerState::ServerState(URI Srv, ServerMethod *Owner) :
-   DownloadSize(0), ServerName(Srv), TimeOut(120), Owner(Owner)
+   ServerName(Srv), TimeOut(120), Owner(Owner)
 {
    Reset();
 }
 									/*}}}*/
-bool ServerState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
+bool RequestState::AddPartialFileToHashes(FileFd &File)			/*{{{*/
 {
    File.Truncate(StartPos);
-   return GetHashes()->AddFD(File, StartPos);
+   return Server->GetHashes()->AddFD(File, StartPos);
 }
 									/*}}}*/
-void ServerState::Reset(bool const Everything)				/*{{{*/
+void ServerState::Reset()						/*{{{*/
 {
-   Major = 0; Minor = 0; Result = 0; Code[0] = '\0';
-   TotalFileSize = 0; JunkSize = 0; StartPos = 0;
-   Encoding = Closes; time(&Date); HaveContent = false;
-   State = Header; MaximumSize = 0;
-   if (Everything)
-   {
-      Persistent = false; Pipeline = false; PipelineAllowed = true;
-      RangesAllowed = true;
-   }
+   Persistent = false;
+   Pipeline = false;
+   PipelineAllowed = true;
+   RangesAllowed = true;
 }
 									/*}}}*/
 
@@ -280,10 +270,10 @@ void ServerState::Reset(bool const Everything)				/*{{{*/
    to do. Returns DealWithHeadersResult (see http.h for details).
  */
 ServerMethod::DealWithHeadersResult
-ServerMethod::DealWithHeaders(FetchResult &Res)
+ServerMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 {
    // Not Modified
-   if (Server->Result == 304)
+   if (Req.Result == 304)
    {
       RemoveFile("server", Queue->DestFile);
       Res.IMSHit = true;
@@ -300,26 +290,26 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
     * redirect.  Pass on those codes so the error handling kicks in.
     */
    if (AllowRedirect
-       && (Server->Result > 300 && Server->Result < 400)
-       && (Server->Result != 300       // Multiple Choices
-           && Server->Result != 304    // Not Modified
-           && Server->Result != 306))  // (Not part of HTTP/1.1, reserved)
+       && (Req.Result > 300 && Req.Result < 400)
+       && (Req.Result != 300       // Multiple Choices
+           && Req.Result != 304    // Not Modified
+           && Req.Result != 306))  // (Not part of HTTP/1.1, reserved)
    {
-      if (Server->Location.empty() == true)
+      if (Req.Location.empty() == true)
 	 ;
-      else if (Server->Location[0] == '/' && Queue->Uri.empty() == false)
+      else if (Req.Location[0] == '/' && Queue->Uri.empty() == false)
       {
 	 URI Uri = Queue->Uri;
 	 if (Uri.Host.empty() == false)
             NextURI = URI::SiteOnly(Uri);
 	 else
 	    NextURI.clear();
-	 NextURI.append(DeQuoteString(Server->Location));
+	 NextURI.append(DeQuoteString(Req.Location));
 	 if (Queue->Uri == NextURI)
 	 {
 	    SetFailReason("RedirectionLoop");
 	    _error->Error("Redirection loop encountered");
-	    if (Server->HaveContent == true)
+	    if (Req.HaveContent == true)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -327,12 +317,12 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       }
       else
       {
-	 NextURI = DeQuoteString(Server->Location);
+	 NextURI = DeQuoteString(Req.Location);
 	 URI tmpURI = NextURI;
 	 if (tmpURI.Access.find('+') != std::string::npos)
 	 {
 	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
-	    if (Server->HaveContent == true)
+	    if (Req.HaveContent == true)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -358,7 +348,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 {
 	    SetFailReason("RedirectionLoop");
 	    _error->Error("Redirection loop encountered");
-	    if (Server->HaveContent == true)
+	    if (Req.HaveContent == true)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -390,7 +380,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       /* else pass through for error message */
    }
    // retry after an invalid range response without partial data
-   else if (Server->Result == 416)
+   else if (Req.Result == 416)
    {
       struct stat SBuf;
       if (stat(Queue->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
@@ -400,25 +390,25 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 	 {
 	    Hashes resultHashes(Queue->ExpectedHashes);
 	    FileFd file(Queue->DestFile, FileFd::ReadOnly);
-	    Server->TotalFileSize = file.FileSize();
-	    Server->Date = file.ModificationTime();
+	    Req.TotalFileSize = file.FileSize();
+	    Req.Date = file.ModificationTime();
 	    resultHashes.AddFD(file);
 	    HashStringList const hashList = resultHashes.GetHashStringList();
 	    partialHit = (Queue->ExpectedHashes == hashList);
 	 }
-	 else if ((unsigned long long)SBuf.st_size == Server->TotalFileSize)
+	 else if ((unsigned long long)SBuf.st_size == Req.TotalFileSize)
 	    partialHit = true;
 	 if (partialHit == true)
 	 {
 	    // the file is completely downloaded, but was not moved
-	    if (Server->HaveContent == true)
+	    if (Req.HaveContent == true)
 	    {
 	       // nuke the sent error page
-	       Server->RunDataToDevNull();
-	       Server->HaveContent = false;
+	       Server->RunDataToDevNull(Req);
+	       Req.HaveContent = false;
 	    }
-	    Server->StartPos = Server->TotalFileSize;
-	    Server->Result = 200;
+	    Req.StartPos = Req.TotalFileSize;
+	    Req.Result = 200;
 	 }
 	 else if (RemoveFile("server", Queue->DestFile))
 	 {
@@ -430,23 +420,23 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 
    /* We have a reply we don't handle. This should indicate a perm server
       failure */
-   if (Server->Result < 200 || Server->Result >= 300)
+   if (Req.Result < 200 || Req.Result >= 300)
    {
       if (_error->PendingError() == false)
       {
 	 std::string err;
-	 strprintf(err, "HttpError%u", Server->Result);
+	 strprintf(err, "HttpError%u", Req.Result);
 	 SetFailReason(err);
-	 _error->Error("%u %s", Server->Result, Server->Code);
+	 _error->Error("%u %s", Req.Result, Req.Code);
       }
-      if (Server->HaveContent == true)
+      if (Req.HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
    }
 
    // This is some sort of 2xx 'data follows' reply
-   Res.LastModified = Server->Date;
-   Res.Size = Server->TotalFileSize;
+   Res.LastModified = Req.Date;
+   Res.Size = Req.TotalFileSize;
    return FILE_IS_OPEN;
 }
 									/*}}}*/
@@ -605,9 +595,10 @@ int ServerMethod::Loop()
 
       // Fill the pipeline.
       Fetch(0);
-      
+
+      RequestState Req(this, Server.get());
       // Fetch the next URL header data from the server.
-      switch (Server->RunHeaders(File, Queue->Uri))
+      switch (Server->RunHeaders(Req, Queue->Uri))
       {
 	 case ServerState::RUN_HEADERS_OK:
 	 break;
@@ -646,7 +637,7 @@ int ServerMethod::Loop()
       // Decide what to do.
       FetchResult Res;
       Res.Filename = Queue->DestFile;
-      switch (DealWithHeaders(Res))
+      switch (DealWithHeaders(Res, Req))
       {
 	 // Ok, the file is Open
 	 case FILE_IS_OPEN:
@@ -660,24 +651,23 @@ int ServerMethod::Loop()
             // we could do "Server->MaximumSize = Queue->MaximumSize" here
             // but that would break the clever pipeline messup detection
             // so instead we use the size of the biggest item in the queue
-            Server->MaximumSize = FindMaximumObjectSizeInQueue();
+            Req.MaximumSize = FindMaximumObjectSizeInQueue();
 
-            if (Server->HaveContent)
-	       Result = Server->RunData(File);
+            if (Req.HaveContent)
+	       Result = Server->RunData(Req);
 
 	    /* If the server is sending back sizeless responses then fill in
 	       the size now */
 	    if (Res.Size == 0)
-	       Res.Size = File->Size();
-	    
+	       Res.Size = Req.File.Size();
+
 	    // Close the file, destroy the FD object and timestamp it
 	    FailFd = -1;
-	    delete File;
-	    File = 0;
-	    
+	    Req.File.Close();
+
 	    // Timestamp
 	    struct timeval times[2];
-	    times[0].tv_sec = times[1].tv_sec = Server->Date;
+	    times[0].tv_sec = times[1].tv_sec = Req.Date;
 	    times[0].tv_usec = times[1].tv_usec = 0;
 	    utimes(Queue->DestFile.c_str(), times);
 
@@ -758,9 +748,6 @@ int ServerMethod::Loop()
 	 // Hard internal error, kill the connection and fail
 	 case ERROR_NOT_FROM_SERVER:
 	 {
-	    delete File;
-	    File = 0;
-
 	    Fail();
 	    RotateDNS();
 	    Server->Close();
@@ -770,7 +757,7 @@ int ServerMethod::Loop()
 	 // We need to flush the data, the header is like a 404 w/ error text
 	 case ERROR_WITH_CONTENT_PAGE:
 	 {
-	    Server->RunDataToDevNull();
+	    Server->RunDataToDevNull(Req);
 	    Fail();
 	    break;
 	 }
@@ -779,8 +766,8 @@ int ServerMethod::Loop()
 	 case TRY_AGAIN_OR_REDIRECT:
 	 {
 	    // Clear rest of response if there is content
-	    if (Server->HaveContent)
-	       Server->RunDataToDevNull();
+	    if (Req.HaveContent)
+	       Server->RunDataToDevNull(Req);
 	    Redirect(NextURI);
 	    break;
 	 }
@@ -805,7 +792,7 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 }
 									/*}}}*/
 ServerMethod::ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
+   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }

@@ -99,23 +99,23 @@ struct HttpServerState: public ServerState
 
    protected:
    virtual bool ReadHeaderLines(std::string &Data) APT_OVERRIDE;
-   virtual bool LoadNextResponse(bool const ToFile, FileFd * const File) APT_OVERRIDE;
+   virtual bool LoadNextResponse(bool const ToFile, RequestState &Req) APT_OVERRIDE;
    virtual bool WriteResponse(std::string const &Data) APT_OVERRIDE;
 
    public:
-   virtual void Reset(bool const Everything = true) APT_OVERRIDE;
+   virtual void Reset() APT_OVERRIDE;
 
-   virtual bool RunData(FileFd * const File) APT_OVERRIDE;
-   virtual bool RunDataToDevNull() APT_OVERRIDE;
+   virtual bool RunData(RequestState &Req) APT_OVERRIDE;
+   virtual bool RunDataToDevNull(RequestState &Req) APT_OVERRIDE;
 
    virtual bool Open() APT_OVERRIDE;
    virtual bool IsOpen() APT_OVERRIDE;
    virtual bool Close() APT_OVERRIDE;
    virtual bool InitHashes(HashStringList const &ExpectedHashes) APT_OVERRIDE;
    virtual Hashes * GetHashes() APT_OVERRIDE;
-   virtual bool Die(FileFd * const File) APT_OVERRIDE;
+   virtual bool Die(RequestState &Req) APT_OVERRIDE;
    virtual bool Flush(FileFd * const File) APT_OVERRIDE;
-   virtual bool Go(bool ToFile, FileFd * const File) APT_OVERRIDE;
+   virtual bool Go(bool ToFile, RequestState &Req) APT_OVERRIDE;
 
    HttpServerState(URI Srv, HttpMethod *Owner);
    virtual ~HttpServerState() {Close();};
@@ -128,7 +128,7 @@ class HttpMethod : public ServerMethod
 
    virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
    virtual void RotateDNS() APT_OVERRIDE;
-   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res) APT_OVERRIDE;
+   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res, RequestState &Req) APT_OVERRIDE;
 
    protected:
    std::string AutoDetectProxyCmd;

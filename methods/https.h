@@ -32,23 +32,23 @@ class HttpsServerState : public ServerState
 
    protected:
    virtual bool ReadHeaderLines(std::string &/*Data*/) APT_OVERRIDE { return false; }
-   virtual bool LoadNextResponse(bool const /*ToFile*/, FileFd * const /*File*/) APT_OVERRIDE { return false; }
+   virtual bool LoadNextResponse(bool const /*ToFile*/, RequestState &/*Req*/) APT_OVERRIDE { return false; }
 
    public:
    virtual bool WriteResponse(std::string const &/*Data*/) APT_OVERRIDE { return false; }
 
    /** \brief Transfer the data from the socket */
-   virtual bool RunData(FileFd * const /*File*/) APT_OVERRIDE { return false; }
-   virtual bool RunDataToDevNull() APT_OVERRIDE { return false; }
+   virtual bool RunData(RequestState &) APT_OVERRIDE { return false; }
+   virtual bool RunDataToDevNull(RequestState &) APT_OVERRIDE { return false; }
 
    virtual bool Open() APT_OVERRIDE { return false; }
    virtual bool IsOpen() APT_OVERRIDE { return false; }
    virtual bool Close() APT_OVERRIDE { return false; }
    virtual bool InitHashes(HashStringList const &ExpectedHashes) APT_OVERRIDE;
    virtual Hashes * GetHashes() APT_OVERRIDE;
-   virtual bool Die(FileFd * const /*File*/) APT_OVERRIDE { return false; }
+   virtual bool Die(RequestState &/*Req*/) APT_OVERRIDE { return false; }
    virtual bool Flush(FileFd * const /*File*/) APT_OVERRIDE { return false; }
-   virtual bool Go(bool /*ToFile*/, FileFd * const /*File*/) APT_OVERRIDE { return false; }
+   virtual bool Go(bool /*ToFile*/, RequestState &/*Req*/) APT_OVERRIDE { return false; }
 
    HttpsServerState(URI Srv, HttpsMethod *Owner);
    virtual ~HttpsServerState() {Close();};
