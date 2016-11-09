@@ -1,0 +1,70 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'stable' 'build-essential' 'i386' '1'
+insertpackage 'stable' 'build-depends' 'i386' '1'
+insertpackage 'stable' 'build-depends-arch' 'i386' '1'
+insertpackage 'stable' 'build-depends-indep' 'i386' '1'
+insertinstalledpackage 'build-conflicts' 'i386' '1'
+insertinstalledpackage 'build-conflicts-arch' 'i386' '1'
+insertinstalledpackage 'build-conflicts-indep' 'i386' '1'
+
+setupaptarchive
+
+cat > foobar.dsc <<EOF
+Format: 3.0 (native)
+Source: foobar
+Binary: foobar
+Architecture: all
+Version: 1
+Maintainer: Joe Sixpack <joe@example.org>
+Build-Depends: build-depends (>= 1)
+Build-Depends-Indep: build-depends-indep (>= 1)
+Build-Depends-Arch: build-depends-arch (>= 1)
+Build-Conflicts: build-conflicts (>= 1)
+Build-Conflicts-Indep: build-conflicts-indep (>= 1)
+Build-Conflicts-Arch: build-conflicts-arch (>= 1)
+Standards-Version: 3.9.8
+EOF
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  build-conflicts build-conflicts-arch build-conflicts-indep
+The following NEW packages will be installed:
+  build-depends build-depends-arch build-depends-indep build-essential
+0 upgraded, 4 newly installed, 3 to remove and 0 not upgraded.
+Remv build-conflicts [1]
+Remv build-conflicts-arch [1]
+Remv build-conflicts-indep [1]
+Inst build-depends (1 stable [i386])
+Inst build-depends-arch (1 stable [i386])
+Inst build-depends-indep (1 stable [i386])
+Inst build-essential (1 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-depends-arch (1 stable [i386])
+Conf build-depends-indep (1 stable [i386])
+Conf build-essential (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc
+
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  build-conflicts build-conflicts-arch
+The following NEW packages will be installed:
+  build-depends build-depends-arch build-essential
+0 upgraded, 3 newly installed, 2 to remove and 0 not upgraded.
+Remv build-conflicts [1]
+Remv build-conflicts-arch [1]
+Inst build-depends (1 stable [i386])
+Inst build-depends-arch (1 stable [i386])
+Inst build-essential (1 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-depends-arch (1 stable [i386])
+Conf build-essential (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc --arch-only
