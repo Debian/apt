@@ -748,6 +748,18 @@ APT_CONST bool pkgAcquire::Item::IsTrusted() const			/*{{{*/
 // ---------------------------------------------------------------------
 /* We return to an idle state if there are still other queues that could
    fetch this object */
+static void formatHashsum(std::ostream &out, HashString const &hs)
+{
+   auto const type = hs.HashType();
+   if (type == "Checksum-FileSize")
+      out << " - Filesize";
+   else
+      out << " - " << type;
+   out << ':' << hs.HashValue();
+   if (hs.usable() == false)
+      out << " [weak]";
+   out << std::endl;
+}
 void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
    if (QueueCounter <= 1)
@@ -819,12 +831,7 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	 {
 	    out << "Hashes of expected file:" << std::endl;
 	    for (auto const &hs: ExpectedHashes)
-	    {
-	       out << " - " << hs.toStr();
-	       if (hs.usable() == false)
-		  out << " [weak]";
-	       out << std::endl;
-	    }
+	       formatHashsum(out, hs);
 	 }
 	 if (failreason == HASHSUM_MISMATCH)
 	 {
@@ -834,16 +841,12 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
 	       std::string const tagname = std::string(*type) + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
 	       if (hashsum.empty() == false)
-	       {
-		  auto const hs = HashString(*type, hashsum);
-		  out << " - " << hs.toStr();
-		  if (hs.usable() == false)
-		     out << " [weak]";
-		  out << std::endl;
-	       }
+		  formatHashsum(out, HashString(*type, hashsum));
 	    }
-	    out << "Last modification reported: " << LookupTag(Message, "Last-Modified", "<none>") << std::endl;
 	 }
+	 auto const lastmod = LookupTag(Message, "Last-Modified", "");
+	 if (lastmod.empty() == false)
+	    out << "Last modification reported: " << lastmod << std::endl;
       }
       ErrorText = out.str();
    }
