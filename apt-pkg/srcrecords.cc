@@ -139,7 +139,9 @@ const char *pkgSrcRecords::Parser::BuildDepType(unsigned char const &Type)
    const char *fields[] = {"Build-Depends",
 			   "Build-Depends-Indep",
 			   "Build-Conflicts",
-			   "Build-Conflicts-Indep"};
+			   "Build-Conflicts-Indep",
+			   "Build-Depends-Arch",
+			   "Build-Conflicts-Arch"};
    if (unlikely(Type >= sizeof(fields)/sizeof(fields[0])))
       return "";
    return fields[Type];

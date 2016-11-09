@@ -56,7 +56,8 @@ APT_IGNORE_DEPRECATED_POP
       public:
 
       enum BuildDep {BuildDepend=0x0,BuildDependIndep=0x1,
-	             BuildConflict=0x2,BuildConflictIndep=0x3};
+	             BuildConflict=0x2,BuildConflictIndep=0x3,
+	             BuildDependArch=0x4,BuildConflictArch=0x5};
 
       struct BuildDepRec 
       {

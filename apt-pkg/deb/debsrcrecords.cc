@@ -103,14 +103,16 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
    unsigned int I;
    const char *Start, *Stop;
    BuildDepRec rec;
-   const char *fields[] = {"Build-Depends", 
+   const char *fields[] = {"Build-Depends",
                            "Build-Depends-Indep",
 			   "Build-Conflicts",
-			   "Build-Conflicts-Indep"};
+			   "Build-Conflicts-Indep",
+			   "Build-Depends-Arch",
+			   "Build-Conflicts-Arch"};
 
    BuildDeps.clear();
 
-   for (I = 0; I < 4; I++) 
+   for (I = 0; I < 6; I++)
    {
       if (ArchOnly && (I == 1 || I == 3))
          continue;

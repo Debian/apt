@@ -620,7 +620,9 @@ static void WriteBuildDependencyPackage(std::ostringstream &buildDepsPkgFile,
    for (auto const &dep: Dependencies)
    {
       std::string * type;
-      if (dep.Type == pkgSrcRecords::Parser::BuildConflict || dep.Type == pkgSrcRecords::Parser::BuildConflictIndep)
+      if (dep.Type == pkgSrcRecords::Parser::BuildConflict ||
+		  dep.Type == pkgSrcRecords::Parser::BuildConflictIndep ||
+		  dep.Type == pkgSrcRecords::Parser::BuildConflictArch)
 	 type = &conflicts;
       else
 	 type = &depends;

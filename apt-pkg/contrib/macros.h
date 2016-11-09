@@ -165,7 +165,7 @@
 // See also buildlib/libversion.mak
 #define APT_PKG_MAJOR 5
 #define APT_PKG_MINOR 0
-#define APT_PKG_RELEASE 0
+#define APT_PKG_RELEASE 1
 #define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 
 #endif
