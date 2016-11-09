@@ -51,3 +51,9 @@ SLIBS = -lapt-pkg -lpthread
 LIB_MAKES = apt-pkg/makefile
 SOURCE = aptwebserver.cc
 include $(PROGRAM_H)
+
+# Program for testing privileges
+PROGRAM=aptdropprivs
+SLIBS = -lapt-pkg
+SOURCE = aptdropprivs.cc
+include $(PROGRAM_H)

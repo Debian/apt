@@ -186,7 +186,7 @@ aptmark() { runapt apt-mark "$@"; }
 aptsortpkgs() { runapt apt-sortpkgs "$@"; }
 apt() { runapt apt "$@"; }
 apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
-aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
+aptwebserver() { runapt "${APTTESTHELPERSBINDIR}/aptwebserver" "$@"; }
 aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
@@ -280,7 +280,7 @@ setupenvironment() {
 	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}"
         METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}"
         APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}"
-        APTWEBSERVERBINDIR="${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}"
+        APTTESTHELPERSBINDIR="${APT_INTEGRATION_TESTS_HELPERS_BIN_DIR:-"${BUILDDIRECTORY}"}"
         APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}"
 	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/apt-dump-solver"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
@@ -1212,7 +1212,7 @@ changetowebserver() {
 	else
 		shift
 	fi
-	if test -x "${APTWEBSERVERBINDIR}/aptwebserver"; then
+	if test -x "${APTTESTHELPERSBINDIR}/aptwebserver"; then
 		cd aptarchive
 		local LOG="webserver.log"
 		if ! aptwebserver --port 0 -o aptwebserver::fork=1 -o aptwebserver::portfile='aptwebserver.port' "$@" >$LOG 2>&1 ; then
