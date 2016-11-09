@@ -3051,6 +3051,26 @@ bool DropPrivileges()							/*{{{*/
 	 return _error->Error("Could restore a uid to root, privilege dropping did not work");
    }
 
+   if (_config->FindB("APT::Sandbox::ResetEnvironment", true))
+   {
+      setenv("HOME", pw->pw_dir, 1);
+      setenv("USER", pw->pw_name, 1);
+      setenv("USERNAME", pw->pw_name, 1);
+      setenv("LOGNAME", pw->pw_name, 1);
+      auto const shell = flNotDir(pw->pw_shell);
+      if (shell == "false" || shell == "nologin")
+	 setenv("SHELL", "/bin/sh", 1);
+      else
+	 setenv("SHELL", pw->pw_shell, 1);
+      auto const tmpdir = getenv("TMPDIR");
+      if (tmpdir != nullptr)
+      {
+	 auto const ourtmpdir = GetTempDir();
+	 if (ourtmpdir != tmpdir)
+	    setenv("TMPDIR", ourtmpdir.c_str(), 1);
+      }
+   }
+
    return true;
 }
 									/*}}}*/

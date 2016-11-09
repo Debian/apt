@@ -6,6 +6,8 @@ add_executable(extract-control extract-control.cc)
 target_link_libraries(extract-control apt-pkg apt-inst)
 add_executable(aptwebserver aptwebserver.cc)
 target_link_libraries(aptwebserver apt-pkg  ${CMAKE_THREAD_LIBS_INIT})
+add_executable(aptdropprivs aptdropprivs.cc)
+target_link_libraries(aptdropprivs apt-pkg)
 add_executable(test_fileutl test_fileutl.cc)
 target_link_libraries(test_fileutl apt-pkg)
 
