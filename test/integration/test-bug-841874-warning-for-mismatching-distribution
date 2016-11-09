@@ -1,0 +1,38 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'testing' 'foo' 'all' '1'
+
+getcodenamefromsuite() { echo -n 'stretch'; }
+setupaptarchive --no-update
+APTARCHIVE="$(readlink -f './aptarchive')"
+ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/stretch"
+ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/zurg"
+
+testfailure apt show foo
+testsuccess apt update
+testsuccess apt show foo
+
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e 's#testing#stretch#g' rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
+testsuccess apt show foo
+
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e 's#stretch#zurg#g' rootdir/etc/apt/sources.list.d/*
+testwarningmsg "W: Conflicting distribution: file:$APTARCHIVE zurg InRelease (expected zurg but got stretch)" apt update
+testsuccess apt show foo
+
+# check that 'foo/bar' is rewritten to 'foo' while we are at it
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e 's#zurg#stretch/updates#g' rootdir/etc/apt/sources.list.d/*
+testfailure apt update
+testfailure apt show foo
+ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/stretch/updates"
+testsuccess apt update
+testsuccess apt show foo

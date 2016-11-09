@@ -65,8 +65,7 @@ APT_PURE bool metaIndex::CheckDist(string const &MaybeDist) const
 }
 APT_PURE std::string metaIndex::GetExpectedDist() const
 {
-   // TODO: Used to be an explicit value set in the constructor
-   return "";
+   return Dist;
 }
 									/*}}}*/
 APT_PURE metaIndex::checkSum *metaIndex::Lookup(string const &MetaKey) const /*{{{*/
