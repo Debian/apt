@@ -1024,7 +1024,7 @@ apt (1.1~exp13) experimental; urgency=medium
   * Fix select timeout to be 50msec instead of 0.5msec (Closes: #799857)
 
   [ David Kalnischkies ]
-  * M-A: allowed pkgs of unconfigured archs do not statisfy :any
+  * M-A: allowed pkgs of unconfigured archs do not satisfy :any
   * implement dpkgs vision of interpreting pkg:<arch> dependencies
   * add Source-Version field for EDSP
   * fix insecure use of /tmp in EDSP solver 'dump' (Closes: 795600)
@@ -3306,7 +3306,7 @@ apt (0.9.7.3) unstable; urgency=low
     - handle :all and :native correctly as architectures again
       in the commandline parsing (regression in 0.9.7)
   * apt-pkg/packagemanager.cc:
-    - do not segfault if nothing can be configured to statisfy
+    - do not segfault if nothing can be configured to satisfy
       a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
   * apt-pkg/contrib/mmap.cc:
     - trigger the usage of the fallback code for kfreebsd also in the
@@ -4063,7 +4063,7 @@ apt (0.8.16~exp7) experimental; urgency=low
     - load the dpkg base arguments only one time and reuse them later
   * cmdline/apt-get.cc:
     - follow Provides in the evaluation of saving candidates, too, for
-      statisfying garbage package dependencies (Closes: #640590)
+      satisfying garbage package dependencies (Closes: #640590)
   * apt-pkg/algorithms.cc:
     - if a package is garbage, don't try to save it with FixByInstall
   * apt-pkg/deb/debsrcrecords.cc:
@@ -4294,7 +4294,7 @@ apt (0.8.15.9) unstable; urgency=low
     - load the dpkg base arguments only one time and reuse them later
   * cmdline/apt-get.cc:
     - follow Provides in the evaluation of saving candidates, too, for
-      statisfying garbage package dependencies (Closes: #640590)
+      satisfying garbage package dependencies (Closes: #640590)
   * apt-pkg/algorithms.cc:
     - if a package is garbage, don't try to save it with FixByInstall
   * apt-pkg/init.cc:
@@ -5225,7 +5225,7 @@ apt (0.8.9) unstable; urgency=low
       consider it as a candidate for FixByInstall
   * apt-pkg/depcache.cc:
     - don't install previously not installed providers in a try
-      to statisfy a "Breaks: provides" dependency by upgrade
+      to satisfy a "Breaks: provides" dependency by upgrade
   * cmdline/acqprogress.cc:
     - don't ask the user for media change if quiet >= 2, stdout is not
       a tty and assume-yes, force-yes or trivial-only option is set to

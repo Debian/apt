@@ -72,7 +72,7 @@ namespace EDSP								/*{{{*/
 	 *  it doesn't make sense from an APT resolver point of view like versions
 	 *  with a negative pin to enable the solver to propose even that as a
 	 *  solution or at least to be able to give a hint what can be done to
-	 *  statisfy a request.
+	 *  satisfy a request.
 	 *
 	 *  \param Cache is the known package universe
 	 *  \param output is written to this "file"
