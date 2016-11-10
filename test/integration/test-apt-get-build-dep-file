@@ -141,6 +141,14 @@ cd downloaded
 testsuccess aptget build-dep --simulate ../foo-1.0
 testsuccess aptget build-dep --simulate "$(readlink -f ../foo-1.0)"
 cd ..
+cd foo-1.0
+testsuccess aptget build-dep --simulate './'
+testsuccess aptget build-dep --simulate '.'
+cd debian
+testsuccess aptget build-dep --simulate './../'
+testsuccess aptget build-dep --simulate '../'
+testsuccess aptget build-dep --simulate '..'
+cd ../..
 
 testfailureequal 'E: Must specify at least one package to check builddeps for' aptget build-dep
 testfailureequal 'E: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup' aptget build-dep --simulate ./foo-1.0 -a armel
