@@ -465,26 +465,58 @@ bool HttpServerState::Open()
 	       ProxyInfo.c_str(), response[3]);
       if (response[1] != 0x00)
       {
-	 char const * errstr;
-	 switch (response[1])
+	 char const * errstr = nullptr;
+	 auto errcode = response[1];
+	 // Tor error reporting can be a bit arcane, lets try to detect & fix it up
+	 if (bindaddr == "0.0.0.0:0")
 	 {
-             case 0x01: errstr = "general SOCKS server failure"; Owner->SetFailReason("SOCKS"); break;
-             case 0x02: errstr = "connection not allowed by ruleset"; Owner->SetFailReason("SOCKS"); break;
-             case 0x03: errstr = "Network unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
-             case 0x04: errstr = "Host unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
-             case 0x05: errstr = "Connection refused"; Owner->SetFailReason("ConnectionRefused"); break;
-             case 0x06: errstr = "TTL expired"; Owner->SetFailReason("Timeout"); break;
-             case 0x07: errstr = "Command not supported"; Owner->SetFailReason("SOCKS"); break;
-             case 0x08: errstr = "Address type not supported"; Owner->SetFailReason("SOCKS"); break;
-             default: errstr = "Unknown error"; Owner->SetFailReason("SOCKS"); break;
+	    auto const lastdot = ServerName.Host.rfind('.');
+	    if (lastdot == std::string::npos || ServerName.Host.substr(lastdot) != ".onion")
+	       ;
+	    else if (errcode == 0x01)
+	    {
+	       auto const prevdot = ServerName.Host.rfind('.', lastdot - 1);
+	       if (lastdot == 16 && prevdot == std::string::npos)
+		  ; // valid .onion address
+	       else if (prevdot != std::string::npos && (lastdot - prevdot) == 17)
+		  ; // valid .onion address with subdomain(s)
+	       else
+	       {
+		  errstr = "Invalid hostname: onion service name must be 16 characters long";
+		  Owner->SetFailReason("SOCKS");
+	       }
+	    }
+	    // in all likelihood the service is either down or the address has
+	    // a typo and so "Host unreachable" is the better understood error
+	    // compared to the technically correct "TLL expired".
+	    else if (errcode == 0x06)
+	       errcode = 0x04;
 	 }
-	 return _error->Error("SOCKS proxy %s didn't grant the connect to %s due to: %s (%d)", ProxyInfo.c_str(), bindaddr.c_str(), errstr, response[1]);
+	 if (errstr == nullptr)
+	 {
+	    switch (errcode)
+	    {
+	       case 0x01: errstr = "general SOCKS server failure"; Owner->SetFailReason("SOCKS"); break;
+	       case 0x02: errstr = "connection not allowed by ruleset"; Owner->SetFailReason("SOCKS"); break;
+	       case 0x03: errstr = "Network unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
+	       case 0x04: errstr = "Host unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
+	       case 0x05: errstr = "Connection refused"; Owner->SetFailReason("ConnectionRefused"); break;
+	       case 0x06: errstr = "TTL expired"; Owner->SetFailReason("Timeout"); break;
+	       case 0x07: errstr = "Command not supported"; Owner->SetFailReason("SOCKS"); break;
+	       case 0x08: errstr = "Address type not supported"; Owner->SetFailReason("SOCKS"); break;
+	       default: errstr = "Unknown error"; Owner->SetFailReason("SOCKS"); break;
+	    }
+	 }
+	 return _error->Error("SOCKS proxy %s could not connect to %s (%s) due to: %s (%d)",
+	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str(), errstr, response[1]);
       }
       else if (Owner->DebugEnabled())
-	 ioprintf(std::clog, "http: SOCKS proxy %s connection established to %s\n", ProxyInfo.c_str(), bindaddr.c_str());
+	 ioprintf(std::clog, "http: SOCKS proxy %s connection established to %s (%s)\n",
+	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
 
       if (WaitFd(ServerFd, true, Timeout) == false)
-	 return _error->Error("SOCKS proxy %s reported connection, but timed out", ProxyInfo.c_str());
+	 return _error->Error("SOCKS proxy %s reported connection to %s (%s), but timed out",
+	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
       #undef APT_ReadOrFail
       #undef APT_WriteOrFail
    }

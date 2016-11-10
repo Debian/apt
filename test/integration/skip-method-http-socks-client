@@ -25,7 +25,7 @@ runclient() {
 	# this doesn't need to be an actually reachable webserver for this test
 	# in fact, its better if it isn't.
 	rm -f index.html
-	apthelper download-file http://localhost:2903/ index.html \
+	apthelper download-file "http://${2:-localhost:2903}/" index.html \
 		-o Acquire::http::Proxy="socks5h://${1}localhost:5555" \
 		-o Acquire::http::Timeout=2 -o Debug::Acquire::http=1 > client.output 2>&1 || true
 }
@@ -68,49 +68,94 @@ testsuccess grep 'reported authorization failure: username or password incorrect
 msgmsg 'SOCKS user:pass request not granted no hostname'
 runserver '05 02' '01 00' '05 01 00 03 00 1f 90'
 runclient 'user:pass@'
-testsuccess grep 'grant the connect to :8080 due to: general SOCKS server failure (1)' client.output
+testsuccess grep 'could not connect to localhost (:8080) due to: general SOCKS server failure (1)' client.output
 
 msgmsg 'SOCKS user:pass request not granted with hostname'
 runserver '05 02' '01 00' '05 01 00 03 09 68 6f 73 74 6c 6f 63 61 6c 1f 90'
 runclient 'user:pass@'
-testsuccess grep 'grant the connect to hostlocal:8080 due to: general SOCKS server failure (1)' client.output
+testsuccess grep 'could not connect to localhost (hostlocal:8080) due to: general SOCKS server failure (1)' client.output
 
 msgmsg 'SOCKS user:pass request not granted ipv4'
 runserver '05 02' '01 00' '05 04 00 01 ac 10 fe 01 1f 90'
 runclient 'user:pass@'
-testsuccess grep 'grant the connect to 172.16.254.1:8080 due to: Host unreachable (4)' client.output
+testsuccess grep 'could not connect to localhost (172.16.254.1:8080) due to: Host unreachable (4)' client.output
 
 msgmsg 'SOCKS user:pass request not granted ipv6'
 runserver '05 02' '01 00' '05 12 00 04 20 01 0d b8 ac 10 fe 00 00 00 00 00 00 00 00 00 1f 90'
 runclient 'user:pass@'
-testsuccess grep 'grant the connect to \[2001:0DB8:AC10:FE00:0000:0000:0000:0000\]:8080 due to: Unknown error (18)' client.output
+testsuccess grep 'could not connect to localhost (\[2001:0DB8:AC10:FE00:0000:0000:0000:0000\]:8080) due to: Unknown error (18)' client.output
 
 msgmsg 'SOCKS user:pass request granted ipv4'
 runserver '05 02' '01 00' '05 00 00 01 ac 10 fe 01 1f 90'
 runclient 'user:pass@'
-testequal "http: SOCKS proxy $PROXY connection established to 172.16.254.1:8080" head -n 1 client.output
+testequal "http: SOCKS proxy $PROXY connection established to localhost (172.16.254.1:8080)" head -n 1 client.output
 testfileequal index.html 'HTML'
 
 msgmsg 'SOCKS user:pass request granted ipv6'
 runserver '05 02' '01 00' '05 00 00 04 20 01 0d b8 ac 10 fe 00 00 00 00 00 00 00 00 00 1f 90'
 runclient 'user:pass@'
-testequal "http: SOCKS proxy $PROXY connection established to [2001:0DB8:AC10:FE00:0000:0000:0000:0000]:8080" head -n 1 client.output
+testequal "http: SOCKS proxy $PROXY connection established to localhost ([2001:0DB8:AC10:FE00:0000:0000:0000:0000]:8080)" head -n 1 client.output
 testfileequal index.html 'HTML'
 
 msgmsg 'SOCKS no auth no hostname'
 runserver '05 00 05 00 00 03 00 1f 90'
 runclient
-testequal "http: SOCKS proxy $PROXY connection established to :8080" head -n 1 client.output
+testequal "http: SOCKS proxy $PROXY connection established to localhost (:8080)" head -n 1 client.output
 testfileequal index.html 'HTML'
 
 msgmsg 'SOCKS no auth with hostname'
 runserver '05 00 05 00 00 03 09 68 6f 73 74 6c 6f 63 61 6c 1f 90'
 runclient
-testequal "http: SOCKS proxy $PROXY connection established to hostlocal:8080" head -n 1 client.output
+testequal "http: SOCKS proxy $PROXY connection established to localhost (hostlocal:8080)" head -n 1 client.output
 testfileequal index.html 'HTML'
 
 msgmsg 'SOCKS user-only request granted ipv4'
 runserver '05 02' '01 00' '05 00 00 01 ac 10 fe 01 1f 90'
 runclient 'apt@'
-testequal "http: SOCKS proxy $PROXY connection established to 172.16.254.1:8080" head -n 1 client.output
+testequal "http: SOCKS proxy $PROXY connection established to localhost (172.16.254.1:8080)" head -n 1 client.output
 testfileequal index.html 'HTML'
+
+msgmsg 'tor: SOCKS user:pass request not granted'
+runserver '05 02' '01 00' '05 04 00 01 00 00 00 00 00 00'
+runclient 'user:pass@'
+testsuccess grep 'could not connect to localhost (0.0.0.0:0) due to: Host unreachable (4)' client.output
+
+msgmsg 'tor: SOCKS user:pass request tll expired'
+runserver '05 02' '01 00' '05 06 00 01 00 00 00 00 00 00'
+runclient 'user:pass@'
+testsuccess grep 'could not connect to localhost (0.0.0.0:0) due to: TTL expired (6)' client.output
+
+msgmsg 'tor: SOCKS user:pass request service unreachable'
+runserver '05 02' '01 00' '05 06 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'vwakviie2ienjx6t.onion'
+testsuccess grep 'could not connect to vwakviie2ienjx6t.onion (0.0.0.0:0) due to: Host unreachable (6)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted onion'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'vwakviie2ienjx6t.onion'
+testsuccess grep 'could not connect to vwakviie2ienjx6t.onion (0.0.0.0:0) due to: general SOCKS server failure (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted subdomain'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'ftp.vwakviie2ienjx6t.onion'
+testsuccess grep 'could not connect to ftp.vwakviie2ienjx6t.onion (0.0.0.0:0) due to: general SOCKS server failure (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'wakviie2ienjx6t.onion'
+testsuccess grep 'could not connect to wakviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too long'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'vwakviie2ienjx6t2.onion'
+testsuccess grep 'could not connect to vwakviie2ienjx6t2.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short subdomain'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'a.akviie2ienjx6t.onion'
+testsuccess grep 'could not connect to a.akviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short subdomains'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'a.a.viie2ienjx6t.onion'
+testsuccess grep 'could not connect to a.a.viie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
