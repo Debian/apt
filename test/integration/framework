@@ -1394,7 +1394,20 @@ downloadfile() {
 }
 
 checkdiff() {
-	local DIFFTEXT="$(command diff -u "$@" 2>&1 | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	local TMPFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/checkdiff.1.tmp"
+	local TMPFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/checkdiff.2.tmp"
+	touch "$TMPFILE1" "$TMPFILE2"
+	if [ "$1" != '-' ]; then
+		sed -e '/^profiling:/ d' < "$1" >"$TMPFILE1"
+	else
+		TMPFILE1='-'
+	fi
+	if [ "$2" != '-' ]; then
+		sed -e '/^profiling:/ d' < "$2" >"$TMPFILE2"
+	else
+		TMPFILE2='-'
+	fi
+	local DIFFTEXT="$(command diff -u "$TMPFILE1" "$TMPFILE2" 2>&1 | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo >&2
 		echo >&2 "$DIFFTEXT"
