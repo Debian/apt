@@ -50,8 +50,18 @@ static const debListParser::WordList PrioList[] = {
    in Step(), if no Architecture is given we will accept every arch
    we would accept in general with checkArchitecture() */
 debListParser::debListParser(FileFd *File) :
-   pkgCacheListParser(), d(NULL), Tags(File)
+   pkgCacheListParser(), Tags(File)
 {
+   // this dance allows an empty value to override the default
+   if (_config->Exists("pkgCacheGen::ForceEssential"))
+   {
+      forceEssential = _config->FindVector("pkgCacheGen::ForceEssential");
+      if (forceEssential.empty() == false && _config->Find("pkgCacheGen::ForceEssential").empty())
+	 forceEssential.emplace_back("apt");
+   }
+   else
+      forceEssential.emplace_back("apt");
+   forceImportant = _config->FindVector("pkgCacheGen::ForceImportant");
 }
 									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
@@ -311,7 +321,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
    if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
       return false;
 
-   if (strcmp(Pkg.Name(),"apt") == 0)
+   if (std::find(forceEssential.begin(), forceEssential.end(), Pkg.Name()) != forceEssential.end())
    {
       if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
 	  essential == "all")
@@ -319,6 +329,8 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
       else
 	 Pkg->Flags |= pkgCache::Flag::Important;
    }
+   else if (std::find(forceImportant.begin(), forceImportant.end(), Pkg.Name()) != forceImportant.end())
+      Pkg->Flags |= pkgCache::Flag::Important;
 
    if (ParseStatus(Pkg,Ver) == false)
       return false;

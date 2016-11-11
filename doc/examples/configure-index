@@ -461,7 +461,12 @@ Debug
   RunScripts "false";      // debug invocation of external scripts  
 }
 
-pkgCacheGen::Essential "native"; // other modes: all, none, installed
+pkgCacheGen
+{
+  Essential "native"; // other modes: all, none, installed
+  ForceEssential { "apt"; };
+  ForceImportant "";
+}
 
 /* Whatever you do, do not use this configuration file!! Take out ONLY
    the portions you need! */

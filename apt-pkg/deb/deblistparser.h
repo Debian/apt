@@ -43,8 +43,8 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 #endif
 
    private:
-   /** \brief dpointer placeholder (for later in case we need it) */
-   void * const d;
+   std::vector<std::string> forceEssential;
+   std::vector<std::string> forceImportant;
 
    protected:
    pkgTagFile Tags;

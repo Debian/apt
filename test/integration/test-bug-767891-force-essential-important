@@ -1,0 +1,100 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'apt' 'amd64' '1'
+insertinstalledpackage 'foo' 'amd64,i386' '1' 'Multi-Arch: same'
+insertinstalledpackage 'bar' 'amd64' '1' 'Provides: foo'
+
+insertpackage 'unstable' 'foo2' 'amd64,i386' '1' 'Multi-Arch: same'
+
+setupaptarchive
+
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  apt* bar* foo* foo:i386*
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  apt
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Purg apt [1]
+Purg bar [1]
+Purg foo [1]
+Purg foo:i386 [1]' apt purge apt foo foo:i386 bar -s
+
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  apt* bar* foo* foo:i386*
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Purg apt [1]
+Purg bar [1]
+Purg foo [1]
+Purg foo:i386 [1]' apt purge apt foo foo:i386 bar -s -o pkgCacheGen::ForceEssential=''
+
+msgmsg 'foo:i386 got the Important flag'
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  apt* bar* foo* foo:i386*
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  foo foo:i386
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Purg apt [1]
+Purg bar [1]
+Purg foo [1]
+Purg foo:i386 [1]' apt purge apt foo foo:i386 bar -s -o pkgCacheGen::ForceEssential='foo'
+
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  apt* bar* foo* foo:i386*
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  apt foo foo:i386
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Purg apt [1]
+Purg bar [1]
+Purg foo [1]
+Purg foo:i386 [1]' apt purge apt foo foo:i386 bar -s -o pkgCacheGen::ForceEssential::='foo'
+
+msgmsg 'essentials only from native'
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  foo2
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo2 (1 unstable [amd64])
+Conf foo2 (1 unstable [amd64])' apt full-upgrade -s -o pkgCacheGen::ForceEssential::='foo2'
+
+msgmsg 'important only effects installed'
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  apt* bar* foo* foo:i386*
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  apt foo foo:i386
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Purg apt [1]
+Purg bar [1]
+Purg foo [1]
+Purg foo:i386 [1]' apt purge apt foo foo:i386 bar -s -o pkgCacheGen::ForceImportant::='foo'
+rm -f rootdir/var/cache/apt/*.bin
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' apt full-upgrade -s -o pkgCacheGen::ForceImportant::='foo2'
