@@ -46,7 +46,7 @@ verify_by_hash
 testsuccess stat aptarchive/dists/unstable/main/binary-i386/by-hash/SHA256/$previous_hash
 
 # ensure we have it in the Release file
-testsuccess grep "Acquire-By-Hash: true" aptarchive/dists/unstable/*Release
+testsuccess grep "Acquire-By-Hash: yes" aptarchive/dists/unstable/*Release
 
 # now ensure gc work
 for i in $(seq 3); do

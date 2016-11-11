@@ -1004,6 +1004,7 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    time_t const now = time(NULL);
    time_t const validuntil = now + _config->FindI("APT::FTPArchive::Release::ValidTime", 0);
 
+   map<string,bool> BoolFields;
    map<string,string> Fields;
    Fields["Origin"] = "";
    Fields["Label"] = "";
@@ -1017,19 +1018,32 @@ ReleaseWriter::ReleaseWriter(FileFd * const GivenOutput, string const &/*DB*/) :
    Fields["Components"] = "";
    Fields["Description"] = "";
    Fields["Signed-By"] = "";
-   if (_config->FindB("APT::FTPArchive::DoByHash", false) == true)
-      Fields["Acquire-By-Hash"] = "true";
-   
-   for(map<string,string>::const_iterator I = Fields.begin();
-       I != Fields.end();
-       ++I)
-   {
-      string Config = string("APT::FTPArchive::Release::") + (*I).first;
-      string Value = _config->Find(Config, (*I).second.c_str());
-      if (Value == "")
-         continue;
+   BoolFields["Acquire-By-Hash"] = _config->FindB("APT::FTPArchive::DoByHash", false);
+   BoolFields["NotAutomatic"] = false;
+   BoolFields["ButAutomaticUpgrades"] = false;
 
-      std::string const out = I->first + ": " + Value + "\n";
+   // Read configuration for string fields, but don't output them
+   for (auto &&I : Fields)
+   {
+      string Config = string("APT::FTPArchive::Release::") + I.first;
+      I.second = _config->Find(Config, I.second);
+   }
+
+   // Read configuration for bool fields, and add them to Fields if true
+   for (auto &&I : BoolFields)
+   {
+      string Config = string("APT::FTPArchive::Release::") + I.first;
+      I.second = _config->FindB(Config, I.second);
+      if (I.second)
+         Fields[I.first] = "yes";
+   }
+
+   // All configuration read and stored in Fields; output
+   for (auto &&I : Fields)
+   {
+      if (I.second.empty())
+         continue;
+      std::string const out = I.first + ": " + I.second + "\n";
       Output->Write(out.c_str(), out.length());
    }
 

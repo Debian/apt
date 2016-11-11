@@ -1053,6 +1053,12 @@ getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 getoriginfromsuite() { true; }
 getarchitecturesfromreleasefile() { echo "all $(getarchitectures)"; }
+getnotautomaticfromsuite() {
+	case "$1" in
+	experimental|experimental2) echo "yes";;
+	esac
+}
+getbutautomaticupgradesfromsuite() { true; }
 
 aptftparchiverelease() {
 	aptftparchive -qq release "$@" | sed -e '/0 Release$/ d' # remove the self reference
@@ -1071,6 +1077,8 @@ generatereleasefiles() {
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
 			local LABEL="$(getlabelfromsuite $SUITE)"
 			local ORIGIN="$(getoriginfromsuite $SUITE)"
+			local NOTAUTOMATIC="$(getnotautomaticfromsuite $SUITE)"
+			local BUTAUTOMATICUPGRADES="$(getbutautomaticupgradesfromsuite $SUITE)"
 			aptftparchiverelease "$dir" \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
@@ -1078,11 +1086,9 @@ generatereleasefiles() {
 				-o APT::FTPArchive::Release::Label="${LABEL}" \
 				-o APT::FTPArchive::Release::Origin="${ORIGIN}" \
 				-o APT::FTPArchive::Release::Version="${VERSION}" \
+				-o APT::FTPArchive::Release::NotAutomatic="${NOTAUTOMATIC}" \
+				-o APT::FTPArchive::Release::ButAutomaticUpgrades="${BUTAUTOMATICUPGRADES}" \
 				> "$dir/Release"
-			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
-				sed -i '/^Date: / a\
-NotAutomatic: yes' "$dir/Release"
-			fi
 		done
 	else
 		msgninfo "\tGenerate Release files for flat… "

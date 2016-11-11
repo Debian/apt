@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'i386'
+
+getnotautomaticfromsuite() {
+	case "$1" in
+	experimental|backports) echo 'yes';;
+	esac
+}
+getbutautomaticupgradesfromsuite() {
+	case "$1" in
+	backports) echo 'yes';;
+	esac
+}
+
+insertpackage 'unstable' 'foo' 'i386' '1'
+insertpackage 'backports' 'foo' 'i386' '3~bpo1'
+insertpackage 'experimental' 'foo' 'i386' '3'
+setupaptarchive
+
+# check no unstable NotAutomatic field
+testfailure grep "NotAutomatic:" aptarchive/dists/unstable/*Release
+# check backports NotAutomatic field
+testsuccess grep "NotAutomatic: yes" aptarchive/dists/backports/*Release
+# check experimental NotAutomatic field
+testsuccess grep "NotAutomatic: yes" aptarchive/dists/experimental/*Release
+
+# check no unstable ButAutomaticUpgrades field
+testfailure grep "ButAutomaticUpgrades:" aptarchive/dists/unstable/*Release
+# check backports ButAutomaticUpgrades field
+testsuccess grep "ButAutomaticUpgrades: yes" aptarchive/dists/backports/*Release
+# check no experimental ButAutomaticUpgrades field
+testfailure grep "ButAutomaticUpgrades:" aptarchive/dists/experimental/*Release
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [i386])
+Conf foo (1 unstable [i386])' apt install foo -s
+
+insertinstalledpackage 'foo' 'i386' '2'
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  foo
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst foo [2] (3~bpo1 backports [i386])
+Conf foo (3~bpo1 backports [i386])' apt install foo -s
