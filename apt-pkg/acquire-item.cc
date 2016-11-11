@@ -1608,6 +1608,14 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
    if (TransactionManager->MetaIndexParser->CheckDist(ExpectedDist) == false)
       _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
 	    Desc.Description.c_str(), ExpectedDist.c_str(), NowCodename.c_str());
+   // might be okay, might be not
+   if (TransactionManager->LastMetaIndexParser != nullptr)
+   {
+      auto const LastCodename = TransactionManager->LastMetaIndexParser->GetCodename();
+      if (LastCodename.empty() == false && NowCodename.empty() == false && LastCodename != NowCodename)
+	 _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
+	       Desc.Description.c_str(), LastCodename.c_str(), NowCodename.c_str());
+   }
    return true;
 }
 									/*}}}*/
