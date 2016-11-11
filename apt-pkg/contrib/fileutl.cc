@@ -2778,9 +2778,9 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
    return result;
 }
 									/*}}}*/
-std::string GetTempDir()						/*{{{*/
+static std::string APT_NONNULL(1) GetTempDirEnv(char const * const env)	/*{{{*/
 {
-   const char *tmpdir = getenv("TMPDIR");
+   const char *tmpdir = getenv(env);
 
 #ifdef P_tmpdir
    if (!tmpdir)
@@ -2796,6 +2796,11 @@ std::string GetTempDir()						/*{{{*/
       tmpdir = "/tmp";
 
    return string(tmpdir);
+}
+									/*}}}*/
+std::string GetTempDir()						/*{{{*/
+{
+   return GetTempDirEnv("TMPDIR");
 }
 std::string GetTempDir(std::string const &User)
 {
@@ -3062,13 +3067,19 @@ bool DropPrivileges()							/*{{{*/
 	 setenv("SHELL", "/bin/sh", 1);
       else
 	 setenv("SHELL", pw->pw_shell, 1);
-      auto const tmpdir = getenv("TMPDIR");
-      if (tmpdir != nullptr)
-      {
-	 auto const ourtmpdir = GetTempDir();
-	 if (ourtmpdir != tmpdir)
-	    setenv("TMPDIR", ourtmpdir.c_str(), 1);
-      }
+      auto const apt_setenv_tmp = [](char const * const env) {
+	 auto const tmpdir = getenv(env);
+	 if (tmpdir != nullptr)
+	 {
+	    auto const ourtmpdir = GetTempDirEnv(env);
+	    if (ourtmpdir != tmpdir)
+	       setenv(env, ourtmpdir.c_str(), 1);
+	 }
+      };
+      apt_setenv_tmp("TMPDIR");
+      apt_setenv_tmp("TEMPDIR");
+      apt_setenv_tmp("TMP");
+      apt_setenv_tmp("TEMP");
    }
 
    return true;
