@@ -1561,24 +1561,6 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 									/*}}}*/
 bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 {
-   string Transformed = TransactionManager->MetaIndexParser->GetExpectedDist();
-
-   if (Transformed == "../project/experimental")
-   {
-      Transformed = "experimental";
-   }
-
-   auto pos = Transformed.rfind('/');
-   if (pos != string::npos)
-   {
-      Transformed = Transformed.substr(0, pos);
-   }
-
-   if (Transformed == ".")
-   {
-      Transformed = "";
-   }
-
    if (TransactionManager->MetaIndexParser->GetValidUntil() > 0)
    {
       time_t const invalid_since = time(NULL) - TransactionManager->MetaIndexParser->GetValidUntil();
@@ -1613,30 +1595,19 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
       TransactionManager->LastMetaIndexParser = NULL;
    }
 
-   if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
+   if (_config->FindB("Debug::pkgAcquire::Auth", false))
    {
       std::cerr << "Got Codename: " << TransactionManager->MetaIndexParser->GetCodename() << std::endl;
+      std::cerr << "Got Suite: " << TransactionManager->MetaIndexParser->GetSuite() << std::endl;
       std::cerr << "Expecting Dist: " << TransactionManager->MetaIndexParser->GetExpectedDist() << std::endl;
-      std::cerr << "Transformed Dist: " << Transformed << std::endl;
    }
 
-   if (TransactionManager->MetaIndexParser->CheckDist(Transformed) == false)
-   {
-      // This might become fatal one day
-//       Status = StatAuthError;
-//       ErrorText = "Conflicting distribution; expected "
-//          + MetaIndexParser->GetExpectedDist() + " but got "
-//          + MetaIndexParser->GetCodename();
-//       return false;
-      if (!Transformed.empty())
-      {
-         _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
-                         Desc.Description.c_str(),
-                         Transformed.c_str(),
-                         TransactionManager->MetaIndexParser->GetCodename().c_str());
-      }
-   }
-
+   // One day that might become fatal…
+   auto const ExpectedDist = TransactionManager->MetaIndexParser->GetExpectedDist();
+   auto const NowCodename = TransactionManager->MetaIndexParser->GetCodename();
+   if (TransactionManager->MetaIndexParser->CheckDist(ExpectedDist) == false)
+      _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
+	    Desc.Description.c_str(), ExpectedDist.c_str(), NowCodename.c_str());
    return true;
 }
 									/*}}}*/

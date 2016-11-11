@@ -57,15 +57,25 @@ APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcqui
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
 APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
 APT_PURE metaIndex::TriState metaIndex::GetLoadedSuccessfully() const { return LoadedSuccessfully; }
+APT_PURE std::string metaIndex::GetExpectedDist() const { return Dist; }
+									/*}}}*/
+bool metaIndex::CheckDist(string const &MaybeDist) const		/*{{{*/
+{
+   if (MaybeDist.empty() || this->Codename == MaybeDist || this->Suite == MaybeDist)
+      return true;
 
-APT_PURE bool metaIndex::CheckDist(string const &MaybeDist) const
-{
-   return (this->Codename == MaybeDist
-	   || this->Suite == MaybeDist);
-}
-APT_PURE std::string metaIndex::GetExpectedDist() const
-{
-   return Dist;
+   std::string Transformed = MaybeDist;
+   if (Transformed == "../project/experimental")
+      Transformed = "experimental";
+
+   auto const pos = Transformed.rfind('/');
+   if (pos != string::npos)
+      Transformed = Transformed.substr(0, pos);
+
+   if (Transformed == ".")
+      Transformed.clear();
+
+   return Transformed.empty() || this->Codename == Transformed || this->Suite == Transformed;
 }
 									/*}}}*/
 APT_PURE metaIndex::checkSum *metaIndex::Lookup(string const &MetaKey) const /*{{{*/

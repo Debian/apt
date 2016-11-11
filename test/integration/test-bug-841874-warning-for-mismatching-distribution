@@ -36,3 +36,14 @@ testfailure apt show foo
 ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/stretch/updates"
 testsuccess apt update
 testsuccess apt show foo
+
+# … but only if needed
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e 's#stretch#buster#g' rootdir/etc/apt/sources.list.d/*
+sed -i -e 's#^Codename: stretch$#Codename: buster/updates#g' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailure apt update
+testfailure apt show foo
+ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/buster"
+testsuccess apt update
+testsuccess apt show foo
