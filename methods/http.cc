@@ -648,6 +648,9 @@ bool HttpServerState::RunData(FileFd * const File)
 									/*}}}*/
 bool HttpServerState::RunDataToDevNull()				/*{{{*/
 {
+   // no need to clean up if we discard the connection anyhow
+   if (Persistent == false)
+      return true;
    FileFd DevNull("/dev/null", FileFd::WriteOnly);
    return RunData(&DevNull);
 }
