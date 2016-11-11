@@ -770,8 +770,8 @@ int ServerMethod::Loop()
 	 // We need to flush the data, the header is like a 404 w/ error text
 	 case ERROR_WITH_CONTENT_PAGE:
 	 {
-	    Fail();
 	    Server->RunDataToDevNull();
+	    Fail();
 	    break;
 	 }
 
