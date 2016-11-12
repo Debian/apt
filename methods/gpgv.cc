@@ -40,6 +40,7 @@ using std::vector;
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
 #define APTKEYWARNING "[APTKEY:] WARNING"
+#define APTKEYERROR "[APTKEY:] ERROR"
 
 struct Digest {
    enum class State {
@@ -241,6 +242,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       }
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
          Warning("%s", buffer + sizeof(APTKEYWARNING));
+      else if (strncmp(buffer, APTKEYERROR, sizeof(APTKEYERROR)-1) == 0)
+	 _error->Error("%s", buffer + sizeof(APTKEYERROR));
    }
    fclose(pipein);
    free(buffer);
@@ -372,9 +375,11 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    URIStart(Res);
 
    // Run apt-key on file, extract contents and get the key ID of the signer
-   string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), key,
+   string const msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), key,
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  SoonWorthlessSigners, NoPubKeySigners);
+   if (_error->PendingError())
+      return false;
 
    // Check if all good signers are soon worthless and warn in that case
    if (std::all_of(GoodSigners.begin(), GoodSigners.end(), [&](std::string const &good) {

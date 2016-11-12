@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -44,6 +45,47 @@ static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
    And as a cherry on the cake, we use our apt-key wrapper to do part
    of the lifting in regards to merging keyrings. Fun for the whole family.
 */
+static bool iovprintf(std::ostream &out, const char *format,
+		      va_list &args, ssize_t &size) {
+   char *S = (char*)malloc(size);
+   ssize_t const n = vsnprintf(S, size, format, args);
+   if (n > -1 && n < size) {
+      out << S;
+      free(S);
+      return true;
+   } else {
+      if (n > -1)
+	 size = n + 1;
+      else
+	 size *= 2;
+   }
+   free(S);
+   return false;
+}
+static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
+{
+   std::ostringstream outstr;
+   std::ostream &out = (statusfd == -1) ? outterm : outstr;
+   va_list args;
+   ssize_t size = 400;
+   while (true) {
+      bool ret;
+      va_start(args,format);
+      ret = iovprintf(out, format, args, size);
+      va_end(args);
+      if (ret == true)
+	 break;
+   }
+   if (statusfd != -1)
+   {
+      auto const errtag = "[APTKEY:] ERROR ";
+      outstr << '\n';
+      auto const errtext = outstr.str();
+      if (FileFd::Write(fd[1], errtag, strlen(errtag)) == false ||
+	    FileFd::Write(fd[1], errtext.data(), errtext.size()) == false)
+	 outterm << errtext << std::flush;
+   }
+}
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2], std::string const &key)
 {
@@ -112,12 +154,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    {
       conf = GenerateTemporaryFileTemplate("apt.conf");
       if (conf == nullptr) {
-	 ioprintf(std::cerr, "Couldn't create tempfile names for passing config to apt-key");
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for passing config to apt-key");
 	 local_exit(EINTERNAL);
       }
       int confFd = mkstemp(conf);
       if (confFd == -1) {
-	 ioprintf(std::cerr, "Couldn't create temporary file %s for passing config to apt-key", conf);
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf);
 	 local_exit(EINTERNAL);
       }
       local_exit.files.push_back(conf);
@@ -140,7 +182,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       data = GenerateTemporaryFileTemplate("apt.data");
       if (sig == NULL || data == NULL)
       {
-	 ioprintf(std::cerr, "Couldn't create tempfile names for splitting up %s", File.c_str());
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for splitting up %s", File.c_str());
 	 local_exit(EINTERNAL);
       }
 
@@ -152,7 +194,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 local_exit.files.push_back(sig);
       if (sigFd == -1 || dataFd == -1)
       {
-	 ioprintf(std::cerr, "Couldn't create tempfiles for splitting up %s", File.c_str());
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfiles for splitting up %s", File.c_str());
 	 local_exit(EINTERNAL);
       }
 
@@ -164,7 +206,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (signature.Failed() == true || message.Failed() == true ||
 	    SplitClearSignedFile(File, &message, &dataHeader, &signature) == false)
       {
-	 ioprintf(std::cerr, "Splitting up %s into data and signature failed", File.c_str());
+	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
       }
       Args.push_back(sig);
@@ -203,7 +245,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    // and we do an additional check, so fork yet another time …
    pid_t pid = ExecFork();
    if(pid < 0) {
-      ioprintf(std::cerr, "Fork failed for %s to check %s", Args[0], File.c_str());
+      apt_error(std::cerr, statusfd, fd, "Fork failed for %s to check %s", Args[0], File.c_str());
       local_exit(EINTERNAL);
    }
    if(pid == 0)
@@ -211,7 +253,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (statusfd != -1)
 	 dup2(fd[1], statusfd);
       execvp(Args[0], (char **) &Args[0]);
-      ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
+      apt_error(std::cerr, statusfd, fd, "Couldn't execute %s to check %s", Args[0], File.c_str());
       local_exit(EINTERNAL);
    }
 
@@ -221,21 +263,22 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    {
       if (errno == EINTR)
 	 continue;
-      ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "apt-key");
+      apt_error(std::cerr, statusfd, fd, _("Waited for %s but it wasn't there"), "apt-key");
       local_exit(EINTERNAL);
    }
 
    // check if it exit'ed normally …
    if (WIFEXITED(Status) == false)
    {
-      ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "apt-key");
+      apt_error(std::cerr, statusfd, fd, _("Sub-process %s exited unexpectedly"), "apt-key");
       local_exit(EINTERNAL);
    }
 
    // … and with a good exit code
    if (WEXITSTATUS(Status) != 0)
    {
-      ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
+      // we forward the statuscode, so don't generate a message on the fd in this case
+      apt_error(std::cerr, -1, fd, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
       local_exit(WEXITSTATUS(Status));
    }
 

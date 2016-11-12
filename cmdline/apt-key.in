@@ -17,7 +17,7 @@ aptkey_echo() { echo "$@"; }
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
-		echo >&2 "ERROR: This command can only be used by root."
+		apt_error "This command can only be used by root."
 		exit 1
 	fi
 }
@@ -61,11 +61,11 @@ add_keys_with_verify_against_master_keyring() {
     MASTER="$2"
 
     if [ ! -f "$ADD_KEYRING" ]; then
-	echo >&2 "ERROR: '$ADD_KEYRING' not found"
+	apt_error "Keyring '$ADD_KEYRING' to be added not found"
 	return
     fi
     if [ ! -f "$MASTER" ]; then
-	echo >&2 "ERROR: '$MASTER' not found"
+	apt_error "Master-Keyring '$MASTER' not found"
 	return
     fi
 
@@ -127,13 +127,13 @@ net_update() {
     fi
 
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
-	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
+	apt_error 'Your distribution is not supported in net-update as no uri for the archive-keyring is set'
 	exit 1
     fi
     # in theory we would need to depend on wget for this, but this feature
     # isn't useable in debian anyway as we have no keyring uri nor a master key
     if ! command_available 'wget'; then
-	echo >&2 "ERROR: an installed wget is required for a network-based update"
+	apt_error 'wget is required for a network-based update, but it is not installed'
 	exit 1
     fi
     if [ ! -d "${APT_DIR}/var/lib/apt/keyrings" ]; then
@@ -164,8 +164,7 @@ update() {
 	fi
     fi
     if [ ! -f "$ARCHIVE_KEYRING" ]; then
-	echo >&2 "ERROR: Can't find the archive-keyring"
-	echo >&2 "Is the &keyring-package; package installed?"
+	apt_error "Can't find the archive-keyring (Is the &keyring-package; package installed?)"
 	exit 1
     fi
 
@@ -184,7 +183,7 @@ update() {
 	    foreach_keyring_do 'remove_key_from_keyring' "$key"
 	done
     else
-	echo >&2 "Warning: removed keys keyring  $REMOVED_KEYS missing or not readable"
+	apt_warn "Removed keys keyring '$REMOVED_KEYS' missing or not readable"
     fi
 }
 
@@ -239,7 +238,7 @@ accessible_file_exists() {
    if test -r "$1"; then
       return 0
    fi
-   warn "The key(s) in the keyring $1 are ignored as the file is not readable by user '$USER' executing apt-key."
+   apt_warn "The key(s) in the keyring $1 are ignored as the file is not readable by user '$USER' executing apt-key."
    return 1
 }
 
@@ -486,7 +485,7 @@ find_gpgv_status_fd() {
 }
 GPGSTATUSFD="$(find_gpgv_status_fd "$@")"
 
-warn() {
+apt_warn() {
     if [ -z "$GPGHOMEDIR" ]; then
 	echo >&2 'W:' "$@"
     else
@@ -494,6 +493,16 @@ warn() {
     fi
     if [ -n "$GPGSTATUSFD" ]; then
 	echo >&${GPGSTATUSFD} '[APTKEY:] WARNING' "$@"
+    fi
+}
+apt_error() {
+    if [ -z "$GPGHOMEDIR" ]; then
+	echo >&2 'E:' "$@"
+    else
+	echo 'E:' "$@" > "${GPGHOMEDIR}/aptwarnings.log"
+    fi
+    if [ -n "$GPGSTATUSFD" ]; then
+	echo >&${GPGSTATUSFD} '[APTKEY:] ERROR' "$@"
     fi
 }
 
@@ -522,7 +531,7 @@ create_gpg_home() {
     CURRENTTRAP="${CURRENTTRAP} cleanup_gpg_home;"
     trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
     if [ -z "$GPGHOMEDIR" ]; then
-	echo "ERROR: Could not create temporary gpg home directory in apt-key ($TMPDIR)"
+	apt_error "Could not create temporary gpg home directory in $TMPDIR (wrong permissions?)"
 	exit 28
     fi
     chmod 700 "$GPGHOMEDIR"
@@ -553,9 +562,7 @@ EOF
     elif command_available 'gpg1'; then
 	GPG_EXE="gpg1"
     else
-	echo >&2 "Error: gnupg, gnupg2 and gnupg1 do not seem to be installed,"
-	echo >&2 "Error: but apt-key requires gnupg, gnupg2 or gnupg1 for this operation."
-	echo >&2
+	apt_error 'gnupg, gnupg2 and gnupg1 do not seem to be installed, but one of them is required for this operation'
 	exit 255
     fi
 
@@ -663,7 +670,7 @@ case "$command" in
 	elif command_available 'gpgv2'; then GPGV='gpgv2';
 	elif command_available 'gpgv1'; then GPGV='gpgv1';
 	else
-	   echo >&2 'ERROR: gpgv, gpgv2 or gpgv1 required for verification'
+	   apt_error 'gpgv, gpgv2 or gpgv1 required for verification, but neither seems installed'
 	   exit 29
 	fi
 	# for a forced keyid we need gpg --export, so full wrapping required
