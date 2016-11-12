@@ -143,6 +143,8 @@ namespace
   // of each array is the key, entry 1 is the value.
   const std::pair<const char *, const char *> PackageProcessingOps[] = {
     std::make_pair("install",   N_("Installing %s")),
+    // we don't care for the difference
+    std::make_pair("upgrade",   N_("Installing %s")),
     std::make_pair("configure", N_("Configuring %s")),
     std::make_pair("remove",    N_("Removing %s")),
     std::make_pair("purge",    N_("Completely removing %s")),
@@ -615,9 +617,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    {
       pkgname = APT::String::Strip(list[2]);
       action = APT::String::Strip(list[1]);
-      // we don't care for the difference (as dpkg doesn't really either)
-      if (action == "upgrade")
-	 action = "install";
    }
    // "status" has the form: "status: pkg: state"
    // with state in ["half-installed", "unpacked", "half-configured", 
@@ -690,10 +689,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    // 'processing: action: pkg'
    if(prefix == "processing")
    {
-      const std::pair<const char *, const char *> * const iter =
-	std::find_if(PackageProcessingOpsBegin,
-		     PackageProcessingOpsEnd,
-		     MatchProcessingOp(action.c_str()));
+      auto const iter = std::find_if(PackageProcessingOpsBegin, PackageProcessingOpsEnd, MatchProcessingOp(action.c_str()));
       if(iter == PackageProcessingOpsEnd)
       {
 	 if (Debug == true)
@@ -709,6 +705,37 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       //         short pkgnames?
       if (action == "disappear")
 	 handleDisappearAction(pkgname);
+      else if (action == "upgrade")
+      {
+	 // in a crossgrade what looked like a remove first is really an unpack over it
+	 auto const Pkg = Cache.FindPkg(pkgname);
+	 if (likely(Pkg.end() == false) && Cache[Pkg].Delete())
+	 {
+	    auto const Grp = Pkg.Group();
+	    if (likely(Grp.end() == false))
+	    {
+	       for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
+		  if(Cache[P].Install())
+		  {
+		     auto && Ops = PackageOps[P.FullName()];
+		     auto const unpackOp = std::find_if(Ops.cbegin(), Ops.cend(), [](DpkgState const &s) { return strcmp(s.state, "unpacked") == 0; });
+		     if (unpackOp != Ops.cend())
+		     {
+			// skip ahead in the crossgraded packages
+			auto const skipped = std::distance(Ops.cbegin(), unpackOp);
+			PackagesDone += skipped;
+			PackageOpsDone[P.FullName()] += skipped;
+			// finish the crossremoved package
+			auto const ROps = PackageOps[Pkg.FullName()].size();
+			auto && ROpsDone = PackageOpsDone[Pkg.FullName()];
+			PackagesDone += ROps - ROpsDone;
+			ROpsDone = ROps;
+			break;
+		     }
+		  }
+	    }
+	 }
+      }
       return;
    }
 
@@ -752,34 +779,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       strprintf(msg, translation, i18n_pkgname.c_str());
 	       d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
 	    }
-	    else if (action == "unpacked" && strcmp(next_action, "config-files") == 0)
-	    {
-	       // in a crossgrade what looked like a remove first is really an unpack over it
-	       ++PackageOpsDone[pkgname];
-	       ++PackagesDone;
-
-	       auto const Pkg = Cache.FindPkg(pkgname);
-	       if (likely(Pkg.end() == false))
-	       {
-		  auto const Grp = Pkg.Group();
-		  if (likely(Grp.end() == false))
-		  {
-		     for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
-			if(Cache[P].Install())
-			{
-			   auto && Ops = PackageOps[P.FullName()];
-			   auto const unpackOp = std::find_if(Ops.cbegin(), Ops.cend(), [](DpkgState const &s) { return strcmp(s.state, "unpacked") == 0; });
-			   if (unpackOp != Ops.cend())
-			   {
-			      auto const skipped = std::distance(Ops.cbegin(), unpackOp);
-			      PackagesDone += skipped;
-			      PackageOpsDone[P.FullName()] += skipped;
-			      break;
-			   }
-			}
-		  }
-	       }
-	    }
 	 }
       }
       else if (action == "triggers-pending")
@@ -802,6 +801,12 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
    if (unlikely(Pkg.end() == true))
       return;
+
+   // a disappeared package has no further actions
+   auto const ROps = PackageOps[Pkg.FullName()].size();
+   auto && ROpsDone = PackageOpsDone[Pkg.FullName()];
+   PackagesDone += ROps - ROpsDone;
+   ROpsDone = ROps;
 
    // record the package name for display and stuff later
    disappearedPkgs.insert(Pkg.FullName(true));
@@ -1994,6 +1999,24 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    if (noopDPkgInvocation == false)
    {
+      if (d->dpkg_error.empty() && (PackagesDone + 1) != PackagesTotal)
+      {
+	 std::string pkglist;
+	 for (auto const &PO: PackageOps)
+	    if (PO.second.size() != PackageOpsDone[PO.first])
+	    {
+	       if (pkglist.empty() == false)
+		  pkglist.append(" ");
+	       pkglist.append(PO.first);
+	    }
+	 /* who cares about correct progress? As we depend on it for skipping actions
+	    our parsing should be correct. People will no doubt be confused if they see
+	    this message, but the dpkg warning about unknown packages isn't much better
+	    from a user POV and combined we might have a chance to figure out what is wrong */
+	 _error->Warning("APT had planned for dpkg to do more than it reported back (%u vs %u).\n"
+	       "Affected packages: %s", PackagesDone, PackagesTotal, pkglist.c_str());
+      }
+
       std::string const oldpkgcache = _config->FindFile("Dir::cache::pkgcache");
       if (oldpkgcache.empty() == false && RealFileExists(oldpkgcache) == true &&
 	  RemoveFile("pkgDPkgPM::Go", oldpkgcache))

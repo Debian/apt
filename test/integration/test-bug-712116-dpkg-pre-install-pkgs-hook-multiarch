@@ -48,7 +48,7 @@ DPkg::Tools::options::\"./${hook}-v${1}.sh\"::Version \"$1\";" > rootdir/etc/apt
 observehook() {
 	rm -f ${hook}-v2.list ${hook}-v3.list
 	msgtest 'Observe hooks while' "$*"
-	testsuccess --nomsg aptget "$@" -y --allow-downgrades --planner $planner
+	testsuccess --nomsg aptget "$@" -y --allow-downgrades --planner $planner -o Debug::pkgDPkgProgressReporting=1
 	# different planners have different orders – we don't care in this test here
 	if [ -e ${hook}-v2.list ]; then
 		sort < ${hook}-v2.list > ${hook}-v2.list.new

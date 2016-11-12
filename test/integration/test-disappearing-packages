@@ -4,21 +4,20 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-configarchitecture 'native'
+configarchitecture 'amd64' 'i386'
 
-buildsimplenativepackage 'old-pkg' 'native' '1.0' 'stable'
-buildsimplenativepackage 'unrelated' 'all' '0.5' 'unstable'
+buildsimplenativepackage 'old-pkg' 'amd64' '1' 'stable'
 
-setupsimplenativepackage 'new-pkg' 'native' '2.0' 'unstable' 'Provides: old-pkg
+setupsimplenativepackage 'new-pkg' 'amd64' '2' 'unstable' 'Provides: old-pkg
 Replaces: old-pkg
-Conflicts: old-pkg (<< 2.0)'
-BUILDDIR='incoming/new-pkg-2.0'
+Conflicts: old-pkg (<< 2)'
+BUILDDIR='incoming/new-pkg-2'
 echo '/usr/share/doc/new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/new-pkg.links"
 buildpackage "$BUILDDIR" 'unstable' 'main'
 rm -rf "$BUILDDIR"
 
-setupsimplenativepackage 'old-pkg' 'all' '2.0' 'unstable' 'Depends: new-pkg'
-BUILDDIR='incoming/old-pkg-2.0'
+setupsimplenativepackage 'old-pkg' 'all' '2' 'unstable' 'Depends: new-pkg'
+BUILDDIR='incoming/old-pkg-2'
 echo '/usr/share/doc/new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/old-pkg.links"
 echo "
 override_dh_link:
@@ -27,39 +26,67 @@ override_dh_link:
 buildpackage "$BUILDDIR" 'unstable' 'main'
 rm -rf "$BUILDDIR"
 
+setupsimplenativepackage 'super-new-pkg' 'i386' '3' 'experimental' 'Provides: new-pkg
+Replaces: new-pkg
+Conflicts: new-pkg (<< 3)'
+BUILDDIR='incoming/super-new-pkg-3'
+echo '/usr/share/doc/super-new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/super-new-pkg.links"
+echo '/usr/share/doc/super-new-pkg /usr/share/doc/new-pkg' >> "${BUILDDIR}/debian/super-new-pkg.links"
+buildpackage "$BUILDDIR" 'experimental' 'main'
+rm -rf "$BUILDDIR"
+
+setupsimplenativepackage 'new-pkg' 'all' '3' 'experimental' 'Depends: super-new-pkg'
+BUILDDIR='incoming/new-pkg-3'
+echo '/usr/share/doc/super-new-pkg /usr/share/doc/old-pkg' > "${BUILDDIR}/debian/new-pkg.links"
+echo '/usr/share/doc/super-new-pkg /usr/share/doc/new-pkg' >> "${BUILDDIR}/debian/new-pkg.links"
+echo "
+override_dh_link:
+	rm -rf debian/new-pkg/usr/share/doc/new-pkg/
+	dh_link" >> "${BUILDDIR}/debian/rules"
+buildpackage "$BUILDDIR" 'experimental' 'main'
+rm -rf "$BUILDDIR"
+
 setupaptarchive
 
-testsuccess aptget install old-pkg=1.0 --trivial-only
-
+msgmsg 'Let a package disappear' 'old-pkg'
+testsuccess aptget install old-pkg=1 --trivial-only
 testmarkedauto # old-pkg is manual installed
-
-CMD='aptget dist-upgrade -y'
-msgtest 'Test for equality of' "$CMD"
-COMPAREFILE="$(mktemp)"
-echo 'The following package disappeared from your system as
+testsuccess aptget dist-upgrade -y
+testdpkgnotinstalled old-pkg
+cp rootdir/tmp/testsuccess.output disappear.output
+testsuccessequal 'The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg
-Note: This is done automatically and on purpose by dpkg.' > "$COMPAREFILE"
-$CMD 2>&1 | tail -n 4 | diff -u "$COMPAREFILE" - && msgpass || msgfail
-rm "$COMPAREFILE"
+Note: This is done automatically and on purpose by dpkg.' tail -n 4 disappear.output
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e "s#:$(getarchitecture 'native') #:native #"
 if [ -n "$SUDO_USER" ]; then
 	testfileequal 'rootdir/var/log/apt/history.log' "
 Requested-By: $SUDO_USER ($(id -u "$SUDO_USER"))
-Install: old-pkg:native (1.0)
+Install: old-pkg:native (1)
 
 Requested-By: $SUDO_USER ($(id -u "$SUDO_USER"))
-Install: new-pkg:native (2.0, automatic)
-Upgrade: old-pkg:native (1.0, 2.0)
-Disappeared: old-pkg (1.0)"
+Install: new-pkg:native (2, automatic)
+Upgrade: old-pkg:native (1, 2)
+Disappeared: old-pkg (1)"
 else
 	testfileequal 'rootdir/var/log/apt/history.log' '
-Install: old-pkg:native (1.0)
+Install: old-pkg:native (1)
 
-Install: new-pkg:native (2.0, automatic)
-Upgrade: old-pkg:native (1.0, 2.0)
-Disappeared: old-pkg (1.0)'
+Install: new-pkg:native (2, automatic)
+Upgrade: old-pkg:native (1, 2)
+Disappeared: old-pkg (1)'
 fi
 
 testmarkedauto  # new-pkg should have get the manual flag from old-pkg
+
+msgmsg 'Let a package disappear which let the previous disappear' 'new-pkg'
+testsuccess aptget dist-upgrade -y -t experimental
+testdpkgnotinstalled new-pkg
+cp rootdir/tmp/testsuccess.output disappear.output
+testsuccessequal 'The following package disappeared from your system as
+all files have been overwritten by other packages:
+  new-pkg
+Note: This is done automatically and on purpose by dpkg.' tail -n 4 disappear.output
+
+testmarkedauto
