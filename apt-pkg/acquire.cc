@@ -1154,7 +1154,7 @@ APT_PURE unsigned long long pkgAcquire::Queue::QItem::GetMaximumSize() const	/*{
    return Maximum;
 }
 									/*}}}*/
-APT_PURE int pkgAcquire::Queue::QItem::GetPriority() const	/*{{{*/
+APT_PURE int pkgAcquire::Queue::QItem::GetPriority() const		/*{{{*/
 {
    int Priority = 0;
    for (auto const &O: Owners)

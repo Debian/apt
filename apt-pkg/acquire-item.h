@@ -779,7 +779,7 @@ struct APT_HIDDEN DiffInfo {						/*{{{*/
  */
 class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
-   void * const d;
+   std::string const indexURI;
 
    protected:
 
@@ -830,23 +830,19 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    /** \brief Create an index merge-diff item.
     *
     *  \param Owner The pkgAcquire object that owns this item.
-    *
-    *  \param URI The URI of the package index file being
-    *  reconstructed.
-    *
-    *  \param URIDesc A long description of this item.
-    *
-    *  \param ShortDesc A brief description of this item.
-    *
+    *  \param TransactionManager responsible for this item
+    *  \param Target we intend to built via pdiff patching
+    *  \param baseURI is the URI used for the Index, but stripped down to Target
+    *  \param DiffInfo of the patch in question
     *  \param patch contains infos about the patch this item is supposed
     *  to download which were read from the index
-    *
     *  \param allPatches contains all related items so that each item can
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
-                         IndexTarget const &Target, DiffInfo const &patch,
-                         std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches) APT_NONNULL(2, 3, 6);
+			 IndexTarget const &Target, std::string const &indexUsedMirror,
+			 std::string const &indexURI, DiffInfo const &patch,
+                         std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches) APT_NONNULL(2, 3, 8);
    virtual ~pkgAcqIndexMergeDiffs();
 };
 									/*}}}*/
@@ -863,7 +859,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  */
 class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
-   void * const d;
+   std::string const indexURI;
 
    private:
 
@@ -943,20 +939,16 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  \a diffs is empty, or QueueNextDiff() otherwise.
     *
     *  \param Owner The pkgAcquire object that owns this item.
-    *
-    *  \param URI The URI of the package index file being
-    *  reconstructed.
-    *
-    *  \param URIDesc A long description of this item.
-    *
-    *  \param ShortDesc A brief description of this item.
-    *
+    *  \param TransactionManager responsible for this item
+    *  \param Target we want to built via pdiff patching
+    *  \param baseURI is the URI used for the Index, but stripped down to Target
     *  \param diffs The remaining diffs from the index of diffs.  They
     *  should be ordered so that each diff appears before any diff
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager,
                     IndexTarget const &Target,
+		    std::string const &indexUsedMirror, std::string const &indexURI,
 		    std::vector<DiffInfo> const &diffs=std::vector<DiffInfo>()) APT_NONNULL(2, 3);
    virtual ~pkgAcqIndexDiffs();
 };
