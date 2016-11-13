@@ -179,7 +179,7 @@ update() {
 
     if [ -r "$REMOVED_KEYS" ]; then
 	# remove no-longer supported/used keys
-	get_fingerprints_of_keyring "$REMOVED_KEYS" | while read key; do
+	get_fingerprints_of_keyring "$(dearmor_filename "$REMOVED_KEYS")" | while read key; do
 	    foreach_keyring_do 'remove_key_from_keyring' "$key"
 	done
     else
@@ -195,10 +195,11 @@ remove_key_from_keyring() {
        return
     fi
 
-    for KEY in "$@"; do
-	local FINGERPRINTS="${GPGHOMEDIR}/keyringfile.keylst"
-	get_fingerprints_of_keyring "$KEYRINGFILE" > "$FINGERPRINTS"
+    local FINGERPRINTS="${GPGHOMEDIR}/keyringfile.keylst"
+    local DEARMOR="$(dearmor_filename "$KEYRINGFILE")"
+    get_fingerprints_of_keyring "$DEARMOR" > "$FINGERPRINTS"
 
+    for KEY in "$@"; do
 	# strip leading 0x, if present:
 	KEY="$(echo "${KEY#0x}" | tr -d ' ')"
 
@@ -207,7 +208,7 @@ remove_key_from_keyring() {
 	    continue
 	fi
 	if [ ! -w "$KEYRINGFILE" ]; then
-	    echo >&2 "Key ${KEY} is in keyring ${KEYRINGFILE}, but can't be removed as it is read only."
+	    apt_warn "Key ${KEY} is in keyring ${KEYRINGFILE}, but can't be removed as it is read only."
 	    continue
 	fi
 	# check if it is the only key in the keyring and if so remove the keyring altogether
@@ -217,17 +218,23 @@ remove_key_from_keyring() {
 	fi
 	# we can't just modify pointed to files as these might be in /usr or something
 	local REALTARGET
-	if [ -L "$KEYRINGFILE" ]; then
-	    REALTARGET="$(readlink -f "$KEYRINGFILE")"
-	    mv -f "$KEYRINGFILE" "${KEYRINGFILE}.dpkg-tmp"
-	    cp -a "$REALTARGET" "$KEYRINGFILE"
+	if [ -L "$DEARMOR" ]; then
+	    REALTARGET="$(readlink -f "$DEARMOR")"
+	    mv -f "$DEARMOR" "${DEARMOR}.dpkg-tmp"
+	    cp -a "$REALTARGET" "$DEARMOR"
 	fi
 	# delete the key from the keyring
-	aptkey_execute "$GPG_SH" --keyring "$KEYRINGFILE" --batch --delete-keys --yes "$KEY"
+	aptkey_execute "$GPG_SH" --keyring "$DEARMOR" --batch --delete-keys --yes "$KEY"
 	if [ -n "$REALTARGET" ]; then
 	    # the real backup is the old link, not the copy we made
-	    mv -f "${KEYRINGFILE}.dpkg-tmp" "${KEYRINGFILE}~"
+	    mv -f "${DEARMOR}.dpkg-tmp" "${DEARMOR}~"
 	fi
+	if [ "$DEARMOR" != "$KEYRINGFILE" ]; then
+	    mv -f "$KEYRINGFILE" "${KEYRINGFILE}~"
+	    create_new_keyring "$KEYRINGFILE"
+	    aptkey_execute "$GPG_SH" --keyring "$DEARMOR" --armor --export > "$KEYRINGFILE"
+	fi
+	get_fingerprints_of_keyring "$DEARMOR" > "$FINGERPRINTS"
     done
 }
 
@@ -247,7 +254,7 @@ foreach_keyring_do() {
    shift
    # if a --keyring was given, just work on this one
    if [ -n "$FORCED_KEYRING" ]; then
-	$ACTION "$FORCED_KEYRING" "$@"
+	$ACTION "$TRUSTEDFILE" "$@"
    else
 	# otherwise all known keyrings are up for inspection
 	if accessible_file_exists "$TRUSTEDFILE"; then
@@ -257,7 +264,7 @@ foreach_keyring_do() {
 	eval "$(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)"
 	if [ -d "$TRUSTEDPARTS" ]; then
 	    TRUSTEDPARTS="$(readlink -f "$TRUSTEDPARTS")"
-	    local TRUSTEDPARTSLIST="$(cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 -name '*.gpg')"
+	    local TRUSTEDPARTSLIST="$(cd /; find "$TRUSTEDPARTS" -mindepth 1 -maxdepth 1 \( -name '*.gpg' -o -name '*.asc' \))"
 	    for trusted in $(echo "$TRUSTEDPARTSLIST" | sort); do
 		if accessible_file_exists "$trusted"; then
 		    $ACTION "$trusted" "$@"
@@ -267,11 +274,41 @@ foreach_keyring_do() {
    fi
 }
 
-run_cmd_on_keyring() {
+list_keys_in_keyring() {
     local KEYRINGFILE="$1"
     shift
     # fingerprint and co will fail if key isn't in this keyring
-    aptkey_execute "$GPG_SH" --keyring "$KEYRINGFILE" --batch "$@" 2>/dev/null || true
+    aptkey_execute "$GPG_SH" --keyring "$(dearmor_filename "$KEYRINGFILE")" "$@" > "${GPGHOMEDIR}/gpgoutput.log" 2> "${GPGHOMEDIR}/gpgoutput.err" || true
+    if [ ! -s "${GPGHOMEDIR}/gpgoutput.log" ]; then
+	return
+    fi
+    # we fake gpg header here to refer to the real asc file rather than a temp file
+    if [ "${KEYRINGFILE##*.}" = 'asc' ]; then
+	if expr match "$(sed -n '2p' "${GPGHOMEDIR}/gpgoutput.log")" '^-\+$' >/dev/null 2>&1; then
+	    echo "$KEYRINGFILE"
+	    echo "$KEYRINGFILE" | sed 's#[^-]#-#g'
+	    sed '1,2d' "${GPGHOMEDIR}/gpgoutput.log" || true
+	else
+	    cat "${GPGHOMEDIR}/gpgoutput.log"
+	fi
+    else
+	cat "${GPGHOMEDIR}/gpgoutput.log"
+    fi
+    if [ -s "${GPGHOMEDIR}/gpgoutput.err" ]; then
+	cat >&2 "${GPGHOMEDIR}/gpgoutput.err"
+    fi
+}
+
+export_key_from_to() {
+    local FROM="$1"
+    local TO="$2"
+    shift 2
+    if ! aptkey_execute "$GPG_SH" --keyring "$(dearmor_filename "$FROM")" --export "$@" > "$TO" 2> "${GPGHOMEDIR}/gpgoutput.log"; then
+	cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
+	false
+    else
+	chmod 0644 -- "$TO"
+    fi
 }
 
 import_keyring_into_keyring() {
@@ -289,12 +326,11 @@ import_keyring_into_keyring() {
     if [ ! -s "$TO" ]; then
 	if [ -s "$FROM" ]; then
 	    if [ -z "$2" ]; then
-		if ! aptkey_execute "$GPG_SH" --keyring "$FROM" --export ${1:+"$1"} > "$TO" 2> "${GPGHOMEDIR}/gpgoutput.log"; then
-		    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
-		    false
-		else
-		    chmod 0644 -- "$TO"
+		local OPTS
+		if [ "${TO##*.}" = 'asc' ]; then
+		    OPTS='--armor'
 		fi
+		export_key_from_to "$(dearmor_filename "$FROM")" "$TO" $OPTS ${1:+"$1"}
 	    else
 		create_new_keyring "$TO"
 	    fi
@@ -304,16 +340,51 @@ import_keyring_into_keyring() {
     elif [ -s "$FROM" ]; then
 	local EXPORTLIMIT="$1"
 	if [ -n "$1$2" ]; then shift; fi
-	if ! aptkey_execute "$GPG_SH" --keyring "$FROM" --export ${EXPORTLIMIT:+"$EXPORTLIMIT"} \
-	   | aptkey_execute "$GPG_SH" --keyring "$TO" --batch --import "$@" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	local DEARMORTO="$(dearmor_filename "$TO")"
+	if ! aptkey_execute "$GPG_SH" --keyring "$(dearmor_filename "$FROM")" --export ${EXPORTLIMIT:+"$EXPORTLIMIT"} \
+	   | aptkey_execute "$GPG_SH" --keyring "$DEARMORTO" --batch --import "$@" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
 	    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
 	    false
+	fi
+	if [ "$DEARMORTO" != "$TO" ]; then
+	    export_key_from_to "$DEARMORTO" "${DEARMORTO}.asc" --armor
+	    if ! cmp -s "$TO" "${DEARMORTO}.asc" 2>/dev/null; then
+		cp -a "$TO" "${TO}~"
+		mv -f "${DEARMORTO}.asc" "$TO"
+	    fi
 	fi
     fi
 }
 
+dearmor_keyring() {
+    # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=831409#67
+    # The awk script is more complex through to skip surrounding garbage and
+    # to support multiple keys in one file (old gpgs generate version headers
+    # which get printed with the original and hence result in garbage input for base64
+    awk '/^-----BEGIN/{ x = 1; }
+/^$/{ if (x == 1) { x = 2; }; }
+/^[^=-]/{ if (x == 2) { print $0; }; }
+/^-----END/{ x = 0; }' | base64 -d
+}
+dearmor_filename() {
+    if [ "${1##*.}" = 'asc' ]; then
+	local trusted="${GPGHOMEDIR}/${1##*/}.gpg"
+	if [ -s "$1" ]; then
+	    dearmor_keyring < "$1" > "$trusted"
+	fi
+	echo "$trusted"
+    elif [ "${1##*.}" = 'gpg' ]; then
+	echo "$1"
+    elif [ "$(head -n 1 "$1" 2>/dev/null)" = '-----BEGIN PGP PUBLIC KEY BLOCK-----' ]; then
+	local trusted="${GPGHOMEDIR}/${1##*/}.gpg"
+	dearmor_keyring < "$1" > "$trusted"
+	echo "$trusted"
+    else
+	echo "$1"
+    fi
+}
 catfile() {
-   cat "$1" >> "$2"
+    cat "$(dearmor_filename "$1")" >> "$2"
 }
 
 merge_all_trusted_keyrings_into_pubring() {
@@ -337,6 +408,10 @@ merge_keys_into_keyrings() {
 merge_back_changes() {
     if [ -n "$FORCED_KEYRING" ]; then
 	# if the keyring was forced merge is already done
+	if [ "$FORCED_KEYRING" != "$TRUSTEDFILE" ]; then
+	    mv -f "$FORCED_KEYRING" "${FORCED_KEYRING}~"
+	    export_key_from_to "$TRUSTEDFILE" "$FORCED_KEYRING" --armor
+	fi
 	return
     fi
     if [ -s "${GPGHOMEDIR}/pubring.gpg" ]; then
@@ -380,6 +455,7 @@ exec sh '($(escape_shell "${GPG}")' --keyring '$(escape_shell "${TRUSTEDFILE}")'
 exec sh '$(escape_shell "${GPG}")' --keyring '$(escape_shell "${GPGHOMEDIR}/pubring.gpg")' \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
 	GPG="${GPGHOMEDIR}/gpg.1.sh"
     else
+	TRUSTEDFILE="$(dearmor_filename "$FORCED_KEYRING")"
 	create_new_keyring "$TRUSTEDFILE"
 	echo "#!/bin/sh
 exec sh '$(escape_shell "${GPG}")' --keyring '$(escape_shell "${TRUSTEDFILE}")' \"\$@\"" > "${GPGHOMEDIR}/gpg.1.sh"
@@ -389,10 +465,10 @@ exec sh '$(escape_shell "${GPG}")' --keyring '$(escape_shell "${TRUSTEDFILE}")' 
 
 create_new_keyring() {
     # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
-    if ! [ -e "$TRUSTEDFILE" ]; then
-	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
-	    touch -- "$TRUSTEDFILE"
-	    chmod 0644 -- "$TRUSTEDFILE"
+    if ! [ -e "$1" ]; then
+	if [ -w "$(dirname "$1")" ]; then
+	    touch -- "$1"
+	    chmod 0644 -- "$1"
 	fi
     fi
 }
@@ -648,7 +724,7 @@ case "$command" in
 	;;
     list|finger*)
 	warn_on_script_usage
-	foreach_keyring_do 'run_cmd_on_keyring' --fingerprint "$@"
+	foreach_keyring_do 'list_keys_in_keyring' --fingerprint "$@"
 	;;
     export|exportall)
 	warn_on_script_usage
@@ -658,7 +734,7 @@ case "$command" in
     adv*)
 	warn_on_script_usage
 	setup_merged_keyring
-	aptkey_echo "Executing: $GPG $*"
+	aptkey_echo "Executing: $GPG" "$@"
 	aptkey_execute "$GPG" "$@"
 	merge_back_changes
 	;;
@@ -681,7 +757,7 @@ case "$command" in
 	fi
 	setup_merged_keyring
 	if [ -n "$FORCED_KEYRING" ]; then
-	    "$GPGV" --homedir "${GPGHOMEDIR}" --keyring "${FORCED_KEYRING}" --ignore-time-conflict "$@"
+	    "$GPGV" --homedir "${GPGHOMEDIR}" --keyring "$(dearmor_filename "${FORCED_KEYRING}")" --ignore-time-conflict "$@"
 	else
 	    "$GPGV" --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
 	fi
