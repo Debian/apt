@@ -1021,9 +1021,7 @@ bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
    return false;
 }
 									/*}}}*/
-
-																		/*}}}*/
-int pkgAcquire::Item::Priority() 				/*{{{*/
+int pkgAcquire::Item::Priority()					/*{{{*/
 {
    // Stage 1: Meta indices and diff indices
    // - those need to be fetched first to have progress reporting working
@@ -2039,7 +2037,7 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
 {
    // list cleanup needs to know that this file as well as the already
    // present index is ours, so we create an empty diff to save it for us
-   new pkgAcqIndexDiffs(Owner, TransactionManager, Target);
+   new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, Target.URI);
 }
 									/*}}}*/
 static bool RemoveFileForBootstrapLinking(bool const Debug, std::string const &For, std::string const &Boot)/*{{{*/
@@ -2415,14 +2413,26 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       }
    }
 
+   std::string indexURI = Desc.URI;
+   auto const byhashidx = indexURI.find("/by-hash/");
+   if (byhashidx != std::string::npos)
+      indexURI = indexURI.substr(0, byhashidx - strlen(".diff"));
+   else
+   {
+      auto end = indexURI.length() - strlen(".diff/Index");
+      if (CurrentCompressionExtension != "uncompressed")
+	 end -= (1 + CurrentCompressionExtension.length());
+      indexURI = indexURI.substr(0, end);
+   }
+
    if (pdiff_merge == false)
-      new pkgAcqIndexDiffs(Owner, TransactionManager, Target, available_patches);
+      new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
    else
    {
       diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
       for(size_t i = 0; i < available_patches.size(); ++i)
 	 (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, TransactionManager,
-               Target,
+               Target, UsedMirror, indexURI,
 	       available_patches[i],
 	       diffs);
    }
@@ -2492,8 +2502,9 @@ pkgAcqDiffIndex::~pkgAcqDiffIndex()
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
                                    pkgAcqMetaClearSig * const TransactionManager,
                                    IndexTarget const &Target,
+				   std::string const &indexUsedMirror, std::string const &indexURI,
 				   vector<DiffInfo> const &diffs)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL),
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
      available_patches(diffs)
 {
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
@@ -2503,6 +2514,12 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
    Desc.Owner = this;
    Description = Target.Description;
    Desc.ShortDesc = Target.ShortDesc;
+
+   UsedMirror = indexUsedMirror;
+   if (UsedMirror == "DIRECT")
+      UsedMirror.clear();
+   else if (UsedMirror.empty() == false && Description.find(" ") != string::npos)
+      Description.replace(0, Description.find(" "), UsedMirror);
 
    if(available_patches.empty() == true)
    {
@@ -2618,7 +2635,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    }
 
    // queue the right diff
-   Desc.URI = Target.URI + ".diff/" + available_patches[0].file + ".gz";
+   Desc.URI = indexURI + ".diff/" + available_patches[0].file + ".gz";
    Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI + ".diff/" + available_patches[0].file), Target);
 
@@ -2671,7 +2688,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 	 // see if there is more to download
 	 if(available_patches.empty() == false)
 	 {
-	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, available_patches);
+	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
 	    Finish();
 	 } else {
 	    DestFile = PatchedFile;
@@ -2700,19 +2717,26 @@ pkgAcqIndexDiffs::~pkgAcqIndexDiffs() {}
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
                                              pkgAcqMetaClearSig * const TransactionManager,
                                              IndexTarget const &Target,
+					     std::string const &indexUsedMirror, std::string const &indexURI,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionManager, Target), d(NULL),
-     patch(patch), allPatches(allPatches), State(StateFetchDiff)
+  : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
+    patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Desc.Owner = this;
    Description = Target.Description;
+   UsedMirror = indexUsedMirror;
+   if (UsedMirror == "DIRECT")
+      UsedMirror.clear();
+   else if (UsedMirror.empty() == false && Description.find(" ") != string::npos)
+      Description.replace(0, Description.find(" "), UsedMirror);
+
+   Desc.Owner = this;
    Desc.ShortDesc = Target.ShortDesc;
-   Desc.URI = Target.URI + ".diff/" + patch.file + ".gz";
+   Desc.URI = indexURI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + ".pdiff";
-   DestFile = GetPartialFileNameFromURI(Desc.URI);
+   DestFile = GetPartialFileNameFromURI(Target.URI + ".diff/" + patch.file + ".gz");
 
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
