@@ -1,3 +1,23 @@
+apt (1.2.16~rc1) xenial; urgency=medium
+
+  [ David Kalnischkies ]
+  * avoid changing the global LC_TIME for Release writing
+  * use de-localed std::put_time instead rolling our own
+  * accept only the expected UTC timezones in date parsing (Closes: 819697)
+  * avoid std::get_time usage to sidestep libstdc++6 bug (LP: #1593583)
+  * imbue datetime parsing with C.UTF-8 locale (Closes: 828011)
+  * prevent C++ locale number formatting in text APIs (try 2) (Closes: 832044)
+  * prevent C++ locale number formatting in text APIs (try 3) (LP: #1611010)
+    (LP: #1592817)
+  * imbue .diff/Index parsing with C.UTF-8 as well
+
+  [ Julian Andres Klode ]
+  * Use C locale instead of C.UTF-8 for protocol strings
+  * Add shippable.yml for CI on Shippable
+  * Revert "if the FileFd failed already following calls should fail, too"
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 14 Nov 2016 20:23:49 +0100
+
 apt (1.2.15) xenial; urgency=medium
 
   New micro release with bug fixes up to (and including) 1.3.1 (LP: #1638021)
