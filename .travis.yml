@@ -7,6 +7,7 @@ before_install:
    sudo sh -c '/bin/echo -e "Package: *\nPin: release n=wily\nPin-Priority: 1" > /etc/apt/preferences.d/wily'
  - sudo apt-get update -qq
 install:
+ - sudo apt-get -qq -y -t wily install libstdc++-5-dev g++
  - sudo ./prepare-release travis-ci
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
  - make
