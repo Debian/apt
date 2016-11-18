@@ -715,18 +715,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    if (prefix == "status")
    {
       std::vector<struct DpkgState> &states = PackageOps[pkgname];
-      if (action == "triggers-pending")
-      {
-	 if (Debug == true)
-	    std::clog << "(parsed from dpkg) pkg: " << pkgname
-	       << " action: " << action << " (prefix 2 to "
-	       << PackageOpsDone[pkgname] << " of " << states.size() << ")" << endl;
-
-	 states.insert(states.begin(), {"installed", N_("Installed %s")});
-	 states.insert(states.begin(), {"half-configured", N_("Configuring %s")});
-	 PackagesTotal += 2;
-      }
-      else if(PackageOpsDone[pkgname] < states.size())
+      if(PackageOpsDone[pkgname] < states.size())
       {
 	 char const * next_action = states[PackageOpsDone[pkgname]].state;
 	 if (next_action)
@@ -792,6 +781,17 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       }
 	    }
 	 }
+      }
+      else if (action == "triggers-pending")
+      {
+	 if (Debug == true)
+	    std::clog << "(parsed from dpkg) pkg: " << pkgname
+	       << " action: " << action << " (prefix 2 to "
+	       << PackageOpsDone[pkgname] << " of " << states.size() << ")" << endl;
+
+	 states.insert(states.begin(), {"installed", N_("Installed %s")});
+	 states.insert(states.begin(), {"half-configured", N_("Configuring %s")});
+	 PackagesTotal += 2;
       }
    }
 }
