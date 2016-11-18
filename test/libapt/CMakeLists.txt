@@ -1,5 +1,7 @@
-set(GTEST_ROOT "/usr/src/gtest" CACHE FILEPATH "Path to GTest CMake project")
-
+find_path(GTEST_ROOT src/gtest.cc
+   /usr/src/googletest/googletest
+   /usr/src/gtest
+)
 find_package(GTest)
 set(GTEST_DEPENDENCIES)
 
