@@ -1,0 +1,109 @@
+#!/bin/sh
+. $(dirname $(readlink -f $0))/framework.sh
+
+WORDS="Halllo\nH-lllo\nHalll1"
+
+# Case-insensitive test
+testsuccessequal "#include \"/dev/null\"
+#ifdef __GNUC__
+typedef uint16_t __attribute__((aligned (1))) triehash_uu16;
+typedef char static_assert16[__alignof__(triehash_uu16) == 1 ? 1 : -1];
+typedef uint32_t __attribute__((aligned (1))) triehash_uu32;
+typedef char static_assert32[__alignof__(triehash_uu32) == 1 ? 1 : -1];
+typedef uint64_t __attribute__((aligned (1))) triehash_uu64;
+typedef char static_assert64[__alignof__(triehash_uu64) == 1 ? 1 : -1];
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define onechar(c, s, l) (((uint64_t)(c)) << (s))
+#else
+#define onechar(c, s, l) (((uint64_t)(c)) << (l-8-s))
+#endif
+#if (!defined(__ARM_ARCH) || defined(__ARM_FEATURE_UNALIGNED)) && !defined(TRIE_HASH_NO_MULTI_BYTE)
+#define TRIE_HASH_MULTI_BYTE
+#endif
+#endif /*GNUC */
+#ifdef TRIE_HASH_MULTI_BYTE
+static enum PerfectKey PerfectHash6(const char *string)
+{
+    switch(string[0] | 0x20) {
+    case 0| onechar('h', 0, 8):
+        switch(string[1]) {
+        case 0| onechar('-', 0, 8):
+            switch(*((triehash_uu32*) &string[2]) | 0x20202020) {
+            case 0| onechar('l', 0, 32)| onechar('l', 8, 32)| onechar('l', 16, 32)| onechar('o', 24, 32):
+                return H_lllo;
+            }
+            break;
+        case 0| onechar('a', 0, 8):
+        case 0| onechar('A', 0, 8):
+            switch(*((triehash_uu16*) &string[2]) | 0x2020) {
+            case 0| onechar('l', 0, 16)| onechar('l', 8, 16):
+                switch(string[4] | 0x20) {
+                case 0| onechar('l', 0, 8):
+                    switch(string[5]) {
+                    case 0| onechar('1', 0, 8):
+                        return Halll1;
+                        break;
+                    case 0| onechar('o', 0, 8):
+                    case 0| onechar('O', 0, 8):
+                        return Halllo;
+                    }
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+#else
+static enum PerfectKey PerfectHash6(const char *string)
+{
+    switch(string[0] | 0x20) {
+    case 'h':
+        switch(string[1]) {
+        case '-':
+            switch(string[2] | 0x20) {
+            case 'l':
+                switch(string[3] | 0x20) {
+                case 'l':
+                    switch(string[4] | 0x20) {
+                    case 'l':
+                        switch(string[5] | 0x20) {
+                        case 'o':
+                            return H_lllo;
+                        }
+                    }
+                }
+            }
+            break;
+        case 'a':
+        case 'A':
+            switch(string[2] | 0x20) {
+            case 'l':
+                switch(string[3] | 0x20) {
+                case 'l':
+                    switch(string[4] | 0x20) {
+                    case 'l':
+                        switch(string[5]) {
+                        case '1':
+                            return Halll1;
+                            break;
+                        case 'o':
+                        case 'O':
+                            return Halllo;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+#endif /* TRIE_HASH_MULTI_BYTE */
+ enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    case 6:
+        return PerfectHash6(string);
+    default:
+        return Unknown;
+    }
+}" triehash --multi-byte=3210 --ignore-case -H /dev/null /dev/stdin

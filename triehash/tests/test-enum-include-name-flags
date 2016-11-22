@@ -1,0 +1,129 @@
+#!/bin/sh
+. $(dirname $(readlink -f $0))/framework.sh
+
+# Need a short word, we really just need to check if the labels work
+WORDS=w
+
+testsuccessequal "\
+#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+#include <foo.h>
+enum PerfectKey {
+    w = 0,
+    Unknown = -1,
+};
+ enum PerfectKey PerfectHash(const char *string, size_t length);
+#endif                       /* TRIE_HASH_PerfectHash */" triehash --multi-byte=0 -C /dev/null --include="<foo.h>" /dev/stdin
+
+# Check for --enum-class support
+testsuccessequal "\
+#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum class PerfectKey {
+    w = 0,
+    Unknown = -1,
+};
+static enum PerfectKey PerfectHash(const char *string, size_t length);
+static enum PerfectKey PerfectHash1(const char *string)
+{
+    switch(string[0]) {
+    case 'w':
+        return PerfectKey::w;
+    }
+    return PerfectKey::Unknown;
+}
+static enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    case 1:
+        return PerfectHash1(string);
+    default:
+        return PerfectKey::Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */" triehash --multi-byte=0 --enum-class /dev/stdin
+
+# Check for --enum-name support
+testsuccessequal "\
+#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum Foo {
+    Unknown = -1,
+};
+static enum Foo PerfectHash(const char *string, size_t length);
+static enum Foo PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */\
+" triehash --multi-byte=0 --enum-name="Foo"
+
+# Check for --enum-class support
+testsuccessequal "\
+#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum class Foo::Bar {
+    Unknown = -1,
+};
+static enum Foo::Bar PerfectHash(const char *string, size_t length);
+static enum Foo::Bar PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Foo::Bar::Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */\
+" triehash --multi-byte=0 --enum-class --enum-name="Foo::Bar"
+
+# Check for --function-name support
+testsuccessequal "\
+#ifndef TRIE_HASH_NonSense
+#define TRIE_HASH_NonSense
+#include <stddef.h>
+#include <stdint.h>
+enum PerfectKey {
+    Unknown = -1,
+};
+static enum PerfectKey NonSense(const char *string, size_t length);
+static enum PerfectKey NonSense(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_NonSense */\
+" triehash --multi-byte=0 --function-name="NonSense"
+
+# Check for --counter-name support
+testsuccessequal "\
+#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum { MyCounter = 0 };
+enum PerfectKey {
+    Unknown = -1,
+};
+static enum PerfectKey PerfectHash(const char *string, size_t length);
+static enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */\
+" triehash --multi-byte=0 --counter-name="MyCounter"
