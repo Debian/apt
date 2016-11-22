@@ -47,6 +47,20 @@
    </para>
 </refsect1>
 
+<refsect1><title>Supported keyring files</title>
+<para>apt-key supports only the binary OpenPGP format (also known as "GPG key
+   public ring") in files with the "<literal>gpg</literal>" extension, not
+   the keybox database format introduced in newer &gpg; versions as default
+   for keyring files. Binary keyring files intended to be used with any apt
+   version should therefore always be created with <command>gpg --export</command>.
+</para>
+<para>Alternatively, if all systems which should be using the created keyring
+   have at least apt version >= 1.4 installed, you can use the ASCII armored
+   format with the "<literal>asc</literal>" extension instead which can be
+   created with <command>gpg --armor --export</command>.
+</para>
+</refsect1>
+
 <refsect1><title>Commands</title>
    <variablelist>
      <varlistentry><term><option>add</option> <option>&synopsis-param-filename;</option></term>
@@ -63,10 +77,10 @@
      otherwise the &apt-secure; infrastructure is completely undermined.
      </para>
      <para>
-       Instead of using this command a keyring can be placed directly in the
-       <filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive name
-       (same rules for filename apply as for &apt-conf; files) and "<literal>gpg</literal>"
-       as file extension.
+       <emphasis>Note</emphasis>: Instead of using this command a keyring
+       should be placed directly in the <filename>/etc/apt/trusted.gpg.d/</filename>
+       directory with a descriptive name and either "<literal>gpg</literal>" or
+       "<literal>asc</literal>" as file extension.
      </para>
      </listitem>
      </varlistentry>
@@ -139,7 +153,7 @@
      <para>
        Note that a distribution does not need to and in fact should not use
        this command any longer and instead ship keyring files in the
-       <filename>/etc/apt/trusted.gpg</filename> directory directly as this
+       <filename>/etc/apt/trusted.gpg.d/</filename> directory directly as this
        avoids a dependency on <package>gnupg</package> and it is easier to manage
        keys by simply adding and removing files for maintainers and users alike.
      </para>
