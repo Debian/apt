@@ -1,0 +1,427 @@
+#!/bin/sh
+. $(dirname $(readlink -f $0))/framework.sh
+
+# Check that building a single-byte trie works
+testsuccessequal "\
+┌────────────────────────────────────────────────────┐
+│                   Initial trie                     │
+└────────────────────────────────────────────────────┘
+
+├── V
+│   ├── e
+│   │   ├── r
+│   │   │   ├── y
+│   │   │   │   ├── L
+│   │   │   │   │   ├── o
+│   │   │   │   │   │   ├── n
+│   │   │   │   │   │   │   ├── g
+│   │   │   │   │   │   │   │   ├── W
+│   │   │   │   │   │   │   │   │   ├── o
+│   │   │   │   │   │   │   │   │   │   ├── r
+│   │   │   │   │   │   │   │   │   │   │   ├── d → VeryLongWord
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│                   Rebuilt trie                     │
+└────────────────────────────────────────────────────┘
+
+├── V
+│   ├── e
+│   │   ├── r
+│   │   │   ├── y
+│   │   │   │   ├── L
+│   │   │   │   │   ├── o
+│   │   │   │   │   │   ├── n
+│   │   │   │   │   │   │   ├── g
+│   │   │   │   │   │   │   │   ├── W
+│   │   │   │   │   │   │   │   │   ├── o
+│   │   │   │   │   │   │   │   │   │   ├── r
+│   │   │   │   │   │   │   │   │   │   │   ├── d → VeryLongWord
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 4            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 5            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 7            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 12           │
+└────────────────────────────────────────────────────┘
+
+├── V
+│   ├── e
+│   │   ├── r
+│   │   │   ├── y
+│   │   │   │   ├── L
+│   │   │   │   │   ├── o
+│   │   │   │   │   │   ├── n
+│   │   │   │   │   │   │   ├── g
+│   │   │   │   │   │   │   │   ├── W
+│   │   │   │   │   │   │   │   │   ├── o
+│   │   │   │   │   │   │   │   │   │   ├── r
+│   │   │   │   │   │   │   │   │   │   │   ├── d → VeryLongWord" triehash --multi-byte=0 -l tree /dev/stdin
+
+# Two byte optimization
+testsuccessequal "\
+┌────────────────────────────────────────────────────┐
+│                   Initial trie                     │
+└────────────────────────────────────────────────────┘
+
+├── Ve
+│   ├── ry
+│   │   ├── Lo
+│   │   │   ├── ng
+│   │   │   │   ├── Wo
+│   │   │   │   │   ├── rd → VeryLongWord
+├── Wo
+│   ├── rd → Word
+│   │   ├── -_
+│   │   │   ├── 0 → Word-_0
+│   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│                   Rebuilt trie                     │
+└────────────────────────────────────────────────────┘
+
+├── Ve
+│   ├── ry
+│   │   ├── Lo
+│   │   │   ├── ng
+│   │   │   │   ├── Wo
+│   │   │   │   │   ├── rd → VeryLongWord
+├── Wo
+│   ├── rd → Word
+│   │   ├── -
+│   │   │   ├── _0 → Word-_0
+│   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 4            │
+└────────────────────────────────────────────────────┘
+
+├── Wo
+│   ├── rd → Word
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 5            │
+└────────────────────────────────────────────────────┘
+
+├── Wo
+│   ├── rd
+│   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 7            │
+└────────────────────────────────────────────────────┘
+
+├── Wo
+│   ├── rd
+│   │   ├── -_
+│   │   │   ├── 0 → Word-_0
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 12           │
+└────────────────────────────────────────────────────┘
+
+├── Ve
+│   ├── ry
+│   │   ├── Lo
+│   │   │   ├── ng
+│   │   │   │   ├── Wo
+│   │   │   │   │   ├── rd → VeryLongWord" triehash --multi-byte=1 -l tree /dev/stdin
+# Four byte optimization
+testsuccessequal "\
+┌────────────────────────────────────────────────────┐
+│                   Initial trie                     │
+└────────────────────────────────────────────────────┘
+
+├── Very
+│   ├── Long
+│   │   ├── Word → VeryLongWord
+├── Word → Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│                   Rebuilt trie                     │
+└────────────────────────────────────────────────────┘
+
+├── Very
+│   ├── Long
+│   │   ├── Word → VeryLongWord
+├── Word → Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 4            │
+└────────────────────────────────────────────────────┘
+
+├── Word → Word
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 5            │
+└────────────────────────────────────────────────────┘
+
+├── Word
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 7            │
+└────────────────────────────────────────────────────┘
+
+├── Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 12           │
+└────────────────────────────────────────────────────┘
+
+├── Very
+│   ├── Long
+│   │   ├── Word → VeryLongWord" triehash --multi-byte=2 -l tree /dev/stdin
+# Eigh byte optimization
+testsuccessequal "\
+┌────────────────────────────────────────────────────┐
+│                   Initial trie                     │
+└────────────────────────────────────────────────────┘
+
+├── VeryLong
+│   ├── W
+│   │   ├── o
+│   │   │   ├── r
+│   │   │   │   ├── d → VeryLongWord
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│                   Rebuilt trie                     │
+└────────────────────────────────────────────────────┘
+
+├── V
+│   ├── eryLongW
+│   │   ├── o
+│   │   │   ├── r
+│   │   │   │   ├── d → VeryLongWord
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 4            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d → Word
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 5            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d
+│   │   │   │   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 7            │
+└────────────────────────────────────────────────────┘
+
+├── W
+│   ├── o
+│   │   ├── r
+│   │   │   ├── d
+│   │   │   │   ├── -
+│   │   │   │   │   ├── _
+│   │   │   │   │   │   ├── 0 → Word-_0
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 12           │
+└────────────────────────────────────────────────────┘
+
+├── VeryLong
+│   ├── W
+│   │   ├── o
+│   │   │   ├── r
+│   │   │   │   ├── d → VeryLongWord" triehash --multi-byte=3 -l tree /dev/stdin
+
+
+# Check that building a multi-byte trie works
+testsuccessequal "\
+┌────────────────────────────────────────────────────┐
+│                   Initial trie                     │
+└────────────────────────────────────────────────────┘
+
+├── VeryLong
+│   ├── Word → VeryLongWord
+├── Word → Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│                   Rebuilt trie                     │
+└────────────────────────────────────────────────────┘
+
+├── Very
+│   ├── LongWord → VeryLongWord
+├── Word → Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 4            │
+└────────────────────────────────────────────────────┘
+
+├── Word → Word
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 5            │
+└────────────────────────────────────────────────────┘
+
+├── Word
+│   ├── 2 → Label
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 7            │
+└────────────────────────────────────────────────────┘
+
+├── Word
+│   ├── -
+│   │   ├── _
+│   │   │   ├── 0 → Word-_0
+┌────────────────────────────────────────────────────┐
+│              Trie for words of length 12           │
+└────────────────────────────────────────────────────┘
+
+├── VeryLong
+│   ├── Word → VeryLongWord" triehash -l tree /dev/stdin
+
+
+###### CHANGE THE WORDS FOR THE FOLLOWING TESTS #######
+WORDS="Word"
+
+# Check that we are generating the proper multi-byte and fallback sessions
+testsuccessequal "#include \"/dev/null\"
+#ifdef __GNUC__
+typedef uint16_t __attribute__((aligned (1))) triehash_uu16;
+typedef char static_assert16[__alignof__(triehash_uu16) == 1 ? 1 : -1];
+typedef uint32_t __attribute__((aligned (1))) triehash_uu32;
+typedef char static_assert32[__alignof__(triehash_uu32) == 1 ? 1 : -1];
+typedef uint64_t __attribute__((aligned (1))) triehash_uu64;
+typedef char static_assert64[__alignof__(triehash_uu64) == 1 ? 1 : -1];
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define onechar(c, s, l) (((uint64_t)(c)) << (s))
+#else
+#define onechar(c, s, l) (((uint64_t)(c)) << (l-8-s))
+#endif
+#if (!defined(__ARM_ARCH) || defined(__ARM_FEATURE_UNALIGNED)) && !defined(TRIE_HASH_NO_MULTI_BYTE)
+#define TRIE_HASH_MULTI_BYTE
+#endif
+#endif /*GNUC */
+#ifdef TRIE_HASH_MULTI_BYTE
+static enum PerfectKey PerfectHash4(const char *string)
+{
+    switch(*((triehash_uu32*) &string[0])) {
+    case 0| onechar('W', 0, 32)| onechar('o', 8, 32)| onechar('r', 16, 32)| onechar('d', 24, 32):
+        return Word;
+    }
+    return Unknown;
+}
+#else
+static enum PerfectKey PerfectHash4(const char *string)
+{
+    switch(string[0]) {
+    case 'W':
+        switch(string[1]) {
+        case 'o':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'd':
+                    return Word;
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+#endif /* TRIE_HASH_MULTI_BYTE */
+ enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    case 4:
+        return PerfectHash4(string);
+    default:
+        return Unknown;
+    }
+}" triehash -H /dev/null /dev/stdin
+
+
+# Check that we are generating no multi-byte session
+testsuccessequal "#include \"/dev/null\"
+static enum PerfectKey PerfectHash4(const char *string)
+{
+    switch(string[0]) {
+    case 'W':
+        switch(string[1]) {
+        case 'o':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'd':
+                    return Word;
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+ enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    case 4:
+        return PerfectHash4(string);
+    default:
+        return Unknown;
+    }
+}" triehash --multi-byte=0 -H /dev/null /dev/stdin

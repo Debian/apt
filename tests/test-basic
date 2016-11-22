@@ -1,0 +1,245 @@
+#!/bin/sh
+. $(dirname $(readlink -f $0))/framework.sh
+
+# Check for non-existing files
+testfailure triehash -C /does/not/exist1 -H /does/not/exist1 /does/not/exist/input
+
+# Check that we can specify - for -C and -H
+testsuccessequal "#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum PerfectKey {
+    Unknown = -1,
+};
+static enum PerfectKey PerfectHash(const char *string, size_t length);
+static enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */" triehash --multi-byte=0 -C - -H -
+
+# Check that split files work
+testsuccess triehash -C test.c -H test.h --multi-byte=0
+testfileequal "#include \"test.h\"
+ enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    default:
+        return Unknown;
+    }
+}" test.c
+testfileequal "#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum PerfectKey {
+    Unknown = -1,
+};
+ enum PerfectKey PerfectHash(const char *string, size_t length);
+#endif                       /* TRIE_HASH_PerfectHash */" test.h
+
+
+# Check the C code generator
+testsuccess triehash -C test.c -H test.c /dev/stdin
+testfileequal "#ifndef TRIE_HASH_PerfectHash
+#define TRIE_HASH_PerfectHash
+#include <stddef.h>
+#include <stdint.h>
+enum PerfectKey {
+    VeryLongWord = 43,
+    Word = 42,
+    Word___0 = 0,
+    Label = 44,
+    Unknown = -9,
+};
+static enum PerfectKey PerfectHash(const char *string, size_t length);
+#ifdef __GNUC__
+typedef uint16_t __attribute__((aligned (1))) triehash_uu16;
+typedef char static_assert16[__alignof__(triehash_uu16) == 1 ? 1 : -1];
+typedef uint32_t __attribute__((aligned (1))) triehash_uu32;
+typedef char static_assert32[__alignof__(triehash_uu32) == 1 ? 1 : -1];
+typedef uint64_t __attribute__((aligned (1))) triehash_uu64;
+typedef char static_assert64[__alignof__(triehash_uu64) == 1 ? 1 : -1];
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define onechar(c, s, l) (((uint64_t)(c)) << (s))
+#else
+#define onechar(c, s, l) (((uint64_t)(c)) << (l-8-s))
+#endif
+#if (!defined(__ARM_ARCH) || defined(__ARM_FEATURE_UNALIGNED)) && !defined(TRIE_HASH_NO_MULTI_BYTE)
+#define TRIE_HASH_MULTI_BYTE
+#endif
+#endif /*GNUC */
+#ifdef TRIE_HASH_MULTI_BYTE
+static enum PerfectKey PerfectHash4(const char *string)
+{
+    switch(*((triehash_uu32*) &string[0])) {
+    case 0| onechar('W', 0, 32)| onechar('o', 8, 32)| onechar('r', 16, 32)| onechar('d', 24, 32):
+        return Word;
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash5(const char *string)
+{
+    switch(*((triehash_uu32*) &string[0])) {
+    case 0| onechar('W', 0, 32)| onechar('o', 8, 32)| onechar('r', 16, 32)| onechar('d', 24, 32):
+        switch(string[4]) {
+        case 0| onechar('2', 0, 8):
+            return Label;
+        }
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash7(const char *string)
+{
+    switch(*((triehash_uu32*) &string[0])) {
+    case 0| onechar('W', 0, 32)| onechar('o', 8, 32)| onechar('r', 16, 32)| onechar('d', 24, 32):
+        switch(string[4]) {
+        case 0| onechar('-', 0, 8):
+            switch(string[5]) {
+            case 0| onechar('_', 0, 8):
+                switch(string[6]) {
+                case 0| onechar('0', 0, 8):
+                    return Word___0;
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash12(const char *string)
+{
+    switch(*((triehash_uu64*) &string[0])) {
+    case 0| onechar('V', 0, 64)| onechar('e', 8, 64)| onechar('r', 16, 64)| onechar('y', 24, 64)| onechar('L', 32, 64)| onechar('o', 40, 64)| onechar('n', 48, 64)| onechar('g', 56, 64):
+        switch(*((triehash_uu32*) &string[8])) {
+        case 0| onechar('W', 0, 32)| onechar('o', 8, 32)| onechar('r', 16, 32)| onechar('d', 24, 32):
+            return VeryLongWord;
+        }
+    }
+    return Unknown;
+}
+#else
+static enum PerfectKey PerfectHash4(const char *string)
+{
+    switch(string[0]) {
+    case 'W':
+        switch(string[1]) {
+        case 'o':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'd':
+                    return Word;
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash5(const char *string)
+{
+    switch(string[0]) {
+    case 'W':
+        switch(string[1]) {
+        case 'o':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'd':
+                    switch(string[4]) {
+                    case '2':
+                        return Label;
+                    }
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash7(const char *string)
+{
+    switch(string[0]) {
+    case 'W':
+        switch(string[1]) {
+        case 'o':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'd':
+                    switch(string[4]) {
+                    case '-':
+                        switch(string[5]) {
+                        case '_':
+                            switch(string[6]) {
+                            case '0':
+                                return Word___0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+static enum PerfectKey PerfectHash12(const char *string)
+{
+    switch(string[0]) {
+    case 'V':
+        switch(string[1]) {
+        case 'e':
+            switch(string[2]) {
+            case 'r':
+                switch(string[3]) {
+                case 'y':
+                    switch(string[4]) {
+                    case 'L':
+                        switch(string[5]) {
+                        case 'o':
+                            switch(string[6]) {
+                            case 'n':
+                                switch(string[7]) {
+                                case 'g':
+                                    switch(string[8]) {
+                                    case 'W':
+                                        switch(string[9]) {
+                                        case 'o':
+                                            switch(string[10]) {
+                                            case 'r':
+                                                switch(string[11]) {
+                                                case 'd':
+                                                    return VeryLongWord;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return Unknown;
+}
+#endif /* TRIE_HASH_MULTI_BYTE */
+static enum PerfectKey PerfectHash(const char *string, size_t length)
+{
+    switch (length) {
+    case 4:
+        return PerfectHash4(string);
+    case 5:
+        return PerfectHash5(string);
+    case 7:
+        return PerfectHash7(string);
+    case 12:
+        return PerfectHash12(string);
+    default:
+        return Unknown;
+    }
+}
+#endif                       /* TRIE_HASH_PerfectHash */"  test.c
