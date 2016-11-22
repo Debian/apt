@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2015-10-20T00:00:00Z</date>
+   <date>2016-11-20T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -62,6 +62,19 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>dist-upgrade</option> (&apt-get;)</term>
+     <listitem><para><literal>dist-upgrade</literal> in addition to performing the function of
+     <literal>upgrade</literal>, also intelligently handles changing dependencies
+     with new versions of packages; <command>apt-get</command> has a "smart" conflict
+     resolution system, and it will attempt to upgrade the most important
+     packages at the expense of less important ones if necessary.
+     The <literal>dist-upgrade</literal> command may therefore remove some packages.
+     The <filename>/etc/apt/sources.list</filename> file contains a list of locations
+     from which to retrieve desired package files.
+     See also &apt-preferences; for a mechanism for
+     overriding the general settings for individual packages.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>full-upgrade</option> (&apt-get;)</term>
      <listitem><para><literal>full-upgrade</literal> performs the function of
 	   upgrade but will remove currently installed packages if this is
@@ -94,6 +107,62 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>source</option> (&apt-get;)</term>
+     <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT
+     will examine the available packages to decide which source package to
+     fetch. It will then find and download into the current directory the
+     newest available version of that source package while respecting the
+     default release, set with the option <literal>APT::Default-Release</literal>,
+     the <option>-t</option> option or per package with the
+     <literal>pkg/release</literal> syntax, if possible.</para>
+
+     <para>Source packages are tracked separately
+     from binary packages via <literal>deb-src</literal> lines
+     in the &sources-list; file. This means that you will need to add such a line
+     for each repository you want to get sources from; otherwise you will probably
+     get either the wrong (too old/too new) source versions or none at all.</para>
+
+     <para>If the <option>--compile</option> option is specified
+     then the package will be compiled to a binary .deb using
+     <command>dpkg-buildpackage</command> for the architecture as
+     defined by the <command>--host-architecture</command> option.
+     If <option>--download-only</option> is specified then the source package
+     will not be unpacked.</para>
+
+     <para>A specific source version can be retrieved by postfixing the source name
+     with an equals and then the version to fetch, similar to the mechanism
+     used for the package files. This enables exact matching of the source
+     package name and version, implicitly enabling the
+     <literal>APT::Get::Only-Source</literal> option.</para>
+
+     <para>Note that source packages are not installed and tracked in the
+     <command>dpkg</command> database like binary packages; they are simply downloaded
+     to the current directory, like source tarballs.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>build-dep</option> (&apt-get;)</term>
+     <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an
+     attempt to satisfy the build dependencies for a source package. By default the dependencies are
+     satisfied to build the package natively. If desired a host-architecture can be specified
+     with the <option>--host-architecture</option> option instead.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>download</option> (&apt-get;)</term>
+       <listitem><para><literal>download</literal> will download the given
+           binary package into the current directory.
+       </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>autoclean</option> (&apt-get;)</term>
+     <listitem><para>Like <literal>clean</literal>, <literal>autoclean</literal> clears out the local
+     repository of retrieved package files. The difference is that it only
+     removes package files that can no longer be downloaded, and are largely
+     useless. This allows a cache to be maintained over a long period without
+     it growing out of control. The configuration option
+     <literal>APT::Clean-Installed</literal> will prevent installed packages from being
+     erased if it is set to off.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>autoremove</option> (&apt-get;)</term>
      <listitem><para>
 	   <literal>autoremove</literal> is used to remove packages that were
@@ -109,12 +178,31 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>changelog</option> (&apt-get;)</term>
+	<listitem><para><literal>changelog</literal> tries to download the
+	      changelog of a package and displays it through
+	      <command>sensible-pager</command>.  By default it
+	      displays the changelog for the version that is installed.
+	      However, you can specify the same options as for the
+	      <option>install</option> command.</para>
+       </listitem>
+     </varlistentry>
+
      <varlistentry><term><option>search</option> (&apt-cache;)</term>
      <listitem><para><option>search</option> can be used to search for the given
 	   &regex; term(s) in the list of available packages and display
 	   matches.  This can e.g. be useful if you are looking for packages
 	   having a specific feature.  If you are looking for a package
 	   including a specific file try &apt-file;.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>showsrc</option> (&apt-cache;)</term>
+     <listitem><para><literal>showsrc</literal> displays all the
+     source package records that match the given package names. All
+     versions are shown, as well as all records that declare the name
+     to be a binary package. Use <option>--only-source</option> to
+     display only source package names.
      </para></listitem>
      </varlistentry>
 
@@ -126,6 +214,23 @@
 	   before allowing &apt; to remove a package or while searching for
 	   new packages to install.
      </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>depends</option> (&apt-cache;)</term>
+     <listitem><para><literal>depends</literal> shows a listing of each dependency a package has
+     and all the possible other packages that can fulfill that dependency.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>rdepends</option> (&apt-cache;)</term>
+     <listitem><para><literal>rdepends</literal> shows a listing of each reverse dependency a
+      package has.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>policy</option> (&apt-cache;)</term>
+     <listitem><para><literal>policy</literal> is meant to help debug issues relating to the
+     preferences file. With no arguments it will print out the
+     priorities of each source. Otherwise it prints out detailed information
+     about the priority selection of the named package.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>list</option> (work-in-progress)</term>
