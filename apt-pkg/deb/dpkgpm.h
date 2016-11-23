@@ -53,6 +53,7 @@ class pkgDPkgPM : public pkgPackageManager
       \param pkgname Name of the package that disappeared
    */
    APT_HIDDEN void handleDisappearAction(std::string const &pkgname);
+   APT_HIDDEN void handleCrossUpgradeAction(std::string const &pkgname);
 
    protected:
    int pkgFailures;

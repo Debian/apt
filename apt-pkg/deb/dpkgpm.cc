@@ -619,63 +619,152 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       action = APT::String::Strip(list[1]);
    }
    // "status" has the form: "status: pkg: state"
-   // with state in ["half-installed", "unpacked", "half-configured", 
+   // with state in ["half-installed", "unpacked", "half-configured",
    //                "installed", "config-files", "not-installed"]
    else if (prefix == "status")
    {
       pkgname = APT::String::Strip(list[1]);
       action = APT::String::Strip(list[2]);
+
+      /* handle the special cases first:
+
+	 errors look like this:
+	 'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data
+	 and conffile-prompt like this
+	 'status:/etc/compiz.conf/compiz.conf :  conffile-prompt: 'current-conffile' 'new-conffile' useredited distedited
+	 */
+      if(action == "error")
+      {
+         d->progress->Error(pkgname, PackagesDone, PackagesTotal, list[3]);
+         ++pkgFailures;
+         WriteApportReport(pkgname.c_str(), list[3].c_str());
+         return;
+      }
+      else if(action == "conffile-prompt")
+      {
+         d->progress->ConffilePrompt(pkgname, PackagesDone, PackagesTotal, list[3]);
+         return;
+      }
    } else {
       if (Debug == true)
 	 std::clog << "unknown prefix '" << prefix << "'" << std::endl;
       return;
    }
 
-
-   /* handle the special cases first:
-
-      errors look like this:
-      'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
-      and conffile-prompt like this
-      'status:/etc/compiz.conf/compiz.conf :  conffile-prompt: 'current-conffile' 'new-conffile' useredited distedited
-   */
-   if (prefix == "status")
-   {
-      if(action == "error")
-      {
-         d->progress->Error(pkgname, PackagesDone, PackagesTotal,
-                            list[3]);
-         pkgFailures++;
-         WriteApportReport(pkgname.c_str(), list[3].c_str());
-         return;
-      }
-      else if(action == "conffile-prompt")
-      {
-         d->progress->ConffilePrompt(pkgname, PackagesDone, PackagesTotal,
-                                     list[3]);
-         return;
-      }
-   }
-
-   // at this point we know that we should have a valid pkgname, so build all 
-   // the info from it
-
-   // dpkg does not always send "pkgname:arch" so we add it here if needed
+   // At this point we have a pkgname, but it might not be arch-qualified !
    if (pkgname.find(":") == std::string::npos)
    {
-      // find the package in the group that is touched by dpkg
-      // if there are multiple pkgs dpkg would send us a full pkgname:arch
       pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
-      if (Grp.end() == false)
-	 for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
-	    if(Cache[P].Keep() == false || Cache[P].ReInstall() == true)
+      /* No arch means that dpkg believes there can only be one package
+         this can refer to so lets see what could be candidates here: */
+      std::vector<pkgCache::PkgIterator> candset;
+      for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
+      {
+	 if (PackageOps.find(P.FullName()) != PackageOps.end())
+	    candset.push_back(P);
+	 // packages can disappear without them having any interaction itself
+	 // so we have to consider these as candidates, too
+	 else if (P->CurrentVer != 0 && action == "disappear")
+	    candset.push_back(P);
+      }
+      if (unlikely(candset.empty()))
+      {
+	 if (Debug == true)
+	    std::clog << "unable to figure out which package is dpkg refering to with '" << pkgname << "'! (1)" << std::endl;
+	 return;
+      }
+      else if (candset.size() == 1) // we are lucky
+	 pkgname = candset.cbegin()->FullName();
+      else
+      {
+	 /* here be dragons^Wassumptions about dpkg:
+	    - an M-A:same version is always arch-qualified
+	    - a package from a foreign arch is (in newer versions) */
+	 size_t installedInstances = 0, wannabeInstances = 0;
+	 for (auto const &P: candset)
+	 {
+	    if (P->CurrentVer != 0)
 	    {
-	       auto fullname = P.FullName();
-	       if (Cache[P].Delete() && PackageOps[fullname].size() <= PackageOpsDone[fullname])
+	       ++installedInstances;
+	       if (Cache[P].Delete() == false)
+		  ++wannabeInstances;
+	    }
+	    else if (Cache[P].Install())
+	       ++wannabeInstances;
+	 }
+	 // the package becomes M-A:same, so we are still talking about current
+	 if (installedInstances == 1 && wannabeInstances >= 2)
+	 {
+	    for (auto const &P: candset)
+	    {
+	       if (P->CurrentVer == 0)
 		  continue;
-	       pkgname = std::move(fullname);
+	       pkgname = P.FullName();
 	       break;
 	    }
+	 }
+	 // the package was M-A:same, it isn't now, so we can only talk about that
+	 else if (installedInstances >= 2 && wannabeInstances == 1)
+	 {
+	    for (auto const &P: candset)
+	    {
+	       auto const IV = Cache[P].InstVerIter(Cache);
+	       if (IV.end())
+		  continue;
+	       pkgname = P.FullName();
+	       break;
+	    }
+	 }
+	 // that is a crossgrade
+	 else if (installedInstances == 1 && wannabeInstances == 1 && candset.size() == 2)
+	 {
+	    auto const PkgHasCurrentVersion = [](pkgCache::PkgIterator const &P) { return P->CurrentVer != 0; };
+	    auto const P = std::find_if(candset.begin(), candset.end(), PkgHasCurrentVersion);
+	    if (unlikely(P == candset.end()))
+	    {
+	       if (Debug == true)
+		  std::clog << "situation for '" << pkgname << "' looked like a crossgrade, but no current version?!" << std::endl;
+	       return;
+	    }
+	    auto fullname = P->FullName();
+	    if (PackageOps[fullname].size() != PackageOpsDone[fullname])
+	       pkgname = std::move(fullname);
+	    else
+	       pkgname = std::find_if_not(candset.begin(), candset.end(), PkgHasCurrentVersion)->FullName();
+	 }
+	 // we are desperate: so "just" take the native one, but that might change mid-air,
+	 // so we have to ask dpkg what it believes native is at the moment… all the time
+	 else
+	 {
+	    std::vector<std::string> sArgs = debSystem::GetDpkgBaseCommand();
+	    sArgs.push_back("--print-architecture");
+	    int outputFd = -1;
+	    pid_t const dpkgNativeArch = debSystem::ExecDpkg(sArgs, nullptr, &outputFd, true);
+	    if (unlikely(dpkgNativeArch == -1))
+	    {
+	       if (Debug == true)
+		  std::clog << "calling dpkg failed to ask it for its current native architecture to expand '" << pkgname << "'!" << std::endl;
+	       return;
+	    }
+	    FILE *dpkg = fdopen(outputFd, "r");
+	    if(dpkg != NULL)
+	    {
+	       char* buf = NULL;
+	       size_t bufsize = 0;
+	       if (getline(&buf, &bufsize, dpkg) != -1)
+		  pkgname += ':' + bufsize;
+	       free(buf);
+	       fclose(dpkg);
+	    }
+	    ExecWait(dpkgNativeArch, "dpkg --print-architecture", true);
+	    if (pkgname.find(':') != std::string::npos)
+	    {
+	       if (Debug == true)
+		  std::clog << "unable to figure out which package is dpkg refering to with '" << pkgname << "'! (2)" << std::endl;
+	       return;
+	    }
+	 }
+      }
    }
 
    std::string arch = "";
@@ -706,36 +795,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       if (action == "disappear")
 	 handleDisappearAction(pkgname);
       else if (action == "upgrade")
-      {
-	 // in a crossgrade what looked like a remove first is really an unpack over it
-	 auto const Pkg = Cache.FindPkg(pkgname);
-	 if (likely(Pkg.end() == false) && Cache[Pkg].Delete())
-	 {
-	    auto const Grp = Pkg.Group();
-	    if (likely(Grp.end() == false))
-	    {
-	       for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
-		  if(Cache[P].Install())
-		  {
-		     auto && Ops = PackageOps[P.FullName()];
-		     auto const unpackOp = std::find_if(Ops.cbegin(), Ops.cend(), [](DpkgState const &s) { return strcmp(s.state, "unpacked") == 0; });
-		     if (unpackOp != Ops.cend())
-		     {
-			// skip ahead in the crossgraded packages
-			auto const skipped = std::distance(Ops.cbegin(), unpackOp);
-			PackagesDone += skipped;
-			PackageOpsDone[P.FullName()] += skipped;
-			// finish the crossremoved package
-			auto const ROps = PackageOps[Pkg.FullName()].size();
-			auto && ROpsDone = PackageOpsDone[Pkg.FullName()];
-			PackagesDone += ROps - ROpsDone;
-			ROpsDone = ROps;
-			break;
-		     }
-		  }
-	    }
-	 }
-      }
+	 handleCrossUpgradeAction(pkgname);
       return;
    }
 
@@ -845,6 +905,38 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
 	    std::clog << "transfer manual-bit from disappeared »" << pkgname << "« to »" << Tar.FullName() << "«" << std::endl;
 	 Cache[Tar].Flags &= ~Flag::Auto;
 	 break;
+      }
+   }
+}
+									/*}}}*/
+void pkgDPkgPM::handleCrossUpgradeAction(string const &pkgname)		/*{{{*/
+{
+   // in a crossgrade what looked like a remove first is really an unpack over it
+   auto const Pkg = Cache.FindPkg(pkgname);
+   if (likely(Pkg.end() == false) && Cache[Pkg].Delete())
+   {
+      auto const Grp = Pkg.Group();
+      if (likely(Grp.end() == false))
+      {
+	 for (auto P = Grp.PackageList(); P.end() != true; P = Grp.NextPkg(P))
+	    if(Cache[P].Install())
+	    {
+	       auto && Ops = PackageOps[P.FullName()];
+	       auto const unpackOp = std::find_if(Ops.cbegin(), Ops.cend(), [](DpkgState const &s) { return strcmp(s.state, "unpacked") == 0; });
+	       if (unpackOp != Ops.cend())
+	       {
+		  // skip ahead in the crossgraded packages
+		  auto const skipped = std::distance(Ops.cbegin(), unpackOp);
+		  PackagesDone += skipped;
+		  PackageOpsDone[P.FullName()] += skipped;
+		  // finish the crossremoved package
+		  auto const ROps = PackageOps[Pkg.FullName()].size();
+		  auto && ROpsDone = PackageOpsDone[Pkg.FullName()];
+		  PackagesDone += ROps - ROpsDone;
+		  ROpsDone = ROps;
+		  break;
+	       }
+	    }
       }
    }
 }
