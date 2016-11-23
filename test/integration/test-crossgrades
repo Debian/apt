@@ -26,8 +26,24 @@ singleinstance() {
 	testdpkgnotinstalled 'crosser:i386' 'unrelated'
 	testdpkginstalled 'crosser:amd64'
 
-	testsuccess apt purge crosser:amd64 -y --planner $1
-	testdpkgnotinstalled 'crosser:amd64'
+	testsuccess apt install crosser:armel=3 -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0 --purge --planner $1
+	cp -a rootdir/tmp/testsuccess.output crosser.output
+	testsuccess grep -- '--remove.*crosser.*' crosser.output
+	testsuccess grep -- '--purge' crosser.output
+	testsuccess apt install crosser:armel=3 -y -o Debug::pkgDPkgProgressReporting=1 -o Dpkg::Use-Pty=0 --purge --planner $1
+	testdpkgnotinstalled 'crosser:i386' 'crosser:amd64' 'unrelated'
+	testdpkginstalled 'crosser:armel'
+
+	testsuccess apt install crosser=1 -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0 --purge --planner $1 --allow-downgrades
+	cp -a rootdir/tmp/testsuccess.output crosser.output
+	testsuccess grep -- '--remove.*crosser.*' crosser.output
+	testsuccess grep -- '--purge' crosser.output
+	testsuccess apt install crosser=1 -y -o Debug::pkgDPkgProgressReporting=1 -o Dpkg::Use-Pty=0 --purge --planner $1 --allow-downgrades
+	testdpkgnotinstalled 'crosser:armel' 'crosser:amd64' 'unrelated'
+	testdpkginstalled 'crosser:i386'
+
+	testsuccess apt purge crosser:i386 -y --planner $1
+	testdpkgnotinstalled 'crosser:i386'
 }
 singleinstance 'internal'
 singleinstance 'apt'
@@ -52,7 +68,15 @@ multiinstance() {
 	testdpkgnotinstalled 'crosser:amd64' 'unrelated'
 	testdpkginstalled 'crosser:i386' 'crosser:armel'
 
-	testsuccess apt purge crosser:i386 crosser:armel -y --planner $1
-	testdpkgnotinstalled 'crosser:i386' 'crosser:armel' 'unrelated'
+	testsuccess apt install crosser:i386- crosser:armel=1 -y -o Debug::pkgDpkgPm=1 -o Dpkg::Use-Pty=0 --purge --planner $1 --allow-downgrades
+	cp -a rootdir/tmp/testsuccess.output crosser.output
+	testsuccess grep -- '--remove.*crosser.*' crosser.output
+	testsuccess grep -- '--purge' crosser.output
+	testsuccess apt install crosser:i386- crosser:armel=1 -y -o Debug::pkgDPkgProgressReporting=1 -o Dpkg::Use-Pty=0 --purge --planner $1 --allow-downgrades
+	testdpkgnotinstalled 'crosser:amd64' 'crosser:i386' 'unrelated'
+	testdpkginstalled 'crosser:armel'
+
+	testsuccess apt purge crosser:armel -y --planner $1 -o Debug::pkgDPkgProgressReporting=1
+	testdpkgnotinstalled 'crosser:i386' 'crosser:armel' 'crosser:amd64' 'unrelated'
 }
 multiinstance 'internal'

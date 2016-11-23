@@ -1525,11 +1525,30 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    continue;
 
 	 auto const Grp = I->Pkg.Group();
-	 size_t installedInstances = 0;
+	 size_t installedInstances = 0, wannabeInstances = 0;
+	 bool multiArchInstances = false;
 	 for (auto Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
-	    if (Pkg->CurrentVer != 0 || Cache[Pkg].Install())
+	 {
+	    if (Pkg->CurrentVer != 0)
+	    {
 	       ++installedInstances;
-	 if (installedInstances == 2)
+	       if (Cache[Pkg].Delete() == false)
+		  ++wannabeInstances;
+	    }
+	    else if (PackageOps.find(Pkg.FullName()) != PackageOps.end())
+	       ++wannabeInstances;
+	    if (multiArchInstances == false)
+	    {
+	       auto const V = Cache[Pkg].InstVerIter(Cache);
+	       if (V.end() == false && (Pkg->CurrentVer == 0 || V != Pkg.CurrentVer()))
+		  multiArchInstances = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
+	    }
+	 }
+	 /* theoretically the installed check would be enough as some wannabe will
+	    be first and hence be the crossgrade we were looking for, but #844300
+	    prevents this so we keep these situations explicit removes.
+	    It is also the reason why neither of them can be a M-A:same package */
+	 if (installedInstances == 1 && wannabeInstances == 1 && multiArchInstances == false)
 	 {
 	    auto const FirstInstall = std::find_if_not(I, List.end(),
 		  [](Item const &i) { return i.Op == Item::Remove || i.Op == Item::Purge; });
