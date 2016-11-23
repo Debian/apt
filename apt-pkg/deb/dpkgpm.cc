@@ -1424,7 +1424,8 @@ bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
 	 if (I.Op == Item::Install && alreadyConfigured.insert(I.Pkg->ID).second == true)
 	    AppendList.emplace_back(Item::Configure, I.Pkg);
       for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-	 if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && alreadyConfigured.insert(Pkg->ID).second == true)
+	 if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
+	       Cache[Pkg].Delete() == false && alreadyConfigured.insert(Pkg->ID).second == true)
 	    AppendList.emplace_back(Item::Configure, Pkg);
       std::move(AppendList.begin(), AppendList.end(), std::back_inserter(List));
    }
