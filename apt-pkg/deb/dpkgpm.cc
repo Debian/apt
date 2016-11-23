@@ -1184,6 +1184,18 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 	 ++PackagesTotal;
 	 return true;
       });
+      if ((I.Op == Item::Remove || I.Op == Item::Purge) && I.Pkg->CurrentVer != 0)
+      {
+	 if (I.Pkg->CurrentState == pkgCache::State::UnPacked ||
+	       I.Pkg->CurrentState == pkgCache::State::HalfInstalled)
+	 {
+	    if (likely(strcmp(PackageOps[name][0].state, "half-configured") == 0))
+	    {
+	       ++PackageOpsDone[name];
+	       --PackagesTotal;
+	    }
+	 }
+      }
    }
    /* one extra: We don't want the progress bar to reach 100%, especially not
       if we call dpkg --configure --pending and process a bunch of triggers
