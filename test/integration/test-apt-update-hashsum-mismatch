@@ -27,7 +27,7 @@ testsuccess aptget update
 testsuccess aptcache show foo
 testsuccess aptget install foo -s
 
-for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log); do
+for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log.client*.log); do
 	msgmsg 'Test hashsum mismatch with file' "$get"
 	rm -rf rootdir/var/lib/apt/lists
 	webserverconfig 'aptwebserver::overwrite' ''

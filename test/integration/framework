@@ -1305,7 +1305,7 @@ changetowebserver() {
 	if test -x "${APTTESTHELPERSBINDIR}/aptwebserver"; then
 		cd aptarchive
 		local LOG="webserver.log"
-		if ! aptwebserver --port 0 -o aptwebserver::fork=1 -o aptwebserver::portfile='aptwebserver.port' "$@" >$LOG 2>&1 ; then
+		if ! aptwebserver --port 0 -o aptwebserver::fork=1 -o aptwebserver::portfile='aptwebserver.port' -o aptwebserver::logfiles="$(readlink -f .)/$LOG" "$@" >$LOG 2>&1 ; then
 			cat "$LOG"
 			false
 		fi

@@ -21,23 +21,30 @@ Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main all Packages [$(stat -c %s apt
 Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
 Reading package lists..." aptget update
 
+grepwebserverlogs() {
+	testsuccess grep -h "$1" aptarchive/webserver.log.client*.log
+	shift
+	sort rootdir/tmp/testsuccess.output > aptwebserver.log
+	testfileequal 'aptwebserver.log' "$@"
+}
+
 # ensure we asked the redirector only once
-testsuccessequal "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease" grep '^Location:' aptarchive/webserver.log
+grepwebserverlogs '^Location:' "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease"
 
 testsuccessequal "Hit:1 http://0.0.0.0:${APTHTTPPORT} unstable InRelease
 Reading package lists..." aptget update
 
-testsuccessequal "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
-Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease" grep '^Location:' aptarchive/webserver.log
+grepwebserverlogs '^Location:' "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
+Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease"
 
 rm -rf rootdir/var/lib/apt/lists
 testsuccess apt update -o Debug::Acquire::http=1 -o Acquire::SameMirrorForAllIndexes=0
-testsuccessequal "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
+grepwebserverlogs '^Location:' "Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
 Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
 Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/InRelease
-Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/main/source/Sources.gz
 Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/main/binary-all/Packages.gz
-Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/main/i18n/Translation-en.gz" grep '^Location:' aptarchive/webserver.log
+Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/main/i18n/Translation-en.gz
+Location: http://0.0.0.0:${APTHTTPPORT}/dists/unstable/main/source/Sources.gz"
 
 cd downloaded
 testsuccess apthelper download-file "http://localhost:${APTHTTPPORT}/redirectme/dists/unstable/InRelease" inrelease

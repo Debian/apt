@@ -6,6 +6,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include "teestream.h"
+
 #include <dirent.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -22,9 +24,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <list>
 #include <string>
+#include <thread>
 #include <vector>
 
 static std::string httpcodeToStr(int const httpcode)			/*{{{*/
@@ -114,7 +118,7 @@ static void addDataHeaders(std::list<std::string> &headers, std::string &data)/*
    }
 }
 									/*}}}*/
-static bool sendHead(int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
+static bool sendHead(std::ostream &log, int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
 {
    std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
@@ -137,7 +141,7 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
    if (chunkedTransferEncoding(headers) == true)
       headers.push_back("Transfer-Encoding: chunked");
 
-   std::clog << ">>> RESPONSE to " << client << " >>>" << std::endl;
+   log << ">>> RESPONSE to " << client << " >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
 	Success == true && h != headers.end(); ++h)
@@ -145,11 +149,11 @@ static bool sendHead(int const client, int const httpcode, std::list<std::string
       Success &= FileFd::Write(client, h->c_str(), h->size());
       if (Success == true)
 	 Success &= FileFd::Write(client, "\r\n", 2);
-      std::clog << *h << std::endl;
+      log << *h << std::endl;
    }
    if (Success == true)
       Success &= FileFd::Write(client, "\r\n", 2);
-   std::clog << "<<<<<<<<<<<<<<<<" << std::endl;
+   log << "<<<<<<<<<<<<<<<<" << std::endl;
    return Success;
 }
 									/*}}}*/
@@ -209,7 +213,7 @@ static bool sendData(int const client, std::list<std::string> const &headers, st
    return true;
 }
 									/*}}}*/
-static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
+static void sendError(std::ostream &log, int const client, int const httpcode, std::string const &request,/*{{{*/
 	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
    std::string response("<!doctype html><html><head><title>");
@@ -234,18 +238,18 @@ static void sendError(int const client, int const httpcode, std::string const &r
 	 headers.push_back("Connection: close");
    }
    addDataHeaders(headers, response);
-   sendHead(client, httpcode, headers);
+   sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
 }
-static void sendSuccess(int const client, std::string const &request,
+static void sendSuccess(std::ostream &log, int const client, std::string const &request,
 	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
-   sendError(client, 200, request, content, error, headers);
+   sendError(log, client, 200, request, content, error, headers);
 }
 									/*}}}*/
-static void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
-		  std::string const &request, bool content)
+static void sendRedirect(std::ostream &log, int const client, int const httpcode,/*{{{*/
+		  std::string const &uri, std::string const &request, bool content)
 {
    std::list<std::string> headers;
    std::string response("<!doctype html><html><head><title>");
@@ -279,7 +283,7 @@ static void sendRedirect(int const client, int const httpcode, std::string const
    else
       location.append(uri);
    headers.push_back(location);
-   sendHead(client, httpcode, headers);
+   sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
 }
@@ -322,19 +326,18 @@ static int grouped_alpha_case_sort(const struct dirent **a, const struct dirent 
    return strcasecmp((*a)->d_name, (*b)->d_name);
 }
 									/*}}}*/
-static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*/
+static void sendDirectoryListing(std::ostream &log, int const client, std::string const &dir,/*{{{*/
 			  std::string const &request, bool content, std::list<std::string> &headers)
 {
-   std::ostringstream listing;
-
    struct dirent **namelist;
    int const counter = scandir(dir.c_str(), &namelist, filter_hidden_files, grouped_alpha_case_sort);
    if (counter == -1)
    {
-      sendError(client, 500, request, content, "scandir failed", headers);
+      sendError(log, client, 500, request, content, "scandir failed", headers);
       return;
    }
 
+   std::ostringstream listing;
    listing << "<!doctype html><html><head><title>Index of " << dir << "</title><meta charset=\"utf-8\" />"
 	   << "<style type=\"text/css\"><!-- td {padding: 0.02em 0.5em 0.02em 0.5em;}"
 	   << "tr:nth-child(even){background-color:#dfdfdf;}"
@@ -368,12 +371,12 @@ static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*
 
    std::string response(listing.str());
    addDataHeaders(headers, response);
-   sendHead(client, 200, headers);
+   sendHead(log, client, 200, headers);
    if (content == true)
       sendData(client, headers, response);
 }
 									/*}}}*/
-static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
+static bool parseFirstLine(std::ostream &log, int const client, std::string const &request,/*{{{*/
 		    std::string &filename, std::string &params, bool &sendContent,
 		    bool &closeConnection, std::list<std::string> &headers)
 {
@@ -381,7 +384,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       sendContent = false;
    if (strncmp(request.c_str(), "GET ", 4) != 0)
    {
-      sendError(client, 501, request, true, "", headers);
+      sendError(log, client, 501, request, true, "", headers);
       return false;
    }
 
@@ -392,7 +395,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (lineend == std::string::npos || filestart == std::string::npos ||
 	 fileend == std::string::npos || filestart == fileend)
    {
-      sendError(client, 500, request, sendContent, "Filename can't be extracted", headers);
+      sendError(log, client, 500, request, sendContent, "Filename can't be extracted", headers);
       return false;
    }
 
@@ -404,14 +407,14 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "close") == 0;
    else
    {
-      sendError(client, 500, request, sendContent, "Not a HTTP/1.{0,1} request", headers);
+      sendError(log, client, 500, request, sendContent, "Not a HTTP/1.{0,1} request", headers);
       return false;
    }
 
    filename = request.substr(filestart, fileend - filestart);
    if (filename.find(' ') != std::string::npos)
    {
-      sendError(client, 500, request, sendContent, "Filename contains an unencoded space", headers);
+      sendError(log, client, 500, request, sendContent, "Filename contains an unencoded space", headers);
       return false;
    }
 
@@ -419,7 +422,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    if (host.empty() == true)
    {
       // RFC 2616 §14.23 requires Host
-      sendError(client, 400, request, sendContent, "Host header is required", headers);
+      sendError(log, client, 400, request, sendContent, "Host header is required", headers);
       return false;
    }
    host = "http://" + host;
@@ -430,7 +433,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    {
       if (absolute.find("uri") == std::string::npos)
       {
-	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that", headers);
+	 sendError(log, client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that", headers);
 	 return false;
       }
 
@@ -442,9 +445,9 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       if (authConf.empty() != auth.empty())
       {
 	 if (auth.empty())
-	    sendError(client, 407, request, sendContent, "Proxy requires authentication", headers);
+	    sendError(log, client, 407, request, sendContent, "Proxy requires authentication", headers);
 	 else
-	    sendError(client, 407, request, sendContent, "Client wants to authenticate to proxy, but proxy doesn't need it", headers);
+	    sendError(log, client, 407, request, sendContent, "Client wants to authenticate to proxy, but proxy doesn't need it", headers);
 	return false;
       }
       if (authConf.empty() == false)
@@ -455,7 +458,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 	    auth.erase(0, strlen(basic));
 	    if (auth != authConf)
 	    {
-	       sendError(client, 407, request, sendContent, "Proxy-Authentication doesn't match", headers);
+	       sendError(log, client, 407, request, sendContent, "Proxy-Authentication doesn't match", headers);
 	       return false;
 	    }
 	 }
@@ -463,14 +466,14 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 	 {
 	    std::list<std::string> headers;
 	    headers.push_back("Proxy-Authenticate: Basic");
-	    sendError(client, 407, request, sendContent, "Unsupported Proxy-Authentication Scheme", headers);
+	    sendError(log, client, 407, request, sendContent, "Unsupported Proxy-Authentication Scheme", headers);
 	    return false;
 	 }
       }
    }
    else if (absolute.find("path") == std::string::npos && APT::String::Startswith(filename, "/_config/") == false)
    {
-      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that", headers);
+      sendError(log, client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that", headers);
       return false;
    }
 
@@ -481,9 +484,9 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
       if (authConf.empty() != auth.empty())
       {
 	 if (auth.empty())
-	    sendError(client, 401, request, sendContent, "Server requires authentication", headers);
+	    sendError(log, client, 401, request, sendContent, "Server requires authentication", headers);
 	 else
-	    sendError(client, 401, request, sendContent, "Client wants to authenticate to server, but server doesn't need it", headers);
+	    sendError(log, client, 401, request, sendContent, "Client wants to authenticate to server, but server doesn't need it", headers);
 	 return false;
       }
       if (authConf.empty() == false)
@@ -494,14 +497,14 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 	    auth.erase(0, strlen(basic));
 	    if (auth != authConf)
 	    {
-	       sendError(client, 401, request, sendContent, "Authentication doesn't match", headers);
+	       sendError(log, client, 401, request, sendContent, "Authentication doesn't match", headers);
 	       return false;
 	    }
 	 }
 	 else
 	 {
 	    headers.push_back("WWW-Authenticate: Basic");
-	    sendError(client, 401, request, sendContent, "Unsupported Authentication Scheme", headers);
+	    sendError(log, client, 401, request, sendContent, "Unsupported Authentication Scheme", headers);
 	    return false;
 	 }
       }
@@ -523,7 +526,7 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
        filename.find("/../") != std::string::npos)
    {
       std::list<std::string> headers;
-      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)", headers);
+      sendError(log, client, 400, request, sendContent, "Filename contains illegal character (sequence)", headers);
       return false;
    }
 
@@ -559,8 +562,8 @@ static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
    return true;
 }
 									/*}}}*/
-static bool handleOnTheFlyReconfiguration(int const client, std::string const &request,/*{{{*/
-      std::vector<std::string> parts, std::list<std::string> &headers)
+static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*{{{*/
+      std::string const &request, std::vector<std::string> parts, std::list<std::string> &headers)
 {
    size_t const pcount = parts.size();
    for (size_t i = 0; i < pcount; ++i)
@@ -568,14 +571,14 @@ static bool handleOnTheFlyReconfiguration(int const client, std::string const &r
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!", headers);
+      sendSuccess(log, client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!", headers);
       return true;
    }
    else if (pcount == 4 && parts[1] == "find")
    {
       std::string response = _config->Find(parts[2], parts[3]);
       addDataHeaders(headers, response);
-      sendHead(client, 200, headers);
+      sendHead(log, client, 200, headers);
       sendData(client, headers, response);
       return true;
    }
@@ -585,28 +588,35 @@ static bool handleOnTheFlyReconfiguration(int const client, std::string const &r
       {
 	 std::string response = _config->Find(parts[2]);
 	 addDataHeaders(headers, response);
-	 sendHead(client, 200, headers);
+	 sendHead(log, client, 200, headers);
 	 sendData(client, headers, response);
 	 return true;
       }
-      sendError(client, 404, request, true, "Requested Configuration option doesn't exist", headers);
+      sendError(log, client, 404, request, true, "Requested Configuration option doesn't exist", headers);
       return false;
    }
    else if (pcount == 3 && parts[1] == "clear")
    {
       _config->Clear(parts[2]);
-      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.", headers);
+      sendSuccess(log, client, request, true, "Option '" + parts[2] + "' was cleared.", headers);
       return true;
    }
 
-   sendError(client, 400, request, true, "Unknown on-the-fly configuration request", headers);
+   sendError(log, client, 400, request, true, "Unknown on-the-fly configuration request", headers);
    return false;
 }
 									/*}}}*/
-static void * handleClient(void * voidclient)				/*{{{*/
+static void * handleClient(int const client, size_t const id)		/*{{{*/
 {
-   int client = *((int*)(voidclient));
-   std::clog << "ACCEPT client " << client << std::endl;
+   auto logfilepath = _config->FindFile("aptwebserver::logfiles");
+   if (logfilepath.empty() == false)
+      strprintf(logfilepath, "%s.client-%lu.log", logfilepath.c_str(), id);
+   else
+      logfilepath = "/dev/null";
+   std::ofstream logfile(logfilepath);
+   basic_teeostream<char> log(std::clog, logfile);
+
+   log << "ACCEPT client " << client << std::endl;
    bool closeConnection = false;
    while (closeConnection == false)
    {
@@ -625,12 +635,12 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 }
 	 headers.clear();
 
-	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
+	 log << ">>> REQUEST from " << client << " >>>" << std::endl << *m
 	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
 	 std::string filename;
 	 std::string params;
 	 bool sendContent = true;
-	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection, headers) == false)
+	 if (parseFirstLine(log, client, *m, filename, params, sendContent, closeConnection, headers) == false)
 	    continue;
 
 	 // special webserver command request
@@ -639,7 +649,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    std::vector<std::string> parts = VectorizeString(filename, '/');
 	    if (parts[0] == "_config")
 	    {
-	       handleOnTheFlyReconfiguration(client, *m, parts, headers);
+	       handleOnTheFlyReconfiguration(log, client, *m, parts, headers);
 	       continue;
 	    }
 	 }
@@ -655,7 +665,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       redirect.erase(0,1);
 	    if (redirect != filename)
 	    {
-	       sendRedirect(client, _config->FindI("aptwebserver::redirect::httpcode", 301), redirect, *m, sendContent);
+	       sendRedirect(log, client, _config->FindI("aptwebserver::redirect::httpcode", 301), redirect, *m, sendContent);
 	       continue;
 	    }
 	 }
@@ -671,7 +681,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       {
 		  char error[300];
 		  regerror(res, pattern, error, sizeof(error));
-		  sendError(client, 500, *m, sendContent, error, headers);
+		  sendError(log, client, 500, *m, sendContent, error, headers);
 		  continue;
 	       }
 	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
@@ -693,7 +703,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	 if (_config->FindB("aptwebserver::support::http", true) == false &&
 	       LookupTag(*m, "Host").find(hosthttpsport) == std::string::npos)
 	 {
-	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS", headers);
+	    sendError(log, client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS", headers);
 	    continue;
 	 }
 	 else if (RealFileExists(filename) == true)
@@ -706,7 +716,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       if (RFC1123StrToTime(condition.c_str(), cache) == true &&
 		     cache >= data.ModificationTime())
 	       {
-		  sendHead(client, 304, headers);
+		  sendHead(log, client, 304, headers);
 		  continue;
 	       }
 	    }
@@ -722,7 +732,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	       if (ranges.find(",bytes,") == std::string::npos)
 	       {
 		  // we handle it as an error here because we are a test server - a real one should just ignore it
-		  sendError(client, 400, *m, sendContent, "Client does range requests we don't support", headers);
+		  sendError(log, client, 400, *m, sendContent, "Client does range requests we don't support", headers);
 		  continue;
 	       }
 
@@ -758,7 +768,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 			std::ostringstream contentlength;
 			contentlength << "Content-Length: " << (filesize - filestart);
 			headers.push_back(contentlength.str());
-			sendHead(client, 206, headers);
+			sendHead(log, client, 206, headers);
 			if (sendContent == true)
 			   sendFile(client, headers, data);
 			continue;
@@ -771,7 +781,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
 			   contentrange << "Content-Range: bytes */" << filesize;
 			   headers.push_back(contentrange.str());
 			}
-			sendError(client, 416, *m, sendContent, "", headers);
+			sendError(log, client, 416, *m, sendContent, "", headers);
 			continue;
 		     }
 		  }
@@ -779,19 +789,19 @@ static void * handleClient(void * voidclient)				/*{{{*/
 	    }
 
 	    addFileHeaders(headers, data);
-	    sendHead(client, 200, headers);
+	    sendHead(log, client, 200, headers);
 	    if (sendContent == true)
 	       sendFile(client, headers, data);
 	 }
 	 else if (DirectoryExists(filename) == true)
 	 {
 	    if (filename[filename.length()-1] == '/')
-	       sendDirectoryListing(client, filename, *m, sendContent, headers);
+	       sendDirectoryListing(log, client, filename, *m, sendContent, headers);
 	    else
-	       sendRedirect(client, 301, filename.append("/"), *m, sendContent);
+	       sendRedirect(log, client, 301, filename.append("/"), *m, sendContent);
 	 }
 	 else
-	    sendError(client, 404, *m, sendContent, "", headers);
+	    sendError(log, client, 404, *m, sendContent, "", headers);
       }
 
       // if we announced a closing in the last response, do the close now
@@ -804,7 +814,7 @@ static void * handleClient(void * voidclient)				/*{{{*/
    }
    _error->DumpErrors(std::cerr);
    close(client);
-   std::clog << "CLOSE client " << client << std::endl;
+   log << "CLOSE client " << client << std::endl;
    return NULL;
 }
 									/*}}}*/
@@ -812,10 +822,11 @@ static void * handleClient(void * voidclient)				/*{{{*/
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
-      {0, "port", "aptwebserver::port", CommandLine::HasArg},
+      {'p', "port", "aptwebserver::port", CommandLine::HasArg},
       {0, "request-absolute", "aptwebserver::request::absolute", CommandLine::HasArg},
       {0, "authorization", "aptwebserver::authorization", CommandLine::HasArg},
       {0, "proxy-authorization", "aptwebserver::proxy-authorization", CommandLine::HasArg},
+      {0, "logfiles", "aptwebserver::logfiles", CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}
@@ -931,8 +942,7 @@ int main(int const argc, const char * argv[])
    _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
    _config->CndSet("aptwebserver::directoryindex", "index.html");
 
-   std::list<int> accepted_clients;
-
+   size_t id = 0;
    while (true)
    {
       int client = accept(sock, NULL, NULL);
@@ -945,25 +955,8 @@ int main(int const argc, const char * argv[])
 	 return 6;
       }
 
-      pthread_attr_t attr;
-      if (pthread_attr_init(&attr) != 0 || pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0)
-      {
-	 _error->Errno("pthread_attr", "Couldn't set detach attribute for a fresh thread to handle client %d on socket %d", client, sock);
-	 _error->DumpErrors(std::cerr);
-	 close(client);
-	 continue;
-      }
-
-      pthread_t tid;
-      // thats rather dirty, but we need to store the client socket somewhere safe
-      accepted_clients.push_front(client);
-      if (pthread_create(&tid, &attr, &handleClient, &(*accepted_clients.begin())) != 0)
-      {
-	 _error->Errno("pthread_create", "Couldn't create a fresh thread to handle client %d on socket %d", client, sock);
-	 _error->DumpErrors(std::cerr);
-	 close(client);
-	 continue;
-      }
+      std::thread t(handleClient, client, ++id);
+      t.detach();
    }
    pidfile.Close();
 

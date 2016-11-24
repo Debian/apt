@@ -24,7 +24,7 @@ testsuccess aptget update
 testsuccess aptcache show foo
 testsuccess aptget install foo -s
 
-for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log); do
+for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log.client*.log); do
 	for ext in '' '.gz'; do
 		COMPRESSFILE="$get"
 		get="${get}${ext}"
