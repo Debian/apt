@@ -520,7 +520,7 @@ bool DoSource(CommandLine &CmdL)
       else
       {
 	 // Call dpkg-source
-	 std::string const sourceopts = _config->Find("DPkg::Source-Options", "-x");
+	 std::string const sourceopts = _config->Find("DPkg::Source-Options", "--no-check -x");
 	 std::string S;
 	 strprintf(S, "%s %s %s",
 	       _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
