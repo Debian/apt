@@ -328,7 +328,8 @@ bool DoSource(CommandLine &CmdL)
    if (_error->PendingError() == true)
       return false;
 
-   std::unique_ptr<DscFile[]> Dsc(new DscFile[CmdL.FileSize()]);
+   std::vector<DscFile> Dsc;
+   Dsc.reserve(CmdL.FileSize());
 
    // insert all downloaded uris into this set to avoid downloading them
    // twice
@@ -343,9 +344,8 @@ bool DoSource(CommandLine &CmdL)
 
    // Load the requestd sources into the fetcher
    aptAcquireWithTextStatus Fetcher;
-   unsigned J = 0;
    std::vector<std::string> UntrustedList;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       std::string Src;
       pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
@@ -394,6 +394,7 @@ bool DoSource(CommandLine &CmdL)
 	 return false;
       }
 
+      DscFile curDsc;
       // Load them into the fetcher
       for (std::vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
 	    I != Lst.end(); ++I)
@@ -401,9 +402,9 @@ bool DoSource(CommandLine &CmdL)
 	 // Try to guess what sort of file it is we are getting.
 	 if (I->Type == "dsc")
 	 {
-	    Dsc[J].Package = Last->Package();
-	    Dsc[J].Version = Last->Version();
-	    Dsc[J].Dsc = flNotDir(I->Path);
+	    curDsc.Package = Last->Package();
+	    curDsc.Version = Last->Version();
+	    curDsc.Dsc = flNotDir(I->Path);
 	 }
 
 	 // Handle the only options so that multiple can be used at once
@@ -438,13 +439,14 @@ bool DoSource(CommandLine &CmdL)
 	 {
 	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
 		  localFile.c_str());
-	    Dsc[J].Dsc.clear();
+	    curDsc.Dsc.clear();
 	    continue;
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
 	       I->Hashes, I->FileSize, Last->Index().SourceInfo(*Last,*I), Src);
       }
+      Dsc.push_back(std::move(curDsc));
    }
 
    // Display statistics
@@ -469,8 +471,8 @@ bool DoSource(CommandLine &CmdL)
 
    if (_config->FindB("APT::Get::Simulate",false) == true)
    {
-      for (unsigned I = 0; I != J; I++)
-	 ioprintf(std::cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
+      for (auto const &D: Dsc)
+	 ioprintf(std::cout, _("Fetch source %s\n"), D.Package.c_str());
       return true;
    }
 
@@ -491,9 +493,7 @@ bool DoSource(CommandLine &CmdL)
    // Run it
    bool Failed = false;
    if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
-   {
       return _error->Error(_("Failed to fetch some archives."));
-   }
 
    if (diffOnly || tarOnly || dscOnly || _config->FindB("APT::Get::Download-only",false) == true)
    {
@@ -501,75 +501,71 @@ bool DoSource(CommandLine &CmdL)
       return true;
    }
 
-   // Unpack the sources
-   pid_t Process = ExecFork();
-
-   if (Process == 0)
+   bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
+   bool SaidCheckIfDpkgDev = false;
+   for (auto const &D: Dsc)
    {
-      bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
-      for (unsigned I = 0; I != J; ++I)
+      if (unlikely(D.Dsc.empty() == true))
+	 continue;
+      std::string const Dir = D.Package + '-' + Cache.GetPkgCache()->VS->UpstreamVersion(D.Version.c_str());
+
+      // See if the package is already unpacked
+      struct stat Stat;
+      if (fixBroken == false && stat(Dir.c_str(),&Stat) == 0 &&
+	    S_ISDIR(Stat.st_mode) != 0)
       {
-	 if (unlikely(Dsc[I].Dsc.empty() == true))
+	 ioprintf(c0out ,_("Skipping unpack of already unpacked source in %s\n"),
+	       Dir.c_str());
+      }
+      else
+      {
+	 // Call dpkg-source
+	 std::string const sourceopts = _config->Find("DPkg::Source-Options", "-x");
+	 std::string S;
+	 strprintf(S, "%s %s %s",
+	       _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
+	       sourceopts.c_str(), D.Dsc.c_str());
+	 if (system(S.c_str()) != 0)
+	 {
+	    _error->Error(_("Unpack command '%s' failed.\n"), S.c_str());
+	    if (SaidCheckIfDpkgDev == false)
+	    {
+	       _error->Notice(_("Check if the 'dpkg-dev' package is installed.\n"));
+	       SaidCheckIfDpkgDev = true;
+	    }
 	    continue;
-	 std::string const Dir = Dsc[I].Package + '-' + Cache.GetPkgCache()->VS->UpstreamVersion(Dsc[I].Version.c_str());
-
-	 // See if the package is already unpacked
-	 struct stat Stat;
-	 if (fixBroken == false && stat(Dir.c_str(),&Stat) == 0 &&
-	       S_ISDIR(Stat.st_mode) != 0)
-	 {
-	    ioprintf(c0out ,_("Skipping unpack of already unpacked source in %s\n"),
-		  Dir.c_str());
-	 }
-	 else
-	 {
-	    // Call dpkg-source
-	    std::string const sourceopts = _config->Find("DPkg::Source-Options", "-x");
-	    std::string S;
-	    strprintf(S, "%s %s %s",
-		  _config->Find("Dir::Bin::dpkg-source","dpkg-source").c_str(),
-		  sourceopts.c_str(), Dsc[I].Dsc.c_str());
-	    if (system(S.c_str()) != 0)
-	    {
-	       fprintf(stderr, _("Unpack command '%s' failed.\n"), S.c_str());
-	       fprintf(stderr, _("Check if the 'dpkg-dev' package is installed.\n"));
-	       _exit(1);
-	    }
-	 }
-
-	 // Try to compile it with dpkg-buildpackage
-	 if (_config->FindB("APT::Get::Compile",false) == true)
-	 {
-	    std::string buildopts = _config->Find("APT::Get::Host-Architecture");
-	    if (buildopts.empty() == false)
-	       buildopts = "-a" + buildopts + " ";
-
-	    // get all active build profiles
-	    std::string const profiles = APT::Configuration::getBuildProfilesString();
-	    if (profiles.empty() == false)
-	       buildopts.append(" -P").append(profiles).append(" ");
-
-	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
-
-	    // Call dpkg-buildpackage
-	    std::string S;
-	    strprintf(S, "cd %s && %s %s",
-		  Dir.c_str(),
-		  _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
-		  buildopts.c_str());
-
-	    if (system(S.c_str()) != 0)
-	    {
-	       fprintf(stderr, _("Build command '%s' failed.\n"), S.c_str());
-	       _exit(1);
-	    }
 	 }
       }
 
-      _exit(0);
-   }
+      // Try to compile it with dpkg-buildpackage
+      if (_config->FindB("APT::Get::Compile",false) == true)
+      {
+	 std::string buildopts = _config->Find("APT::Get::Host-Architecture");
+	 if (buildopts.empty() == false)
+	    buildopts = "-a" + buildopts + " ";
 
-   return ExecWait(Process, "dpkg-source");
+	 // get all active build profiles
+	 std::string const profiles = APT::Configuration::getBuildProfilesString();
+	 if (profiles.empty() == false)
+	    buildopts.append(" -P").append(profiles).append(" ");
+
+	 buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
+
+	 // Call dpkg-buildpackage
+	 std::string S;
+	 strprintf(S, "cd %s && %s %s",
+	       Dir.c_str(),
+	       _config->Find("Dir::Bin::dpkg-buildpackage","dpkg-buildpackage").c_str(),
+	       buildopts.c_str());
+
+	 if (system(S.c_str()) != 0)
+	 {
+	    _error->Error(_("Build command '%s' failed.\n"), S.c_str());
+	    continue;
+	 }
+      }
+   }
+   return true;
 }
 									/*}}}*/
 // DoBuildDep - Install/removes packages to satisfy build dependencies  /*{{{*/
