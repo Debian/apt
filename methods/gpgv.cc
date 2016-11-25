@@ -55,9 +55,9 @@ struct Digest {
       std::string optionWeak;
       strprintf(optionUntrusted, "APT::Hashes::%s::Untrusted", name);
       strprintf(optionWeak, "APT::Hashes::%s::Weak", name);
-      if (_config->FindB(optionUntrusted, state == State::Untrusted) == true)
+      if (_config->FindB(optionUntrusted, false) == true)
 	 return State::Untrusted;
-      if (_config->FindB(optionWeak, state == State::Weak) == true)
+      if (_config->FindB(optionWeak, false) == true)
 	 return State::Weak;
 
       return state;
@@ -67,8 +67,8 @@ struct Digest {
 static constexpr Digest Digests[] = {
    {Digest::State::Untrusted, "Invalid digest"},
    {Digest::State::Untrusted, "MD5"},
-   {Digest::State::Weak, "SHA1"},
-   {Digest::State::Weak, "RIPE-MD/160"},
+   {Digest::State::Untrusted, "SHA1"},
+   {Digest::State::Untrusted, "RIPE-MD/160"},
    {Digest::State::Trusted, "Reserved digest"},
    {Digest::State::Trusted, "Reserved digest"},
    {Digest::State::Trusted, "Reserved digest"},

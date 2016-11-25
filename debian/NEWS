@@ -1,3 +1,21 @@
+apt (1.4~beta1) UNRELEASED; urgency=medium
+
+  Support for GPG signatures using the SHA1 or RIPE-MD/160 hash
+  algorithms has been disabled. Repositories using Release files
+  signed in such a way will stop working. This change has been made
+  due to security considerations, especially with regards to possible
+  further breakthroughs in SHA1 breaking during the lifetime
+  of this APT release series.
+
+  It is possible (but STRONGLY ADVISED AGAINST) to revert to the previous
+  behaviour by setting the options
+    APT::Hashes::SHA1::Weak "yes";
+    APT::Hashes::RIPE-MD/160::Weak "yes";
+  Note that setting these options only affects the verification of the overall
+  repository signature.
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 25 Nov 2016 13:19:32 +0100
+
 apt (1.2~exp1) experimental; urgency=medium
 
   [ Automatic removal of debs after install ]
