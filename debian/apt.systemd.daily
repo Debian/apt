@@ -320,8 +320,8 @@ fi
 VERBOSE=0
 eval $(apt-config shell VERBOSE APT::Periodic::Verbose)
 debug_echo "verbose level $VERBOSE"
-if [ "$VERBOSE" -le 2 ]; then
-    # quiet for 0,1,2
+if [ "$VERBOSE" -le 1 ]; then
+    # quiet for 0/1
     XSTDOUT=">/dev/null"
     XSTDERR="2>/dev/null"
     XAPTOPT="-qq"
