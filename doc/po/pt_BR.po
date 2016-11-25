@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-11 23:29+0100\n"
+"POT-Creation-Date: 2016-11-25 23:46+0100\n"
 "PO-Revision-Date: 2004-09-20 17:02+0000\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: <debian-l10n-portuguese@lists.debian.org>\n"
@@ -1905,6 +1905,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
+msgid "Supported keyring files"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid ""
+"apt-key supports only the binary OpenPGP format (also known as \"GPG key "
+"public ring\") in files with the \"<literal>gpg</literal>\" extension, not "
+"the keybox database format introduced in newer &gpg; versions as default for "
+"keyring files. Binary keyring files intended to be used with any apt version "
+"should therefore always be created with <command>gpg --export</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid ""
+"Alternatively, if all systems which should be using the created keyring have "
+"at least apt version >= 1.4 installed, you can use the ASCII armored format "
+"with the \"<literal>asc</literal>\" extension instead which can be created "
+"with <command>gpg --armor --export</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-key.8.xml
 msgid "Commands"
 msgstr ""
 
@@ -1927,10 +1951,10 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
-"Instead of using this command a keyring can be placed directly in the "
-"<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
-"name (same rules for filename apply as for &apt-conf; files) and "
-"\"<literal>gpg</literal>\" as file extension."
+"<emphasis>Note</emphasis>: Instead of using this command a keyring should be "
+"placed directly in the <filename>/etc/apt/trusted.gpg.d/</filename> "
+"directory with a descriptive name and either \"<literal>gpg</literal>\" or "
+"\"<literal>asc</literal>\" as file extension."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>

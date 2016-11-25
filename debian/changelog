@@ -1,3 +1,75 @@
+apt (1.4~beta1) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * Updated German documentation translation
+  * fix three typos in sources & manpages
+  * German translation proof read by Helge Kreutzmann
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #840552)
+  * Dutch manpages translation update (Closes: #840757)
+
+  [ David Kalnischkies ]
+  * don't install new deps of candidates for kept back pkgs
+  * keep Release.gpg on untrusted to trusted IMS-Hit (Closes: 838779)
+  * fix testcase expecting incorrect remove log from dpkg
+  * reset HOME, USER(NAME), TMPDIR & SHELL in DropPrivileges (Closes: 842877)
+  * show the conflicting distribution warning again (Closes: 841874)
+  * rename Checksum-FileSize to Filesize in hashsum mismatch
+  * improve SOCKS error messages for http slightly
+  * support 'apt build-dep .' (aka: without /)
+  * add TMP/TEMP/TEMPDIR to the TMPDIR DropPrivileges dance
+  * http: skip connection cleanup if we close it anyhow
+  * add hidden config to set packages as Essential/Important.
+    Thanks to Anthony Towns for initial patch (Closes: 767891)
+  * don't warn if untransformed distribution matches.
+    Thanks to Lukas Anzinger for initial patch (Closes: 644610)
+  * show distribution mismatch for changed codenames
+  * react to trig-pend only if we have nothing else to do
+  * correct cross & disappear progress detection
+  * improve arch-unqualified dpkg-progress parsing
+  * don't perform implicit crossgrades involving M-A:same
+  * do not configure unconfigured to be removed packages
+  * skip unconfigure for unconfigured to-be removed pkgs
+  * report apt-key errors via status-fd messages (LP: #1522988)
+  * add apt-key support for armored GPG key files (*.asc)
+  * document which keyring formats are supported by apt-key (Closes: 844724)
+  * get pdiff files from the same mirror as the index
+  * follow the googletest merge in build-depends
+
+  [ Michael Vogt ]
+  * Do not (re)start "apt-daily.system"
+    Thanks to Alexandre Detiste (Closes: #841763)
+
+  [ Johannes Schauer ]
+  * add support for Build-Depends/Conflicts-Arch (Closes: #837395)
+
+  [ Edgar Fuß ]
+  * http: clear content before reporting the failure (Closes: #465572)
+
+  [ James Clarke ]
+  * apt-ftparchive: Support NotAutomatic and ButAutomaticUpgrades fields
+    (Closes: #272557)
+
+  [ Julian Andres Klode ]
+  * TagSection: Split AlphaIndexes into AlphaIndexes and BetaIndexes
+  * TagSection: Extract Find() methods taking Pos instead of Key
+  * Squashed 'triehash/' content from commit 16f59e1
+  * TagSection: Introduce functions for looking up by key ids
+  * debListParser: Convert to use pkgTagSection::Key-based lookup
+  * Bump the cache major version for non-backportable changes
+  * Introduce tolower_ascii_unsafe() and use it for hashing
+  * Optimize VersionHash() to not need temporary copy of input
+  * Compare size before data when ordering cache bucket entries
+  * debListParser: Micro-optimize AvailableDescriptionLanguages()
+  * Do not use MD5SumValue for Description_md5()
+  * gpgv: Untrust SHA1, RIPE-MD/160, but allow downgrading to weak
+
+  [ Paul Wise ]
+  * show output as documented for APT::Periodic::Verbose 2 (Closes: 845599)
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 25 Nov 2016 23:49:54 +0100
+
 apt (1.3.1) unstable; urgency=medium
 
   [ Julian Andres Klode ]

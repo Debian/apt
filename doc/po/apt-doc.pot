@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.3.1\n"
+"Project-Id-Version: apt-doc 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-11 23:29+0100\n"
+"POT-Creation-Date: 2016-11-25 23:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1938,6 +1938,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml:1
+msgid "Supported keyring files"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml:1
+msgid ""
+"apt-key supports only the binary OpenPGP format (also known as \"GPG key "
+"public ring\") in files with the \"<literal>gpg</literal>\" extension, not "
+"the keybox database format introduced in newer &gpg; versions as default for "
+"keyring files. Binary keyring files intended to be used with any apt version "
+"should therefore always be created with <command>gpg --export</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml:1
+msgid ""
+"Alternatively, if all systems which should be using the created keyring have "
+"at least apt version >= 1.4 installed, you can use the ASCII armored format "
+"with the \"<literal>asc</literal>\" extension instead which can be created "
+"with <command>gpg --armor --export</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-key.8.xml:1
 msgid "Commands"
 msgstr ""
 
@@ -1960,10 +1984,10 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:1
 msgid ""
-"Instead of using this command a keyring can be placed directly in the "
-"<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
-"name (same rules for filename apply as for &apt-conf; files) and "
-"\"<literal>gpg</literal>\" as file extension."
+"<emphasis>Note</emphasis>: Instead of using this command a keyring should be "
+"placed directly in the <filename>/etc/apt/trusted.gpg.d/</filename> "
+"directory with a descriptive name and either \"<literal>gpg</literal>\" or "
+"\"<literal>asc</literal>\" as file extension."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2015,9 +2039,9 @@ msgstr ""
 msgid ""
 "Note that a distribution does not need to and in fact should not use this "
 "command any longer and instead ship keyring files in the "
-"<filename>/etc/apt/trusted.gpg.d/</filename> directory directly as this avoids "
-"a dependency on <package>gnupg</package> and it is easier to manage keys by "
-"simply adding and removing files for maintainers and users alike."
+"<filename>/etc/apt/trusted.gpg.d/</filename> directory directly as this "
+"avoids a dependency on <package>gnupg</package> and it is easier to manage "
+"keys by simply adding and removing files for maintainers and users alike."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
