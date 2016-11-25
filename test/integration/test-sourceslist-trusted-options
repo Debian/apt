@@ -26,7 +26,7 @@ foo/stable 1 amd64
 	testsuccess test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
 
 	rm -f foo_1.dsc foo_2.dsc
-	testsuccess aptget source foo --dsc-only -d "$@"
+	testsuccess aptget source foo --dsc-only "$@"
 	testsuccess test -s foo_1.dsc -o -s foo_2.dsc
 	cd - >/dev/null
 }
@@ -48,7 +48,7 @@ E: Some packages could not be authenticated'
 	testfailure test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
 
 	rm -f foo_1.dsc foo_2.dsc
-	testfailure aptget source foo --dsc-only -d "$@"
+	testfailure aptget source foo --dsc-only "$@"
 	testequal "$WARNING" tail -n 3 ../rootdir/tmp/testfailure.output
 	testfailure test -s foo_1.dsc -o -s foo_2.dsc
 	cd - >/dev/null

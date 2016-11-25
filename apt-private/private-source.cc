@@ -495,7 +495,7 @@ bool DoSource(CommandLine &CmdL)
       return _error->Error(_("Failed to fetch some archives."));
    }
 
-   if (_config->FindB("APT::Get::Download-only",false) == true)
+   if (diffOnly || tarOnly || dscOnly || _config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << std::endl;
       return true;
@@ -509,13 +509,9 @@ bool DoSource(CommandLine &CmdL)
       bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
       for (unsigned I = 0; I != J; ++I)
       {
-	 std::string Dir = Dsc[I].Package + '-' + Cache.GetPkgCache()->VS->UpstreamVersion(Dsc[I].Version.c_str());
-
-	 // Diff only mode only fetches .diff files
-	 if (_config->FindB("APT::Get::Diff-Only",false) == true ||
-	       _config->FindB("APT::Get::Tar-Only",false) == true ||
-	       Dsc[I].Dsc.empty() == true)
+	 if (unlikely(Dsc[I].Dsc.empty() == true))
 	    continue;
+	 std::string const Dir = Dsc[I].Package + '-' + Cache.GetPkgCache()->VS->UpstreamVersion(Dsc[I].Version.c_str());
 
 	 // See if the package is already unpacked
 	 struct stat Stat;
