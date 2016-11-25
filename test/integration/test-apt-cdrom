@@ -107,7 +107,7 @@ Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 	rm -f testing_0.8.15_amd64.deb
 
 	rm -f testing_0.8.15.dsc
-	testsuccess aptget source testing --dsc-only -d
+	testsuccess aptget source testing --dsc-only
 	testsuccess test -s testing_0.8.15.dsc
 	rm -f testing_0.8.15.dsc
 	cd - >/dev/null
