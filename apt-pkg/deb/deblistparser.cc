@@ -547,11 +547,23 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					bool const &StripMultiArch,
 					bool const &ParseRestrictionsList)
 {
+   return debListParser::ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags,
+                                      StripMultiArch, ParseRestrictionsList,
+                                      _config->Find("APT::Architecture"));
+}
+
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+					string &Package,string &Ver,
+					unsigned int &Op, bool const &ParseArchFlags,
+					bool const &StripMultiArch,
+					bool const &ParseRestrictionsList,
+				        string const &Arch)
+{
    StringView PackageView;
    StringView VerView;
 
    auto res = ParseDepends(Start, Stop, PackageView, VerView, Op, (bool)ParseArchFlags,
-   (bool) StripMultiArch, (bool) ParseRestrictionsList);
+   (bool) StripMultiArch, (bool) ParseRestrictionsList, Arch);
    Package = PackageView.to_string();
    Ver = VerView.to_string();
 
@@ -562,6 +574,17 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					unsigned int &Op, bool ParseArchFlags,
 					bool StripMultiArch,
 					bool ParseRestrictionsList)
+{
+   return debListParser::ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags,
+                                      StripMultiArch, ParseRestrictionsList,
+                                      _config->Find("APT::Architecture"));
+}
+
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+					StringView &Package,StringView &Ver,
+					unsigned int &Op, bool ParseArchFlags,
+					bool StripMultiArch,
+					bool ParseRestrictionsList, string const &Arch)
 {
    // Strip off leading space
    for (;Start != Stop && isspace_ascii(*Start) != 0; ++Start);
@@ -630,8 +653,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (unlikely(ParseArchFlags == true))
    {
-      string const arch = _config->Find("APT::Architecture");
-      APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
+      APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(Arch, false);
 
       // Parse an architecture
       if (I != Stop && *I == '[')

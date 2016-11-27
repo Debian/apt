@@ -102,6 +102,11 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 	 std::string &Package,std::string &Ver,unsigned int &Op,
 	 bool const &ParseArchFlags, bool const &StripMultiArch,
 	 bool const &ParseRestrictionsList);
+   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
+	 std::string &Package,std::string &Ver,unsigned int &Op,
+	 bool const &ParseArchFlags, bool const &StripMultiArch,
+	 bool const &ParseRestrictionsList,
+	 std::string const &Arch);
 
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
    APT_HIDDEN static const char *ParseDepends(const char *Start,const char *Stop,
@@ -109,6 +114,12 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
     APT::StringView &Ver,unsigned int &Op,
 	 bool const ParseArchFlags = false, bool StripMultiArch = true,
 	 bool const ParseRestrictionsList = false);
+   APT_HIDDEN static const char *ParseDepends(const char *Start,const char *Stop,
+	 APT::StringView &Package,
+	 APT::StringView &Ver,unsigned int &Op,
+	 bool const ParseArchFlags, bool StripMultiArch,
+	 bool const ParseRestrictionsList,
+	 std::string const &Arch);
 #endif
 
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
