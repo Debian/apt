@@ -381,6 +381,12 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    if (buf != NULL)
       free(buf);
 
+   // Flush the files. Errors will be checked below.
+   if (SignatureFile != nullptr)
+      SignatureFile->Flush();
+   if (ContentFile != nullptr)
+      ContentFile->Flush();
+
    // An error occured during reading - propagate it up
    bool const hasErrored = _error->PendingError();
    _error->MergeWithStack();
