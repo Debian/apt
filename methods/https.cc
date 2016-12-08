@@ -365,6 +365,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, DL_MIN_SPEED);
    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, timeout);
 
+   if(_config->FindB("Acquire::ForceIPv4", false) == true)
+      curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+   else if(_config->FindB("Acquire::ForceIPv6", false) == true)
+      curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+
    // debug
    if (Debug == true)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
