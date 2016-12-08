@@ -366,6 +366,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, AllowRedirect);
    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
 
+   if(_config->FindB("Acquire::ForceIPv4", false) == true)
+      curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+   else if(_config->FindB("Acquire::ForceIPv6", false) == true)
+      curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+
    // debug
    if (Debug == true)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
