@@ -24,7 +24,7 @@ using std::cout;
 using std::endl;
 
 class Hashes;
-class ServerMethod;
+class BaseHttpMethod;
 struct ServerState;
 
 struct RequestState
@@ -53,13 +53,13 @@ struct RequestState
 
    FileFd File;
 
-   ServerMethod * const Owner;
+   BaseHttpMethod * const Owner;
    ServerState * const Server;
 
    bool HeaderLine(std::string const &Line);
    bool AddPartialFileToHashes(FileFd &File);
 
-   RequestState(ServerMethod * const Owner, ServerState * const Server) :
+   RequestState(BaseHttpMethod * const Owner, ServerState * const Server) :
       Owner(Owner), Server(Server) { time(&Date); }
 };
 
@@ -75,7 +75,7 @@ struct ServerState
    unsigned long TimeOut;
 
    protected:
-   ServerMethod *Owner;
+   BaseHttpMethod *Owner;
 
    virtual bool ReadHeaderLines(std::string &Data) = 0;
    virtual bool LoadNextResponse(bool const ToFile, RequestState &Req) = 0;
@@ -111,11 +111,11 @@ struct ServerState
    virtual bool Go(bool ToFile, RequestState &Req) = 0;
    virtual Hashes * GetHashes() = 0;
 
-   ServerState(URI Srv, ServerMethod *Owner);
+   ServerState(URI Srv, BaseHttpMethod *Owner);
    virtual ~ServerState() {};
 };
 
-class ServerMethod : public aptMethod
+class BaseHttpMethod : public aptMethod
 {
    protected:
    virtual bool Fetch(FetchItem *) APT_OVERRIDE;
@@ -166,8 +166,8 @@ class ServerMethod : public aptMethod
 
    bool AddProxyAuth(URI &Proxy, URI const &Server) const;
 
-   ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags);
-   virtual ~ServerMethod() {};
+   BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags);
+   virtual ~BaseHttpMethod() {};
 };
 
 #endif

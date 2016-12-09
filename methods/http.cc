@@ -977,10 +977,10 @@ void HttpMethod::RotateDNS()						/*{{{*/
    ::RotateDNS();
 }
 									/*}}}*/
-ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)/*{{{*/
+BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)/*{{{*/
 {
-   auto ret = ServerMethod::DealWithHeaders(Res, Req);
-   if (ret != ServerMethod::FILE_IS_OPEN)
+   auto ret = BaseHttpMethod::DealWithHeaders(Res, Req);
+   if (ret != BaseHttpMethod::FILE_IS_OPEN)
       return ret;
    if (Req.File.Open(Queue->DestFile, FileFd::WriteAny) == false)
       return ERROR_NOT_FROM_SERVER;
@@ -1002,7 +1002,7 @@ ServerMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &Res
    return FILE_IS_OPEN;
 }
 									/*}}}*/
-HttpMethod::HttpMethod(std::string &&pProg) : ServerMethod(pProg.c_str(), "1.2", Pipeline | SendConfig)/*{{{*/
+HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(pProg.c_str(), "1.2", Pipeline | SendConfig)/*{{{*/
 {
    auto addName = std::inserter(methodNames, methodNames.begin());
    if (Binary != "http")

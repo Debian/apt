@@ -17,7 +17,7 @@
 #include <string>
 #include <memory>
 
-#include "server.h"
+#include "basehttp.h"
 
 using std::cout;
 using std::endl;
@@ -54,7 +54,7 @@ class HttpsServerState : public ServerState
    virtual ~HttpsServerState() {Close();};
 };
 
-class HttpsMethod : public ServerMethod
+class HttpsMethod : public BaseHttpMethod
 {
    // minimum speed in bytes/se that triggers download timeout handling
    static const int DL_MIN_SPEED = 10;
@@ -68,7 +68,7 @@ class HttpsMethod : public ServerMethod
    bool SetupProxy();
    CURL *curl;
 
-   // Used by ServerMethods unused by https
+   // Used by BaseHttpMethods unused by https
    virtual void SendReq(FetchItem *) APT_OVERRIDE { exit(42); }
    virtual void RotateDNS() APT_OVERRIDE { exit(42); }
 

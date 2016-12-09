@@ -17,7 +17,7 @@
 #include <sys/time.h>
 #include <iostream>
 
-#include "server.h"
+#include "basehttp.h"
 
 using std::cout;
 using std::endl;
@@ -121,7 +121,7 @@ struct HttpServerState: public ServerState
    virtual ~HttpServerState() {Close();};
 };
 
-class HttpMethod : public ServerMethod
+class HttpMethod : public BaseHttpMethod
 {
    public:
    virtual void SendReq(FetchItem *Itm) APT_OVERRIDE;

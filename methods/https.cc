@@ -458,22 +458,22 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    switch (DealWithHeaders(Res, Req))
    {
-      case ServerMethod::IMS_HIT:
+      case BaseHttpMethod::IMS_HIT:
 	 URIDone(Res);
 	 break;
 
-      case ServerMethod::ERROR_WITH_CONTENT_PAGE:
+      case BaseHttpMethod::ERROR_WITH_CONTENT_PAGE:
 	 // unlink, no need keep 401/404 page content in partial/
 	 RemoveFile(Binary.c_str(), Req.File.Name());
-      case ServerMethod::ERROR_UNRECOVERABLE:
-      case ServerMethod::ERROR_NOT_FROM_SERVER:
+      case BaseHttpMethod::ERROR_UNRECOVERABLE:
+      case BaseHttpMethod::ERROR_NOT_FROM_SERVER:
 	 return false;
 
-      case ServerMethod::TRY_AGAIN_OR_REDIRECT:
+      case BaseHttpMethod::TRY_AGAIN_OR_REDIRECT:
 	 Redirect(NextURI);
 	 break;
 
-      case ServerMethod::FILE_IS_OPEN:
+      case BaseHttpMethod::FILE_IS_OPEN:
 	 struct stat resultStat;
 	 if (unlikely(stat(Req.File.Name().c_str(), &resultStat) != 0))
 	 {
@@ -510,7 +510,7 @@ std::unique_ptr<ServerState> HttpsMethod::CreateServerState(URI const &uri)/*{{{
    return std::unique_ptr<ServerState>(new HttpsServerState(uri, this));
 }
 									/*}}}*/
-HttpsMethod::HttpsMethod(std::string &&pProg) : ServerMethod(std::move(pProg),"1.2",Pipeline | SendConfig)/*{{{*/
+HttpsMethod::HttpsMethod(std::string &&pProg) : BaseHttpMethod(std::move(pProg),"1.2",Pipeline | SendConfig)/*{{{*/
 {
    auto addName = std::inserter(methodNames, methodNames.begin());
    addName = "http";

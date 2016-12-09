@@ -29,15 +29,15 @@
 #include <string>
 #include <vector>
 
-#include "server.h"
+#include "basehttp.h"
 
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
-string ServerMethod::FailFile;
-int ServerMethod::FailFd = -1;
-time_t ServerMethod::FailTime = 0;
+string BaseHttpMethod::FailFile;
+int BaseHttpMethod::FailFd = -1;
+time_t BaseHttpMethod::FailTime = 0;
 
 // ServerState::RunHeaders - Get the headers before the data		/*{{{*/
 // ---------------------------------------------------------------------
@@ -243,7 +243,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 }
 									/*}}}*/
 // ServerState::ServerState - Constructor				/*{{{*/
-ServerState::ServerState(URI Srv, ServerMethod *Owner) :
+ServerState::ServerState(URI Srv, BaseHttpMethod *Owner) :
    ServerName(Srv), TimeOut(120), Owner(Owner)
 {
    Reset();
@@ -264,13 +264,13 @@ void ServerState::Reset()						/*{{{*/
 }
 									/*}}}*/
 
-// ServerMethod::DealWithHeaders - Handle the retrieved header data	/*{{{*/
+// BaseHttpMethod::DealWithHeaders - Handle the retrieved header data	/*{{{*/
 // ---------------------------------------------------------------------
 /* We look at the header data we got back from the server and decide what
    to do. Returns DealWithHeadersResult (see http.h for details).
  */
-ServerMethod::DealWithHeadersResult
-ServerMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
+BaseHttpMethod::DealWithHeadersResult
+BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 {
    // Not Modified
    if (Req.Result == 304)
@@ -440,11 +440,11 @@ ServerMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
    return FILE_IS_OPEN;
 }
 									/*}}}*/
-// ServerMethod::SigTerm - Handle a fatal signal			/*{{{*/
+// BaseHttpMethod::SigTerm - Handle a fatal signal			/*{{{*/
 // ---------------------------------------------------------------------
 /* This closes and timestamps the open file. This is necessary to get
    resume behavoir on user abort */
-void ServerMethod::SigTerm(int)
+void BaseHttpMethod::SigTerm(int)
 {
    if (FailFd == -1)
       _exit(100);
@@ -459,11 +459,11 @@ void ServerMethod::SigTerm(int)
    _exit(100);
 }
 									/*}}}*/
-// ServerMethod::Fetch - Fetch an item					/*{{{*/
+// BaseHttpMethod::Fetch - Fetch an item					/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds an item to the pipeline. We keep the pipeline at a fixed
    depth. */
-bool ServerMethod::Fetch(FetchItem *)
+bool BaseHttpMethod::Fetch(FetchItem *)
 {
    if (Server == nullptr || QueueBack == nullptr)
       return true;
@@ -530,8 +530,8 @@ bool ServerMethod::Fetch(FetchItem *)
    return true;
 }
 									/*}}}*/
-// ServerMethod::Loop - Main loop					/*{{{*/
-int ServerMethod::Loop()
+// BaseHttpMethod::Loop - Main loop					/*{{{*/
+int BaseHttpMethod::Loop()
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -783,7 +783,7 @@ int ServerMethod::Loop()
    return 0;
 }
 									/*}}}*/
-unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
+unsigned long long BaseHttpMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 {
    unsigned long long MaxSizeInQueue = 0;
    for (FetchItem *I = Queue; I != 0 && I != QueueBack; I = I->Next)
@@ -791,13 +791,13 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
    return MaxSizeInQueue;
 }
 									/*}}}*/
-ServerMethod::ServerMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
+BaseHttpMethod::BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
    aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }
 									/*}}}*/
-bool ServerMethod::Configuration(std::string Message)			/*{{{*/
+bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
 {
    if (aptMethod::Configuration(Message) == false)
       return false;
@@ -807,7 +807,7 @@ bool ServerMethod::Configuration(std::string Message)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool ServerMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
+bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
 {
    if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
 	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())
