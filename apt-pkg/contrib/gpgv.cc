@@ -145,7 +145,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   std::vector<std::string> dataHeader;
    char * sig = NULL;
    char * data = NULL;
    char * conf = nullptr;
@@ -204,7 +203,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       message.OpenDescriptor(dataFd, FileFd::WriteOnly, true);
 
       if (signature.Failed() == true || message.Failed() == true ||
-	    SplitClearSignedFile(File, &message, &dataHeader, &signature) == false)
+	    SplitClearSignedFile(File, &message, nullptr, &signature) == false)
       {
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
@@ -313,6 +312,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    bool skip_until_empty_line = false;
    bool found_signature = false;
    bool first_line = true;
+   bool signed_message_not_on_first_line = false;
+   bool found_garbage = false;
 
    char *buf = NULL;
    size_t buf_size = 0;
@@ -327,6 +328,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    found_message_start = true;
 	    skip_until_empty_line = true;
 	 }
+	 else
+	    signed_message_not_on_first_line = found_garbage = true;
       }
       else if (skip_until_empty_line == true)
       {
@@ -364,6 +367,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    if (ContentFile != NULL)
 	       ContentFile->Write(dashfree, strlen(dashfree));
 	 }
+	 else
+	    found_garbage = true;
       }
       else if (found_signature == true)
       {
@@ -376,6 +381,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    found_signature = false; // look for other signatures
       }
       // all the rest is whitespace, unsigned garbage or additional message blocks we ignore
+      else
+	 found_garbage = true;
    }
    fclose(in);
    if (buf != NULL)
@@ -386,6 +393,14 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       SignatureFile->Flush();
    if (ContentFile != nullptr)
       ContentFile->Flush();
+
+   if (found_message_start)
+   {
+      if (signed_message_not_on_first_line)
+	 _error->Warning("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
+      else if (found_garbage)
+	 _error->Warning("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
+   }
 
    // An error occured during reading - propagate it up
    bool const hasErrored = _error->PendingError();

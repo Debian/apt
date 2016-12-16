@@ -2,6 +2,7 @@
 
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
 #include <algorithm>
@@ -214,6 +215,7 @@ TEST(LanguagesTest,TranslationFiles)
    EXPECT_EQ(1, vec.size());
    EXPECT_EQ("none", vec[0]);
 
+   _error->PushToStack();
    _config->Set("Acquire::Languages", "");
    //FIXME: Remove support for this deprecated setting
    _config->Set("APT::Acquire::Translation", "ast_DE");
@@ -228,6 +230,11 @@ TEST(LanguagesTest,TranslationFiles)
    EXPECT_EQ(1, vec.size());
    EXPECT_EQ("en", vec[0]);
 
+   // discard the deprecation warning for APT::Acquire::Translation
+   if (_error->PendingError())
+      _error->MergeWithStack();
+   else
+      _error->RevertToStack();
 
    EXPECT_EQ(0, system(std::string("rm -rf ").append(tempdir).c_str()));
    _config->Clear();

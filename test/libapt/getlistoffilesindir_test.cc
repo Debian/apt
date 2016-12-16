@@ -1,6 +1,7 @@
 #include <config.h>
 
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/error.h>
 
 #include <string>
 #include <vector>
@@ -49,6 +50,7 @@ TEST(FileUtlTest,GetListOfFilesInDir)
    createLink(tempdir, "non-existing-file", "brokenlink.list");
 
    // Files with no extension
+   _error->PushToStack();
    std::vector<std::string> files = GetListOfFilesInDir(tempdir, "", true);
    ASSERT_EQ(2, files.size());
    EXPECT_EQ(P("01yet-anothernormalfile"), files[0]);
@@ -103,5 +105,10 @@ TEST(FileUtlTest,GetListOfFilesInDir)
    EXPECT_EQ(P("disabledfile.disabled"), files[3]);
    EXPECT_EQ(P("disabledfile.list.disabled"), files[4]);
 
+   // discard the unknown file extension messages
+   if (_error->PendingError())
+      _error->MergeWithStack();
+   else
+      _error->RevertToStack();
    removeDirectory(tempdir);
 }
