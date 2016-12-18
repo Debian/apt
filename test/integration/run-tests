@@ -107,6 +107,16 @@ if [ -n "$APT_TEST_JOBS" ]; then
 	fi
 	exec $parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
 fi
+
+APT_TEST_SIGNINGHOME="$(mktemp --directory --tmpdir 'apt-key-signinghome.XXXXXXXXXX')"
+removesigninghome() {
+	if [ -z "$APT_TEST_SIGNINGHOME" ]; then return; fi
+	GNUPGHOME="${APT_TEST_SIGNINGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
+	rm -rf -- "$APT_TEST_SIGNINGHOME"
+}
+trap "removesigninghome; exit 0" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+export APT_TEST_SIGNINGHOME
+
 TOTAL="$(echo "$TESTLIST" | wc -l)"
 if [ "$MSGLEVEL" -le 1 ]; then
 	printf "${CTEST}Running testcases${CRESET}: "

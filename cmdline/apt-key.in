@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-unset GREP_OPTIONS
+unset GREP_OPTIONS GPGHOMEDIR CURRENTTRAP
 export IFS="$(printf "\n\b")"
 
 MASTER_KEYRING='&keyring-master-filename;'
@@ -526,6 +526,11 @@ while [ -n "$1" ]; do
 	 # … other more complicated ones pipe gpg into gpg.
 	aptkey_execute() { echo >&2 'EXEC:' "$@"; sh "$@"; }
 	;;
+      --homedir)
+	 # force usage of a specific homedir instead of creating a temporary
+	 shift
+	 GPGHOMEDIR="$1"
+	;;
       --*)
 	 echo >&2 "Unknown option: $1"
 	 usage
@@ -593,9 +598,13 @@ cleanup_gpg_home() {
     rm -rf "$GPGHOMEDIR"
 }
 
+# gpg needs (in different versions more or less) files to function correctly,
+# so we give it its own homedir and generate some valid content for it later on
 create_gpg_home() {
-    # gpg needs (in different versions more or less) files to function correctly,
-    # so we give it its own homedir and generate some valid content for it later on
+    # for cases in which we want to cache a homedir due to expensive setup
+    if [ -n "$GPGHOMEDIR" ]; then
+	return
+    fi
     if [ -n "$TMPDIR" ]; then
 	# tmpdir is a directory and current user has rwx access to it
 	# same tests as in apt-pkg/contrib/fileutl.cc GetTempDir()
@@ -603,7 +612,7 @@ create_gpg_home() {
 	    unset TMPDIR
 	fi
     fi
-    GPGHOMEDIR="$(mktemp -d)"
+    GPGHOMEDIR="$(mktemp --directory --tmpdir 'apt-key-gpghome.XXXXXXXXXX')"
     CURRENTTRAP="${CURRENTTRAP} cleanup_gpg_home;"
     trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
     if [ -z "$GPGHOMEDIR" ]; then
@@ -644,6 +653,13 @@ EOF
 
     create_gpg_home
 
+    # now tell gpg that it shouldn't try to maintain this trustdb file
+    echo "#!/bin/sh
+exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-default-keyring \\
+--homedir '$(escape_shell "${GPGHOMEDIR}")' --no-auto-check-trustdb --trust-model always \"\$@\"" > "${GPGHOMEDIR}/gpg.0.sh"
+    GPG_SH="${GPGHOMEDIR}/gpg.0.sh"
+    GPG="$GPG_SH"
+
     # create the trustdb with an (empty) dummy keyring
     # older gpgs required it, newer gpgs even warn that it isn't needed,
     # but require it nonetheless for some commands, so we just play safe
@@ -654,13 +670,6 @@ EOF
        cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
        false
     fi
-
-    # now tell gpg that it shouldn't try to maintain this trustdb file
-    echo "#!/bin/sh
-exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-default-keyring \\
---homedir '$(escape_shell "${GPGHOMEDIR}")' --no-auto-check-trustdb --trust-model always \"\$@\"" > "${GPGHOMEDIR}/gpg.0.sh"
-    GPG_SH="${GPGHOMEDIR}/gpg.0.sh"
-    GPG="$GPG_SH"
 
     # We don't usually need a secret keyring, of course, but
     # for advanced operations, we might really need a secret keyring after all

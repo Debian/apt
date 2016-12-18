@@ -1157,6 +1157,30 @@ setupaptarchive() {
 	fi
 }
 
+killgpgagent() {
+	if [ -z "${TMPWORKINGDIRECTORY}" ]; then return; fi
+	local GPGHOME="${TMPWORKINGDIRECTORY}/signinghome"
+	if [ -e "${GPGHOME}" ]; then return; fi
+	# ensure the agent dies quickly as different versions have different suicide heuristics
+	GNUPGHOME="${GPGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
+	rm -rf "$GPGHOME"
+}
+dosigning() {
+	local KEY="$1"
+	shift
+	local GPGHOME="${TMPWORKINGDIRECTORY}/signinghome"
+	if [ -n "$APT_TEST_SIGNINGHOME" ]; then
+		GPGHOME="$APT_TEST_SIGNINGHOME"
+	else
+		if [ ! -e "$GPGHOME" ]; then
+			mkdir -p --mode=700 "${GPGHOME}"
+			addtrap 'prefix' 'killgpgagent;'
+		fi
+	fi
+	testsuccess aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly \
+		--homedir "${GPGHOME}" adv --batch --yes --digest-algo "${APT_TESTS_DIGEST_ALGO:-SHA512}" \
+		"$@"
+}
 signreleasefiles() {
 	local SIGNERS="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
@@ -1208,21 +1232,20 @@ signreleasefiles() {
 		mv "${KEY}.new.pub" "${KEY}.pub"
 		mv "${KEY}.new.sec" "${KEY}.sec"
 	fi
-	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes --digest-algo ${APT_TESTS_DIGEST_ALGO:-SHA512}"
 	for RELEASE in $(find "${REPODIR}/" -name Release); do
 		# we might have set a specific date for the Release file, so copy it
 		local DATE="$(stat --format "%y" "${RELEASE}")"
 		if [ "$APT_DONT_SIGN" = 'Release.gpg' ]; then
 			rm -f "${RELEASE}.gpg"
 		else
-			testsuccess $GPG "$@" $SIGUSERS --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+			dosigning "$KEY" "$@" $SIGUSERS --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
 			touch -d "$DATE" "${RELEASE}.gpg"
 		fi
 		local INRELEASE="${RELEASE%/*}/InRelease"
 		if [ "$APT_DONT_SIGN" = 'InRelease' ]; then
 			rm -f "$INRELEASE"
 		else
-			testsuccess $GPG "$@" $SIGUSERS --clearsign --output "$INRELEASE" "$RELEASE"
+			dosigning "$KEY" "$@" $SIGUSERS --clearsign --output "$INRELEASE" "$RELEASE"
 			touch -d "$DATE" "${INRELEASE}"
 		fi
 	done
