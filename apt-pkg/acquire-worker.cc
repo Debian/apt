@@ -664,6 +664,8 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    if (isDoomedItem(Item->Owner))
       return true;
 
+   Item->SyncDestinationFiles();
+
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
    Message += "URI: " + Item->URI;
@@ -673,7 +675,9 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
 
-   if (hsl.FileSize() == 0)
+   Message += Item->Custom600Headers();
+
+   if (hsl.FileSize() == 0 && Message.find("\nMaximum-Size: ") == std::string::npos)
    {
       unsigned long long FileSize = Item->GetMaximumSize();
       if(FileSize > 0)
@@ -684,8 +688,6 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
       }
    }
 
-   Item->SyncDestinationFiles();
-   Message += Item->Custom600Headers();
    Message += "\n\n";
 
    if (RealFileExists(Item->Owner->DestFile))
