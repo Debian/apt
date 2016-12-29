@@ -220,6 +220,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
+      addArg(0,"arch-only","APT::Get::Arch-Only",0);
+      addArg(0,"indep-only","APT::Get::Indep-Only",0);
       // this has no effect *but* sbuild is using it (see LP: #1255806)
       // once sbuild is fixed, this option can be removed
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
@@ -270,7 +272,6 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg(0,"trivial-only","APT::Get::Trivial-Only",0);
    addArg(0,"remove","APT::Get::Remove",0);
    addArg(0,"only-source","APT::Get::Only-Source",0);
-   addArg(0,"arch-only","APT::Get::Arch-Only",0);
    addArg(0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0);
    addArg(0,"allow-insecure-repositories","Acquire::AllowInsecureRepositories",0);
    addArg(0,"allow-weak-repositories","Acquire::AllowWeakRepositories",0);

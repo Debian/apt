@@ -608,9 +608,14 @@ static void WriteBuildDependencyPackage(std::ostringstream &buildDepsPkgFile,
       << "Architecture: " << Arch << "\n"
       << "Version: 1\n";
 
+   bool const IndepOnly = _config->FindB("APT::Get::Indep-Only", false);
    std::string depends, conflicts;
    for (auto const &dep: Dependencies)
    {
+      // ArchOnly is handled while parsing the dependencies on input
+      if (IndepOnly && (dep.Type == pkgSrcRecords::Parser::BuildDependArch ||
+	       dep.Type == pkgSrcRecords::Parser::BuildConflictArch))
+	 continue;
       std::string * type;
       if (dep.Type == pkgSrcRecords::Parser::BuildConflict ||
 		  dep.Type == pkgSrcRecords::Parser::BuildConflictIndep ||
