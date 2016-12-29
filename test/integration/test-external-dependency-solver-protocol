@@ -148,7 +148,16 @@ testsuccess aptget upgrade -s --solver apt
 testfailure aptget install awesome badstuff -s
 testfailure aptget install awesome badstuff -s --solver apt
 testsuccess grep 'ERR_UNSOLVABLE' rootdir/tmp/testfailure.output
-
+msgtest 'A resolving error is format as' 'valid parseable EDSP error'
+if dpkg-checkbuilddeps -d 'dctrl-tools' /dev/null >/dev/null 2>&1; then
+	if apthelper cat-file rootdir/var/log/apt/edsp.last.xz | aptinternalsolver > solver.result 2>&1; then
+		testsuccess --nomsg grep-dctrl -FError ERR -- solver.result
+	else
+		msgfail
+	fi
+else
+	msgskip 'dctrl-tools not installed'
+fi
 configarchitecture 'armel'
 testfailure aptget install --solver apt awesomecoolstuff:i386 -s
 msgtest 'An invalid EDSP file generates a' 'hard error'
