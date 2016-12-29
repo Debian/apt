@@ -241,6 +241,10 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
 
+   // The "+" is encoded as a workaround for a amazon S3 bug
+   // see LP bugs #1003633 and #1086997. (taken from http method)
+   Uri.Path = QuoteString(Uri.Path, "+~ ");
+
    FetchResult Res;
    CURLUserPointer userp(this, &Res, Itm);
    // callbacks

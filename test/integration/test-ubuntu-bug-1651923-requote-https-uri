@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+
+mkdir "aptarchive/target with space"
+echo 'alright' > "aptarchive/target with space/working"
+changetohttpswebserver
+webserverconfig 'aptwebserver::redirect::replace::/targetwithoutspace/' '/target%20with%20space/'
+webserverconfig 'aptwebserver::redirect::replace::/targetwithoutspace2/' '/target with space/'
+
+testsuccess apthelper download-file -o debug::acquire::http=1 "http://localhost:${APTHTTPPORT}/targetwithoutspace/working" httpfile1
+testsuccess apthelper download-file -o debug::acquire::http=1 "http://localhost:${APTHTTPPORT}/targetwithoutspace2/working" httpfile2
+testsuccess apthelper download-file -o debug::acquire::https=1 "https://localhost:${APTHTTPSPORT}/targetwithoutspace/working" httpsfile1
+testsuccess apthelper download-file -o debug::acquire::https=1 "https://localhost:${APTHTTPSPORT}/targetwithoutspace2/working" httpsfile2
