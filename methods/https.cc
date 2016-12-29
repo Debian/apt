@@ -275,6 +275,10 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (Server == nullptr || Server->Comp(Itm->Uri) == false)
       Server = CreateServerState(Itm->Uri);
 
+   // The "+" is encoded as a workaround for a amazon S3 bug
+   // see LP bugs #1003633 and #1086997. (taken from http method)
+   Uri.Path = QuoteString(Uri.Path, "+~ ");
+
    FetchResult Res;
    RequestState Req(this, Server.get());
    CURLUserPointer userp(this, &Res, Itm, &Req);
