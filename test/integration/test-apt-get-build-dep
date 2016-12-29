@@ -8,6 +8,7 @@ setupenvironment
 configarchitecture 'i386'
 
 insertpackage 'stable' 'build-essential' 'i386' '1'
+insertpackage 'stable' 'build-essential2' 'i386' '1'
 insertpackage 'stable' 'build-depends' 'i386' '1'
 insertpackage 'stable' 'build-depends-arch' 'i386' '1'
 insertpackage 'stable' 'build-depends-indep' 'i386' '1'
@@ -51,6 +52,67 @@ Conf build-depends (1 stable [i386])
 Conf build-depends-arch (1 stable [i386])
 Conf build-depends-indep (1 stable [i386])
 Conf build-essential (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc
+
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  build-conflicts build-conflicts-arch build-conflicts-indep
+The following NEW packages will be installed:
+  build-depends build-depends-arch build-depends-indep build-essential2
+0 upgraded, 4 newly installed, 3 to remove and 0 not upgraded.
+Remv build-conflicts [1]
+Remv build-conflicts-arch [1]
+Remv build-conflicts-indep [1]
+Inst build-depends (1 stable [i386])
+Inst build-depends-arch (1 stable [i386])
+Inst build-depends-indep (1 stable [i386])
+Inst build-essential2 (1 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-depends-arch (1 stable [i386])
+Conf build-depends-indep (1 stable [i386])
+Conf build-essential2 (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc -o APT::Build-Essential="build-essential2"
+
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  build-conflicts build-conflicts-arch build-conflicts-indep
+The following NEW packages will be installed:
+  build-depends build-depends-arch build-depends-indep
+0 upgraded, 3 newly installed, 3 to remove and 0 not upgraded.
+Remv build-conflicts [1]
+Remv build-conflicts-arch [1]
+Remv build-conflicts-indep [1]
+Inst build-depends (1 stable [i386])
+Inst build-depends-arch (1 stable [i386])
+Inst build-depends-indep (1 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-depends-arch (1 stable [i386])
+Conf build-depends-indep (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc -o APT::Build-Essential=","
+
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  build-conflicts build-conflicts-arch build-conflicts-indep
+The following NEW packages will be installed:
+  build-depends build-depends-arch build-depends-indep build-essential
+  build-essential2
+0 upgraded, 5 newly installed, 3 to remove and 0 not upgraded.
+Remv build-conflicts [1]
+Remv build-conflicts-arch [1]
+Remv build-conflicts-indep [1]
+Inst build-depends (1 stable [i386])
+Inst build-depends-arch (1 stable [i386])
+Inst build-depends-indep (1 stable [i386])
+Inst build-essential (1 stable [i386])
+Inst build-essential2 (1 stable [i386])
+Conf build-depends (1 stable [i386])
+Conf build-depends-arch (1 stable [i386])
+Conf build-depends-indep (1 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf build-essential2 (1 stable [i386])" aptget build-dep --simulate ./foobar.dsc -o APT::Build-Essential::="build-essential2"
 
 testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
 Reading package lists...

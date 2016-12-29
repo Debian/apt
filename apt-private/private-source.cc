@@ -668,16 +668,12 @@ bool DoBuildDep(CommandLine &CmdL)
    // deal with the build essentials first
    {
       std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
-      if (Opts)
-	 Opts = Opts->Child;
-      for (; Opts; Opts = Opts->Next)
+      for (auto && opt: _config->FindVector("APT::Build-Essential"))
       {
-	 if (Opts->Value.empty() == true)
+	 if (opt.empty())
 	    continue;
-
 	 pkgSrcRecords::Parser::BuildDepRec rec;
-	 rec.Package = Opts->Value;
+	 rec.Package = std::move(opt);
 	 rec.Type = pkgSrcRecords::Parser::BuildDependIndep;
 	 rec.Op = 0;
 	 BuildDeps.push_back(rec);
